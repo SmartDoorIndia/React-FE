@@ -1,0 +1,48 @@
+@import './mixin.scss';
+$primary-color:#BE1452;
+$primary-color-hover:#AB1249;
+$secondry-color:#252525;
+$secondry-color-hover:#BBB5B8;
+$dangerous:#FF1919;
+$success:#40C52B;
+$success-hover:#39B126;
+$alertColor:#FFBF1A;
+$white:#fff;
+$black:#000;
+$tataritory-color:#E5E5E5;
+$lightgray:#F8F3F5;
+$secondryBtn:#D0CACD;
+$gray:#949494;
+$hover:#CC2461;
+$borderColor:#CC2864;
+$citrus:#EEC3D3;
+$TaupeGrey:#8E878A;
+$info: #1AC8FF;
+$lightBorder:#DED6D9;
+$lightprime:#E5CBD5;
+$borderLight:#D7D7D7;
+$cardLeftBorder:#EDC281;
+$grayColor:#DEDEDE;
+$lightPink:#FFE1EC;
+//Font-Size;
+$small:10px !important;
+$xSmall:12px;
+$body: 14px;
+$xxSmall: 16px;
+$regular: 18px;
+$xregular: 20px;
+$medium:22px;
+$large:24px;
+$xlarge:28px;
+$xxLarge: 30px;  
+
+// Font Weight
+$semibold:400 !important;
+$xsemibold:500 !important;
+$smbold:600 !important;
+$mediumbold:700 !important;
+$bold:bold !important;
+
+.lightPink {
+    color: $lightPink !important; 
+}

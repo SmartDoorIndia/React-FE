@@ -1,0 +1,219 @@
+@import '../../../../scss/modules/variables.scss';
+.builderForm{
+    padding:12px;
+    @include border;
+    border-radius: 4px;
+    .newEntry{
+        .form-label{        
+            position: relative;
+            top: 18px;
+            background:$white;
+            left:11px;
+            font-size:$xSmall;
+            padding-left: 5px;
+            padding-right: 5px;
+            color:$gray;
+        }
+        .form-group{
+            margin-bottom: 0;
+        }
+        
+         .uploadFile{
+             text-align: center;
+             background:$lightgray;
+             border: 1px dotted $TaupeGrey;
+             padding: 12px;
+             .form-file-label{
+                 color:$primary-color;
+                 text-align: center;
+                 cursor: pointer;
+                 font-size: $body;
+                 font-weight: $smbold;
+             }
+             input{
+                 display: none;
+        
+             }
+         }
+        }
+        .positionRelative{
+            position: relative;
+            min-height: 136px;
+            overflow: hidden;
+        }
+        .companyLogo{
+            display: flex;
+            justify-content: center;
+            align-items: center;        
+            min-height:130px;
+            border: 1px solid #D7D7D7;        
+            border-radius: 4px;
+            flex-direction: column;
+            cursor: pointer !important;
+            img{
+                opacity: 0.6;
+                width: 64px;
+            }
+            .custom.custom-file {
+                position: absolute;
+                cursor: pointer !important;
+            }
+            .fileSelect{
+                height: 130px;
+                cursor: pointer !important;
+                input{
+                    height: 100%;
+                    cursor: pointer !important;
+                }
+            }
+        } 
+        .lightBg{
+            background-color:$lightgray;
+            padding: 12px;
+            .inputBg{
+                .form-label{
+                    background-color:$lightgray;
+                }
+             }
+             .lableField{
+                label{
+                    background-color:$lightgray;
+                }
+            }
+        }
+
+        .checkBox{
+            margin-right:10px;
+            .form-check{
+                background: #FFFFFF;
+                border: 1px solid #DEDEDE;
+                box-sizing: border-box;
+                border-radius: 4px;
+            }
+        }
+        .residentialBox{
+            .form-label{
+                font-size: 10px;
+                left: 3px;
+                padding-left: 3px;
+                padding-right: 3px;
+            }
+            
+            .deleteButton{
+                background: #F8F3F5;
+                border: 1px solid #DED6D9;
+                box-sizing: border-box;
+                border-radius: 2px;
+                width: 26px;
+                height: 26px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 25px;
+                cursor: pointer;
+                figure{
+                    margin-bottom:3px;
+                }
+            }
+            .deleteIcon {
+                min-width: 34px;
+                margin: 0px 10px 0px 10px;                
+            }
+            .formButton{
+                display: inline-block;
+                margin:20px auto;
+                text-align: center;
+                width: 100%;
+                border-top: 1px solid #DED6D9;
+                padding-top:20px;              
+                button{
+                    margin-top: 0;
+                    width:16%;
+                }
+            }
+        }
+        .customChechbox {
+            .form-check-input {visibility: hidden;}
+            input[type=checkbox] + label {border:2px solid #ced4da;padding:5px 7px; font-size: 14px; border-radius:4px;}            
+            input[type=checkbox]:checked + label {border: 2px solid $primary-color; font-size: 14px;border-radius:4px;}
+            input[type=radio] + label {border:2px solid #ced4da;padding:5px 7px; font-size: 14px; border-radius:4px;}            
+            input[type=radio]:checked + label {border: 2px solid $primary-color; font-size: 14px;border-radius:4px;}
+        }
+        .submitBtn{
+            display: inline-block;
+            margin:0 auto;
+            text-align: center;
+            width: 100%;         
+          button{
+                margin-top: 0;
+                width:25%;
+                padding:12px !important
+            } 
+        }
+        ::placeholder{
+            font-size: 12px;
+        }
+        @media(max-width:1600px){
+            .residentialBox{
+            .formButton{
+                button{
+                    margin-top: 0;
+                    width:25%;
+                }
+            }
+                .form-label{
+                    font-size: 9px;
+                }
+                ::placeholder{
+                    font-size: 10px;
+                }
+                .lableTitle{
+                    .form-control{
+                        font-size:10px !important;                        
+                    }
+                }
+            }
+            .customChechbox {                
+                input[type=checkbox] + label {font-size: 11px;}            
+                input[type=checkbox]:checked + label {font-size: 11px;}
+            }
+
+            .customChechbox {                
+                input[type=radio] + label {font-size: 11px;}            
+                input[type=radio]:checked + label {font-size: 11px;}
+            }
+
+            .boxSpace{
+                margin-right: 0 !important;
+                .col{
+                    padding-right: 0;
+                }
+            }
+           
+        }
+       
+}
+
+
+.amenitiesBox{
+    .boxAmenities{
+        width: 102px;
+        height: 102px;
+        border: 1px solid #DEDEDE;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        border-radius: 8px;
+        @media(max-width:1366px){
+            width:75px;
+            height: 75px;
+        }
+
+        figure{
+            margin-bottom:5px !important;
+        }
+
+        }
+ 
+}

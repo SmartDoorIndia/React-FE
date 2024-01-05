@@ -1,0 +1,26 @@
+.rdt_TableCol {
+    &:nth-child(2){
+        white-space: nowrap;
+    }
+   &>div{
+    &>div{
+        font-weight: 700 ;
+    }
+   }  
+    &:last-child{
+        justify-content: start;padding-left: .5rem;
+    } 
+}
+
+.rdt_TableRow {
+    .rdt_TableCell{
+        text-align: center;
+        &:nth-child(2){
+            white-space: nowrap;
+        }
+        &:last-child{
+            justify-content: start;
+            // padding-left: .5rem;
+        }
+    }
+}

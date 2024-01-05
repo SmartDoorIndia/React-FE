@@ -1,0 +1,34 @@
+.locationSelect{
+    display: flex;
+    .form-group{
+        display: flex;
+        margin-bottom: 0;
+        align-items: center;
+        // margin-right: 24px;
+        label{
+            margin-right: 15px;
+            margin-bottom: 0;
+            font-size: $body;
+            color:$secondry-color;
+            font-weight:$smbold;
+        }
+        .form-control{
+            background: $lightgray;
+            @include border;                    
+            font-weight: $smbold;                    
+            font-size: $xSmall !important;
+            border-radius: 4px !important;
+            height: 30px !important;      
+            box-shadow: none;
+            padding-top: 4px;
+            padding-left: 30px !important;
+        }
+        select.form-control {
+            padding-left: 10px !important;
+        }
+    }
+    figure {
+        margin: 0 auto;
+    }
+   
+}

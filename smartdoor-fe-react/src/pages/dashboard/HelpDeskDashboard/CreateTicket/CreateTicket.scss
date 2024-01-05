@@ -1,0 +1,31 @@
+
+@import "../../../../scss/modules/variables.scss";
+
+.createTicket{
+.form-label{        
+    position: relative;
+    top: 18px;
+    background:$white;
+    left:11px;
+    font-size:$xSmall;
+    padding-left: 5px;
+    padding-right: 5px;
+    color:$gray;
+}
+.form-group{
+    margin-bottom: 0;
+}
+button {
+      margin-top: 30px;
+      width: 100% ;          
+      padding: 12px !important;
+ }
+.NotifyUser{
+    display: flex;
+    justify-content: center;
+}
+.dropdown_multiselect{
+    border-color: lightgray;
+    border-radius: 2px;
+    }
+}

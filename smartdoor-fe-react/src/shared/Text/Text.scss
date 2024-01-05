@@ -1,0 +1,36 @@
+@import "../../scss/modules/variables.scss";
+// Default Class
+.text{font-size:$xSmall;color:black;display: block;}
+
+// Font Size
+.small{font-size:$small}
+.xSmall{font-size:$xSmall;}
+.Small{font-size: $body;}
+.regular{font-size:$regular;}
+.medium{font-size:$medium;}
+.large{font-size:$large;}
+
+// Font color 
+.primaryColor{color:$primary-color;}
+.secondryColor{color:$secondry-color;}
+.dangerText{ color:$dangerous;}
+.successColor{color:$success;}
+.white{color:$white;}
+.black{color:$black;}
+.alertColor{color:$alertColor}
+.gray{color:$gray;}
+.TaupeGrey{color:$TaupeGrey}
+.grayColor{color:$grayColor}
+
+// Font Weight
+
+.semibold{font-weight: 400;}
+.smbold{font-weight: 600 !important;}
+.mediumbold{font-weight: 700 !important;}
+.bold{font-weight:bold;}
+.regularbold{font-weight:500 !important}
+
+
+// Extra Font Size
+.xxSmall{font-size:$xxSmall;}
+.xregular{font-size:$xregular;}

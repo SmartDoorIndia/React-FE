@@ -1,0 +1,23 @@
+@import "../../../../scss/modules/variables.scss";
+.e_select{
+  select{
+    border: 0;
+    background-color: transparent;
+    padding-left: 0 !important;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0 !important;
+    height: 35px !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+  }
+}
+.phnumber{
+  display: inline !important;
+  padding-left: 5px;
+}
+.linkFor:hover, .linkFor {
+  color: $primary-color;
+}
+.confirm-modal{
+  padding-top: 40px !important;
+}

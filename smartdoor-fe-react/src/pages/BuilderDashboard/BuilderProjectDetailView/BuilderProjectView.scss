@@ -1,0 +1,19 @@
+@import "../../../scss/modules/variables.scss";
+
+.img_moreInfo {
+   transition-duration: 0.8s;
+   transition-property: transform
+ }
+ 
+.img_moreInfo.done {
+   transform: rotate(-180deg) !important;
+ }
+ 
+.img_moreInfo.done::before {
+   transform: rotate(45deg);
+ }
+
+.w-65{
+   width: 65% !important;
+}
+ 

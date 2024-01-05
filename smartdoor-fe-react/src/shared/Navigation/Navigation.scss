@@ -1,0 +1,200 @@
+@import "../../scss/modules/variables.scss";
+
+.mainMenu {
+    width: 100%;
+    min-height: calc(100vh - 30px);
+    height: 100%;
+    background-color: $primary-color;
+    border-radius: 4px;
+
+    .navbar-collapse {
+        width: 100%;
+    }
+
+    .navbar {
+        .navbar-brand {
+            padding: 15px;
+        }
+
+        flex-direction: column;
+        padding: 0;
+
+        .navbar-nav {
+            display: block;
+            border-top: 1px solid $borderColor;
+            padding-top: 20px;
+            width: 100%;
+
+            .nav-link {
+                font-weight: 700;
+                color: $citrus;
+                display: flex;
+                padding: 7px 25px;
+
+                >figure {
+                    margin-right: 10px;
+                    margin-bottom: 0;
+                }
+
+                &:hover {
+                    color: $white;
+                }
+            }
+
+            .dropdown-menu {
+                position: relative;
+                background-color: transparent;
+                z-index: 100 !important;
+                border: 0;
+                padding: 0 0px 0 25px;
+
+                .dropdown-item {
+                    font-weight: 700;
+                    padding: 4px 20px;
+                    margin-bottom: 2px;
+                    //    color:$white !important;
+                    color: #EEC3D3;
+                    position: relative;
+                    padding-left: 25px;
+
+                    &::before {
+                        position: absolute;
+                        left: 12px;
+                        top: 16px;
+                        width: 3px;
+                        height: 2px;
+                        content: "";
+                        border-radius: 50%;
+                        background-color: $citrus;
+                    }
+
+                    &:hover,
+                    &:focus {
+                        background-color: $hover;
+                        color: $white;
+                        border-radius: 30px;
+                    }
+
+                    &.active {
+                        background-color: $hover !important;
+                        color: $white;
+                        border-radius: 30px;
+                    }
+
+                    @media (min-width: 992px) and (max-width: 1200px) { 
+                        word-break: break-all;
+                        white-space: normal;
+                    }
+                }
+
+            }
+
+            .navbar-collapse {
+                padding: 15px;
+            }
+
+            .dropdown-toggle::after {
+                width: 10px;
+                height: 10px;
+                border-bottom: 1px solid #fff;
+                border-right: 1px solid #fff;
+                border-top: 0;
+                border-left: 0;
+                transform: rotate(45deg);
+                right: 0px;
+                left: auto;
+                margin-left: auto;
+                margin-top: 10px;
+                margin-right: -25px;
+            }
+        }
+    }
+}
+
+.dashboardIcon {
+    position: relative;
+    margin-left: 24px;
+    padding-right: 24px;
+
+    &::before {
+        background-image: url(../../assets/images/dashboard-icon.svg);
+        width: 15px;
+        height: 15px;
+        position: absolute;
+        left: 0px;
+        top: 13px;
+        background-repeat: no-repeat;
+        content: "";
+    }
+}
+
+.dashboardActiveIcon {
+    position: relative;
+    margin-left: 24px;
+    padding-right: 24px;
+
+    &::before {
+        background-image: url(../../assets/svg/dashboard-active-icon.svg);
+        width: 15px;
+        height: 15px;
+        position: absolute;
+        left: 0px;
+        top: 13px;
+        background-repeat: no-repeat;
+        content: "";
+    }
+
+    .dropdown-toggle.nav-link {
+        color: white !important;
+    }
+}
+
+.houseIcon {
+    position: relative;
+    margin-left: 24px;
+    padding-right: 24px;
+
+    &::before {
+        background-image: url(../../assets/images/house-icon.svg);
+        width: 15px;
+        height: 15px;
+        position: absolute;
+        left: 0px;
+        top: 13px;
+        background-repeat: no-repeat;
+        content: "";
+    }
+}
+
+.propertyActive {
+    position: relative;
+    margin-left: 24px;
+    padding-right: 24px;
+
+    &::before {
+        background-image: url(../../assets/svg/property-active.svg);
+        width: 15px;
+        height: 15px;
+        position: absolute;
+        left: 0px;
+        top: 13px;
+        background-repeat: no-repeat;
+        content: "";
+    }
+
+    .dropdown-toggle.nav-link {
+        color: white !important;
+    }
+}
+
+.dropdown {
+    &.show {
+        .dropdown-toggle::after {
+            transform: rotate(-135deg) !important;
+        }
+    }
+}
+
+.nav-active {
+    color: white !important;
+}

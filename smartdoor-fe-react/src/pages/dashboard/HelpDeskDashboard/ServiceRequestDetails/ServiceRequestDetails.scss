@@ -1,0 +1,49 @@
+@import "../../../../scss/modules/variables.scss";
+.e_select{
+    select{
+      border: 0;
+      background-color: transparent;
+      padding-left: 0 !important;
+      border-bottom: 1px solid #ddd;
+      border-radius: 0 !important;
+      height: 35px !important;
+      outline: 0 !important;
+      box-shadow: none !important;
+    }
+  }
+  
+  .leadTitle {
+      width: 70%;
+  }
+
+.helpdesk_addComments{
+.form-label{        
+    position: relative;
+    top: 18px;
+    background:$white;
+    left:11px;
+    font-size:$xSmall;
+    padding-left: 5px;
+    padding-right: 5px;
+    color:$gray;
+}
+.form-group{
+    margin-bottom: 0;
+}
+button {
+      margin-top: 30px;
+      width: 100% ;          
+      padding: 12px !important;
+ }
+.NotifyUser{
+    display: flex;
+    justify-content: center;
+}
+.dropdown_multiselect{
+    border-color: lightgray;
+    border-radius: 2px;
+    }
+}
+.linkFor:hover, .linkFor {
+    color: $primary-color;
+  }

@@ -1,0 +1,94 @@
+@import '../../../../../src/scss/modules/mixin.scss';
+@import '../../../../../src/scss/modules/variables.scss';
+.blockButton {
+    z-index:8;
+    top: -50px;
+    width: 94px;
+    position:relative
+}
+
+.profileImg{
+    width:100px;
+    height:100px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.onVisit {	
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 20px;
+}
+
+.realtorDetails{    
+    display: block;
+    .userImage{
+        width: 62px;
+        height: 62px;        
+        min-height: 62px;
+        min-width: 62px;
+        overflow: hidden;
+        border-radius: 50%;
+        margin-right: 24px;
+
+    }
+}
+
+.ratingSection{
+    margin-bottom: 30px;
+    margin-top: 20px;
+    figure{
+        margin-bottom: 0;
+    }
+}
+.commentSection{
+    .userImage {
+        width:40px;
+        height:40px;
+        min-height:40px;
+        min-width:40px;
+        overflow: hidden;
+        border-radius: 50%;
+        margin-right:10px;
+
+    }
+}
+.buttonTopSection{
+    // display: flex;
+    // justify-content: space-between;
+    // margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    z-index: 8;
+    top: -50px;
+    /* width: 94px; */
+    position: relative;
+    float: right;
+}
+
+.status{
+    margin-right: 20px;
+}
+.commentSection {
+    .realtorRatingWrapper {
+        .realtorRatingUserWrapper {
+            min-width: 250px;max-width: 250px;
+            white-space: normal;
+        }
+    }
+}
+.tableBox{
+    margin-top: 30px;
+    background-color: $white;
+    @include border;
+    border-radius: 4px;
+    .tableHeading{
+        padding: 12px;
+        border-bottom: 1px solid $lightBorder;
+    }
+}

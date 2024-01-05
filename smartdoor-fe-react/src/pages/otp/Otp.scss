@@ -1,0 +1,17 @@
+@import "../../scss/modules/variables.scss";
+.Resend-otp-btn{
+    width: 30% !important;
+    background-color: transparent !important;
+    color: $primary-color !important;
+    font-weight: 600 !important;
+    &:focus{
+        color: white !important;
+        background-color: yellowgreen !important;
+    }
+    cursor: pointer;
+}
+
+.Resend-otp-btn:focus{
+    color: $primary-color-hover !important;
+    background-color: transparent !important;
+}

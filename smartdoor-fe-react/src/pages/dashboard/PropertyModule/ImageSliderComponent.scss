@@ -1,0 +1,40 @@
+.crossIcon{
+    cursor: pointer;
+}
+.main_box { position: relative; }
+.main_box img {
+    
+    display: block;
+     width: 50%;  
+}
+.main_box .crossIcon { position: absolute; top:0; right:0; padding-top: 10px;padding-right: 10px; }
+
+.crossIcon{
+    position: relative;
+    .closeRight{
+        position: absolute;
+        right:15px;
+        top:15px;
+        width: 16px;
+        height: 25px;
+        overflow: hidden;
+        img{
+            height:auto !important;
+            aspect-ratio:auto;
+        }
+    }
+}
+.imageloader{
+    margin-bottom: 85px;
+}
+/********Css starts here*********/
+.uploadImg {
+    &.sliderAddImage
+    .thumbSlider {
+        &.propertySmallSlider {
+            .slick-list {
+                .slick-track {transform: unset !important;}
+            }
+        }
+    }
+}

@@ -1,0 +1,110 @@
+@import '../../../../scss/modules/variables.scss';
+@import '../../HelpDeskDashboard/ServiceRequest/CalanderInput.scss';
+.sideModal{    
+    > button{
+        border: 0;
+        margin-bottom: 20px;
+    padding: 0 !important;
+        &:hover{
+            background-color: transparent;
+            color:$black !important;
+            border: 0 !important;
+        }
+    }
+    .btnCenter{
+        display: flex;
+        justify-content: center;
+        margin-top: 130px;
+        button{
+            margin-left: 10px;
+        }
+    }
+    .labelWidth {
+        min-width: 180px;
+    }
+} 
+
+.rs-picker-menu.fade.in.rs-picker-daterange-menu{
+    z-index: 99999 !important; 
+}
+
+.filterButton {
+    background: #F8F3F5 !important;
+    border: 1px solid #DED6D9 !important;
+}
+.assignTo{
+    padding-right: 5%;
+    padding-left: 5%;
+    .form-group{
+        display: flex;
+        margin-bottom: 0;
+        align-items: center;
+        label{
+            margin-right: 15px;
+            margin-bottom: 0;
+            font-size: $body;
+            color:$secondry-color;
+            font-weight:$smbold;
+        }
+        .form-control{
+            background: $lightgray;
+            @include border;                    
+            font-weight: $smbold;                    
+            font-size: $xSmall !important;
+            border-radius: 4px !important;
+            height: 30px !important;      
+            box-shadow: none;
+            padding-top: 4px;
+            padding-left: 14px !important;
+        }
+        select.form-control { 
+            padding-left: 10px !important; 
+            @media (min-width: 375px) and (max-width: 1200px) {
+                min-width: 92px; 
+            } 
+        }
+    }
+
+}
+
+
+.rs-picker-daterange.rs-picker-default.rs-picker-toggle-wrapper {
+    .rs-btn.rs-btn-default.rs-picker-toggle {
+        padding: 14px !important;
+        padding-left: 15px !important;
+        display: flex !important;
+    }
+    .rs-picker-toggle-caret {
+        padding: 5px;
+    }
+    .rs-picker-toggle-value {
+        color: #495057;
+    }
+    .rs-picker-toggle-clean {
+        padding: 6px;
+        padding-right: 15px;
+    }
+}
+
+
+/********css starts here***********/
+.SocietyLeadsTableWrapper {
+    .rdt_TableBody {
+        .rdt_TableRow {
+            .rdt_TableCell {
+                text-align: center;
+                &:nth-child(4) {
+                    text-align: center;
+                    .elipsis-text {
+                        white-space: nowrap;overflow: hidden;
+                        width: 180px;min-width: 180px;
+                        text-overflow: ellipsis;display: block;text-align: center;
+                        @media (max-width:1440px) {
+                         width: 150px;min-width: 150px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

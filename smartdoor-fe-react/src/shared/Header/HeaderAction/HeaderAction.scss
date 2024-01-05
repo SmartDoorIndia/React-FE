@@ -1,0 +1,59 @@
+@import '../../../scss/modules/variables.scss';
+.headerAction{
+    display: flex;
+    align-items: center;
+    // padding-top:20px;
+    figure{
+        margin-bottom: 0 !important;
+    }
+    .inputField{
+        .form-group{
+            width:100px;
+            margin-bottom: 0;
+        .form-control{
+            border: 0;
+            background: inherit;
+            height: 20px !important;
+            border-radius: 0 !important;
+            outline: 0;
+            box-shadow: none;
+        }
+    }
+    }
+    .actionButton{
+        border-right:1px solid $secondryBtn;
+        padding-right: 20px;        
+        img{
+            cursor: pointer;
+        }
+    }
+    .notifaction{
+        position: relative;
+        > span{            
+            position: absolute;
+            top:-8px;
+            background-color: $primary-color;
+            color:$white;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            font-size: 10px;
+            text-align: center;
+            right:11px;
+            line-height: 14px;
+        }          
+    }
+}
+.profileAction{
+    border-right:0 !important;
+    display: flex;
+    .btn-primary{
+        background-color: transparent !important;
+        border-color:transparent !important;
+        background: url(../../../assets/images/downArrow-icon.svg);
+        background-repeat: no-repeat;
+        background-position: 56% 100%;
+        font-size: 0;
+    }
+    
+}

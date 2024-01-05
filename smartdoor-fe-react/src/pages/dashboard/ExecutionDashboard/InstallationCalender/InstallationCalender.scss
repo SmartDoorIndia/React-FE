@@ -1,0 +1,60 @@
+// @import '../../../scss/modules/variables.scss';
+@import '../../../../scss/modules/variables.scss';
+
+
+
+.button-top-section{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    .locationSelect{
+        align-items: center;
+        margin-right: 0;
+        margin-left: 1rem;
+        // min-width: 200px;
+        // &:first-child{
+        //     margin-right: 15px;
+        // }
+        select.form-control{
+            max-height: 40px;
+        }
+    }
+}
+
+.installation-filter{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: -50px;
+    margin-bottom: 0;
+    z-index: 8;
+    /* top: -50px; */
+    /* width: 94px; */
+    /* position: relative; */
+    float: right;
+}
+.form-installation{
+    background: $lightgray;
+    @include border;                    
+    font-weight: $smbold;                    
+    font-size: $xSmall !important;
+    border-radius: 4px !important;
+    height: 30px !important;      
+    box-shadow: none;
+    padding-top: 4px;
+    padding-left: 14px !important;
+}
+// label{
+//     margin-right: 15px;
+//     margin-bottom: 0;
+//     font-size: $body;
+//     color:$secondry-color;
+//     font-weight:$smbold;
+// }
+
+.status {
+    span.mediumbold.defaultTag.ml-2 {
+        font-size: 10px !important;
+        min-width: auto;
+    }
+}

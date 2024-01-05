@@ -1,0 +1,23 @@
+@import '../../../scss/modules/variables.scss';
+// Input cancle icon
+.searchCrossButon{
+    position: relative;
+    .crossInputButton{
+        border: 0;
+        position: absolute;
+        right: 25px;
+        background:$lightgray;
+        top: 1px;
+    }
+    .form-group {
+        .form-control {
+            padding-left: 30px !important;   
+            background: transparent !important; 
+        }
+    }
+    .inputSearchIcon {
+        position: absolute;
+        left: 2.5rem;
+        top: 2px;
+    }
+}

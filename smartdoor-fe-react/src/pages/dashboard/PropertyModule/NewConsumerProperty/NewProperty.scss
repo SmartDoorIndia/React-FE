@@ -1,0 +1,32 @@
+// @import "../../../scss/modules/variables.scss";
+@import "../../../../scss/modules/variables.scss";
+
+.new_property{
+.form-label{        
+    position: relative;
+    top: 18px;
+    background:$white;
+    left:11px;
+    font-size:$xSmall;
+    padding-left: 5px;
+    padding-right: 5px;
+    color:$gray;
+}
+.form-group{
+    margin-bottom: 0;
+}
+button {
+      margin-top: 30px;
+      width: 100% ;          
+      padding: 12px !important;
+ }
+.radio_div{
+    display: flex;
+    justify-content: space-evenly;
+    padding: 10px;
+}
+.dropdown_multiselect{
+    border-color: lightgray;
+    border-radius: 2px;
+    }
+}

@@ -1,0 +1,27 @@
+@import "../../../../scss/modules/variables.scss";
+
+
+.w-65{
+   width: 65% !important;
+}
+.contactDetails{
+   display: flex;
+   align-items: center;
+   margin-top: 5px;
+   a{
+      margin-left: 2px;
+      color:$secondry-color;
+      font-size:$xSmall;
+      font-weight:600;
+   }
+}
+
+
+.builderEditButton{
+   z-index:8;
+   top: -50px;
+   position:absolute;
+   width: max-content;
+   right: 0;
+   margin-right: 1em;   
+}

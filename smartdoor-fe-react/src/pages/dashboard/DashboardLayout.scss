@@ -1,0 +1,113 @@
+@import '../../scss/modules/variables.scss';
+.callingCard {
+    position: relative;    
+    width: 100%;
+    margin-top: 15%;
+    .cardWidth{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;                
+        width:30%;
+        margin: 0 auto;
+        z-index: 999;
+        margin-left: 40%;
+        
+        .callingData_card{
+          display: flex;
+          justify-content: center;
+            .profileName{
+                background-color: $black;
+                min-width: 400px;
+                height: 80px;
+                display: flex;
+                color:$white;
+                align-items: center;
+                padding: 10px 35px;
+                margin-top: 3px;
+                margin-right: 2px;
+
+                span{
+                    font-size: $regular;
+                    font-weight: $mediumbold;
+                    max-height: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    
+                }
+            }
+        }
+    }
+}
+
+.buttonBox{
+    display: flex;
+    .btn_Reject{
+        background-color: #FE3435;
+        color: white !important; 
+        span {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        img {
+            padding-top: 5px
+        }
+    }
+    .btn_accept{
+        background-color: #40C52B;
+        color: white !important; 
+        span {
+            line-height: 17px;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            letter-spacing: -0.02em;
+            display: block;
+            margin-top: 3px;
+        }
+        img {
+            padding-top: 11px
+        }
+    }
+    .btn_Hold {
+        background-color: white ;
+        color: black !important;
+        img {
+            height: 30px;
+            width: 30px;
+            padding-top: 5px;
+            margin-bottom:4px;
+        }
+         
+    }    
+    .endCall{
+        span {
+            line-height: 14px;
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            letter-spacing: -0.02em;
+            margin-top: 10px !important;
+        }
+        img {
+            padding-top: 5px;
+            margin-bottom:4px;
+        }
+
+    }
+    .callButton {
+        margin:3px;
+        padding: 3px;
+        width: 20%;       
+        margin-right: 2px;
+        width: 80px;
+        height: 80px;
+        border:0;
+        box-shadow: none;        
+    }
+    .holdIcon {
+        width: 25px;
+    }
+}

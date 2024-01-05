@@ -1,0 +1,158 @@
+@import "../../../scss/modules/variables.scss";
+
+    .finance-tableBox{
+        margin-top: 0 !important;
+    }
+
+    .tableBox{
+        margin-top: 30px;
+        background-color: $white;
+        @include border;
+        border-radius: 4px;
+        .tableHeading{
+            padding: 12px;
+            border-bottom: 1px solid $lightBorder;
+        }    
+        .locationSelect{
+            display: flex;
+            .form-group{
+                display: flex;
+                margin-bottom: 0;
+                align-items: center;
+                // margin-left: 24px;
+                label{
+                    margin-right: 15px;
+                    margin-bottom: 0;
+                    font-size: $body;
+                    color:$secondry-color;
+                    font-weight:$smbold;
+                }
+                .form-control{
+                    background: $lightgray;
+                    @include border;                    
+                    font-weight: $smbold;                    
+                    font-size: $xSmall !important;
+                    border-radius: 4px !important;
+                    height: 30px !important;      
+                    box-shadow: none;
+                    padding-top: 4px;
+                    
+                }
+            }
+            figure {
+                margin: 0 auto;
+            }
+        }
+        table{
+            thead{
+                th{
+                    border: 0;
+                    font-size: $body;
+                    font-weight: $bold;
+                    color:$secondry-color;
+                    text-align: center;
+                }
+                    tr{                    
+                        &:nth-of-type(odd){
+                            background-color:$white;
+                        }                         
+                }    
+            }
+            tr{
+                td{
+                    border:0;
+                    font-size: $body;                    
+                    color:$secondry-color;
+                    font-weight: $smbold;
+                    text-align: center;
+                    .action{
+                        display: contents;
+                        span{
+                            border:1px solid $lightBorder;                            
+                            border-radius:2px;
+                            display: inline-block;
+                            width: 26px;
+                            height: 26px;
+                            text-align: center;
+                            cursor: pointer;
+                            margin-right: 10px;
+                            
+                        }
+                    }
+                }
+                &:nth-of-type(odd){
+                    background-color: $lightgray;
+                }
+            }
+        }
+     .tableBottom{
+         padding:10px;
+     }  
+     .userName {
+         display: flex;
+         align-items: center;
+         text-align: center;
+            
+         span{
+             margin-left: 5px;
+         }
+         .userImage{
+             width: 30px;
+             height: 30px;
+             overflow: hidden;
+             text-align: center;
+             border-radius: 50%;
+         }
+     }
+    .moreInformation{
+        display: contents;
+        span{
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            cursor: pointer;
+            margin-right: 10px;        
+        }
+    }
+     
+    }
+
+.action{
+    display: contents;
+    span{
+        border:1px solid $lightBorder;                            
+        border-radius:2px;
+        display: inline-block;
+        width: 26px;
+        height: 26px;
+        text-align: center;
+        cursor: pointer;
+        margin-right: 10px;
+        
+    }
+}
+/*******Css starts here************/
+.consumersTableWrapper {
+    .tableBox {
+        .rdt_TableBody {
+            .rdt_TableRow {
+                .rdt_TableCell {
+                    text-align: center;
+                    &:nth-child(2) {
+                        text-align: center;
+                        .elipsis-text {
+                            white-space: nowrap;overflow: hidden;
+                            width: 120px;min-width: 120px;
+                            text-overflow: ellipsis;display: block;text-align: center;
+                            @media (max-width:1440px) {
+                                width: 90px;min-width: 90px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+/*******Css ends here************/

@@ -1,0 +1,160 @@
+@import '../../../scss/modules/variables.scss';
+.modalBg{
+    background-color: $white;
+    padding:20px 10px;
+    min-height: 100vh;
+    height: 100%;
+    // position: absolute;
+    right: 0;
+    top: 0;
+    z-index:999;
+    // width: 70%;
+    .leftIcon{
+        img{
+            position: absolute;
+            top:8px;
+            left:0;
+        }
+    }
+    .modalRight{
+        button{
+            margin-left:10px;
+            img{
+                position: absolute;
+                top: 9px;
+                left: 4px;
+            }
+        }
+        .secondary{
+            background-color: $lightgray !important;
+            @include border;
+            padding-left: 27px !important;
+            padding-right: 27px !important;            
+            &:hover{
+                background-color: $lightBorder !important;
+            }
+        }
+
+    }
+    .profileDetails{
+        background-color: $lightgray;
+        border-top:1px solid  $lightBorder;
+        border-bottom:1px solid  $lightBorder;
+        padding:10px;
+        .userDetails{
+            figure{
+                width: 100px;
+                height: 100px;
+                overflow: hidden;
+                border-radius: 50%;
+            }
+        }
+    }
+    .tabBox{
+        margin-top:10px;
+        // display: flex;
+        // width: 100%;
+        // /* background-color: antiquewhite; */
+        // align-items: center;
+        .cardSecond{
+            background-color: $lightgray;
+            @include border;
+            border-radius: 4px;
+            padding:10px;
+            margin-bottom: 10px;
+            .visitor-div{
+                justify-content: space-between;
+            }
+            .info-div{
+                display: flex;
+                flex-direction: column;
+            }
+        }
+        .nav-tabs{
+            width: 95%;
+            .nav-link{
+                border:0;                
+                border-bottom: 1px solid transparent;
+                color:$TaupeGrey;
+                font-size: $body;
+                font-weight: $mediumbold;
+            }
+            .nav-link.active, .nav-link:hover {
+                border:0;
+                border-bottom: 3px solid $primary-color !important;
+                color:$secondry-color !important;                    
+            }
+            a:first-of-type {
+                margin-right: 25px;
+                margin-left: 25px;
+                text-align: center;
+                // width: 103px;                
+            }
+        }
+        .tab-content{
+            margin-top: 20px;
+        }
+    }
+
+    
+}
+
+.slide_modal{
+    .modal-dialog{
+        max-width: 55%;
+        margin-left: auto;
+        margin-right: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        .modal-content{
+            border-radius: 0;
+            border: 0;
+        }
+    }
+
+    &.fade{
+        .modal-dialog{
+            transform: translate(0px, 0px);
+           }
+        }
+    }
+
+   
+
+    .personalDetail{
+        span{
+            flex: 1;
+            text-align: left;
+        }
+    }
+
+
+.sideModalDialog{
+    .modal-dialog{
+        max-width: 30% !important; 
+    }   
+    opacity:1 !important; 
+}
+
+
+.fade.modal-backdrop.show {
+    z-index: 1000 !important;
+}
+
+// Date filter Modal css
+.tabBox{
+    position: relative;
+.dateFilter{
+    position: absolute;
+    right: 10px;
+    top: 0;
+ }
+}
+
+.showmoreBellicon {
+ font-size: $regular;cursor: pointer;
+}
+
+.notifications{
+    cursor: pointer;
+}
