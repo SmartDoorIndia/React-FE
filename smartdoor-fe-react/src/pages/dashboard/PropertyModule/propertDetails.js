@@ -24,6 +24,8 @@ import {
    doorClosed,
    remoteUnlock,
    remoteOTP,
+   deletePropertyById,
+   getPropertyPlanDetails,
 } from "../../../common/redux/actions";
 import MapComponent from "../../../shared/Map/MapComponent";
 import Loader from "../../../common/helpers/Loader";
@@ -33,6 +35,7 @@ import {
    formateDate,
    ToolTip,
    setPrice,
+   showSuccessToast,
 } from "../../../common/helpers/Utils";
 import "./PropertyDoc.scss";
 import MessageModal from "../../../shared/Modal/MessageModal/MessageModal";
@@ -50,6 +53,7 @@ import SignatureAlgo from "../../../camera-related/signatureAlgorithm";
 import TimeStampAlgo from "../../../camera-related/timeMilis";
 import QrModal from "../../../shared/Modal/QrModal/QrModal";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Switch } from "@mui/material";
 const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
 const PropertyDetails = (props) => {
@@ -85,6 +89,8 @@ const PropertyDetails = (props) => {
    const [smartLockData, setSmartLockData] = useState("");
    const [qrData, setQrData] = useState({})
    const [showQr, setShowQr] = useState(false)
+   const [currentPlanData, setCurrentPlanData] = useState({})
+   const [upgradePlanData, setUpgradePlanData] = useState([])
 
    const batteryStatusCensor = (censorBatteryStatus) => {
       if (censorBatteryStatus === 0) {
@@ -208,6 +214,23 @@ const PropertyDetails = (props) => {
          });
    }, [propertyId, getPropertyDetails]);
 
+   const _getPropertyPlanDetailsById = useCallback(
+      () => {
+         getPropertyPlanDetails({ propertyId: propertyId })
+            .then((response) => {
+               if (response.data) {
+                  if (response.data.resourceData && response.data.status === 200) {
+                     console.log(response.data.resourceData)
+                     setCurrentPlanData(response?.data?.resourceData?.currentPlanData)
+                     setUpgradePlanData(response?.data?.resourceData?.upgradePlanData)
+                  }
+               }
+            })
+            .catch((error) => {
+               console.log("error", error);
+            });
+      }
+   )
    console.log("censor data:", censorData);
    console.log("smart lock data", smartLockData);
 
@@ -349,7 +372,7 @@ const PropertyDetails = (props) => {
       }
    };
 
- 
+
    const handleViewRecording = async () => {
       try {
          const result = await getCameraDevice({ propertyid: propertyId });
@@ -363,7 +386,7 @@ const PropertyDetails = (props) => {
       }
    };
 
-   
+
 
    const fileUpload = (event) => {
       if (event.target.files && event.target.files[0]) {
@@ -465,12 +488,12 @@ const PropertyDetails = (props) => {
          accessToken: slData.accessToken,
          lockId: slData.lockId,
          lockmac: slData.lockmac,
-         propertyId:slData.propertyId
+         propertyId: slData.propertyId
       }
       setQrData(data, () => {
          console.log(qrData, "QR data");
-       });
-       setShowQrModal(true)
+      });
+      setShowQrModal(true)
    }
    const handleCloseQrModal = () => {
       setShowQrModal(false)
@@ -479,6 +502,7 @@ const PropertyDetails = (props) => {
    useEffect(() => {
       _getPropertyDetails();
       getPropertyAnalyticsByPropertyId({ propertyId: propertyId });
+      _getPropertyPlanDetailsById();
    }, [propertyId, _getPropertyDetails, getPropertyAnalyticsByPropertyId]);
 
    // console.log('propertyData', propertyData);
@@ -505,10 +529,10 @@ const PropertyDetails = (props) => {
          if (result_data.data.status === 200 && result_data.data.resourceData) {
             let doorOpenResponse = JSON.parse(result_data.data.resourceData);
             console.log("doorOpenResponse:", doorOpenResponse);
-            if(doorOpenResponse.errcode===0) {
-              setDoor_status("Open");
-            } 
-            
+            if (doorOpenResponse.errcode === 0) {
+               setDoor_status("Open");
+            }
+
             // _getContactSensor(propertyId);
             console.log("doorClose result_data.data.resourceData:", result_data.data.resourceData);
             // setSmartdoorBattery(result_data?.data?.resourceData?.lockPowerPercentage)
@@ -553,21 +577,29 @@ const PropertyDetails = (props) => {
 
    const [remoteUnlockResponse, setRemoteUnlockresponse] = useState({});
    const [remoteOTPResponse, setRemoteOTPresponse] = useState({});
-   const [showRemoteUnlockModal , setShowRemoteUnlockModal] = useState(false);
-   const [showRemoteOTPModal , setShowRemoteOTPModal] = useState(false);
+   const [showRemoteUnlockModal, setShowRemoteUnlockModal] = useState(false);
+   const [showRemoteOTPModal, setShowRemoteOTPModal] = useState(false);
+   const [remoteUnlockErr , setRemoteUnlockErr] = useState(false);
+   const [remoteOTPErr , setRemoteOTPErr] = useState(false);
 
    const remoteUnLock = async () => {
       let map = {
-         propertyId : propertyId,
-         userId : ownerId,
-         consumer_requested : false
+         propertyId: propertyId,
+         userId: ownerId,
+         consumer_requested: false
       }
       const response = await remoteUnlock(map);
       console.log(response)
-      setRemoteUnlockresponse(response.data.resourceData)
-      remoteUnlockShow()
+      if(response?.data?.resourceData?.status === 200) {
+         setRemoteUnlockresponse(response.data.resourceData)
+         remoteUnlockShow()
+      } else {
+         setRemoteUnlockresponse(response?.data)
+         console.log(response?.data)
+         setRemoteUnlockErr(true)
+      }
    }
- 
+
    const remoteUnlockShow = () => {
       setShowRemoteUnlockModal(true)
    }
@@ -582,16 +614,29 @@ const PropertyDetails = (props) => {
    }
    const remoteOtp = async () => {
       let map = {
-         propertyId : propertyId,
-         userId : ownerId,
-         consumer_requested : false
+         propertyId: propertyId,
+         userId: ownerId,
+         consumer_requested: false
       }
       const response = await remoteOTP(map);
       console.log(response)
-      setRemoteOTPresponse(response.data.resourceData)
-      remoteOTPShow()
+      if(response?.data?.resourceData?.status === 200) {
+         setRemoteOTPresponse(response.data.resourceData)
+         remoteOTPShow()
+      } else {
+         setRemoteOTPresponse(response?.data)
+         setRemoteOTPErr(true)
+      }
    }
 
+   const handleDelete = async () => {
+      const response = await deletePropertyById({ propertyId })
+      if (response?.data?.status === 200) {
+         console.log(response)
+         showSuccessToast("Property deleted successfully");
+         history.push("/admin/property")
+      }
+   }
    return (
       <>
          {Object.keys(propertyData).length > 0 ? (
@@ -615,9 +660,8 @@ const PropertyDetails = (props) => {
                                  size="large"
                                  fontWeight="mediumbold"
                                  color="secondry-color"
-                                 text={`Flat/House  ${propertyData.houseNumber || "-"}, ${
-                                    propertyData.towerName ? `${propertyData.towerName},` : ""
-                                 } ${propertyData.societyDetailResponse.societyName}`}
+                                 text={`Flat/House  ${propertyData.houseNumber || "-"}, ${propertyData.towerName ? `${propertyData.towerName},` : ""
+                                    } ${propertyData.societyDetailResponse.societyName}`}
                               />
                               <Text
                                  className="fw500"
@@ -667,60 +711,60 @@ const PropertyDetails = (props) => {
                         <Loader />
                      ) : (
                         <div className="bg-white rounded px-3 py-3 border">
-                          {!propertyData.uninstallationDone ?
-                           <div className="statusDiv">
-                              {/* { propertyData?.cameraPlan? */}
-                              {/* {propertyAnalyticsData?.basicPlan ? '' :   */}
-                              
-                              {/* }  */}
-                              {propertyData.propertyType === "Commercial" ? null : (
-                                 
-                                 <div className="lock-div">
-                                    {showCameraButton()}
-                                    <div className="lockIcon">
-                                       {/* <img src={smartLock} /> */}
-                                    </div>
-                                    {/* <div>
+                           {!propertyData.uninstallationDone ?
+                              <div className="statusDiv">
+                                 {/* { propertyData?.cameraPlan? */}
+                                 {/* {propertyAnalyticsData?.basicPlan ? '' :   */}
+
+                                 {/* }  */}
+                                 {propertyData.propertyType === "Commercial" ? (
+
+                                    <div className="lock-div">
+                                       {showCameraButton()}
+                                       <div className="lockIcon">
+                                          {/* <img src={smartLock} /> */}
+                                       </div>
+                                       {/* <div>
                                        Smartlock Power % : {smartdoorBattery}%
                                     </div> */}
-                                    {propertyData.status==="UNDER REVIEW" ? null :
-                                    <>
-                                       <Text
-                                          className=" mt-2"
-                                          size="xSmall"
-                                          fontWeight="xsemibold"
-                                          color="primaryColor"
-                                          text={`Power: ${smartdoorBattery}%`}
-                                       />
-                                       <Text
-                                          className=" mt-2"
-                                          size="xSmall"
-                                          fontWeight="xsemibold"
-                                          color="primaryColor"
-                                          text={`SmartLock Admin Passcode: ${smartlockAdminPassCode}`}
-                                       />
-                                       <Text
-                                          className=" mt-2"
-                                          size="xSmall"
-                                          fontWeight="xsemibold"
-                                          color="primaryColor"
-                                          text={`Contact sensor status: ${door_status}`}
-                                       />
-                                        <Text
-                                          className=" mt-2"
-                                          size="xSmall"
-                                          fontWeight="xsemibold"
-                                          color="primaryColor"
-                                          text={`Camera ID: ${cameraData[0]?.uuId}`}
-                                       />
+                                       {propertyData?.smartLockProperty === true && propertyData?.deleted === false && propertyData.status === "UNDER REVIEW" ?
+                                          <>
+                                             <Text
+                                                className=" mt-2"
+                                                size="xSmall"
+                                                fontWeight="xsemibold"
+                                                color="primaryColor"
+                                                text={`Power: ${smartdoorBattery}%`}
+                                             />
+                                             <Text
+                                                className=" mt-2"
+                                                size="xSmall"
+                                                fontWeight="xsemibold"
+                                                color="primaryColor"
+                                                text={`SmartLock Admin Passcode: ${smartlockAdminPassCode}`}
+                                             />
+                                             <Text
+                                                className=" mt-2"
+                                                size="xSmall"
+                                                fontWeight="xsemibold"
+                                                color="primaryColor"
+                                                text={`Contact sensor status: ${door_status}`}
+                                             />
+                                             <Text
+                                                className=" mt-2"
+                                                size="xSmall"
+                                                fontWeight="xsemibold"
+                                                color="primaryColor"
+                                                text={`Camera ID: ${cameraData[0]?.uuId}`}
+                                             />
 
-                                    </>
-                                    }
-                                    {propertyData.basicPlan ? null : (
-                                       <>
-                                          {door_status ? (
-                                            <div style={{"display":"flex"}}>
-                                             {/* <Text
+                                          </> : null
+                                       }
+                                       {propertyData.basicPlan ? null : (
+                                          <>
+                                             {door_status ? (
+                                                <div style={{ "display": "flex" }}>
+                                                   {/* <Text
                                                 
                                                 className=" mt-2"
                                                 size="xSmall"
@@ -729,13 +773,13 @@ const PropertyDetails = (props) => {
                                                 text={`Door Status: ${door_status}`}
                                              /> */}
 
-                                             {door_status==="Open" ? 
-                                             <img className="LockIconOpen" src={LockOpen} />
-                                            
-                                            : <img className="LockIconClose" onClick={() => doorClose(smartLockData)} src={LockClose} />
-                                            }
+                                                   {door_status === "Open" ?
+                                                      <img className="LockIconOpen" src={LockOpen} />
 
-                                             {/* <Buttons
+                                                      : <img className="LockIconClose" onClick={() => doorClose(smartLockData)} src={LockClose} />
+                                                   }
+
+                                                   {/* <Buttons
                                              onClick={() => doorClose(smartLockData)}
                                              name="Door Open"
                                              varient="primary"
@@ -743,22 +787,22 @@ const PropertyDetails = (props) => {
                                              size="Small"
                                              color="white"
                                           /> */}
-                                          </div>
-                                          ) : null}
-                                          {censorBattery_status ? (
-                                             <Text
-                                                className=" mt-2"
-                                                size="xSmall"
-                                                fontWeight="xsemibold"
-                                                color="primaryColor"
-                                                text={`Sensor Power: ${censorBattery_status}%`}
-                                             />
-                                          ) : null}
-                                       </>
-                                    )}
-                                 </div>
-                              )}
-                           </div>:''}
+                                                </div>
+                                             ) : null}
+                                             {censorBattery_status ? (
+                                                <Text
+                                                   className=" mt-2"
+                                                   size="xSmall"
+                                                   fontWeight="xsemibold"
+                                                   color="primaryColor"
+                                                   text={`Sensor Power: ${censorBattery_status}%`}
+                                                />
+                                             ) : null}
+                                          </>
+                                       )}
+                                    </div>
+                                 ) : null}
+                              </div> : ''}
 
                            {showCameraDD ? (
                               <select
@@ -773,12 +817,11 @@ const PropertyDetails = (props) => {
                                  <option selected>Select camera</option>
                                  {cameraData.length
                                     ? cameraData.map((cItem, cIndx) => {
-                                         return (
-                                            <option value={cItem.uuId} key={cIndx}>{`camera ${
-                                               cIndx + 1
-                                            } (${cItem.nickName})`}</option>
-                                         );
-                                      })
+                                       return (
+                                          <option value={cItem.uuId} key={cIndx}>{`camera ${cIndx + 1
+                                             } (${cItem.nickName})`}</option>
+                                       );
+                                    })
                                     : ""}
                               </select>
                            ) : (
@@ -789,76 +832,90 @@ const PropertyDetails = (props) => {
 
                            {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
                            <div className="d-flex">
-                              {showQr? 
-                              <>
-                                 <Buttons
-                                    onClick={()=>qrGenerator(smartLockData)} 
-                                    name="Print QR" 
-                                    varient="primary"
-                                    size="xSmall"
-                                    color="white" 
-                                    className="mt-2 mb-2" /> &nbsp;&nbsp;
-                              </>
-                              : null }
-                              
-                              {propertyData?.smartLockProperty === true && propertyData?.deleted === false ? (
-                                 <Link
-                                    to={{
-                                       pathname: "/admin/property/property-devices",
-                                       state: {
-                                          propertyId: propertyData.smartdoorPropertyId,
-                                          smartLockData: smartLockData,
-                                          propertyDocsResp:
-                                             propertyData.propertyDocsResp,
-                                          userId: userId
-                                       },
-                                    }}
-                                 >
+                              {showQr ?
+                                 <>
                                     <Buttons
-                                    style={{float: 'right'}}
-                                    name="Show Device Data" 
-                                    varient="primary"
-                                    size="xSmall"
-                                    color="white" 
-                                    className="mt-2 mb-2" />
-                                 </Link>  
-                              ):(null)}
+                                       onClick={() => qrGenerator(smartLockData)}
+                                       name="Print QR"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className="mt-2 mb-2" /> &nbsp;&nbsp;
+                                 </>
+                                 : null}
+
+                              {propertyData?.smartLockProperty === true && propertyData?.deleted === false ?
+                                 <>
+                                    <Link
+                                       to={{
+                                          pathname: "/admin/property/property-devices",
+                                          state: {
+                                             propertyId: propertyData.smartdoorPropertyId,
+                                             smartLockData: smartLockData,
+                                             propertyDocsResp:
+                                                propertyData.propertyDocsResp,
+                                             userId: userId
+                                          },
+                                       }}
+                                    >
+                                       <Buttons
+                                          style={{ float: 'right' }}
+                                          name="Show Device Data"
+                                          varient="primary"
+                                          size="xSmall"
+                                          color="white"
+                                          className="mt-2 mb-2" />
+                                    </Link>
+                                 </>
+                                 : null}
                            </div>
 
                            <div className="d-flex">
                               {propertyData?.smartLockProperty === true && propertyData?.deleted === false ? (
                                  <>
                                     <Buttons
-                                       style={{float: 'right'}}
-                                       name="Remote Unlock" 
+                                       style={{ float: 'right' }}
+                                       name="Remote Unlock"
                                        varient="primary"
                                        size="xSmall"
-                                       color="white" 
-                                       className="mt-2 mb-2" 
-                                       onClick={() => {remoteUnLock()}} /> &nbsp; &nbsp;
+                                       color="white"
+                                       className="mt-2 mb-2"
+                                       onClick={() => { remoteUnLock() }} /> &nbsp; &nbsp;
                                     <Buttons
-                                       style={{float: 'right'}}
-                                       name="Remote OTP" 
+                                       style={{ float: 'right' }}
+                                       name="Remote OTP"
                                        varient="primary"
                                        size="xSmall"
-                                       color="white" 
-                                       className="mt-2 mb-2" 
-                                       onClick={() => {remoteOtp()}}/>
+                                       color="white"
+                                       className="mt-2 mb-2"
+                                       onClick={() => { remoteOtp() }} />
                                  </>
-                              ):(null)}
+                              ) : (null)}
                            </div>
 
-                           <div>
+                           <div className="d-flex">
                               <Buttons
-                                 style={{float: 'left'}}
-                                 name="Edit Property" 
+                                 style={{ float: 'left' }}
+                                 name="Edit Property"
                                  varient="primary"
                                  size="xSmall"
-                                 color="white" 
-                                 className=" mb-2" 
-                                 onClick={() => {history.push('/admin/property/edit-basic-details', {propertyData: propertyData})}} />
+                                 color="white"
+                                 className=" mb-2"
+                                 onClick={() => { history.push('/admin/property/edit-basic-details', { propertyData: propertyData }) }} /> &nbsp; &nbsp;
+
+                              {propertyData?.smartLockProperty === false ?
+                                 <>
+                                    <Buttons
+                                       style={{ float: 'left' }}
+                                       name="Delete"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className=" mb-2 bg-danger"
+                                       onClick={() => { handleDelete() }} />
+                                 </> : <></>}
                            </div>
-                          
+
                            <Text
                               className="fw500 mt-5"
                               size="xSmall"
@@ -908,10 +965,9 @@ const PropertyDetails = (props) => {
                                  text={
                                     propertyAnalyticsData.data.registerdOn === null
                                        ? "Published On: - "
-                                       : `Published On: ${
-                                            formateDate(propertyAnalyticsData.data.registerdOn) ||
-                                            "-"
-                                         }`
+                                       : `Published On: ${formateDate(propertyAnalyticsData.data.registerdOn) ||
+                                       "-"
+                                       }`
                                  }
                               />
                            </div>
@@ -1221,7 +1277,7 @@ const PropertyDetails = (props) => {
                                                    <img
                                                       className={
                                                          "doc docOwner " +
-                                                         propertyData?.ownerNotAvailable
+                                                            propertyData?.ownerNotAvailable
                                                             ? "doc docOwner"
                                                             : "disabled-icon "
                                                       }
@@ -1655,7 +1711,7 @@ const PropertyDetails = (props) => {
                                        text={
                                           propertyData.propertyInfoResponse.plotArea
                                              ? propertyData.propertyInfoResponse.plotArea +
-                                               " Sq. Ft."
+                                             " Sq. Ft."
                                              : "-"
                                        }
                                     />
@@ -1667,7 +1723,7 @@ const PropertyDetails = (props) => {
                            // Sixth Row
                            <tr>
                               {propertyData.propertyCategory === "Lease" &&
-                              propertyData.propertyType !== "Commercial" ? (
+                                 propertyData.propertyType !== "Commercial" ? (
                                  <td className="p-2">
                                     <Text
                                        size="xSmall"
@@ -1684,7 +1740,7 @@ const PropertyDetails = (props) => {
                                  </td>
                               ) : null}
                               {propertyData.propertyCategory === "Lease" &&
-                              propertyData.propertyType !== "Commercial" ? (
+                                 propertyData.propertyType !== "Commercial" ? (
                                  <td className="p-2">
                                     <Text
                                        size="xSmall"
@@ -1737,7 +1793,7 @@ const PropertyDetails = (props) => {
                                     text={
                                        propertyData.propertyInfoResponse.attachedOpenAreaOrGarden
                                           ? propertyData.propertyInfoResponse
-                                               .attachedOpenAreaOrGarden + " Sq. Ft."
+                                             .attachedOpenAreaOrGarden + " Sq. Ft."
                                           : "-"
                                     }
                                  />
@@ -1756,7 +1812,7 @@ const PropertyDetails = (props) => {
                                     text={
                                        propertyData.propertyInfoResponse.attachedOpenTerraceArea
                                           ? propertyData.propertyInfoResponse
-                                               .attachedOpenTerraceArea + " Sq. Ft."
+                                             .attachedOpenTerraceArea + " Sq. Ft."
                                           : "-"
                                     }
                                  />
@@ -1989,10 +2045,9 @@ const PropertyDetails = (props) => {
                                     text={
                                        propertyData.propertyInfoResponse.propertyAge === null
                                           ? "-"
-                                          : `${
-                                               Number(moment().year()) -
-                                               propertyData.propertyInfoResponse.propertyAge
-                                            }`
+                                          : `${Number(moment().year()) -
+                                          propertyData.propertyInfoResponse.propertyAge
+                                          }`
                                     }
                                  />
                               </td>
@@ -2024,6 +2079,225 @@ const PropertyDetails = (props) => {
                   </Col>
                </Row>
 
+               <Row>
+                  <Col md={12} className="propertyDetailsTable mb-5">
+                  <Text
+                        size="medium"
+                        fontWeight="bold"
+                        color="secondryColor"
+                        text="Current Plan details"
+                     />
+                     <table className="w-100 bg-white">
+                        <tr>
+                           <td className="p-2">
+                              <Text
+                                 size="xSmall"
+                                 fontWeight="bold"
+                                 color="secondryColor"
+                                 text="Plan Name"
+                              />
+                              <Text
+                                 size="Small"
+                                 fontWeight="semibold"
+                                 color="secondryColor"
+                                 text={currentPlanData.planName}
+                              />
+                           </td>
+                           <td className="p-2">
+                              <Text
+                                 size="xSmall"
+                                 fontWeight="bold"
+                                 color="secondryColor"
+                                 text="Current Plan Start Date"
+                              />
+                              <Text
+                                 size="Small"
+                                 fontWeight="semibold"
+                                 color="secondryColor"
+                                 text={currentPlanData.currentPlanStartDate}
+                              />
+                           </td>
+                           <td className="p-2">
+                              <Text
+                                 size="xSmall"
+                                 fontWeight="bold"
+                                 color="secondryColor"
+                                 text="Current Plan Expiry Date"
+                              />
+                              <Text
+                                 size="Small"
+                                 fontWeight="semibold"
+                                 color="secondryColor"
+                                 text={currentPlanData.expiryDate}
+                              />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td className="p-2">
+                              <Text
+                                 size="xSmall"
+                                 fontWeight="bold"
+                                 color="secondryColor"
+                                 text="Auto Renew Status"
+                              />
+                              {/* <Text
+                                 size="Small"
+                                 fontWeight="semibold"
+                                 color="secondryColor"
+                                 text={currentPlanData.autoRenewStatus ? "YES" : "NO"}
+                              /> */}
+                              <Switch checked={currentPlanData.autoRenewStatus ? true : false} color="warning" />
+                           </td>
+                           <td className="p-2">
+                              <Text
+                                 size="xSmall"
+                                 fontWeight="bold"
+                                 color="secondryColor"
+                                 text="Plan Start Date"
+                              />
+                              <Text
+                                 size="Small"
+                                 fontWeight="semibold"
+                                 color="secondryColor"
+                                 text={currentPlanData.planStartDate}
+                              />
+                           </td>
+                           <td className="p-2">
+                              <Text
+                                 size="xSmall"
+                                 fontWeight="bold"
+                                 color="secondryColor"
+                                 text="Security Deposit"
+                              />
+                              <Text
+                                 size="Small"
+                                 fontWeight="semibold"
+                                 color="secondryColor"
+                                 text={currentPlanData.securitydeposite}
+                              />
+                           </td>
+                        </tr>
+                     </table>
+                  </Col>
+               </Row>
+
+               <Row>
+                  <Col md={12} className="propertyDetailsTable mb-5">
+                     <Text
+                        size="medium"
+                        fontWeight="bold"
+                        color="secondryColor"
+                        text="Upgrade Plan details"
+                     />
+                     {upgradePlanData.length > 0 ? <>
+                        {upgradePlanData.map((planData) => (
+                           <table className="w-100 bg-white">
+                              <tr>
+                                 <td className="p-2">
+                                    <Text
+                                       size="xSmall"
+                                       fontWeight="bold"
+                                       color="secondryColor"
+                                       text="Plan Name"
+                                    />
+                                    <Text
+                                       size="Small"
+                                       fontWeight="semibold"
+                                       color="secondryColor"
+                                       text={planData.planName}
+                                    />
+                                 </td>
+                                 <td className="p-2">
+                                    <Text
+                                       size="xSmall"
+                                       fontWeight="bold"
+                                       color="secondryColor"
+                                       text="Current Plan Start Date"
+                                    />
+                                    <Text
+                                       size="Small"
+                                       fontWeight="semibold"
+                                       color="secondryColor"
+                                       text={planData.currentPlanStartDate}
+                                    />
+                                 </td>
+                                 <td className="p-2">
+                                    <Text
+                                       size="xSmall"
+                                       fontWeight="bold"
+                                       color="secondryColor"
+                                       text="Current Plan Expiry Date"
+                                    />
+                                    <Text
+                                       size="Small"
+                                       fontWeight="semibold"
+                                       color="secondryColor"
+                                       text={planData.expiryDate}
+                                    />
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <td className="p-2">
+                                    <Text
+                                       size="xSmall"
+                                       fontWeight="bold"
+                                       color="secondryColor"
+                                       text="Auto Renew Status"
+                                    />
+                                    {/* <Text
+                                       size="Small"
+                                       fontWeight="semibold"
+                                       color="secondryColor"
+                                       text={currentPlanData.autoRenewStatus ? "YES" : "NO"}
+                                    /> */}
+                                    <Switch checked={planData.autoRenewStatus ? true : false} color="warning" />
+                                 </td>
+                                 <td className="p-2">
+                                    <Text
+                                       size="xSmall"
+                                       fontWeight="bold"
+                                       color="secondryColor"
+                                       text="Plan Start Date"
+                                    />
+                                    <Text
+                                       size="Small"
+                                       fontWeight="semibold"
+                                       color="secondryColor"
+                                       text={planData.planStartDate}
+                                    />
+                                 </td>
+                                 <td className="p-2">
+                                    <Text
+                                       size="xSmall"
+                                       fontWeight="bold"
+                                       color="secondryColor"
+                                       text="Security Deposit"
+                                    />
+                                    <Text
+                                       size="Small"
+                                       fontWeight="semibold"
+                                       color="secondryColor"
+                                       text={planData.securitydeposite}
+                                    />
+                                 </td>
+                              </tr>
+                           </table>
+                        ))}
+                     </> :
+                     <>
+                        <Row>
+                           <Col md={12} className="mb-3">
+                              <Text
+                                 fontSize="40px"
+                                 fontWeight="bold"
+                                 color="secondryColor"
+                                 text="No Plan Details to show"
+                              />
+                           </Col>
+                        </Row>
+                     </>}
+                  </Col>
+               </Row>
                {/* <ConfirmationModal
         title ={ blockData.status ? 'Are you sure you want to unblock this user?':'Are you sure you want to block this user?' }
         // title = "Are you sure you want to decline the request ?"
@@ -2045,11 +2319,11 @@ const PropertyDetails = (props) => {
                   // sendMsgHandler={sendMsgHandler}
                   ownerId={ownerId}
                   userId={userId}
-                  // modalData={modalData}
-                  // dataFrom="user_manage"
-                  // closeModal={closeModal}
-                  // history={{ goBack: closeModal }}
-                  // getAllUsers={getAllUsers}
+               // modalData={modalData}
+               // dataFrom="user_manage"
+               // closeModal={closeModal}
+               // history={{ goBack: closeModal }}
+               // getAllUsers={getAllUsers}
                />
 
                <QrModal
@@ -2058,15 +2332,15 @@ const PropertyDetails = (props) => {
                   // handleShow={handleshowQrModal}
                   handleClose={handleCloseQrModal}
                   headerText="QR Code"
-                  // subHeaderText="Message"
-                  // sendMsgHandler={sendMsgHandler}
-                  // ownerId={ownerId}
-                  // userId={userId}
-                  // modalData={modalData}
-                  // dataFrom="user_manage"
-                  // closeModal={closeModal}
-                  // history={{ goBack: closeModal }}
-                  // getAllUsers={getAllUsers}
+               // subHeaderText="Message"
+               // sendMsgHandler={sendMsgHandler}
+               // ownerId={ownerId}
+               // userId={userId}
+               // modalData={modalData}
+               // dataFrom="user_manage"
+               // closeModal={closeModal}
+               // history={{ goBack: closeModal }}
+               // getAllUsers={getAllUsers}
                />
 
                {/* <ModalComponent /> */}
@@ -2079,8 +2353,8 @@ const PropertyDetails = (props) => {
                </Modal> */}
             </div>
          ) : null}
-         
-         <Modal show={ showRemoteOTPModal } onHide={() => { remoteOTPHide() }} centered style={{backgroundImage:'unset'}}>
+
+         <Modal show={showRemoteOTPModal} onHide={() => { remoteOTPHide() }} centered style={{ backgroundImage: 'unset' }}>
             <Modal.Body>
                <div>
                   <Text
@@ -2095,29 +2369,60 @@ const PropertyDetails = (props) => {
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"OTP : " + remoteOTPResponse.keyboardPwd} />
+                     text={"OTP : " + remoteOTPResponse?.keyboardPwd} />
                   <Text
                      size="regular"
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"KeyboardPwdId : " + remoteOTPResponse.keyboardPwdId} />
+                     text={"KeyboardPwdId : " + remoteOTPResponse?.keyboardPwdId} />
 
                   <div className="text-center mt-5 mb-3">
                      <Buttons
-                     name="Cancel"
-                     varient="disable"
-                     type="button"
-                     size="xSmall"
-                     color="black"
-                     className="mr-3"
-                     onClick={() => { remoteOTPHide() }} />
+                        name="Cancel"
+                        varient="disable"
+                        type="button"
+                        size="xSmall"
+                        color="black"
+                        className="mr-3"
+                        onClick={() => { remoteOTPHide() }} />
                   </div>
                </div>
             </Modal.Body>
          </Modal>
 
-         <Modal show={ showRemoteUnlockModal } onHide={() => {remoteUnlockHide()} } centered style={{backgroundImage:'unset'}}>
+         <Modal show={remoteOTPErr} onHide={() => { setRemoteOTPErr(false) }} centered style={{ backgroundImage: 'unset' }}>
+            <Modal.Body>
+               <div>
+                  <Text
+                     size="regular"
+                     fontWeight="bold"
+                     color="secondryColor"
+                     className="text-center"
+                     text="Remote OTP" />
+
+                  <Text
+                     size="regular"
+                     fontWeight="bold"
+                     color="secondryColor"
+                     className="text-center"
+                     text={"Message : " + remoteOTPResponse?.message} />
+
+                  <div className="text-center mt-5 mb-3">
+                     <Buttons
+                        name="Cancel"
+                        varient="disable"
+                        type="button"
+                        size="xSmall"
+                        color="black"
+                        className="mr-3"
+                        onClick={() => { setRemoteOTPErr(false) }} />
+                  </div>
+               </div>
+            </Modal.Body>
+         </Modal>
+
+         <Modal show={showRemoteUnlockModal} onHide={() => { remoteUnlockHide() }} centered style={{ backgroundImage: 'unset' }}>
             <Modal.Body>
                <div>
                   <Text
@@ -2132,23 +2437,53 @@ const PropertyDetails = (props) => {
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"Error Code : " + remoteUnlockResponse.errcode} />
+                     text={"Error Code : " + remoteUnlockResponse?.errcode} />
                   <Text
                      size="regular"
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"Error Message : " + remoteUnlockResponse.errmsg} />
+                     text={"Error Message : " + remoteUnlockResponse?.errmsg} />
 
                   <div className="text-center mt-5 mb-3">
                      <Buttons
-                     name="Cancel"
-                     varient="disable"
-                     type="button"
-                     size="xSmall"
-                     color="black"
-                     className="mr-3"
-                     onClick={() => { remoteUnlockHide()} } />
+                        name="Cancel"
+                        varient="disable"
+                        type="button"
+                        size="xSmall"
+                        color="black"
+                        className="mr-3"
+                        onClick={() => { remoteUnlockHide() }} />
+                  </div>
+               </div>
+            </Modal.Body>
+         </Modal>
+         <Modal show={remoteUnlockErr} onHide={() => { setRemoteUnlockErr(false) }} centered style={{ backgroundImage: 'unset' }}>
+            <Modal.Body>
+               <div>
+                  <Text
+                     size="regular"
+                     fontWeight="bold"
+                     color="secondryColor"
+                     className="text-center"
+                     text="Remote Unlock" />
+
+                  <Text
+                     size="regular"
+                     fontWeight="bold"
+                     color="secondryColor"
+                     className="text-center"
+                     text={"Error Message : " + remoteUnlockResponse?.message} />
+
+                  <div className="text-center mt-5 mb-3">
+                     <Buttons
+                        name="Cancel"
+                        varient="disable"
+                        type="button"
+                        size="xSmall"
+                        color="black"
+                        className="mr-3"
+                        onClick={() => { setRemoteUnlockErr(false) }} />
                   </div>
                </div>
             </Modal.Body>

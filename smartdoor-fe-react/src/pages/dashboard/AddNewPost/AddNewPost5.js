@@ -13,10 +13,14 @@ import Buttons from "../../../shared/Buttons/Buttons"
 import validateRegex from '../../../common/helpers/ValidateRegex';
 import { showToastErrMessage } from "../../../common/redux/actions"
 import { showErrorToast } from "../../../common/helpers/Utils"
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min"
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min"
 
 const AddNewPost5 = () => {
-    const { basicDetails } = useSelector(state => state.addNewPostReducer)
+    // const { basicDetails } = useSelector(state => state.addNewPostReducer)
+    const location = useLocation();
+    const [basicDetails, setBasicDetails] = useState(location?.state?.basicDetails)
+    const [addressDetails, setAddressDetails] = useState(location?.state?.addressDetails)
+    const [moreInfo, setMoreIfo] = useState(location?.state?.moreInfo)
     const [planDetails, setPlanDetails] = useState([])
     const [selectedPlan, setSelectedPlan] = useState('');
     const [ emailId, setEmailId ] = useState('')
@@ -144,7 +148,7 @@ const AddNewPost5 = () => {
                                                 {(plan.deviceSmartLock !== null && plan.deviceSmartLock !== 'NOT_AVAILABLE') && (
                                                     <>
                                                         <ListItem >
-                                                            <ListItemText primary="Fingerprint Smart Lock" style={{textAlign:'start', fontSize:'10px', 'text-wrap':'nowrap'}} />
+                                                            <ListItemText primary="Fingerprint Smart Lock" style={{textAlign:'start', fontSize:'10px', wordWrap:'break-word'}} />
                                                             <Text text={plan.deviceSmartLock} 
                                                                 style={{textAlign:'end', fontWeight:'bold', fontSize:'15px'}}/>
                                                         </ListItem>
@@ -274,7 +278,7 @@ const AddNewPost5 = () => {
                 </div>
                 <div className="d-flex mt-5 px-2">
                     <button color="gray">Cancel</button> &nbsp;
-                    <Buttons name="Back" onClick={() => { history.push('/admin/posts/add-new-post/info') }}></Buttons> &nbsp;
+                    <Buttons name="Back" onClick={() => { history.goBack() }}></Buttons> &nbsp;
                     <Buttons name="Generate Payment Link" onClick={() => { validatePlan() }} />
                 </div>
             </div>

@@ -204,7 +204,7 @@ class NewPlan extends Component {
          autoDoorCloser: isAutoDoorCloser,
          smartLockPlan: isSmartDoorProperty,
          gstEnable: isGstEnabled,
-         subscriptionMonth,
+         subscriptionMonth: subscriptionMonth,
          baseRentalCoins: baseRentalCoins,
          depositeAmount: depositeAmount,
          installationCharges: installationCharges,
@@ -873,6 +873,28 @@ class NewPlan extends Component {
                               size="xSmall"
                               className="pt-2"
                               text={error.depositeAmount}
+                           />
+                        </Col>
+                        <Col lg="4">
+                           <Form.Group>
+                              <Form.Label>Subscription Month</Form.Label>
+                              <Form.Control
+                                 type="number"
+                                 placeholder="Enter Subscription Month"
+                                 value={subscriptionMonth}
+                                 min='0'
+                                 onChange={(e) =>
+                                    this.setState({
+                                       subscriptionMonth: e.target.value.slice(0, 10),
+                                    })
+                                 }
+                              />
+                           </Form.Group>
+                           <Text
+                              color="dangerText"
+                              size="xSmall"
+                              className="pt-2"
+                              text={error.subscriptionMonth}
                            />
                         </Col>
                         <Col lg="4">

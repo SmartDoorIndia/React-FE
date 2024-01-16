@@ -487,6 +487,11 @@ export const getPropertyDetails = async (data) => {
   return response;
 };
 
+export const getPropertyPlanDetails = async(data) => {
+  const response = await mainApiService('getPropertyPlanDetails',data);
+  return response;
+}
+
 //Action to remote unlock by owner
 export const remoteUnlock = async (data) => {
   const response = await mainApiService('remoteUnlock', data)
@@ -689,6 +694,16 @@ export const getAllConsumerUsers = (data) => async (dispatch) => {
   }
 };
 
+export const getAllConsumers = (data) => async (dispatch) => {
+  dispatch({ type: Actions.CONSUMSER_MANAGEMENT_LOADING, data: {} });
+  const response = await mainApiService('getAllConsumers', data);
+  if (response) {
+    if (response.data && response.status === 200 && response.data.resourceData) {
+      dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: response.data.resourceData });
+    } else dispatch({ type: Actions.CONSUMSER_MANAGEMENT_ERROR, data: response.data });
+  }
+};
+
 // Action to get Consumer Property By UserId
 export const getConsumerPropertyByUserId = async (data) => {
   const response = await mainApiService('getConsumerPropertyByUserId', data);
@@ -742,6 +757,10 @@ export const getConsumerDetailsFinance = async (data) => {
   return response;
 };
 
+export const getCoinTransactions = async (data) => {
+  const response = await mainApiService('getCoinTransactions', data);
+  return response;
+}
 export const allNotification = async (data) => {
   const response = await mainApiService('allNotification', data);
   return response;
@@ -1640,6 +1659,19 @@ export const doorClosed = async (data) => {
 //   return response;
 // };
 
+
+//Check if smartlock is installed in city
+export const getInstallationCity = async () => {
+  const response = await mainApiService('getInstallationCity');
+  return response;
+}
+
+//Get all properties by userId
+export const getPropertyByUserId = async(data) => {
+  const response = await mainApiService('getPropertyByUserId', data);
+  return response;
+}
+
 //Action for adding  new property
 export const addNewPost  = (data) => async (dispatch) => {
   dispatch({ type: Actions.ADD_NEW_POST_LOADING, data: {} });
@@ -1687,4 +1719,18 @@ export const addNewPost4 = (data) => async(dispatch) => {
       showErrorToast('Unexpected error. Please try again later');
     }
   }
+}
+
+export const deletePropertyById = async(data) => {
+  const response = await mainApiService('deletePropertyById',data)
+  return response
+}
+
+export const getStaticMobNumbers = async () => {
+  const response  = await mainApiService('getStaticMobNums');
+  return response
+}
+export const setStaticMobNumbers = async (data) => {
+  const response  = await mainApiService('setStaticMobNums',data);
+  return response
 }

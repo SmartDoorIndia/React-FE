@@ -97,8 +97,10 @@ const EditPost3 = (props) => {
 		}
 		console.log(event.target.files[0], "after upload files");
 		const imageData = {
-			propertyId: 554,
+			propertyId: propertyId,
 			propertyDocs: [],
+			draft: false,
+			partial: false,
 			propertyImage: [
 				{
 					docId: null,
@@ -110,44 +112,47 @@ const EditPost3 = (props) => {
 		console.log(event.target.files, "before s3 files");
 		if (event.target.files.length > 0) {
 			setImageLoader(true);
-			ReactS3Client.uploadFile(event.target.files[0], event.target.files[0].name)
-				.then((data) => {
-					console.log("data", data);
-					const property_image = [];
-					property_image.push({
-						docId: null,
-						docName: "",
-						docURL: data.location,
-					});
-					const image_data = {
-						...imageData,
-						propertyDocs: [],
-						propertyImage: property_image,
-					};
-					addImage(
-						image_data
-					)
-						.then((response) => {
-							setLoading(false);
-							if (response.data) {
-								if (response.data.resourceData) {
-									setImageLoader(false);
-									_getPropertyDetails();
-									const imageArray = Array.from(event.target.files[0])?.map((file) => URL.createObjectURL(file));
-									setImageArray(imageArray);
-									console.log(imageArray)
-								}
-							}
-						})
-						.catch((error) => {
-							setImageLoader(false);
-							setLoading(false);
-							console.log("error", error);
-						});
+			Array.from(event.target.files).map((file) => {
 
-				})
-				.catch((err) => {
-				});
+				ReactS3Client.uploadFile(file, file.name)
+					.then((data) => {
+						console.log("data", data);
+						const property_image = [];
+						property_image.push({
+							docId: null,
+							docName: "",
+							docURL: data.location,
+						});
+						const image_data = {
+							...imageData,
+							propertyDocs: [],
+							propertyImage: property_image,
+						};
+						addImage(
+							image_data
+						)
+							.then((response) => {
+								setLoading(false);
+								if (response.data) {
+									if (response.data.resourceData) {
+										setImageLoader(false);
+										_getPropertyDetails();
+										const imageArray = Array.from(file)?.map((file) => URL.createObjectURL(file));
+										setImageArray(imageArray);
+										console.log(imageArray)
+									}
+								}
+							})
+							.catch((error) => {
+								setImageLoader(false);
+								setLoading(false);
+								console.log("error", error);
+							});
+	
+					})
+					.catch((err) => {
+					});
+			})
 			console.log(event.target.files[0], "end file");
 		}
 	};
@@ -179,7 +184,7 @@ const EditPost3 = (props) => {
 				<input
 					hidden
 					type="file"
-					multiple={false}
+					multiple={true}
 					ref={fileInputRef}
 					onChange={(e) => {
 						fileUpload(e);
@@ -199,9 +204,8 @@ const EditPost3 = (props) => {
 				</div>
 			</div>
 			<div className="d-flex">
-				<button color="gray">Cancel</button> &nbsp;
-				{/* <Link to="/admin/posts/add-new-post/basic-details">
-					</Link> */}
+				<Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
+					history.push('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid}) }} name="Cancel" /> &nbsp;
 				<Buttons name="Back" onClick={() => { history.push('/admin/property/edit-address-details',{propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails}) }}></Buttons> &nbsp;
 				<Buttons name="Next" onClick={() => { history.push('/admin/property/edit-more-info',{propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails}) }} />
 			</div>

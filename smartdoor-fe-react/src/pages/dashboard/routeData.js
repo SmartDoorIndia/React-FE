@@ -1,6 +1,7 @@
 /** @format */
 
 import React from 'react';
+import { sassFalse } from 'sass';
 
 // Lazy import of Dashboard's components
 const SalesDashboard = React.lazy(() => import('./SalesModule/SalesDashboard'));
@@ -33,6 +34,7 @@ const AddNewPost2 = React.lazy(() => import('./AddNewPost/AddNewPost2'));
 const AddNewPost3 = React.lazy(() => import('./AddNewPost/AddNewPost3'));
 const AddNewPost4 = React.lazy(() => import('./AddNewPost/AddNewPost4'));
 const AddNewPost5 = React.lazy(() => import('./AddNewPost/AddNewPost5'));
+const StaticMobNumbers = React.lazy(() => import('./StaticMobileNums/StaticMobNums'))
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -363,7 +365,8 @@ const routeData = [
   {
     path: '/admin/property/property-details',
     name: 'Properties',
-    bradcrumb: [ 'Property Listed', 'Property Details' ],
+    // bradcrumb: [ 'Property Listed', 'Property Details' ],
+    bradcrumb: false,
     excat: true,
     module: 'EXECUTION',
     component: PropertyDetailsModule,
@@ -405,7 +408,7 @@ const routeData = [
   {
     path: '/admin/property/edit-basic-details',
     name: 'Edit Basic Details',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: [],
     excat: true,
     module: 'EXECUTION',
     component: EditPost1,
@@ -413,7 +416,7 @@ const routeData = [
   {
     path: '/admin/property/edit-address-details',
     name: 'Edit Address Details',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: [],
     excat: true,
     module: 'EXECUTION',
     component: EditPost2,
@@ -421,7 +424,7 @@ const routeData = [
   {
     path: '/admin/property/upload-property-image',
     name: 'Upload Property Images',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: [],
     excat: true,
     module: 'EXECUTION',
     component: EditPost3,
@@ -429,7 +432,7 @@ const routeData = [
   {
     path: '/admin/property/edit-more-info',
     name: 'Edit Info',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: [],
     excat: true,  
     module: 'EXECUTION',
     component: EditPost4,
@@ -902,7 +905,16 @@ const routeData = [
     component: AddNewPost5,
     stepper: '5',
     module : 'NEW POST'
-  }
+  },
+
+  //Static Mobile Numbers
+  {
+    path: '/admin/static-mobile-numbers',
+    name: 'Static Mobile Numbers',
+    bradcrumb: [],
+    excat: true,
+    component: StaticMobNumbers
+  },
 
   // {
   //   path: '/admin/execution/installation-detail/property-details',

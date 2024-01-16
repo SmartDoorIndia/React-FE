@@ -926,6 +926,18 @@ export const ApiJson = {
       showErrorMessage: false,
     },
 
+    getAllConsumers: {
+      url: '/admin/user/getAllUserDetails',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
     allNotification: {
       url: '/consumer/notification/:userId',
       method: 'GET',
@@ -1201,6 +1213,18 @@ export const ApiJson = {
       showErrorMessage: false,
     },
   
+    getInstallationCity: {
+      url: '/consumer/property/getAllInstallationTeamsCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
     getSocietyByCity: {
       url: '/admin/property/getSocietyByCity?city=:city&societyString=:societyString',
       method: 'GET',
@@ -2088,6 +2112,18 @@ export const ApiJson = {
       showErrorMessage: false,
     },
 
+    getPropertyByUserId: {
+      url: '/consumer/property/getPropertyByUserId/:userId?records=:recordes&pageNumber=:pagenumber',
+      method: 'GET',
+      data:{},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
     addNewPost: {
       url: '/consumer/property/addPropertyBasicDetails',
       method: 'POST',
@@ -2215,6 +2251,63 @@ export const ApiJson = {
       showResultMessage: true,
       showErrorMessage: true
     },
+    deletePropertyById: {
+      url : 'consumer/property/deletePropertyById/:propertyId',
+      method : 'DELETE',
+      data : {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    getStaticMobNums: {
+      url:'/admin/admin/getStaticMobile',
+      method : 'GET',
+      data : {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    setStaticMobNums: {
+      url:'/admin/admin/setStaticMobile',
+      method : 'POST',
+      data : {
+        mobile : ''
+      },
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    getCoinTransactions: {
+      url:'consumer/transaction/getTransactionForUser/:userId/:pageNumber/:records',
+      method:'POST',
+      data: {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    getPropertyPlanDetails: {
+      url:'admin/property/getPropertyPlandetails/:propertyId',
+      method:'GET',
+      data: {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    }
   };
   
   

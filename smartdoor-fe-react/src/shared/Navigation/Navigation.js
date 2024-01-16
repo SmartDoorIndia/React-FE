@@ -292,6 +292,22 @@ const Nav = () => {
                         />
                         Advisors
                      </Link>
+                     <Link
+                        to="/admin/static-mobile-numbers"
+                        className={`nav-link ${
+                           pathname.includes("static-mobile-numbers") ? "nav-active" : ""
+                        }`}
+                     >
+                        <Image
+                           name="teamGroup"
+                           src={
+                              pathname.includes("static-mobile-numbers")
+                                 ? borkerIcon
+                                 : borkerIcon
+                           }
+                        />
+                        Static Mobile Numbers
+                     </Link>
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>

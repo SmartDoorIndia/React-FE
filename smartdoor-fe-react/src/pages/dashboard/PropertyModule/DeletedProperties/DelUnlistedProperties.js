@@ -292,7 +292,6 @@ const DeletedProperties = (props) => {
                  <div className="locationSelect d-flex">
                     {subHeaderComponentMemo}
                     <Form.Group controlId="exampleForm.SelectCustom">
-                       {/* <Form.Label>City:</Form.Label> */}
                        <Form.Control
                           as="select"
                           onChange={(e) => {

@@ -279,11 +279,13 @@ const AutoCompleteInput = (props) => {
           const result = e.target.value.replace(/[^a-z]/gi, '');                               
           onInputChange(result)
         }}
-        onInput={(e) => {
-          console.log(e)
-          loadLocationListner()
-        }}
+        // onInput={(e) => {
+        //   console.log(e)
+        //   loadLocationListner()
+        // }}
+        onSelectCapture={()=>{loadLocationListner()}}
         { ...rest }
+        onSelect={()=>{loadLocationListner()}}
       />
     </Form.Group>
   );

@@ -22,6 +22,7 @@ import {
   blockConsumerUser,
   getAllServiceRequest,
   getConsumerDetails,
+  getCoinTransactions,
 } from '../../../../common/redux/actions';
 import contentIco from '../../../../assets/images/content-ico.svg';
 import './ConsumerDetails.scss';
@@ -45,6 +46,7 @@ const ConsumerManagement = (props) => {
   const [loading, setLoading] = useState(true);
   const [taskloading, settaskLoading] = useState(true);
   const [ServiceRequestData, setServiceRequestData] = useState([]);
+  const [coinTransactionData, setCoinTransactionData] = useState({})
   const [show, setShow] = useState(false);
   const [blockData, setBlockData] = useState(null);
   const history = useHistory();
@@ -264,6 +266,34 @@ const ConsumerManagement = (props) => {
     },
   ];
 
+  const CoinTransactionColumns = [
+    {
+      name: 'Header',
+      selector: 'header',
+      center: true,
+      sortable: false,
+      maxWidth: '500px !important',
+    },
+    {
+      name: 'TimeStamp',
+      selector: 'timeStamp',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Coins',
+      selector: 'coin',
+      center: true,
+      sortable: false,
+      maxWidth: '100px !important',
+      style:{fontWeight:'bold'},
+      cell: ({ coin }) => (
+        <Text size="35px" fontWeight={"bold"} color={coin > 0 ? 'green' : 'red'} className="text-center" text={ coin > 0 ? "+"+coin : "-"+coin }
+        style={{color: coin > 0 ? 'green' : 'red'}} />) 
+    },
+
+  ]
   // GET_CONSUMER_DETAILS_API
   const _getConsumerDetails = useCallback(() => {
     getConsumerDetails({ userId: consumerId })
@@ -334,12 +364,24 @@ const ConsumerManagement = (props) => {
     console.log('serviceRequestData:', ServiceRequestData);
   }, [getAllServiceRequest, consumerId]);
 
+  const _getAllCoinTransactions = useCallback(() => {
+    getCoinTransactions({userId : consumerId, pageNumber: 1, records: 1000})
+    .then((response) => {
+      if(response.data) {
+        console.log(response)
+        setCoinTransactionData(response.data.resourceData)
+      }
+    }).catch((error) => {
+      setLoading(false);
+    });
+  });
   // USE_EFFECT
   useEffect(() => {
     _getConsumerDetails();
     _getConsumerPropertyByUserId();
     _getConsumerTransactionsByUserId();
     _getAllServiceRequest();
+    _getAllCoinTransactions();
   }, [_getConsumerDetails, _getConsumerPropertyByUserId,_getConsumerTransactionsByUserId, _getAllServiceRequest]);
 
   return (
@@ -390,6 +432,54 @@ const ConsumerManagement = (props) => {
                 fontWeight="mediumbold"
                 color="secondryColor"
                 text={Consumer_data.email || '-'}
+                className="mt-1"
+              />
+            </div>
+            <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+              <Text
+                size="Small"
+                fontWeight="smbold"
+                color="secondryColor"
+                text="FreeCoins"
+                className="mt-1"
+              />
+              <Text
+                size="Small"
+                fontWeight="mediumbold"
+                color="secondryColor"
+                text={coinTransactionData.freeCoins}
+                className="mt-1"
+              />
+            </div>
+            <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+              <Text
+                size="Small"
+                fontWeight="smbold"
+                color="secondryColor"
+                text="FreeCoins Expiry Date"
+                className="mt-1"
+              />
+              <Text
+                size="Small"
+                fontWeight="mediumbold"
+                color="secondryColor"
+                text={coinTransactionData.freeCoinsExpiryDate}
+                className="mt-1"
+              />
+            </div>
+            <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+              <Text
+                size="Small"
+                fontWeight="smbold"
+                color="secondryColor"
+                text="User Balance"
+                className="mt-1"
+              />
+              <Text
+                size="Small"
+                fontWeight="mediumbold"
+                color="secondryColor"
+                text={coinTransactionData.userBalance}
                 className="mt-1"
               />
             </div>
@@ -522,6 +612,16 @@ const ConsumerManagement = (props) => {
         data={ServiceRequestData}
         columns={serviceReqColumns}
         isLoading={ServiceRequestData.isLoading}
+        perPageOptions={ [  4, 8, 12, 16,20, 24,28, 32, 36, 40 ] }
+            paginationPerPage={ 4 }
+            paginationRowsPerPageOptions={[4, 8, 12, 16,20, 24,28, 32, 36, 40]}
+      />
+
+      <ListingDataTable
+        title="Coin Transactions"
+        data={coinTransactionData.transactionDetailList}
+        columns={CoinTransactionColumns}
+        // isLoading={ServiceRequestData.isLoading}
         perPageOptions={ [  4, 8, 12, 16,20, 24,28, 32, 36, 40 ] }
             paginationPerPage={ 4 }
             paginationRowsPerPageOptions={[4, 8, 12, 16,20, 24,28, 32, 36, 40]}

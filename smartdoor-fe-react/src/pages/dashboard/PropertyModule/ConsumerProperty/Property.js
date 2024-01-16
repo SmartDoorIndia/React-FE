@@ -275,7 +275,7 @@ const PropertyModule = (props) => {
 
       if (status && filteredItems.length) {
          filteredItems = filteredItems.filter((item) => {
-            return item?.status.toUpperCase() == status.toUpperCase();
+            return item?.status?.toUpperCase() == status?.toUpperCase();
          });
       }
       return filteredItems;

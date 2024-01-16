@@ -543,8 +543,8 @@ export const validateNewPost1 = (data) => {
       if(isBlank(data.commercialType)) {
         errors.commercialType = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.numberOfBaths) && data.numberOfBaths !== 0) {
-        errors.numberOfBaths = ValidationMessages.fieldRequired.required
+      if(isBlank(data.restRoom) && data.restRoom !== 0) {
+        errors.restRoom = ValidationMessages.fieldRequired.required
       }
       if(isBlank(data.commonReception) && data.commonReception !== 0) {
         errors.commonReception = ValidationMessages.fieldRequired.required
@@ -578,6 +578,8 @@ export const validateNewPost1 = (data) => {
     if(isBlank(data.openParking) && data.openParking !== 0) {
       errors.openParking = ValidationMessages.fieldRequired.required
     }
+    console.log(data)
+    
     if(isBlank(data.type)) {
       errors.type = ValidationMessages.fieldRequired.required
     }
@@ -593,17 +595,37 @@ export const validateNewPost1 = (data) => {
   if(isBlank(data.propertyRate) && data.propertyRate !== 0) {
     errors.propertyRate = ValidationMessages.fieldRequired.required
   }
-  if(isBlank(data.maintenanceCost) && data.maintenanceCost !== 0) {
-    errors.maintenanceCost = ValidationMessages.fieldRequired.required
+  if(data.propertySubType === 'Independent House/Villa') {
+    if(isBlank(data.plotArea) && data.plotArea !== 0) {
+      errors.plotArea = ValidationMessages.fieldRequired.required
+    }
+  } 
+    if(isBlank(data.carpetArea) && data.carpetArea !== 0) {
+      errors.carpetArea = ValidationMessages.fieldRequired.required
+    }
+  
+  if(data.propertyAge < 0) {
+    errors.propertyAge = "Enter positive values"
   }
-  if(isBlank(data.plotArea) && data.plotArea !== 0) {
-    errors.plotArea = ValidationMessages.fieldRequired.required
+  if(data.propertyRate < 0) {
+    errors.propertyRate = "Enter positive values"
   }
-  if(isBlank(data.attachedOpenTerraceArea) && data.attachedOpenTerraceArea !== 0) {
-    errors.attachedOpenTerraceArea = ValidationMessages.fieldRequired.required
+  if(data.plotArea < 0) {
+    errors.plotArea = "Enter positive values"
   }
-  if(isBlank(data.attachedOpenAreaOrGarden) && data.attachedOpenAreaOrGarden !== 0) {
-    errors.attachedOpenAreaOrGarden = ValidationMessages.fieldRequired.required
+  if(data.propertyType === "Commercial") {
+    if(isBlank(data.balconyOpenArea) && data.balconyOpenArea !== 0) {
+      errors.balconyOpenArea = ValidationMessages.fieldRequired.required
+    }
+    if((data.balconyOpenArea < 0)) {
+      errors.balconyOpenArea = "Enter positive values"
+    }  
+  }
+  if((data.attachedOpenAreaOrGarden < 0)) {
+    errors.attachedOpenAreaOrGarden = "Enter positive values"
+  }
+  if(data.attachedOpenTerraceArea < 0) {
+    errors.attachedOpenTerraceArea = "Enter positive values"
   }
 
 
