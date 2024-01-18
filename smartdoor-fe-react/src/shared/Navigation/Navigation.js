@@ -292,6 +292,22 @@ const Nav = () => {
                         />
                         Advisors
                      </Link>
+                     <Link
+                        to="/admin/broker"
+                        className={`nav-link ${
+                           pathname.includes("broker") ? "nav-active" : ""
+                        }`}
+                     >
+                        <Image
+                           name="teamGroup"
+                           src={
+                              pathname.includes("broker")
+                                 ? borkerIcon
+                                 : borkerIcon
+                           }
+                        />
+                        Broker's
+                     </Link>
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>

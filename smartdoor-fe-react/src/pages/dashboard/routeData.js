@@ -27,12 +27,13 @@ const AddNewCity = React.lazy(()=> import('./AddNewCity/AddCity'));
 const ManagePlan = React.lazy(() => import('./ManagePlan/ManagePlan'));
 const AddNewPlan = React.lazy(() => import('./AddNewPlan/NewPlan'));
 const NonSDProperties = React.lazy(() => import('./NonSdProperties/NonSDProperties'));
-const Advisors = React.lazy(() => import('./Advisors/Advisors'))
+const Advisors = React.lazy(() => import('./Advisors/Advisors'));
 const AddNewPost = React.lazy(() => import('./AddNewPost/AddNewPost'))
 const AddNewPost2 = React.lazy(() => import('./AddNewPost/AddNewPost2'));
 const AddNewPost3 = React.lazy(() => import('./AddNewPost/AddNewPost3'));
 const AddNewPost4 = React.lazy(() => import('./AddNewPost/AddNewPost4'));
 const AddNewPost5 = React.lazy(() => import('./AddNewPost/AddNewPost5'));
+const Brokers = React.lazy(() => import('./Broker/Broker'));
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -857,6 +858,14 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: Advisors,
+  },
+
+  {
+    path: '/admin/broker',
+    name: 'Brokers',
+    bradcrumb: false,
+    excat: true,
+    component: Brokers,
   },
   {
     path: '/admin/posts/add-new-post/basic-details',
