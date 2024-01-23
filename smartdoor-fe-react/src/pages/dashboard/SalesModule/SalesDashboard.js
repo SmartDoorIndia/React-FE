@@ -88,6 +88,7 @@ const SalesDashboard = (props) => {
             <Text size="Small" color="secondryColor" text={name ? name.capitalizeWord() : '-'} />
           </ToolTip>
         </div>),
+      maxWidth: '300px',
     },
     {
       name: 'Role',
@@ -99,24 +100,26 @@ const SalesDashboard = (props) => {
             <Text size="Small" color="secondryColor" text={userType ? userType.capitalizeWord() : '-'} />
           </ToolTip>
         </div>),
+      maxWidth: '200px',
     },
     {
       name: 'City',
       selector: row => row.city,
       center: true,
+      wrap:true,
     },
     {
       name: 'Lead Assigned',
       selector: row => row.leadAssigned,
       center: true,
-      maxWidth: '160px',
+      maxWidth: '150px',
     },
     {
       name: 'Lead Completed',
       selector: row => row.leadCompleted,
       sortable: true,
       center: true,
-      minWidth: '160px'
+      maxWidth: '150px'
     },
     {
       name: 'Action',

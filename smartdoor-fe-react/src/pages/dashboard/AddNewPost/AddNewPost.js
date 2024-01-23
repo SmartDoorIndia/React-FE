@@ -72,22 +72,21 @@ const AddNewPost = (props) => {
     const [showAllRestrooms, setShowAllRestrooms] = useState(false)
     const [halfRoomFlag, setHalfRoomFlag] = useState(false)
 
-    // const _getPropertyDetails = useCallback(() => {
-    //     getPropertyDetails({ propertyId: basicDetails?.smartdoorPropertyId, userId: userData.userid })
-    //        .then((response) => {
-    //           if (response.data) {
-    //              if (response.data.resourceData && response.data.status === 200) {
-    //                 setpropertyData(response.data.resourceData);
-    //                 setData(basicDetails)
-    //              }
-    //           }
-    //           console.log("responseSocietyDetails", data);
-    //           console.log("owner id", response.data.resourceData?.postedById);
-    //        })
-    //        .catch((error) => {
-    //           console.log("error", error);
-    //        });
-    //  }, [basicDetails?.smartdoorPropertyId, getPropertyDetails]);
+    const _getPropertyDetails = useCallback(() => {
+        getPropertyDetails({ propertyId: data.smartdoorPropertyId, userId: userData.userid })
+           .then((response) => {
+              if (response.data) {
+                 if (response.data.resourceData && response.data.status === 200) {
+                    setpropertyData(response.data.resourceData);
+                 }
+              }
+              console.log("responseSocietyDetails", data);
+              console.log("owner id", response.data.resourceData?.postedById);
+           })
+           .catch((error) => {
+              console.log("error", error);
+           });
+     }, [data.smartdoorPropertyId, getPropertyDetails]);
 
     useEffect(() => {
         console.log(propertyData)
@@ -177,15 +176,22 @@ const AddNewPost = (props) => {
     
     const handleSubmit = async () => {
         try {
+            if (draftModal) {
+                setData({ ...data, draft: true, partial: false })
+            }
+            if (!draftModal) {
+                setData({ ...data, draft: false, partial: true })
+            }
             let response = await dispatch(addNewPost(data))
             console.log(response)
             if(data.smartdoorPropertyId === undefined || data.smartdoorPropertyId === null) {
                 data.smartdoorPropertyId = response?.data?.resourceData?.propertyId;
+                // _getPropertyDetails();
               }
             if(draftModal){
                 history.push('/admin/advisors')
             }else {
-                history.push('/admin/posts/add-new-post/address',{basicDetails : data, propertyId : data?.smartdoorPropertyId})
+                history.push('/admin/posts/add-new-post/address',{propertyData : propertyData, propertyId : data?.smartdoorPropertyId})
             }
         } catch (error) {
             console.error('Error:', error.message);   

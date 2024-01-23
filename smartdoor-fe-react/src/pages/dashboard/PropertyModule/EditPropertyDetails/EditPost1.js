@@ -111,11 +111,12 @@ const EditPost1 = (props) => {
         setData({
             ...data, propertyType: type, propertySubType: '', kitchenPantry: '', commercialProjectType: null,
             plotArea: 0})
-        if((data.propertyType === 'Residential' || data.propertyType === 'SemiCommercial') && (type === 'Commercial')) {
+        if((data.propertyType === 'Residential' || data.propertyType === 'Semi Commercial') && (type === 'Commercial')) {
             setData({ ...data, propertyType: type, propertySubType: '', bedRooms: null, numberOfHalls: null, numberOfBaths: null,
             kitchens: null, kitchenPantry: '', balcony: null, leaseType: null, preferredFor: null, purpose: null, commercialProjectType: null,
             plotArea: 0})
         }
+        setError({})
     };
     const assignPropertySubType = (type) => {
         setData({ ...data, propertySubType: type });
@@ -172,8 +173,8 @@ const EditPost1 = (props) => {
 
     const handleValidate = async () => {
         if(halfRoomFlag === true) {
-            const bedRoom = (data.bedRooms.toString())
-            const newValue = bedRoom.concat(".5")
+            const bedRoom = (data?.bedRooms?.toString())
+            const newValue = bedRoom?.concat(".5")
             // await assignBedroomCount(newValue)
             const modifiedData = data
             modifiedData.bedRooms = newValue
@@ -1004,7 +1005,7 @@ const EditPost1 = (props) => {
                                     text={error.type}
                                 />
                             </div>
-                            <div className="col-1"></div>
+                            {/* <div className="col-1"></div>
                             <div>
                                 <Text
                                     className="text-capitalize mt-4 h6"
@@ -1027,7 +1028,7 @@ const EditPost1 = (props) => {
                                     className="pt-2"
                                     text={error.leaseType}
                                 />
-                            </div>
+                            </div> */}
                         </div>
                     </>
                 )}

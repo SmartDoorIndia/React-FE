@@ -33,7 +33,7 @@ const EditPost4 = (props) => {
 		draft: false,
         partial: false,
 		propertyFurnishing: propertyData.propertyFurnishing === null ? "" : propertyData.propertyFurnishing,
-		isLoanAvailable: propertyData.propertyInfoResponse.loanAvailable,
+		loanAvailable: propertyData.propertyInfoResponse.loanAvailable,
 		loanFromBank: propertyData.propertyInfoResponse.loanFromBank === null ? "" : propertyData.propertyInfoResponse.loanFromBank,
 		enteranceFacing: propertyData.propertyInfoResponse.enteranceFacing === null ? "" : propertyData.propertyInfoResponse.enteranceFacing,
 		security: propertyData.propertyInfoResponse.security === null ? "" : propertyData.propertyInfoResponse.security,
@@ -276,21 +276,21 @@ const EditPost4 = (props) => {
 							<Form.Label style={{top:'0px', left: '0px'}}>Loan against property?</Form.Label>
 							<RadioButton
 								items={["Yes", "No"]}
-								name={"isLoanAvailable"}
+								name={"loanAvailable"}
 								layout={"horizontal"}
-								value={data.isLoanAvailable ? "Yes" : "No"}
+								value={data.loanAvailable ? "Yes" : "No"}
 								onValueChanged={(e) => {
 									if (e.value === "Yes") {
-										setData({ ...data, isLoanAvailable: true })
+										setData({ ...data, loanAvailable: true })
 									} else {
-										setData({ ...data, isLoanAvailable: false })
+										setData({ ...data, loanAvailable: false })
 									}
 								}}
 							/>
 						</Col>
 					</Row>
 					<br />
-					{data.isLoanAvailable === true && (
+					{data.loanAvailable === true && (
 						<Row>
 							<Col lg="4">
 								<TextField
@@ -441,19 +441,23 @@ const EditPost4 = (props) => {
 										if (e.value === "Yes") {
 											setData({ ...data, investmentOpportunity: true })
 										} else {
-											setData({ ...data, investmentOpportunity: false })
+											setData({ ...data, investmentOpportunity: false, oldRate: 0 })
 										}
 									}}
 								/>
 							</Form.Group>
-							{/* <TextField
-								className="w-100 mt-3"
-								id="outlined-select-currency"
-								label="Price before 1 year"
-								defaultValue={data.oldRate}
-								onChange={(e) => {
-									setData({ ...data, oldRate: e.target.value });
-								}} /> */}
+							{data.investmentOpportunity ? <>
+								<TextField
+									className="w-100 mt-3"
+									id="outlined-select-currency"
+									label="Price before 1 year"
+									inputProps={{min : 0}}
+									defaultValue={data.oldRate}
+									onChange={(e) => {
+										setData({ ...data, oldRate: e.target.value });
+									}} />
+							</> : null
+							}
 						</Col>
 					</> : null
 					}

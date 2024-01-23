@@ -107,7 +107,7 @@ const Advisors = (props) => {
         },
         {
             name: "Config",
-            selector: (row) => row.flatType === null ? '-' : row.flatType,
+            selector: (row) => row.propertyInfoResponse.majorityComposition === null ? '-' : row.propertyInfoResponse.majorityComposition,
             sortable: false,
             minWidth: "80px",
             center: true

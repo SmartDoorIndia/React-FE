@@ -469,7 +469,7 @@ export const ApiJson = {
     },
     // GET /property/getPropertyById/{propertyId}/{userId}
     getPropertyDetails: {
-      url: '/admin/property/getPropertyById/:propertyId/:userId',
+      url: '/consumer/property/getPropertyById/:propertyId/:userId',
       method: 'GET',
       data: {},
       headers: {
@@ -928,6 +928,30 @@ export const ApiJson = {
 
     getAllConsumers: {
       url: '/admin/user/getAllUserDetails',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    getUpcomingVisits: {
+      url: '/consumer/visit/UpcomingVisits/:userId',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    getVisitRequests: {
+      url: '/consumer/visit/getVisitReqHistory/:userId',
       method: 'GET',
       data: {},
       headers: {

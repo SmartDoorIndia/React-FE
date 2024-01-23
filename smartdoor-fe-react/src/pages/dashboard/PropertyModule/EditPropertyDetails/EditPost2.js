@@ -24,27 +24,27 @@ const EditPost2 = (props) => {
     const { userData } = provideAuth();
     const basicDetails = (location?.state?.basicDetails);
     const [data, setData] = useState({
-        postedById: propertyData.postedById,
-        smartdoorPropertyId: propertyData.smartdoorPropertyId,
-        houseNumber: propertyData.houseNumber,
-        address: propertyData.address,
-        towerName: propertyData.towerName,
-        latitude: propertyData.latitude,
-        longitude: propertyData.longitude,
-        zipCode: propertyData.zipCode,
-        country: propertyData.country,
-        state: propertyData.state,
-        city: propertyData.city,
+        postedById: propertyData?.postedById,
+        smartdoorPropertyId: propertyData?.smartdoorPropertyId,
+        houseNumber: propertyData?.houseNumber,
+        address: propertyData?.address,
+        towerName: propertyData?.towerName,
+        latitude: propertyData?.latitude,
+        longitude: propertyData?.longitude,
+        zipCode: propertyData?.zipCode,
+        country: propertyData?.country,
+        state: propertyData?.state,
+        city: propertyData?.city,
         draft: false,
         partial: false,
-        floorNumber: propertyData.propertyInfoResponse.floor === null ? 0 : Number(propertyData.propertyInfoResponse.floor),
-        societyId: propertyData.societyDetailResponse === null ? 0 : propertyData.societyDetailResponse.societyId,
-        otherSociety: propertyData.societyDetailResponse.societyName,
-        buildingProjectSociety: propertyData.societyDetailResponse.societyName,
-        totalFloor: propertyData.propertyInfoResponse.totalFloor === null ? 0 : Number(propertyData.propertyInfoResponse.totalFloor),
-        locality: propertyData.societyDetailResponse.locality,
-        cityLat: propertyData.cityLat,
-        cityLong: propertyData.cityLong
+        floorNumber: propertyData?.propertyInfoResponse?.floor === null ? 0 : Number(propertyData?.propertyInfoResponse?.floor),
+        societyId: propertyData?.societyDetailResponse === null ? 0 : propertyData?.societyDetailResponse.societyId,
+        otherSociety: propertyData?.societyDetailResponse?.societyName,
+        buildingProjectSociety: propertyData?.societyDetailResponse?.societyName,
+        totalFloor: propertyData?.propertyInfoResponse?.totalFloor === null ? 0 : Number(propertyData?.propertyInfoResponse?.totalFloor),
+        locality: propertyData?.societyDetailResponse?.locality,
+        cityLat: propertyData?.cityLat,
+        cityLong: propertyData?.cityLong
     });
     const [societyArray, setSocietyArray] = useState([])
     const [cityArray, setCityArray] = useState([])
@@ -160,14 +160,14 @@ const EditPost2 = (props) => {
         let matchFound = false;
         let localityArr = e.location?.split(', ')
         console.log(localityArr)
+        error.locality =""
         localityArr.forEach(element => {
-            if(element === data?.city) {
-                matchFound = true
+            if(element === data?.country) {
                 setData({
                     ...data, latitude: e?.latlng?.lat, longitude: e?.latlng?.lng, locality: e.location,
                     zipCode: e?.data?.address_components[e.data.address_components?.length - 1]?.long_name
                 })
-                error.locality =""
+                matchFound = true
                 return null;
             }
         })
@@ -224,6 +224,7 @@ const EditPost2 = (props) => {
                         <AutoCompleteInput
                             label="City"
                             disabled={true}
+                            cityLatLng={null}
                             placeholder="Enter City"
                             id="PropertyCityAutoComplete"
                             onSelectOption={(e) => { handleSelectCityOption(e) }}
@@ -292,6 +293,7 @@ const EditPost2 = (props) => {
                             label="Locality"
                             // radius={150000}
                             options={{radius : 150000}}
+                            cityLatLng={{lat : data.cityLat, lng: data.cityLong}}
                             customValue={data?.locality}
                             placeholder="Enter Locality"
                             disabled={propertyData?.status === 'PUBLISHED' && propertyData.smartLockProperty === true ? true : false}

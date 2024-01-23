@@ -512,20 +512,20 @@ export const validateNewPost1 = (data) => {
     errors.propertyType = ValidationMessages.fieldRequired.required
   }
   else {
-    if(data.propertyType === 'Residential') {
+    if(data.propertyType === 'Residential' || data.propertyType === 'Semi Commercial') {
       if(isBlank(data.propertySubType)) {
         errors.propertySubType = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.bedRooms) && data.bedRooms !== 0) {
+      if(isBlank(data.bedRooms) || data.bedRooms === 0) {
         errors.bedRooms = ValidationMessages.fieldRequired.required
       }
       if(isBlank(data.numberOfHalls) && data.numberOfHalls !== 0) {
         errors.numberOfHalls = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.kitchens) && data.kitchens !== 0) {
+      if(isBlank(data.kitchens) || data.kitchens === 0) {
         errors.kitchens = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.numberOfBaths) && data.numberOfBaths !== 0) {
+      if(isBlank(data.numberOfBaths) || data.numberOfBaths === 0) {
         errors.numberOfBaths = ValidationMessages.fieldRequired.required
       }
       if(isBlank(data.balcony) && data.balcony !== 0) {
@@ -552,15 +552,17 @@ export const validateNewPost1 = (data) => {
       if(isBlank(data.kitchenPantry)) {
         errors.kitchenPatry = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.leaseType)) {
-        errors.leaseType = ValidationMessages.fieldRequired.required
-      }
+      // if(isBlank(data.leaseType)) {
+      //   errors.leaseType = ValidationMessages.fieldRequired.required
+      // }
     }
     
     if(data.propertyType === 'Semi Commercial') {
       if(isBlank(data.propertySubType)) {
         errors.propertySubType = ValidationMessages.fieldRequired.required
       }
+    }
+    if((data.propertyType === 'Semi Commercial' || data.propertyType === 'Residential') && (data.propertyCategory === 'Rent' ||  data.propertyCategory === 'Lease')) {
       if(isBlank(data.leaseType)) {
         errors.leaseType = ValidationMessages.fieldRequired.required
       }

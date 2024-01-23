@@ -35,6 +35,7 @@ const AddNewPost3 = React.lazy(() => import('./AddNewPost/AddNewPost3'));
 const AddNewPost4 = React.lazy(() => import('./AddNewPost/AddNewPost4'));
 const AddNewPost5 = React.lazy(() => import('./AddNewPost/AddNewPost5'));
 const StaticMobNumbers = React.lazy(() => import('./StaticMobileNums/StaticMobNums'))
+const AddCoins = React.lazy(() => import('./AddCoins/AddCoins'))
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -914,6 +915,15 @@ const routeData = [
     bradcrumb: [],
     excat: true,
     component: StaticMobNumbers
+  },
+
+  //Add coins
+  {
+    path: '/admin/add-coins',
+    name: 'Add Coins',
+    bradcrumb: [],
+    excat: true,
+    component: AddCoins
   },
 
   // {

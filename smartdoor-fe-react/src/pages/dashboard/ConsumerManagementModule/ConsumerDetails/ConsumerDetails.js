@@ -23,6 +23,8 @@ import {
   getAllServiceRequest,
   getConsumerDetails,
   getCoinTransactions,
+  getUpcomingVisits,
+  getVisitRequests,
 } from '../../../../common/redux/actions';
 import contentIco from '../../../../assets/images/content-ico.svg';
 import './ConsumerDetails.scss';
@@ -33,6 +35,7 @@ import { useParams } from 'react-router-dom';
 import ListingDataTable from '../../../../shared/DataTable/ListingDataTable';
 import { useAudioCall, useSocket } from '../../../../common/helpers/SocketProvider';
 import Loader from '../../../../common/helpers/Loader';
+import reviewIcon from '../../../../assets/svg/reviewIcon.svg'
 
 const ConsumerManagement = (props) => {
   console.log("props:", props);
@@ -50,6 +53,10 @@ const ConsumerManagement = (props) => {
   const [show, setShow] = useState(false);
   const [blockData, setBlockData] = useState(null);
   const history = useHistory();
+  const [upcomingVisitsForYou, setUpcomingVisitsForYou] = useState([])
+  const [upcomingVisitsFromYou, setUpcomingVisitsFromYou] = useState([])
+  const [visitHistoryFor, setVisitHistoryFor] = useState([])
+  const [visitHistoryFrom, setVisitHistoryFrom] = useState([])
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -74,6 +81,11 @@ const ConsumerManagement = (props) => {
     if(props.module === 'CONSUMER') return '/admin/consumer-management/consumer-details/property-details';
     else return '/admin/property/property-details';
   }
+
+  const visitStatus = (visitVal) => {
+    const status = visitVal ? 'APPROVED' : 'PENDING';
+    return handleStatusElement(status);
+  };
 
   const columns = [
     {
@@ -289,11 +301,235 @@ const ConsumerManagement = (props) => {
       maxWidth: '100px !important',
       style:{fontWeight:'bold'},
       cell: ({ coin }) => (
-        <Text size="35px" fontWeight={"bold"} color={coin > 0 ? 'green' : 'red'} className="text-center" text={ coin > 0 ? "+"+coin : "-"+coin }
-        style={{color: coin > 0 ? 'green' : 'red'}} />) 
+        <Text size="45px" fontWeight={"bold"} color={coin > 0 ? '#44D22D' : '#FF1919'} className="text-center" text={ coin > 0 ? "+"+coin : "-"+coin }
+        style={{color: coin > 0 ? '#44D22D' : '#FF1919', fontSize: 'medium'}} />) 
     },
 
   ]
+
+  const upcomingRequestForCols = [
+    {
+      name: 'Visit Date',
+      selector: 'visitDate',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+      cell: ({ visitDate })=>(<span>{`${ formateDate(visitDate) }`}</span>),
+    },
+    {
+      name: 'Visit Time',
+      // selector: 'visitStartTime',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+      cell: ({ visitStartTime, visitEndTime })=>(<span>{visitStartTime} - {visitEndTime}</span>),
+    },
+    // {
+    //   name: 'Visit End Time',
+    //   selector: 'visitEndTime',
+    //   center: true,
+    //   sortable: false,
+    //   maxWidth: '200px !important',
+    //   // cell: ({ visitEndTime })=>(<span>{`${ formateDate(visitEndTime, 'hh:mm a') }`}</span>),
+    // },
+    {
+      name: 'Visitor Name',
+      selector: 'visitorName',
+      wrap: true,
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Visitor Address',
+      selector: 'visitAddress',
+      wrap: true,
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Property Id',
+      selector: 'propertyId',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Visit Status',
+      selector: 'visitStatus',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    }
+  ]
+
+  const upcomingRequestsFromCols = [
+    {
+      name: 'Visit Date',
+      selector: 'visitDate',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+      cell: ({ visitDate })=>(<span>{`${ formateDate(visitDate) }`}</span>),
+    },
+    {
+      name: 'Visit Time',
+      // selector: 'visitStartTime',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+      cell: ({ visitStartTime, visitEndTime })=>(<span>{visitStartTime} - {visitEndTime}</span>),
+    },
+    // {
+    //   name: 'Visit End Time',
+    //   selector: 'visitEndTime',
+    //   center: true,
+    //   sortable: false,
+    //   maxWidth: '200px !important',
+    //   // cell: ({ visitEndTime })=>(<span>{`${ formateDate(visitEndTime) }`}</span>),
+    // },
+    {
+      name: 'Visitor Address',
+      selector: 'visitAddress',
+      wrap: true,
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Property Id',
+      selector: 'propertyId',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Visit Status',
+      selector: 'visitStatus',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+  ]
+
+  const visitRequestForCols = [
+    {
+      name: 'Visit Date',
+      selector: 'visitDate',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+      cell: ({ visitDate })=>(<span>{`${ formateDate(visitDate) }`}</span>),
+    },
+    {
+      name: 'Visitor Name',
+      selector: 'visitorName',
+      wrap: true,
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Visitor Address',
+      selector: 'visitAddress',
+      wrap: true,
+      center: true,
+      sortable: false,
+      maxWidth: '300px !important',
+    },
+    {
+      name: 'Property Id',
+      selector: 'propertyId',
+      center: true,
+      sortable: false,
+      maxWidth: '150px !important',
+    },
+    {
+      name: 'Visit Status',
+      selector: 'visitStatus',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Visit Ratings',
+      // selector: 'visitRating'+'visitReviews',
+      center: true,
+      sortable: false,
+      maxWidth: '250px !important',
+      cell:({visitRating}) => (
+        <>
+          {Array.from({ length: Number(visitRating) }, (_, index) => (
+          <img src={reviewIcon} alt=""  style={{ alignItems: 'center', width: 'fit-content', height: '20px' }}></img>
+          ))}
+        </>
+        )
+    },
+    {
+      name: 'Visit Reviews',
+      selector: 'visitReview',
+      center: true,
+      wrap:true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+  ]
+
+  const visitRequestFromCols = [
+    {
+      name: 'Visit Date',
+      selector: 'visitDate',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+      cell: ({ visitDate })=>(<span>{`${ formateDate(visitDate) }`}</span>),
+    },
+    {
+      name: 'Visitor Address',
+      selector: 'visitAddress',
+      wrap: true,
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Property Id',
+      selector: 'propertyId',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Visit Status',
+      selector: 'visitStatus',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+    {
+      name: 'Visit Ratings',
+      center: true,
+      sortable: false,
+      maxWidth: '200px !important',
+      cell:({visitRating}) => (
+        <>
+          {Array.from({ length: Number(visitRating) }, (_, index) => (
+          <img src={reviewIcon} alt=""  style={{ alignItems: 'center', width: 'fit-content', height: '20px' }}></img>
+          ))}
+        </>
+        )
+    },
+    {
+      name: 'Visit Reviews',
+      selector: 'visitReview',
+      center: true,
+      wrap:true,
+      sortable: false,
+      maxWidth: '200px !important',
+    },
+  ]
+
   // GET_CONSUMER_DETAILS_API
   const _getConsumerDetails = useCallback(() => {
     getConsumerDetails({ userId: consumerId })
@@ -369,12 +605,52 @@ const ConsumerManagement = (props) => {
     .then((response) => {
       if(response.data) {
         console.log(response)
-        setCoinTransactionData(response.data.resourceData)
+        setCoinTransactionData(response?.data?.resourceData)
       }
     }).catch((error) => {
       setLoading(false);
     });
   });
+
+  const _getUpcomingVisits = useCallback(() => {
+    getUpcomingVisits({userId : consumerId})
+    .then((response) => {
+      if(response.data) {
+        console.log(response)
+        setUpcomingVisitsForYou(response.data.resourceData.upcomingvisitsForYou)
+        setUpcomingVisitsFromYou(response.data.resourceData.upcomingvisitsFromYou)
+      }
+    }).catch((error) => {
+      setLoading(false);
+    })
+  },[consumerId])
+
+  const _visitHistory = useCallback(() => {
+    getVisitRequests({userId : consumerId})
+    .then((response) => {
+      if(response.data) {
+        // console.log(response)
+        let data = response.data.resourceData
+        let visitForYou = []
+        let visitFromYou = []
+        data.forEach(element => {
+          if(element.forYou) {
+            visitForYou.push(element)
+            console.log(upcomingVisitsForYou)
+          }
+        });
+        setVisitHistoryFor(visitForYou)
+        data.forEach(element => {
+          if(element.fromYou) {
+            visitFromYou.push(element)
+          }
+        });
+        setVisitHistoryFrom(visitFromYou)
+      }
+    }).catch((error) => {
+      setLoading(false);
+    })
+  },[consumerId])
   // USE_EFFECT
   useEffect(() => {
     _getConsumerDetails();
@@ -382,7 +658,9 @@ const ConsumerManagement = (props) => {
     _getConsumerTransactionsByUserId();
     _getAllServiceRequest();
     _getAllCoinTransactions();
-  }, [_getConsumerDetails, _getConsumerPropertyByUserId,_getConsumerTransactionsByUserId, _getAllServiceRequest]);
+    _getUpcomingVisits();
+    _visitHistory();
+  }, [_getConsumerDetails, _getConsumerPropertyByUserId,_getConsumerTransactionsByUserId, _getAllServiceRequest, _getUpcomingVisits, _visitHistory]);
 
   return (
     <>
@@ -447,7 +725,7 @@ const ConsumerManagement = (props) => {
                 size="Small"
                 fontWeight="mediumbold"
                 color="secondryColor"
-                text={coinTransactionData.freeCoins}
+                text={coinTransactionData?.freeCoins}
                 className="mt-1"
               />
             </div>
@@ -463,7 +741,7 @@ const ConsumerManagement = (props) => {
                 size="Small"
                 fontWeight="mediumbold"
                 color="secondryColor"
-                text={coinTransactionData.freeCoinsExpiryDate}
+                text={coinTransactionData?.freeCoinsExpiryDate === null ? '-' : coinTransactionData?.freeCoinsExpiryDate}
                 className="mt-1"
               />
             </div>
@@ -479,7 +757,7 @@ const ConsumerManagement = (props) => {
                 size="Small"
                 fontWeight="mediumbold"
                 color="secondryColor"
-                text={coinTransactionData.userBalance}
+                text={coinTransactionData?.userBalance}
                 className="mt-1"
               />
             </div>
@@ -619,8 +897,48 @@ const ConsumerManagement = (props) => {
 
       <ListingDataTable
         title="Coin Transactions"
-        data={coinTransactionData.transactionDetailList}
+        data={coinTransactionData.transactionDetailList === null ? [] : coinTransactionData.transactionDetailList}
         columns={CoinTransactionColumns}
+        // isLoading={ServiceRequestData.isLoading}
+        perPageOptions={ [  4, 8, 12, 16,20, 24,28, 32, 36, 40 ] }
+            paginationPerPage={ 4 }
+            paginationRowsPerPageOptions={[4, 8, 12, 16,20, 24,28, 32, 36, 40]}
+      />
+
+      <ListingDataTable
+        title="Upcoming Visits For Owner"
+        data={upcomingVisitsForYou === null ? [] : upcomingVisitsForYou}
+        columns={upcomingRequestForCols}
+        // isLoading={ServiceRequestData.isLoading}
+        perPageOptions={ [  4, 8, 12, 16,20, 24,28, 32, 36, 40 ] }
+            paginationPerPage={ 4 }
+            paginationRowsPerPageOptions={[4, 8, 12, 16,20, 24,28, 32, 36, 40]}
+      />
+
+      <ListingDataTable
+        title=" Upcoming Visits From Owner"
+        data={upcomingVisitsFromYou === null ? [] : upcomingVisitsFromYou}
+        columns={upcomingRequestsFromCols}
+        // isLoading={ServiceRequestData.isLoading}
+        perPageOptions={ [  4, 8, 12, 16,20, 24,28, 32, 36, 40 ] }
+            paginationPerPage={ 4 }
+            paginationRowsPerPageOptions={[4, 8, 12, 16,20, 24,28, 32, 36, 40]}
+      />
+
+      <ListingDataTable
+        title="Visit Requests For Owner (History)"
+        data={visitHistoryFor === null ? [] : visitHistoryFor}
+        columns={visitRequestForCols}
+        // isLoading={ServiceRequestData.isLoading}
+        perPageOptions={ [  4, 8, 12, 16,20, 24,28, 32, 36, 40 ] }
+            paginationPerPage={ 4 }
+            paginationRowsPerPageOptions={[4, 8, 12, 16,20, 24,28, 32, 36, 40]}
+      />
+
+      <ListingDataTable
+        title="Visit Requests From Owner (History)"
+        data={visitHistoryFrom === null ? [] : visitHistoryFrom}
+        columns={visitRequestFromCols}
         // isLoading={ServiceRequestData.isLoading}
         perPageOptions={ [  4, 8, 12, 16,20, 24,28, 32, 36, 40 ] }
             paginationPerPage={ 4 }

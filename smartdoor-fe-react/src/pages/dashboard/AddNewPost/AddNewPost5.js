@@ -25,6 +25,7 @@ const AddNewPost5 = () => {
     const [selectedPlan, setSelectedPlan] = useState('');
     const [ emailId, setEmailId ] = useState('')
     const history = useHistory();
+    const [propertyData, setPropertyData] = useState(location?.state?.propertyData)
     
     useEffect(() => {
         getPlans();
@@ -278,7 +279,7 @@ const AddNewPost5 = () => {
                 </div>
                 <div className="d-flex mt-5 px-2">
                     <button color="gray">Cancel</button> &nbsp;
-                    <Buttons name="Back" onClick={() => { history.goBack() }}></Buttons> &nbsp;
+                    <Buttons name="Back" onClick={() => { history.push('/admin/posts/add-new-post/info', {propertyData: propertyData}) }}></Buttons> &nbsp;
                     <Buttons name="Generate Payment Link" onClick={() => { validatePlan() }} />
                 </div>
             </div>

@@ -41,6 +41,7 @@ const AutoCompleteInput = (props) => {
     onInputChange,
     onBlurInput,
     onSelectOption,
+    cityLatLng,
     ...rest
   } = props;
 
@@ -49,9 +50,18 @@ const AutoCompleteInput = (props) => {
   id = id || defaultID;
   placeholder = placeholder || 'Enter Location';
 
+  let cityBounds = {
+    north: cityLatLng?.lat + 1.5,
+    south: cityLatLng?.lat - 1.5,
+    east: cityLatLng?.lng + 1.5,
+    west: cityLatLng?.lng - 1.5,
+  };
+
   let options = {
+    bounds: cityLatLng === null ? null : cityBounds,
     componentRestrictions: { country: 'IN' },
     strictBounds: true,
+    lang: 'en'
   };
 
   if (radius) {

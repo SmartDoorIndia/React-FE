@@ -276,7 +276,7 @@ const Nav = () => {
                         </Link>
                      </>
                   )}
-                     <Link
+                     {/* <Link
                         to="/admin/advisors"
                         className={`nav-link ${
                            pathname.includes("advisors") ? "nav-active" : ""
@@ -291,7 +291,7 @@ const Nav = () => {
                            }
                         />
                         Advisors
-                     </Link>
+                     </Link> */}
                      <Link
                         to="/admin/static-mobile-numbers"
                         className={`nav-link ${
@@ -308,6 +308,22 @@ const Nav = () => {
                         />
                         Static Mobile Numbers
                      </Link>
+                     {/* <Link
+                        to="/admin/add-coins"
+                        className={`nav-link ${
+                           pathname.includes("add-coins") ? "nav-active" : ""
+                        }`}
+                     >
+                        <Image
+                           name="teamGroup"
+                           src={
+                              pathname.includes("add-coins")
+                                 ? borkerIcon
+                                 : borkerIcon
+                           }
+                        />
+                        Add coins
+                     </Link> */}
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>

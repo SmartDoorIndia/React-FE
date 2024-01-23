@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, memo } from "react";
+import React, { useEffect, memo, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -8,7 +8,7 @@ import Text from "../../../shared/Text/Text";
 import Form from "react-bootstrap/Form";
 import Buttons from "../../../shared/Buttons/Buttons";
 import "./NonSDProperties.scss";
-import { getNonSDProperties } from "../../../common/redux/actions";
+import { getNonSDProperties, getAllCity } from "../../../common/redux/actions";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import Pagination from "../../../shared/DataTable/Pagination";
 import { TableLoader } from "../../../common/helpers/Loader";
@@ -17,6 +17,8 @@ import { approveProperty } from "../../../common/redux/actions";
 import { Link } from "react-router-dom";
 import contentIco from "../../../assets/images/content-ico.svg";
 import Image from "../../../shared/Image/Image";
+import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
+import ListingDataTable from "../../../shared/DataTable/ListingDataTable";
 
 const PaginationComponent = (props) => <Pagination {...props} />;
 const ProgressComponent = <TableLoader />;
@@ -27,10 +29,29 @@ const getModalActionData = (row) => {
 const NonSDProperties = (props) => {
    const history = useHistory();
 
-   const { getNonSDProperties, allNonSDProperties } = props;
+   const { getNonSDProperties, allNonSDProperties, getAllCity, allCities } = props;
    useEffect(() => {
+      getAllCity();
       getNonSDProperties();
-   }, [getNonSDProperties]);
+   }, [getNonSDProperties, getAllCity]);
+
+   const [filterText, setFilterText] = React.useState('');
+   const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
+   const PaginationComponent = (props) => (<Pagination {...props} />);
+   const [p_city, setPCity] = useState('');
+
+   const subHeaderComponentMemo = React.useMemo(() => {
+      const handleClear = () => {
+         if (filterText) {
+            setResetPaginationToggle(!resetPaginationToggle);
+            setFilterText('');
+         }
+      };
+
+      return (
+         <SearchInput onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} placeholder='Search here' />
+      );
+   }, [filterText, resetPaginationToggle]);
 
    function handleApproveProperty(propertyId) {
       if (propertyId) {
@@ -64,33 +85,46 @@ const NonSDProperties = (props) => {
       },
       {
          name: "Owner",
-         selector: "ownerName",
+         // selector: "ownerName",
          center: true,
+         minWidth: "180px",
+         cell: ({ ownerName, postedByName }) => (
+            <span>{ownerName === null ? <>{postedByName}</> : <>{ownerName}</>}</span>
+         )
       },
       {
          name: "Location",
          selector: "planName",
          center: true,
-         maxWidth: "150px",
-         cell: ({ houseNumber, societyName }) => (
+         minWidth: "200px",
+         cell: ({ houseNumber, societyName, societyAddress }) => (
             <span>
                {houseNumber} {" , "}
-               {societyName}
+               {societyName} {" , "} {societyAddress}
             </span>
          ),
+      },
+      {
+         name: "Mobile",
+         // selector: "ownerName",
+         center: true,
+         minWidth: "120px",
+         cell: ({ ownerMobile, posetdByMobile }) => (
+            <span>{ownerMobile === null ? <>{posetdByMobile}</> : <>{ownerMobile}</>}</span>
+         )
       },
       {
          name: "Type",
          selector: "propertyType",
          center: true,
-         minWidth: "200px",
+         minWidth: "150px",
       },
 
       {
          name: "Status",
          selector: "status",
          center: true,
-         minWidth: "200px",
+         minWidth: "170px",
       },
 
       {
@@ -137,9 +171,26 @@ const NonSDProperties = (props) => {
 
    const filteredItems = allNonSDProperties.data.length
       ? allNonSDProperties.data.filter((item) => {
-           return item.propertyId || item.propertyType;
-        })
+         return item.propertyId || item.propertyType;
+      })
       : [];
+
+   const showData = (city) => {
+      let filteredItems = [];
+      filteredItems = allNonSDProperties.data.length ?
+         allNonSDProperties.data.filter(item => {
+            return item?.propertyId === filterText ||
+               item?.ownerMobile?.includes(filterText) ||
+               item?.posetdByMobile?.includes(filterText) ||
+               item?.ownerName?.toLowerCase().includes(filterText.toLowerCase()) ||
+               item?.postedByName?.toLowerCase().includes(filterText.toLowerCase())
+         }) : [];
+         // if (city && filteredItems.length) {
+         //    filteredItems = filteredItems.filter(item => item?.societyAddress?.toLowerCase().includes(city.toLowerCase()));
+         //    console.log(filteredItems)
+         //  }
+      return filteredItems;
+   }
 
    return (
       <>
@@ -153,10 +204,32 @@ const NonSDProperties = (props) => {
                      text="Approval"
                   />
                </div>
+               <div className="locationSelect d-flex">
+                  {subHeaderComponentMemo}
+                  {/* <Form.Group controlId="exampleForm.SelectCustom">
+                     <Form.Control
+                        as="select"
+                        onChange={(e) => {
+                           setPCity(e.target.value)
+                           showData(e.target.value);
+                        }}
+                        value={p_city}
+                     >
+                        <option value="">Select City</option>
+                        {allCities?.data?.cities?.length > 0
+                           ? allCities?.data?.cities.map((c_value, indx) => (
+                              <option key={indx} value={c_value}>
+                                 {c_value}
+                              </option>
+                           ))
+                           : null}
+                     </Form.Control>
+                  </Form.Group> */}
+               </div>
             </div>
 
-            <DataTableComponent
-               data={filteredItems}
+            <ListingDataTable
+               data={showData()}
                columns={columns}
                progressPending={allNonSDProperties.isLoading}
                paginationComponent={PaginationComponent}
@@ -170,12 +243,13 @@ const NonSDProperties = (props) => {
    );
 };
 
-const mapStateToProps = ({ allNonSDProperties }) => ({
-   allNonSDProperties,
+const mapStateToProps = ({ allNonSDProperties, allCities }) => ({
+   allNonSDProperties, allCities
 });
 
 const actions = {
    getNonSDProperties,
+   getAllCity
 };
 
 const withConnect = connect(mapStateToProps, actions);

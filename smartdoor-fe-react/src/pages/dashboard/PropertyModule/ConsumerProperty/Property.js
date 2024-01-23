@@ -102,12 +102,22 @@ const PropertyModule = (props) => {
          cell: ({ postedDate }) => <span>{`${formateDate(postedDate)}` || ""}</span>,
       },
       {
+         name: "Published On",
+         // selector: ((row) => row.postedDate),
+         sortable: true,
+         center: true,
+         maxWidth: "120px",
+         style: { padding: "0 !important" },
+         cell: ({ publishDate }) => <span>{`${formateDate(publishDate)}` || ""}</span>,
+      },
+      {
          name: "Owner",
          selector: "ownerName",
          sortable: false,
          sortable: false,
          center: true,
-         maxWidth: "200px",
+         wrap:true,
+         minWidth: "200px",
          style: { padding: "0 !important" },
       },
       {
@@ -116,6 +126,7 @@ const PropertyModule = (props) => {
          wrap: true,
          style: { padding: "0 !important" },
          center: true,
+         minWidth: "300px",
          cell: ({ houseNumber, societyName, societyAddress }) => (
             <span>
                {houseNumber} {" , "}
@@ -167,7 +178,7 @@ const PropertyModule = (props) => {
          name: "Action",
          sortable: false,
          center: true,
-         maxWidth: "60px",
+         maxWidth: "40px",
          cell: ({ row, propertyId }) => (
             <div className="action">
                <ToolTip position="left" name="View Details">

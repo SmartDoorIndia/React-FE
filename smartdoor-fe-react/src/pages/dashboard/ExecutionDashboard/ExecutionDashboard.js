@@ -26,6 +26,7 @@ import calendarIcon from '../../../assets/svg/calendar.svg';
 import personGroupIco from '../../../assets/svg/person_group.svg';
 import ListingDataTable from '../../../shared/DataTable/ListingDataTable';
 import { handleStatusElement, ToolTip, formateDate, dateWithFormate }  from '../../../common/helpers/Utils';
+import './ExecutionDashboard.scss'
 
 const TeamTablePaginationActionButton = () => (
     <div className="d-flex justify-content-center tableBottom">

@@ -761,6 +761,17 @@ export const getCoinTransactions = async (data) => {
   const response = await mainApiService('getCoinTransactions', data);
   return response;
 }
+
+export const getUpcomingVisits = async (data) => {
+  const response = await mainApiService('getUpcomingVisits', data);
+  return response;
+}
+
+export const getVisitRequests = async (data) => {
+  const response = await mainApiService('getVisitRequests', data);
+  return response;
+}
+
 export const allNotification = async (data) => {
   const response = await mainApiService('allNotification', data);
   return response;

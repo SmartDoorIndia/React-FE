@@ -54,6 +54,7 @@ import TimeStampAlgo from "../../../camera-related/timeMilis";
 import QrModal from "../../../shared/Modal/QrModal/QrModal";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Switch } from "@mui/material";
+import reviewIcon from "../../../assets/svg/reviewIcon.svg"
 const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
 const PropertyDetails = (props) => {
@@ -91,6 +92,7 @@ const PropertyDetails = (props) => {
    const [showQr, setShowQr] = useState(false)
    const [currentPlanData, setCurrentPlanData] = useState({})
    const [upgradePlanData, setUpgradePlanData] = useState([])
+   const [visitorReviewList, setVisitorReviewList] = useState([])
 
    const batteryStatusCensor = (censorBatteryStatus) => {
       if (censorBatteryStatus === 0) {
@@ -201,6 +203,8 @@ const PropertyDetails = (props) => {
                if (response.data.resourceData && response.data.status === 200) {
                   setpropertyData(response.data.resourceData);
                   setOwnerId(response.data.resourceData.postedById);
+                  setVisitorReviewList(response.data.resourceData.visitorReviewList)
+                  console.log(response.data.resourceData.visitorReviewList)
                   _getSmartLockData({ propertyId });
                   if (!response.data.resourceData.basicPlan) _getContactSensor(propertyId);
                }
@@ -830,6 +834,13 @@ const PropertyDetails = (props) => {
 
                            {/* </div> */}
 
+                           {/* <Buttons
+                              onClick={() => {}}
+                              name="Approve"
+                              varient="primary"
+                              size="xSmall"
+                              color="white"
+                              className="mt-2 mb-2" />  */}
                            {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
                            <div className="d-flex">
                               {showQr ?
@@ -2187,10 +2198,10 @@ const PropertyDetails = (props) => {
                         size="medium"
                         fontWeight="bold"
                         color="secondryColor"
-                        text="Upgrade Plan details"
+                        text="Previous Plan details"
                      />
-                     {upgradePlanData.length > 0 ? <>
-                        {upgradePlanData.map((planData) => (
+                     {upgradePlanData?.length > 0 ? <>
+                        {upgradePlanData?.map((planData) => (
                            <table className="w-100 bg-white">
                               <tr>
                                  <td className="p-2">
@@ -2298,6 +2309,85 @@ const PropertyDetails = (props) => {
                      </>}
                   </Col>
                </Row>
+
+               <Text
+                  size="medium"
+                  fontWeight="bold"
+                  color="secondryColor"
+                  text="Visitor Reviews"
+               />
+               {visitorReviewList.length > 0 ? 
+               <>
+                  <div className="d-flex whiteBg">
+                  <Col lg='4'>
+                     <Text
+                        fontSize="medium"
+                        fontWeight="bold"
+                        style={{fontSize:'medium'}}
+                        color="secondryColor"
+                        text="Visitor Name"
+                     />
+                  </Col>
+                  <Col lg='4'>
+                     <Text
+                        fontSize="medium"
+                        fontWeight="bold"
+                        style={{fontSize:'medium'}}
+                        color="secondryColor"
+                        text="Visitor Reviews"
+                     />
+                  </Col>
+                  <Col lg='4'>
+                     <Text
+                        fontSize="medium"
+                        fontWeight="bold"
+                        style={{fontSize:'medium'}}
+                        color="secondryColor"
+                        text="Comments"
+                     />
+                  </Col>
+                  </div>
+                  {visitorReviewList?.map((element) => (
+                     <div className="d-flex whiteBg" style={{marginTop:'0px'}}> 
+                        <Col lg='4'>
+                           <Text
+                              fontSize="medium"
+                              fontWeight="bold"
+                              style={{fontSize:'medium'}}
+                              color="secondryColor"
+                              text={element.visitorName}
+                           />
+                        </Col>
+                        <Col lg='4'>
+                           {/* {visitorReviewList} */}
+                           {Array.from({ length: Number(element.visitRating) }, (_, index) => (
+                              <img src={reviewIcon} alt=""  style={{ alignItems: 'center', width: 'fit-content', height: '30px' }}></img>
+                           ))}
+                           {/* <Text
+                              fontSize="40px"
+                              fontWeight="bold"
+                              color="secondryColor"
+                              text={element.visitRating}
+                           /> */}
+                        </Col>
+                        <Col lg='4'>
+                           <Text
+                              fontSize="40px"
+                              fontWeight="bold"
+                              color="secondryColor"
+                              text={element.visitReview}
+                           />
+                        </Col>
+                     </div>
+                  ))}
+               </>
+               : <>
+               <Text
+                              fontSize="40px"
+                              fontWeight="bold"
+                              color="secondryColor"
+                              text={"No reviews"}
+                           /></>}
                {/* <ConfirmationModal
         title ={ blockData.status ? 'Are you sure you want to unblock this user?':'Are you sure you want to block this user?' }
         // title = "Are you sure you want to decline the request ?"

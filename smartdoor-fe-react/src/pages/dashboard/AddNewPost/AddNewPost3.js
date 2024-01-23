@@ -205,8 +205,8 @@ const AddNewPost3 = (props) => {
 			</div>
 			<div className="d-flex">
 			<Buttons type="button" size={"medium"} color={"secondary"} onClick={() => { history.push('/admin/advisors') }} name="Cancel" /> &nbsp;
-				<Buttons name="Back" onClick={() => { history.goBack() }}></Buttons> &nbsp;
-				<Buttons name="Next" onClick={() => { history.push('/admin/posts/add-new-post/info', {propertyId: propertyId}) }} />
+				<Buttons name="Back" onClick={() => { history.push('/admin/posts/add-new-post/address', {propertyData: propertyData, propertyId: propertyId}) }}></Buttons> &nbsp;
+				<Buttons name="Next" onClick={() => { history.push('/admin/posts/add-new-post/info', {propertyData: propertyData}) }} />
 			</div>
 		</>
 	)

@@ -14,14 +14,15 @@ import AutoCompleteInput from "../../../shared/Inputs/AutoComplete";
 import { getSocietyByCity } from "../../../common/redux/actions/addNewPost.action";
 import { Autocomplete } from "devextreme-react/autocomplete";
 import "./post.scss"
-import { getIn } from "yup/lib/util/reach";
+import { Map, Marker } from "google-maps-react";
+import MarkerIcon from "../../../assets/images/mapMarker-icon.png";
 
 const AddNewPost2 = (props) => {
     const location = useLocation();
     const { userData } = provideAuth();
     const {addNewPostReducer} = props
     const [propertyId , setPropertyId] = useState(location?.state?.propertyId);
-    const [propertyData, setPropertyData] = useState({})
+    const [propertyData, setPropertyData] = useState(location?.state?.propertyData)
     const [data, setData] = useState({
         postedById: userData.userid,
         smartdoorPropertyId: propertyId,
@@ -52,13 +53,28 @@ const AddNewPost2 = (props) => {
     const history = useHistory();
     const dispatch = useDispatch();
 
+    const mapStyles = {
+        width: "100%",
+        height: "120px",
+        display: "inline",
+        borderRadius: "5px",
+     };
+
     const _getPropertyDetails = useCallback(async() => {
         try {
             const response = await getPropertyDetails({ propertyId, userId: userData.userid });
             if (response.data && response.data.status === 200) {
-                setPropertyData(response?.data?.resourceData);
-                console.log(propertyData);
+                const newData = response.data.resourceData;
+                setPropertyData(newData)
+                if (newData && Object.keys(newData).length > 0) {
+                    // setPropertyData(prevData => ({
+                    //     ...prevData,
+                    //     ...newData
+                    // }));
+                    console.log(propertyData)
+                }
                 getAllInstallationCity(); 
+                return true;
             }
           } catch (error) {
                 console.error("Error fetching property details:", error);
@@ -68,15 +84,17 @@ const AddNewPost2 = (props) => {
     const getAllInstallationCity = async () => {
         try {
             const response = await getInstallationCity();
-            setCityArray(response?.data?.resourceData);
+            const cities = response?.data?.resourceData
+            setCityArray(cities);
         } catch (error) {
             console.error("Error fetching installation cities:", error);
         }
     }
 
-    useEffect(async () => {
+    useEffect(() => {
         console.log(propertyId)
-        await _getPropertyDetails();
+        _getPropertyDetails();
+        console.log(data.latitude)
     }, [_getPropertyDetails, propertyId]);
 
     
@@ -96,7 +114,7 @@ const AddNewPost2 = (props) => {
             setData({ ...data, draft: true, partial: false })
         }
         if (!draftModal) {
-            setData({ ...data, draft: false, partial: false })
+            setData({ ...data, draft: false, partial: true })
         }
         let requestBody = data
         requestBody.smartdoorPropertyId = propertyId
@@ -112,7 +130,7 @@ const AddNewPost2 = (props) => {
 
     const selectSocietyName = async (e) => {
         console.log(e?.event?.target?.value)
-        setData({ ...data, buildingProjectSociety: e?.event?.target?.value, otherSociety: e?.event?.target?.value })
+        setData(prevData => ({ ...prevData, buildingProjectSociety: e?.event?.target?.value, otherSociety: e?.event?.target?.value }))
         console.log(data.otherSociety)
         const response = await getSocietyByCity({ city: (data.city)?.split(', ')[0], society: e?.event?.target?.value })
         setSocietyArray(response)
@@ -250,6 +268,7 @@ const AddNewPost2 = (props) => {
                     <Col lg="4">
                         <AutoCompleteInput
                             label="City"
+                            cityLatLng={null}
                             placeholder="Enter City"
                             id="PropertyCityAutoComplete"
                             onSelectOption={(e) => { handleSelectCityOption(e) }}
@@ -334,6 +353,8 @@ const AddNewPost2 = (props) => {
                     <AutoCompleteInput
                         label="Locality"
                         options={{radius : 150000}}
+                        // city={data?.city}
+                        cityLatLng={{lat : data.cityLat, lng: data.cityLong}}
                         customValue={data?.locality}
                         placeholder="Enter Locality"
                         disabled={propertyData?.status === 'PUBLISHED' && propertyData.smartLockProperty === true ? true : false}
@@ -423,10 +444,10 @@ const AddNewPost2 = (props) => {
                     </Col>
                 </Row>
 
-                <div className={"mapLocation my-3"}>
+                <div className="mapLocation my-3">
                     <div style={{ height: "120px", overflow: "hidden" }}>
                         <MapComponent
-                            p_lat={data?.latitude} p_lng={data?.longitude} />
+                            p_lat={data.latitude} p_lng={data.longitude} />
                     </div>
                 </div>
 
@@ -461,7 +482,7 @@ const AddNewPost2 = (props) => {
                                 size="xSmall"
                                 color="black"
                                 className="mr-3"
-                                onClick={() => { history.push('/admin/advisors') }} />
+                                onClick={() => { history.push('/admin/posts/add-new-post/basic-details', {propertyData: propertyData}) }} />
                             <Buttons
                                 name="Save"
                                 varient="disable"
