@@ -185,9 +185,10 @@ const PropertyModule = (props) => {
                   <span>
                      <Link
                         to={{
-                           pathname: "/admin/property/property-details",
+                           pathname: `/admin/property/property-details/?propertyId=${propertyId}&userId=${userData.userid}`,
                            state: { propertyId: propertyId, userId: userData.userid },
                         }}
+                        target={"_blank"}
                      >
                         <Image name="editIcon" src={contentIco} />
                      </Link>
