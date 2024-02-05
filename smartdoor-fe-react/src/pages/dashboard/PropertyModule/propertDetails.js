@@ -62,8 +62,8 @@ const PropertyDetails = (props) => {
 
    console.log("props.module in details page:", props.module);
 
-   const propertyId = props.location.state ? props.location.state.propertyId || "" : "";
-   const userId = props.location.state ? props.location.state.userId || "" : "";
+   const [propertyId, setPropertyId] = useState(null);
+   const [userId, setUserId] = useState(null);
    const [loading, setLoading] = useState(true);
    const [propertyData, setpropertyData] = useState({});
    // const [societyUserData, setSocietyUserData] = useState({})
@@ -503,7 +503,23 @@ const PropertyDetails = (props) => {
       setShowQrModal(false)
    }
 
+   const setPropertySearchParameters = () => {
+      const URLsearchQueryString = window.location.search;
+      let URLsearchQueryObject = {};
+  
+      URLsearchQueryString.replace(
+          new RegExp( "([^?=&]+)(=([^&]*))?", "g" ),
+          function( $0, $1, $2, $3 ){
+            URLsearchQueryObject[ $1 ] = $3;
+          }
+      );
+
+      setPropertyId(URLsearchQueryObject?.propertyId ? URLsearchQueryObject?.propertyId : props.location?.state?.propertyId ? props.location?.state?.propertyId : "");
+      setUserId(URLsearchQueryObject?.userId ? URLsearchQueryObject?.userId : props.location?.state?.userId ? props.location?.state?.userId : "");
+   }
+
    useEffect(() => {
+      setPropertySearchParameters();
       _getPropertyDetails();
       getPropertyAnalyticsByPropertyId({ propertyId: propertyId });
       _getPropertyPlanDetailsById();
