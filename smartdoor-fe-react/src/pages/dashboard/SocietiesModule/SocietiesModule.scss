@@ -278,6 +278,12 @@ position: relative;
 
 /*******Css start here************/
 .societiesTableWrapper {
+    .rdt_TableBody {
+        max-height: calc(60vh - 20px);
+        height: 60vh;
+        overflow-y: visible;
+        overflow-x: hidden;
+    }
     .rdt_TableHead {
         .rdt_TableCol {
             &:nth-child(3) {

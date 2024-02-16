@@ -461,7 +461,7 @@ const Societies = (props) => {
 
   return (
     <>
-      <div className="dashboard container-fluid12">
+      <div className="dashboard container-fluid12" style={{height: '79vh', overflowY:'auto'}}>
         <Row>
           <Col lg={ 8 }>
             <Row>

@@ -169,6 +169,8 @@ const HelpDeskDashboard = (props) => {
           />
         ) }
       />
+      <div style={{height : '35rem', overflow:'auto'}}>
+
       <div className="cardBox">
         {/* <Card className="cardWidth">
           <Card.Body>
@@ -310,6 +312,7 @@ const HelpDeskDashboard = (props) => {
           handleFilterChange={ _filterServiceReq }
           pagination={ false }
         />
+      </div>
       </div>
 
       {/* <div className='helpdeskHelpdeskteamTableWrapper'>

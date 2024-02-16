@@ -99,6 +99,8 @@ const RealtorManagement = (props) => {
       name: 'Location',
       selector: 'dealInArea',
       center: true,
+      wrap:true,
+      minWidth: '170px',
       cell: (row) => ( <ToolTip
         position="top"
         style={{ width: "100%" }}
@@ -301,7 +303,7 @@ const showData = (status_value) => {
         handlePerformAction = { ()=> handleRealtorStatus(blockData.id, "REJECTED") }
       /> */}
 
-    <div className = "tableBox mb-5">  
+    <div className = "tableBox">  
       <ConfirmationModal
         title ={ blockData.status ? 'Are you sure you want to unblock this user?':'Are you sure you want to block this user?' }
         // title = "Are you sure you want to decline the request ?"

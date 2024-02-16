@@ -325,6 +325,7 @@ const SalesDashboard = (props) => {
         render={(props) => <ModalModule {...props} />}
       />
       <Route path="/admin/sales/user-details" name="User Details" component={ModalModule} />
+      <div style={{height : '85vh', overflow:'auto'}}>
 
       <div className="cardBox cardTractions">
         <Card className="cardWidth">
@@ -464,6 +465,7 @@ const SalesDashboard = (props) => {
             <TeamTablePaginationActionButton />
           </div>
         }
+      </div>
       </div>
     </>
   )

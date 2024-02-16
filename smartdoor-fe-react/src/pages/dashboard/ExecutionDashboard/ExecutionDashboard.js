@@ -720,6 +720,7 @@ const InstallationRequestsColumns = [
               tabName={["Tasks", "Completed"]} 
               /> } 
             />
+          <div style={{height : '89vh', overflow:'auto'}}>
 
             <div className="cardBox"> 
                 <Card className="cardWidth"> 
@@ -954,6 +955,7 @@ const InstallationRequestsColumns = [
                       </div>
                     }
               </div>
+          </div>
         </>
     )
 }

@@ -157,14 +157,14 @@ export const validateNewTeamMember = (data) => {
   if (isBlank(data.executiveName)) {
     errors.executiveName = ValidationMessages.fieldRequired.required;
   }
-  if (!(data.post==='1')) {
+  if ((data.city?.length === 0)) {
     errors.city = ValidationMessages.fieldRequired.required;
   }
   console.log(data,"ddddddddddddddddddddddddddd")
   
-  if ( !(data.post==='3' || data.post==='7' || data.post==='8' || data.post==='10' || data.post==='13' || data.post==='14' || data.post==='16' ||  data.post==='1' || (data.post.toLowerCase().includes("admin"))) && data.location.length < 1) {
-    errors.location = ValidationMessages.fieldRequired.required;
-  }
+  // if ( !(data.post==='3' || data.post==='7' || data.post==='8' || data.post==='10' || data.post==='13' || data.post==='14' || data.post==='16' ||  data.post==='1' || (data.post.toLowerCase().includes("admin"))) && data.location.length < 1) {
+  //   errors.location = ValidationMessages.fieldRequired.required;
+  // }
   if (isBlank(data.post)) {
     errors.post = ValidationMessages.fieldRequired.required;
   }

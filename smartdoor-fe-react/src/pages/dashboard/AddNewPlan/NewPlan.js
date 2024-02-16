@@ -17,7 +17,7 @@ import {
    addNewPlan,
 } from "../../../common/redux/actions";
 import S3 from "react-aws-s3";
-import { showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
+import { showErrorToast } from "../../../common/helpers/Utils";
 import { validateNewPlan } from "../../../common/validations";
 import RadioButton from "../../../shared/RadioButton/RadioButton";
 import Constants from "../../../common/helpers/Constants";
@@ -227,6 +227,10 @@ class NewPlan extends Component {
                this.setState({ handleSubmit: false });
                this.setState({ disableSubmit: false });
             }
+            if (response.data && response.data.status === 500) {
+               this.setState({ handleSubmit: true });
+               this.setState({ disableSubmit: false });
+            }
          })
          .catch((error) => {
             this.setState({ handleSubmit: false });
@@ -287,14 +291,14 @@ class NewPlan extends Component {
       return (
          <>
             {/* <div style={{ height: "5%" }}></div> */}
-            <div className="whiteBg">
+            <div className="whiteBg" style={{height : '78vh', overflowY:'auto'}}>
                <Text
                   size="medium"
                   fontWeight="mediumbold"
                   color="secondryColor"
                   text={!planId ? "Add New Plan" : "Edit Plan"}
                />
-               <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="" className="mt-1" />
+               {/* <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="" className="mt-1" /> */}
                <div className="newEntry">
                   <form noValidate onSubmit={(e) => e.preventDefault()} autoComplete="off">
                      <Row>
@@ -1004,12 +1008,13 @@ class NewPlan extends Component {
                         </Col>
                         <Col lg="2">
                            <Buttons
-                              name={"Upload Plan Image"}
+                              name="Upload Plan Image"
                               varient="primary"
                               size="Small"
                               onClick={() => {this.fileInputRef.current?.click()}}
                               color="white"
-                              style={{width:'fit-content'}}
+                              className='button py-0'
+                              style={{width:'fit-content', padding:'0px'}}
                            />
                               {/* <img className="" src={imageLocation} style={{width: '60px', height: '60px', borderRadius: 8, border: '1px #9BA5AD solid'}}></img>  */}
                            <input

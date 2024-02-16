@@ -1,8 +1,8 @@
 /** @format */
 
-import React, { Component } from "react";
+import React, { Component, memo } from "react";
 import Calender from "../../../../shared/Calender/Calender";
-import { getExecutiveCalendar, changeInstallationAssignee, getAllInstallationCity,  getInstallationLocationByCity } from "../../../../common/redux/actions";
+import { getExecutiveCalendar, changeInstallationAssignee, getAllInstallationCity,  getInstallationLocationByCity, getAllCityWithId } from "../../../../common/redux/actions";
 import {
    getCurrentWeek,
    dateWithFormate,
@@ -13,8 +13,11 @@ import moment from "moment";
 import notify from "devextreme/ui/notify";
 import Form from 'react-bootstrap/Form';
 import './InstallationCalender.scss';
+import { connect } from "react-redux";
+import { compose } from "redux";
+import { allCitiesWithId } from "../../../../common/redux/reducers/dashboard.reducer";
 
-export default class InstallationCalender extends Component {
+class InstallationCalender extends Component {
    constructor() {
       super();
       this.state = {
@@ -28,7 +31,8 @@ export default class InstallationCalender extends Component {
          city: '',
          pincode: '',
          allLocationsByCity: [],
-         allCities: []
+         allCities: [],
+         allCitiesWithId: [],
       };
       this._parseCalenderData = this._parseCalenderData.bind(this);
       // this.getAllInstallationCity = this.getAllInstallationCity.bind(this);
@@ -39,15 +43,24 @@ export default class InstallationCalender extends Component {
       this.setState({ firstDay: week.firstDay, lastDay: week.lastDay });
       this._getCalenderData(week);
       //getAllInstallationCity
-      getAllInstallationCity()//this.state.city
-         .then(res=> {
-            if(res.data && res.data.status === 200){
-               console.log("res:",res.data)
-               // locations = res.data.resourceData.locations.map(city_location => city_location.location);
-               //console.log("locations..@@1", locations);
-               this.setState({allCities: res.data.resourceData.cities})
-            }})
-            .catch(err=> console.log("err:", err));
+      this.props.getAllCityWithId({stateId: null, smartdoorServiceStatus: true})
+      .then((response) => {
+         console.log(response)
+         if(response.data.status === 200) {
+            this.setState({allCitiesWithId: (response.data.resourceData)})
+            console.log(this.state.allCitiesWithId)
+         }
+      });
+      // console.log(allCitiesWithId)
+      // getAllInstallationCity()//this.state.city
+      //    .then(res=> {
+      //       if(res.data && res.data.status === 200){
+      //          console.log("res:",res.data)
+      //          // locations = res.data.resourceData.locations.map(city_location => city_location.location);
+      //          //console.log("locations..@@1", locations);
+      //          this.setState({allCities: res.data.resourceData.cities})
+      //       }})
+      //       .catch(err=> console.log("err:", err));
       // getInstallationLocationByCity({city: "Pune"})//this.state.city
       //    .then(res=> {
       //       if(res.data && res.data.status === 200){
@@ -77,7 +90,7 @@ export default class InstallationCalender extends Component {
       let city = this.props.location.state ? this.props.location.state.city || "" : "";
 
       try {
-         getExecutiveCalendar({ weekStartDate: firstDay, weekEndDate: lastDay, city, pincode: this.state.pincode  })
+         getExecutiveCalendar({ weekStartDate: firstDay, weekEndDate: lastDay, city  })
             .then((response) => {
                if (response && response.status === 200) {
                   if (response.data.resourceData) {
@@ -98,12 +111,12 @@ export default class InstallationCalender extends Component {
       }
    }
 
-   _getFilteredCalenderData( firstDay = '', lastDay='' , city ='' , pincode= '') {
+   _getFilteredCalenderData( firstDay = '', lastDay='' , city ='') {
       this.setState({ loading: true });
       // let city = this.props.location.state ? this.props.location.state.city || "" : "";
 
       try {
-         getExecutiveCalendar({ weekStartDate: this.state.firstDay, weekEndDate: this.state.lastDay, city, pincode })
+         getExecutiveCalendar({ weekStartDate: this.state.firstDay, weekEndDate: this.state.lastDay, city })
             .then((response) => {
                if (response && response.status === 200) {
                   if (response.data.resourceData) {
@@ -353,6 +366,7 @@ export default class InstallationCalender extends Component {
 
 
    render() {
+      // const {allCitiesWithId} = this.props
       return (
          <div>
             {this.state.loading ? <FallBackLoader /> : null}
@@ -391,38 +405,38 @@ export default class InstallationCalender extends Component {
                             onChange={(e)=> {
                                   this._getFilteredCalenderData(this.state.firstDay,this.state.lastday, e.target.value, "")
                               this.setState({ city: e.target.value , allLocationsByCity: []});
-                              getInstallationLocationByCity({ city: e.target.value })
-                              .then((res) => {
-                                 if (res.data && res.data.status === 200) {
-                                    const locationsByCity = res.data.resourceData.locations.map(loc=>{
-                                       return {...loc, location: `${loc.location} ,${loc.pinCode}` }
-                                    })
+                              // getInstallationLocationByCity({ city: e.target.value })
+                              // .then((res) => {
+                              //    if (res.data && res.data.status === 200) {
+                              //       const locationsByCity = res.data.resourceData.locations.map(loc=>{
+                              //          return {...loc, location: `${loc.location} ,${loc.pinCode}` }
+                              //       })
                                     
-                                    this.setState({
-                                       // allLocationsByCity: res.data.resourceData.locations,
-                                       allLocationsByCity: locationsByCity,
-                                    });
-                                 }
-                              })
-                              .catch((err) => console.log("err:", err));
+                              //       this.setState({
+                              //          // allLocationsByCity: res.data.resourceData.locations,
+                              //          allLocationsByCity: locationsByCity,
+                              //       });
+                              //    }
+                              // })
+                              // .catch((err) => console.log("err:", err));
                             }}
                             >
                                 <option value="">Select City</option>
                                 {/* <option value="Pune">Pune</option>
                                 <option value="Mumbai">Mumbai</option> */}
-                                {
-                                     this.state.allCities.length ? 
-                                     this.state.allCities.map((_value, index)=>
-                                        <option key={index} value={_value}>{_value}</option>
-                                        ) 
-                                    : null 
-                                }
+                                {this.state.allCitiesWithId?.length
+                                    ? this.state.allCitiesWithId?.map((city) => (
+                                       <option key={city.cityId} value={city.cityId}>
+                                          {city.cityName}
+                                       </option>
+                                    ))
+                                    : null}
                             </Form.Control>
                       </Form.Group>
                </div>
-                  <div className="locationSelect">
-                      <Form.Group controlId="exampleForm.SelectCustom"  className="d-flex align-items-center">
                           {/* <Form.Label className="mr-2">Location:</Form.Label> */}
+                  {/* <div className="locationSelect">
+                      <Form.Group controlId="exampleForm.SelectCustom"  className="d-flex align-items-center">
                             <Form.Control as="select" 
                             className="locationWidth form-installation"
                             onChange={(e)=> {
@@ -440,7 +454,7 @@ export default class InstallationCalender extends Component {
                                 }
                             </Form.Control>
                       </Form.Group>
-               </div>
+               </div> */}
                </div>
             </div>
             <Calender
@@ -453,3 +467,15 @@ export default class InstallationCalender extends Component {
       );
    }
 }
+
+const mapStateToProps = ({ allCitiesWithId }) => ({
+   allCitiesWithId
+});
+
+const actions = {
+   getAllCityWithId
+};
+
+const withConnect = connect(mapStateToProps, actions);
+
+export default compose(withConnect, memo)(InstallationCalender);

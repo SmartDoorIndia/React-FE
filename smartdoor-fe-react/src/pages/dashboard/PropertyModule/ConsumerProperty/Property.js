@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Route } from "react-router-dom";
 import Image from "../../../../shared/Image/Image";
 import Text from "../../../../shared/Text/Text";
@@ -13,7 +13,7 @@ import {
    getLocationByCity,
    getAllCity,
 } from "../../../../common/redux/actions";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { compose } from "redux";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import Pagination from "../../../../shared/DataTable/Pagination";
@@ -31,6 +31,9 @@ import ModalModule from "../../../../shared/Modal/ModalModule";
 import Input from "../../../../shared/Inputs/Input/Input";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
+import { useCallback } from "react";
+import { TableLoader } from "../../../../common/helpers/Loader";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const PropertyModule = (props) => {
    const {
@@ -42,22 +45,58 @@ const PropertyModule = (props) => {
       allCities,
       getLocationByCity,
    } = props;
+   const data = useSelector(state => state.allPropertyData.data);
    const userData = getLocalStorage("authData");
-   const [p_city, setp_City] = useState("");
-   const [p_location, setp_Location] = useState("");
+   const [p_city, setp_City] = useState(data.length !== 0 ? allPropertyData?.data?.city : "");
+   const [p_location, setp_Location] = useState(data.length !== 0 ? allPropertyData?.data?.location : "");
    const [locationsData, setLocationsData] = useState([]);
    const [zipCode, setzipCode] = useState("");
-
+   const history = useHistory();
    //state: for managing the status filter.
    const statusArr = CONSTANTS_STATUS.propertyStatusArr;
-   const [statusSelected, setStatusSelected] = useState("");
+   const [statusSelected, setStatusSelected] = useState(() => {
+      if (allPropertyData?.data?.propertyStatus === 'PUBLISHED') {
+         return 'PUBLISHED';
+      } else if (allPropertyData?.data?.propertyStatus === 'UNDER REVIEW') {
+         return 'UNDER REVIEW';
+      } else {
+         return '';
+      }
+   });
 
    const propertyType = CONSTANTS_STATUS.propertyType;
-   const [typeSelected, setTypeSelected] = useState("");
+   const [typeSelected, setTypeSelected] = useState(() => {
+      if (allPropertyData?.data?.smartLockProperty === true) {
+         return 'SMARTDOOR';
+      } else if (allPropertyData?.data?.smartLockProperty === false) {
+         return 'NON SMARTDOOR';
+      } else {
+         return null;
+      }
+   });
 
-   const [filterText, setFilterText] = React.useState("");
+   const [filterText, setFilterText] = React.useState(data.length !== 0 ? allPropertyData?.data?.searchStr : "");
    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
 
+   const cityPresent = useCallback(
+      () => {
+         getLocationByCity({ city: p_city })
+            .then((res) => {
+               if (res.data && res.data.status === 200) {
+                  const locationsByCity = res.data.resourceData.locations.map(
+                     (loc) => {
+                        return {
+                           ...loc,
+                           location: `${loc.location} ,${loc.pinCode}`,
+                        };
+                     }
+                  );
+                  setLocationsData(locationsByCity);
+               }
+            })
+            .catch((err) => console.log("err:", err));
+      }
+   )
    function formateAddress(address, city) {
       try {
          if (address) {
@@ -91,6 +130,7 @@ const PropertyModule = (props) => {
          selector: "propertyId",
          sortable: true,
          center: true,
+         minWidth: "120px",
       },
       {
          name: "Added On",
@@ -112,13 +152,25 @@ const PropertyModule = (props) => {
       },
       {
          name: "Owner",
-         selector: "ownerName",
+         // selector: "ownerName",
          sortable: false,
          sortable: false,
          center: true,
-         wrap:true,
-         minWidth: "200px",
+         wrap: true,
+         minWidth: "150px",
          style: { padding: "0 !important" },
+         cell: ({ ownerName, postedByName }) => (
+            <span>{ownerName !== null && ownerName !== undefined && ownerName !== '' ? <>{ownerName}</> : <>{postedByName}</>}</span>
+         )
+      },
+      {
+         name: "Mobile",
+         // selector: "ownerName",
+         center: true,
+         maxWidth: "120px",
+         cell: ({ ownerMobile, posetdByMobile }) => (
+            <span>{ownerMobile === null ? <>{posetdByMobile}</> : <>{ownerMobile}</>}</span>
+         )
       },
       {
          name: "Location",
@@ -150,7 +202,10 @@ const PropertyModule = (props) => {
          center: true,
          maxWidth: "120px",
          style: { padding: "0 !important" },
-         cell: ({ status }) => <span>{handleStatusElement(status)}</span>,
+         cell: ({ status }) => <span>{status !== null ? <>
+            {handleStatusElement(status)}
+         </> : '-'}
+         </span>,
       },
       {
          name: "Assets",
@@ -179,14 +234,14 @@ const PropertyModule = (props) => {
          sortable: false,
          center: true,
          maxWidth: "40px",
-         cell: ({ row, propertyId }) => (
+         cell: ({ row, propertyId, postedById }) => (
             <div className="action">
                <ToolTip position="left" name="View Details">
                   <span>
                      <Link
                         to={{
                            pathname: "/admin/property/property-details",
-                           state: { propertyId: propertyId, userId: userData.userid },
+                           state: { propertyId: propertyId, userId: postedById, menuName: 'Properties', isDeleted: false },
                         }}
                      >
                         <Image name="editIcon" src={contentIco} />
@@ -204,50 +259,206 @@ const PropertyModule = (props) => {
       </div>
    );
 
-   const PaginationComponent = (props) => (
-      <Pagination {...props} PaginationActionButton={PaginationActionButton} />
+   const ProgressComponent = <TableLoader />;
+   const [currentPage, setCurrentPage] = useState(allPropertyData?.data?.length !== 0 ? allPropertyData?.data?.currentPage : 1);
+   const [rowsPerPage, setRowsPerPage] = useState(allPropertyData?.data?.length !== 0 ? allPropertyData?.data?.rowsPerPage : 8);
+   const recordSize = (allPropertyData?.data?.records || 0);
+   console.log(recordSize)
+   let recordsPerPage = 0
+   recordsPerPage = allPropertyData?.data?.rowsPerPage;
+   console.log('0st row number ' + recordsPerPage)
+
+   const handlePageChange = (newPage) => {
+      setCurrentPage(Number(newPage));
+      let type = null
+      if (typeSelected === 'SMARTDOOR') {
+         type = true
+      } else if (typeSelected === 'NON SMARTDOOR') {
+         type = false
+      }
+      const regex = /([^,]+),\s*(\d{6})/;
+      const matches = p_location.match(regex);
+      if (matches) {
+         let zipcode = matches[2]
+         getAllProperties({
+            p_city,
+            zipcode,
+            p_location,
+            pageSize: rowsPerPage,
+            pageNo: newPage,
+            userId: userData.userid,
+            searchString: filterText,
+            smartLockProperty: type,
+            propertyStatus: statusSelected,
+         });
+      } else {
+         let zipcode = ""
+         let location = ""
+         getAllProperties({
+            p_city,
+            zipcode,
+            location,
+            pageSize: rowsPerPage,
+            pageNo: newPage,
+            userId: userData.userid,
+            searchString: filterText,
+            smartLockProperty: type,
+            propertyStatus: statusSelected,
+         });
+      }
+   };
+
+   const handleRowsPerPageChange = async (newRowsPerPage) => {
+      let type = null
+      if (typeSelected === 'SMARTDOOR') {
+         type = true
+      } else if (typeSelected === 'NON SMARTDOOR') {
+         type = false
+      }
+      const regex = /([^,]+),\s*(\d{6})/;
+      const matches = p_location.match(regex);
+      recordsPerPage = Number(newRowsPerPage)
+      console.log('1st row chnage ' + recordsPerPage)
+      setRowsPerPage(Number(newRowsPerPage))
+      if (matches) {
+         let zipcode = matches[2]
+         getAllProperties({
+            p_city,
+            zipcode,
+            p_location,
+            pageSize: Number(newRowsPerPage),
+            pageNo: currentPage,
+            userId: userData.userid,
+            searchString: filterText,
+            smartLockProperty: type,
+            propertyStatus: statusSelected,
+         });
+      } else {
+         let zipcode = ""
+         let location = ""
+         getAllProperties({
+            p_city,
+            zipcode,
+            location,
+            pageSize: Number(newRowsPerPage),
+            pageNo: currentPage,
+            userId: userData.userid,
+            searchString: filterText,
+            smartLockProperty: type,
+            propertyStatus: statusSelected,
+         });
+      }
+      // history.push('/admin/property');
+   };
+
+   const PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
+      <Pagination {...props}
+         rowCount={recordSize}
+         rowsPerPage={recordsPerPage}
+         onChangeRowsPerPage={handleRowsPerPageChange}
+         currentPage={currentPage}
+         onChangePage={handlePageChange}
+         PaginationActionButton={PaginationActionButton} />
    );
+
+   const onRowClicked = (rowdata) => {
+      console.log()
+   }
+
+   console.log('records are given ' + recordSize + recordsPerPage)
+   // const PaginationComponent = React.useMemo(() => {
+   //    <Pagination 
+   //    rowCount={recordSize} 
+   //    rowsPerPage={recordSize}
+   //    onChangeRowsPerPage={handleRowsPerPageChange} 
+   //    currentPage={currentPage} 
+   //    onChangePage={handlePageChange}
+   //    PaginationActionButton={PaginationActionButton} 
+   //    {...props}/>
+   // },[recordSize, rowsPerPage, currentPage, handlePageChange, handleRowsPerPageChange]);
+
+   const [scrollPosition, setScrollPosition] = useState(0);
+   const tableRef = useRef(null);
+
+   // Function to handle scroll position change
+   const handleScroll = () => {
+      if (tableRef.current) {
+         setScrollPosition(tableRef.current.scrollTop);
+      }
+      console.log("test")
+   };
+
+   // Function to scroll to the stored position
+   // const scrollToPosition = () => {
+   //    if (tableRef.current) {
+   //       tableRef.current.scrollTop = scrollPosition;
+   //    }
+   // };
 
    useEffect(() => {
       // getPropertyCity();
-      getAllCity();
-   }, [getPropertyCity, getAllCity]);
+      if (!p_city) {
+         getAllCity();
+      }
+      if (p_city) {
+         cityPresent();
+      }
+      if (data?.length === 0) {
+         getAllProperties({
+            city: '',
+            zipcode: '',
+            location: '',
+            pageSize: rowsPerPage,
+            pageNo: currentPage,
+            userId: userData.userid,
+            searchString: '',
+            smartLockProperty: '',
+            propertyStatus: ""
+         });
+         if (tableRef.current) {
+            tableRef.current.scrollTop = scrollPosition;
+          }
+        
+      }
+   }, [getPropertyCity, getAllCity,  scrollPosition]);
 
    const _filterData = (city, locationData) => {
-      console.log(city, locationData, "location filter data");
       let data = locationData;
       const regex = /([^,]+),\s*(\d{6})/;
       const matches = data.match(regex);
       if (matches) {
-         console.log("inside match");
          const location = matches[1].trim();
          setp_Location(location);
          const zipcode = matches[2];
          setzipCode(zipcode);
-         console.log(location, zipcode, "data for filter");
-         getAllProperties({
-            city,
-            zipcode,
-            location,
-            pageSize: "",
-            pageNo: "",
-            userId: userData.userid,
-         });
+         // console.log(location, zipcode, "data for filter");
+         // getAllProperties({
+         //    city,
+         //    zipcode,
+         //    location,
+         //    pageSize: rowsPerPage,
+         //    pageNo: currentPage,
+         //    userId: userData.userid,
+         //    searchString: filterText
+         // });
       }
       if (locationData == "") {
          let location = "";
          let zipcode = "";
-         console.log("outside match");
-         getAllProperties({
-            city,
-            zipcode,
-            location,
-            pageSize: "",
-            pageNo: "",
-            userId: userData.userid,
-         });
+         setzipCode(zipcode);
+         // console.log("outside match");
+         // getAllProperties({
+         //    city,
+         //    zipcode,
+         //    location,
+         //    pageSize: rowsPerPage,
+         //    pageNo: currentPage,
+         //    userId: userData.userid,
+         //    searchString: filterText
+         // });
       }
    };
+
 
    const subHeaderComponentMemo = React.useMemo(() => {
       const handleClear = () => {
@@ -260,7 +471,7 @@ const PropertyModule = (props) => {
       return (
          <SearchInput
             onFilter={(e) => setFilterText(e.target.value)}
-            onClear={handleClear}
+            onClear={() => handleClear}
             filterText={filterText}
             placeholder="Search here"
          />
@@ -269,26 +480,36 @@ const PropertyModule = (props) => {
 
    let filteredItems = [];
 
-   filteredItems = allPropertyData.data.length
-      ? allPropertyData.data.filter((item) => {
-           return (
-              item?.propertyId == filterText ||
-              item?.postedDate?.toLowerCase().includes(filterText.toLowerCase()) ||
-              item?.propertyType?.toLowerCase().includes(filterText.toLowerCase()) ||
-              item.societyName.toLowerCase().includes(filterText.toLowerCase()) ||
-              item.societyAddress.toLowerCase().includes(filterText.toLowerCase())
-           );
-        })
-      : [];
+
+   // ?.filter((item) => {
+   //      return (
+   //         item?.propertyId == filterText ||
+   //         item?.postedDate?.toLowerCase().includes(filterText.toLowerCase()) ||
+   //         item?.propertyType?.toLowerCase().includes(filterText.toLowerCase()) 
+   //         item.societyName.toLowerCase().includes(filterText.toLowerCase()) ||
+   //         item.societyAddress.toLowerCase().includes(filterText.toLowerCase()) ||
+   //         item?.ownerName?.toLowerCase().includes(filterText.toLowerCase()) ||
+   //         item?.posetdByMobile?.toLowerCase().includes(filterText.toLowerCase()) ||
+   //         item?.ownerMobile?.toLowerCase().includes(filterText.toLowerCase())
+   //      );
+   //   })
+   // : [];
+
+
 
    const showData = (status_value) => {
       let status = status_value || statusSelected;
-
-      if (status && filteredItems.length) {
-         filteredItems = filteredItems.filter((item) => {
-            return item?.status?.toUpperCase() == status?.toUpperCase();
-         });
-      }
+      filteredItems = [];
+      // data?.propertyData?.forEach(element => {
+      //    filteredItems.push(element)
+      // });
+      filteredItems = allPropertyData?.data?.propertyData
+      console.log("filteredItems : ", filteredItems)
+      // if (status && filteredItems.length) {
+      //    filteredItems = filteredItems.filter((item) => {
+      //       return item?.status?.toUpperCase() == status?.toUpperCase();
+      //    });
+      // }
       return filteredItems;
    };
 
@@ -296,27 +517,27 @@ const PropertyModule = (props) => {
       let status = status_value || typeSelected;
       let property = typeSelected === "SMARTDOOR" ? true : false;
 
-      if (status && filteredItems.length) {
-         filteredItems = filteredItems.filter((item) => {
-            return item?.smartDoorProperty === property;
-         });
-      }
+      // if (status && filteredItems.length) {
+      //    filteredItems = filteredItems.filter((item) => {
+      //       return item?.smartDoorProperty === property;
+      //    });
+      // }
       return filteredItems;
    };
 
    const _filterStatus = (status_value) => {
       setStatusSelected(status_value);
-      showData(status_value);
+      // showData(status_value);
    };
 
    const _filterPropertyType = (status_value) => {
       setTypeSelected(status_value);
-      showProperty(status_value);
+      // showProperty(status_value);
    };
 
    return (
       <>
-         <div className="tableBox mb-5">
+         <div className="tableBox ">
             <Route
                path="/admin/user-management/user-details"
                name="Admin Dashboard"
@@ -366,10 +587,10 @@ const PropertyModule = (props) => {
                         <option value="">Select City</option>
                         {allCities?.data?.cities?.length > 0
                            ? allCities?.data?.cities.map((c_value, indx) => (
-                                <option key={indx} value={c_value}>
-                                   {c_value}
-                                </option>
-                             ))
+                              <option key={indx} value={c_value}>
+                                 {c_value}
+                              </option>
+                           ))
                            : null}
                      </Form.Control>
                   </Form.Group>
@@ -387,10 +608,10 @@ const PropertyModule = (props) => {
                         <option value="">Select Location</option>
                         {locationsData && locationsData.length
                            ? locationsData.map((_value, index) => (
-                                <option key={_value.pinCode} value={_value.location}>
-                                   {_value.location}
-                                </option>
-                             ))
+                              <option key={_value.pinCode} value={_value.location}>
+                                 {_value.location}
+                              </option>
+                           ))
                            : null}
                      </Form.Control>
                   </Form.Group>
@@ -406,10 +627,10 @@ const PropertyModule = (props) => {
                            <option value="">Select Property Type</option>
                            {propertyType.length
                               ? propertyType.map((_value, index) => (
-                                   <option key={index} value={_value}>
-                                      {_value}
-                                   </option>
-                                ))
+                                 <option key={index} value={_value}>
+                                    {_value}
+                                 </option>
+                              ))
                               : null}
                         </Form.Control>
                      </Form.Group>
@@ -428,10 +649,10 @@ const PropertyModule = (props) => {
                            <option value="">Select Status</option>
                            {statusArr.length
                               ? statusArr.map((_value, index) => (
-                                   <option key={index} value={_value}>
-                                      {_value}
-                                   </option>
-                                ))
+                                 <option key={index} value={_value}>
+                                    {_value}
+                                 </option>
+                              ))
                               : null}
                         </Form.Control>
                      </Form.Group>
@@ -444,44 +665,60 @@ const PropertyModule = (props) => {
                         varient="primary"
                         size="Small"
                         color="white"
-                        style={{height: "40px !important" }}
-                        onClick={() => {
+                        style={{ height: "40px !important" }}
+                        onClick={async () => {
+                           setCurrentPage(1)
+                           let type = null
+                           if (typeSelected === 'SMARTDOOR') {
+                              type = true
+                           } else if (typeSelected === 'NON SMARTDOOR') {
+                              type = false
+                           }
                            const regex = /([^,]+),\s*(\d{6})/;
                            const matches = p_location.match(regex);
-                           getAllProperties({
+                           await getAllProperties({
                               userId: userData.userid,
                               city: p_city ? p_city : "",
-                              pageSize: "",
-                              pageNo: "",
+                              pageSize: rowsPerPage,
+                              pageNo: 1,
                               zipcode: zipCode ? zipCode : "",
                               location: matches ? matches[1].trim() : "",
+                              searchString: filterText,
+                              smartLockProperty: type,
+                              propertyStatus: statusSelected,
                            });
+                           // setRecordSize(allPropertyData?.data?.propertyData?.length)
                         }}
                      />
                   </div>
                </div>
             </div>
-            <div className="propertiesTableWrapper">
+            <div className="propertiesTableWrapper" ref={tableRef} onScroll={handleScroll}>
                <DataTableComponent
-                  // onChangePage={ onChangePage }
-                  data={showProperty() && showData()}
+                  data={showData()}
                   columns={columns}
                   progressPending={allPropertyData.isLoading}
+                  progressComponent={ProgressComponent}
                   paginationComponent={PaginationComponent}
                   paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                  paginationPerPage={8}
+                  paginationPerPage={recordsPerPage}
+                  currentPage={currentPage}
+                  onChangePage={handlePageChange}
+                  onChangeRowsPerPage={handleRowsPerPageChange}
                   perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                   filterText={filterText}
                   subHeaderComponent={subHeaderComponentMemo}
                   persistTableHead
                   filterComponent={subHeaderComponentMemo}
+                  onRowClicked={onRowClicked}
                />
+               {/* {allPropertyData?.data?.propertyData?.length===0 ? null : <>{filteredItems}</>} */}
             </div>
-            {allPropertyData.isLoading ? (
+            {/* {allPropertyData.isLoading ? (
                <PaginationActionButton />
-            ) : allPropertyData.data.length ? null : (
+            ) : allPropertyData?.data?.propertyData?.length===0 ? null : (
                <PaginationActionButton />
-            )}
+            )} */}
          </div>
       </>
    );

@@ -697,6 +697,7 @@ const Transaction = (props) => {
                />
             }}
          />
+         <div style={{height : '35rem', overflow:'auto'}}>
 
          <div className="cardBox cardTractions">
             <Card className="cardWidth">
@@ -1220,6 +1221,7 @@ const Transaction = (props) => {
                   <TeamTablePaginationActionButton />
                </div>
             )}
+         </div>
          </div>
       </>
    );

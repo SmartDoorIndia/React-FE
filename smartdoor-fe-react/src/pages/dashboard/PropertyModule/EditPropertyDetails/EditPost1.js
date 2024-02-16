@@ -213,7 +213,7 @@ const EditPost1 = (props) => {
 
     return (
         <>
-            <div className="whiteBg">
+            <div className="whiteBg" style={{height:'31.5rem', overflowY:'auto'}}>
                 <Text
                     size="medium"
                     fontWeight="mediumbold"
@@ -1363,7 +1363,10 @@ const EditPost1 = (props) => {
                 </form>
                 <div className="d-flex mt-4">
                     <Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
-                        history.push('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid}) }} name="Cancel" /> &nbsp;
+                        history.replace('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid}) ;
+                        window.history.go(-1);
+
+                        }} name="Cancel" /> &nbsp;
                     <Buttons name="Next" onClick={() => handleValidate()} />
                 </div>
             </div>

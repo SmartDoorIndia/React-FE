@@ -26,6 +26,9 @@ export const ADMIN_ALL_ROLES = 'ADMIN_ALL_ROLES';
 // All cities Constants type
 export const ALL_CITIES = 'ALL_CITIES';
 
+// All cities Constants type with id
+export const ALL_CITIES_ID = 'ALL_CITIES_ID';
+
 // All Executives Constants type
 export const ALL_EXECUTIVES = 'ALL_EXECUTIVES';
 

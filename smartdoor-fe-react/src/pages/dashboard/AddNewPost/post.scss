@@ -263,6 +263,11 @@
 
 /*******Css start here************/
 .propertiesTableWrapper {
+    .rdt_TableBody {
+        max-height: 20rem;
+        overflow-y: visible;
+        overflow-x: hidden;
+    }
     .rdt_TableRow {
         .rdt_TableCell {
             text-align: center;

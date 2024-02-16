@@ -20,19 +20,19 @@ import Pagination from "../../../shared/DataTable/Pagination";
 import {  ToolTip } from "../../../common/helpers/Utils";
 import { TableLoader } from "../../../common/helpers/Loader";
 
-const PaginationComponent = (props) => <Pagination {...props} />;
-const ProgressComponent = <TableLoader />;
-const getModalActionData = (row) => {
-   return { userData: row};
-};
 
 const ManagePlan = (props) => {
    const history = useHistory();
-
+   
    const { allPlanData, getPlansForAdmin } = props;
-
+   
    // MODAL DATA STATE
    const [planData, setPlanData] = useState();
+   const PaginationComponent = (props) => <Pagination {...props} rowCount={allPlanData.data?.length} />;
+   const ProgressComponent = <TableLoader />;
+   const getModalActionData = (row) => {
+      return { userData: row};
+   };
 
    useEffect(() => {
       getPlansForAdmin();
@@ -124,7 +124,7 @@ const ManagePlan = (props) => {
 
    return (
       <>
-         <div className="tableBox mb-5">
+         <div className="tableBox ">
             <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
                <div className="text-nowrap mb-2">
                   <Text
@@ -149,16 +149,18 @@ const ManagePlan = (props) => {
                </div>
             </div>
 
-            <DataTableComponent
-               data={filteredItems}
-               columns={columns}
-               progressPending={allPlanData.isLoading}
-               paginationComponent={PaginationComponent}
-               perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-               paginationPerPage={8}
-               paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-               progressComponent={ProgressComponent}
-            />
+            <div className="planDetailTable">
+               <DataTableComponent
+                  data={filteredItems}
+                  columns={columns}
+                  progressPending={allPlanData.isLoading}
+                  paginationComponent={PaginationComponent}
+                  perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  paginationPerPage={8}
+                  paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  progressComponent={ProgressComponent}
+               />
+            </div>
          </div>
       </>
    );

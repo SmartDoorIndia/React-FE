@@ -42,6 +42,7 @@ const AutoCompleteInput = (props) => {
     onBlurInput,
     onSelectOption,
     cityLatLng,
+    cityName,
     ...rest
   } = props;
 
@@ -59,6 +60,7 @@ const AutoCompleteInput = (props) => {
 
   let options = {
     bounds: cityLatLng === null ? null : cityBounds,
+    // types:['(cities)'],
     componentRestrictions: { country: 'IN' },
     strictBounds: true,
     lang: 'en'
@@ -147,6 +149,7 @@ const AutoCompleteInput = (props) => {
         const circle = new google.maps.Circle({
           center: new google.maps.LatLng(center.lat, center.lng),
           radius: 15000,
+          language:['en']
         });
         autoComplete.setBounds(circle.getBounds());
 
@@ -272,7 +275,7 @@ const AutoCompleteInput = (props) => {
       <Form.Control
         type="text"
         id={ id }
-        autoComplete="off"
+        // autoComplete="off"
         autoFill="off"
         placeholder={ placeholder }
         value={ customValue }

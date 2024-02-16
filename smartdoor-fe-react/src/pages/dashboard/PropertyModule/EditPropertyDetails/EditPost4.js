@@ -85,7 +85,8 @@ const EditPost4 = (props) => {
 		requestBody.extras = data.extras?.join(', ')
 		console.log(requestBody)
 		await dispatch(addNewPost4(requestBody))
-		history.push('/admin/property/property-details', { propertyId: propertyData.smartdoorPropertyId, userId: userData.userid })
+		history.replace('/admin/property/property-details', { propertyId: propertyData.smartdoorPropertyId, userId: userData.userid })
+		window.history.go(-4);
 	}
 
 	return (
@@ -466,10 +467,11 @@ const EditPost4 = (props) => {
 				<br />
 				<div className="d-flex">
 					<Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
-                        history.push('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid}) }} name="Cancel" /> &nbsp;
+                        history.replace('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid});                        window.history.go(-4);
+					}} name="Cancel" /> &nbsp;
 					<Buttons name="Back" size="medium" onClick={() => {
-							history.push("/admin/property/upload-property-image", { propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails }); }} ></Buttons> &nbsp;
-					<Buttons size="medium" name="Next" onClick={() => { submitInfo() }} />
+							history.replace("/admin/property/upload-property-image", { propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails }); window.history.go(-1); }} ></Buttons> &nbsp;
+					<Buttons size="medium" name="Done" onClick={() => { submitInfo() }} />
 				</div>
 			</div>
 		</>

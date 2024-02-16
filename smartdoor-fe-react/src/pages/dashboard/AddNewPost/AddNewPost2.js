@@ -14,8 +14,6 @@ import AutoCompleteInput from "../../../shared/Inputs/AutoComplete";
 import { getSocietyByCity } from "../../../common/redux/actions/addNewPost.action";
 import { Autocomplete } from "devextreme-react/autocomplete";
 import "./post.scss"
-import { Map, Marker } from "google-maps-react";
-import MarkerIcon from "../../../assets/images/mapMarker-icon.png";
 
 const AddNewPost2 = (props) => {
     const location = useLocation();

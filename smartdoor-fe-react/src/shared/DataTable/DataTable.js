@@ -23,6 +23,8 @@ const DataTableComponent = ({
   sortIcon,
   progressComponent,
   striped,
+  currentPage,
+  rowsPerPage,
   ...rest
 }) => {
   
@@ -39,9 +41,11 @@ const DataTableComponent = ({
       paginationComponent={ paginationComponent }
       paginationRowsPerPageOptions={ paginationRowsPerPageOptions }
       paginationPerPage={ paginationPerPage }
+      // rowsPerPage = {rowsPerPage}
       customStyles={ customStyles }
       sortIcon={ sortIcon || DefaultSortIcon }
       progressComponent={ progressComponent || DefaultProgressComponent }
+      currentPage={currentPage}
       { ...rest }
     />
   );

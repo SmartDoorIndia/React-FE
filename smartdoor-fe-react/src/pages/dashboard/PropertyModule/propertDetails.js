@@ -26,6 +26,10 @@ import {
    remoteOTP,
    deletePropertyById,
    getPropertyPlanDetails,
+   uploadImage,
+   restorePropertyById,
+   getAllDeletedProperties,
+   getAllProperties,
 } from "../../../common/redux/actions";
 import MapComponent from "../../../shared/Map/MapComponent";
 import Loader from "../../../common/helpers/Loader";
@@ -55,6 +59,7 @@ import QrModal from "../../../shared/Modal/QrModal/QrModal";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Switch } from "@mui/material";
 import reviewIcon from "../../../assets/svg/reviewIcon.svg"
+import { getLocalStorage } from "../../../common/helpers/Utils";
 const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
 const PropertyDetails = (props) => {
@@ -64,6 +69,8 @@ const PropertyDetails = (props) => {
 
    const propertyId = props.location.state ? props.location.state.propertyId || "" : "";
    const userId = props.location.state ? props.location.state.userId || "" : "";
+   const menuName = props.location.state ? props.location.state.menuName || "" : "";
+   const isDeleted = props.location.state ? props.location.state.isDeleted : null;
    const [loading, setLoading] = useState(true);
    const [propertyData, setpropertyData] = useState({});
    // const [societyUserData, setSocietyUserData] = useState({})
@@ -93,6 +100,7 @@ const PropertyDetails = (props) => {
    const [currentPlanData, setCurrentPlanData] = useState({})
    const [upgradePlanData, setUpgradePlanData] = useState([])
    const [visitorReviewList, setVisitorReviewList] = useState([])
+   const userData = getLocalStorage("authData");
 
    const batteryStatusCensor = (censorBatteryStatus) => {
       if (censorBatteryStatus === 0) {
@@ -393,96 +401,179 @@ const PropertyDetails = (props) => {
 
 
    const fileUpload = (event) => {
-      if (event.target.files && event.target.files[0]) {
-         let reader = new FileReader();
-         reader.onload = (e) => {
-            console.log(e.target.result, "target.result");
-            // this.setState({ builderPropertyImg: e.target.result });
-         };
-         reader.readAsDataURL(event.target.files[0]);
-      }
-      console.log(event.target.files[0], "after upload files");
+      // if (event.target.files && event.target.files[0]) {
+      //    let reader = new FileReader();
+      //    reader.onload = (e) => {
+      //       console.log(e.target.result, "target.result");
+      //       // this.setState({ builderPropertyImg: e.target.result });
+      //    };
+      //    reader.readAsDataURL(event.target.files[0]);
+      // }
+      // console.log(event.target.files[0], "after upload files");
 
-      const imageData = {
-         propertyId: propertyId,
-         propertyDocs: [],
-         propertyImage: [
-            {
-               docId: null,
-               docName: "",
-               docURL: "",
-            },
-         ],
-      };
+      // const imageData = {
+      //    propertyId: propertyId,
+      //    propertyDocs: [],
+      //    propertyImage: [
+      //       {
+      //          docId: null,
+      //          docName: "",
+      //          docURL: "",
+      //       },
+      //    ],
+      // };
       // this.setState({ imageUrl: event.target.files[0] });
       console.log(event.target.files, "before s3 files");
       if (event.target.files.length > 0) {
-         setImageLoader(true);
-         ReactS3Client.uploadFile(event.target.files[0], event.target.files[0].name)
-            .then((data) => {
-               console.log("data", data);
-               const property_image = [];
-               property_image.push({
+         // setImageLoader(true);
+         // ReactS3Client.uploadFile(event.target.files[0], event.target.files[0].name)
+         //    .then((data) => {
+         //       console.log("data", data);
+         //       const property_image = [];
+         //       property_image.push({
+         //          docId: null,
+         //          docName: "",
+         //          docURL: data.location,
+         //       });
+         //       const image_data = {
+         //          ...imageData,
+         //          propertyDocs: [],
+         //          propertyImage: property_image,
+         //       };
+         //       // setImageData({})
+         //       addImage(
+         //          image_data
+         //          // ...imageData,
+         //          //  propertyId:propertyId,
+         //          //  propertyImage: [...propertyImage],
+         //          //  propertyImage:[
+         //          //   {...iZgeData.propertyImage,docURL: data.location}
+
+         //          // ],
+         //       )
+         //          .then((response) => {
+         //             setLoading(false);
+         //             if (response.data) {
+         //                if (response.data.resourceData) {
+         //                   setImageLoader(false);
+         //                   // setpropertyData(response.data.resourceData);
+         //                   // setOwnerId(response.data.resourceData.postedById)
+         //                   _getPropertyDetails();
+         //                }
+         //             }
+         //             // console.log('responseSocietyDetails', response);
+         //             // console.log('owner id', ownerId)
+         //          })
+         //          .catch((error) => {
+         //             setImageLoader(false);
+         //             setLoading(false);
+         //             console.log("error", error);
+         //          });
+         //       // addBuilderProject({ ...builderPropertyData, imageUrl: data.location })
+         //       //    .then((response) => {
+         //       //       if (response.data && response.data.status === 200) {
+         //       //          this.props.history.push("/admin/builder-property");
+         //       //       }
+         //       //    })
+         //       //    .finally(() => {
+         //       //       this.setState({ disableSave: false });
+         //       //    });
+         //    })
+         //    .catch((err) => {
+         //       // addBuilderProject({ ...builderPropertyData, imageUrl: "" })
+         //       //    .then((response) => {
+         //       //       if (response.data && response.data.status === 200) {
+         //       //          this.props.history.push("/admin/builder-property");
+         //       //       }
+         //       //    })
+         //       //    .finally(() => {
+         //       //       this.setState({ disableSave: false });
+         //       //    });
+         //    });
+         console.log(event.target.files[0], "end file");
+         if (event.target.files.length > 10) {
+            alert("Please select up to 10 files only.");
+            return;
+         }
+         
+         const imageData = {
+            propertyId: propertyId,
+            propertyDocs: [],
+            draft: false,
+            partial: false,
+            propertyImage: [
+               {
                   docId: null,
                   docName: "",
-                  docURL: data.location,
-               });
-               const image_data = {
-                  ...imageData,
-                  propertyDocs: [],
-                  propertyImage: property_image,
-               };
-               // setImageData({})
-               addImage(
-                  image_data
-                  // ...imageData,
-                  //  propertyId:propertyId,
-                  //  propertyImage: [...propertyImage],
-                  //  propertyImage:[
-                  //   {...iZgeData.propertyImage,docURL: data.location}
-
-                  // ],
-               )
-                  .then((response) => {
-                     setLoading(false);
-                     if (response.data) {
-                        if (response.data.resourceData) {
-                           setImageLoader(false);
-                           // setpropertyData(response.data.resourceData);
-                           // setOwnerId(response.data.resourceData.postedById)
-                           _getPropertyDetails();
-                        }
-                     }
-                     // console.log('responseSocietyDetails', response);
-                     // console.log('owner id', ownerId)
-                  })
-                  .catch((error) => {
-                     setImageLoader(false);
-                     setLoading(false);
-                     console.log("error", error);
-                  });
-               // addBuilderProject({ ...builderPropertyData, imageUrl: data.location })
-               //    .then((response) => {
-               //       if (response.data && response.data.status === 200) {
-               //          this.props.history.push("/admin/builder-property");
-               //       }
-               //    })
-               //    .finally(() => {
-               //       this.setState({ disableSave: false });
-               //    });
+                  docURL: "",
+               },
+            ],
+         };
+         if (event.target.files.length > 0) {
+            setImageLoader(true);
+            let formData = new FormData();
+            const maxSizeInBytes = 15 * 1024 * 1024; // 10MB
+            Array.from(event.target.files).map((file) => {
+               if(file.size > maxSizeInBytes) {
+                  showErrorToast('File must be less than 15MB...')
+                  return;
+               }
             })
-            .catch((err) => {
-               // addBuilderProject({ ...builderPropertyData, imageUrl: "" })
-               //    .then((response) => {
-               //       if (response.data && response.data.status === 200) {
-               //          this.props.history.push("/admin/builder-property");
-               //       }
-               //    })
-               //    .finally(() => {
-               //       this.setState({ disableSave: false });
-               //    });
-            });
-         console.log(event.target.files[0], "end file");
+            console.log(event.target.files)
+            let fileList = []
+            for (let i = 0; i < event.target.files.length; i++) {
+               fileList.push(event.target.files[i])
+               formData.append('file', event.target.files[i]);
+            }
+            console.log(fileList)
+            formData.append('id', propertyData.smartdoorPropertyId);
+            formData.append('enumType', 'PROPERTY_IMAGES');
+            uploadImage(formData)
+               .then((response) => {
+                  setImageLoader(true);
+                  console.log(response)
+                  if(response.data.status === 200) {
+                     const property_image = [];
+                     for(let i = 0; i < response.data.resourceData.length; i++) {
+                        property_image.push({
+                           docId: null,
+                           docName: "",
+                           docURL: response.data.resourceData[i],
+                        });
+                     }
+                     const image_data = {
+                        ...imageData,
+                        propertyDocs: [],
+                        propertyImage: property_image,
+                     };
+                     addImage(
+                        image_data
+                     )
+                     .then((response) => {
+                        setLoading(false);
+                        setImageLoader(false);
+                        if (response.data) {
+                           if (response.data.resourceData) {
+                              setImageLoader(false);
+                              _getPropertyDetails();
+                           }
+                        }
+                     })
+                     .catch((error) => {
+                        setImageLoader(false);
+                        setLoading(false);
+                        console.log("error", error);
+                     });
+                     showSuccessToast(response.data.customMessage)
+                  }
+               })
+               .catch((error) => {
+                  setImageLoader(false);
+                  setLoading(false);
+                  console.log("error", error);
+               });
+            // console.log(event.target.files[0], "end file");
+         }
       }
    };
 
@@ -594,7 +685,7 @@ const PropertyDetails = (props) => {
       }
       const response = await remoteUnlock(map);
       console.log(response)
-      if(response?.data?.resourceData?.status === 200) {
+      if(response?.status === 200) {
          setRemoteUnlockresponse(response.data.resourceData)
          remoteUnlockShow()
       } else {
@@ -624,7 +715,7 @@ const PropertyDetails = (props) => {
       }
       const response = await remoteOTP(map);
       console.log(response)
-      if(response?.data?.resourceData?.status === 200) {
+      if(response?.status === 200) {
          setRemoteOTPresponse(response.data.resourceData)
          remoteOTPShow()
       } else {
@@ -637,14 +728,65 @@ const PropertyDetails = (props) => {
       const response = await deletePropertyById({ propertyId })
       if (response?.data?.status === 200) {
          console.log(response)
+         await getAllProperties({
+            city:'',
+            zipcode :'',
+            location:'',
+            pageSize: 8,
+            pageNo: 1,
+            userId: userData.userid,
+            searchString: '',
+            smartLockProperty: null,
+            propertyStatus: '',
+         });
          showSuccessToast("Property deleted successfully");
-         history.push("/admin/property")
+         if(menuName === 'NonSDProperties' ) {
+            history.push("/admin/nonsdproperty")
+         }
+         if(menuName === 'Properties' ) {
+            history.push("/admin/property")
+         }
+         window.location.reload()
+      }else {
+         showErrorToast("Property deletion failed");
+      }
+   }
+
+   const handleRestore = async() => {
+      const response = await restorePropertyById({ propertyId })
+      if (response?.data?.status === 200) {
+         console.log(response)
+         getAllDeletedProperties({
+            city : '',
+            zipcode : '',
+            location : '',
+            pageSize: 8,
+            pageNo: 1,
+            userId: userData.userid,
+            searchString:'',
+         });
+         showSuccessToast("Property restored successfully");
+         if(menuName === 'DeletedProperties' ) {
+            history.push("/admin/deleted-unlisted-property")
+         }
+         window.location.reload()
+      } else {
+         showErrorToast("Property restored failed");
       }
    }
    return (
       <>
          {Object.keys(propertyData).length > 0 ? (
-            <div>
+            <div className="container" style={{height: '85vh', overflowY: 'auto'}}>
+               {menuName === 'Properties' ? 
+               <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => {history.push('/admin/property')}}></Buttons>
+               : <></>}
+               {menuName === 'NonSDProperties' ? 
+               <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => {history.push('/admin/nonsdproperty')}}></Buttons>
+               : <></>}
+               {menuName === 'DeletedProperties' ? 
+               <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => {history.push('/admin/deleted-unlisted-property')}}></Buttons>
+               : <></>}
                <Row>
                   <Col md={8}>
                      {propertyData.propertyImageResp.length > 0 ? (
@@ -914,7 +1056,7 @@ const PropertyDetails = (props) => {
                                  className=" mb-2"
                                  onClick={() => { history.push('/admin/property/edit-basic-details', { propertyData: propertyData }) }} /> &nbsp; &nbsp;
 
-                              {propertyData?.smartLockProperty === false ?
+                              {isDeleted === false && propertyData?.smartLockProperty === false && userData.roleName === 'SUPER ADMIN' ?
                                  <>
                                     <Buttons
                                        style={{ float: 'left' }}
@@ -923,8 +1065,21 @@ const PropertyDetails = (props) => {
                                        size="xSmall"
                                        color="white"
                                        className=" mb-2 bg-danger"
-                                       onClick={() => { handleDelete() }} />
+                                       onClick={() => { handleDelete() }} /> &nbsp; &nbsp;
                                  </> : <></>}
+                           </div>
+                           <div>
+                              { isDeleted === true && propertyData?.smartLockProperty === false && userData.roleName === 'SUPER ADMIN' ?
+                              <>
+                                 <Buttons
+                                    style={{ float: 'left' }}
+                                    name="Restore"
+                                    varient="primary"
+                                    size="xSmall"
+                                    color="white"
+                                    className=" mb-2 bg-danger"
+                                    onClick={() => { handleRestore() }} />
+                              </> : <></>}
                            </div>
 
                            <Text

@@ -472,6 +472,8 @@ const FinanceDashboard = (props) => {
       />
       <Route path="/admin/sales/user-details" name="User Details" component={ModalModule} />
 
+      <div style={{height : '35rem', overflow:'auto'}}>
+
       <div className="cardBox cardTractions">
         {/* <Card className="cardWidth">
           <Card.Body>
@@ -575,6 +577,7 @@ const FinanceDashboard = (props) => {
           handleFilterChange={_filterReq}
           pagination={false}
         />
+      </div>
       </div>
 
       {/* <ListingDataTable

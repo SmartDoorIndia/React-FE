@@ -137,7 +137,7 @@ const EditPost2 = (props) => {
         console.log(e?.location.split(', ')[0])
         cityArray.forEach(element => {
             let city = e?.location.split(', ')[0]
-            if (element === city) {
+            if (element === city.trim()) {
                 setData({
                     ...data, city: e.location, cityLat: e.latlng?.lat, cityLong: e.latlng?.lng,
                     state: e.location.split(', ')[1], country: e.location.split(', ')[2]
@@ -159,13 +159,13 @@ const EditPost2 = (props) => {
     const handleSelectLocalityOption = (e) => {
         let matchFound = false;
         let localityArr = e.location?.split(', ')
-        console.log(localityArr)
+        console.log(e)
         error.locality =""
         localityArr.forEach(element => {
-            if(element === data?.country) {
+            if(element === data?.city) {
                 setData({
                     ...data, latitude: e?.latlng?.lat, longitude: e?.latlng?.lng, locality: e.location,
-                    zipCode: e?.data?.address_components[e.data.address_components?.length - 1]?.long_name
+                    zipCode: e?.data?.address_components[e?.data?.address_components?.length - 1]?.long_name
                 })
                 matchFound = true
                 return null;
@@ -296,6 +296,7 @@ const EditPost2 = (props) => {
                             cityLatLng={{lat : data.cityLat, lng: data.cityLong}}
                             customValue={data?.locality}
                             placeholder="Enter Locality"
+                            cityName={data.city}
                             disabled={propertyData?.status === 'PUBLISHED' && propertyData.smartLockProperty === true ? true : false}
                             id="PropertyLocalityAutoComplete"
                             onSelectOption={(e) => { handleSelectLocalityOption(e); console.log(e) }}
@@ -416,8 +417,9 @@ const EditPost2 = (props) => {
                 {/* </form> */}
                 <div className="d-flex">
                     <Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
-                        history.push('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid}) }} name="Cancel" /> &nbsp;
-                    <Buttons name="Back" onClick={() => { history.push('/admin/property/edit-basic-details', {propertyData : propertyData, basicDetails : basicDetails}) }}></Buttons> &nbsp;
+                        history.replace('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid});                        window.history.go(-2);
+                    }} name="Cancel" /> &nbsp;
+                    <Buttons name="Back" onClick={() => { history.replace('/admin/property/edit-basic-details', {propertyData : propertyData, basicDetails : basicDetails}); window.history.go(-1); }}></Buttons> &nbsp;
                     <Buttons name="Next" onClick={() => handleValidate()} />
                 </div>
             </div>

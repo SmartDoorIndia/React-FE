@@ -6,8 +6,8 @@ import Text from '../../../shared/Text/Text';
 import { Link } from 'react-router-dom';
 import contentIco from '../../../assets/images/content-ico.svg';
 import { getAllConsumers } from '../../../common/redux/actions';
-import { connect } from 'react-redux';
-import { formateDate, ToolTip, handleStatusElement } from '../../../common/helpers/Utils';
+import { connect, useSelector } from 'react-redux';
+import { formateDate, ToolTip, handleStatusElement, getLocalStorage } from '../../../common/helpers/Utils';
 import SearchInput from '../../../shared/Inputs/SearchInput/SearchInput';
 import Form from 'react-bootstrap/Form';
 import DataTableComponent from "../../../shared/DataTable/DataTable";
@@ -15,24 +15,70 @@ import Pagination from '../../../shared/DataTable/Pagination';
 import CONSTANTS_STATUS from '../../../common/helpers/ConstantsStatus';
 import { Col, Modal } from 'react-bootstrap';
 import ListingDataTable from '../../../shared/DataTable/ListingDataTable';
+import Buttons from '../../../shared/Buttons/Buttons';
 
 const ConsumerManagement = (props) => {
   const { getAllConsumers, getAllConsumerUsersData } = props;
 
   const [filterText, setFilterText] = React.useState('');
   const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
-
+  const data = useSelector(state => state.getAllConsumerUsersData.data);
   //state: for managing the status filter.
   const statusArr = CONSTANTS_STATUS.ConsumerStatusArr;
   //["PENDING" , "COMPLETED"];
   const [statusSelected, setStatusSelected] = useState('');
 
-  const [selectedCity, setSelectedCity] = useState('');
-
+  // const [selectedCity, setSelectedCity] = useState('');
+  const userData = getLocalStorage('authData')
   const kycstatus = (Kyc_value) => {
     const status = Kyc_value ? 'COMPLETED' : 'PENDING';
     return handleStatusElement(status);
   };
+
+  const PaginationActionButton = () => (
+    <div className="d-flex justify-content-center tableBottom">
+      {/* <Link to="/admin/property/new-property"><Buttons name="Add New Property" varient="primary" type="submit" size="Small" color="white" /></Link> */}
+    </div>
+  );
+  const [currentPage, setCurrentPage] = useState(data.length !== 0 ? getAllConsumerUsersData?.data?.currentPage : 1);
+  const [rowsPerPage, setRowsPerPage] = useState(data.length !== 0 ? getAllConsumerUsersData?.data?.rowsPerPage : 8);
+  const recordSize = (getAllConsumerUsersData?.data?.records);
+  let recordsPerPage = 0
+  recordsPerPage = getAllConsumerUsersData?.data?.rowsPerPage;
+
+  const handlePageChange = (newPage) => {
+    // Handle the page change in the parent component
+    setCurrentPage(Number(newPage));
+    getAllConsumers({
+      pageSize: rowsPerPage,
+      pageNo: newPage,
+      userId: userData.userid,
+      searchString: filterText,
+      kycStatus: statusSelected,
+    });
+  };
+
+  const handleRowsPerPageChange = async (newRowsPerPage) => {
+    // console.log(`Rows per page changed to: ${rowsPerPage}`);
+    setRowsPerPage(Number(newRowsPerPage))
+    getAllConsumers({
+      pageSize: Number(newRowsPerPage),
+      pageNo: currentPage,
+      userId: userData.userid,
+      searchString: filterText,
+      kycStatus: statusSelected,
+    });
+  };
+
+  const PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
+    <Pagination {...props}
+      rowCount={recordSize}
+      rowsPerPage={rowsPerPage}
+      onChangeRowsPerPage={handleRowsPerPageChange}
+      currentPage={currentPage}
+      onChangePage={handlePageChange}
+      PaginationActionButton={PaginationActionButton} />
+  );
 
   const columns = [
     {
@@ -118,6 +164,7 @@ const ConsumerManagement = (props) => {
               <Link
                 to={{
                   pathname: `/admin/consumer-management/consumer-details/${row.id}`,
+                  state: { selectedConsumer: row }
                 }}>
                 <Image name="contentIco" src={contentIco} />
               </Link>
@@ -132,10 +179,10 @@ const ConsumerManagement = (props) => {
       sortable: false,
       center: true,
       cell: (row) => (
-        <div className="action" onClick={() => {setConsumerInfoModal(true); setSelectedConsumer(row)}}>
+        <div className="action" onClick={() => { setConsumerInfoModal(true); setSelectedConsumer(row) }}>
           <ToolTip position="left" name="View KYC Details">
             <span >
-                <Image name="contentIco" src={contentIco} alt={"No image available"}  />
+              <Image name="contentIco" src={contentIco} alt={"No image available"} />
             </span>
           </ToolTip>
         </div>
@@ -147,10 +194,17 @@ const ConsumerManagement = (props) => {
   const [selectedConsumer, setSelectedConsumer] = useState({})
 
   useEffect(() => {
-    getAllConsumers({ city: '', records: '', pageNumber: '' });
+
+    if(data?.length === 0) {
+      getAllConsumers({ userId: userData.userid,
+        pageSize: rowsPerPage,
+        pageNo: 1,
+        searchString: '',
+        kycStatus: null, });
+    }
   }, [getAllConsumers]);
 
-  const PaginationComponent = (props) => (<Pagination {...props} />);
+  // const PaginationComponent = (props) => (<Pagination {...props} />);
 
   const subHeaderComponentMemo = React.useMemo(() => {
     const handleClear = () => {
@@ -168,24 +222,27 @@ const ConsumerManagement = (props) => {
   const showData = (status_value) => {
     let status = status_value || statusSelected;
     let filteredItems = [];
-    filteredItems = getAllConsumerUsersData.data.length ?
-      getAllConsumerUsersData.data.filter(item => {
-        return item?.id == filterText ||
-          item?.contactNumber?.includes(filterText) ||
-          item?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
-          item?.propertyCount == filterText ||
-          item?.userType?.toLowerCase().includes(filterText.toLowerCase());
-        }) : [];
-    if (status && filteredItems.length) {
-      filteredItems = filteredItems.filter(item => {
-        if(status === 'COMPLETED'){
-          return item.kycverified === true
-        } 
-        if(status === 'PENDING') {          
-          return item.kycverified === false
-        }
-      })
-    }
+    filteredItems = getAllConsumerUsersData?.data?.consumersData?.length ?
+      getAllConsumerUsersData.data.consumersData
+      // .filter(item => {
+      //   return item?.id == filterText ||
+      //     item?.contactNumber?.includes(filterText) ||
+      //     item?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
+      //     item?.propertyCount == filterText ||
+      //     item?.userType?.toLowerCase().includes(filterText.toLowerCase());
+      // })
+      : [];
+    console.log(status_value)
+    // if (status && filteredItems.length) {
+    //   filteredItems = filteredItems.filter(item => {
+    //     if (status === 'COMPLETED') {
+    //       return item.kycverified === true
+    //     }
+    //     if (status === 'PENDING') {
+    //       return item.kycverified === false
+    //     }
+    //   })
+    // }
     return filteredItems;
   }
 
@@ -231,6 +288,34 @@ const ConsumerManagement = (props) => {
                 </Form.Control>
               </Form.Group>
               : ''}
+            <div className="ml-3">
+              <Buttons
+                name="Search"
+                varient="primary"
+                size="Small"
+                color="white"
+                style={{ height: "40px !important" }}
+                onClick={async () => {
+                  setCurrentPage(1)
+                  let type = null
+                  if (statusSelected === 'COMPLETED') {
+                    type = true
+                  } else if (statusSelected === 'PENDING') {
+                    type = false
+                  } else {
+                    type = null
+                  }
+                  await getAllConsumers({
+                    userId: userData.userid,
+                    pageSize: rowsPerPage,
+                    pageNo: 1,
+                    searchString: filterText,
+                    kycStatus: type,
+                  });
+                  // setRecordSize(allPropertyData?.data?.propertyData?.length)
+                }}
+              />
+            </div>
           </div>
         </div>
         <div className='consumersTableWrapper'>
@@ -246,130 +331,130 @@ const ConsumerManagement = (props) => {
         </div>
       </div>
 
-      <Modal show={ consumerInfoModal } onHide={() => {setConsumerInfoModal(false)} } centered style={{backgroundImage:'unset'}}>
-          <Modal.Header style={{justifyContent:'center'}}>
-            <Text
-              size="regular"
-              fontWeight="bold"
-              color="secondryColor"
-              className="text-center"
-              text="Consumer Details" />
-          </Modal.Header>
-          <Modal.Body>
-            <div className='d-flex'>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text="Karza name :" />
-              </Col>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text={selectedConsumer.karzaName === null ? "-" : selectedConsumer.karzaName} />
-              </Col>
-            </div>
-            <div className='d-flex'>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text="Gender :" />
-              </Col>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text={selectedConsumer.gender === null ? '-' : selectedConsumer.gender} />
-              </Col>
-
-            </div>
-            <div className='d-flex'>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text="Date Of Birth :" />
-              </Col>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text={selectedConsumer.dob === null ? "-" : selectedConsumer.dob} />
-              </Col>
-
-            </div>
-            <div className='d-flex'>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text="Email :" />
-              </Col>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text={selectedConsumer.email === null ? "-" : selectedConsumer.email} />
-              </Col>
-
-            </div>
-            <div className='d-flex'>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text="Address :" />
-              </Col>
-              <Col lg="4">
-                <Text
-                  size="regular"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-start"
-                  text={selectedConsumer.address === null ? "-" : selectedConsumer.address} />
-              </Col>
-
-            </div>
-            <div>
+      <Modal show={consumerInfoModal} onHide={() => { setConsumerInfoModal(false) }} centered style={{ backgroundImage: 'unset' }}>
+        <Modal.Header style={{ justifyContent: 'center' }}>
+          <Text
+            size="regular"
+            fontWeight="bold"
+            color="secondryColor"
+            className="text-center"
+            text="Consumer Details" />
+        </Modal.Header>
+        <Modal.Body>
+          <div className='d-flex'>
+            <Col lg="4">
               <Text
                 size="regular"
                 fontWeight=""
                 color="secondryColor"
-                className="text-center mt-3"
-                text="Aadhar Image" />
-              {selectedConsumer.kycDetail !== null ?
-              <> 
+                className="text-start"
+                text="Karza name :" />
+            </Col>
+            <Col lg="4">
+              <Text
+                size="regular"
+                fontWeight=""
+                color="secondryColor"
+                className="text-start"
+                text={selectedConsumer.karzaName === null ? "-" : selectedConsumer.karzaName} />
+            </Col>
+          </div>
+          <div className='d-flex'>
+            <Col lg="4">
+              <Text
+                size="regular"
+                fontWeight=""
+                color="secondryColor"
+                className="text-start"
+                text="Gender :" />
+            </Col>
+            <Col lg="4">
+              <Text
+                size="regular"
+                fontWeight=""
+                color="secondryColor"
+                className="text-start"
+                text={selectedConsumer.gender === null ? '-' : selectedConsumer.gender} />
+            </Col>
+
+          </div>
+          <div className='d-flex'>
+            <Col lg="4">
+              <Text
+                size="regular"
+                fontWeight=""
+                color="secondryColor"
+                className="text-start"
+                text="Date Of Birth :" />
+            </Col>
+            <Col lg="4">
+              <Text
+                size="regular"
+                fontWeight=""
+                color="secondryColor"
+                className="text-start"
+                text={selectedConsumer.dob === null ? "-" : selectedConsumer.dob} />
+            </Col>
+
+          </div>
+          <div className='d-flex'>
+            <Col lg="4">
+              <Text
+                size="regular"
+                fontWeight=""
+                color="secondryColor"
+                className="text-start"
+                text="Email :" />
+            </Col>
+            <Col lg="4">
+              <Text
+                size="regular"
+                fontWeight=""
+                color="secondryColor"
+                className="text-start"
+                text={selectedConsumer.email === null ? "-" : selectedConsumer.email} />
+            </Col>
+
+          </div>
+          <div className='d-flex'>
+            <Col lg="4">
+              <Text
+                size="regular"
+                fontWeight=""
+                color="secondryColor"
+                className="text-start"
+                text="Address :" />
+            </Col>
+            <Col lg="4">
+              <Text
+                size="regular"
+                fontWeight=""
+                color="secondryColor"
+                className="text-start"
+                text={selectedConsumer.address === null ? "-" : selectedConsumer.address} />
+            </Col>
+
+          </div>
+          <div>
+            <Text
+              size="regular"
+              fontWeight=""
+              color="secondryColor"
+              className="text-center mt-3"
+              text="Aadhar Image" />
+            {selectedConsumer.kycDetail !== null ?
+              <>
                 <img src={selectedConsumer.kycDetail}></img>
-              </> : 
-                <Text
-                  size="20px"
-                  fontWeight=""
-                  color="secondryColor"
-                  className="text-center mt-3"
-                  text="KYC Details not available!" />
-              }
-            </div>
-          </Modal.Body>
+              </> :
+              <Text
+                size="20px"
+                fontWeight=""
+                color="secondryColor"
+                className="text-center mt-3"
+                text="KYC Details not available!" />
+            }
+          </div>
+        </Modal.Body>
       </Modal>
     </>
   );

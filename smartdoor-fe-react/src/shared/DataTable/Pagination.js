@@ -76,7 +76,7 @@ const SelectWrapper = styled.div`
 const defaultComponentOptions = {
   rowsPerPageText: 'Rows per page:',
   rangeSeparatorText: 'of',
-  noRowsPerPage: false,
+  noRowsPerPage: true,
   selectAllRowsItem: false,
   selectAllRowsItemText: 'All',
 };

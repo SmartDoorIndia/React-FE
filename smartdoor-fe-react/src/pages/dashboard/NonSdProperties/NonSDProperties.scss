@@ -151,3 +151,18 @@
              margin-right:10px;
          }
      }
+
+     .NonSDPropertiesTable {
+        .rdt_TableBody {
+            max-height: calc(50vh - 20px);
+            height: 50vh;
+            overflow-y: visible;
+            overflow-x: hidden;
+        }
+        .rdt_TableRow {
+            min-height: auto;
+            .rdt_TableCell {
+                text-align: center;
+            }
+        }
+    }

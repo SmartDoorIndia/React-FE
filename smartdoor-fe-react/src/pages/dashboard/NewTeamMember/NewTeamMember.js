@@ -13,11 +13,13 @@ import {
    addNewTeamMember,
    getAllRoles,
    getAllCity,
+   getAllCityWithId,
    getLocationByCity,
    getUserLocationByCity,
-   getExecutivesWrtRoleLocation
+   getExecutivesWrtRoleLocation,
+   setworkCityRequest
 } from "../../../common/redux/actions";
-import { showErrorToast } from "../../../common/helpers/Utils";
+import { showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
 import { validateNewTeamMember } from "../../../common/validations";
 import AutoCompleteInput from "../../../shared/Inputs/AutoComplete";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
@@ -45,6 +47,8 @@ class NewTeamMemberPage extends Component {
          _gPlaceLocation: "",
          cityLatLong: "",
          allCities: [],
+         cityNameList:[],
+         allCitiesWithId: [],
          allLocationsByCity: [],
          cityLocations: [],
          locationExecutiveListing: [],
@@ -59,7 +63,25 @@ class NewTeamMemberPage extends Component {
 
    handleValidate = () => {
       // event.preventDefault();
+      let cityIds = [];
+
+// Iterate over the city array
+for (let i = 0; i < this.state.city.length; i++) {
+    // Find the corresponding city object in allCitiesWithId
+    const cityObject = this.state.allCitiesWithId.filter(city => city.cityName === this.state.city[i]);
+    
+    // If a city object with the current city name is found
+    console.log(cityObject)
+    if (cityObject) {
+        // Push the cityId into the cityIds array
+        cityIds.push(cityObject.cityId);
+    }
+}
+
+// Update the state outside of the loop
+this.setState({ cityNameList: cityIds });
       let validate = validateNewTeamMember(this.state);
+      console.log(validate)
       this.setState({ error: validate.errors });
       if (validate.isValid) {
          this.handleSubmit();
@@ -68,7 +90,8 @@ class NewTeamMemberPage extends Component {
 
    componentDidMount() {
       this.props.getAllRoles({ rollId: this.props.module});
-      this.props.getAllCity();
+      // this.props.getAllCity();
+      this.props.getAllCityWithId();
    }
 
    changeHandler = (e) => {
@@ -88,6 +111,7 @@ class NewTeamMemberPage extends Component {
          post,
          alternatePhoneNumber,
          city,
+         cityNameList,
          businessLocality,
          latitude,
          longitude,
@@ -116,7 +140,15 @@ class NewTeamMemberPage extends Component {
             if (response.data && response.data.status === 200) {
                this.setState({handleSubmit:false})
                this.setState({disableSubmit:false})
-               this.props.history.goBack();
+               console.log(response)
+               console.log(this.state.city)
+               setworkCityRequest({userid : response?.data?.resourceData, cityIdList: this.state.cityNameList})
+               .then((response) => {
+                  if(response.status === 200) {
+                     showSuccessToast("City assigned successfully...")
+                     this.props.history.goBack();
+                  }
+               })
             }
             if (response.data && response.data.status === 409) {
                this.setState({handleSubmit:false})
@@ -165,6 +197,7 @@ class NewTeamMemberPage extends Component {
          title: { formTitle, buttonText },
          allAdminRoles,
          allCities,
+         allCitiesWithId,
          allExecutives
       } = this.props;
 
@@ -203,8 +236,8 @@ class NewTeamMemberPage extends Component {
             cell: ({ noOfExecutives }) => (<span>{noOfExecutives || '0'}</span>),
          },
       ];
-console.log(this.state.post,"pppppppppppppppppp")
-console.log(this.state.allLocationsByCity,"all location by city")
+// console.log(this.state.post,"pppppppppppppppppp")
+// console.log(this.state.allLocationsByCity,"all location by city")
       return (
          <>
             <div style={{ height: "5%" }}></div>
@@ -275,40 +308,43 @@ console.log(this.state.allLocationsByCity,"all location by city")
                         <Form.Label style={{ zIndex: "999999" }}>City</Form.Label>
                         <div className="dropdown-location">
 
-                          {allCities?.data?.cities?.length ?  
+                          {allCitiesWithId?.data?.length ?  
                         <DropdownMultiselect
-                           optionLabel={'city'}
-                           optionKey="id"
-                           options={allCities.data.cities}
+                           optionLabel={'cityName'}
+                           optionKey="cityName"
+                           options={allCitiesWithId.data}
                            // options={["Gurugram", "Faridabad", "New Delhi"]}
                            selected={location}
                            placeholder="Select "
                            // selectDeselectLabel={!cityLocations.length ? 'Select All' : 'Deselect All'}
                            buttonClass="btn-transperant mt-0 dropdown_multiselect"
-                           handleOnChange={(selected) => {
-                              this.setState({ city: selected, allLocationsByCity: [], location: [], allLocationLoader:true });
+                           handleOnChange={(selectedOptions) => {
+                              this.setState({ city: selectedOptions, allLocationsByCity: [], location: [], allLocationLoader:true });
+                              console.log(selectedOptions)
+                              
+                              let selectedKeys = selectedOptions.map(option => option.cityId);
+                              console.log(selectedKeys)
+                           // this.props
+                           //    .getUserLocationByCity({ cities: selected })
+                           //    .then((res) => {
+                           //       if (res.data && res.data.status === 200) {
+                           //          const locationsByCity = res.data.resourceData.locations.map(loc => {
 
-                           this.props
-                              .getUserLocationByCity({ cities: selected })
-                              .then((res) => {
-                                 if (res.data && res.data.status === 200) {
-                                    const locationsByCity = res.data.resourceData.locations.map(loc => {
-
-                                       return { ...loc, location: `${loc.location} ,${loc.pinCode}` }
-                                    })
-                                    console.log(locationsByCity,"location by city")
-                                    this.setState({
-                                       allLocationsByCity: locationsByCity,
-                                       allLocationLoader: false
-                                    },()=>{console.log(this.state.allLocationsByCity,"all location after api")});
-                                 }
-                              })
-                              .catch((err) => console.log("err:", err));
-                              if (post.length && selected.length) {
-                                 this.props.getExecutivesWrtRoleLocation({ role: Number(post), page: 1, size: '', city: selected })
-                                    .then(res => this.setState({ showList: true }))
-                                    .catch(err => console.log("err"))
-                              }
+                           //             return { ...loc, location: `${loc.location} ,${loc.pinCode}` }
+                           //          })
+                           //          console.log(locationsByCity,"location by city")
+                           //          this.setState({
+                           //             allLocationsByCity: locationsByCity,
+                           //             allLocationLoader: false
+                           //          },()=>{console.log(this.state.allLocationsByCity,"all location after api")});
+                           //       }
+                           //    })
+                           //    .catch((err) => console.log("err:", err));
+                           //    if (post.length && selected.length) {
+                           //       this.props.getExecutivesWrtRoleLocation({ role: Number(post), page: 1, size: '', city: selected })
+                           //          .then(res => this.setState({ showList: true }))
+                           //          .catch(err => console.log("err"))
+                           //    }
 
                            }}
                         />
@@ -327,7 +363,7 @@ console.log(this.state.allLocationsByCity,"all location by city")
                        ) : null}
                      </Row>
                      <Row>
-                        {!(this.state.post==='3' || this.state.post==='7' || this.state.post==='8' || this.state.post==='10' || this.state.post==='13' || this.state.post==='14' || this.state.post==='16' || this.state.post==="" || this.state.post === '1') ? 
+                        {/* {!(this.state.post==='3' || this.state.post==='7' || this.state.post==='8' || this.state.post==='10' || this.state.post==='13' || this.state.post==='14' || this.state.post==='16' || this.state.post==="" || this.state.post === '1') ? 
                         
                            <Col lg="4">
                               {!this.state.allLocationLoader ? 
@@ -365,7 +401,7 @@ console.log(this.state.allLocationsByCity,"all location by city")
                               />
                            </Col>
                        
-                     : null }
+                     : null } */}
                         <Col lg="4">
                            <Form.Group>
                               <Form.Label>Date of Birth</Form.Label>
@@ -498,8 +534,8 @@ console.log(this.state.allLocationsByCity,"all location by city")
                                  }}
                               >
                                  <option value="">Select City</option>
-                                 {allCities?.data?.cities?.length
-                                    ? allCities?.data?.cities?.map((data, index) => (
+                                 {allCitiesWithId?.data?.cities?.length
+                                    ? allCitiesWithId?.data?.cities?.map((data, index) => (
                                        <option key={index} value={data}>
                                           {data}
                                        </option>
@@ -522,9 +558,10 @@ console.log(this.state.allLocationsByCity,"all location by city")
    }
 }
 
-const mapStateToProps = ({ allAdminRoles, allCities, allLocationsByCity, allExecutives }) => ({
+const mapStateToProps = ({ allAdminRoles, allCities, allCitiesWithId, allLocationsByCity, allExecutives }) => ({
    allAdminRoles,
    allCities,
+   allCitiesWithId,
    allLocationsByCity,
    getUserLocationByCity,
    allExecutives,
@@ -533,6 +570,7 @@ const mapStateToProps = ({ allAdminRoles, allCities, allLocationsByCity, allExec
 const actions = {
    getAllRoles,
    getAllCity,
+   getAllCityWithId,
    getLocationByCity,
    getExecutivesWrtRoleLocation,
    getUserLocationByCity

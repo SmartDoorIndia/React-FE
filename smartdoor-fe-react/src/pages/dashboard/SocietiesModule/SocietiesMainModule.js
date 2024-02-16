@@ -71,7 +71,7 @@ const SocietiesModule = (props) => {
 
   return (
     <>
-      <div className="tableBox mb-5">
+      <div className="tableBox">
         <div className="d-flex justify-content-between align-items-center tableHeading">
       <div>
         <Text size="regular" fontWeight="mediumbold" color="secondryColor" text="Societies on Smartdoor" />

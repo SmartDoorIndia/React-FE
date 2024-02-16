@@ -136,6 +136,10 @@
 .consumersTableWrapper {
     .tableBox {
         .rdt_TableBody {
+            max-height: calc(50vh - 20px);
+            height: 50vh;
+            overflow-y: visible;
+            overflow-x: hidden;
             .rdt_TableRow {
                 .rdt_TableCell {
                     text-align: center;

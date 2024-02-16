@@ -54,6 +54,20 @@ export const allCities = (state = { data: [], isLoading: false }, action) => {
   });
 };
 
+export const allCitiesWithId = (state = { data: [], isLoading: false }, action) => {
+  return produce(state, (draft) => {
+    switch (action.type) {
+      case Actions.ALL_CITIES_ID:
+        draft.data = action.data;
+        draft.isLoading = false;
+        return draft;
+
+      default:
+        return state;
+    }
+  });
+};
+
 // Dispatch Function to set the admin roles list.
 export const allLocationsByCity = (state = { data: [], isLoading: false }, action) => {
   return produce(state, (draft) => {

@@ -7,8 +7,7 @@ import { useRef } from "react";
 import S3 from "react-aws-s3";
 import { addImage } from "../../../common/redux/actions"
 import Constants from "../../../common/helpers/Constants";
-import { connect, useSelector } from "react-redux";
-import { addNewPost2Reducer } from "../../../common/redux/reducers/views/addNewPost2.reducer";
+import { connect } from "react-redux";
 import { addNewPostReducer } from "../../../common/redux/reducers/views/addNewPost.reducer";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";

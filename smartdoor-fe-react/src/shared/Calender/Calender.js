@@ -51,7 +51,7 @@ const Calender = (props) => {
       defaultCurgroupsrentView="day"
       defaultCurrentDate={ currentDate }
       groups={ groups }
-      height={ 600 }
+      height={ 480 }
       firstDayOfWeek={ 0 }
       startDayHour={ 7 }
       endDayHour={ 22 }

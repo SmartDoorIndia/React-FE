@@ -24,7 +24,7 @@ import Text from "../../../../shared/Text/Text";
 import { Form } from "react-bootstrap";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { compose } from "redux";
 import "./property.scss";
 
@@ -38,19 +38,28 @@ const DeletedProperties = (props) => {
         getLocationByCity,
     } = props;
     const userData = getLocalStorage("authData");
-    const [p_city, setp_City] = useState("");
-    const [p_location, setp_Location] = useState("");
+    const data = useSelector(state => state.deletedPropertyData.data);
+    const [p_city, setp_City] = useState(data.length !== 0 ? deletedPropertyData?.data?.city :"");
+    const [p_location, setp_Location] = useState(data.length !== 0 ? deletedPropertyData?.data?.location :"");
     const [locationsData, setLocationsData] = useState([]);
     const [zipCode, setzipCode] = useState("");
 
     //state: for managing the status filter.
     const statusArr = CONSTANTS_STATUS.propertyStatusArr;
-    const [statusSelected, setStatusSelected] = useState("");
+    const [statusSelected, setStatusSelected] = useState(data.length !== 0 ? deletedPropertyData?.data?.propertyStatus :"");
 
     const propertyType = CONSTANTS_STATUS.propertyType;
-    const [typeSelected, setTypeSelected] = useState("");
+    const [typeSelected, setTypeSelected] = useState(() => {
+        if (deletedPropertyData?.data?.smartLockProperty === true) {
+          return 'SMARTDOOR';
+        } else if (deletedPropertyData?.data?.smartLockProperty === false) {
+          return 'NON SMARTDOOR';
+        } else {
+          return null;
+        }
+      });
 
-    const [filterText, setFilterText] = React.useState("");
+    const [filterText, setFilterText] = React.useState(data.length !== 0 ? deletedPropertyData?.data?.searchStr :"");
     const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
 
     const columns = [
@@ -71,12 +80,14 @@ const DeletedProperties = (props) => {
         },
         {
             name: "Owner",
-            selector: "ownerName",
+            // selector: "ownerName",
             sortable: false,
             sortable: false,
             center: true,
             maxWidth: "200px",
             style: { padding: "0 !important" },
+            cell: ({ownerName, postedByName}) =>
+            <span>{ownerName !== null ? <>{ownerName}</> : <>{postedByName}</>}</span>
         },
         {
             name: "Location",
@@ -143,7 +154,7 @@ const DeletedProperties = (props) => {
                             <Link
                                 to={{
                                     pathname: "/admin/deleted-unlisted-property/view-property",
-                                    state: { propertyId: propertyId, userId: userData.userid },
+                                    state: { propertyId: propertyId, userId: userData.userid, menuName: 'DeletedProperties', isDeleted: true },
                                 }}
                             >
                                 <Image name="editIcon" src={contentIco} />
@@ -154,6 +165,77 @@ const DeletedProperties = (props) => {
             ),
         },
     ];
+   
+    const [currentPage, setCurrentPage] = useState(data.length !== 0 ? deletedPropertyData?.data?.currentPage : 1);
+    const [rowsPerPage, setRowsPerPage] = useState(data.length !== 0 ? deletedPropertyData?.data?.rowsPerPage : 4);
+    let recordsPerPage = (data.length !== 0 ? deletedPropertyData?.data?.rowsPerPage : 4);
+    const recordSize = (deletedPropertyData?.data?.records);
+
+    const handlePageChange = (newPage) => {
+        // Handle the page change in the parent component
+        setCurrentPage(Number(newPage));
+        console.log(currentPage)
+  
+        const regex = /([^,]+),\s*(\d{6})/;
+        const matches = p_location.match(regex);
+        if(matches) {
+           let zipcode = matches[2]
+           getAllDeletedProperties({
+              p_city,
+              zipcode,
+              p_location,
+              pageSize: rowsPerPage,
+              pageNo: newPage,
+              userId: userData.userid,
+              searchString: filterText
+           });
+        } else {
+           let zipcode = ""
+           let location = ""
+           getAllDeletedProperties({
+              p_city,
+              zipcode,
+              location,
+              pageSize: rowsPerPage,
+              pageNo: newPage,
+              userId: userData.userid,
+              searchString: filterText
+           });
+        }
+     };
+  
+     const handleRowsPerPageChange = async (newRowsPerPage) => {
+        // console.log(`Rows per page changed to: ${rowsPerPage}`);
+        
+        const regex = /([^,]+),\s*(\d{6})/;
+        const matches = p_location.match(regex);
+        setRowsPerPage(Number(newRowsPerPage))
+        recordsPerPage = Number(newRowsPerPage)
+        if(matches) {
+           let zipcode = matches[2]
+           getAllDeletedProperties({
+              p_city,
+              zipcode,
+              p_location,
+              pageSize: Number(newRowsPerPage),
+              pageNo: currentPage,
+              userId: userData.userid,
+              searchString: filterText,
+           });
+        } else {
+           let zipcode = ""
+           let location = ""
+           getAllDeletedProperties({
+              p_city,
+              zipcode,
+              location,
+              pageSize: newRowsPerPage,
+              pageNo: currentPage,
+              userId: userData.userid,
+              searchString: filterText,
+           });
+        }
+      };
 
     const PaginationActionButton = () => (
         <div className="d-flex justify-content-center tableBottom">
@@ -162,12 +244,29 @@ const DeletedProperties = (props) => {
     );
 
     const PaginationComponent = (props) => (
-        <Pagination {...props} PaginationActionButton={PaginationActionButton} />
+        <Pagination {...props}
+            rowCount={recordSize} 
+            rowsPerPage={recordsPerPage}
+            onChangeRowsPerPage={handleRowsPerPageChange} 
+            currentPage={currentPage} 
+            onChangePage={handlePageChange}
+            PaginationActionButton={PaginationActionButton} />
     );
 
     useEffect(() => {
         // getPropertyCity();
         getAllCity();
+        if(data.length === 0) {
+            getAllDeletedProperties({
+                city : '',
+                zipcode : '',
+                location : '',
+                pageSize: rowsPerPage,
+                pageNo: currentPage,
+                userId: userData.userid,
+                searchString:'',
+             });
+        }
     }, [getPropertyCity, getAllCity]);
 
     const _filterData = (city, locationData) => {
@@ -182,27 +281,27 @@ const DeletedProperties = (props) => {
             const zipcode = matches[2];
             setzipCode(zipcode);
             console.log(location, zipcode, "data for filter");
-            getAllDeletedProperties({
-                city,
-                zipcode,
-                location,
-                pageSize: "",
-                pageNo: "",
-                userId: userData.userid,
-            });
+            // getAllDeletedProperties({
+            //     city,
+            //     zipcode,
+            //     location,
+            //     pageSize: "",
+            //     pageNo: "",
+            //     userId: userData.userid,
+            // });
         }
         if (locationData == "") {
             let location = "";
             let zipcode = "";
             console.log("outside match");
-            getAllDeletedProperties({
-                city,
-                zipcode,
-                location,
-                pageSize: "",
-                pageNo: "",
-                userId: userData.userid,
-            });
+            // getAllDeletedProperties({
+            //     city,
+            //     zipcode,
+            //     location,
+            //     pageSize: "",
+            //     pageNo: "",
+            //     userId: userData.userid,
+            // });
         }
     };
 
@@ -226,26 +325,27 @@ const DeletedProperties = (props) => {
 
     let filteredItems = [];
 
-    filteredItems = deletedPropertyData.data.length
-        ? deletedPropertyData.data.filter((item) => {
-            return (
-                item?.propertyId == filterText ||
-                item?.postedDate?.toLowerCase().includes(filterText.toLowerCase()) ||
-                item?.propertyType?.toLowerCase().includes(filterText.toLowerCase()) ||
-                item.societyName.toLowerCase().includes(filterText.toLowerCase()) ||
-                item.societyAddress.toLowerCase().includes(filterText.toLowerCase())
-            );
-        })
+    filteredItems = deletedPropertyData?.data?.propertyData?.length
+        ? deletedPropertyData?.data?.propertyData
+        // .filter((item) => {
+        //     return (
+        //         item?.propertyId == filterText ||
+        //         item?.postedDate?.toLowerCase().includes(filterText.toLowerCase()) ||
+        //         item?.propertyType?.toLowerCase().includes(filterText.toLowerCase()) ||
+        //         item.societyName.toLowerCase().includes(filterText.toLowerCase()) ||
+        //         item.societyAddress.toLowerCase().includes(filterText.toLowerCase())
+        //     );
+        // })
         : [];
 
     const showData = (status_value) => {
         let status = status_value || statusSelected;
 
-        if (status && filteredItems.length) {
-            filteredItems = filteredItems.filter((item) => {
-                return item?.status.toUpperCase() == status.toUpperCase();
-            });
-        }
+        // if (status && filteredItems.length) {
+        //     filteredItems = filteredItems.filter((item) => {
+        //         return item?.status.toUpperCase() == status.toUpperCase();
+        //     });
+        // }
         return filteredItems;
     };
 
@@ -253,11 +353,11 @@ const DeletedProperties = (props) => {
         let status = status_value || typeSelected;
         let property = typeSelected === "SMARTDOOR" ? true : false;
 
-        if (status && filteredItems.length) {
-            filteredItems = filteredItems.filter((item) => {
-                return item?.smartDoorProperty === property;
-            });
-        }
+        // if (status && filteredItems.length) {
+        //     filteredItems = filteredItems.filter((item) => {
+        //         return item?.smartDoorProperty === property;
+        //     });
+        // }
         return filteredItems;
     };
 
@@ -273,7 +373,7 @@ const DeletedProperties = (props) => {
 
     return (
         <>
-           <div className="tableBox mb-5">
+           <div className="tableBox">
               <Route
                  path="/admin/user-management/user-details"
                  name="Admin Dashboard"
@@ -329,8 +429,7 @@ const DeletedProperties = (props) => {
                              : null}
                        </Form.Control>
                     </Form.Group>
-                    <Form.Group controlId="exampleForm.SelectCustom" className="loc-input">
-                       {/* <Form.Label>Location:</Form.Label> */}
+                    {/* <Form.Group controlId="exampleForm.SelectCustom" className="loc-input">
                        <Form.Control
                           as="select"
                           value={p_location}
@@ -349,7 +448,7 @@ const DeletedProperties = (props) => {
                                ))
                              : null}
                        </Form.Control>
-                    </Form.Group>
+                    </Form.Group> */}
                     {propertyType.length ? (
                        <Form.Group controlId="exampleForm.SelectCustom">
                           <Form.Control
@@ -402,16 +501,26 @@ const DeletedProperties = (props) => {
                           color="white"
                           style={{height: "40px !important" }}
                           onClick={() => {
-                             const regex = /([^,]+),\s*(\d{6})/;
-                             const matches = p_location.match(regex);
-                             getAllDeletedProperties({
-                                userId: userData.userid,
-                                city: p_city ? p_city : "",
-                                pageSize: "",
-                                pageNo: "",
-                                zipcode: zipCode ? zipCode : "",
-                                location: matches ? matches[1].trim() : "",
-                             });
+                                setCurrentPage(1)
+                                let type = null
+                                if(typeSelected === 'SMARTDOOR') {
+                                    type = true
+                                } else if(typeSelected === 'NON SMARTDOOR') {
+                                    type = false
+                                }
+                                const regex = /([^,]+),\s*(\d{6})/;
+                                const matches = p_location.match(regex);
+                                getAllDeletedProperties({
+                                    userId: userData.userid,
+                                    city: p_city ? p_city : "",
+                                    pageSize: rowsPerPage,
+                                    pageNo: currentPage,
+                                    zipcode: zipCode ? zipCode : "",
+                                    location: matches ? matches[1].trim() : "",
+                                    searchString: filterText,
+                                    smartLockProperty: type,
+                                    propertyStatus: statusSelected
+                                });
                           }}
                        />
                     </div>
@@ -424,9 +533,12 @@ const DeletedProperties = (props) => {
                     columns={columns}
                     progressPending={deletedPropertyData.isLoading}
                     paginationComponent={PaginationComponent}
-                    paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                    paginationPerPage={8}
-                    perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                    paginationRowsPerPageOptions={[4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                    paginationPerPage={recordsPerPage}
+                    currentPage={currentPage}
+                    onChangePage={ handlePageChange }
+                    onChangeRowsPerPage={ handleRowsPerPageChange }
+                    perPageOptions={[4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                     filterText={filterText}
                     subHeaderComponent={subHeaderComponentMemo}
                     persistTableHead
@@ -435,7 +547,7 @@ const DeletedProperties = (props) => {
               </div>
               {deletedPropertyData.isLoading ? (
                  <PaginationActionButton />
-              ) : deletedPropertyData.data.length ? null : (
+              ) : deletedPropertyData?.data?.propertyData?.length ? null : (
                  <PaginationActionButton />
               )}
            </div> 

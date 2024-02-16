@@ -763,8 +763,15 @@ export const ApiJson = {
     
     getNonSDProperties: {
       url: '/admin/property/getnonSmartlockProperties',
-      method: 'GET',
-      data: {},
+      method: 'POST',
+      data: {
+        "userId": "",
+        "city":"",
+        "location":"",
+        "zipcode":"",
+        "pageSize": "",
+        "pageNo": "",
+      },
       headers: {
         'Accept': '*/*',
         'Content-Type': 'application/json',
@@ -928,7 +935,7 @@ export const ApiJson = {
 
     getAllConsumers: {
       url: '/admin/user/getAllUserDetails',
-      method: 'GET',
+      method: 'POST',
       data: {},
       headers: {
         'Accept': '*/*',
@@ -1175,7 +1182,7 @@ export const ApiJson = {
       showErrorMessage: false,
     },
     getExecutiveCalendar: {
-      url: '/admin/execution/getExecutiveCalendar?weekStartDate=:weekStartDate&weekEndDate=:weekEndDate&city=:city&pincode=:pincode',
+      url: '/admin/execution/getExecutiveCalendar?weekStartDate=:weekStartDate&weekEndDate=:weekEndDate&cityId=:city&pincode=:pincode',
       method: 'GET',
       headers: {
         'Accept': '*/*',
@@ -1666,6 +1673,22 @@ export const ApiJson = {
       url: '/admin/user/getAllCity',
       method: 'GET',
       data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    // getAllCityUsingGET
+    getAllCityWithId: {
+      url: '/admin/property/getCityList',
+      method: 'POST',
+      data: {
+        stateId: null,
+        smartdoorServiceStatus: true
+      },
       headers: {
         'Accept': '*/*',
         'Content-Type': 'application/json',
@@ -2286,6 +2309,17 @@ export const ApiJson = {
       showResultMessage: true,
       showErrorMessage: true
     },
+    restorePropertyById: {
+      url : 'admin/property/restore/:propertyId',
+      method : 'PUT',
+      data : {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
     getStaticMobNums: {
       url:'/admin/admin/getStaticMobile',
       method : 'GET',
@@ -2325,6 +2359,31 @@ export const ApiJson = {
       url:'admin/property/getPropertyPlandetails/:propertyId',
       method:'GET',
       data: {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    uploadImage: {
+      url: 'consumer/user/uploadImages',
+      method: 'PUT',
+      data: {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'multipart/form-data'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    setWorkCityRequest: {
+      url: '/admin/property/setCityList',
+      method: 'POST',
+      data: {
+        userId: null,
+        cityIdList: []
+      },
       headers : {
         'Accept': '*/*',
         'Content-Type': 'application/json'

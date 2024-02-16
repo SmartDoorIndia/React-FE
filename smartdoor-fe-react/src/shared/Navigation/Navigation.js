@@ -93,17 +93,15 @@ const Nav = () => {
                      </Link>
                      <Link
                         to="/admin/execution"
-                        className={`dropdown-item  ${
-                           pathname.includes("execution") ? "active" : ""
-                        }`}
+                        className={`dropdown-item  ${pathname.includes("execution") ? "active" : ""
+                           }`}
                      >
                         Installation Team
                      </Link>
                      <Link
                         to="/admin/helpdesk"
-                        className={`dropdown-item  ${
-                           pathname.includes("helpdesk") ? "active" : ""
-                        }`}
+                        className={`dropdown-item  ${pathname.includes("helpdesk") ? "active" : ""
+                           }`}
                      >
                         Helpdesk Team
                      </Link>
@@ -116,11 +114,10 @@ const Nav = () => {
                      </Link>
                      <Link
                         to="/admin/transaction"
-                        className={`dropdown-item  ${
-                           pathname.includes("/transaction") && !pathname.includes("transactions")
-                              ? "active"
-                              : ""
-                        }`}
+                        className={`dropdown-item  ${pathname.includes("/transaction") && !pathname.includes("transactions")
+                           ? "active"
+                           : ""
+                           }`}
                      >
                         Transaction Team
                      </Link>
@@ -144,9 +141,8 @@ const Nav = () => {
 
                   <Link
                      to="/admin/property"
-                     className={`nav-link ${
-                        pathname.includes("/admin/property") ? "nav-active" : ""
-                     }`}
+                     className={`nav-link ${pathname.includes("/admin/property") ? "nav-active" : ""
+                        }`}
                   >
                      <Image
                         name="houseIcon"
@@ -157,9 +153,8 @@ const Nav = () => {
 
                   <Link
                      to="/admin/deleted-unlisted-property"
-                     className={`nav-link ${
-                        pathname.includes("/admin/deleted-unlisted-property") ? "nav-active" : ""
-                     }`}
+                     className={`nav-link ${pathname.includes("/admin/deleted-unlisted-property") ? "nav-active" : ""
+                        }`}
                   >
                      <Image
                         name="houseIcon"
@@ -170,9 +165,8 @@ const Nav = () => {
 
                   <Link
                      to="/admin/societies"
-                     className={`nav-link ${
-                        pathname.includes("/admin/societies") ? "nav-active" : ""
-                     }`}
+                     className={`nav-link ${pathname.includes("/admin/societies") ? "nav-active" : ""
+                        }`}
                   >
                      <Image
                         name="buildingIcon"
@@ -183,9 +177,8 @@ const Nav = () => {
 
                   <Link
                      to="/admin/consumer-management"
-                     className={`nav-link ${
-                        pathname.includes("consumer-management") ? "nav-active" : ""
-                     }`}
+                     className={`nav-link ${pathname.includes("consumer-management") ? "nav-active" : ""
+                        }`}
                   >
                      <Image
                         name="user"
@@ -196,9 +189,8 @@ const Nav = () => {
 
                   <Link
                      to="/admin/user-management"
-                     className={`nav-link ${
-                        pathname.includes("user-management") ? "nav-active" : ""
-                     }`}
+                     className={`nav-link ${pathname.includes("user-management") ? "nav-active" : ""
+                        }`}
                   >
                      <Image
                         name="teamGroup"
@@ -209,9 +201,8 @@ const Nav = () => {
 
                   <Link
                      to="/admin/realtor-advisor-management"
-                     className={`nav-link ${
-                        pathname.includes("realtor-advisor-management") ? "nav-active" : ""
-                     }`}
+                     className={`nav-link ${pathname.includes("realtor-advisor-management") ? "nav-active" : ""
+                        }`}
                   >
                      <Image
                         name="teamGroup"
@@ -228,9 +219,8 @@ const Nav = () => {
                      <>
                         <Link
                            to="/admin/nonsdproperty"
-                           className={`nav-link ${
-                              pathname.includes("nonsdproperty") ? "nav-active" : ""
-                           }`}
+                           className={`nav-link ${pathname.includes("nonsdproperty") ? "nav-active" : ""
+                              }`}
                         >
                            <Image
                               name="houseIcon"
@@ -244,9 +234,8 @@ const Nav = () => {
                         </Link>
                         <Link
                            to="/admin/addCity"
-                           className={`nav-link ${
-                              pathname.includes("addCity") ? "nav-active" : ""
-                           }`}
+                           className={`nav-link ${pathname.includes("addCity") ? "nav-active" : ""
+                              }`}
                         >
                            <Image
                               name="teamGroup"
@@ -260,9 +249,8 @@ const Nav = () => {
                         </Link>
                         <Link
                            to="/admin/addPlans"
-                           className={`nav-link ${
-                              pathname.includes("addPlans") ? "nav-active" : ""
-                           }`}
+                           className={`nav-link ${pathname.includes("addPlans") ? "nav-active" : ""
+                              }`}
                         >
                            <Image
                               name="teamGroup"
@@ -276,7 +264,7 @@ const Nav = () => {
                         </Link>
                      </>
                   )}
-                     {/* <Link
+                  {/* <Link
                         to="/admin/advisors"
                         className={`nav-link ${
                            pathname.includes("advisors") ? "nav-active" : ""
@@ -292,23 +280,23 @@ const Nav = () => {
                         />
                         Advisors
                      </Link> */}
-                     <Link
-                        to="/admin/static-mobile-numbers"
-                        className={`nav-link ${
-                           pathname.includes("static-mobile-numbers") ? "nav-active" : ""
+                     {userData.roleName === "SUPER ADMIN" && (
+                  <Link
+                     to="/admin/static-mobile-numbers"
+                     className={`nav-link ${pathname.includes("static-mobile-numbers") ? "nav-active" : ""
                         }`}
-                     >
-                        <Image
-                           name="teamGroup"
-                           src={
-                              pathname.includes("static-mobile-numbers")
-                                 ? borkerIcon
-                                 : borkerIcon
-                           }
-                        />
-                        Static Mobile Numbers
-                     </Link>
-                     {/* <Link
+                  >
+                     <Image
+                        name="teamGroup"
+                        src={
+                           pathname.includes("static-mobile-numbers")
+                              ? borkerIcon
+                              : borkerIcon
+                        }
+                     />
+                     Static Mobile Numbers
+                  </Link>)}
+                  {/* <Link
                         to="/admin/add-coins"
                         className={`nav-link ${
                            pathname.includes("add-coins") ? "nav-active" : ""

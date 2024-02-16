@@ -112,6 +112,17 @@ export const addNewTeamMember = async (data) => {
   return response;
 };
 
+// Send cityId list with userid
+export const setworkCityRequest = async (data) => {
+  const response = await mainApiService('setWorkCityRequest', data);
+  if (response.data.status) {
+    if (response.data && response.data.status === 200) {
+      // showSuccessToast('User has been created successfully.');
+    } else if (response.data && response.data.status === 409) showErrorToast(response.data.message);
+    else showErrorToast(response.data.message);
+  }
+  return response;
+}
 export const addNewPlan = async (data) => {
   console.log(data,"add new Plan");
   const response = await mainApiService('addNewPlan', data);
@@ -120,6 +131,7 @@ export const addNewPlan = async (data) => {
     if (response.data && response.data.status === 200) {
       showSuccessToast(response.data.customMessage);
     } else if (response.data && response.data.status === 409) showErrorToast(response.data.responseMessage);
+      else if (response.data && response.data.status === 500) showErrorToast("Please Try again...");
     else showErrorToast(response.data.customMessage);
   }
   return response;
@@ -145,6 +157,20 @@ export const getAllCity = (data) => async (dispatch) => {
       if (response.data.resourceData) {
         console.log(response.data.resourceData, "response.data.resourceData")
         dispatch({ type: Actions.ALL_CITIES, data: response.data.resourceData });
+      } // return response.data.resourceData;
+    }
+  }
+};
+
+// Action to  Get All User Roles
+export const getAllCityWithId = (data) => async (dispatch) => {
+  const response = await mainApiService('getAllCityWithId', data);
+  if (response) {
+    if (response.data && response.status === 200) {
+      if (response.data.resourceData) {
+        console.log(response.data.resourceData, "response.data.resourceData")
+        dispatch({ type: Actions.ALL_CITIES_ID, data: response.data.resourceData });
+        return response
       } // return response.data.resourceData;
     }
   }
@@ -188,7 +214,7 @@ export const getAllUsers = (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        dispatch({ type: Actions.USER_MANAGEMENT_SUCCESS, data: response.data.resourceData });
+        dispatch({ type: Actions.USER_MANAGEMENT_SUCCESS, data: {userData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, city: data?.searchByCity, location: data?.searchByzipCode, department: data.departmentName}});
       }
     } else dispatch({ type: Actions.USER_MANAGEMENT_ERROR, data: response.data });
   }
@@ -454,7 +480,7 @@ export const getNonSDProperties= (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        dispatch({ type: Actions.NON_SD_PROPERTIES_SUCCESS, data: response.data.resourceData });
+        dispatch({ type: Actions.NON_SD_PROPERTIES_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus} });
       }
     }
   }
@@ -466,7 +492,7 @@ export const getAllProperties = (data) => async (dispatch) => {
   const response = await mainApiService('getAllProperties', data);
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
-      dispatch({ type: Actions.PROPERTY_MODULE_SUCCESS, data: response.data.resourceData });
+      dispatch({ type: Actions.PROPERTY_MODULE_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus} });
     } else dispatch({ type: Actions.PROPERTY_MODULE_ERROR, data: response.data });
   }
 };
@@ -476,7 +502,7 @@ export const getAllDeletedProperties = (data) => async (dispatch) => {
   const response = await mainApiService('getAllDeletedProperties', data);
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
-      dispatch({ type: Actions.DELETED_PROPERTY_DATA_SUCCESS, data: response.data.resourceData });
+      dispatch({ type: Actions.DELETED_PROPERTY_DATA_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus} });
     } else dispatch({ type: Actions.DELETED_PROPERTY_DATA_ERROR, data: response.data });
   }
 };
@@ -489,6 +515,12 @@ export const getPropertyDetails = async (data) => {
 
 export const getPropertyPlanDetails = async(data) => {
   const response = await mainApiService('getPropertyPlanDetails',data);
+  return response;
+}
+
+//Upload Image File to AWS
+export const uploadImage = async(formData) => {
+  const response = await mainApiService('uploadImage', formData)
   return response;
 }
 
@@ -699,8 +731,8 @@ export const getAllConsumers = (data) => async (dispatch) => {
   const response = await mainApiService('getAllConsumers', data);
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
-      dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: response.data.resourceData });
-    } else dispatch({ type: Actions.CONSUMSER_MANAGEMENT_ERROR, data: response.data });
+      dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: {consumersData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchString, kycStatus: data.kycStatus} });
+    } else dispatch({ type: Actions.CONSUMSER_MANAGEMENT_ERROR, data: response.data.resourceData });
   }
 };
 
@@ -1736,6 +1768,12 @@ export const deletePropertyById = async(data) => {
   const response = await mainApiService('deletePropertyById',data)
   return response
 }
+
+export const restorePropertyById = async(data) => {
+  const response = await mainApiService('restorePropertyById',data)
+  return response
+}
+
 
 export const getStaticMobNumbers = async () => {
   const response  = await mainApiService('getStaticMobNums');

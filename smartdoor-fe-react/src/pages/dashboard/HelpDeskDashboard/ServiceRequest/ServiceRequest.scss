@@ -75,6 +75,9 @@
 }
 .servicrequestServicerequestsTableWrapper {
     .rdt_TableBody {
+        height: 19rem;
+        overflow-y: auto;
+        overflow-x: hidden;
         .rdt_TableRow {
             .rdt_TableCell {
                 text-align: center;
