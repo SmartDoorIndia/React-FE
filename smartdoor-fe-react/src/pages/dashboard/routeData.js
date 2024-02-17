@@ -34,6 +34,8 @@ const AddNewPost3 = React.lazy(() => import('./AddNewPost/AddNewPost3'));
 const AddNewPost4 = React.lazy(() => import('./AddNewPost/AddNewPost4'));
 const AddNewPost5 = React.lazy(() => import('./AddNewPost/AddNewPost5'));
 const Brokers = React.lazy(() => import('./Broker/Broker'));
+const BrokerApprovedDetial = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
+const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails') );
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -214,7 +216,30 @@ const routeData = [
     module: 'USER',
     component: UserManagement,
   },
+  // brokers
 
+  {
+    path: '/admin/broker',
+    name: 'Brokers',
+    bradcrumb: false,
+    excat: true,
+    component: Brokers,
+  },
+  {
+    path:'/admin/broker-approved',
+    name:'BrokerApprovedDetial',
+    bradcrumb: false,
+    excat: true,
+    component: BrokerApprovedDetial,
+  },
+  {
+    path:'/admin/broker/BrokerDetail/:brokerdetailId',
+    name:'BrokerDetail',
+    breadcrumb: ['Brokers','Broker Details'],
+    excat: true,
+    component: BrokerDetail,
+  },
+ 
   // Societies Management Route
   {
     path: '/admin/societies/property-details',
@@ -860,13 +885,6 @@ const routeData = [
     component: Advisors,
   },
 
-  {
-    path: '/admin/broker',
-    name: 'Brokers',
-    bradcrumb: false,
-    excat: true,
-    component: Brokers,
-  },
   {
     path: '/admin/posts/add-new-post/basic-details',
     name: 'Add New Post',

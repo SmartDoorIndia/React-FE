@@ -6,7 +6,6 @@ import openSocket from 'socket.io-client';
 import Constants from './Constants';
 import { provideAuth } from './Auth';
 
-console.log("Constants.SOCKET_URL..", Constants.SOCKET_URL);
 
 // Establish Socket Connection.
 export const socket = new openSocket(Constants.SOCKET_URL, {
@@ -31,7 +30,6 @@ export const useAudioCall = () => {
 
 // Use the Socket Provider
 export function SocketProvider({ children }) {
-  console.log('Websocket started...');
 
   const socketProvider = useProvideSocket(socket);
   const [callInProgress, setCallInProgress ] = useState(false);
@@ -49,11 +47,8 @@ function useProvideSocket(socket) {
   const [ socketLoggedInUserData , setSocketLoggedInUserData ] = useState(null);
 
   const loginUser = (socket , callback) => {
-    console.log("userData", userData);
-    console.log("isAuth", isAuth);
       if (isAuth) {
         // if (userData.access_token) {
-        console.table('Here socket abc abc..');
         socket.emit(
             'chat-login',
             {
@@ -61,7 +56,6 @@ function useProvideSocket(socket) {
               role_id: userData.roleId,
             },
             (response) => {
-              console.log('Response', response);
               setSocketLoggedInUserData(response)
               if(callback) callback(true)
             },
@@ -78,7 +72,6 @@ function useProvideSocket(socket) {
 
   const subscribeSocketEvents = (socket) => {
     socket.on('connect', (data) => {     
-      console.log('SOCKET CONNECTED: ', socket.connected, socket.id); 
       if(!socket.connected){        
           socket.connect();
           loginUser(socket);       
@@ -86,7 +79,6 @@ function useProvideSocket(socket) {
     });
 
     socket.on('connect_error', (error) => {
-      console.log('SOCKET ERROR: ', socket.connected, error);
       setTimeout(() => {
         socket.connect();
       }, 3000);
@@ -94,10 +86,10 @@ function useProvideSocket(socket) {
 
 
     socket.on('disconnect', (reason) => {
-      console.log("disconnect event:isAuth:", isAuth);
+     
       //manually disconnected ---> do disconnect
       if (reason === 'io client disconnect') {
-        console.log('SOCKET DISCONNECTED:io client disconnect');
+       
         socket.disconnect();
         socket.removeAllListeners();
       } 
@@ -106,7 +98,6 @@ function useProvideSocket(socket) {
         loginUser(socket);
       }
       else {
-        console.log('SOCKET should get connected TRY RECONNECT: ', socket.connected, socket.id, reason);
         socket.connect();
         loginUser(socket);
       }
@@ -114,7 +105,6 @@ function useProvideSocket(socket) {
 
 
     socket.on('reconnect', () => {
-      console.log('SOCKET RECONNECTED: ', socket.connected, socket.id);
       if(socket.connected === false){
         socket.connect();
         loginUser(socket);
@@ -131,7 +121,6 @@ function useProvideSocket(socket) {
   };
 
   const disconnectSocket = (socket) => {
-    console.log("karishma:disconnectSocket: VIsf");
     // socket.emit('disconnect');
     socket.close();
     socket.disconnect();

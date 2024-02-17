@@ -121,6 +121,7 @@ const ManagePlan = (props) => {
            return item.smartLockPlan || item.planName;
         })
       : [];
+      console.log(filteredItems,'filteredItems1111')
 
    return (
       <>

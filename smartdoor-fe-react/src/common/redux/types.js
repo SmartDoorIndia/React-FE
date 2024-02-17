@@ -78,11 +78,18 @@ export const MANAGE_PLAN_LOADING = 'src/pages/Dashboard/managePlan/Loading';
 export const NON_SD_PROPERTIES_SUCCESS = 'src/pages/Dashboard/NonSDProperties/Success';
 export const NON_SD_PROPERTIES_ERROR = 'src/pages/Dashboard/NonSDProperties/Error';
 export const NON_SD_PROPERTIES_LOADING = 'src/pages/Dashboard/NonSDProperties/Loading';
+// Brokers
+
+export const BROKERS_MODULE_SUCCESS = 'src/pages/Dashboard/Broker/Success';
+export const BROKERS_MODULE_ERROR = 'src/pages/Dashboard/Broker/Error';
+export const BROKERS_MODULE_LOADING = 'src/pages/Dashboard/Broker/Loading';
 
 // Society Module Constants types
 export const SOCIETY_MODULE_SUCCESS = 'src/pages/Dashboard/Society/Success';
 export const SOCIETY_MODULE_ERROR = 'src/pages/Dashboard/Society/Error';
 export const SOCIETY_MODULE_LOADING = 'src/pages/Dashboard/Society/Loading';
+
+
 
 export const SOCIETY_ANALYTICS_SUCCESS = 'src/pages/Dashboard/Society/Analytics/Success';
 export const SOCIETY_ANALYTICS_ERROR = 'src/pages/Dashboard/Society/Analytics/Error';
@@ -293,3 +300,7 @@ export const ADD_NEW_POST_ADDRESS_LOADING = 'src/pages/Dashboard/AddNewPost2/Loa
 export const ADD_NEW_POST_INFO_SUCCESS = 'src/pages/Dashboard/AddNewPost4/Success';
 export const ADD_NEW_POST_INFO_ERROR = 'src/pages/Dashboard/AddNewPost4/Error';
 export const ADD_NEW_POST_INFO_LOADING = 'src/pages/Dashboard/AddNewPost4/Loading';
+
+
+//All Broker Modules
+

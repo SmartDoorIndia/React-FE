@@ -78,7 +78,7 @@ import {
   allTransactionLocationsByCity,
   dealApprovalData
 } from './views/transaction.reducer';
-
+import { allPlanDataBroker } from './views/ManageBroker.reducer';
 import { addNewPostReducer } from './views/addNewPost.reducer';
 import { addNewPost2Reducer } from './views/addNewPost2.reducer';
 
@@ -147,7 +147,8 @@ const appReducer = combineReducers({
   allRealtorLocationsByCity,
   getBuybackRequestsData,
   addNewPostReducer,
-  addNewPost2Reducer
+  addNewPost2Reducer,
+  allPlanDataBroker,
 });
 
 const rootReducer = (state, action) => {

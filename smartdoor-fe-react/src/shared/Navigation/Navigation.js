@@ -298,16 +298,32 @@ const Nav = () => {
                            pathname.includes("broker") ? "nav-active" : ""
                         }`}
                      >
-                        <Image
+                        {/* <Image
                            name="teamGroup"
                            src={
                               pathname.includes("broker")
                                  ? borkerIcon
                                  : borkerIcon
                            }
-                        />
+                        /> */}
                         Broker's
                      </Link>
+                     <Link
+                          to='/admin/broker-approved'
+                          className={`nav-link ${
+                           pathname.includes("BrokerApprovedDetial") ? "nav-active" : ""
+                        }`}
+                        >
+                           Broker aPPROVED
+                     </Link>
+                     {/* <Link
+                          to='/admin/BrokerDetail'
+                          className={`nav-link ${
+                           pathname.includes("BrokerDetail") ? "nav-active" : ""
+                        }`}
+                        >
+                           Broker details
+                     </Link> */}
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>

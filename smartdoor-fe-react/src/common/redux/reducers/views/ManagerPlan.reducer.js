@@ -23,7 +23,8 @@ export const allPlanData = (state = { data: [], isLoading: false }, action) => {
         return draft;
 
       default:
+        console.log(action.type,'type');
         return state;
     }
   });
-};
+}

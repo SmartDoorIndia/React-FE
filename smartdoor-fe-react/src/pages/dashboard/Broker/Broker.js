@@ -1,18 +1,41 @@
-import { React, useMemo } from 'react'
+/** @format */
+
+import { React, useEffect, useMemo , memo } from 'react'
 import SearchInput from '../../../shared/Inputs/SearchInput/SearchInput'
 import Pagination from "../../../shared/DataTable/Pagination";
 import { compose } from "redux";
+import { connect } from 'react-redux';
 import { useState } from 'react';
 import { Card, Row, Col } from 'react-bootstrap';
 import Text from '../../../shared/Text/Text';
+import Image from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import DataTable from '../../../shared/DataTable/DataTable';
+import actionIcon from "../../../assets/images/action-icon.svg";
+import DataTableComponent from '../../../shared/DataTable/DataTable';
 import Buttons from '../../../shared/Buttons/Buttons';
-// import { Link } from 'react-router-dom/cjs/react-router-dom';
+import { ToolTip } from '../../../common/helpers/Utils';
+import { getBrokerListing, getBrokerDetails} from '../../../common/redux/actions';
+import { Link } from 'react-router-dom/cjs/react-router-dom';
 import "./Broker.scss";
 
-const Broker = () => {
+const getModalActionData = (row) => {
+    return { userData: row};
+ };
+const Broker = (props) => {
 
+    const {allPlanDataBroker, getBrokerListing }  =  props;
+    const [planData, setPlanData] = useState();
+
+    useEffect(()=>{
+        getBrokerListing();
+    
+    },[getBrokerListing])
+
+    
+   const filteredItems = allPlanDataBroker.data?.length ? allPlanDataBroker.data.filter((item) => {
+        return item.name || item.brokerId;
+     })
+   : [];
     const [filterText, setFilterText] = useState("");
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
     const PaginationComponent = (props) => (
@@ -41,74 +64,77 @@ const Broker = () => {
 
     const columns = [
         {
-            name: "Reg On",
-            selector: "Reg On",
-            maxWidth: "350px",
-            sortable: true,
+            name: "ID",
+            selector:(row) => row.brokerId,
             center: true,
         },
         {
             name: "Name",
-            selector: "Name",
-            sortable: true,
-            maxWidth: "200px",
-            center: false
+            selector: "name",
+            center: false,
+            minWidth: '120px',
         },
         {
             name: "Location",
-            selector: "Location",
+            selector: "null",
             sortable: false,
-            maxWidth: "200px",
-            center: false
+            center: false,
+            minWidth: '140px',
         },
         {
             name: "mobile",
             selector: "mobile",
             sortable: true,
-            maxWidth: "100px",
-            center: false
+            center: false,
+            minWidth: '150px',
         },
         {
             name: "Email",
-            selector: "Email",
+            selector: "email",
             sortable: false,
-            maxWidth: "100px",
-            center: true
+            center: true,
+            minWidth: '120px',
         },
         {
             name: "Plan",
-            selector: "Plan",
+            selector: "plan",
             sortable: false,
-            maxWidth: "150px",
-            center: true
+            center: true,
+            minWidth: '120px',
         },
         {
             name: "Posted Properties",
-            selector: "Posted Properties",
+            selector: "postedProperties",
             sortable: false,
-            maxWidth: "150px",
-            center: true
+            center: true,
+            minWidth: '120px',
         },
-        {
-            name: "Payment",
-            selector: "Payment",
-            sortable: false,
-            maxWidth: "150px",
-            center: true
-        },
+        // {
+        //     name: "Payment",
+        //     selector: "Payment",
+        //     sortable: false,
+        //     center: true
+        // },
         {
             name: "Profile Status",
-            selector: "Profile Status",
+            selector: "status",
             sortable: false,
-            maxWidth: "150px",
-            center: true
+            center: true,
+            minWidth: '120px',
         },
-        {
+         {
             name: "Action",
-            selector: "Action",
-            sortable: false,
-            maxWidth: "200px",
-            end: true
+            center: true,
+            minWidth: '150px',
+            cell: (row) =>( <div className= "action">
+                <ToolTip name="View Details">
+                    <span>
+                        <Link to={{ pathname: `/admin/broker/BrokerDetail/${ row.brokerId }`}}>
+                            Details
+                        </Link>
+                    </span>
+                </ToolTip>
+            </div> ),
         },
     ]
 
@@ -135,8 +161,10 @@ const Broker = () => {
                 </div>
             
                 <Card>
-                    <DataTable
+                    <DataTableComponent
+                        data={ filteredItems }
                         columns={columns}
+                        progressPending={allPlanDataBroker.isLoading}
                         paginationComponent={PaginationComponent}
                         paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                         paginationPerPage={8}
@@ -147,12 +175,21 @@ const Broker = () => {
                         filterComponent={subHeaderComponentMemo}
                     >
 
-                    </DataTable>
+                    </DataTableComponent>
                 </Card>
             </div>
 
         </>
     )
-}
+};
+const mapStateToProps = ({ allPlanDataBroker }) => ({
+    allPlanDataBroker,
+    getBrokerDetails
+});
+const actions ={
+    getBrokerListing,
+    getBrokerDetails
+};
+const withConnect = connect(mapStateToProps, actions);
 
-export default compose()(Broker);
+export default compose(withConnect, memo)(Broker);

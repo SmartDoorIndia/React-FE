@@ -81,11 +81,9 @@ const handleErrorByStatus = (error) => {
 };
 
 const mainApiService = async (apiKeyName, data) => {
-   console.log("test 1")
    const apiDetails = ApiJson[apiKeyName];
 
    if (!apiDetails) {
-      console.log("Api configuration do not found in api-json, please check api-json.js");
       throw new Error("Api configuration do not found in api-json, please check api-json.js");
    }
 
@@ -94,7 +92,6 @@ const mainApiService = async (apiKeyName, data) => {
       typeof data === "object" ? data : prepareDataObject(requestObject.data, data);
    requestObject.url = injectParamsToUrl(requestObject.url, data);
    // requestObject.headers = await injectHeadersToReq(requestObject.headers, data);
-
    return axios(requestObject)
       .then(function (result) {
          apiFailCounter = 0;
