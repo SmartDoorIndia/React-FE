@@ -779,17 +779,17 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
    },
-   // getConsumerDetails: {
-   //    url: "/admin/consumer/getConsumerDetails/:userId",
-   //    method: "GET",
-   //    data: {},
-   //    headers: {
-   //       Accept: "*/*",
-   //       "Content-Type": "application/json",
-   //    },
-   //    showResultMessage: false,
-   //    showErrorMessage: false,
-   // },
+   getBrokerDetailsForApprove: {
+      url: "/consumer/broker/getBrokerDetailsForApprove/:brokerId",
+      method: "GET",
+      data: {},
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
 
    getNonSDProperties: {
       url: "/admin/property/getnonSmartlockProperties",

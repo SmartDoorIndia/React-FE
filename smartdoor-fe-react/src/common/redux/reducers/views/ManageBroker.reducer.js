@@ -23,9 +23,8 @@ export const allPlanDataBroker = ( state = { date:[], isLoading: false},action) 
         case Actions.BROKERS_MODULE_LOADING:
           draft.isLoading = false;
           return draft;
-          
+                   
         default:
-          console.log(action.type,'type');
           return state;
       }
      

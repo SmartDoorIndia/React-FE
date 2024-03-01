@@ -67,8 +67,8 @@ const customStyles = {
       'color': '#252525',
       'justifyContent': 'center',
       '&:first-child': {
-        minWidth: '65px',
-        maxWidth: '65px',
+        minWidth: '70px',
+        maxWidth: '100px',
       },
     },
   },
@@ -77,8 +77,8 @@ const customStyles = {
       'fontSize': '.875rem',
       'color': '#252525',
       '&:first-child': {
-        minWidth: '65px',
-        maxWidth: '65px',
+        minWidth: '100px',
+        maxWidth: '120px',
       },
     },
   },

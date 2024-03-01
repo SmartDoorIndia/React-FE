@@ -261,7 +261,6 @@ export const getAllConvertedLeadsByUser = async (data) => {
 
 // Action to Get society Leades data
 export const getInstallationRequest = (data) => async (dispatch) => {
-  console.log(data,"data for installation filter");
   dispatch({ type: Actions.EXCUTIVE_INSTALLATION_LOADING, data: [] });
   const response = await mainApiService('getInstallationRequest', data);
   if (response) {
@@ -460,6 +459,7 @@ export const getNonSDProperties= (data) => async (dispatch) => {
 
 export const getBrokerListing  = (data) => async (dispatch) => {
   const response = await mainApiService('getBrokerListing', data);
+  console.log(response,"listing")
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
@@ -471,9 +471,14 @@ export const getBrokerListing  = (data) => async (dispatch) => {
 
 export const getBrokerDetails = async (data) => {
   const response = await mainApiService('getBrokerDetails', data);
-  console.log(response,"brokrerdetails")
   return response;
 };
+
+export const getBrokerDetailsForApprove = async(data) => {
+  const response = await mainApiService('getBrokerDetailsForApprove', data);
+  console.log(response, "response")
+  return response;
+}
 
 // Action to get all properties..
 export const getAllProperties = (data) => async (dispatch) => {
@@ -1656,7 +1661,6 @@ export const addNewPost  = (data) => async (dispatch) => {
   const response = await mainApiService('addNewPost', data);
   if(response != null) {
     if(response?.status === 200) {
-      console.log(response)
       if(data.smartdoorPropertyId === undefined || data.smartdoorPropertyId === null) {
         data.smartdoorPropertyId = response?.data?.resourceData?.propertyId;
       }

@@ -13,15 +13,16 @@ import Form from 'react-bootstrap/Form';
 import DataTable from '../../../shared/DataTable/DataTable';
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useParams } from "react-router-dom";
-import "./Broker.scss";
-import { getBrokerDetails,blockConsumerUser } from "../../../common/redux/actions";
 
-const BrokerDetails = () => {
+import "./Broker.scss";
+import { getBrokerDetails } from "../../../common/redux/actions";
+
+const BrokerDetails = (props) => {
    const { brokerdetailId } = useParams();
    const [blockData,setBlockData] = useState(null);
    const [Broker_data, setBrokerData] = useState([]);
-   const [show, setShow] = useState(false);
    console.log(Broker_data,"broker_data");
+   const [show, setShow] = useState(false);
    const [loading, setLoading] = useState(true);
    const handleClose = () => setShow(false);
    const handleBlockConsumser = () => {
@@ -39,14 +40,12 @@ const BrokerDetails = () => {
       getBrokerDetails({ brokerId: brokerdetailId })
         .then((response) => {
           setLoading(false);
-          console.log(response,"brokerresponse")
           if (response.data) {
-            if (response.data.resourceData) setBrokerData(response.data.resourceData);
+            if (response.data) setBrokerData(response.data.resourceData) ;
           }
         })
         .catch((error) => {
           setLoading(false);
-          console.log('error', error);
         });
     }, [getBrokerDetails, brokerdetailId]);
     useEffect(() => {
@@ -122,6 +121,7 @@ const BrokerDetails = () => {
          sortable: false,
          maxWidth: "150px",
          center: true,
+         
       },
       {
          name: "Action",
@@ -145,8 +145,8 @@ const BrokerDetails = () => {
                         <div className="ml-3 mt-2">
                            <div className="broker-name" size="large" fontWeight="mediumbold">
                               <p>
-                                 {" "}
-                                 Mohit Suryavanshi<span>(4 Yrs)</span>
+                                 {Broker_data.name || "Yousuf jain"}
+                                 <span>(4 Yrs)</span>
                               </p>
                            </div>
                            <div className="d-flex justify-content-between align-items-center">
@@ -241,25 +241,28 @@ const BrokerDetails = () => {
                         <Col className="">
                            <div>
                               <p className="detail-heading">Locations Assigned</p>
-                              <p className="details">yiuyti</p>
+                              {Broker_data.brokerlocation && Broker_data.brokerlocation.map((data, index) => (
+                                        <p key={index} className="details">{data.locationName}</p>
+                              ))}
+                            
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Specialized In</p>
-                              <p className="details">yiuyti</p>
+                              <p className="details">{Broker_data.specializedIn}</p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Services Offered</p>
-                              <p className="details">yiuyti</p>
+                              <p className="details">{Broker_data.specializedIn}</p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Language Preferences</p>
-                              <p className="details">yiuyti</p>
+                              <p className="details">{Broker_data.languagePreference}</p>
                            </div>
                         </Col>
                        
@@ -292,19 +295,19 @@ const BrokerDetails = () => {
                         <Col className="">
                            <div>
                               <p className="detail-heading">Date of Birth</p>
-                              <p className="details">Sep 16, 1989</p>
+                              <p className="details">{Broker_data.dob}</p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Email</p>
-                              <p className="details">manish.tiwari@gmail.com</p>
+                              <p className="details">{Broker_data.email}</p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Company Details </p>
-                              <p className="details">ABC Firm, 6391 Elgin St. Celina, Pune 411001, MH</p>
+                              <p className="details">{Broker_data.companyName + ',' + Broker_data.companyAddress}</p>
                            </div>
                         </Col>
                        

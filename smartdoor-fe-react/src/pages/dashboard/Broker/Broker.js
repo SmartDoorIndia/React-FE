@@ -1,5 +1,5 @@
 /** @format */
-
+// @ts-ignore
 import { React, useEffect, useMemo , memo } from 'react'
 import SearchInput from '../../../shared/Inputs/SearchInput/SearchInput'
 import Pagination from "../../../shared/DataTable/Pagination";
@@ -12,9 +12,10 @@ import Image from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import actionIcon from "../../../assets/images/action-icon.svg";
 import DataTableComponent from '../../../shared/DataTable/DataTable';
+import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
 import Buttons from '../../../shared/Buttons/Buttons';
 import { ToolTip } from '../../../common/helpers/Utils';
-import { getBrokerListing, getBrokerDetails} from '../../../common/redux/actions';
+import { getBrokerListing, getBrokerDetails, getBrokerDetailsForApprove} from '../../../common/redux/actions';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
 import "./Broker.scss";
 
@@ -23,20 +24,36 @@ const getModalActionData = (row) => {
  };
 const Broker = (props) => {
 
-    const {allPlanDataBroker, getBrokerListing }  =  props;
+    const {allPlanDataBroker, getBrokerListing, getBrokerDetailsForApprove }  =  props;
     const [planData, setPlanData] = useState();
 
     useEffect(()=>{
         getBrokerListing();
     
     },[getBrokerListing])
+     const showValue = (status_value) => {
+    let status = status_value || statusSelected;
+    let filteredItems = [];
+    filteredItems =  allPlanDataBroker.data?.length ? allPlanDataBroker.data.filter((item)=>{
+        return item?.id == filterText ||
+        item?.mobile?.includes(filterText) ||
+        item?.name?.toLowerCase().includes(filterText.toLowerCase());
+    }):[]
+    if(status && filteredItems.length){
+        filteredItems = filteredItems.filter(item =>{
+            return item?.status == status;
+        })
+    }
 
-    
-   const filteredItems = allPlanDataBroker.data?.length ? allPlanDataBroker.data.filter((item) => {
-        return item.name || item.brokerId;
-     })
-   : [];
+    return filteredItems;
+   } 
+
+//    const BrokerLocation = allPlanDataBroker.data?.length ? allPlanDataBroker.data.filter((item) => {
+//         return item.name || item.brokerId;
+//      })
+//    : [];
     const [filterText, setFilterText] = useState("");
+    const [ statusSelected , setStatusSelected ] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
     const PaginationComponent = (props) => (
         <Pagination {...props} PaginationActionButton={PaginationActionButton} />
@@ -57,36 +74,46 @@ const Broker = (props) => {
 
 		return (
 			<SearchInput onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} 
-      placeholder="Search here"
+      placeholder="Search here"  autoComplete="off"
       />
 		);
 	}, [filterText, resetPaginationToggle]);
 
+    // const displayPathname = () =>{
+    //     if(
+    //         status === 'APPROVED'
+    //     ) 
+      
+    // }
+
     const columns = [
         {
-            name: "ID",
-            selector:(row) => row.brokerId,
+            name: "Reg On",
+            // selector:(row) => row.brokerId,
             center: true,
+            sortable: true,
+            minWidth: '400px',
+            cell: ({ joinedDate }) => <span>{`${formateDate(joinedDate)}` || ""}</span>,
         },
         {
             name: "Name",
             selector: "name",
             center: false,
-            minWidth: '120px',
+            minWidth: '100px',
         },
         {
             name: "Location",
-            selector: "null",
+            selector: "",
             sortable: false,
             center: false,
-            minWidth: '140px',
+            minWidth: '120px',
         },
         {
             name: "mobile",
             selector: "mobile",
             sortable: true,
             center: false,
-            minWidth: '150px',
+            minWidth: '100px',
         },
         {
             name: "Email",
@@ -109,27 +136,30 @@ const Broker = (props) => {
             center: true,
             minWidth: '120px',
         },
-        // {
-        //     name: "Payment",
-        //     selector: "Payment",
-        //     sortable: false,
-        //     center: true
-        // },
+        {
+            name: "Chats",
+            selector: "Payment",
+            sortable: false,
+            center: true
+        },
         {
             name: "Profile Status",
             selector: "status",
             sortable: false,
             center: true,
             minWidth: '120px',
+            cell: ({ status })=>(handleStatusElement(status === 'COMPLETED' ? 'CONVERTED' : status)),
         },
          {
             name: "Action",
+            selector: (row) => row.action,
+            sortable: false,
             center: true,
             minWidth: '150px',
             cell: (row) =>( <div className= "action">
                 <ToolTip name="View Details">
                     <span>
-                        <Link to={{ pathname: `/admin/broker/BrokerDetail/${ row.brokerId }`}}>
+                        <Link to={{ pathname:allPlanDataBroker.status === 'COMPLETED' ? `/admin/BrokerDetails/${ row.brokerId }` : `/admin/getBrokerDetailsForApprove/${ row.brokerId }`}}>
                             Details
                         </Link>
                     </span>
@@ -162,7 +192,7 @@ const Broker = (props) => {
             
                 <Card>
                     <DataTableComponent
-                        data={ filteredItems }
+                        data={showValue()}
                         columns={columns}
                         progressPending={allPlanDataBroker.isLoading}
                         paginationComponent={PaginationComponent}

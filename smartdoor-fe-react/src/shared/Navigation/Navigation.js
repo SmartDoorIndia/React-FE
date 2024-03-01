@@ -311,15 +311,15 @@ const Nav = () => {
                      <Link
                           to='/admin/broker-approved'
                           className={`nav-link ${
-                           pathname.includes("BrokerApprovedDetial") ? "nav-active" : ""
+                           pathname.includes("BrokerApprovedDetail") ? "nav-active" : ""
                         }`}
                         >
                            Broker aPPROVED
                      </Link>
                      {/* <Link
-                          to='/admin/BrokerDetail'
+                          to='/admin/BrokerDetails'
                           className={`nav-link ${
-                           pathname.includes("BrokerDetail") ? "nav-active" : ""
+                           pathname.includes("BrokerDetails") ? "nav-active" : ""
                         }`}
                         >
                            Broker details

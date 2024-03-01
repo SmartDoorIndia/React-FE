@@ -1,6 +1,6 @@
 /** @format */
 
-import React from "react";
+import React, { useState, useCallback,useEffect, useMemo } from "react";
 import { compose } from "redux";
 import { Col, Row } from "react-bootstrap";
 import Image from "../../../shared/Image/Image";
@@ -9,7 +9,34 @@ import Text from "../../../shared/Text/Text";
 import Buttons from "../../../shared/Buttons/Buttons";
 import "./Broker.scss";
 
-const BrokerApprovedDetial = () => {
+import { getBrokerDetailsForApprove } from "../../../common/redux/actions";
+import { useParams }from "react-router-dom"; 
+
+
+const BrokerApprovedDetail = (props) => {
+   const { brokerdetailId } = useParams();
+   const [loading, setLoading] = useState(true);
+   const[brokerApprovedData, setBrokerApprovedData] = useState([]);
+   console.log(brokerApprovedData,"brokerapproveddata")
+
+
+
+
+   const _getBrokerDetails = useCallback(() => {
+      getBrokerDetailsForApprove({ brokerId: brokerdetailId })
+        .then((response) => {
+          setLoading(false);
+          if (response.data) {
+            if (response.data) setBrokerApprovedData(response.data.resourceData) ;
+          }
+        })
+        .catch((error) => {
+          setLoading(false);
+        });
+    }, [getBrokerDetailsForApprove, brokerdetailId]);
+    useEffect(() => {
+      _getBrokerDetails();
+    },[_getBrokerDetails])
    return (
       <>
          <div className="dashboard container-fluid12">
@@ -135,16 +162,16 @@ const BrokerApprovedDetial = () => {
                <div className="mr-2">
                   <Buttons
                      name="Decline"
-                     varient=""
+                     varient="lightBtn"
                      size="Small"
-                     color="black"
+                     color="secondryColor"
                      style={{ height: "40px !important" }}
                   >
                      Decline
                   </Buttons>
                </div>
                <div className="mr-2">
-                  <Buttons class="btn Small white  primary" name="Search">
+                  <Buttons class="btn Small white  primary" name="Approve">
                      Approve
                   </Buttons>
                </div>
@@ -154,4 +181,4 @@ const BrokerApprovedDetial = () => {
    );
 };
 
-export default compose()(BrokerApprovedDetial);
+export default compose()(BrokerApprovedDetail);

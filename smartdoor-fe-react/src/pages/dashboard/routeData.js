@@ -34,7 +34,7 @@ const AddNewPost3 = React.lazy(() => import('./AddNewPost/AddNewPost3'));
 const AddNewPost4 = React.lazy(() => import('./AddNewPost/AddNewPost4'));
 const AddNewPost5 = React.lazy(() => import('./AddNewPost/AddNewPost5'));
 const Brokers = React.lazy(() => import('./Broker/Broker'));
-const BrokerApprovedDetial = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
+const BrokerApprovedDetail = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
 const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails') );
 
 const InstallationCalenderView = React.lazy(() =>
@@ -226,16 +226,16 @@ const routeData = [
     component: Brokers,
   },
   {
-    path:'/admin/broker-approved',
-    name:'BrokerApprovedDetial',
+    path:'/admin/getBrokerDetailsForApprove/:brokerdetailId',
+    name:'BrokerApprovedDetail',
     bradcrumb: false,
     excat: true,
-    component: BrokerApprovedDetial,
+    component: BrokerApprovedDetail,
   },
   {
-    path:'/admin/broker/BrokerDetail/:brokerdetailId',
+    path:'/admin/BrokerDetails/:brokerdetailId',
     name:'BrokerDetail',
-    breadcrumb: ['Brokers','Broker Details'],
+    breadcrumb: false,
     excat: true,
     component: BrokerDetail,
   },

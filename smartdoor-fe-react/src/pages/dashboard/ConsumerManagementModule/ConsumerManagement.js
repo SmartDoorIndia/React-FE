@@ -18,6 +18,7 @@ const ConsumerManagement = (props) => {
   const { getAllConsumerUsers, getAllConsumerUsersData } = props;
 
   const [filterText, setFilterText] = React.useState('');
+  console.log(filterText,"texteq")
 	const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
 
   //state: for managing the status filter.
