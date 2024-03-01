@@ -1,16 +1,16 @@
 /** @format */
 
-import {React, useMemo,useEffect, useState, useCallback} from "react";
+import { React, useMemo, useEffect, useState, useCallback } from "react";
 import { compose } from "redux";
 import { Col, Row, Table, Card } from "react-bootstrap";
-import SearchInput from '../../../shared/Inputs/SearchInput/SearchInput'
+import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import Image from "../../../shared/Image/Image";
 import userImage from "../../../assets/svg/avatar_sml.svg";
 import Text from "../../../shared/Text/Text";
 import StarRating from "../../../shared/StarRating/StarRating";
 import Pagination from "../../../shared/DataTable/Pagination";
-import Form from 'react-bootstrap/Form';
-import DataTable from '../../../shared/DataTable/DataTable';
+import Form from "react-bootstrap/Form";
+import DataTable from "../../../shared/DataTable/DataTable";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useParams } from "react-router-dom";
 
@@ -19,39 +19,41 @@ import { getBrokerDetails } from "../../../common/redux/actions";
 
 const BrokerDetails = (props) => {
    const { brokerdetailId } = useParams();
-   const [blockData,setBlockData] = useState(null);
+   const [blockData, setBlockData] = useState(null);
    const [Broker_data, setBrokerData] = useState([]);
-   console.log(Broker_data,"broker_data");
+   console.log(Broker_data, "broker_data");
    const [show, setShow] = useState(false);
    const [loading, setLoading] = useState(true);
    const handleClose = () => setShow(false);
    const handleBlockConsumser = () => {
       if (blockData !== null) {
-        ({ userId: blockData })
-          .then((data) => {
-            _getBrokerDetails();
-          })
-          .finally(() => {
-            handleClose();
-          });
+         ({ userId: blockData })
+            .then((data) => {
+               _getBrokerDetails();
+            })
+            .finally(() => {
+               handleClose();
+            });
       }
-    };
-    const _getBrokerDetails = useCallback(() => {
+   };
+   const _getBrokerDetails = useCallback(() => {
       getBrokerDetails({ brokerId: brokerdetailId })
-        .then((response) => {
-          setLoading(false);
-          if (response.data) {
-            if (response.data) setBrokerData(response.data.resourceData) ;
-          }
-        })
-        .catch((error) => {
-          setLoading(false);
-        });
-    }, [getBrokerDetails, brokerdetailId]);
-    useEffect(() => {
+         .then((response) => {
+            console.log(response, "response");
+            setLoading(false);
+            if (response) {
+               console.log(response, "kkkhkhkh");
+               if (response) setBrokerData(response.data);
+            }
+         })
+         .catch((error) => {
+            setLoading(false);
+         });
+   }, [getBrokerDetails, brokerdetailId]);
+   useEffect(() => {
       _getBrokerDetails();
-    },[_getBrokerDetails])
-  
+   }, [_getBrokerDetails]);
+
    const [filterText, setFilterText] = useState("");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const PaginationComponent = (props) => (
@@ -121,7 +123,6 @@ const BrokerDetails = (props) => {
          sortable: false,
          maxWidth: "150px",
          center: true,
-         
       },
       {
          name: "Action",
@@ -130,7 +131,6 @@ const BrokerDetails = (props) => {
          maxWidth: "150px",
          center: true,
       },
-
    ];
    return (
       <>
@@ -145,7 +145,7 @@ const BrokerDetails = (props) => {
                         <div className="ml-3 mt-2">
                            <div className="broker-name" size="large" fontWeight="mediumbold">
                               <p>
-                                 {Broker_data.name || "Yousuf jain"}
+                                 {Broker_data?.resourceData?.name}
                                  <span>(4 Yrs)</span>
                               </p>
                            </div>
@@ -241,41 +241,63 @@ const BrokerDetails = (props) => {
                         <Col className="">
                            <div>
                               <p className="detail-heading">Locations Assigned</p>
-                              {Broker_data.brokerlocation && Broker_data.brokerlocation.map((data, index) => (
-                                        <p key={index} className="details">{data.locationName}</p>
-                              ))}
-                            
+                              {Broker_data?.resourceData?.brokerlocation &&
+                                 Broker_data?.resourceData?.brokerlocation.map((data, index) => (
+                                    <p key={index} className="details">
+                                       {data.locationName}
+                                    </p>
+                                 ))}
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Specialized In</p>
-                              <p className="details">{Broker_data.specializedIn}</p>
+                              <p className="details">
+                                 {Broker_data?.resourceData?.specializedIn &&
+                                    Broker_data.resourceData.specializedIn.map(
+                                       (data, index) =>
+                                          index ===
+                                             Broker_data.resourceData.specializedIn.length - 1 && (
+                                             <p key={index} className="details">
+                                                {data.specializedIn}
+                                             </p>
+                                          )
+                                    )}
+                              </p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Services Offered</p>
-                              <p className="details">{Broker_data.specializedIn}</p>
+                              <p className="details">{Broker_data.resourceData?.serviceOffered}</p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Language Preferences</p>
-                              <p className="details">{Broker_data.languagePreference}</p>
+                              <p className="details">
+                                 {Broker_data?.resourceData?.languagePreference &&
+                                    Broker_data.resourceData.languagePreference
+                                       .slice(0, 2)
+                                       .map((data, index) => (
+                                          <p key={index} className="details">
+                                             {data.languagePreference}
+                                          </p>
+                                       ))}
+                              </p>
                            </div>
                         </Col>
-                       
+
                         <Col className="">
                            <div>
                               <p className="detail-heading">Rera Number</p>
-                              <p className="details">yiuyti</p>
+                              <p className="details">{Broker_data?.resourceData?.reraNumber}</p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Deals In</p>
-                              <p className="details">yiuyti</p>
+                              <p className="details">{Broker_data?.resourceData?.dealsInNewProject}</p>
                            </div>
                         </Col>
                      </div>
@@ -283,40 +305,41 @@ const BrokerDetails = (props) => {
                   <div className="separator mt-4"></div>
                   <div className="personal_details">
                      <div className="personal_name">
-                           <p>Personal Details</p>
+                        <p>Personal Details</p>
                      </div>
                      <div className="mt-1 row">
                         <Col className="">
                            <div>
                               <p className="detail-heading">Phone Number</p>
-                              <p className="details">7894561000, 7894561000</p>
+                              <p className="details">{Broker_data?.resourceData?.phoneNumber}</p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Date of Birth</p>
-                              <p className="details">{Broker_data.dob}</p>
+                              <p className="details">{Broker_data?.resourceData?.dob}</p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Email</p>
-                              <p className="details">{Broker_data.email}</p>
+                              <p className="details">{Broker_data?.resourceData?.email}</p>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Company Details </p>
-                              <p className="details">{Broker_data.companyName + ',' + Broker_data.companyAddress}</p>
+                              <p className="details">
+                                 {Broker_data?.resourceData?.companyName + "," + Broker_data?.resourceData?.companyAddress}
+                              </p>
                            </div>
                         </Col>
-                       
                      </div>
                   </div>
                </Col>
 
                <Col lg={12}>
-                  <div className="heading">
+                  <div className="heading mt-10" >
                      <h6>PROPERTIES</h6>
                   </div>
                </Col>

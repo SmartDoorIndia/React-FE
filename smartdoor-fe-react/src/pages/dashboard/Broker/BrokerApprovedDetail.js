@@ -8,6 +8,8 @@ import userImage from "../../../assets/svg/avatar_sml.svg";
 import Text from "../../../shared/Text/Text";
 import Buttons from "../../../shared/Buttons/Buttons";
 import "./Broker.scss";
+import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
+
 
 import { getBrokerDetailsForApprove } from "../../../common/redux/actions";
 import { useParams }from "react-router-dom"; 
@@ -27,7 +29,7 @@ const BrokerApprovedDetail = (props) => {
         .then((response) => {
           setLoading(false);
           if (response.data) {
-            if (response.data) setBrokerApprovedData(response.data.resourceData) ;
+            if (response.data) setBrokerApprovedData(response.data) ;
           }
         })
         .catch((error) => {
@@ -48,13 +50,14 @@ const BrokerApprovedDetail = (props) => {
                            <Image name="author" className="object-cover" src={userImage} />
                         </div>
                         <div className="ml-3 mt-2">
-                           <Text
+                           <p
                               className="boldness"
                               size="large"
                               fontWeight="mediumbold"
-                              text="Mohit Suryavanshi(4 Yrs)"
-                           />
-                           <Text size="xSmall" fontWeight="smbold" text="Joined on: Aug 20, 2017" />
+                           >{brokerApprovedData.resourceData?.name}</p>
+                           <p size="xSmall" fontWeight="smbold"  >
+                           {formateDate(brokerApprovedData.resourceData?.joinedDate) ?? ""}
+                           </p>
                         </div>
                      </div>
                   </div>
@@ -75,7 +78,9 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Location Assigned"
                      />
-                     <Text size="Small" fontWeight="mediumbold" color="secondryColor" text="dfd" />
+                     <p size="Small" fontWeight="mediumbold" color="secondryColor" >
+                        {brokerApprovedData.resourceData?.brokerlocation?.locationName} 
+                        </p>
                   </Col>
                   <Col>
                      <Text
@@ -84,7 +89,19 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Specialized In"
                      />
-                     <Text size="Small" fontWeight="mediumbold" color="secondryColor" text="dfd" />
+                     <p size="Small" fontWeight="mediumbold" color="secondryColor">
+                   
+                       {brokerApprovedData?.resourceData?.specializedIn &&
+                                    brokerApprovedData.resourceData.specializedIn.map(
+                                       (data, index) =>
+                                          index ===
+                                          brokerApprovedData.resourceData.specializedIn.length - 1 && (
+                                             <p key={index} className="details">
+                                                {data.specializedIn}
+                                             </p>
+                                          )
+                                    )}
+                     </p>
                   </Col>
                   <Col>
                      <Text
@@ -102,7 +119,19 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Languages Preferences"
                      />
-                     <Text size="Small" fontWeight="mediumbold" color="secondryColor" text="dfd" />
+                     <p size="Small" fontWeight="mediumbold" color="secondryColor">
+                   
+                   {brokerApprovedData?.resourceData?.languagePreference &&
+                                brokerApprovedData.resourceData.languagePreference.map(
+                                   (data, index) =>
+                                     
+                                     (
+                                         <p key={index} className="details d-flex">
+                                            {data.languagePreference}
+                                         </p>
+                                      )
+                                )}
+                 </p>
                   </Col>
                </Row>
             </div>
@@ -122,7 +151,9 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Phone Number"
                      />
-                     <Text size="Small" fontWeight="mediumbold" color="secondryColor" text="dfd" />
+                     <p size="Small" fontWeight="mediumbold" color="secondryColor" >
+                        {brokerApprovedData?.resourceData?.mobile}
+                     </p>
                   </Col>
                   <Col>
                      <Text
@@ -131,16 +162,15 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Date of Birth"
                      />
-                     <Text size="Small" fontWeight="mediumbold" color="secondryColor" text="dfd" />
+                      <p size="Small" fontWeight="mediumbold" color="secondryColor" >
+                        {brokerApprovedData?.resourceData?.dob}
+                     </p>
                   </Col>
                   <Col>
                      <Text size="xSmall" fontWeight="semibold" color="TaupeGrey" text="Email" />
-                     <Text
-                        size="Small"
-                        fontWeight="mediumbold"
-                        color="secondryColor"
-                        text="manish.tiwari@gmail.com"
-                     />
+                     <p size="Small" fontWeight="mediumbold" color="secondryColor" >
+                        {brokerApprovedData?.resourceData?.email}
+                     </p>
                   </Col>
                   <Col>
                      <Text

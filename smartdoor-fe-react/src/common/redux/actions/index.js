@@ -137,6 +137,7 @@ export const getAllRoles = (data) => async (dispatch) => {
 // Action to  Get All User Roles
 export const getAllCity = (data) => async (dispatch) => {
   const response = await mainApiService('getAllCity', data);
+  console.log(response,'responsecity')
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
@@ -459,7 +460,6 @@ export const getNonSDProperties= (data) => async (dispatch) => {
 
 export const getBrokerListing  = (data) => async (dispatch) => {
   const response = await mainApiService('getBrokerListing', data);
-  console.log(response,"listing")
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
