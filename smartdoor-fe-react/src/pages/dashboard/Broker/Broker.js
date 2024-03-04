@@ -72,10 +72,8 @@ const Broker = (props) => {
    );
 
    const handleDateRangeChange = (date) => {
-      setStartDate(date[0]);
-      setEndDate(date[1]);
       setResetPaginationToggle(!resetPaginationToggle);
-      getBrokerListing(date[0], date[1]);
+      getBrokerListing();
    };
 
    const subHeaderComponentMemo = useMemo(() => {
