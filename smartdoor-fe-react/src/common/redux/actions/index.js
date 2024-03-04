@@ -469,6 +469,18 @@ export const getBrokerListing  = (data) => async (dispatch) => {
   }
 };
 
+export const getBrokerPostedProperty = (data) => async (dispatch) => {
+  const response = await mainApiService('getBrokerPostedProperty', data);
+  console.log(getBrokerPostedProperty,"getBrokerPostedProperty")
+  if ( response) {
+    if(response.data && response.status === 200) {
+      if(response.data.resourceData) {
+        dispatch({type: Actions.BROKERS_MODULE_SUCCESS, data: response.data.resourceData });
+      }
+    }
+  }
+};
+
 export const getBrokerDetails = async (data) => {
   const response = await mainApiService('getBrokerDetails', data);
   return response;
@@ -476,8 +488,15 @@ export const getBrokerDetails = async (data) => {
 
 export const getBrokerDetailsForApprove = async(data) => {
   const response = await mainApiService('getBrokerDetailsForApprove', data);
-  console.log(response, "response")
   return response;
+}
+export const getBrokerStatusDetail = async(data) =>{
+  const response = await mainApiService('getBrokerStatusDetail', data);
+    console.log(response,"response");
+    if(response.data && response.status === 200) showSuccessToast(response.data.customMessage); 
+    else if (response.data && response.data.error) showErrorToast(response.data.error);
+    else showErrorToast('Unexpected error. Please try again later');
+    return response;
 }
 
 // Action to get all properties..

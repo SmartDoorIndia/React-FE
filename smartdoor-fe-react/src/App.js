@@ -27,7 +27,7 @@ function App() {
               className="custom-toaster-main-cls"
               toastClassName="custom-toaster-bg"
             />
-            <SmartDoorViewRoute />
+            <SmartDoorViewRoute />**
           </AuthProvider>
         </StrictMode>
       </Provider>

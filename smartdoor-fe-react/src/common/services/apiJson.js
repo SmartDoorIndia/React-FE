@@ -779,9 +779,32 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
    },
+   getBrokerPostedProperty:{
+      url:"/consumer/broker/postedProperty",
+      method:"GET",
+      headers:{
+         Accept :"*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
+
    getBrokerDetailsForApprove: {
       url: "/consumer/broker/getBrokerDetailsForApprove/:brokerId",
       method: "GET",
+      data: {},
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
+   
+   getBrokerStatusDetail: {
+      url: "/consumer/broker/updateStatus/:brokerId/:status",
+      method: "PUT",
       data: {},
       headers: {
          Accept: "*/*",

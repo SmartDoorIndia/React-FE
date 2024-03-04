@@ -7,18 +7,13 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { useState } from "react";
 import { Card, Row, Col } from "react-bootstrap";
-import Text from "../../../shared/Text/Text";
-import Image from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import actionIcon from "../../../assets/images/action-icon.svg";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
-import Buttons from "../../../shared/Buttons/Buttons";
 import { ToolTip } from "../../../common/helpers/Utils";
 import {
    getBrokerListing,
    getBrokerDetails,
-   getBrokerDetailsForApprove,
 } from "../../../common/redux/actions";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import "./Broker.scss";
@@ -29,13 +24,18 @@ const getModalActionData = (row) => {
    return { userData: row };
 };
 const Broker = (props) => {
-   const { allPlanDataBroker, getBrokerListing, getBrokerDetailsForApprove } = props;
+   const { allPlanDataBroker, getBrokerListing } = props;
    const [planData, setPlanData] = useState();
    const statusArr = CONSTANTS_STATUS.brokerStatus;
+   
 
    useEffect(() => {
       getBrokerListing();
    }, [getBrokerListing]);
+
+
+
+
    const showValue = (status_value) => {
       let status = status_value || statusSelected;
       let filteredItems = [];
@@ -57,7 +57,7 @@ const Broker = (props) => {
       return filteredItems;
    };
 
-   //    const BrokerLocation = allPlanDataBroker.data?.length ? allPlanDataBroker.data.filter((item) => {
+   //    const   = allPlanDataBroker.data?.length ? allPlanDataBroker.data.filter((item) => {
    //         return item.name || item.brokerId;
    //      })
    //    : [];
