@@ -71,6 +71,13 @@ const Broker = (props) => {
       <div className="d-flex justify-content-center tableBottom"></div>
    );
 
+   const handleDateRangeChange = (date) => {
+      setStartDate(date[0]);
+      setEndDate(date[1]);
+      setResetPaginationToggle(!resetPaginationToggle);
+      getBrokerListing(date[0], date[1]);
+   };
+
    const subHeaderComponentMemo = useMemo(() => {
       const handleClear = () => {
          if (filterText) {
@@ -202,6 +209,7 @@ const Broker = (props) => {
                         color: "darkgray",
                         marginTop: "10px",
                      }}
+                     onChange={handleDateRangeChange}
                   />
                </div>
                <div className="locationSelect d-flex align-items-xl-center align-items-left">

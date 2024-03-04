@@ -1072,6 +1072,7 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
    },
+
    getAllServiceRequest: {
       url: "/admin/consumer/getAllPreviousServiceRequest/:userId",
       method: "GET",
@@ -1987,6 +1988,7 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
    },
+ 
 
    changeUserAssignee: {
       url: "/admin/admin/changeAssignee",
