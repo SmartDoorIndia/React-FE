@@ -790,6 +790,19 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
    },
+   getBrokerApproveStatus: {
+      url: "/consumer/broker/updateStatus/:userId",
+      method: "PUT",
+      data:{
+         status:"",
+      },
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: true,
+      showErrorMessage: true,
+   },
 
    getNonSDProperties: {
       url: "/admin/property/getnonSmartlockProperties",
@@ -1049,6 +1062,7 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
    },
+
    getAllServiceRequest: {
       url: "/admin/consumer/getAllPreviousServiceRequest/:userId",
       method: "GET",
@@ -1964,6 +1978,7 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
    },
+ 
 
    changeUserAssignee: {
       url: "/admin/admin/changeAssignee",

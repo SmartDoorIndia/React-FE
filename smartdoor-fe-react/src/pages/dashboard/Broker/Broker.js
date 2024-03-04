@@ -32,10 +32,12 @@ const Broker = (props) => {
    const { allPlanDataBroker, getBrokerListing, getBrokerDetailsForApprove } = props;
    const [planData, setPlanData] = useState();
    const statusArr = CONSTANTS_STATUS.brokerStatus;
+   const [startDate, setStartDate] = useState(null);
+   const [endDate, setEndDate] = useState(null);
 
    useEffect(() => {
-      getBrokerListing();
-   }, [getBrokerListing]);
+      getBrokerListing(startDate, endDate);
+   }, [getBrokerListing,startDate,endDate]);
    const showValue = (status_value) => {
       let status = status_value || statusSelected;
       let filteredItems = [];
@@ -70,6 +72,13 @@ const Broker = (props) => {
    const PaginationActionButton = () => (
       <div className="d-flex justify-content-center tableBottom"></div>
    );
+
+   const handleDateRangeChange = (date) => {
+      setStartDate(date[0]);
+      setEndDate(date[1]);
+      setResetPaginationToggle(!resetPaginationToggle);
+      getBrokerListing(date[0], date[1]);
+   };
 
    const subHeaderComponentMemo = useMemo(() => {
       const handleClear = () => {
@@ -202,6 +211,7 @@ const Broker = (props) => {
                         color: "darkgray",
                         marginTop: "10px",
                      }}
+                     onChange={handleDateRangeChange}
                   />
                </div>
                <div className="locationSelect d-flex align-items-xl-center align-items-left">
