@@ -118,7 +118,7 @@
 .action {
    display: contents;
    span {
-      border: 1px solid $lightBorder;
+      // border-bottom: 1px solid $lightBorder;
       border-radius: 2px;
       display: inline-block;
       width: 58px;
@@ -126,6 +126,11 @@
       text-align: center;
       cursor: pointer;
       margin-right: 10px;
+   }
+   a {
+      text-decoration: underline;
+      color: #be1452;
+      font-weight: 600;
    }
 }
 
@@ -172,6 +177,12 @@
          height: 80px;
       }
    }
+   .broker-name {
+      p {
+         font-weight: 600;
+      }
+   }
+
    .table_sell-rent {
       border: 1px solid #ffa3c8;
       border-radius: 10px;
@@ -243,35 +254,46 @@
          }
       }
    }
-  
-   
 }
 
 .personal_name {
-    p{
-        font-size: 16px;
-    font-weight: 600;
-    color: #BE1452;
-    margin-top: 12px;
-    }
+   p {
+      font-size: 16px;
+      font-weight: 600;
+      color: #be1452;
+      margin-top: 12px;
+   }
 }
 
 .personal_details {
-    .detail-heading {
-        font-size: 14px;
-        font-weight: 600;
-        color: #757575;
-    }
- }
- .profession_details{
-    .detail-heading {
-        font-size: 14px;
-        font-weight: 600;
-        color: #757575;
-    }
- }
- .details {
-    font-size: 14px;
-    color: #333333;
-    font-weight: 700;
- }
+   .detail-heading {
+      font-size: 14px;
+      font-weight: 600;
+      color: #757575;
+   }
+}
+.profession_details {
+   .detail-heading {
+      font-size: 14px;
+      font-weight: 600;
+      color: #757575;
+   }
+}
+.details {
+   font-size: 14px;
+   color: #333333;
+   font-weight: 700;
+}
+.langauge-part {
+   display: flex;
+   font-size: 14px;
+   font-weight: 700;
+   margin-top: 8px;
+   .language-data {
+      margin-right: 5px;
+      background: white;
+      border: #ded6d9;
+      border-radius: 50px;
+      padding: 0px 10px;
+   }
+}

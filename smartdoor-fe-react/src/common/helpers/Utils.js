@@ -168,7 +168,7 @@ export const capitalize = (s) => {
  * @param {string} status
  */
 export function handleStatusElement(status) {
-  if ([ 'COMPLETED', 'PUBLISHED', 'CONVERTED', 'APPROVED', 'VISITED', 'Yes, I’m interested', 'completed', 'Completed' ].includes(status)) {
+  if ([ 'COMPLETED', 'PUBLISHED', 'CONVERTED', 'APPROVED', 'Approved', 'VISITED', 'Yes, I’m interested', 'completed', 'Completed' ].includes(status)) {
     return (
       <Text
         size="xSmall"

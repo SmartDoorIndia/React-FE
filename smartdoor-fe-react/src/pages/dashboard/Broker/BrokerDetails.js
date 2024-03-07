@@ -13,6 +13,8 @@ import Form from "react-bootstrap/Form";
 import DataTable from "../../../shared/DataTable/DataTable";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useParams } from "react-router-dom";
+import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
+
 
 import "./Broker.scss";
 import { getBrokerDetails } from "../../../common/redux/actions";
@@ -39,10 +41,8 @@ const BrokerDetails = (props) => {
    const _getBrokerDetails = useCallback(() => {
       getBrokerDetails({ brokerId: brokerdetailId })
          .then((response) => {
-            console.log(response, "response");
             setLoading(false);
             if (response) {
-               console.log(response, "kkkhkhkh");
                if (response) setBrokerData(response.data);
             }
          })
@@ -160,7 +160,9 @@ const BrokerDetails = (props) => {
                               />
                            </div>
 
-                           <Text size="xSmall" fontWeight="smbold" text="Joined on: Aug 20, 2017" />
+                           <p size="xSmall" fontWeight="smbold" > 
+                           {formateDate(Broker_data?.resourceData?.joinedDate) ?? ""}
+                           </p>
                         </div>
                      </div>
                      <div className="sell-rent-status">
@@ -275,16 +277,16 @@ const BrokerDetails = (props) => {
                         <Col className="">
                            <div>
                               <p className="detail-heading">Language Preferences</p>
-                              <p className="details">
+                              <div className="langauge-part">
                                  {Broker_data?.resourceData?.languagePreference &&
                                     Broker_data.resourceData.languagePreference
                                        .slice(0, 2)
                                        .map((data, index) => (
-                                          <p key={index} className="details">
+                                          <div key={index} className="language-data">
                                              {data.languagePreference}
-                                          </p>
+                                          </div>
                                        ))}
-                              </p>
+                              </div>
                            </div>
                         </Col>
 

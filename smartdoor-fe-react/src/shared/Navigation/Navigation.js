@@ -306,16 +306,16 @@ const Nav = () => {
                                  : borkerIcon
                            }
                         /> */}
-                        Broker's
+                        Brokers
                      </Link>
-                     <Link
+                     {/* <Link
                           to='/admin/broker-approved'
                           className={`nav-link ${
                            pathname.includes("BrokerApprovedDetail") ? "nav-active" : ""
                         }`}
                         >
                            Broker aPPROVED
-                     </Link>
+                     </Link> */}
                      {/* <Link
                           to='/admin/BrokerDetails'
                           className={`nav-link ${

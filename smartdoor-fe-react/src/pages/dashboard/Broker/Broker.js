@@ -11,14 +11,12 @@ import Form from "react-bootstrap/Form";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
 import { ToolTip } from "../../../common/helpers/Utils";
-import {
-   getBrokerListing,
-   getBrokerDetails,
-} from "../../../common/redux/actions";
+import { getBrokerListing, getBrokerDetails } from "../../../common/redux/actions";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import "./Broker.scss";
 import { DateRangePicker, Stack } from "rsuite";
-import CONSTANTS_STATUS from '../../../common/helpers/ConstantsStatus';
+import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
+import { set } from "date-fns";
 
 const getModalActionData = (row) => {
    return { userData: row };
@@ -27,14 +25,16 @@ const Broker = (props) => {
    const { allPlanDataBroker, getBrokerListing } = props;
    const [planData, setPlanData] = useState();
    const statusArr = CONSTANTS_STATUS.brokerStatus;
-   
+   const [filterText, setFilterText] = useState("");
+   const [statusSelected, setStatusSelected] = useState("");
+   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+   const [startDate, setStartDate] = useState(new Date());
+   const [endDate, setEndDate] = useState(new Date());
+   const [datata, setDatata] = useState([]);
 
    useEffect(() => {
       getBrokerListing();
    }, [getBrokerListing]);
-
-
-
 
    const showValue = (status_value) => {
       let status = status_value || statusSelected;
@@ -53,17 +53,9 @@ const Broker = (props) => {
             return item?.status == status;
          });
       }
-      // setPlanData(filteredItems)
       return filteredItems;
    };
 
-   //    const   = allPlanDataBroker.data?.length ? allPlanDataBroker.data.filter((item) => {
-   //         return item.name || item.brokerId;
-   //      })
-   //    : [];
-   const [filterText, setFilterText] = useState("");
-   const [statusSelected, setStatusSelected] = useState("");
-   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const PaginationComponent = (props) => (
       <Pagination {...props} PaginationActionButton={PaginationActionButton} />
    );
@@ -72,8 +64,25 @@ const Broker = (props) => {
    );
 
    const handleDateRangeChange = (date) => {
-      setResetPaginationToggle(!resetPaginationToggle);
-      getBrokerListing();
+      if (date && date.selection) {
+         const startDate = date.selection.startDate;
+         const endDate = date.selection.endDate;
+
+         const filteredItems = allPlanDataBroker.data?.filter((item) => {
+            const productDate = new Date(item.createdAt);
+
+            return productDate >= startDate && productDate <= endDate;
+         });
+
+         setStartDate(startDate);
+         setEndDate(endDate);
+         setDatata(filteredItems);
+      }
+   };
+   const selectionRange = {
+      startDate: startDate,
+      endDate: endDate,
+      key: "selection",
    };
 
    const subHeaderComponentMemo = useMemo(() => {
@@ -89,7 +98,7 @@ const Broker = (props) => {
             onFilter={(e) => setFilterText(e.target.value)}
             onClear={handleClear}
             filterText={filterText}
-            placeholder="Search here"
+            placeholder="Search"
             autoComplete="off"
          />
       );
@@ -97,8 +106,8 @@ const Broker = (props) => {
 
    const _filterStatus = (status_value) => {
       setStatusSelected(status_value);
-      showValue(status_value)
-    }
+      showValue(status_value);
+   };
 
    const columns = [
       {
@@ -117,7 +126,7 @@ const Broker = (props) => {
       },
       {
          name: "Location",
-         selector: "",
+         selector: (row) => row.latestLcation.locationName,
          sortable: false,
          center: false,
          minWidth: "120px",
@@ -127,14 +136,14 @@ const Broker = (props) => {
          selector: "mobile",
          sortable: true,
          center: false,
-         minWidth: "100px",
+         minWidth: "145px",
       },
       {
          name: "Email",
          selector: "email",
          sortable: false,
          center: true,
-         minWidth: "120px",
+         minWidth: "245px",
       },
       {
          name: "Plan",
@@ -148,7 +157,7 @@ const Broker = (props) => {
          selector: "postedProperties",
          sortable: false,
          center: true,
-         minWidth: "120px",
+         minWidth: "165px",
       },
       {
          name: "Chats",
@@ -177,7 +186,9 @@ const Broker = (props) => {
                      <Link
                         to={{
                            pathname:
-                           row?.status == "Approved" ? `/admin/BrokerDetails/${row.brokerId}` : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
+                              row?.status == "Approved"
+                                 ? `/admin/BrokerDetails/${row.brokerId}`
+                                 : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
                         }}
                      >
                         Details
@@ -207,6 +218,7 @@ const Broker = (props) => {
                         color: "darkgray",
                         marginTop: "10px",
                      }}
+                     ranges={[selectionRange]}
                      onChange={handleDateRangeChange}
                   />
                </div>
