@@ -470,10 +470,11 @@ export const getBrokerListing  = (data) => async (dispatch) => {
 
 export const getBrokerPostedProperty = (data) => async (dispatch) => {
   const response = await mainApiService('getBrokerPostedProperty', data);
-  if ( response) {
-    if(response.data && response.status === 200) {
-      if(response.data.resourceData) {
-        dispatch({type: Actions.BROKERS_MODULE_SUCCESS, data: response.data.resourceData });
+  console.log(response,"dkjhkjfhfk")
+  if (response) {
+    if (response.data && response.status === 200) {
+      if (response.data.resourceData) {
+        dispatch({ type: Actions.BROKERS_MODULE_SUCCESS, data: response.data.resourceData });
       }
     }
   }

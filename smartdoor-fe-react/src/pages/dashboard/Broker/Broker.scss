@@ -119,13 +119,14 @@
    display: contents;
    span {
       // border-bottom: 1px solid $lightBorder;
-      border-radius: unset;
+      border-radius: 2px;
       display: inline-block;
       width: 58px;
       height: 26px;
       text-align: center;
       cursor: pointer;
       margin-right: 10px;
+      border: unset;
    }
    a {
       text-decoration: underline;

@@ -17,7 +17,7 @@ import "./Broker.scss";
 import { DateRangePicker, Stack } from "rsuite";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
 import { set } from "date-fns";
-
+import moment  from "moment";
 const getModalActionData = (row) => {
    return { userData: row };
 };
@@ -28,17 +28,19 @@ const Broker = (props) => {
    const [filterText, setFilterText] = useState("");
    const [statusSelected, setStatusSelected] = useState("");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-   const [startDate, setStartDate] = useState(new Date());
-   const [endDate, setEndDate] = useState(new Date());
+   const [startDate, setStartDate] = useState(null);
+   const [endDate, setEndDate] = useState(null);
    const [datata, setDatata] = useState([]);
 
    useEffect(() => {
       getBrokerListing();
    }, [getBrokerListing]);
 
-   const showValue = (status_value) => {
+   const showValue = (status_value, startDate_, endDate_) => {
       let status = status_value || statusSelected;
       let filteredItems = [];
+      startDate_ = startDate_ || startDate;
+      endDate_ = endDate_ || endDate;
       filteredItems = allPlanDataBroker.data?.length
          ? allPlanDataBroker.data.filter((item) => {
               return (
@@ -53,6 +55,17 @@ const Broker = (props) => {
             return item?.status == status;
          });
       }
+      if (startDate_) {
+         console.log({startDate_});
+         filteredItems = filteredItems.filter((item) => {
+            let joinedDate =moment(item.joinedDate);
+            let mst = moment(startDate_).startOf('day')
+            let met = moment(endDate_).endOf('day')
+
+            return joinedDate >= mst && joinedDate <= met;
+            return item?.status == status;
+         });
+      }
       return filteredItems;
    };
 
@@ -64,19 +77,21 @@ const Broker = (props) => {
    );
 
    const handleDateRangeChange = (date) => {
-      if (date && date.selection) {
-         const startDate = date.selection.startDate;
-         const endDate = date.selection.endDate;
+      console.log("called", date);
+      if (date && date[0] && date[1]) {
+         const startDate = date[0];
+         const endDate = date[1];
 
-         const filteredItems = allPlanDataBroker.data?.filter((item) => {
-            const productDate = new Date(item.createdAt);
+         // const filteredItems = allPlanDataBroker.data?.filter((item) => {
+         //    const productDate = new Date(item.createdAt);
 
-            return productDate >= startDate && productDate <= endDate;
-         });
+         //    return productDate >= startDate && productDate <= endDate;
+         // });
 
          setStartDate(startDate);
          setEndDate(endDate);
-         setDatata(filteredItems);
+         showValue(statusSelected, startDate, endDate);
+         // setDatata(filteredItems);
       }
    };
    const selectionRange = {
@@ -218,7 +233,7 @@ const Broker = (props) => {
                         color: "darkgray",
                         marginTop: "10px",
                      }}
-                     ranges={[selectionRange]}
+                     // ranges={[selectionRange]}
                      onChange={handleDateRangeChange}
                   />
                </div>

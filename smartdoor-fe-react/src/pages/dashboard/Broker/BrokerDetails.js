@@ -1,7 +1,8 @@
 /** @format */
-
-import { React, useMemo, useEffect, useState, useCallback } from "react";
+// @ts-ignore
+import { React, useMemo, useEffect, useState, useCallback, memo } from "react";
 import { compose } from "redux";
+import { connect } from "react-redux";
 import { Col, Row, Table, Card } from "react-bootstrap";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import Image from "../../../shared/Image/Image";
@@ -16,23 +17,21 @@ import { useParams } from "react-router-dom";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
 import Hold from "../../../shared/Modal/BrokerDetailModal/BrokerDetailModal";
 import "./Broker.scss";
-import { getBrokerDetails } from "../../../common/redux/actions";
+import { getBrokerDetails, getBrokerPostedProperty } from "../../../common/redux/actions";
+import moment  from "moment";
 
 const BrokerDetails = (props) => {
    // MODAL DATA STATE
-   
+   const { allPlanDataBroker, getBrokerPostedProperty } = props
    const [show, setShow] = useState(false);
-   console.log(show,"show");
    const handleShow = () => setShow(true);
    const [modalData, setModalData] = useState();
-   console.log(modalData,"modaldata");
    const { brokerdetailId } = useParams();
-   console.log(brokerdetailId,"brokeriddddd");
    const [blockData, setBlockData] = useState(null);
    const [Broker_data, setBrokerData] = useState([]);
-   console.log(Broker_data, "broker_data");
    const [loading, setLoading] = useState(true);
    const handleClose = () => setShow(false);
+
    const handleBlockConsumser = () => {
       if (blockData !== null) {
          ({ userId: blockData })
@@ -58,7 +57,8 @@ const BrokerDetails = (props) => {
    }, [getBrokerDetails, brokerdetailId]);
    useEffect(() => {
       _getBrokerDetails();
-   }, [_getBrokerDetails]);
+      getBrokerPostedProperty();
+   }, [_getBrokerDetails,getBrokerPostedProperty]);
 
    const [filterText, setFilterText] = useState("");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
@@ -86,6 +86,68 @@ const BrokerDetails = (props) => {
          />
       );
    }, [filterText, resetPaginationToggle]);
+
+   const [startDate, setStartDate] = useState(null);
+   const [endDate, setEndDate] = useState(null);
+   const [statusSelected, setStatusSelected] = useState("");
+
+   const showValue = (status_value, startDate_, endDate_) => {
+      let status = status_value || statusSelected;
+      let filteredItems = [];
+      startDate_ = startDate_ || startDate;
+      endDate_ = endDate_ || endDate;
+      filteredItems = allPlanDataBroker.data?.length
+         ? allPlanDataBroker.data.filter((item) => {
+              return (
+                 item?.id == filterText ||
+                 item?.mobile?.includes(filterText) ||
+                 item?.name?.toLowerCase().includes(filterText.toLowerCase())
+              );
+           })
+         : [];
+      if (status && filteredItems.length) {
+         filteredItems = filteredItems.filter((item) => {
+            return item?.status == status;
+         });
+      }
+      if (startDate_) {
+         console.log({startDate_});
+         filteredItems = filteredItems.filter((item) => {
+            let joinedDate =moment(item.joinedDate);
+            let mst = moment(startDate_).startOf('day')
+            let met = moment(endDate_).endOf('day')
+
+            return joinedDate >= mst && joinedDate <= met;
+            return item?.status == status;
+         });
+      }
+      console.log(filteredItems,"filtereditems")
+      return filteredItems;
+   };
+   const handleDateRangeChange = (date) => {
+      console.log("called", date);
+      if (date && date[0] && date[1]) {
+         const startDate = date[0];
+         const endDate = date[1];
+
+         // const filteredItems = allPlanDataBroker.data?.filter((item) => {
+         //    const productDate = new Date(item.createdAt);
+
+         //    return productDate >= startDate && productDate <= endDate;
+         // });
+
+         setStartDate(startDate);
+         setEndDate(endDate);
+         showValue(statusSelected, startDate, endDate);
+         // setDatata(filteredItems);
+      }
+   };
+   const selectionRange = {
+      startDate: startDate,
+      endDate: endDate,
+      key: "selection",
+   };
+
 
    const columns = [
       {
@@ -327,7 +389,10 @@ const BrokerDetails = (props) => {
                            <div>
                               <p className="detail-heading">Deals In</p>
                               <p className="details">
-                                 {Broker_data?.resourceData?.dealsInNewProject}
+                                 {Broker_data?.resourceData?.rent == true ? "Rent" : ""}
+                              </p>
+                              <p className="details">
+                                 {Broker_data?.resourceData?.sell == true ? "Sell" : ""}
                               </p>
                            </div>
                         </Col>
@@ -424,4 +489,13 @@ const BrokerDetails = (props) => {
    );
 };
 
-export default compose()(BrokerDetails);
+const mapStateToProps = ({allPlanDataBroker}) => ({
+   allPlanDataBroker,
+   getBrokerPostedProperty
+});
+const actions = {
+   getBrokerPostedProperty
+};
+const withConnect = connect(mapStateToProps, actions);
+
+export default compose(withConnect, memo)(BrokerDetails);

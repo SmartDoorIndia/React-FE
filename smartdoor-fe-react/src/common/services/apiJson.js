@@ -780,7 +780,7 @@ export const ApiJson = {
       showErrorMessage: false,
    },
    getBrokerPostedProperty:{
-      url:"/consumer/broker/getBrokerDetails/:brokerId",
+      url:"consumer/broker/postedProperty",
       method:"GET",
       headers:{
          Accept :"*/*",
