@@ -14,17 +14,23 @@ import DataTable from "../../../shared/DataTable/DataTable";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useParams } from "react-router-dom";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
-
-
+import Hold from "../../../shared/Modal/BrokerDetailModal/BrokerDetailModal";
 import "./Broker.scss";
 import { getBrokerDetails } from "../../../common/redux/actions";
 
 const BrokerDetails = (props) => {
+   // MODAL DATA STATE
+   
+   const [show, setShow] = useState(false);
+   console.log(show,"show");
+   const handleShow = () => setShow(true);
+   const [modalData, setModalData] = useState();
+   console.log(modalData,"modaldata");
    const { brokerdetailId } = useParams();
+   console.log(brokerdetailId,"brokeriddddd");
    const [blockData, setBlockData] = useState(null);
    const [Broker_data, setBrokerData] = useState([]);
    console.log(Broker_data, "broker_data");
-   const [show, setShow] = useState(false);
    const [loading, setLoading] = useState(true);
    const handleClose = () => setShow(false);
    const handleBlockConsumser = () => {
@@ -132,12 +138,26 @@ const BrokerDetails = (props) => {
          center: true,
       },
    ];
+   const closeModal = (data={isReload : false}) => {
+      // if(data?.isReload) getAllUsers({pageNumber:"", records:"",searchByCity:"", searchByzipCode:""});
+      setModalData(brokerdetailId);
+   };
    return (
       <>
+       <Hold
+            show = {show}
+            handleShow ={handleShow}
+            handleClose ={handleClose}
+            modalData={modalData}
+            // dataFrom="user_manage"
+            closeModal={closeModal}
+            history={{ goBack: closeModal }}
+            // getAllUsers={getAllUsers}
+          />
          <div className="dashboard container-fluid12">
             <Row>
                <Col lg={12}>
-                  <div className="authorContact mt-4">
+                  <div className="authorContact">
                      <div className="d-flex">
                         <div className="author-detail">
                            <Image name="author" className="object-cover" src={userImage} />
@@ -160,8 +180,8 @@ const BrokerDetails = (props) => {
                               />
                            </div>
 
-                           <p size="xSmall" fontWeight="smbold" > 
-                           {formateDate(Broker_data?.resourceData?.joinedDate) ?? ""}
+                           <p size="xSmall" fontWeight="smbold">
+                              {formateDate(Broker_data?.resourceData?.joinedDate) ?? ""}
                            </p>
                         </div>
                      </div>
@@ -226,8 +246,15 @@ const BrokerDetails = (props) => {
                                  </td>
                               </tr>
                            </Table>
+                           <div className="brokerdetail-hold">
+                              <Buttons className="hold-btn" name="Hold" 
+                               onClick={() => {
+                                 handleShow();
+                                 setModalData(brokerdetailId);
+                                 // handleShow();
+                              }}/>
+                           </div>
                         </div>
-                        <div></div>
                      </div>
                   </div>
                </Col>
@@ -299,7 +326,9 @@ const BrokerDetails = (props) => {
                         <Col className="">
                            <div>
                               <p className="detail-heading">Deals In</p>
-                              <p className="details">{Broker_data?.resourceData?.dealsInNewProject}</p>
+                              <p className="details">
+                                 {Broker_data?.resourceData?.dealsInNewProject}
+                              </p>
                            </div>
                         </Col>
                      </div>
@@ -332,7 +361,9 @@ const BrokerDetails = (props) => {
                            <div>
                               <p className="detail-heading">Company Details </p>
                               <p className="details">
-                                 {Broker_data?.resourceData?.companyName + "," + Broker_data?.resourceData?.companyAddress}
+                                 {Broker_data?.resourceData?.companyName +
+                                    "," +
+                                    Broker_data?.resourceData?.companyAddress}
                               </p>
                            </div>
                         </Col>
@@ -341,10 +372,11 @@ const BrokerDetails = (props) => {
                </Col>
 
                <Col lg={12}>
-                  <div className="heading mt-10" >
+                  <div className="heading mt-10">
                      <h6>PROPERTIES</h6>
                   </div>
                </Col>
+
                <Col lg={12}>
                   <div className="tableBox mb-5">
                      <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">

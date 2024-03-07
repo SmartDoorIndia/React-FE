@@ -24,6 +24,7 @@ const TransactionDetails = (props) => {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
+  console.log(data,'dataid');
   const [previousVisitdata, setPreviousVisitData] = useState([]);
   const [error, setError] = useState(null);
   // const [selectedSelection, setSelect] = useState('');
@@ -35,9 +36,14 @@ const TransactionDetails = (props) => {
 
   // MODAL DATA STATE
   const [show, setShow] = useState(false);
+  console.log(show,"sjowd")
    const handleClose = () => setShow(false);
+   console.log(handleClose,"close")
+
    const handleShow = () => setShow(true);
+   console.log(handleShow,"show")
   const [modalData, setModalData] = useState();
+  console.log(modalData,'modal data')
 
   const PaginationComponent = (props) => (<Pagination {...props} />);
   // const TeamTablePaginationComponent = (props) => (<Pagination {...props} PaginationActionButton={TeamTablePaginationActionButton} />);

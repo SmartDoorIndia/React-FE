@@ -16,6 +16,7 @@ const FeedbackModal = (props) => {
 
     const modalData = props.modalData;
     const [data, setData] = useState({});
+    console.log(data,"data")
 
     console.log("feedback modal:", modalData);
   
