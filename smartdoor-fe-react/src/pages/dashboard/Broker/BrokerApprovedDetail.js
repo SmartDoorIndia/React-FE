@@ -9,22 +9,41 @@ import Text from "../../../shared/Text/Text";
 import Buttons from "../../../shared/Buttons/Buttons";
 import "./Broker.scss";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
-import { getBrokerDetailsForApprove, getBrokerStatusDetail } from "../../../common/redux/actions";
+import { getBrokerDetailsForApprove, getBrokerStatusDetail,getBrokerDeclineStatusDetail } from "../../../common/redux/actions";
 import { useParams, useHistory } from "react-router-dom";
 
 const BrokerApprovedDetail = (props) => {
    const { brokerdetailId } = useParams();
    const [loading, setLoading] = useState(true);
    const [brokerApprovedData, setBrokerApprovedData] = useState([]);
+   console.log(brokerApprovedData,"approved")
    const history = useHistory();
+   const reverse = useHistory();
 
-   const HnadleSubmit = () => {
+   const HandleSubmit = () => {
       getBrokerStatusDetail({
          brokerId: brokerdetailId,
          status: "Approved",
       });
-      history.push('/admin/broker')
+      setTimeout(()=>{
+         history.push('/admin/broker');
+       window.location.reload();
+      },1000)
+
+   }
+
+   const HandleRejected = () => {
+      getBrokerDeclineStatusDetail({
+         brokerId: brokerdetailId,
+         status: "Rejected",
+      });
+      setTimeout(()=>{
+         reverse.push('/admin/broker');
+       window.location.reload();
+      },1000)
+      
    };
+
    const _getBrokerDetails = useCallback(() => {
       getBrokerDetailsForApprove({ brokerId: brokerdetailId })
          .then((response) => {
@@ -34,7 +53,7 @@ const BrokerApprovedDetail = (props) => {
             }
          })
          .catch((error) => {
-            setLoading(false);
+            setLoading(true);
          });
    }, [getBrokerDetailsForApprove, brokerdetailId]);
    useEffect(() => {
@@ -100,6 +119,7 @@ const BrokerApprovedDetail = (props) => {
                                  )
                            )}
                      </p>
+                   
                   </Col>
                   <Col>
                      <Text
@@ -108,7 +128,14 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Services Offered"
                      />
-                     <Text size="Small" fontWeight="mediumbold" color="secondryColor" text="dfd" />
+                       <div className="brokerapproved-servicedoffered">
+                        <p className="details">
+                           {brokerApprovedData?.resourceData?.rent == true ? "Rent" : "NA"}
+                        </p>
+                        <p className="details">
+                           {brokerApprovedData?.resourceData?.sale == true ? "Sell" : "NA"}
+                        </p>
+                     </div>
                   </Col>
                   <Col>
                      <Text
@@ -145,7 +172,7 @@ const BrokerApprovedDetail = (props) => {
                         text="Phone Number"
                      />
                      <p size="Small" fontWeight="mediumbold" color="secondryColor">
-                        {brokerApprovedData?.resourceData?.mobile}
+                        {brokerApprovedData?.resourceData?.mobileNoForCustomer}
                      </p>
                   </Col>
                   <Col>
@@ -189,12 +216,13 @@ const BrokerApprovedDetail = (props) => {
                      size="Small"
                      color="secondryColor"
                      style={{ height: "40px !important" }}
+                     onClick={HandleRejected}
                   >
                      Decline
                   </Buttons>
                </div>
                <div className="mr-2">
-                  <Buttons class="btn Small white  primary" name="Approve" onClick={HnadleSubmit}>
+                  <Buttons class="btn Small white  primary" name="Approve" onClick={HandleSubmit}>
                      Approve
                   </Buttons>
                </div>

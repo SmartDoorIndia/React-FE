@@ -12,7 +12,7 @@ const CONSTANTS_STATUS = {
     propertyStatusArr :  [ "UNDER REVIEW" , "PUBLISHED" ],
     propertyType :  [ "SMARTDOOR" , "NON SMARTDOOR" ],
     realtorStatusArr :  [ "SUBMITTED" , "ACCEPTED", "REJECTED" ],
-    brokerStatus: [ "Approved","APPROVED", "Rejected", "Hold", "Pending" ]
+    brokerStatus: [ "Approved", "Rejected", "Hold", "Pending" ]
  };
  
  export default CONSTANTS_STATUS;

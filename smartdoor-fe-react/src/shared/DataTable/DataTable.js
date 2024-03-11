@@ -67,8 +67,8 @@ const customStyles = {
       'color': '#252525',
       'justifyContent': 'center',
       '&:first-child': {
-        minWidth: '70px',
-        maxWidth: '100px',
+        minWidth: '100px',
+        maxWidth: '120px',
       },
     },
   },

@@ -15,7 +15,9 @@ import DataTable from "../../../shared/DataTable/DataTable";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useParams } from "react-router-dom";
 import { DateRangePicker, Stack } from "rsuite";
+import { ToolTip } from "../../../common/helpers/Utils";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
+import { Link } from "react-router-dom/cjs/react-router-dom";
 import Hold from "../../../shared/Modal/BrokerDetailModal/BrokerDetailModal";
 import "./Broker.scss";
 import { getBrokerDetails, getBrokerPostedProperty } from "../../../common/redux/actions";
@@ -32,7 +34,7 @@ const BrokerDetails = (props) => {
    const { brokerdetailId } = useParams();
    const [blockData, setBlockData] = useState(null);
    const [Broker_data, setBrokerData] = useState([]);
-   console.log(Broker_data,"data")
+   console.log(Broker_data,'broker_data')
    const [loading, setLoading] = useState(true);
    const handleClose = () => setShow(false);
    const [startDate, setStartDate] = useState(null);
@@ -104,8 +106,10 @@ const BrokerDetails = (props) => {
       let filteredItems = [];
       startDate_ = startDate_ || startDate;
       endDate_ = endDate_ || endDate;
+
       filteredItems = allPlanDataBroker.data?.length
          ? allPlanDataBroker.data.filter((item) => {
+            return true
               return item?.userId == filterText;
            })
          : [];
@@ -115,11 +119,10 @@ const BrokerDetails = (props) => {
          });
       }
       if (startDate_) {
-         console.log({ startDate_ });
          filteredItems = filteredItems.filter((item) => {
             let postedOn = moment(item.postedOn);
             let mst = moment(startDate_).startOf("day");
-            let met = moment(endDate_).endO("day");
+            let met = moment(endDate_).endOf("day");
 
             return postedOn >= mst && postedOn <= met;
             return item?.status == status;
@@ -145,52 +148,73 @@ const BrokerDetails = (props) => {
    const columns = [
       {
          name: "Posted On",
-         selector: "postedFor",
-         maxWidth: "550px",
          sortable: true,
          center: true,
+         cell: ({ postedOn }) => <span>{`${formateDate(postedOn)}` || ""}</span>,
       },
       {
          name: "Posted for",
-         selector: "Posted for",
+         selector: "postedFor",
          sortable: true,
-         maxWidth: "200px",
+         maxWidth: "120px",
          center: false,
       },
       {
          name: "Location",
-         selector: "Location",
+         selector: (row) => row.location?.localityName,
          sortable: false,
-         maxWidth: "200px",
+         maxWidth: "100px",
+         minWidth:"100px",
          center: false,
       },
       {
          name: "Plan",
-         selector: "Plan",
+         selector: "plan",
          sortable: true,
          maxWidth: "100px",
          center: false,
       },
       {
          name: "Config.",
-         selector: "Config.",
+         selector: "config",
          sortable: false,
          maxWidth: "100px",
+         minWidth:"115px",
          center: true,
       },
       {
          name: "Status",
-         selector: "Status",
+         selector: "status",
          sortable: false,
          maxWidth: "150px",
          center: true,
+         cell: ({ status }) => handleStatusElement(status)
       },
       {
          name: "Action",
-         selector: "Action",
+         selector: (row) => row.action,
          sortable: false,
-         maxWidth: "150px",
          center: true,
+         minWidth: "120px",
+         maxWidth:"100px",
+         cell: (row) => (
+            <div className="action">
+               <ToolTip name="View Details">
+                  <span>
+                     <Link
+                        to={{
+                           pathname:
+                              row?.status == "Approved"
+                                 ? `/admin/BrokerDetails/${row.brokerId}`
+                                 : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
+                        }}
+                     >
+                        Details
+                     </Link>
+                  </span>
+               </ToolTip>
+            </div>
+         ),
       },
    ];
    const closeModal = (data = { isReload: false }) => {
@@ -246,12 +270,12 @@ const BrokerDetails = (props) => {
                               <tr>
                                  <th>
                                     <p>
-                                       Sell<span> Last 90 days</span>
+                                       Sell<span> Last {Broker_data?.resourceData?.sellLastDays} days</span>
                                     </p>
                                  </th>
                                  <th>
                                     <p>
-                                       rent<span> Last 90 days</span>
+                                       rent<span> Last {Broker_data?.resourceData?.rentLastDays} days</span>
                                     </p>
                                  </th>
                               </tr>
@@ -260,11 +284,11 @@ const BrokerDetails = (props) => {
                                     <div className="d-flex">
                                        <div>
                                           <p>Active Cust.</p>
-                                          <span>10</span>
+                                          <span>{Broker_data?.resourceData?.sellActiveCustomers}</span>
                                        </div>
                                        <div>
                                           <p>Visits</p>
-                                          <span>100</span>
+                                          <span>{Broker_data?.resourceData?.sellVisits}</span>
                                        </div>
                                     </div>
                                  </td>
@@ -272,11 +296,11 @@ const BrokerDetails = (props) => {
                                     <div className="d-flex">
                                        <div>
                                           <p>Active Cust.</p>
-                                          <span>10</span>
+                                          <span>{Broker_data?.resourceData?.rentActiveCustomers}</span>
                                        </div>
                                        <div>
                                           <p>Visits</p>
-                                          <span>100</span>
+                                          <span>{Broker_data?.resourceData?.rentVisits}</span>
                                        </div>
                                     </div>
                                  </td>
@@ -286,7 +310,7 @@ const BrokerDetails = (props) => {
                               <tr>
                                  <th>
                                     <p>
-                                       cHAT<span> Last 90 days </span>
+                                       CHAT<span> Last {Broker_data?.resourceData?.chatLastDays}  days </span>
                                     </p>
                                  </th>
                               </tr>
@@ -295,7 +319,7 @@ const BrokerDetails = (props) => {
                                     <div className="d-flex">
                                        <div>
                                           <p>Active Cust.</p>
-                                          <span>10</span>
+                                          <span>{Broker_data?.resourceData?.chatCustomerCount}</span>
                                        </div>
                                     </div>
                                  </td>
@@ -331,7 +355,7 @@ const BrokerDetails = (props) => {
                               {Broker_data?.resourceData?.brokerlocation &&
                                  Broker_data?.resourceData?.brokerlocation.map((data, index) => (
                                     <p key={index} className="details">
-                                       {data.locationName}
+                                       {data?.city}
                                     </p>
                                  ))}
                            </div>
@@ -441,7 +465,7 @@ const BrokerDetails = (props) => {
                </Col>
 
                <Col lg={12}>
-                  <div className="heading mt-10">
+                  <div className="heading mt-4 text-decoration-underline">
                      <h6>PROPERTIES</h6>
                   </div>
                </Col>
@@ -462,9 +486,10 @@ const BrokerDetails = (props) => {
                            <DateRangePicker
                               style={{
                                  width: "249px",
-                                 height: "39px",
+                                 height: "30px",
                                  color: "darkgray",
                                  marginTop: "0px",
+                                 marginLeft:"15px",
                               }}
                               onChange={handleDateRangeChange}
                            />
@@ -473,6 +498,7 @@ const BrokerDetails = (props) => {
                                  <Form.Control
                                     as="select"
                                     value={statusSelected}
+
                                     onChange={(e) => {
                                        _filterStatus(e.target.value);
                                     }}

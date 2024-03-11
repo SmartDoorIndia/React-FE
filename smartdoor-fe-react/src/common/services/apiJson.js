@@ -780,7 +780,7 @@ export const ApiJson = {
       showErrorMessage: false,
    },
    getBrokerPostedProperty:{
-      url:"consumer/broker/postedProperty",
+      url:"/consumer/broker/postedProperty",
       method:"GET",
       headers:{
          Accept :"*/*",
@@ -806,6 +806,32 @@ export const ApiJson = {
       url: "/consumer/broker/updateStatus/:brokerId/:status",
       method: "PUT",
       data: {},
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
+   getBrokerDeclineStatusDetail: {
+      url: "/consumer/broker/updateStatusAsRejected/:brokerId/:status",
+      method: "PUT",
+      data: {},
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
+   
+   addHoldRequestComments: {
+      url: "/consumer/broker/updateStatus/:brokerId/:status/hold",
+      method: "PUT",
+      data: {
+         comments: "string",
+         id: 0,
+      },
       headers: {
          Accept: "*/*",
          "Content-Type": "application/json",

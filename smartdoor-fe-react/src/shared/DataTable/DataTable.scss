@@ -1,4 +1,5 @@
 .rdt_TableCol {
+
     &:nth-child(2){
         white-space: nowrap;
     }
@@ -9,10 +10,14 @@
    }  
     &:last-child{
         justify-content: start;padding-left: 1.5rem;
+        max-width: 120px;
     } 
+    
+
 }
 
 .rdt_TableRow {
+    justify-content: space-between;
     .rdt_TableCell{
         text-align: center;
         &:nth-child(2){
@@ -23,4 +28,7 @@
             // padding-left: .5rem;
         }
     }
+}
+.rdt_TableHeadRow{
+    justify-content: space-between;
 }

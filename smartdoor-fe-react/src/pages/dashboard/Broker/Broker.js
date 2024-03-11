@@ -82,13 +82,6 @@ const Broker = (props) => {
       if (date && date[0] && date[1]) {
          const startDate = date[0];
          const endDate = date[1];
-
-         // const filteredItems = allPlanDataBroker.data?.filter((item) => {
-         //    const productDate = new Date(item.createdAt);
-
-         //    return productDate >= startDate && productDate <= endDate;
-         // });
-
          setStartDate(startDate);
          setEndDate(endDate);
          showValue(statusSelected, startDate, endDate);
