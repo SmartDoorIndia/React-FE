@@ -298,14 +298,10 @@ const Nav = () => {
                            pathname.includes("broker") ? "nav-active" : ""
                         }`}
                      >
-                        {/* <Image
-                           name="teamGroup"
-                           src={
-                              pathname.includes("broker")
-                                 ? borkerIcon
-                                 : borkerIcon
-                           }
-                        /> */}
+                       <Image
+                        name="houseIcon"
+                        src={pathname.includes("broker") ? propertyActive : houseIcon}
+                     />
                         Brokers
                      </Link>
                      {/* <Link

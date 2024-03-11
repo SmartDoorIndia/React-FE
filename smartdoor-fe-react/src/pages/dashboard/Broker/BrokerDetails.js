@@ -14,23 +14,32 @@ import Form from "react-bootstrap/Form";
 import DataTable from "../../../shared/DataTable/DataTable";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useParams } from "react-router-dom";
+import { DateRangePicker, Stack } from "rsuite";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
 import Hold from "../../../shared/Modal/BrokerDetailModal/BrokerDetailModal";
 import "./Broker.scss";
 import { getBrokerDetails, getBrokerPostedProperty } from "../../../common/redux/actions";
-import moment  from "moment";
+import moment from "moment";
+import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
 
 const BrokerDetails = (props) => {
    // MODAL DATA STATE
-   const { allPlanDataBroker, getBrokerPostedProperty } = props
+   const { allPlanDataBroker, getBrokerPostedProperty } = props;
    const [show, setShow] = useState(false);
    const handleShow = () => setShow(true);
    const [modalData, setModalData] = useState();
+   const statusArr = CONSTANTS_STATUS.brokerStatus;
    const { brokerdetailId } = useParams();
    const [blockData, setBlockData] = useState(null);
    const [Broker_data, setBrokerData] = useState([]);
+   console.log(Broker_data,"data")
    const [loading, setLoading] = useState(true);
    const handleClose = () => setShow(false);
+   const [startDate, setStartDate] = useState(null);
+   const [endDate, setEndDate] = useState(null);
+   const [statusSelected, setStatusSelected] = useState("");
+   const [filterText, setFilterText] = useState("");
+   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
 
    const handleBlockConsumser = () => {
       if (blockData !== null) {
@@ -58,10 +67,8 @@ const BrokerDetails = (props) => {
    useEffect(() => {
       _getBrokerDetails();
       getBrokerPostedProperty();
-   }, [_getBrokerDetails,getBrokerPostedProperty]);
+   }, [_getBrokerDetails, getBrokerPostedProperty]);
 
-   const [filterText, setFilterText] = useState("");
-   const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const PaginationComponent = (props) => (
       <Pagination {...props} PaginationActionButton={PaginationActionButton} />
    );
@@ -82,14 +89,15 @@ const BrokerDetails = (props) => {
             onFilter={(e) => setFilterText(e.target.value)}
             onClear={handleClear}
             filterText={filterText}
-            placeholder="Search here"
+            placeholder="Search"
          />
       );
    }, [filterText, resetPaginationToggle]);
 
-   const [startDate, setStartDate] = useState(null);
-   const [endDate, setEndDate] = useState(null);
-   const [statusSelected, setStatusSelected] = useState("");
+   const _filterStatus = (status_value) => {
+      setStatusSelected(status_value);
+      showValue(status_value);
+   };
 
    const showValue = (status_value, startDate_, endDate_) => {
       let status = status_value || statusSelected;
@@ -98,61 +106,46 @@ const BrokerDetails = (props) => {
       endDate_ = endDate_ || endDate;
       filteredItems = allPlanDataBroker.data?.length
          ? allPlanDataBroker.data.filter((item) => {
-              return (
-                 item?.id == filterText ||
-                 item?.mobile?.includes(filterText) ||
-                 item?.name?.toLowerCase().includes(filterText.toLowerCase())
-              );
+              return item?.userId == filterText;
            })
          : [];
-      if (status && filteredItems.length) {
+      if (status && filteredItems?.length) {
          filteredItems = filteredItems.filter((item) => {
             return item?.status == status;
          });
       }
       if (startDate_) {
-         console.log({startDate_});
+         console.log({ startDate_ });
          filteredItems = filteredItems.filter((item) => {
-            let joinedDate =moment(item.joinedDate);
-            let mst = moment(startDate_).startOf('day')
-            let met = moment(endDate_).endOf('day')
+            let postedOn = moment(item.postedOn);
+            let mst = moment(startDate_).startOf("day");
+            let met = moment(endDate_).endO("day");
 
-            return joinedDate >= mst && joinedDate <= met;
+            return postedOn >= mst && postedOn <= met;
             return item?.status == status;
          });
       }
-      console.log(filteredItems,"filtereditems")
       return filteredItems;
    };
    const handleDateRangeChange = (date) => {
-      console.log("called", date);
       if (date && date[0] && date[1]) {
          const startDate = date[0];
          const endDate = date[1];
-
-         // const filteredItems = allPlanDataBroker.data?.filter((item) => {
-         //    const productDate = new Date(item.createdAt);
-
-         //    return productDate >= startDate && productDate <= endDate;
-         // });
-
          setStartDate(startDate);
          setEndDate(endDate);
          showValue(statusSelected, startDate, endDate);
-         // setDatata(filteredItems);
       }
    };
-   const selectionRange = {
-      startDate: startDate,
-      endDate: endDate,
-      key: "selection",
-   };
-
+   // const selectionRange = {
+   //    startDate: startDate,
+   //    endDate: endDate,
+   //    key: "selection",
+   // };
 
    const columns = [
       {
          name: "Posted On",
-         selector: "Posted On",
+         selector: "postedFor",
          maxWidth: "550px",
          sortable: true,
          center: true,
@@ -200,22 +193,22 @@ const BrokerDetails = (props) => {
          center: true,
       },
    ];
-   const closeModal = (data={isReload : false}) => {
+   const closeModal = (data = { isReload: false }) => {
       // if(data?.isReload) getAllUsers({pageNumber:"", records:"",searchByCity:"", searchByzipCode:""});
       setModalData(brokerdetailId);
    };
    return (
       <>
-       <Hold
-            show = {show}
-            handleShow ={handleShow}
-            handleClose ={handleClose}
+         <Hold
+            show={show}
+            handleShow={handleShow}
+            handleClose={handleClose}
             modalData={modalData}
             // dataFrom="user_manage"
             closeModal={closeModal}
             history={{ goBack: closeModal }}
             // getAllUsers={getAllUsers}
-          />
+         />
          <div className="dashboard container-fluid12">
             <Row>
                <Col lg={12}>
@@ -309,12 +302,15 @@ const BrokerDetails = (props) => {
                               </tr>
                            </Table>
                            <div className="brokerdetail-hold">
-                              <Buttons className="hold-btn" name="Hold" 
-                               onClick={() => {
-                                 handleShow();
-                                 setModalData(brokerdetailId);
-                                 // handleShow();
-                              }}/>
+                              <Buttons
+                                 className="hold-btn"
+                                 name="Hold"
+                                 onClick={() => {
+                                    handleShow();
+                                    setModalData(brokerdetailId);
+                                    // handleShow();
+                                 }}
+                              />
                            </div>
                         </div>
                      </div>
@@ -324,8 +320,8 @@ const BrokerDetails = (props) => {
                <Col lg={12}>
                   <div className="profession_details">
                      <div className="profession-name">
-                        <div>
-                           <p className="personal_name">Profession Details</p>
+                        <div className="personal_name">
+                           <p>Profession Details</p>
                         </div>
                      </div>
                      <div className="mt-1 row">
@@ -349,7 +345,7 @@ const BrokerDetails = (props) => {
                                        (data, index) =>
                                           index ===
                                              Broker_data.resourceData.specializedIn.length - 1 && (
-                                             <p key={index} className="details">
+                                             <p key={index} className="specializedIn">
                                                 {data.specializedIn}
                                              </p>
                                           )
@@ -360,6 +356,12 @@ const BrokerDetails = (props) => {
                         <Col className="">
                            <div>
                               <p className="detail-heading">Services Offered</p>
+                              <p className="details">
+                                 {Broker_data?.resourceData?.rent == true ? "Rent" : ""}
+                              </p>
+                              <p className="details">
+                                 {Broker_data?.resourceData?.sell == true ? "Sell" : ""}
+                              </p>
                               <p className="details">{Broker_data.resourceData?.serviceOffered}</p>
                            </div>
                         </Col>
@@ -388,12 +390,14 @@ const BrokerDetails = (props) => {
                         <Col className="">
                            <div>
                               <p className="detail-heading">Deals In</p>
+                              <div>
                               <p className="details">
-                                 {Broker_data?.resourceData?.rent == true ? "Rent" : ""}
+                                 {Broker_data?.resourceData?.dealsInNewProject == true ? "New Projects" : ""}
                               </p>
                               <p className="details">
-                                 {Broker_data?.resourceData?.sell == true ? "Sell" : ""}
+                                 {Broker_data?.resourceData?.dealsInResaleProperties == true ? "Resale Properties" : ""}
                               </p>
+                              </div>
                            </div>
                         </Col>
                      </div>
@@ -455,22 +459,45 @@ const BrokerDetails = (props) => {
                         </div>
                         <div className="locationSelect d-flex align-items-xl-center align-items-left">
                            {subHeaderComponentMemo}
-                           <Buttons
-                              type="submit"
-                              name="Filters"
-                              className="ml-2 me-3"
-                              size="Small"
+                           <DateRangePicker
+                              style={{
+                                 width: "249px",
+                                 height: "39px",
+                                 color: "darkgray",
+                                 marginTop: "0px",
+                              }}
+                              onChange={handleDateRangeChange}
                            />
-                           <Form.Group
-                              controlId="example"
-                              className="w-40 userGrp ml-0"
-                           ></Form.Group>
+                           {statusArr.length ? (
+                              <Form.Group controlId="exampleForm.SelectCustom">
+                                 <Form.Control
+                                    as="select"
+                                    value={statusSelected}
+                                    onChange={(e) => {
+                                       _filterStatus(e.target.value);
+                                    }}
+                                 >
+                                    <option value="">Filter</option>
+                                    {statusArr.length
+                                       ? statusArr.map((_value, index) => (
+                                            <option key={index} value={_value}>
+                                               {_value}
+                                            </option>
+                                         ))
+                                       : null}
+                                 </Form.Control>
+                              </Form.Group>
+                           ) : (
+                              ""
+                           )}
                         </div>
                      </div>
 
                      <Card>
                         <DataTable
+                           data={showValue()}
                            columns={columns}
+                           progressPending={allPlanDataBroker.isLoading}
                            paginationComponent={PaginationComponent}
                            paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                            paginationPerPage={8}
@@ -489,12 +516,12 @@ const BrokerDetails = (props) => {
    );
 };
 
-const mapStateToProps = ({allPlanDataBroker}) => ({
+const mapStateToProps = ({ allPlanDataBroker }) => ({
    allPlanDataBroker,
-   getBrokerPostedProperty
+   getBrokerPostedProperty,
 });
 const actions = {
-   getBrokerPostedProperty
+   getBrokerPostedProperty,
 };
 const withConnect = connect(mapStateToProps, actions);
 

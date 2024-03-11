@@ -10,20 +10,21 @@ import Buttons from "../../../shared/Buttons/Buttons";
 import "./Broker.scss";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
 import { getBrokerDetailsForApprove, getBrokerStatusDetail } from "../../../common/redux/actions";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 const BrokerApprovedDetail = (props) => {
    const { brokerdetailId } = useParams();
    const [loading, setLoading] = useState(true);
    const [brokerApprovedData, setBrokerApprovedData] = useState([]);
+   const history = useHistory();
 
    const HnadleSubmit = () => {
       getBrokerStatusDetail({
          brokerId: brokerdetailId,
          status: "Approved",
       });
+      history.push('/admin/broker')
    };
-
    const _getBrokerDetails = useCallback(() => {
       getBrokerDetailsForApprove({ brokerId: brokerdetailId })
          .then((response) => {

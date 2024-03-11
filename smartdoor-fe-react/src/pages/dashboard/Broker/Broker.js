@@ -66,6 +66,7 @@ const Broker = (props) => {
             return item?.status == status;
          });
       }
+      console.log(filteredItems,"filtered")
       return filteredItems;
    };
 
@@ -114,7 +115,7 @@ const Broker = (props) => {
             onClear={handleClear}
             filterText={filterText}
             placeholder="Search"
-            autoComplete="off"
+          
          />
       );
    }, [filterText, resetPaginationToggle]);
