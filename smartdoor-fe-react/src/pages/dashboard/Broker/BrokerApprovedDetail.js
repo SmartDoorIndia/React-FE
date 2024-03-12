@@ -9,7 +9,7 @@ import Text from "../../../shared/Text/Text";
 import Buttons from "../../../shared/Buttons/Buttons";
 import "./Broker.scss";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
-import { getBrokerDetailsForApprove, getBrokerStatusDetail,getBrokerDeclineStatusDetail } from "../../../common/redux/actions";
+import { getBrokerDetailsForApprove, getBrokerStatusDetail, getBrokerDeclineStatusDetail } from "../../../common/redux/actions";
 import { useParams, useHistory } from "react-router-dom";
 
 const BrokerApprovedDetail = (props) => {

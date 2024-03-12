@@ -826,7 +826,7 @@ export const ApiJson = {
    },
    
    addHoldRequestComments: {
-      url: "/consumer/broker/updateStatus/:brokerId/:status/hold",
+      url: "/consumer/broker/updateStatus/:brokerId/:status",
       method: "PUT",
       data: {
          comments: "string",
