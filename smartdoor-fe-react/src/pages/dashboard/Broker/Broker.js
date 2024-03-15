@@ -26,6 +26,7 @@ const Broker = (props) => {
    const [planData, setPlanData] = useState();
    const statusArr = CONSTANTS_STATUS.brokerStatus;
    const [filterText, setFilterText] = useState("");
+   console.log(filterText,"filetereeeelisting ")
    const [statusSelected, setStatusSelected] = useState("");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [startDate, setStartDate] = useState(null);

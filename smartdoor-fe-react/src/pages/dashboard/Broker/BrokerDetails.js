@@ -42,6 +42,7 @@ const BrokerDetails = (props) => {
    const [endDate, setEndDate] = useState(null);
    const [statusSelected, setStatusSelected] = useState("");
    const [filterText, setFilterText] = useState("");
+   console.log(filterText,"dteialssssssss")
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
 
    const handleBlockConsumser = () => {
@@ -110,8 +111,10 @@ const BrokerDetails = (props) => {
 
       filteredItems = allPlanDataBroker.data?.length
          ? allPlanDataBroker.data.filter((item) => {
-              return true;
-              return item?.userId == filterText;
+              return (
+                item?.propertyId == filterText || 
+               item?.postedFor?.toLowerCase().includes(filterText.toLowerCase())
+              );
            })
          : [];
       if (status && filteredItems?.length) {
