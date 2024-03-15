@@ -56,7 +56,6 @@ const Broker = (props) => {
          });
       }
       if (startDate_) {
-         console.log({startDate_});
          filteredItems = filteredItems.filter((item) => {
             let joinedDate =moment(item.joinedDate);
             let mst = moment(startDate_).startOf('day')
@@ -66,7 +65,6 @@ const Broker = (props) => {
             return item?.status == status;
          });
       }
-      console.log(filteredItems,"filtered")
       return filteredItems;
    };
 
@@ -78,7 +76,6 @@ const Broker = (props) => {
    );
 
    const handleDateRangeChange = (date) => {
-      console.log("called", date);
       if (date && date[0] && date[1]) {
          const startDate = date[0];
          const endDate = date[1];
@@ -170,7 +167,7 @@ const Broker = (props) => {
       },
       {
          name: "Chats",
-         selector: "Payment",
+         selector: "chat",
          sortable: false,
          center: true,
       },
@@ -192,19 +189,23 @@ const Broker = (props) => {
             <div className="action">
                <ToolTip name="View Details">
                   <span>
-                     <Link
-                        to={{
-                           pathname:
-                              row?.status == "Approved"
-                                 ? `/admin/BrokerDetails/${row.brokerId}`
-                                 : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
-                        }}
-                     >
-                        Details
-                     </Link>
+                     {row.status === "Rejected" ? (
+                        <span className="broker_details">Details</span>
+                     ) : (
+                        <Link
+                           to={{
+                              pathname:
+                                 row.status === "Approved"
+                                    ? `/admin/BrokerDetails/${row.brokerId}`
+                                    : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
+                           }}
+                        >
+                           Details
+                        </Link>
+                     )}
                   </span>
                </ToolTip>
-            </div>
+           </div>
          ),
       },
    ];

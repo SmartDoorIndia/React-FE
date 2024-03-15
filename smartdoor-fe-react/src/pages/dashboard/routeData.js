@@ -227,13 +227,14 @@ const routeData = [
   },
   {
     path:'/admin/getBrokerDetailsForApprove/:brokerdetailId',
-    name:'BrokerApprovedDetail',
+    name:'Brokers',
     bradcrumb: ['Brokers', 'Brokers Approved'],
     excat: true,
     component: BrokerApprovedDetail,
   },
   {
     path:'/admin/BrokerDetails/:brokerdetailId',
+    name:'Brokers',
     bradcrumb: [ 'Brokers', 'Broker Details' ],
     breadcrumb: false,
     excat: true,

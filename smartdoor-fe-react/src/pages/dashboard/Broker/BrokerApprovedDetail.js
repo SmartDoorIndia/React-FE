@@ -9,14 +9,18 @@ import Text from "../../../shared/Text/Text";
 import Buttons from "../../../shared/Buttons/Buttons";
 import "./Broker.scss";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
-import { getBrokerDetailsForApprove, getBrokerStatusDetail, getBrokerDeclineStatusDetail } from "../../../common/redux/actions";
+import {
+   getBrokerDetailsForApprove,
+   getBrokerStatusDetail,
+   getBrokerDeclineStatusDetail,
+} from "../../../common/redux/actions";
 import { useParams, useHistory } from "react-router-dom";
 
 const BrokerApprovedDetail = (props) => {
    const { brokerdetailId } = useParams();
    const [loading, setLoading] = useState(true);
    const [brokerApprovedData, setBrokerApprovedData] = useState([]);
-   console.log(brokerApprovedData,"approved")
+   console.log(brokerApprovedData, "approved");
    const history = useHistory();
    const reverse = useHistory();
 
@@ -25,23 +29,21 @@ const BrokerApprovedDetail = (props) => {
          brokerId: brokerdetailId,
          status: "Approved",
       });
-      setTimeout(()=>{
-         history.push('/admin/broker');
-       window.location.reload();
-      },1000)
-
-   }
+      setTimeout(() => {
+         history.push("/admin/broker");
+         window.location.reload();
+      }, 1000);
+   };
 
    const HandleRejected = () => {
       getBrokerDeclineStatusDetail({
          brokerId: brokerdetailId,
          status: "Rejected",
       });
-      setTimeout(()=>{
-         reverse.push('/admin/broker');
-       window.location.reload();
-      },1000)
-      
+      setTimeout(() => {
+         reverse.push("/admin/broker");
+         window.location.reload();
+      }, 1000);
    };
 
    const _getBrokerDetails = useCallback(() => {
@@ -70,7 +72,7 @@ const BrokerApprovedDetail = (props) => {
                            <Image name="author" className="object-cover" src={userImage} />
                         </div>
                         <div className="ml-3 mt-2">
-                           <p className="boldness" size="large" fontWeight="mediumbold">
+                           <p className="bold" size="large" fontWeight="mediumbold">
                               {brokerApprovedData.resourceData?.name}
                            </p>
                            <p size="xSmall" fontWeight="smbold">
@@ -96,9 +98,19 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Location Assigned"
                      />
-                     <p size="Small" fontWeight="mediumbold" color="secondryColor">
-                        {brokerApprovedData.resourceData?.brokerlocation?.locationName}
-                     </p>
+                     <div className="details-heading d-flex" >
+                     
+                        {brokerApprovedData && brokerApprovedData.resourceData && (
+                           <>
+                           {brokerApprovedData?.resourceData.brokerlocation?.city && (
+                              <span className="details-value">
+                                 {brokerApprovedData.resourceData?.brokerlocation?.city}
+
+                              </span>
+                           )}
+                           </>
+                        )}
+                     </div>
                   </Col>
                   <Col>
                      <Text
@@ -107,33 +119,18 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Specialized In"
                      />
-                     <p size="Small" fontWeight="mediumbold" color="secondryColor">
-                        {brokerApprovedData?.resourceData?.specializedIn &&
-                           brokerApprovedData.resourceData.specializedIn.map(
-                              (data, index) =>
-                                 index ===
-                                    brokerApprovedData.resourceData.specializedIn.length - 1 && (
-                                    <p key={index} className="details">
-                                       {data.specializedIn}
-                                    </p>
-                                 )
-                           )}
-                     </p>
-                   
-                  </Col>
-                  <Col>
-                     <Text
-                        size="xSmall"
-                        fontWeight="semibold"
-                        color="TaupeGrey"
-                        text="Services Offered"
-                     />
-                       <div className="brokerapproved-servicedoffered">
-                        <p className="details">
-                           {brokerApprovedData?.resourceData?.rent == true ? "Rent" : "NA"}
-                        </p>
-                        <p className="details">
-                           {brokerApprovedData?.resourceData?.sale == true ? "Sell" : "NA"}
+                     <div className="details-heading">
+                        <p size="Small" font-weight="bold" color="secondryColor">
+                           {brokerApprovedData?.resourceData?.specializedIn &&
+                              brokerApprovedData.resourceData.specializedIn.map(
+                                 (data, index) =>
+                                    index ===
+                                       brokerApprovedData.resourceData.specializedIn.length - 1 && (
+                                       <p key={index} className="details-value">
+                                          {data.specializedIn}
+                                       </p>
+                                    )
+                              )}
                         </p>
                      </div>
                   </Col>
@@ -142,16 +139,36 @@ const BrokerApprovedDetail = (props) => {
                         size="xSmall"
                         fontWeight="semibold"
                         color="TaupeGrey"
+                        text="Services Offered"
+                     />
+                      <div className="details-heading d-flex">
+                           {brokerApprovedData && brokerApprovedData.resourceData &&  (
+                                 <>
+                                    {brokerApprovedData?.resourceData?.rent  && (
+                                       <span className="details-value">Rent</span>
+                                    )}
+                                    {brokerApprovedData?.resourceData?.sale && (
+                                       <span className="details-value">Sell</span>
+                                    )}
+                                 </>
+                           )}
+                        </div>
+                  </Col>
+                  <Col>
+                     <Text
+                        size="xSmall"
+                        fontWeight="semibold"
+                        color="TaupeGrey"
                         text="Languages Preferences"
                      />
-                     <p size="Small" fontWeight="mediumbold" color="secondryColor">
+                     <div className="details-heading">
                         {brokerApprovedData?.resourceData?.languagePreference &&
                            brokerApprovedData.resourceData.languagePreference.map((data, index) => (
-                              <p key={index} className="details d-flex">
+                              <span key={index} className="details-value ">
                                  {data.languagePreference}
-                              </p>
+                              </span>
                            ))}
-                     </p>
+                     </div>
                   </Col>
                </Row>
             </div>
@@ -171,9 +188,16 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Phone Number"
                      />
-                     <p size="Small" fontWeight="mediumbold" color="secondryColor">
-                        {brokerApprovedData?.resourceData?.mobileNoForCustomer}
-                     </p>
+                     <div className="details-heading">
+                        <p
+                           size="Small"
+                           font-weight="bold"
+                           color="secondryColor"
+                           className="details-value"
+                        >
+                           {brokerApprovedData?.resourceData?.mobileNoForCustomer}
+                        </p>
+                     </div>
                   </Col>
                   <Col>
                      <Text
@@ -182,15 +206,29 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Date of Birth"
                      />
-                     <p size="Small" fontWeight="mediumbold" color="secondryColor">
-                        {brokerApprovedData?.resourceData?.dob}
-                     </p>
+                     <div className="details-heading">
+                        <p
+                           size="Small"
+                           font-weight="bold"
+                           color="secondryColor"
+                           className="details-value"
+                        >
+                           {brokerApprovedData?.resourceData?.dob}
+                        </p>
+                     </div>
                   </Col>
                   <Col>
                      <Text size="xSmall" fontWeight="semibold" color="TaupeGrey" text="Email" />
-                     <p size="Small" fontWeight="mediumbold" color="secondryColor">
-                        {brokerApprovedData?.resourceData?.email}
-                     </p>
+                     <div className="details-heading">
+                        <p
+                           size="Small"
+                           font-weight="bold"
+                           color="secondryColor"
+                           className="details-value"
+                        >
+                           {brokerApprovedData?.resourceData?.email}
+                        </p>
+                     </div>
                   </Col>
                   <Col>
                      <Text
@@ -199,12 +237,13 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Office Address"
                      />
-                     <Text
-                        size="Small"
-                        fontWeight="mediumbold"
-                        color="secondryColor"
-                        text="6391 Elgin St. Celina, Delaware 10299"
-                     />
+                     <div className="details-heading">
+                      
+                        <p className="details">
+                                        {brokerApprovedData?.resourceData?.companyName ? brokerApprovedData?.resourceData?.companyName + "," : ""}
+                                        {brokerApprovedData?.resourceData?.companyAddress ? brokerApprovedData?.resourceData?.companyAddress : ""} 
+                        </p>
+                     </div>
                   </Col>
                </Row>
             </div>
