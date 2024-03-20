@@ -190,9 +190,7 @@ const Broker = (props) => {
             <div className="action">
                <ToolTip name="View Details">
                   <span>
-                     {row.status === "Rejected" ? (
-                        <span className="broker_details">Details</span>
-                     ) : (
+                
                         <Link
                            to={{
                               pathname:
@@ -203,7 +201,7 @@ const Broker = (props) => {
                         >
                            Details
                         </Link>
-                     )}
+            
                   </span>
                </ToolTip>
            </div>

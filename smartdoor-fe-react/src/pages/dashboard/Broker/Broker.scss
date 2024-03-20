@@ -234,7 +234,7 @@
          font-weight: 500;
          cursor: pointer;
       }
-  }
+   }
    .chat_date {
       border: 1px solid #ffa3c8;
       border-radius: 10px;
@@ -308,7 +308,20 @@
 .details-heading {
    display: flex;
    margin-top: 10px;
-
+}
+.details-heading.deals-in {
+   display: grid;
+}
+.details-heading.deals-in span {
+   width: fit-content;
+   margin-bottom: 5px;
+}
+.details-heading.location-assigned {
+   display: grid;
+}
+.details-heading.location-assigned span {
+   width: fit-content;
+   margin-bottom: 5px;
 }
 .details-heading span {
    margin-right: 5px;
@@ -317,15 +330,14 @@
    font-size: 14px;
    color: #333333;
    font-weight: 700;
-   
-   .specializedIn{
+
+   .specializedIn {
       margin-right: 5px;
-    background: white;
-    border: #ded6d9;
-    border-radius: 50px;
-    padding: 0px 10px;
-    width: 55px;
-      
+      background: white;
+      border: #ded6d9;
+      border-radius: 50px;
+      padding: 0px 10px;
+      width: 55px;
    }
 }
 .langauge-part {
@@ -341,7 +353,7 @@
       padding: 0px 10px;
    }
 }
-.customer_ratedby{
+.customer_ratedby {
    margin-top: 8px;
    font-size: 14px;
 }

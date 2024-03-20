@@ -239,7 +239,7 @@ const BrokerApprovedDetail = (props) => {
                      />
                      <div className="details-heading">
                       
-                        <p className="details">
+                        <p className="details-value">
                                         {brokerApprovedData?.resourceData?.companyName ? brokerApprovedData?.resourceData?.companyName + "," : ""}
                                         {brokerApprovedData?.resourceData?.companyAddress ? brokerApprovedData?.resourceData?.companyAddress : ""} 
                         </p>

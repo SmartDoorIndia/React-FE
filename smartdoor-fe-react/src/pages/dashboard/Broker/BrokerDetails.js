@@ -20,7 +20,11 @@ import { handleStatusElement, formateDate } from "../../../common/helpers/Utils"
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import Hold from "../../../shared/Modal/BrokerDetailModal/BrokerDetailModal";
 import "./Broker.scss";
-import { getBrokerDetails, getBrokerPostedProperty } from "../../../common/redux/actions";
+import {
+   getBrokerDetails,
+   getBrokerPostedProperty,
+   getPropertyDetails,
+} from "../../../common/redux/actions";
 import moment from "moment";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
 
@@ -30,21 +34,25 @@ const BrokerDetails = (props) => {
    const [show, setShow] = useState(false);
    const handleShow = () => setShow(true);
    const [modalData, setModalData] = useState();
+   const [count, setCount] = useState(0);
    const statusArr = CONSTANTS_STATUS.brokerStatus;
    const { brokerdetailId } = useParams();
+   const { propertyId } = useParams();
+   const { userId } = useParams();
    const [blockData, setBlockData] = useState(null);
-   
+
    const [Broker_data, setBrokerData] = useState([]);
-   console.log(Broker_data,"datatata");
    const [loading, setLoading] = useState(true);
    const handleClose = () => setShow(false);
    const [startDate, setStartDate] = useState(null);
    const [endDate, setEndDate] = useState(null);
    const [statusSelected, setStatusSelected] = useState("");
    const [filterText, setFilterText] = useState("");
-   console.log(filterText,"dteialssssssss")
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-
+   const [holdStatus, setHoldStatus] = useState(false);
+   const toggleHoldStatus = () => {
+      setHoldStatus(!holdStatus);
+   };
    const handleBlockConsumser = () => {
       if (blockData !== null) {
          ({ userId: blockData })
@@ -112,8 +120,8 @@ const BrokerDetails = (props) => {
       filteredItems = allPlanDataBroker.data?.length
          ? allPlanDataBroker.data.filter((item) => {
               return (
-                item?.propertyId == filterText || 
-               item?.postedFor?.toLowerCase().includes(filterText.toLowerCase())
+                 item?.propertyId == filterText ||
+                 item?.postedFor?.toLowerCase().includes(filterText.toLowerCase())
               );
            })
          : [];
@@ -132,6 +140,7 @@ const BrokerDetails = (props) => {
             return item?.status == status;
          });
       }
+      if (count != filteredItems.length) setCount(filteredItems.length);
       return filteredItems;
    };
    const handleDateRangeChange = (date) => {
@@ -207,10 +216,7 @@ const BrokerDetails = (props) => {
                   <span>
                      <Link
                         to={{
-                           pathname:
-                              row?.status == "Approved"
-                                 ? `/admin/BrokerDetails/${row.brokerId}`
-                                 : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
+                           pathname: `/admin/property/getPropertyById/${propertyId}/${userId}`,
                         }}
                      >
                         Details
@@ -236,6 +242,8 @@ const BrokerDetails = (props) => {
             // dataFrom="user_manage"
             closeModal={closeModal}
             history={{ goBack: closeModal }}
+            toggleHoldStatus={toggleHoldStatus}
+            holdStatus={holdStatus}
             // getAllUsers={getAllUsers}
          />
          <div className="dashboard container-fluid12">
@@ -256,14 +264,14 @@ const BrokerDetails = (props) => {
                            <div className="d-flex justify-content-between align-items-center">
                               <div className="d-flex align-items-start ">
                                  <div>
-                                    <StarRating rating={Broker_data?.resourceData?.rating } />
+                                    <StarRating rating={Broker_data?.resourceData?.rating} />
                                     {/* <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="(112 customers)" className="ml-1" /> */}
                                  </div>
                               </div>
                               <div className="customer_ratedby">
-                                ( { Broker_data?.resourceData?.ratedBy } customers)
+                                 ( {Broker_data?.resourceData?.ratedBy} customers)
                               </div>
-                              
+
                               {/* <Text
                                  size="xSmall"
                                  fontWeight="smbold"
@@ -360,7 +368,7 @@ const BrokerDetails = (props) => {
                            <div className="brokerdetail-hold">
                               <Buttons
                                  className="hold-btn"
-                                 name="Hold"
+                                 name={holdStatus ? "Unhold" : "Hold"}
                                  onClick={() => {
                                     handleShow();
                                     setModalData(brokerdetailId);
@@ -383,14 +391,16 @@ const BrokerDetails = (props) => {
                      <div className="mt-1 row">
                         <Col className="">
                            <div>
-                              <p className="detail">Locations Assigned</p>
-                              <div className="details-heading">
-                                 {Broker_data?.resourceData?.brokerlocation &&
-                                    Broker_data?.resourceData?.brokerlocation.map((data, index) => (
-                                       <span key={index} className="details-value">
-                                          {data?.city}
-                                       </span>
-                                    ))}
+                              <p className="detail-heading">Locations Assigned</p>
+                              <div className="details-heading location-assigned">
+                                 {Broker_data?.resourceData?.brokerlocation.map(
+                                    (data, index) =>
+                                       data?.city !== null && (
+                                          <span key={index} className="details-value">
+                                             {data.city}
+                                          </span>
+                                       )
+                                 )}
                               </div>
                            </div>
                         </Col>
@@ -415,16 +425,16 @@ const BrokerDetails = (props) => {
                            <div>
                               <p className="detail-heading">Services Offered</p>
                               <div className="details-heading d-flex">
-                              {Broker_data && Broker_data.resourceData && (
+                                 {Broker_data && Broker_data.resourceData && (
                                     <>
-                                    {Broker_data.resourceData?.rent && (
-                                       <span className="details-value">Rent</span>
-                                    )}
-                                    {Broker_data.resourceData?.sell && (
-                                       <span className="details-value">Sell</span>
-                                    )}
+                                       {Broker_data.resourceData?.rent && (
+                                          <span className="details-value">Rent</span>
+                                       )}
+                                       {Broker_data.resourceData?.sell && (
+                                          <span className="details-value">Sell</span>
+                                       )}
                                     </>
-                              )}
+                                 )}
                               </div>
                            </div>
                         </Col>
@@ -433,13 +443,13 @@ const BrokerDetails = (props) => {
                               <p className="detail-heading">Language Preferences</p>
                               <div className="details-heading">
                                  {Broker_data?.resourceData?.languagePreference &&
-                                    Broker_data.resourceData.languagePreference
-                                       .slice(0, 2)
-                                       .map((data, index) => (
+                                    Broker_data.resourceData.languagePreference.map(
+                                       (data, index) => (
                                           <span key={index} className="language-data details-value">
                                              {data.languagePreference}
                                           </span>
-                                       ))}
+                                       )
+                                    )}
                               </div>
                            </div>
                         </Col>
@@ -448,43 +458,41 @@ const BrokerDetails = (props) => {
                            <div>
                               <p className="detail-heading">Rera Number</p>
                               <div className="details-heading">
-                                 {Broker_data && Broker_data.resourceData && ( 
+                                 {Broker_data && Broker_data.resourceData && (
                                     <>
-                                    {Broker_data.resourceData.reraNumber && (
-                                       <p className="details-value">
-                                          {Broker_data?.resourceData?.reraNumber}
-                                       </p>
-                                    )}
-
+                                       {Broker_data.resourceData.reraNumber && (
+                                          <p className="details-value">
+                                             {Broker_data?.resourceData?.reraNumber}
+                                          </p>
+                                       )}
                                     </>
                                  )}
-                                 
                               </div>
                            </div>
                         </Col>
                         <Col className="">
                            <div>
                               <p className="detail-heading">Deals In</p>
-                              <div className="details-heading">
-                                 {Broker_data &&  Broker_data.resourceData && (
+                              <div className="details-heading deals-in">
+                                 {Broker_data && Broker_data.resourceData && (
                                     <>
-                                    {Broker_data.resourceData?.dealsInNewProject && (
-                                       <span className="details-value">New Projects</span>
-                                    )}
-                                    {Broker_data.resourceData?.dealsInResaleProperties && (
-                                       <span className="details-value">Resale Properties</span>
-                                    )}
+                                       {Broker_data.resourceData?.dealsInNewProject && (
+                                          <span className="details-value">New Projects</span>
+                                       )}
+                                       {Broker_data.resourceData?.dealsInResaleProperties && (
+                                          <span className="details-value">Resale Properties</span>
+                                       )}
                                     </>
-                                 // <span className="details-value">
-                                 //    {Broker_data?.resourceData?.dealsInNewProject == true
-                                 //       ? "New Projects"
-                                 //       : ""}
-                                 // </span>
-                                 // <span className="details-value">
-                                 //    {Broker_data?.resourceData?.dealsInResaleProperties == true
-                                 //       ? "Resale Properties"
-                                 //       : ""}
-                                 // </span>
+                                    // <span className="details-value">
+                                    //    {Broker_data?.resourceData?.dealsInNewProject == true
+                                    //       ? "New Projects"
+                                    //       : ""}
+                                    // </span>
+                                    // <span className="details-value">
+                                    //    {Broker_data?.resourceData?.dealsInResaleProperties == true
+                                    //       ? "Resale Properties"
+                                    //       : ""}
+                                    // </span>
                                  )}
                               </div>
                            </div>
@@ -518,13 +526,15 @@ const BrokerDetails = (props) => {
                         <Col className="">
                            <div>
                               <p className="detail-heading">Company Details </p>
-                              
-                                        <p className="details">
-                                        {Broker_data?.resourceData?.companyName ? Broker_data?.resourceData?.companyName + "," : ""}
-                                        {Broker_data?.resourceData?.companyAddress ? Broker_data?.resourceData?.companyAddress : ""} 
-                                     </p>
-                                  
-                              
+
+                              <p className="details">
+                                 {Broker_data?.resourceData?.companyName
+                                    ? Broker_data?.resourceData?.companyName + ","
+                                    : ""}
+                                 {Broker_data?.resourceData?.companyAddress
+                                    ? Broker_data?.resourceData?.companyAddress
+                                    : ""}
+                              </p>
                            </div>
                         </Col>
                      </div>
@@ -545,9 +555,9 @@ const BrokerDetails = (props) => {
                               size="regular"
                               fontWeight="mediumbold"
                               color="secondryColor"
-                              text="Properties Posted - 20"
+                              text=""
                            />
-                           <p>{lengthOfResourceData}</p>
+                           <p className="bold"> Properties Posted - {count}</p>
                         </div>
                         <div className="locationSelect d-flex align-items-xl-center align-items-left">
                            {subHeaderComponentMemo}
@@ -612,9 +622,11 @@ const BrokerDetails = (props) => {
 const mapStateToProps = ({ allPlanDataBroker }) => ({
    allPlanDataBroker,
    getBrokerPostedProperty,
+   getPropertyDetails,
 });
 const actions = {
    getBrokerPostedProperty,
+   getPropertyDetails,
 };
 const withConnect = connect(mapStateToProps, actions);
 

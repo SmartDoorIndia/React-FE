@@ -25,7 +25,7 @@ function App() {
             <ToastContainer
               autoClose={ 4000 }
               className="custom-toaster-main-cls"
-              toastClassName="custom-toaster-bg"
+             
             />
             <SmartDoorViewRoute />**
           </AuthProvider>

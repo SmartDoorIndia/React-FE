@@ -779,6 +779,16 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
    },
+   getBrokerPropertyById: {
+      url: "/consumer/property/getPropertyById/:propertyId/:brokerId",
+      method: "GET",
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
    getBrokerPostedProperty:{
       url:"/consumer/broker/postedProperty",
       method:"GET",

@@ -27,24 +27,18 @@ const Hold = (props) => {
             }
         }})();
       }, [brokerdetailId]);
-
-
-
-
       const commentPosted = (comment) => {
       
-      
-    
-    
           addHoldRequestComments({
             brokerId: brokerdetailId,
-            status: "Hold",
+            status: props.holdStatus ? "Approved" : "Hold",
             comments: comment
          });
-         setTimeout(()=>{
-            history.push('/admin/broker');
-           window.location.reload();
-         },2000)
+         setTimeout(() => {
+          props.handleClose();
+      }, 1000);
+     
+         props.toggleHoldStatus();
         }
     return (
         <>
