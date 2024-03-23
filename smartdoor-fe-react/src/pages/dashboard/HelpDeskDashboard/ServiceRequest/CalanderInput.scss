@@ -17059,10 +17059,13 @@ textarea.rs-picker-search-input {
   padding-right: 42px;
 }
 .rs-picker-date .rs-picker-toggle.rs-btn .rs-picker-toggle-clean,
-.rs-picker-daterange .rs-picker-toggle.rs-btn .rs-picker-toggle-clean,
-.rs-picker-date .rs-picker-toggle.rs-btn .rs-picker-toggle-caret,
-.rs-picker-daterange .rs-picker-toggle.rs-btn .rs-picker-toggle-caret {
+.rs-picker-date .rs-picker-toggle.rs-btn .rs-picker-toggle-caret {
   top: 8px;
+}
+.rs-picker-daterange .rs-picker-toggle.rs-btn .rs-picker-toggle-clean,
+.rs-picker-daterange .rs-picker-toggle.rs-btn .rs-picker-toggle-caret{
+  top: 0px;
+   
 }
 .rs-picker-subtle .rs-picker-date .rs-picker-toggle.rs-btn .rs-picker-toggle-clean,
 .rs-picker-subtle .rs-picker-daterange .rs-picker-toggle.rs-btn .rs-picker-toggle-clean,

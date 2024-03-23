@@ -470,7 +470,6 @@ export const getBrokerListing  = (data) => async (dispatch) => {
 
 export const getBrokerPostedProperty = (data) => async (dispatch) => {
   const response = await mainApiService('getBrokerPostedProperty', data);
-  console.log(response,"dkjhkjfhfk")
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
@@ -496,6 +495,15 @@ export const getBrokerStatusDetail = async(data) =>{
     else showErrorToast('Unexpected error. Please try again later');
     return response;
 }
+export const getBrokerDeclineStatusDetail = async(data) =>{
+  const response = await mainApiService('getBrokerDeclineStatusDetail', data);
+    if(response.data && response.status === 200) showSuccessToast(response.data.customMessage); 
+    else if (response.data && response.data.error) showErrorToast(response.data.error);
+    else showErrorToast('Unexpected error. Please try again later');
+    return response;
+}
+
+
 
 export const getBrokerApproveStatus = async (data) => {
   const response = await mainApiService('getBrokerApproveStatus', data);
@@ -505,6 +513,13 @@ export const getBrokerApproveStatus = async (data) => {
   return response;
 };
 
+export const addHoldRequestComments = async (data) => {
+  const response = await mainApiService('addHoldRequestComments', data);
+  if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);
+  else if (response.data && response.data.error) showErrorToast(response.data.error);
+  else showErrorToast('Unexpected error. Please try again later');
+  return response;
+};
 // export const postComment = async (data) => {
 //   const response = await mainApiService('postComment', data);
 //   if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);

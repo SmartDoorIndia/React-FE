@@ -280,7 +280,6 @@ const AutoCompleteInput = (props) => {
           onInputChange(result)
         }}
         onInput={(e) => {
-          console.log(e)
           loadLocationListner()
         }}
         { ...rest }

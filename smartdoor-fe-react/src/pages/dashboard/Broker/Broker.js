@@ -26,11 +26,13 @@ const Broker = (props) => {
    const [planData, setPlanData] = useState();
    const statusArr = CONSTANTS_STATUS.brokerStatus;
    const [filterText, setFilterText] = useState("");
+   console.log(filterText,"filetereeeelisting ")
    const [statusSelected, setStatusSelected] = useState("");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [startDate, setStartDate] = useState(null);
    const [endDate, setEndDate] = useState(null);
    const [datata, setDatata] = useState([]);
+   
 
    useEffect(() => {
       getBrokerListing();
@@ -56,7 +58,6 @@ const Broker = (props) => {
          });
       }
       if (startDate_) {
-         console.log({startDate_});
          filteredItems = filteredItems.filter((item) => {
             let joinedDate =moment(item.joinedDate);
             let mst = moment(startDate_).startOf('day')
@@ -68,6 +69,7 @@ const Broker = (props) => {
       }
       return filteredItems;
    };
+   
 
    const PaginationComponent = (props) => (
       <Pagination {...props} PaginationActionButton={PaginationActionButton} />
@@ -77,17 +79,9 @@ const Broker = (props) => {
    );
 
    const handleDateRangeChange = (date) => {
-      console.log("called", date);
       if (date && date[0] && date[1]) {
          const startDate = date[0];
          const endDate = date[1];
-
-         // const filteredItems = allPlanDataBroker.data?.filter((item) => {
-         //    const productDate = new Date(item.createdAt);
-
-         //    return productDate >= startDate && productDate <= endDate;
-         // });
-
          setStartDate(startDate);
          setEndDate(endDate);
          showValue(statusSelected, startDate, endDate);
@@ -114,7 +108,7 @@ const Broker = (props) => {
             onClear={handleClear}
             filterText={filterText}
             placeholder="Search"
-            autoComplete="off"
+          
          />
       );
    }, [filterText, resetPaginationToggle]);
@@ -127,12 +121,13 @@ const Broker = (props) => {
    const columns = [
       {
          name: "Reg On",
-         // selector:(row) => row.brokerId,
+         selector: 'joinedDate',
          center: true,
          sortable: true,
          minWidth: "400px",
-         cell: ({ joinedDate }) => <span>{`${formateDate(joinedDate)}` || ""}</span>,
+         cell: ({ joinedDate })=>(<span>{formateDate(joinedDate)}</span>),
       },
+       
       {
          name: "Name",
          selector: "name",
@@ -141,7 +136,7 @@ const Broker = (props) => {
       },
       {
          name: "Location",
-         selector: (row) => row.latestLcation.locationName,
+         selector: (row) => row.latestLcation?.locationName,
          sortable: false,
          center: false,
          minWidth: "120px",
@@ -176,7 +171,7 @@ const Broker = (props) => {
       },
       {
          name: "Chats",
-         selector: "Payment",
+         selector: "chat",
          sortable: false,
          center: true,
       },
@@ -198,19 +193,21 @@ const Broker = (props) => {
             <div className="action">
                <ToolTip name="View Details">
                   <span>
-                     <Link
-                        to={{
-                           pathname:
-                              row?.status == "Approved"
-                                 ? `/admin/BrokerDetails/${row.brokerId}`
-                                 : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
-                        }}
-                     >
-                        Details
-                     </Link>
+                
+                        <Link
+                           to={{
+                              pathname:
+                                 row.status === "Approved" || row.status === "Hold"
+                                    ? `/admin/BrokerDetails/${row.brokerId}`
+                                    : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
+                           }}
+                        >
+                           Details
+                        </Link>
+            
                   </span>
                </ToolTip>
-            </div>
+           </div>
          ),
       },
    ];
@@ -278,6 +275,7 @@ const Broker = (props) => {
                   subHeaderComponent={subHeaderComponentMemo}
                   persistTableHead="true"
                   filterComponent={subHeaderComponentMemo}
+                  keyField="id"
                ></DataTableComponent>
             </Card>
          </div>
