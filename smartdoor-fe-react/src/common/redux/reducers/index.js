@@ -41,6 +41,7 @@ import {
   allAdminRoles,
   allCities,
   allCitiesWithId,
+  allStatesWithId,
   allLocationsByCity,
   userAuthData,
   generalCityDepData,
@@ -82,6 +83,7 @@ import {
 
 import { addNewPostReducer } from './views/addNewPost.reducer';
 import { addNewPost2Reducer } from './views/addNewPost2.reducer';
+import { featuredVideos } from './views/featuredVideos.reducer';
 
 import { USER_LOGOUT } from '../types';
 
@@ -99,6 +101,7 @@ const appReducer = combineReducers({
   allAdminRoles,
   allCities,
   allCitiesWithId,
+  allStatesWithId,
   allLocationsByCity,
   userAuthData,
   excutiveTeamsData,
@@ -149,7 +152,8 @@ const appReducer = combineReducers({
   allRealtorLocationsByCity,
   getBuybackRequestsData,
   addNewPostReducer,
-  addNewPost2Reducer
+  addNewPost2Reducer,
+  featuredVideos
 });
 
 const rootReducer = (state, action) => {

@@ -106,11 +106,11 @@ const Calender = (props) => {
           const reqData = {
             date: date,
             timeSlot: timeSlot,
-            city: data.appointmentData.city,
+            // city: data.appointmentData.city,
             userRequestId: data.appointmentData.userRequestId
           };
           const response = await getExecutiveList(reqData);
-          if (response.length) {
+          if (response?.length) {
             executiveArr = await response;
             customEditForm(executiveArr);
           } else customEditForm(executiveArr);

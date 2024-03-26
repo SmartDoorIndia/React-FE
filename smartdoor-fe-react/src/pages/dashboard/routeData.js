@@ -36,6 +36,9 @@ const AddNewPost4 = React.lazy(() => import('./AddNewPost/AddNewPost4'));
 const AddNewPost5 = React.lazy(() => import('./AddNewPost/AddNewPost5'));
 const StaticMobNumbers = React.lazy(() => import('./StaticMobileNums/StaticMobNums'))
 const AddCoins = React.lazy(() => import('./AddCoins/AddCoins'))
+const ChatWithOwner = React.lazy(() => import('./ChatWithOwner/chatWithOwner'))
+const FeaturedVideos = React.lazy(() => import('./FeaturedVideos/FeaturedVideos'))
+const MarketingAgency = React.lazy(() => import('./MarketingAgencyModule/MarketingAgency/MarketingAgencyList'))
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -96,7 +99,7 @@ const TransactionDashboard = React.lazy(() => import('./TransactionDashboard/Tra
 const TransactionDetailsPage = React.lazy(() => import('./TransactionDashboard/TranscationDetails/TransactionDetails'));
 const TransactionListingPage = React.lazy(() => import('./TransactionDashboard/TransactionListing/TransactionListing'));
 const DealApprovalDetailPage = React.lazy(()=> import('./TransactionDashboard/DealApproval/DealApproval'))
-
+const SmartDoorCities = React.lazy(() => import('./SmartdoorCities/SmartDoorCities'))
 
 // Routing data
 const routeData = [
@@ -441,7 +444,7 @@ const routeData = [
   {
     path: '/admin/deleted-unlisted-property/view-property',
     name: 'Properties',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: false,
     excat: true,
     module: 'EXECUTION',
     component: PropertyDetailsModule,
@@ -926,6 +929,38 @@ const routeData = [
     component: AddCoins
   },
 
+  {
+    path: '/admin/smartdoor-cities',
+    name: 'Smartdoor Cities',
+    bradcrumb: false,
+    excat: true,
+    component: SmartDoorCities
+  },
+
+  {
+    path: '/admin/chat-history',
+    name: 'Chat History',
+    bradcrumb: ['Back'],
+    excat: true,
+    module: 'EXECUTION',
+    component: ChatWithOwner
+  },
+
+  {
+    path: '/admin/featured-videos',
+    name: 'Featured Videos',
+    bradcrumb: false,
+    excat: true,
+    component: FeaturedVideos
+  },
+
+  {
+    path: '/admin/marketing-agency',
+    name: 'Marketing Agency',
+    bradcrumb: ['Marketing Agency'],
+    excat: true,
+    component: MarketingAgency
+  }
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

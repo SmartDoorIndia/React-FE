@@ -8,10 +8,11 @@ import Buttons from "../../../shared/Buttons/Buttons";
 import Text from "../../../shared/Text/Text";
 import { Col, Row } from "react-bootstrap";
 import "../NewTeamMember/NewEntry.scss";
-import { editTeamMember, getAllRoles, getAllCity, getLocationByCity, getUserLocationByCity } from "../../../common/redux/actions";
+import { editTeamMember, getAllRoles, getAllCity, getAllCityWithId, getLocationByCity, getUserLocationByCity } from "../../../common/redux/actions";
 import { showErrorToast } from "../../../common/helpers/Utils";
 import { validateNewTeamMember } from "../../../common/validations";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 class EditTeamMemberPage extends Component {
    constructor(props) {
@@ -30,7 +31,9 @@ class EditTeamMemberPage extends Component {
          alternatePhoneNumber: this?.props?.location?.state?.user_Data?.alternatePhoneNumber || "",
          allAdminRoles: [],
          city: this?.props?.location?.state?.user_Data?.city || '',
+         cityIdList: this?.props?.location?.state?.user_Data?.cityIdList || '',
          allCities: [],
+         allCitiesWithId: [],
          allLocationsByCity: [],
          cityLocations: [],
          latitude: this?.props?.location?.state?.user_Data?.lat || '',
@@ -44,28 +47,51 @@ class EditTeamMemberPage extends Component {
 
    componentDidMount() {
       this.props.getAllRoles({ rollId: this.props.module });
-      this.props.getAllCity();
-      if (this.state.city.length) {
-         this.setState({allLocationLoader:true})
-         this.props.getUserLocationByCity({ cities: this.state.city[0].split(",") }).then((res) => {
-            if (res.data && res.data.status === 200) {
-               console.log("res:", res.data);
-               const locationsByCity = res.data.resourceData.locations.map(loc => {
+      this.props.getAllCityWithId({smartdoorServiceStatus: true, stateId: null});
+      console.log(this.state.city)
+      console.log(this.state.cityIdList)
+      // this.props.getAllCity();
+      // if (this.state.city.length) {
+      //    this.setState({allLocationLoader:true})
+      //    this.props.getUserLocationByCity({ cities: this.state.city[0].split(",") }).then((res) => {
+      //       if (res.data && res.data.status === 200) {
+      //          console.log("res:", res.data);
+      //          const locationsByCity = res.data.resourceData.locations.map(loc => {
 
-                  return { ...loc, location: `${loc.location} ,${loc.pinCode}` }
-               })
-               this.setState({
-                  allLocationsByCity: locationsByCity,
-                  allLocationLoader: false
-               });
-            }
-         })
-            .catch((err) => console.log("err:", err));
-      }
+      //             return { ...loc, location: `${loc.location} ,${loc.pinCode}` }
+      //          })
+      //          this.setState({
+      //             allLocationsByCity: locationsByCity,
+      //             allLocationLoader: false
+      //          });
+      //       }
+      //    })
+      //       .catch((err) => console.log("err:", err));
+      // }
    }
 
-   handleValidate = (event) => {
+   handleValidate = async (event) => {
       // event.preventDefault();
+      const {allCitiesWithId} = this.props
+      let cityIds = [];
+      let cityNames = []
+   // Iterate over the city array
+      for (let i = 0; i < this.state.cityIdList.length; i++) {
+      // Find the corresponding city object in allCitiesWithId
+      const cityId = this.state.cityIdList[i]
+      const cityObject = allCitiesWithId?.data?.find(city => Number(city.cityId) === Number(cityId));
+      console.log(cityObject)
+      
+      // If a city object with the current city name is found
+      if (cityObject) {
+         // Push the cityId into the cityIds array
+         cityIds.push(cityObject.cityId)
+         cityNames.push(cityObject.cityName);
+         }
+      }
+   
+   // Update the state outside of the loop
+      await this.setState({ city: cityNames, cityIdList: cityIds });
       let validate = validateNewTeamMember(this.state);
       this.setState({ error: validate.errors });
       console.log(validate,"validation")
@@ -85,6 +111,7 @@ class EditTeamMemberPage extends Component {
          userId,
          alternatePhoneNumber,
          city,
+         cityIdList,
          latitude,
          longitude,
       } = this.state;
@@ -96,6 +123,7 @@ class EditTeamMemberPage extends Component {
       let data = {
          active: true,
          city: city,
+         cityIdList: cityIdList,
          dob: dob,
          email: email,
          name: executiveName,
@@ -112,7 +140,7 @@ class EditTeamMemberPage extends Component {
       editTeamMember(data)
          .then((response) => {
             if (response.data && response.data.status === 200) {
-               this.props.history.push("/admin/user-management");
+               this.props.history.push("/admin/user-management", {autoRefresh : 'Yes'});
             }
          })
          .catch((error) => {
@@ -142,9 +170,11 @@ class EditTeamMemberPage extends Component {
          title: { formTitle, buttonText },
          allAdminRoles,
          allCities,
+         allCitiesWithId
       } = this.props;
       const { userData } = this.props.location.state;
       console.log(this.state.city, "seleceted city")
+      console.log(this.state.cityIdList, "seleceted city")
       console.log(this.state.location, "selected location")
       console.log(this.state.allLocationsByCity, "all location by city")
       console.log(this.state.post,"[pstt post post post")
@@ -209,6 +239,27 @@ class EditTeamMemberPage extends Component {
                         </Col>
 
                         <Col lg="4">
+                        <FormControl className="w-100 mt-4 py-0" style={{height:'40px'}}>
+								<InputLabel id="demo-simple-select-helper-label">City</InputLabel>
+								<Select
+                           
+									labelId="demo-simple-select-helper-label"
+									id="demo-simple-select-helper"
+									multiple
+									value={(this.state.cityIdList)}
+									label="City"
+									onChange={(e) => {
+                              this.setState({cityIdList: e.target.value})
+										// setData({ ...data, furnishKitchen: [...e?.target?.value] });
+									}}
+								>
+									{allCitiesWithId?.data?.map((option) => (
+										<MenuItem key={option.cityId} value={option.cityId}>
+											{option.cityName}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
                            {/* <Form.Group controlId="exampleForm.SelectCustom">
                               <Form.Label>City</Form.Label>
                               <Form.Control
@@ -243,46 +294,46 @@ class EditTeamMemberPage extends Component {
                               </Form.Control>
                            </Form.Group> */}
                            {/* {this.state.post.toLowerCase().includes("admin") ?  */}
-                              <Form.Group controlId="exampleForm.SelectCustom" className="removeSpace">
+                              {/* <Form.Group controlId="exampleForm.SelectCustom" className="removeSpace">
                               <Form.Label style={{ zIndex: "999999" }}>City</Form.Label>
-                              {allCities?.data?.cities?.length ?
+                              {allCitiesWithId?.data?.length ?
                                  <DropdownMultiselect
-                                    optionLabel={"city"}
-                                    optionKey={"id"}
-                                    options={allCities.data.cities}
+                                 name='dropdownCity'
+                                    optionLabel={"cityName"}
+                                    optionKey={'cityId'}
+                                    options={allCitiesWithId?.data}
                                     // options={allLocationsByCity}
                                     // selected={this.state.location.map(locn => {return `${locn.id.toString()}`})}
-                                    selected={this.state?.city ? this.state?.city[0]?.split(",") : []}
+                                    selected={this.state?.cityIdList || []}
                                     placeholder="Select "
                                     buttonClass="btn-transperant mt-0 dropdown_multiselect"
                                     handleOnChange={(selected) => {
-                                       console.log(allLocationsByCity, this.state.location, "inside handle change")
-                                       this.setState({ city: selected ? [selected.join(",")] : '', allLocationsByCity: [], allLocationLoader: true });
+                                       console.log("selected: " + selected)
+                                       // console.log(allLocationsByCity, this.state.location, "inside handle change")
+                                       this.setState({ cityIdList: selected ? selected : '', allLocationsByCity: [], allLocationLoader: true });
                                        // this.setState({location: []})
+                                       // this.props
+                                       //    .getUserLocationByCity({ cities: selected })
+                                       //    .then((res) => {
+                                       //       if (res.data && res.data.status === 200) {
+                                       //          console.log("res:", res.data);
+                                       //          let loc = []
+                                       //          for (let i of res.data.resourceData.locations) {
+                                       //             loc = [...loc,...this.state.location.filter(x => x.id === i.id)]
+                                       //          }
+                                       //          const locationsByCity = res.data.resourceData.locations.map(loc => {
 
-
-                                       this.props
-                                          .getUserLocationByCity({ cities: selected })
-                                          .then((res) => {
-                                             if (res.data && res.data.status === 200) {
-                                                console.log("res:", res.data);
-                                                let loc = []
-                                                for (let i of res.data.resourceData.locations) {
-                                                   loc = [...loc,...this.state.location.filter(x => x.id === i.id)]
-                                                }
-                                                const locationsByCity = res.data.resourceData.locations.map(loc => {
-
-                                                   return { ...loc, location: `${loc.location} ,${loc.pinCode}` }
-                                                })
-                                                console.log(loc,"loc loc loc loc")
-                                                this.setState({
-                                                   allLocationsByCity: locationsByCity,
-                                                   location: loc,
-                                                   allLocationLoader: false
-                                                });
-                                             }
-                                          })
-                                          .catch((err) => console.log("err:", err));
+                                       //             return { ...loc, location: `${loc.location} ,${loc.pinCode}` }
+                                       //          })
+                                       //          console.log(loc,"loc loc loc loc")
+                                       //          this.setState({
+                                       //             allLocationsByCity: locationsByCity,
+                                       //             location: loc,
+                                       //             allLocationLoader: false
+                                       //          });
+                                       //       }
+                                       //    })
+                                       //    .catch((err) => console.log("err:", err));
                                        // console.log("selected..", selected);
                                        // const originals = allLocationsByCity.filter((allLocations) =>
                                        //    selected.includes(String(allLocations.id))
@@ -292,7 +343,7 @@ class EditTeamMemberPage extends Component {
                                     }}
                                  />
                                  : null}
-                           </Form.Group>
+                           </Form.Group> */}
                             {/* :
                             <Form.Group controlId="exampleForm.SelectCustom">
                                <Form.Label>City</Form.Label>
@@ -338,7 +389,7 @@ class EditTeamMemberPage extends Component {
                         </Col>
                      </Row>
                      <Row>
-                        {!this?.state?.post?.toLowerCase()?.includes("admin") ?
+                        {/* {!this?.state?.post?.toLowerCase()?.includes("admin") ?
                         // allLocationsByCity.length ? (
                            <Col lg="4">
                               {!this.state.allLocationLoader ? 
@@ -376,14 +427,14 @@ class EditTeamMemberPage extends Component {
                                  text={error.location}
                               />
                            </Col>
-                         : null}
+                         : null} */}
 
                         <Col lg="4">
                            <Form.Group controlId="formBasicLocation">
                               <Form.Label>Date of Birth</Form.Label>
                               <Form.Control
                                  type="date"
-                                 max={new Date().toISOString().split("T")[0]}
+                                 // max={new Date().toISOString().split("T")[0]}
                                  placeholder="Enter Date of Birth"
                                  value={dob}
                                  onChange={(e) => this.setState({ dob: e.target.value })}
@@ -474,15 +525,17 @@ class EditTeamMemberPage extends Component {
    }
 }
 
-const mapStateToProps = ({ allAdminRoles, allCities, allLocationsByCity }) => ({
+const mapStateToProps = ({ allAdminRoles, allCities, allCitiesWithId, allLocationsByCity }) => ({
    allAdminRoles,
    allCities,
-   allLocationsByCity
+   allLocationsByCity,
+   allCitiesWithId
 });
 
 const actions = {
    getAllRoles,
    getAllCity,
+   getAllCityWithId,
    getLocationByCity,
    getUserLocationByCity
 };

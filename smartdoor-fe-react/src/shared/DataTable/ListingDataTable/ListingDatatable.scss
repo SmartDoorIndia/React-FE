@@ -136,8 +136,8 @@
 .consumersTableWrapper {
     .tableBox {
         .rdt_TableBody {
-            max-height: calc(50vh - 20px);
-            height: 50vh;
+            max-height: calc(50vh);
+            height: fit-content;
             overflow-y: visible;
             overflow-x: hidden;
             .rdt_TableRow {

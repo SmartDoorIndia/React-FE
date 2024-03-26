@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useState, useEffect, memo } from "react";
-import { connect, useSelector } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { compose } from "redux";
 import Text from "../../../shared/Text/Text";
 import Form from "react-bootstrap/Form";
@@ -31,7 +31,7 @@ import { TableLoader } from "../../../common/helpers/Loader";
 import blockIconActive from "../../../assets/svg/dismiss-icon-active.svg";
 import { provideAuth } from "../../../common/helpers/Auth";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
-
+import * as Actions from '../../../common/redux/types';
 
 const ProgressComponent = <TableLoader />;
 const POSITION_MODULE_VAL = {
@@ -53,7 +53,7 @@ const getModalActionData = (row) => {
 const UserManagement = (props) => {
    const { userData } = provideAuth();
    const moduleName = props.location?.state?.moduleName ? props.location?.state?.moduleName : ''
-
+   const dispatch = useDispatch();
    console.log("user mgmnt:userData:", userData);
    console.log(moduleName, "moduleName");
    console.log(props, "generalCityDepData");
@@ -78,7 +78,9 @@ const UserManagement = (props) => {
    // state to manage the search filter component
    const [filterText, setFilterText] = React.useState(data.length !== 0 ? allUsersData.data?.searchStr :'');
    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
-
+   const [defaultSort, setDefaultSort] = useState(data.length !== 0 ? allUsersData?.data?.defaultSort : true);
+   const [defaultSortId, setDefaultSortId] = useState(data.length !== 0 ? allUsersData?.data?.defaultSortId : 'id');
+   const [defaultSortFieldId, setDefaultSortFieldId] = useState(data.length !== 0 ? allUsersData?.data?.defaultSortFieldId : 1);
    // const [dates, setDates] = useState([
    //    {
    //       startDate: new Date(),
@@ -112,22 +114,26 @@ const UserManagement = (props) => {
          let zipcode = matches[2]
          getAllUsers({
             searchByCity: city,
-            searchByzipCode: location,
+            // searchByzipCode: location,
             pageSize: rowsPerPage,
             pageNo: newPage,
             userId: userData.userid,
-            searchString: filterText
+            searchString: filterText,
+            departmentName: departments,
+            defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
       } else {
          let zipcode = ""
          let location = ""
          getAllUsers({
             searchByCity: city,
-            searchByzipCode: location,
+            // searchByzipCode: location,
             pageSize: rowsPerPage,
             pageNo: newPage,
             userId: userData.userid,
-            searchString: filterText
+            searchString: filterText,
+            departmentName: departments,
+            defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
       }
    };
@@ -143,11 +149,12 @@ const UserManagement = (props) => {
          let zipcode = matches[2]
          getAllUsers({
             searchByCity: city,
-            searchByzipCode: location,
+            // searchByzipCode: location,
             pageSize: Number(newRowsPerPage),
             pageNo: currentPage,
             userId: userData.userid,
             searchString: filterText,
+            departmentName: departments
          });
       } else {
          let zipcode = ""
@@ -156,7 +163,7 @@ const UserManagement = (props) => {
             pageNo: currentPage,
             pageSize: Number(newRowsPerPage),
             searchByCity: city,
-            searchByzipCode: location,
+            // searchByzipCode: location,
             departmentName: departments,
             searchString: filterText,
          });
@@ -185,7 +192,7 @@ const UserManagement = (props) => {
       );
       blockTeamMember({ userId: blockData.id, startDate: startDt, endDate: endDt })
          .then((data) => {
-            getAllUsers({ pageNo: "", records: "", searchByCity: city, searchByzipCode: location, departmentName: departments });
+            getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments });
             setDatePickerblockvalue([]);
          })
          .catch((error) => {
@@ -194,19 +201,23 @@ const UserManagement = (props) => {
       handleClose();
    };
 
-   useEffect(() => {
-      getCityAndDept();
-   }, [getCityAndDept]);
-
+   // useEffect(() => {
+   //    if(data?.length === 0) {
+   //    }
+   // }, [getCityAndDept]);
+   
    useEffect(() => {
       // if (city === "" && departments === "") {
-      getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchByCity: "", searchByzipCode: "", departmentName: departments });
+         if(data?.length === 0 || props?.location?.state?.autoRefresh === 'Yes') {
+         getCityAndDept();
+         getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: "", departmentName: departments,defaultSort: true, defaultSortId: 'id', defaultSortFieldId: 1 });
+      }
    }
       // else {
       //    getUserByCityAndDept({ city, departments });
       // }
       // }
-      , [getAllUsers]);
+      , [getAllUsers, getCityAndDept]);
 
    const columns = [
       {
@@ -214,15 +225,17 @@ const UserManagement = (props) => {
          selector: "id",
          center: true,
          sortable: true,
+         id: 1
       },
 
       {
          name: "Joined On",
-         selector: "joiningDate",
+         selector: ((row) => row.joiningDate),
          maxWidth: "120px",
          sortable: true,
          center: true,
          cell: ({ joiningDate }) => <span>{formateDate(joiningDate)}</span>,
+         id: 2
       },
       {
          name: "Name ",
@@ -249,28 +262,28 @@ const UserManagement = (props) => {
             </div>
          ),
       },
-      {
-         name: "Location",
-         // selector: 'workLocation',
-         selector: (row) => row.workLocation,
-         center: true,
-         wrap: true,
-         maxWidth: "150px",
-         style: { padding: '0px !important' },
-         cell: (row) => (
-            // <ToolTip
-            //    position="left"
-            //    style={{ width: "100%" }}
-            //    name={getLocationStr(row.workLocation)}
-            // >
-            <span className="cursor-pointer elipsis-text" title={row?.workLocation?.map(obj => obj.location)}>
-               {row?.workLocation?.length && row?.workLocation !== null
-                  ? `${row?.workLocation[0]?.location.toString()}...`
-                  : "-"}
-            </span>
-            // </ToolTip>
-         ),
-      },
+      // {
+      //    name: "Location",
+      //    // selector: 'workLocation',
+      //    selector: (row) => row.workLocation,
+      //    center: true,
+      //    wrap: true,
+      //    maxWidth: "150px",
+      //    style: { padding: '0px !important' },
+      //    cell: (row) => (
+      //       // <ToolTip
+      //       //    position="left"
+      //       //    style={{ width: "100%" }}
+      //       //    name={getLocationStr(row.workLocation)}
+      //       // >
+      //       <span className="cursor-pointer elipsis-text" title={row?.workLocation?.map(obj => obj.location)}>
+      //          {row?.workLocation?.length && row?.workLocation !== null
+      //             ? `${row?.workLocation[0]?.location.toString()}...`
+      //             : "-"}
+      //       </span>
+      //       // </ToolTip>
+      //    ),
+      // },
       {
          name: "City",
          selector: "city",
@@ -279,7 +292,9 @@ const UserManagement = (props) => {
          style: { padding: '0px !important' },
          wrap: true,
          cell: ({ city }) =>
-            (<span className="cursor-pointer elipsis-text" title={city}>{city || "-"}</span>)
+            (<span className="cursor-pointer elipsis-text" title={city}>
+               {city.map((element) => <span>{element} {' '}</span>) || "-"}
+            </span>)
          // <ToolTip
          //       position="top"
          //       style={{ width: "100%" }}
@@ -344,7 +359,7 @@ const UserManagement = (props) => {
 
    const closeModal = (data = { isReload: false }) => {
       if (data?.isReload) {
-         getAllUsers({ pageNo: "", pageSize: "", searchByCity: city, searchByzipCode: location, departmentName: departments });
+         getAllUsers({ pageNo: "", pageSize: "", searchString: filterText, searchByCity: city, departmentName: departments,defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
       }
       // getAllUsers({pageNumber:"", records:"",searchByCity:"", searchByzipCode:""});
       setModalData();
@@ -369,7 +384,7 @@ const UserManagement = (props) => {
       return element.location.toLowerCase().includes(filterText.toLowerCase());
    }
 
-   const filteredItems = allUsersData?.data?.userData?.length ?
+   let filteredItems = allUsersData?.data?.userData?.length ?
       allUsersData?.data?.userData
       // ?.filter(item => {
       //    return item?.id === filterText ||
@@ -391,6 +406,41 @@ const UserManagement = (props) => {
    }
    console.log(allUsersData, "aaaaaaaaaaaaaaaaaaaaaaaaaa")
 
+   
+   const handleSortedData = (newSortedData) => {
+      // Store sorted data
+      const { selector, direction } = newSortedData;
+      let selectorVal = newSortedData?.selector?.toString().split('.');
+      selectorVal = selectorVal?.length > 1 ? selectorVal[1] : selectorVal[0]
+      console.log(selectorVal)
+      // Perform sorting based on selector and direction
+      const sorted = [...filteredItems].sort((a, b) => {
+         if (selectorVal === 'id') {
+            if (defaultSort === true) {
+               return a[selectorVal] - b[selectorVal]; // Example sorting logic
+            } else {
+               return b[selectorVal] - a[selectorVal]; // Example sorting logic for descending order
+            }
+         }
+         else if (selectorVal === 'joiningDate') {
+            const dateA = new Date(a[selectorVal]);
+            const dateB = new Date(b[selectorVal]);
+
+            if (defaultSort === true) {
+               return dateA - dateB;
+            } else {
+               return dateB - dateA;
+            }
+         }
+      });
+      setDefaultSort(!defaultSort)
+      // Update sorted data state
+      console.log(sorted);
+      filteredItems = [...sorted]
+      dispatch({ 
+         type: Actions.USER_MANAGEMENT_SUCCESS, 
+         data: {userData : [...sorted], records : recordSize, currentPage : currentPage, rowsPerPage : rowsPerPage, searchStr: filterText, city: city, location: location, department: departments, defaultSort: !defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId}});
+   };
    return (
       <>
          <div className="tableBox ">
@@ -446,7 +496,7 @@ const UserManagement = (props) => {
                   {/* <div className="m-2"></div> */}
                   <Form.Group controlId="exampleForm.SelectCustom" className="w-40 userGrp ml-0">
                      {/* <Form.Label>City:</Form.Label> */}
-                     <Form.Control as="select"
+                     {/* <Form.Control as="select"
                         onChange={(e) => {
                            setLocationsData([]);
                            setCity(e.target.value)
@@ -484,7 +534,7 @@ const UserManagement = (props) => {
                               ))
                               : null
                            : null}
-                     </Form.Control>
+                     </Form.Control> */}
                      {/* <div className="m-2"></div> */}
                      {/* <Form.Label>Location:</Form.Label> */}
                      {/* <Form.Control as="select"
@@ -535,7 +585,7 @@ const UserManagement = (props) => {
                               setCurrentPage(1)
                               const regex = /([^,]+),\s*(\d{6})/;
                               const matches = location.match(regex);
-                              getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText,  searchByCity: city, searchByzipCode: "", departmentName: departments });
+                              getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText,  searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
                            }}
                         />
                      </div>
@@ -559,6 +609,11 @@ const UserManagement = (props) => {
                   onChangeRowsPerPage={ handleRowsPerPageChange }
                   paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                   progressComponent={ProgressComponent}
+                  paginationServer={true}
+                  onSort={handleSortedData}
+                  defaultSort={defaultSort}
+                  defaultSortId={defaultSortId}
+                  defaultSortFieldId={defaultSortFieldId}
                />
             </div>
 

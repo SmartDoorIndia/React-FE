@@ -2,7 +2,7 @@
 
 import DataTable from 'react-data-table-component';
 import './DataTable.scss';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 
 import sortIocn from '../../assets/svg/sort-icon.svg';
 import { TableLoader } from '../../common/helpers/Loader';
@@ -17,6 +17,7 @@ const DataTableComponent = ({
   pagination,
   progressPending,
   onChangePage,
+  onChangeRowsPerPage,
   paginationComponent,
   paginationRowsPerPageOptions,
   paginationPerPage,
@@ -25,9 +26,13 @@ const DataTableComponent = ({
   striped,
   currentPage,
   rowsPerPage,
+  onSort,
+  defaultSort,
+  defaultSortId,
+  defaultSortFieldId,
+  paginationServer,
   ...rest
 }) => {
-  
   return (
     <DataTable
       title={ title }
@@ -37,16 +42,22 @@ const DataTableComponent = ({
       highlightOnHover
       progressPending={ progressPending }
       onChangePage={ onChangePage }
+      onChangeRowsPerPage={ onChangeRowsPerPage }
       striped={ striped === false ? false : true }
       paginationComponent={ paginationComponent }
       paginationRowsPerPageOptions={ paginationRowsPerPageOptions }
       paginationPerPage={ paginationPerPage }
+      paginationServer={paginationServer}
       // rowsPerPage = {rowsPerPage}
       customStyles={ customStyles }
       sortIcon={ sortIcon || DefaultSortIcon }
       progressComponent={ progressComponent || DefaultProgressComponent }
       currentPage={currentPage}
+      onSort={onSort}
+      defaultSortAsc={defaultSort}
+      defaultSortId={defaultSortId}
       { ...rest }
+      defaultSortFieldId={defaultSortFieldId}
     />
   );
 };

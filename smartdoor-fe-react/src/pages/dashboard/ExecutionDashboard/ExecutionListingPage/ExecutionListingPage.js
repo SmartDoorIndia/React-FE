@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, memo, useCallback } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { compose } from 'redux';
 import Image from '../../../../shared/Image/Image';
 import Buttons from '../../../../shared/Buttons/Buttons'
@@ -24,6 +24,7 @@ import filterIcon from '../../../../assets/images/filter-icon.svg';
 import SearchInput from '../../../../shared/Inputs/SearchInput/SearchInput';
 import './ExecutionListingPage.scss';
 import CONSTANTS_STATUS from '../../../../common/helpers/ConstantsStatus';
+import * as Actions from '../../../../common/redux/types';
 
 const ExecutionListing = (props) => {
   const { 
@@ -37,7 +38,7 @@ const ExecutionListing = (props) => {
       allCities
   } = props;
   const location = useLocation()
- 
+  const dispatch = useDispatch();
   const [city, setCity] = useState("");
   const [locationsData, setLocationsData] = useState([]);
   
@@ -88,8 +89,10 @@ const ExecutionListing = (props) => {
   useEffect(() => {
     console.log(props,"module name");
     getAllCity();
-    if(props?.tabName === "Installation/Un-installation Requests" ){        
+    if(props?.tabName === "Installation/Un-installation Requests" ){  
+      if(installationReqData?.data?.length === 0 || installationReqData?.data?.length === 4) {
         getInstallationRequest({city: "", location: "", records:"", pageNumber:""});
+      }     
     }
     if(props?.tabName === "Published Property" ){        
         getAllPublishedProperty({city: "", records:"", pageNumber:""});
@@ -296,7 +299,7 @@ const ExecutionListing = (props) => {
     cell: ({smartdoorPropertyId,postedById}) =>( <div className="action">
               <ToolTip position="left" name="View Details">
                   <span>
-                      <Link  to={{ pathname: "/admin/property/property-details",
+                      <Link  to={{ pathname: "/admin/execution/published-property/property-details",
                                   state: {propertyId : smartdoorPropertyId, userId : postedById} }}> 
                           <Image name="useraddIcon" src={contentIcon} />
                       </Link>
@@ -397,6 +400,43 @@ const ExecutionListing = (props) => {
 		);
 	}, [filterText, resetPaginationToggle]);
 
+  const [defaultSort, setDefaultSort] = useState(true);
+   const [defaultSortId, setDefaultSortId] = useState('id');
+   const handleSortedData = (newSortedData) => {
+      // Store sorted data
+      // const { selector, direction } = newSortedData;
+      let selectorVal = newSortedData?.selector
+      console.log(newSortedData?.selector)
+      // Perform sorting based on selector and direction
+      let filteredItems = showData()
+      const sorted = [...filteredItems].sort((a, b) => {
+         if (selectorVal === 'id') {
+            if (defaultSort === true) {
+               return a[selectorVal] - b[selectorVal]; // Example sorting logic
+            } else {
+               return b[selectorVal] - a[selectorVal]; // Example sorting logic for descending order
+            }
+         }
+         else if (selectorVal === 'dateTime') {
+            const dateA = new Date(a[selectorVal]);
+            const dateB = new Date(b[selectorVal]);
+
+            if (defaultSort === true) {
+               return dateA - dateB;
+            } else {
+               return dateB - dateA;
+            }
+         }
+      });
+      setDefaultSort(!defaultSort)
+      // Update sorted data state
+      console.log(sorted);
+      // filteredItems = [...sorted]
+      dispatch({
+        type: Actions.EXCUTIVE_INSTALLATION_SUCCESS,
+        data: [...sorted],
+      });
+   };
   return (  
     <div className="tableBox bg-white">
       <div className="d-flex justify-content-between align-items-center tableHeading">
@@ -485,6 +525,9 @@ const ExecutionListing = (props) => {
           paginationRowsPerPageOptions={ [8, 16, 24, 32, 40, 48, 56, 64, 72, 80 ] }
           paginationPerPage={ 8 }
           PaginationComponent={ PaginationComponent }
+          onSort={(e) => {if(props.location.state.module === 'Installation Requests') {handleSortedData(e) }}}
+          defaultSort={props.location.state.module === 'Installation Requests' ? defaultSort : false}
+          defaultSortId={props.location.state.module === 'Installation Requests' ? defaultSortId : 'smartdoorPropertyId'}
         />
       </div>
  </div>

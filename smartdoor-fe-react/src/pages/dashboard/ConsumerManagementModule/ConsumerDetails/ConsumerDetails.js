@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Image from '../../../../shared/Image/Image';
 import Button from '../../../../shared/Buttons/Buttons';
 import Text from '../../../../shared/Text/Text';
-import { Col, Row } from 'react-bootstrap';
+import { Col, Modal, Row } from 'react-bootstrap';
 import dismissIcon from '../../../../assets/images/dismiss-icon.svg';
 import consumerIcon from '../../../../assets/svg/avatar_sml.svg';
 import Verified from '../../../../assets/images/Verified.png'
@@ -15,16 +15,22 @@ import {
   handleStatusElement,
   dateWithFormate,
   setPrice,
+  getLocalStorage,
+  showErrorToast,
+  showSuccessToast,
 } from '../../../../common/helpers/Utils';
 import {
   getConsumerPropertyByUserId,
   getConsumerTransactionsByUserId,
   blockConsumerUser,
+  getAllConsumers,
   getAllServiceRequest,
   getConsumerDetails,
   getCoinTransactions,
   getUpcomingVisits,
   getVisitRequests,
+  giftCoinsToConsumer,
+  getSystemVariables,
 } from '../../../../common/redux/actions';
 import contentIco from '../../../../assets/images/content-ico.svg';
 import './ConsumerDetails.scss';
@@ -37,11 +43,16 @@ import { useAudioCall, useSocket } from '../../../../common/helpers/SocketProvid
 import Loader from '../../../../common/helpers/Loader';
 import reviewIcon from '../../../../assets/svg/reviewIcon.svg'
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
+import { userAuthData } from '../../../../common/redux/reducers/dashboard.reducer';
+import { Badge, TextField } from '@mui/material';
+import { min } from 'date-fns';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import * as Actions from '../../../../common/redux/types';
 
 const ConsumerManagement = (props) => {
-  console.log("props:", props);
-
+  const {getAllConsumerUsersData, getAllConsumers} = props
   const location = useLocation();
+  const dispatch = useDispatch();
   const { consumerId } = useParams();
   const { makeAudioCall } = useAudioCall();
   const { callInProgress } = useSocket();
@@ -62,6 +73,10 @@ const ConsumerManagement = (props) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const selectedConsumer = props.location.state ? props.location.state.selectedConsumer || "" : ""
+  const userData = getLocalStorage('authData');
+  const [showModal, setShowModal] = useState(false);
+  const [newCoinValue, setNewCoinValue] = useState(null);
+  const [recentChatCount, setRecentChatCount] = useState(null);
 
   const handleBlockConsumser = () => {
     if (blockData !== null) {
@@ -327,14 +342,6 @@ const ConsumerManagement = (props) => {
       maxWidth: '200px !important',
       cell: ({ visitStartTime, visitEndTime }) => (<span>{visitStartTime} - {visitEndTime}</span>),
     },
-    // {
-    //   name: 'Visit End Time',
-    //   selector: 'visitEndTime',
-    //   center: true,
-    //   sortable: false,
-    //   maxWidth: '200px !important',
-    //   // cell: ({ visitEndTime })=>(<span>{`${ formateDate(visitEndTime, 'hh:mm a') }`}</span>),
-    // },
     {
       name: 'Visitor Name',
       selector: 'visitorName',
@@ -384,14 +391,6 @@ const ConsumerManagement = (props) => {
       maxWidth: '200px !important',
       cell: ({ visitStartTime, visitEndTime }) => (<span>{visitStartTime} - {visitEndTime}</span>),
     },
-    // {
-    //   name: 'Visit End Time',
-    //   selector: 'visitEndTime',
-    //   center: true,
-    //   sortable: false,
-    //   maxWidth: '200px !important',
-    //   // cell: ({ visitEndTime })=>(<span>{`${ formateDate(visitEndTime) }`}</span>),
-    // },
     {
       name: 'Visitor Address',
       selector: 'visitAddress',
@@ -600,14 +599,12 @@ const ConsumerManagement = (props) => {
       .catch((error) => {
         setLoading(false);
       });
-    console.log('serviceRequestData:', ServiceRequestData);
   }, [getAllServiceRequest, consumerId]);
 
   const _getAllCoinTransactions = useCallback(() => {
     getCoinTransactions({ userId: consumerId, pageNumber: 1, records: 1000 })
       .then((response) => {
         if (response.data) {
-          console.log(response)
           setCoinTransactionData(response?.data?.resourceData)
         }
       }).catch((error) => {
@@ -619,7 +616,6 @@ const ConsumerManagement = (props) => {
     getUpcomingVisits({ userId: consumerId })
       .then((response) => {
         if (response.data) {
-          console.log(response)
           setUpcomingVisitsForYou(response.data.resourceData.upcomingvisitsForYou)
           setUpcomingVisitsFromYou(response.data.resourceData.upcomingvisitsFromYou)
         }
@@ -632,14 +628,12 @@ const ConsumerManagement = (props) => {
     getVisitRequests({ userId: consumerId })
       .then((response) => {
         if (response.data) {
-          // console.log(response)
           let data = response.data.resourceData
           let visitForYou = []
           let visitFromYou = []
           data.forEach(element => {
             if (element.forYou) {
               visitForYou.push(element)
-              console.log(upcomingVisitsForYou)
             }
           });
           setVisitHistoryFor(visitForYou)
@@ -654,6 +648,81 @@ const ConsumerManagement = (props) => {
         setLoading(false);
       })
   }, [consumerId])
+
+  const _getSystemVariables = useCallback(() => {
+    getSystemVariables({receiverId: consumerId})
+    .then((response) => {
+      if( response.status === 200 ) {
+        console.log(response)
+        setRecentChatCount(response.data.resourceData.chatCount)
+      }
+    })
+  })
+ 
+
+  const addCoins = () => {
+    if(newCoinValue < 0) {
+      showErrorToast('Enter positive value...')
+      setNewCoinValue(0)
+    }
+    else if(!newCoinValue) {
+      showErrorToast('Enter SD coins...')
+    }
+    else {
+      setShowModal(false)
+      giftCoinsToConsumer({consumerId: consumerId, coins: newCoinValue})
+      .then((response) => {
+        if(response.status === 200) {
+          showSuccessToast(newCoinValue + " Coins gifted successfully")
+          _getAllCoinTransactions();
+          let consumerList = [];
+          consumerList = [...getAllConsumerUsersData?.data?.consumersData ?? []]
+          consumerList.forEach((element, index) => {
+            if (element.id === Number(consumerId)) {
+              // Create a new object with the updated coinBalance
+              const updatedElement = { ...element, coinBalance: Number(element.coinBalance) + Number(newCoinValue) };
+              consumerList[index] = updatedElement; // Replace the old element with the updated one
+            }
+          });
+          // dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: {consumersData: consumerList, records: getAllConsumerUsersData?.data?.records, currentPage: getAllConsumerUsersData?.data?.currentPage, rowsPerPage: getAllConsumerUsersData?.data?.rowsPerPage, searchStr: getAllConsumerUsersData?.data?.searchStr, kycStatus: getAllConsumerUsersData?.data?.kycStatus} });
+          setNewCoinValue(null)
+          handleSortedData(consumerList);
+        }
+      }).catch(error => {
+        console.log(error)
+        showErrorToast("Please try again...")
+      })
+    }
+  }
+
+  const handleSortedData = (consumerList) => {
+    let filteredItems = [...consumerList];
+    console.log(getAllConsumerUsersData?.data?.defaultSort);
+    console.log(getAllConsumerUsersData?.data?.defaultSortId);
+    const sorted = [...filteredItems].sort((a, b) => {
+       if (getAllConsumerUsersData?.data?.defaultSortId === 'id') {
+         if (getAllConsumerUsersData?.data?.defaultSort === true) {
+           return a['id'] - b['id']; // Example sorting logic
+          } else {
+            return b['id'] - a['id']; // Example sorting logic for descending order
+          }
+        }
+        else if (getAllConsumerUsersData?.data?.defaultSortId === 'coinBalance') {
+          if (getAllConsumerUsersData?.data?.defaultSort === true) {
+             return a['coinBalance'] - b['coinBalance']; // Example sorting logic
+          } else {
+             return b['coinBalance'] - a['coinBalance']; // Example sorting logic for descending order
+          }
+       }
+    });
+    // Update sorted data state
+    // console.log(sorted);
+    filteredItems = [...sorted]
+    dispatch({ 
+      type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, 
+      data: {consumersData: [...sorted], records: getAllConsumerUsersData?.data?.recordSize, currentPage: getAllConsumerUsersData?.data?.currentPage, rowsPerPage: getAllConsumerUsersData?.data?.rowsPerPage, searchStr: getAllConsumerUsersData?.data?.searchStr, kycStatus: getAllConsumerUsersData?.data?.kycStatus, defaultSort: getAllConsumerUsersData?.data?.defaultSort, defaultSortId: getAllConsumerUsersData?.data?.defaultSortId, defaultSortFieldId: getAllConsumerUsersData?.data?.defaultSortFieldId} });
+ };
+
   // USE_EFFECT
   useEffect(() => {
     _getConsumerDetails();
@@ -663,398 +732,472 @@ const ConsumerManagement = (props) => {
     _getAllCoinTransactions();
     _getUpcomingVisits();
     _visitHistory();
+    _getSystemVariables();
   }, [_getConsumerDetails, _getConsumerPropertyByUserId, _getConsumerTransactionsByUserId, _getAllServiceRequest, _getUpcomingVisits, _visitHistory]);
 
   return (
     <>
       {loading ? <Loader /> :
         <>
-          <div style={{height : '79vh', overflow:'auto'}}>
+          <div style={{ height: '79vh', overflow: 'auto' }}>
 
-          <div className="whiteBg mb-0">
-            <Row>
-              <Col lg="6">
-                <div className="d-flex">
-                  <Image
-                    name="consumerIcon"
-                    src={Consumer_data.imageUrl || consumerIcon}
-                    className="mr-4 profileImg"
-                  />
-                  <div>
-                    <Text size="regular" fontWeight="smbold" color="secondryColor" text={Consumer_data.name} className="mt-1" />
-                    <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text={Consumer_data.position} className="mt-1" />
-                    <Text size="xSmall" fontWeight="smbold" color="secondryColor" text={`Joined on: ${formateDate(Consumer_data.joiningDate)}`} className="mt-2" />
+            <div className="whiteBg mb-0">
+              <Row>
+                <Col lg="6">
+                  <div className="d-flex">
+                    <Image
+                      name="consumerIcon"
+                      src={Consumer_data.imageUrl || consumerIcon}
+                      className="mr-4 profileImg"
+                    />
+                    <div>
+                      <Text size="regular" fontWeight="smbold" color="secondryColor" text={Consumer_data.name} className="mt-1" />
+                      <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text={Consumer_data.position} className="mt-1" />
+                      <Text size="xSmall" fontWeight="smbold" color="secondryColor" text={`Joined on: ${formateDate(Consumer_data.joiningDate)}`} className="mt-2" />
+                    </div>
                   </div>
-                </div>
-                <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
-                  <Text
-                    size="Small"
-                    fontWeight="smbold"
-                    color="secondryColor"
-                    text="Phone Number"
-                    className="mt-1"
-                  />
-                  <Text
-                    size="Small"
-                    fontWeight="mediumbold"
-                    color="secondryColor"
-                    text={Consumer_data.contactNumber || '-'}
-                    className="mt-1"
-                  />
-                </div>
-                <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
-                  <Text
-                    size="Small"
-                    fontWeight="smbold"
-                    color="secondryColor"
-                    text="Email"
-                    className="mt-1"
-                  />
-                  <Text
-                    size="Small"
-                    fontWeight="mediumbold"
-                    color="secondryColor"
-                    text={Consumer_data.email || '-'}
-                    className="mt-1"
-                  />
-                </div>
-                <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
-                  <Text
-                    size="Small"
-                    fontWeight="smbold"
-                    color="secondryColor"
-                    text="FreeCoins"
-                    className="mt-1"
-                  />
-                  <Text
-                    size="Small"
-                    fontWeight="mediumbold"
-                    color="secondryColor"
-                    text={coinTransactionData?.freeCoins}
-                    className="mt-1"
-                  />
-                </div>
-                <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
-                  <Text
-                    size="Small"
-                    fontWeight="smbold"
-                    color="secondryColor"
-                    text="FreeCoins Expiry Date"
-                    className="mt-1"
-                  />
-                  <Text
-                    size="Small"
-                    fontWeight="mediumbold"
-                    color="secondryColor"
-                    text={coinTransactionData?.freeCoinsExpiryDate === null ? '-' : coinTransactionData?.freeCoinsExpiryDate}
-                    className="mt-1"
-                  />
-                </div>
-                <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
-                  <Text
-                    size="Small"
-                    fontWeight="smbold"
-                    color="secondryColor"
-                    text="User Balance"
-                    className="mt-1"
-                  />
-                  <Text
-                    size="Small"
-                    fontWeight="mediumbold"
-                    color="secondryColor"
-                    text={coinTransactionData?.userBalance}
-                    className="mt-1"
-                  />
-                </div>
-              </Col>
+                  <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+                    <Text
+                      size="Small"
+                      fontWeight="smbold"
+                      color="secondryColor"
+                      text="Phone Number"
+                      className="mt-1"
+                    />
+                    <Text
+                      size="Small"
+                      fontWeight="mediumbold"
+                      color="secondryColor"
+                      text={Consumer_data.contactNumber || '-'}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+                    <Text
+                      size="Small"
+                      fontWeight="smbold"
+                      color="secondryColor"
+                      text="Email"
+                      className="mt-1"
+                    />
+                    <Text
+                      size="Small"
+                      fontWeight="mediumbold"
+                      color="secondryColor"
+                      text={Consumer_data.email || '-'}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+                    <Text
+                      size="Small"
+                      fontWeight="smbold"
+                      color="secondryColor"
+                      text="FreeCoins"
+                      className="mt-1"
+                    />
+                    <Text
+                      size="Small"
+                      fontWeight="mediumbold"
+                      color="secondryColor"
+                      text={coinTransactionData?.freeCoins}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+                    <Text
+                      size="Small"
+                      fontWeight="smbold"
+                      color="secondryColor"
+                      text="FreeCoins Expiry Date"
+                      className="mt-1"
+                    />
+                    <Text
+                      size="Small"
+                      fontWeight="mediumbold"
+                      color="secondryColor"
+                      text={coinTransactionData?.freeCoinsExpiryDate === null ? '-' : coinTransactionData?.freeCoinsExpiryDate}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+                    <Text
+                      size="Small"
+                      fontWeight="smbold"
+                      color="secondryColor"
+                      text="User Balance"
+                      className="mt-1"
+                    />
+                    <Text
+                      size="Small"
+                      fontWeight="mediumbold"
+                      color="secondryColor"
+                      text={coinTransactionData?.userBalance}
+                      className="mt-1"
+                    />
+                  </div>
+                </Col>
 
-              <Col lg="6">
-                <div className="text-right">
-                  {(props.module === 'HELPDESK') ?
-                    <Link to={{
-                      pathname: '/admin/helpdesk/create-ticket',
-                      state: {
-                        consumer_name: Consumer_data.name,
-                        consumer_contactNumber: Consumer_data.contactNumber,
-                        consumerId: Consumer_data.id,
-                        callerId: consumerId
-                      },
-                    }}>
+                <Col lg="6">
+                  <div className="text-right">
+                    {(props.module === 'HELPDESK') ?
+                      <Link to={{
+                        pathname: '/admin/helpdesk/create-ticket',
+                        state: {
+                          consumer_name: Consumer_data.name,
+                          consumer_contactNumber: Consumer_data.contactNumber,
+                          consumerId: Consumer_data.id,
+                          callerId: consumerId
+                        },
+                      }}>
+                        <Button
+                          name="Create Ticket"
+                          varient="lightBtn"
+                          type="submit"
+                          size="Small"
+                          color="secondryColor"
+                          className="mr-3"
+                        />
+                      </Link> :
+                      null}
+
+                    {props.module === 'CONSUMER' ? (
+                      <ToolTip position="top" name="Under Development">
+                        <span>
+                        </span>
+                      </ToolTip>
+                    ) : null}
+                    {(props.module === 'CONSUMER') ?
                       <Button
-                        name="Create Ticket"
+                        name={Consumer_data.blocked ? 'Unblock' : 'Block'}
                         varient="lightBtn"
                         type="submit"
                         size="Small"
                         color="secondryColor"
+                        iconSrc={dismissIcon}
                         className="mr-3"
+                        onClick={() => {
+                          handleShow();
+                          setBlockData(consumerId);
+                        }}
+                      /> :
+                      null}
+                    <span className="ml-2"></span>
+                    {props.module === 'HELPDESK INSTALLATION REQUESTS' ?
+                      <Buttons
+                        name="Create Ticket"
+                        varient="primary"
+                        type="submit"
+                        size="xSmall"
+                        color="white"
+                        className='mr-2'
+                        onClick={() => history.push('/admin/helpdesk/serviceRequest/consumer/create-ticket', {
+                          // state: {
+                          consumer_name: Consumer_data.name,
+                          consumer_contactNumber: Consumer_data.contactNumber,
+                          consumerId: Consumer_data.id,
+                          callerId: consumerId
+                          // },
+                        })}
                       />
-                    </Link> :
-                    null}
-
-                  {props.module === 'CONSUMER' ? (
-                    <ToolTip position="top" name="Under Development">
-                      <span>
-                      </span>
-                    </ToolTip>
-                  ) : null}
-                  {(props.module === 'CONSUMER') ?
-                    <Button
-                      name={Consumer_data.blocked ? 'Unblock' : 'Block'}
-                      varient="lightBtn"
-                      type="submit"
-                      size="Small"
-                      color="secondryColor"
-                      iconSrc={dismissIcon}
-                      className="mr-3"
-                      onClick={() => {
-                        handleShow();
-                        setBlockData(consumerId);
-                      }}
-                    /> :
-                    null}
-                  <span className="ml-2"></span>
-                  {props.module === 'HELPDESK INSTALLATION REQUESTS' ?
+                      : ''}
                     <Buttons
-                      name="Create Ticket"
+                      name="Call"
                       varient="primary"
                       type="submit"
                       size="xSmall"
                       color="white"
-                      className='mr-2'
-                      onClick={() => history.push('/admin/helpdesk/serviceRequest/consumer/create-ticket', {
-                        // state: {
-                        consumer_name: Consumer_data.name,
-                        consumer_contactNumber: Consumer_data.contactNumber,
-                        consumerId: Consumer_data.id,
-                        callerId: consumerId
-                        // },
-                      })}
+                      disabled={callInProgress ? true : false}
+                      onClick={() => makeAudioCall(Consumer_data)}
+                    /> &nbsp; &nbsp;
+                    <Link
+                      to={{
+                        pathname: "/admin/chat-history",
+                        state: {
+                          userId: userData?.userid,
+                          ownerId: Consumer_data.id,
+                          ownerName: Consumer_data.name,
+                          roleId: Consumer_data.roleId
+                        },
+                      }}
+                    >
+                      <Badge color="success" badgeContent={recentChatCount} >
+                        <Buttons
+                          // style={{ float: 'left' }}
+                          name="Chat"
+                          varient="primary"
+                          size="xSmall"
+                          color="white"
+                          className="" />
+                      </Badge>
+                    </Link>&nbsp; &nbsp;
+                    <Buttons
+                      name="Add Coins"
+                      varient="primary"
+                      type="submit"
+                      size="xSmall"
+                      color="white"
+                      onClick={() => {setShowModal(true)}}
                     />
-                    : ''}
-                  <Buttons
-                    name="Call"
-                    varient="primary"
-                    type="submit"
-                    size="xSmall"
-                    color="white"
-                    disabled={callInProgress ? true : false}
-                    onClick={() => makeAudioCall(Consumer_data)}
-                  />
-                  {(props.module === 'CONSUMER') ?
-                    <div className="mt-5">
-                      <div className="d-flex justify-content-end align-items-center kycTag">
-                        {Consumer_data.kycverified ?
-                          <Image name="consumerIcon" src={Verified} />
-                          :
-                          <Image name="consumerIcon" src={Unverified} />
-                        }
-                      </div>
+
+                    {(props.module === 'CONSUMER') ?
+                      <div className="mt-5">
+                        <div className="d-flex justify-content-end align-items-center kycTag">
+                          {Consumer_data.kycverified ?
+                            <Image name="consumerIcon" src={Verified} />
+                            :
+                            <Image name="consumerIcon" src={Unverified} />
+                          }
+                        </div>
+                      </div> :
+                      null}
+
+                    <div className="d-flex align-items-start  justify-content-start pt-2 personalDetail">
+                      <Text
+                        size="Small"
+                        fontWeight="smbold"
+                        color="secondryColor"
+                        text="Karza Name"
+                        className="mt-1"
+                      />
+                      <Text
+                        size="Small"
+                        fontWeight="mediumbold"
+                        color="secondryColor"
+                        text={selectedConsumer.karzaName || '-'}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+                      <Text
+                        size="Small"
+                        fontWeight="smbold"
+                        color="secondryColor"
+                        text="Gender"
+                        className="mt-1"
+                      />
+                      <Text
+                        size="Small"
+                        fontWeight="mediumbold"
+                        color="secondryColor"
+                        text={selectedConsumer.gender || '-'}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+                      <Text
+                        size="Small"
+                        fontWeight="smbold"
+                        color="secondryColor"
+                        text="Date Of Birth"
+                        className="mt-1"
+                      />
+                      <Text
+                        size="Small"
+                        fontWeight="mediumbold"
+                        color="secondryColor"
+                        text={selectedConsumer.dob || '-'}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+                      <Text
+                        size="Small"
+                        fontWeight="smbold"
+                        color="secondryColor"
+                        text="Address"
+                        className="mt-1"
+                      />
+                      <Text
+                        size="Small"
+                        fontWeight="mediumbold"
+                        color="secondryColor"
+                        text={selectedConsumer.address === null ? '-' : selectedConsumer.address}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
+                      <Text
+                        size="Small"
+                        fontWeight="smbold"
+                        color="secondryColor"
+                        className="mt-1"
+                        text="Aadhar Image" />
+                      {selectedConsumer.kycDetail !== null ?
+                        <>
+                          <img src={selectedConsumer.kycDetail}></img>
+                        </> :
+                        <Text
+                          size="20px"
+                          fontWeight=""
+                          color="secondryColor"
+                          className="text-center mt-3"
+                          text="KYC Details not available!" />
+                      }
+                    </div>
+                  </div>
+
+                  {Consumer_data.visitSocietyName ?
+                    <div className="onVisit mb-3 mt-5">
+                      <Text
+                        size="Small"
+                        fontWeight="mediumbold"
+                        color="primaryColor"
+                        text={`On visit: ${Consumer_data.visitHouseNumber || ''} ${Consumer_data.visitSocietyName ? Consumer_data.visitSocietyName + ',' : ''} ${Consumer_data.visitCity || ''}`}
+                        className={(props.module === 'CONSUMER') ? 'mt-1' : 'mb-0'}
+                      />
                     </div> :
                     null}
-                  <div className="d-flex align-items-start  justify-content-start pt-2 personalDetail">
-                    <Text
-                      size="Small"
-                      fontWeight="smbold"
-                      color="secondryColor"
-                      text="Karza Name"
-                      className="mt-1"
-                    />
-                    <Text
-                      size="Small"
-                      fontWeight="mediumbold"
-                      color="secondryColor"
-                      text={selectedConsumer.karzaName || '-'}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
-                    <Text
-                      size="Small"
-                      fontWeight="smbold"
-                      color="secondryColor"
-                      text="Gender"
-                      className="mt-1"
-                    />
-                    <Text
-                      size="Small"
-                      fontWeight="mediumbold"
-                      color="secondryColor"
-                      text={selectedConsumer.gender || '-'}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
-                    <Text
-                      size="Small"
-                      fontWeight="smbold"
-                      color="secondryColor"
-                      text="Date Of Birth"
-                      className="mt-1"
-                    />
-                    <Text
-                      size="Small"
-                      fontWeight="mediumbold"
-                      color="secondryColor"
-                      text={selectedConsumer.dob || '-'}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
-                    <Text
-                      size="Small"
-                      fontWeight="smbold"
-                      color="secondryColor"
-                      text="Address"
-                      className="mt-1"
-                    />
-                    <Text
-                      size="Small"
-                      fontWeight="mediumbold"
-                      color="secondryColor"
-                      text={selectedConsumer.address === null ? '-' : selectedConsumer.address}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div className="d-flex align-items-center  justify-content-between pt-2 personalDetail">
-                    <Text
-                      size="Small"
-                      fontWeight="smbold"
-                      color="secondryColor"
-                      className="mt-1"
-                      text="Aadhar Image" />
-                    {selectedConsumer.kycDetail !== null ?
-                      <>
-                        <img src={selectedConsumer.kycDetail}></img>
-                      </> :
-                      <Text
-                        size="20px"
-                        fontWeight=""
-                        color="secondryColor"
-                        className="text-center mt-3"
-                        text="KYC Details not available!" />
-                    }
-                  </div>
-                </div>
-
-                {Consumer_data.visitSocietyName ?
-                  <div className="onVisit mb-3 mt-5">
-                    <Text
-                      size="Small"
-                      fontWeight="mediumbold"
-                      color="primaryColor"
-                      text={`On visit: ${Consumer_data.visitHouseNumber || ''} ${Consumer_data.visitSocietyName ? Consumer_data.visitSocietyName + ',' : ''} ${Consumer_data.visitCity || ''}`}
-                      className={(props.module === 'CONSUMER') ? 'mt-1' : 'mb-0'}
-                    />
-                  </div> :
-                  null}
 
 
-              </Col>
-            </Row>
-          </div>
+                </Col>
+              </Row>
+            </div>
 
-          <ListingDataTable
-            title="Properties Listed"
-            data={consumerPropertyData}
-            columns={columns}
-            isLoading={consumerPropertyData.isLoading}
-            perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-            paginationPerPage={4}
-            paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-          />
-
-          <div className='consumer-detailsTransactionsTableWrapper'>
             <ListingDataTable
-              title="Transactions"
-              data={consumerTransactionsData}
-              columns={transactionsColumns}
-              isLoading={consumerTransactionsData.isLoading}
+              title="Properties Listed"
+              data={consumerPropertyData}
+              columns={columns}
+              isLoading={consumerPropertyData.isLoading}
               perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
               paginationPerPage={4}
               paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
             />
+
+            <div className='consumer-detailsTransactionsTableWrapper'>
+              <ListingDataTable
+                title="Transactions"
+                data={consumerTransactionsData}
+                columns={transactionsColumns}
+                isLoading={consumerTransactionsData.isLoading}
+                perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+                paginationPerPage={4}
+                paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+              />
+            </div>
+
+            <ListingDataTable
+              title="Previous Service Requests"
+              data={ServiceRequestData}
+              columns={serviceReqColumns}
+              isLoading={ServiceRequestData.isLoading}
+              perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+              paginationPerPage={4}
+              paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+            />
+
+            <ListingDataTable
+              title="Coin Transactions"
+              data={coinTransactionData.transactionDetailList === null ? [] : coinTransactionData.transactionDetailList}
+              columns={CoinTransactionColumns}
+              // isLoading={ServiceRequestData.isLoading}
+              perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+              paginationPerPage={4}
+              paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+            />
+
+            <ListingDataTable
+              title="Upcoming Visits For Owner"
+              data={upcomingVisitsForYou === null ? [] : upcomingVisitsForYou}
+              columns={upcomingRequestForCols}
+              // isLoading={ServiceRequestData.isLoading}
+              perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+              paginationPerPage={4}
+              paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+            />
+
+            <ListingDataTable
+              title=" Upcoming Visits From Owner"
+              data={upcomingVisitsFromYou === null ? [] : upcomingVisitsFromYou}
+              columns={upcomingRequestsFromCols}
+              // isLoading={ServiceRequestData.isLoading}
+              perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+              paginationPerPage={4}
+              paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+            />
+
+            <ListingDataTable
+              title="Visit Requests For Owner (History)"
+              data={visitHistoryFor === null ? [] : visitHistoryFor}
+              columns={visitRequestForCols}
+              // isLoading={ServiceRequestData.isLoading}
+              perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+              paginationPerPage={4}
+              paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+            />
+
+            <ListingDataTable
+              title="Visit Requests From Owner (History)"
+              data={visitHistoryFrom === null ? [] : visitHistoryFrom}
+              columns={visitRequestFromCols}
+              // isLoading={ServiceRequestData.isLoading}
+              perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+              paginationPerPage={4}
+              paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
+            />
+
+            <ConfirmationModal
+              title={
+                Consumer_data.blocked ?
+                  'Are you sure you want to unblock this consumer?' :
+                  'Are you sure you want to block this consumer?'
+              }
+              cancelButtonName="Cancel"
+              primaryButtonName={Consumer_data.blocked ? 'Unblock' : 'Block'}
+              show={show}
+              handleClose={handleClose}
+              handleShow={handleShow}
+              handlePerformAction={handleBlockConsumser}
+            />
+            {/* <div className="mt-5">
+            </div> */}
           </div>
-
-          <ListingDataTable
-            title="Previous Service Requests"
-            data={ServiceRequestData}
-            columns={serviceReqColumns}
-            isLoading={ServiceRequestData.isLoading}
-            perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-            paginationPerPage={4}
-            paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-          />
-
-          <ListingDataTable
-            title="Coin Transactions"
-            data={coinTransactionData.transactionDetailList === null ? [] : coinTransactionData.transactionDetailList}
-            columns={CoinTransactionColumns}
-            // isLoading={ServiceRequestData.isLoading}
-            perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-            paginationPerPage={4}
-            paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-          />
-
-          <ListingDataTable
-            title="Upcoming Visits For Owner"
-            data={upcomingVisitsForYou === null ? [] : upcomingVisitsForYou}
-            columns={upcomingRequestForCols}
-            // isLoading={ServiceRequestData.isLoading}
-            perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-            paginationPerPage={4}
-            paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-          />
-
-          <ListingDataTable
-            title=" Upcoming Visits From Owner"
-            data={upcomingVisitsFromYou === null ? [] : upcomingVisitsFromYou}
-            columns={upcomingRequestsFromCols}
-            // isLoading={ServiceRequestData.isLoading}
-            perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-            paginationPerPage={4}
-            paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-          />
-
-          <ListingDataTable
-            title="Visit Requests For Owner (History)"
-            data={visitHistoryFor === null ? [] : visitHistoryFor}
-            columns={visitRequestForCols}
-            // isLoading={ServiceRequestData.isLoading}
-            perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-            paginationPerPage={4}
-            paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-          />
-
-          <ListingDataTable
-            title="Visit Requests From Owner (History)"
-            data={visitHistoryFrom === null ? [] : visitHistoryFrom}
-            columns={visitRequestFromCols}
-            // isLoading={ServiceRequestData.isLoading}
-            perPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-            paginationPerPage={4}
-            paginationRowsPerPageOptions={[4, 8, 12, 16, 20, 24, 28, 32, 36, 40]}
-          />
-
-          <ConfirmationModal
-            title={
-              Consumer_data.blocked ?
-                'Are you sure you want to unblock this consumer?' :
-                'Are you sure you want to block this consumer?'
-            }
-            cancelButtonName="Cancel"
-            primaryButtonName={Consumer_data.blocked ? 'Unblock' : 'Block'}
-            show={show}
-            handleClose={handleClose}
-            handleShow={handleShow}
-            handlePerformAction={handleBlockConsumser}
-          />
-          <div className="mt-5">
-          </div>
-          </div>
+            <Modal show={showModal} onHide={() => {setShowModal(false)}} centered style={{ backgroundImage: 'unset' }}>
+              <Modal.Header className='justify-content-center'>
+                <Text 
+                  size="medium"
+                  fontWeight="mediumbold"
+                  color="primaryColor"
+                  text={'Add coins to ' + Consumer_data.name} 
+                />
+              </Modal.Header>
+              <Modal.Body className='text-align-center'>
+                <TextField
+                  label={'Enter SD coins'}
+                  type='number'
+                  inputProps={{min : 0}}
+                  value={newCoinValue}
+                  onChange={(e) => {setNewCoinValue(e.target.value); }}
+                />
+                <div className='mt-3'>
+                  <Buttons
+                    name="Gift Coins"
+                    varient="primary"
+                    type="submit"
+                    size="Small"
+                    color="white"
+                    onClick={() => {addCoins()}}
+                    /> &nbsp;&nbsp;
+                  <Buttons
+                    name="Cancel"
+                    varient="primary"
+                    size="Small"
+                    color="white"
+                    onClick={() => {setShowModal(false)}}
+                    />
+                </div>
+              </Modal.Body>
+            </Modal>
         </>
       }
     </>
   );
 };
 
-export default ConsumerManagement;
+const mapStateToProps = ({ getAllConsumerUsersData }) => ({
+  getAllConsumerUsersData,
+});
+const actions = {
+  getAllConsumers,
+};
+export default connect(mapStateToProps, actions)(ConsumerManagement);

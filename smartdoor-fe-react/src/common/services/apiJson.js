@@ -427,7 +427,8 @@ export const ApiJson = {
         "zipcode":"",
         "pageSize": "",
         "pageNo": "",
-        
+        "fromDate": null,
+        "toDate":null
       },
       headers: {
         'Accept': '*/*',
@@ -1085,6 +1086,19 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
     },
+
+    giftCoinsToConsumer: {
+      url: '/admin/consumer/addSDcoinsToConsumer/:consumerId/:coins',
+      method: 'PUT',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
     //http://103.187.101.53:8751/admin/finance/getUserDetailById/305/67
     getConsumerDetailsFinance: {
       url: '/admin/finance/getUserDetailById/:userId/:transactionId',
@@ -1182,7 +1196,7 @@ export const ApiJson = {
       showErrorMessage: false,
     },
     getExecutiveCalendar: {
-      url: '/admin/execution/getExecutiveCalendar?weekStartDate=:weekStartDate&weekEndDate=:weekEndDate&cityId=:city&pincode=:pincode',
+      url: '/admin/execution/getExecutiveCalendar?weekStartDate=:weekStartDate&weekEndDate=:weekEndDate&cityId=:city',
       method: 'GET',
       headers: {
         'Accept': '*/*',
@@ -1278,7 +1292,7 @@ export const ApiJson = {
     },
     getExecutiveList: {
       // city=:city&date=:date&timeSlot=:timeSlot
-      url: 'admin/execution/getExecutiveList?city=:city&date=:date&timeSlot=:timeSlot&userRequestId=:userRequestId',
+      url: 'admin/execution/getExecutiveList?date=:date&timeSlot=:timeSlot&userRequestId=:userRequestId',
       method: 'GET',
       headers: {
         'Accept': '*/*',
@@ -1689,6 +1703,18 @@ export const ApiJson = {
         stateId: null,
         smartdoorServiceStatus: true
       },
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    getAllStateWithId: {
+      url: '/admin/property/getAllStates',
+      method: 'GET',
+      data: {},
       headers: {
         'Accept': '*/*',
         'Content-Type': 'application/json',
@@ -2384,6 +2410,61 @@ export const ApiJson = {
         userId: null,
         cityIdList: []
       },
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    setServiceStatus: {
+      url: '/admin/property/setCityServiceStatus/:cityId/:status',
+      method: 'PUT',
+      data: {
+        cityId: null,
+        status: null
+      },
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+
+    getFeaturedVideosList: {
+      url: '/admin/system/getValues/:parameterId',
+      method: 'GET',
+      data: {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+
+    setFeaturedVideosList: {
+      url: '/admin/system/addFeaturedVideos',
+      method: 'PUT',
+      data: {
+        parameterId:'',
+        parameterType:'',
+        value:'',
+        parameterDescription:''
+      },
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+
+    getSystemVariables: {
+      url: '/consumer/user/getSystemVariables/:receiverId',
+      method: 'GET',
+      data: { },
       headers : {
         'Accept': '*/*',
         'Content-Type': 'application/json'

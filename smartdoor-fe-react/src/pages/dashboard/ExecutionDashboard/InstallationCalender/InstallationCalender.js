@@ -279,21 +279,21 @@ class InstallationCalender extends Component {
          }
       }
       // console.log(filterExecutive,cellData,"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
-      if (filterExecutive.length) {
+      // if (filterExecutive.length) {
 
-         const executiveCities = filterExecutive[0]?.city[0]?.split(",") || [];
+      //    const executiveCities = filterExecutive[0]?.city[0]?.split(",") || [];
 
-          // Check if the cellData's city matches any of the cities in the executiveCities array
-         if (!executiveCities.some(city => city.trim().toLowerCase() === cellData?.city?.toLowerCase())) {
-         valid = true;
-         message = "Can't assign to other city Executive";
-         }
+      //     // Check if the cellData's city matches any of the cities in the executiveCities array
+      //    if (!executiveCities.some(city => city.trim().toLowerCase() === cellData?.city?.toLowerCase())) {
+      //    valid = true;
+      //    message = "Can't assign to other city Executive";
+      //    }
 
-         // if (filterExecutive[0]?.city?.toLowerCase() !== cellData?.city?.toLowerCase()) {
-         //    valid = true;
-         //    message = "Can't assign to other city Executive";
-         // }
-      }
+      //    // if (filterExecutive[0]?.city?.toLowerCase() !== cellData?.city?.toLowerCase()) {
+      //    //    valid = true;
+      //    //    message = "Can't assign to other city Executive";
+      //    // }
+      // }
 
       if (Number(time) >= 21) {
          valid = true;

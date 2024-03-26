@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { compose } from 'redux';  
 import Text from '../../../shared/Text/Text';
 import Card from 'react-bootstrap/Card'
@@ -15,7 +15,8 @@ import {  getInstallationRequest,
           getExcutionDashboardCity,
           getAllCity,
           getLocationByCity,
-          changeInstallationAssignee
+          changeInstallationAssignee,
+          getAllCityWithId
       }  from '../../../common/redux/actions';
 import { Link, Route } from 'react-router-dom';  
 import { TableLoader } from '../../../common/helpers/Loader';
@@ -26,6 +27,7 @@ import calendarIcon from '../../../assets/svg/calendar.svg';
 import personGroupIco from '../../../assets/svg/person_group.svg';
 import ListingDataTable from '../../../shared/DataTable/ListingDataTable';
 import { handleStatusElement, ToolTip, formateDate, dateWithFormate }  from '../../../common/helpers/Utils';
+import * as Actions from '../../../common/redux/types';
 import './ExecutionDashboard.scss'
 
 const TeamTablePaginationActionButton = () => (
@@ -90,6 +92,7 @@ const ExecutionDashboard = (props) => {
       getExecutionDashboardCount,
       getExcutionDashboardCity,
       getAllCity,
+      getAllCityWithId,
       getLocationByCity,
       excutiveTeamsData, 
       publishedProperyData, 
@@ -98,9 +101,11 @@ const ExecutionDashboard = (props) => {
       executionDashboardCount,
       excutiveDashboardCity,
       allCities,
+      allCitiesWithId,
       allExecutiveLocationsByCity
       }= props;
 
+    const dispatch = useDispatch();
     useEffect(()=>{
       getInstallationRequest({city: "", location: "",pageSize:"4", pageNo:"1" });
       getServiceRequest({ "status":[],
@@ -114,6 +119,7 @@ const ExecutionDashboard = (props) => {
       getExecutionDashboardCount();
       // getExcutionDashboardCity();
       getAllCity();
+      getAllCityWithId({smartdoorServiceStatus: true, stateId: null});
     },[ getInstallationRequest,
         getServiceRequest,
         getAllPublishedProperty,
@@ -121,6 +127,7 @@ const ExecutionDashboard = (props) => {
         getExecutionDashboardCount,
         // getExcutionDashboardCity,
         getAllCity,
+        getAllCityWithId
       ]);
 
     const [installationCity, setInstallationCity] = useState("");
@@ -709,6 +716,43 @@ const InstallationRequestsColumns = [
   </>
   );
 
+  const [defaultSort, setDefaultSort] = useState(true);
+   const [defaultSortId, setDefaultSortId] = useState('id');
+   const handleSortedData = (newSortedData) => {
+      // Store sorted data
+      // const { selector, direction } = newSortedData;
+      let selectorVal = newSortedData?.selector
+      console.log(newSortedData?.selector)
+      // Perform sorting based on selector and direction
+      let filteredItems = installationReqData.data
+      const sorted = [...filteredItems].sort((a, b) => {
+         if (selectorVal === 'id') {
+            if (defaultSort === true) {
+               return a[selectorVal] - b[selectorVal]; // Example sorting logic
+            } else {
+               return b[selectorVal] - a[selectorVal]; // Example sorting logic for descending order
+            }
+         }
+         else if (selectorVal === 'dateTime') {
+            const dateA = new Date(a[selectorVal]);
+            const dateB = new Date(b[selectorVal]);
+
+            if (defaultSort === true) {
+               return dateA - dateB;
+            } else {
+               return dateB - dateA;
+            }
+         }
+      });
+      setDefaultSort(!defaultSort)
+      // Update sorted data state
+      console.log(sorted);
+      // filteredItems = [...sorted]
+      dispatch({
+        type: Actions.EXCUTIVE_INSTALLATION_SUCCESS,
+        data: [...sorted],
+      });
+   };
     return (
         <>            
           <Route 
@@ -807,29 +851,29 @@ const InstallationRequestsColumns = [
                               _filterInstallationCity(e.target.value, "");
                               setInstallationCity(e.target.value)
                               if(e.target.value.length){
-                                getLocationByCity({ city: e.target.value })
-                                .then((res) => {
-                                  if (res.data && res.data.status === 200) {
-                                      const locationsByCity = res.data.resourceData.locations.map(loc=>{
-                                        return {...loc, location: `${loc.location} ,${loc.pinCode}` }
-                                      })
-                                      setLocationsData(locationsByCity)
-                                  }
-                                })
-                                .catch((err) => console.log("err:", err));
+                                // getLocationByCity({ city: e.target.value })
+                                // .then((res) => {
+                                //   if (res.data && res.data.status === 200) {
+                                //       const locationsByCity = res.data.resourceData.locations.map(loc=>{
+                                //         return {...loc, location: `${loc.location} ,${loc.pinCode}` }
+                                //       })
+                                //       setLocationsData(locationsByCity)
+                                //   }
+                                // })
+                                // .catch((err) => console.log("err:", err));
                               }
                             }}>
                                 <option value="">Select City</option>
                                 {
-                                    allCities?.data ? allCities?.data?.cities?.length ? 
-                                      allCities?.data?.cities.map((_value, index)=>
-                                        <option key={index} value={_value}>{_value}</option>
+                                    allCitiesWithId?.data ? allCitiesWithId?.data?.length ? 
+                                    allCitiesWithId?.data?.map((city)=>
+                                        <option key={city.cityId} value={city.cityName}>{city.cityName}</option>
                                         ) 
                                     : null :null
                                 }
                             </Form.Control>
                       </Form.Group>
-                      <Form.Group controlId="exampleForm.SelectCustom">
+                      {/* <Form.Group controlId="exampleForm.SelectCustom">
                             <Form.Control as="select" 
                             className="locationWidth"
                             onChange={(e)=> _filterInstallationCity(installationCity,e.target.value)
@@ -844,9 +888,9 @@ const InstallationRequestsColumns = [
                                     : null 
                                 }
                             </Form.Control>
-                      </Form.Group>
+                      </Form.Group> */}
                       <Link to={{ pathname: "/admin/execution/installation-calender", 
-                                state: {city : installationCity}}} >
+                                state: {city : ''}}} >
                         <Image name="sort_icon" src={calendarIcon} className='ml-3' />
                       </Link>
                   </div>
@@ -860,6 +904,9 @@ const InstallationRequestsColumns = [
                     progressPending={installationReqData.isLoading}
                     paginationComponent={installationReqData?.data?.length ? PaginationComponent : null}
                     progressComponent={ProgressComponent}
+                    onSort={(e) => {handleSortedData(e) }}
+                    defaultSort={defaultSort}
+                    defaultSortId={defaultSortId}
                   />
                 </div>
               </div>
@@ -968,6 +1015,7 @@ const mapStateToProps = ({
   executionDashboardCount, 
   excutiveDashboardCity,
   allCities,
+  allCitiesWithId,
   allLocationsByCity 
 }) => ({
     excutiveTeamsData, 
@@ -977,6 +1025,7 @@ const mapStateToProps = ({
     executionDashboardCount,
     excutiveDashboardCity,
     allCities,
+    allCitiesWithId,
     allLocationsByCity
   });
 
@@ -988,6 +1037,7 @@ const actions = {
   getExecutionDashboardCount,
   getExcutionDashboardCity,
   getAllCity,
+  getAllCityWithId,
   getLocationByCity
 };
 

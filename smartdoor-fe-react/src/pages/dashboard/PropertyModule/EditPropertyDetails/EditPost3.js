@@ -220,7 +220,7 @@ const EditPost3 = (props) => {
 			</div>
 			<div className="d-flex">
 				<Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
-					history.replace('/admin/property/property-details', { propertyId: propertyData.smartdoorPropertyId, userId: userData.userid }); window.history.go(-3);
+					history.replace('/admin/property/property-details', { propertyId: propertyData.smartdoorPropertyId, userId: userData.userid}); window.history.go(-3); 
 				}} name="Cancel" /> &nbsp;
 				<Buttons name="Back" onClick={() => { history.replace('/admin/property/edit-address-details', { propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails }); window.history.go(-1); }}></Buttons> &nbsp;
 				<Buttons name="Next" onClick={() => { history.push('/admin/property/edit-more-info', { propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails }) }} />

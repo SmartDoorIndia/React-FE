@@ -61,25 +61,28 @@ class NewTeamMemberPage extends Component {
       this.handleValidate = this.handleValidate.bind(this);
    }
 
-   handleValidate = () => {
+   handleValidate = async () => {
       // event.preventDefault();
+      const {allCitiesWithId} = this.props
       let cityIds = [];
 
-// Iterate over the city array
-for (let i = 0; i < this.state.city.length; i++) {
-    // Find the corresponding city object in allCitiesWithId
-    const cityObject = this.state.allCitiesWithId.filter(city => city.cityName === this.state.city[i]);
-    
-    // If a city object with the current city name is found
-    console.log(cityObject)
-    if (cityObject) {
-        // Push the cityId into the cityIds array
-        cityIds.push(cityObject.cityId);
-    }
-}
-
-// Update the state outside of the loop
-this.setState({ cityNameList: cityIds });
+   // Iterate over the city array
+      for (let i = 0; i < this.state.city.length; i++) {
+      // Find the corresponding city object in allCitiesWithId
+      const cityName = this.state.city[i]
+      const cityObject = allCitiesWithId?.data?.find(city => Number(city.cityId) === Number(cityName));
+      console.log(cityObject)
+      
+      // If a city object with the current city name is found
+      if (cityObject) {
+         // Push the cityId into the cityIds array
+         cityIds.push(cityObject.cityName);
+         }
+      }
+   
+   // Update the state outside of the loop
+      await this.setState({ cityNameList: cityIds });
+      console.log(this.state.cityNameList)
       let validate = validateNewTeamMember(this.state);
       console.log(validate)
       this.setState({ error: validate.errors });
@@ -91,7 +94,7 @@ this.setState({ cityNameList: cityIds });
    componentDidMount() {
       this.props.getAllRoles({ rollId: this.props.module});
       // this.props.getAllCity();
-      this.props.getAllCityWithId();
+      this.props.getAllCityWithId({smartdoorServiceStatus: true, stateId: null});
    }
 
    changeHandler = (e) => {
@@ -120,21 +123,21 @@ this.setState({ cityNameList: cityIds });
          cityLatLong,
       } = this.state;
       let data = {
-         city: city,
+         city: cityNameList,
          dob: dob,
          email: email,
          name: executiveName,
          phoneNumber: phoneNumber,
          position: Number(post),
-         profileImageUrl: "",
+         // profileImageUrl: "",
          isProfileComplete: true,
          isActive: true,
          alternatePhoneNumber: alternatePhoneNumber,
-         businessLocality: "",
+         // businessLocality: "",
          // businessLocality: location,
-         location: location,
+         // location: location,
       };
-
+      console.log(cityNameList)
       addNewTeamMember(data)
          .then((response) => {
             if (response.data && response.data.status === 200) {
@@ -142,11 +145,12 @@ this.setState({ cityNameList: cityIds });
                this.setState({disableSubmit:false})
                console.log(response)
                console.log(this.state.city)
-               setworkCityRequest({userid : response?.data?.resourceData, cityIdList: this.state.cityNameList})
+               setworkCityRequest({userId : response?.data?.resourceData, cityIdList: city})
                .then((response) => {
                   if(response.status === 200) {
                      showSuccessToast("City assigned successfully...")
-                     this.props.history.goBack();
+                     // this.props.history.goBack();
+                     this.props.history.push("/admin/user-management", {autoRefresh : 'Yes'});
                   }
                })
             }
@@ -240,7 +244,7 @@ this.setState({ cityNameList: cityIds });
 // console.log(this.state.allLocationsByCity,"all location by city")
       return (
          <>
-            <div style={{ height: "5%" }}></div>
+            {/* <div style={{ height: "5%" }}></div> */}
             <div className="whiteBg">
                <Text size="medium" fontWeight="mediumbold" color="secondryColor" text={formTitle} />
                <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="" className="mt-1" />
@@ -311,7 +315,7 @@ this.setState({ cityNameList: cityIds });
                           {allCitiesWithId?.data?.length ?  
                         <DropdownMultiselect
                            optionLabel={'cityName'}
-                           optionKey="cityName"
+                           optionKey="cityId"
                            options={allCitiesWithId.data}
                            // options={["Gurugram", "Faridabad", "New Delhi"]}
                            selected={location}
@@ -322,8 +326,6 @@ this.setState({ cityNameList: cityIds });
                               this.setState({ city: selectedOptions, allLocationsByCity: [], location: [], allLocationLoader:true });
                               console.log(selectedOptions)
                               
-                              let selectedKeys = selectedOptions.map(option => option.cityId);
-                              console.log(selectedKeys)
                            // this.props
                            //    .getUserLocationByCity({ cities: selected })
                            //    .then((res) => {
@@ -534,8 +536,8 @@ this.setState({ cityNameList: cityIds });
                                  }}
                               >
                                  <option value="">Select City</option>
-                                 {allCitiesWithId?.data?.cities?.length
-                                    ? allCitiesWithId?.data?.cities?.map((data, index) => (
+                                 {allCitiesWithId?.data?.length
+                                    ? allCitiesWithId?.data?.map((data, index) => (
                                        <option key={index} value={data}>
                                           {data}
                                        </option>

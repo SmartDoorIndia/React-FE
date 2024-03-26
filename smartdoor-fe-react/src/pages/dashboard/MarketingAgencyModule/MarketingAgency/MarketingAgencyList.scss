@@ -1,0 +1,45 @@
+
+@import '../../../../scss/modules/variables.scss';
+
+.form-label{        
+    position: relative;
+/*    top: 18px;*/
+    left:11px;
+    font-size:$xSmall;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.dashboard{    
+    .tableBox{
+        .locationSelect{
+            display: flex;
+            justify-content: end; 
+            .form-group{
+                display: flex;
+                margin-bottom: 0;
+                align-items: end;
+                label{
+                    margin-right: 15px;
+                    margin-bottom: 0;
+                    font-size: $body;
+                    color:$secondry-color;
+                    font-weight:$smbold;
+                }
+                .form-control{
+                    background: $white;                
+                    font-weight: $smbold;                    
+                    font-size: $xSmall !important;
+                    height: 30px !important;      
+                    box-shadow: none;
+                    
+                }
+            }
+        }
+    }
+}
+
+
+/*******Css start here************/
+
+/*******Css ends here************/

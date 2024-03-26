@@ -1,118 +1,4 @@
-
-@import '../../../../scss/modules/variables.scss';
-.whiteBg{
-    .scroll{
-        overflow: hidden;
-        max-height: 340px;
-        overflow-y: scroll;
-    }           
-    .companyLogo{
-        display: flex;
-        justify-content: center;
-        align-items: center;        
-        min-height:250px;
-        }   
-  .addImage{
-      padding-top:27px;
-      display: flex;
-      justify-content:flex-end;
-      cursor: pointer;
-      img{
-          cursor: pointer;
-      }
-      figure{
-        position: absolute;
-      }
-      input{
-        cursor: pointer;
-      }
-  }
-
-}
-.whiteBgHeight{
-  height: 94%
-}
-.authorContact{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    .author{
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          overflow: hidden;
-          display: inline-block;
-      }
-      
-      button{
-        margin-left:10px;
-        padding: 4px 30px !important;
-        padding-left: 40px !important;
-        img{
-            position: absolute;
-            top:11px;
-            left:19px;
-        }       
-    }
-    .primaryDisable{
-        background-color: $lightprime !important;
-        border-color: $primary-color !important;
-        color:$primary-color !important;
-        &:focus{
-            color:#fff!important;
-        }
-    }
-}
-.action{
-  display: contents;
-    span{
-        border:1px solid $lightBorder;                            
-        border-radius:2px;
-        display: inline-block;
-        width: 26px;
-        height: 26px;
-        text-align: center;
-        cursor: pointer;
-        margin-right: 10px;
-        line-height: 22px;
-        /*width: 100%*/
-        
-    }
-}
-.societyUsersList{
-    .addUser{
-        cursor:pointer;
-    }
-}
-.borderBottom{
-    border-bottom: 1px solid $borderLight;
-    width: 100%;
-    margin: 20px 0;
-
-    display: flex;
-}
-
-.form-label{        
-    position: relative;
-/*    top: 18px;*/
-    background:$white;
-    left:11px;
-    font-size:$xSmall;
-    padding-left: 5px;
-    padding-right: 5px;
-    color:$gray;
-}
-
-
-.titleForm {
-  font-family: Manrope;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 150%;
-  color: #8E878A;
-}
-
+@import '../../../scss/modules/variables.scss';
 
 .dashboard{    
     
@@ -130,8 +16,6 @@
         }
     }
     .tableBox{
-        overflow: auto;
-        display: block;
         margin-top: 30px;
         background-color: $white;
         @include border;
@@ -141,8 +25,6 @@
             border-bottom: 1px solid $lightBorder;
         }    
         .locationSelect{
-            display: flex;
-            justify-content: space-between; 
             .form-group{
                 display: flex;
                 margin-bottom: 0;
@@ -163,7 +45,7 @@
                     height: 30px !important;      
                     box-shadow: none;
                     padding-top: 4px;
-                    
+                    width: 138px;
                 }
             }
         }
@@ -190,6 +72,7 @@
                     font-weight: $smbold;
                     text-align: center;
                     .action{
+                        display: contents;
                         span{
                             border:1px solid $lightBorder;                            
                             border-radius:2px;
@@ -228,60 +111,40 @@
         }
      .tableBottom{
          /*border-top:1px solid $lightBorder;*/
-         padding:10px;
+         padding:12px;
      }  
-     .userName {
-         display: flex;
-         align-items: center;
-            
-         span{
-             margin-left: 5px;
-         }
-         .userImage{
-             width: 30px;
-             height: 30px;
-             overflow: hidden;
-             text-align: center;
-             border-radius: 50%;
-             min-width: 30px;
-             height: 30px;
-             margin-right:10px;
-             img{
-                width: 30px;
-                height: 30px;
-                object-fit: cover;
-             }
-         }
-     }
-    }
-}
-.dociconSpace{
-    figure{
-        margin-bottom: 0;
     }
 }
 
+.action{
+    display: contents;
+    span{
+        border:1px solid $lightBorder;                            
+        border-radius:2px;
+        display: inline-block;
+        width: 26px;
+        height: 26px;
+        text-align: center;
+        cursor: pointer;
+        margin-right: 10px;
+        
+    }
+}
 
-/*******Css start here************/
-.propertiesTableWrapper {
+.smartDoorCityTable {
     .rdt_TableBody {
-        max-height: calc(55vh - 20px);
-        height: fit-content;
+        max-height: calc(25vh - 20px);
+        height: 25vh;
         overflow-y: visible;
         overflow-x: hidden;
-    }
-    .rdt_TableRow {
-        min-height: auto;
-        .rdt_TableCell {
-            text-align: center;
-            &:nth-child(4) {
-                .elipsis-text {
-                    white-space: nowrap;overflow: hidden;
-                    width: 180px;min-width: 180px;
-                    text-overflow: ellipsis;display: block;text-align: center;
+        .rdt_TableRow {
+            // min-height: auto;
+            .rdt_TableCell {
+                text-align: center;
+                &:nth-child(2) {
+                    white-space: normal;
                 }
             }
         }
     }
 }
-/*******Css ends here************/

@@ -154,8 +154,8 @@
 
      .NonSDPropertiesTable {
         .rdt_TableBody {
-            max-height: calc(50vh - 20px);
-            height: 50vh;
+            max-height: calc(55vh - 20px);
+            height: fit-content;
             overflow-y: visible;
             overflow-x: hidden;
         }

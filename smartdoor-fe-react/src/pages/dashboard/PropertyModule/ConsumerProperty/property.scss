@@ -268,7 +268,7 @@
 }
 .propertiesTableWrapper {
     .rdt_TableBody {
-        max-height: calc(57vh);
+        max-height: calc(51vh);
         height: fit-content;
         overflow-y: scroll;
         overflow-x: hidden;
@@ -277,6 +277,12 @@
         min-height: auto;
         .rdt_TableCell {
             text-align: center;
+            &:nth-child(1) {
+                &:first-child {
+                    min-width: none;
+                    white-space: nowrap;overflow: visible;
+                }                
+            }
             &:nth-child(4) {
                 .elipsis-text {
                     white-space: nowrap;overflow: hidden;

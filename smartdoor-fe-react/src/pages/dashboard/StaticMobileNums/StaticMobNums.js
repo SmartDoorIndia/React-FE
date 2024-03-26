@@ -2,56 +2,52 @@ import { compose } from "redux"
 import Text from "../../../shared/Text/Text"
 import { useState } from "react"
 import { useEffect } from "react"
-import {getStaticMobNumbers, setStaticMobNumbers} from "../../../common/redux/actions/index"
+import { getStaticMobNumbers, setStaticMobNumbers } from "../../../common/redux/actions/index"
 import { Col } from "react-bootstrap"
 import { TextField } from "@mui/material"
 import Buttons from "../../../shared/Buttons/Buttons"
 import { showSuccessToast } from "../../../common/helpers/Utils"
 const StaticMobNums = () => {
 
-    const [staticMobile , setStaticMobile] = useState('')
+    const [staticMobile, setStaticMobile] = useState('')
 
-    useEffect(async() => {
+    useEffect(async () => {
         await getMobileArray()
-    },[getStaticMobNumbers])
+    }, [getStaticMobNumbers])
 
-    const getMobileArray = async() => {
+    const getMobileArray = async () => {
         const response = await getStaticMobNumbers();
         setStaticMobile(response?.data?.resourceData)
         console.log(response)
     }
 
-    const setMobileNumbers = async() => {
-        const response = await setStaticMobNumbers({mobile : staticMobile})
+    const setMobileNumbers = async () => {
+        const response = await setStaticMobNumbers({ mobile: staticMobile })
         console.log(response)
-        if(response?.data?.status === 200) {
+        if (response?.data?.status === 200) {
             showSuccessToast("Mobile Numbers Updated Successfully")
         }
     }
 
     return (
         <>
-        <div className="whiteBg">
-            <Text
-                className="h5"
-                size="medium"
-                text="Static Mobile Numbers" />
-            
-            <Col lg="8">
-            <TextField
-                id="outlined-multiline-flexible"
-                className="w-100 mt-5"
-                // label="Mobile Numbers"
-                multiline
-                defaultValue={staticMobile}
-                onInput={(e) => {
-                    console.log(e.target.value)
-                    setStaticMobile(e?.target?.value)}}
-                maxRows={4}
+            <div className="whiteBg">
+                <TextField
+                    id="outlined-multiline-flexible"
+                    className="w-100 mt-3 col-8"
+                    // label="Mobile Numbers"
+                    multiline
+                    defaultValue={staticMobile}
+                    onInput={(e) => {
+                        console.log(e.target.value)
+                        setStaticMobile(e?.target?.value)
+                    }}
+                    maxRows={4}
                 />
-            </Col>
-            <Buttons className="mt-3" name="Set Static Mobile Numbers" onClick={() => {setMobileNumbers()}} />
-        </div>
+                <div>
+                    <Buttons className="mt-3" name="Set Static Mobile Numbers" onClick={() => { setMobileNumbers() }} />
+                </div>
+            </div>
         </>
     )
 }

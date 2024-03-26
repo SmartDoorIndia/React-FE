@@ -197,6 +197,7 @@ const EditPost1 = (props) => {
             if(data.smartdoorPropertyId === undefined || data.smartdoorPropertyId === null) {
                 data.smartdoorPropertyId = response?.data?.resourceData?.propertyId;
               }
+              localStorage.setItem('autoRefresh', 'Yes') 
             history.push('/admin/property/edit-address-details',{propertyData : propertyData, basicDetails : data})
         } catch (error) {
             console.error('Error:', error.message);   

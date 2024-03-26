@@ -85,12 +85,12 @@ const Nav = () => {
                      className={isActive ? "dashboardActiveIcon" : "dashboardIcon"}
                   >
                      {/* <Link to='/admin/sales' className={ `dropdown-item  ${ pathname.includes('analytics') ? 'active':'' }` } >Analytics & Management</Link> */}
-                     <Link
+                     {/* <Link
                         to="/admin/sales"
                         className={`dropdown-item  ${pathname.includes("sales") ? "active" : ""}`}
                      >
                         Society Sales Team
-                     </Link>
+                     </Link> */}
                      <Link
                         to="/admin/execution"
                         className={`dropdown-item  ${pathname.includes("execution") ? "active" : ""
@@ -232,7 +232,7 @@ const Nav = () => {
                            />
                            Non SmartDoor Properties
                         </Link>
-                        <Link
+                        {/* <Link
                            to="/admin/addCity"
                            className={`nav-link ${pathname.includes("addCity") ? "nav-active" : ""
                               }`}
@@ -246,7 +246,7 @@ const Nav = () => {
                               }
                            />
                            Add New City
-                        </Link>
+                        </Link> */}
                         <Link
                            to="/admin/addPlans"
                            className={`nav-link ${pathname.includes("addPlans") ? "nav-active" : ""
@@ -280,22 +280,70 @@ const Nav = () => {
                         />
                         Advisors
                      </Link> */}
-                     {userData.roleName === "SUPER ADMIN" && (
-                  <Link
-                     to="/admin/static-mobile-numbers"
-                     className={`nav-link ${pathname.includes("static-mobile-numbers") ? "nav-active" : ""
-                        }`}
-                  >
-                     <Image
-                        name="teamGroup"
-                        src={
-                           pathname.includes("static-mobile-numbers")
-                              ? borkerIcon
-                              : borkerIcon
-                        }
-                     />
-                     Static Mobile Numbers
-                  </Link>)}
+                  {userData.roleName === "SUPER ADMIN" && (
+                     <>
+                        <Link
+                           to="/admin/static-mobile-numbers"
+                           className={`nav-link ${pathname.includes("static-mobile-numbers") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="teamGroup"
+                              src={
+                                 pathname.includes("static-mobile-numbers")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
+                           />
+                           Static Mobile Numbers
+                        </Link>
+                        <Link
+                           to="/admin/smartdoor-cities"
+                           className={`nav-link ${pathname.includes("smartdoor-cities") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="teamGroup"
+                              src={
+                                 pathname.includes("smartdoor-cities")
+                                    ? propertyAdvisorActive
+                                    : propertyAdvisorIcon
+                              }
+                           />
+                           Smartdoor Cities
+                        </Link>
+                        <Link
+                           to="/admin/featured-videos"
+                           className={`nav-link ${pathname.includes("featured-videos") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="teamGroup"
+                              src={
+                                 pathname.includes("featured-videos")
+                                    ? propertyAdvisorActive
+                                    : propertyAdvisorIcon
+                              }
+                           />
+                           Featured Videos
+                        </Link>
+                        {/* <Link
+                           to="/admin/marketing-agency"
+                           className={`nav-link ${pathname.includes("marketing-agency") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="teamGroup"
+                              src={
+                                 pathname.includes("marketing-agency")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
+                           />
+                           Marketing Agency
+                        </Link> */}
+                     </>
+                  )}
                   {/* <Link
                         to="/admin/add-coins"
                         className={`nav-link ${

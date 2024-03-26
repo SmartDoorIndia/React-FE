@@ -655,12 +655,12 @@ export const validateNewPost2 = (data) => {
   if(isBlank(data.houseNumber)) {
     errors.houseNumber = "Required"
   }
-  if(isBlank(data.floorNumber)) {
-    errors.plotNo = "Required"
-  }
-  if(isBlank(data.totalFloor)) {
-    errors.totalFloor = "Required"
-  }
+  // if(isBlank(data.floorNumber)) {
+  //   errors.plotNo = "Required"
+  // }
+  // if(isBlank(data.totalFloor)) {
+  //   errors.totalFloor = "Required"
+  // }
   console.log(errors)
   return {
     errors,

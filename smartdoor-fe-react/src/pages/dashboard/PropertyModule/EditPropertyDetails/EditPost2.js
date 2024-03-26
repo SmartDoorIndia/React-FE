@@ -17,6 +17,8 @@ import { getSocietyByCity } from "../../../../common/redux/actions/addNewPost.ac
 import { Autocomplete } from "devextreme-react/autocomplete";
 import "./property.scss";
 import { showErrorToast } from "../../../../common/helpers/Utils";
+import { geocodeByAddress } from "react-google-places-autocomplete";
+import { da } from "date-fns/locale";
 
 const EditPost2 = (props) => {
     const location = useLocation();
@@ -46,28 +48,29 @@ const EditPost2 = (props) => {
         cityLat: propertyData?.cityLat,
         cityLong: propertyData?.cityLong
     });
+    const [localityString, setLocalityString] = useState({ locality: propertyData?.societyDetailResponse?.locality})
     const [societyArray, setSocietyArray] = useState([])
     const [cityArray, setCityArray] = useState([])
     const [error, setError] = useState({});
     const history = useHistory();
     const dispatch = useDispatch();
     const [addressDetails, setAddressDetails] = useState(location?.state?.addressDetails)
-    useEffect(async() => {
-        if(propertyData.societyDetailResponse !== null ) {
+    useEffect(async () => {
+        if (propertyData.societyDetailResponse !== null) {
             let selectedSociety = []
             selectedSociety.push(propertyData.societyDetailResponse)
             await setSocietyArray(selectedSociety)
-            setData({...data, buildingProjectSociety: propertyData.societyDetailResponse.societyName})
+            setData({ ...data, buildingProjectSociety: propertyData.societyDetailResponse.societyName })
             console.log(data.societyId)
         }
         if (addressDetails !== undefined) {
             setData(addressDetails)
         }
-       
+
         getAllInstallationCity();
     }, [addNewPostReducer, addNewPost2Reducer, basicDetails]);
 
-    const getAllInstallationCity = async() => {
+    const getAllInstallationCity = async () => {
         const response = await getInstallationCity();
         setCityArray(response?.data?.resourceData)
         let cities = response?.data?.resourceData
@@ -88,9 +91,9 @@ const EditPost2 = (props) => {
     };
 
     const submitAddress = async () => {
-        setData({...data, isDraft : false, isPartial : true})
+        setData({ ...data, isDraft: false, isPartial: true })
         await dispatch(addNewPost2(data));
-        history.push('/admin/property/upload-property-image', {propertyData: propertyData, basicDetails: basicDetails, addressDetails: data})
+        history.push('/admin/property/upload-property-image', { propertyData: propertyData, basicDetails: basicDetails, addressDetails: data })
     }
 
     const selectSocietyName = async (e) => {
@@ -134,57 +137,108 @@ const EditPost2 = (props) => {
 
     const handleSelectCityOption = (e) => {
         let matchFound = false
-        console.log(e?.location.split(', ')[0])
-        cityArray.forEach(element => {
-            let city = e?.location.split(', ')[0]
-            if (element === city.trim()) {
-                setData({
-                    ...data, city: e.location, cityLat: e.latlng?.lat, cityLong: e.latlng?.lng,
-                    state: e.location.split(', ')[1], country: e.location.split(', ')[2]
-                })
-                matchFound = true
-                error.city = ""
-                return
-            }
-        });
-        if(!matchFound) {
+        // cityArray.forEach(element => {
+            //     let city = e?.location.split(', ')[0]
+            //     if (element.trim() === city.trim()) {
+                //         setData({
+                    //             ...data, city: e.location, cityLat: e.latlng?.lat, cityLong: e.latlng?.lng,
+                    //             state: e.location.split(', ')[1], country: e.location.split(', ')[2]
+                    //         })
+                    //         matchFound = true
+                    //         console.log(cityArray.includes(e?.location.split(', ')[0].trim().toLowerCase()))
+                    //         error.city = ""
+                    //         return
+                    //     }
+                    // });
+        let cityName = e?.location.split(', ')[0];
+        console.log(cityName)
+        let formattedCityName = cityName;
+        let formattedCityArray = cityArray.map(city => city.trim().toLowerCase());
+        if(cityArray.includes(formattedCityName)) {
+            setData({
+                ...data, city: cityName, cityLat: e.latlng?.lat, cityLong: e.latlng?.lng,
+                state: e.location.split(', ')[1], country: e.location.split(', ')[2],
+                locality: '', zipCode: '', latitude: 0, longitude: 0
+            })
+            matchFound = true
+            console.log(cityArray.includes(e?.location.split(', ')[0]))
+            error.city = ""
+            return
+        }
+        if (!matchFound) {
             error.city = "Currently We are not providing service in " + e?.location
             setData({
                 ...data, city: "", state: "", country: ""
             })
         }
-        
+
     }
 
-    const handleSelectLocalityOption = (e) => {
-        let matchFound = false;
-        let localityArr = e.location?.split(', ')
+    const handleSelectLocalityOption = async (e) => {
+        // let matchFound = false;
+        // let localityArr = e.location?.split(', ')
         console.log(e)
-        error.locality =""
-        localityArr.forEach(element => {
-            if(element === data?.city) {
-                setData({
-                    ...data, latitude: e?.latlng?.lat, longitude: e?.latlng?.lng, locality: e.location,
-                    zipCode: e?.data?.address_components[e?.data?.address_components?.length - 1]?.long_name
-                })
-                matchFound = true
-                return null;
+        error.locality = ""
+        let newData = { ...data }; // Make a copy of the current state
+        let newStr = {...localityString}
+        let sublocality_level_1Flag = false;
+        let localityFlag = false;
+        let administrative_area_level_3Flag = false
+        let stateFlag = false
+
+        e?.data?.address_components?.forEach(element => {
+            if (element.types.includes('locality')) {
+                newData.city = element.long_name;
+                console.log(newData.city);
+                localityFlag = true
             }
-        })
-        if(!matchFound) {
-            error.locality = ("Locality exist out of city")
-            setData({
-                ...data,  locality: ""})
+            if (element.types.includes('sublocality_level_1')) {
+                newData.locality = element.long_name;
+                console.log(newData.locality);
+                sublocality_level_1Flag = true
+            }
+            if (element.types.includes('postal_code')) {
+                newData.zipCode = element.long_name;
+                console.log(newData.zipCode);
+            }
+            if (element.types.includes('administrative_area_level_1')) {
+                newData.state = element.long_name;
+                console.log(newData.state);
+                stateFlag = true
+            }
+        });
+        if(localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
+            showErrorToast("Please select pin point location")
         }
-        // if(!e.location?.includes(data.city)) {
+        newStr.locality = newData.locality + ', ' + newData.city + ', ' + newData.state
+        console.log(newStr)
+        setLocalityString(newStr)
+        const response = await geocodeByAddress(newData.city);
+        const latFunction = response[0].geometry.location.lat;
+        const eLat = latFunction();
+        const lngFunction = response[0].geometry.location.lng;
+        const eLng = lngFunction();
+        console.log(eLat);
+        console.log(eLng);
+        newData.cityLat = eLat;
+        newData.cityLong = eLng;
+        // Update latitude and longitude outside the loop
+        newData.latitude = e?.latlng?.lat;
+        newData.longitude = e?.latlng?.lng;
+
+        // Update the state once
+        setData(newData);
+
+        // matchFound = true
+        // localityArr.forEach(element => {
+        //     // return null;
+        //     // if(element === data?.city) {
+        //     // }
+        // })
+        // if(!matchFound) {
         //     error.locality = ("Locality exist out of city")
         //     setData({
         //         ...data,  locality: ""})
-        // } else {
-        //     setData({
-        //         ...data, latitude: e?.latlng?.lat, longitude: e?.latlng?.lng, locality: e.location,
-        //         zipCode: e?.data?.address_components[e.data.address_components?.length - 1]?.long_name
-        //     })
         // }
     }
 
@@ -197,6 +251,61 @@ const EditPost2 = (props) => {
         setDraftModal(false)
     }
 
+    const handleMarkerChanged = async (e) => {
+        console.log(e?.location?.address_components)
+        let newData = { ...data }; // Make a copy of the current state
+        let newStr = {...localityString}
+        let sublocality_level_1Flag = false;
+        let localityFlag = false;
+        let administrative_area_level_3Flag = false
+        let stateFlag = false
+
+        e?.location?.address_components?.forEach(element => {
+            if (element.types.includes('locality')) {
+                newData.city = element.long_name;
+                console.log(newData.city);
+                localityFlag = true
+            }
+            if (element.types.includes('sublocality_level_1')) {
+                newData.locality = element.long_name;
+                console.log(newData.locality);
+                sublocality_level_1Flag = true
+            }
+            if (element.types.includes('postal_code')) {
+                newData.zipCode = element.long_name;
+                console.log(newData.zipCode);
+            }
+            if (element.types.includes('administrative_area_level_1')) {
+                newData.state = element.long_name;
+                console.log(newData.state);
+                stateFlag = true
+            }
+        });
+        if(localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
+            showErrorToast("Please select pin point location")
+        }
+        newStr.locality = newData.locality + ', ' + newData.city + ', ' + newData.state
+        setLocalityString(newStr)
+        const response = await geocodeByAddress(newData.city);
+        const latFunction = response[0].geometry.location.lat;
+        const eLat = latFunction();
+        const lngFunction = response[0].geometry.location.lng;
+        const eLng = lngFunction();
+        console.log(eLat);
+        console.log(eLng);
+        newData.cityLat = eLat;
+        newData.cityLong = eLng;
+        // Update latitude and longitude outside the loop
+        newData.latitude = e?.latlng?.lat;
+        newData.longitude = e?.latlng?.lng;
+        // Update latitude and longitude outside the loop
+        newData.latitude = e?.lat;
+        newData.longitude = e?.lng;
+
+        // Update the state once
+        setData(newData);
+    }
+
     return (
         <>
             <div className="whiteBg">
@@ -206,12 +315,12 @@ const EditPost2 = (props) => {
                     color="secondryColor"
                     text="Address">
                 </Text>
-                {propertyData?.status === 'PUBLISHED' && propertyData.smartLockProperty === true ? 
+                {propertyData?.status === 'PUBLISHED' && propertyData.smartLockProperty === true ?
                     <>
                         <Text
                             size="10px"
                             fontWeight="medium"
-                            style={{fontSize:'16px', color: 'gray'}}
+                            style={{ fontSize: '16px', color: 'gray' }}
                             text="Note : Address details are non-editable for published proprties">
                         </Text>
                     </> : null}
@@ -223,7 +332,7 @@ const EditPost2 = (props) => {
                             </Form.Group> */}
                         <AutoCompleteInput
                             label="City"
-                            disabled={true}
+                            disabled={propertyData.smartLockProperty === true ? true : false}
                             cityLatLng={null}
                             placeholder="Enter City"
                             id="PropertyCityAutoComplete"
@@ -243,7 +352,7 @@ const EditPost2 = (props) => {
                     </Col>
                     <Col lg="4">
                         <Form.Group>
-                            <Form.Label style={{top:'13px'}}>Building/Project/Society<span style={{ color: 'red' }}>*</span></Form.Label>
+                            <Form.Label style={{ top: '13px' }}>Building/Project/Society<span style={{ color: 'red' }}>*</span></Form.Label>
                             {/* <Form.Control
                                     type="text"
                                     maxLength="100"
@@ -257,7 +366,7 @@ const EditPost2 = (props) => {
                                 dataSource={societyArray}
                                 // value={data?.buildingProjectSociety}
                                 defaultValue={data?.buildingProjectSociety}
-                                disabled={propertyData?.status === 'PUBLISHED' && propertyData.smartLockProperty === true  ? true : false}
+                                disabled={propertyData?.status === 'PUBLISHED' && propertyData.smartLockProperty === true ? true : false}
                                 onInput={(e) => { selectSocietyName(e) }}
                                 onSelectionChanged={(value) => { setSelectedSociety(value?.selectedItem); console.log(value) }}
                                 placeholder="Select Building/Project/Society"
@@ -292,16 +401,15 @@ const EditPost2 = (props) => {
                         <AutoCompleteInput
                             label="Locality"
                             // radius={150000}
-                            options={{radius : 150000}}
-                            cityLatLng={{lat : data.cityLat, lng: data.cityLong}}
-                            customValue={data?.locality}
+                            // options={{radius : 150000}}
+                            cityLatLng={null}
+                            customValue={data.locality}
                             placeholder="Enter Locality"
                             cityName={data.city}
                             disabled={propertyData?.status === 'PUBLISHED' && propertyData.smartLockProperty === true ? true : false}
                             id="PropertyLocalityAutoComplete"
                             onSelectOption={(e) => { handleSelectLocalityOption(e); console.log(e) }}
-                            onInputChange={(value) =>
-                                {setData({ ...data, locality: value })}
+                            onInputChange={(value) => { setData({ ...data, locality: value }) }
                             }
                             predictionType="business"
                         />
@@ -327,7 +435,7 @@ const EditPost2 = (props) => {
                             text={error?.locality}
                         />
                     </Col>
-                    <Col lg="4">
+                    {/* <Col lg="4">
                         <Form.Group>
                             <Form.Label>Tower/Building</Form.Label>
                             <Form.Control
@@ -345,7 +453,7 @@ const EditPost2 = (props) => {
                                 text={error?.towerName}
                             />
                         </Form.Group>
-                    </Col>
+                    </Col> */}
                     <Col lg="4">
                         <div className="d-flex">
                             {/* <div className="d-flex">
@@ -368,7 +476,7 @@ const EditPost2 = (props) => {
                                 />
                             </Form.Group>&nbsp;
                             <Form.Group>
-                                <Form.Label>Floor No<span style={{ color: 'red' }}>*</span></Form.Label>
+                                <Form.Label>Floor No</Form.Label>
                                 <Form.Control
                                     type="text"
                                     maxLength="35"
@@ -385,7 +493,7 @@ const EditPost2 = (props) => {
                                 />
                             </Form.Group>&nbsp;
                             <Form.Group>
-                                <Form.Label>Total Floors<span style={{ color: 'red' }}>*</span></Form.Label>
+                                <Form.Label>Total Floors</Form.Label>
                                 <Form.Control
                                     type="number"
                                     maxLength="35"
@@ -409,7 +517,10 @@ const EditPost2 = (props) => {
                 <div className={"mapLocation my-3"}>
                     <div style={{ height: "120px", overflow: "hidden" }}>
                         <MapComponent
-                            p_lat={data?.latitude} p_lng={data?.longitude} />
+                            p_lat={data?.latitude !== 0 ? data.latitude : data.cityLat}
+                            p_lng={data?.longitude !== 0 ? data.longitude : data.cityLong}
+                            draggable={true}
+                            onMarkerDragEnd={handleMarkerChanged} />
                     </div>
                 </div>
 
@@ -417,13 +528,13 @@ const EditPost2 = (props) => {
                 {/* </form> */}
                 <div className="d-flex">
                     <Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
-                        history.replace('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid});                        window.history.go(-2);
+                        history.replace('/admin/property/property-details', { propertyId: propertyData.smartdoorPropertyId, userId: userData.userid}); window.history.go(-2); 
                     }} name="Cancel" /> &nbsp;
-                    <Buttons name="Back" onClick={() => { history.replace('/admin/property/edit-basic-details', {propertyData : propertyData, basicDetails : basicDetails}); window.history.go(-1); }}></Buttons> &nbsp;
+                    <Buttons name="Back" onClick={() => { history.replace('/admin/property/edit-basic-details', { propertyData: propertyData, basicDetails: basicDetails }); window.history.go(-1); }}></Buttons> &nbsp;
                     <Buttons name="Next" onClick={() => handleValidate()} />
                 </div>
             </div>
-            <Modal show={ draftModal } onHide={() => { hideDraftModal() }} centered style={{ backgroundImage: 'unset' }}>
+            <Modal show={draftModal} onHide={() => { hideDraftModal() }} centered style={{ backgroundImage: 'unset' }}>
                 <Modal.Body>
                     <div>
                         <Text
@@ -448,7 +559,7 @@ const EditPost2 = (props) => {
                                 size="xSmall"
                                 color="black"
                                 className="mr-3"
-                                onClick={() => { history.push('/admin/property/edit-basic-details', {propertyData : propertyData, basicDetails : basicDetails}) }} />
+                                onClick={() => { history.push('/admin/property/edit-basic-details', { propertyData: propertyData, basicDetails: basicDetails }) }} />
                             <Buttons
                                 name="Yes"
                                 varient="disable"

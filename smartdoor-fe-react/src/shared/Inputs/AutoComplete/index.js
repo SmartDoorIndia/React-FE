@@ -275,21 +275,22 @@ const AutoCompleteInput = (props) => {
       <Form.Control
         type="text"
         id={ id }
+        contentEditable
         // autoComplete="off"
         autoFill="off"
         placeholder={ placeholder }
         value={ customValue }
-        onKeyPress={(e)=>{
-          if (/[0-9]/.test(e.key)) {
-            e.preventDefault()
-          }
-        }}
+        // onKeyPress={(e)=>{
+        //   if (/[0-9]/.test(e.key)) {
+        //     e.preventDefault()
+        //   }
+        // }}
         onBlur={()=>{
           if(onBlurInput)
           onBlurInput()
         }}
         onChange={ (e) => {
-          const result = e.target.value.replace(/[^a-z]/gi, '');                               
+          const result = e.target.value.replace(/[^a-z\s0-9]/gi, '');                               
           onInputChange(result)
         }}
         // onInput={(e) => {

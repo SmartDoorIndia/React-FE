@@ -85,13 +85,14 @@ const EditPost4 = (props) => {
 		requestBody.extras = data.extras?.join(', ')
 		console.log(requestBody)
 		await dispatch(addNewPost4(requestBody))
-		history.replace('/admin/property/property-details', { propertyId: propertyData.smartdoorPropertyId, userId: userData.userid })
+		localStorage.setItem('autoRefresh', 'Yes') 
+		history.replace('/admin/property/property-details', { propertyId: propertyData.smartdoorPropertyId, userId: userData.userid})
 		window.history.go(-4);
 	}
 
 	return (
 		<>
-			<div className="whiteBg">
+			<div className="whiteBg" style={{height: '31.5rem', overflowY:'auto'}}>
 				<Text
 					size="medium"
 					fontWeight="mediumbold"
@@ -467,7 +468,7 @@ const EditPost4 = (props) => {
 				<br />
 				<div className="d-flex">
 					<Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
-                        history.replace('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid});                        window.history.go(-4);
+                        history.replace('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid}); window.history.go(-4); localStorage.setItem('autoRefresh', 'Yes') 
 					}} name="Cancel" /> &nbsp;
 					<Buttons name="Back" size="medium" onClick={() => {
 							history.replace("/admin/property/upload-property-image", { propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails }); window.history.go(-1); }} ></Buttons> &nbsp;
