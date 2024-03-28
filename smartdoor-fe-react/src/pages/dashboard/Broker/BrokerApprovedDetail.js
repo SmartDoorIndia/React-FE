@@ -148,7 +148,7 @@ const BrokerApprovedDetail = (props) => {
                                        <span className="details-value">Rent</span>
                                     )}
                                     {(brokerApprovedData?.resourceData?.sale || brokerApprovedData?.resourceData?.buy) && (
-                                       <span className="details-value">Sell / Buy</span>
+                                       <span className="details-value">Buy / Sell </span>
                                     )}
                                  </>
                            )}

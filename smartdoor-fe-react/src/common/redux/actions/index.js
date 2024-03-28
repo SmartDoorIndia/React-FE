@@ -470,6 +470,7 @@ export const getBrokerListing  = (data) => async (dispatch) => {
 
 export const getBrokerPostedProperty = (data) => async (dispatch) => {
   const response = await mainApiService('getBrokerPostedProperty', data);
+  console.log(response,"response")
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {

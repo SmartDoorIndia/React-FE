@@ -191,23 +191,25 @@ const Broker = (props) => {
          minWidth: "150px",
          cell: (row) => (
             <div className="action">
-               <ToolTip name="View Details">
-                  <span>
-                
-                        <Link
-                           to={{
-                              pathname:
-                                 row.status === "Approved" || row.status === "Hold"
-                                    ? `/admin/BrokerDetails/${row.brokerId}`
-                                    : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
-                           }}
-                        >
-                           Details
-                        </Link>
-            
-                  </span>
-               </ToolTip>
-           </div>
+         <ToolTip name="View Details">
+            <span>
+               {row.status === "Expired" ? (
+                  <span>Details</span>
+               ) : (
+                  <Link
+                     to={{
+                        pathname:
+                           row.status === "Approved" || row.status === "Hold"
+                              ? `/admin/BrokerDetails/${row.brokerId}`
+                              : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
+                     }}
+                  >
+                     Details
+                  </Link>
+               )}
+            </span>
+         </ToolTip>
+      </div>
          ),
       },
    ];
