@@ -327,21 +327,21 @@ const Nav = () => {
                            />
                            Featured Videos
                         </Link>
-                        {/* <Link
-                           to="/admin/marketing-agency"
-                           className={`nav-link ${pathname.includes("marketing-agency") ? "nav-active" : ""
+                        <Link
+                           to="/admin/marketingAgency"
+                           className={`nav-link ${pathname.includes("marketingAgency") ? "nav-active" : ""
                               }`}
                         >
                            <Image
                               name="teamGroup"
                               src={
-                                 pathname.includes("marketing-agency")
+                                 pathname.includes("marketingAgency")
                                     ? borkerIcon
                                     : dashboard
                               }
                            />
                            Marketing Agency
-                        </Link> */}
+                        </Link>
                      </>
                   )}
                   {/* <Link

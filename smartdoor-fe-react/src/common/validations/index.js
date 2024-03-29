@@ -667,3 +667,23 @@ export const validateNewPost2 = (data) => {
     isValid: isEmpty(errors)
   }
 }
+
+export const validateAgencyDetails = (data) => {
+  const errors = {};
+  if(data.agencyName.trim() === '' || data.agencyName === null) {
+    errors.agencyName = ValidationMessages.fieldRequired.required;
+  }
+  if(data.location.trim() === '' || data.location === null) {
+    errors.location = ValidationMessages.fieldRequired.required;
+  }
+  if(data.contactName.trim() === '' || data.contactName === null) {
+    errors.contactName = ValidationMessages.fieldRequired.required;
+  }
+  if((data.contactNumber.trim()).length === 0 || data.contactName === null) {
+    errors.contactNumber = ValidationMessages.fieldRequired.required;
+  }
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}

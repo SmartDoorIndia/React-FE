@@ -39,6 +39,8 @@ const AddCoins = React.lazy(() => import('./AddCoins/AddCoins'))
 const ChatWithOwner = React.lazy(() => import('./ChatWithOwner/chatWithOwner'))
 const FeaturedVideos = React.lazy(() => import('./FeaturedVideos/FeaturedVideos'))
 const MarketingAgency = React.lazy(() => import('./MarketingAgencyModule/MarketingAgency/MarketingAgencyList'))
+const Add_EditAgency = React.lazy(() => import('./MarketingAgencyModule/Add_EditAgency'))
+const AgencyDetail = React.lazy(() => import('./MarketingAgencyModule/AgencyDetials/AgencyDetail'))
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -955,12 +957,32 @@ const routeData = [
   },
 
   {
-    path: '/admin/marketing-agency',
+    path: '/admin/marketingAgency',
     name: 'Marketing Agency',
-    bradcrumb: ['Marketing Agency'],
+    bradcrumb: false,
     excat: true,
+    module:'MARKETING',
     component: MarketingAgency
-  }
+  },
+
+  {
+    path: '/admin/marketing-Agency/addAgency',
+    name: 'Add New Agency',
+    bradcrumb: ['Marketing Agency', 'Add New'],
+    excat: true,
+    module:'MARKETING',
+    component: Add_EditAgency
+  },
+
+  {
+    path: '/admin/marketing-Agency/agencyDetails',
+    name: 'Agency Details',
+    bradcrumb: ['Marketing Agency', 'Agency Details'],
+    excat: true,
+    // module:'MARKETING',
+    component: AgencyDetail
+  },
+
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',
