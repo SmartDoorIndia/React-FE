@@ -243,8 +243,8 @@ useEffect(()=>{
          selector: (row) => row.action,
          sortable: false,
          center: true,
-         minWidth: "120px",
-         maxWidth: "100px",
+         minWidth: "70px",
+         maxWidth: "115px",
          cell: (row) => (
             <div className="action">
                <ToolTip name="View Details">

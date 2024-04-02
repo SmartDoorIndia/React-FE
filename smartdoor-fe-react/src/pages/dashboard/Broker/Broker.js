@@ -180,7 +180,7 @@ const Broker = (props) => {
          selector: "status",
          sortable: false,
          center: true,
-         minWidth: "120px",
+         minWidth: "10px",
          cell: ({ status }) => handleStatusElement(status),
       },
       {
