@@ -111,12 +111,24 @@ export const addNewTeamMember = async (data) => {
   return response;
 };
 
+// Send cityId list with userid
+export const setworkCityRequest = async (data) => {
+  const response = await mainApiService('setWorkCityRequest', data);
+  if (response.data.status) {
+    if (response.data && response.data.status === 200) {
+      // showSuccessToast('User has been created successfully.');
+    } else if (response.data && response.data.status === 409) showErrorToast(response.data.message);
+    else showErrorToast(response.data.message);
+  }
+  return response;
+}
 export const addNewPlan = async (data) => {
   const response = await mainApiService('addNewPlan', data);
   if (response.data.status) {
     if (response.data && response.data.status === 200) {
       showSuccessToast(response.data.customMessage);
     } else if (response.data && response.data.status === 409) showErrorToast(response.data.responseMessage);
+      else if (response.data && response.data.status === 500) showErrorToast("Please Try again...");
     else showErrorToast(response.data.customMessage);
   }
   return response;
@@ -141,6 +153,34 @@ export const getAllCity = (data) => async (dispatch) => {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
         dispatch({ type: Actions.ALL_CITIES, data: response.data.resourceData });
+      } // return response.data.resourceData;
+    }
+  }
+};
+
+// Action to  Get All Cities With Id
+export const getAllCityWithId = (data) => async (dispatch) => {
+  const response = await mainApiService('getAllCityWithId', data);
+  if (response) {
+    if (response.data && response.status === 200) {
+      if (response.data.resourceData) {
+        console.log(response.data.resourceData, "response.data.resourceData")
+        dispatch({ type: Actions.ALL_CITIES_ID, data: response.data.resourceData });
+        return response
+      } // return response.data.resourceData;
+    }
+  }
+};
+
+// Action to  Get All States with Id
+export const getAllStateWithId = (data) => async (dispatch) => {
+  const response = await mainApiService('getAllStateWithId', data);
+  if (response) {
+    if (response.data && response.status === 200) {
+      if (response.data.resourceData) {
+        console.log(response.data.resourceData, "response.data.resourceData")
+        dispatch({ type: Actions.ALL_STATES_ID, data: response.data.resourceData });
+        return response
       } // return response.data.resourceData;
     }
   }
@@ -184,7 +224,7 @@ export const getAllUsers = (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        dispatch({ type: Actions.USER_MANAGEMENT_SUCCESS, data: response.data.resourceData });
+        dispatch({ type: Actions.USER_MANAGEMENT_SUCCESS, data: {userData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, city: data?.searchByCity, location: data?.searchByzipCode, department: data.departmentName, defaultSort: data?.defaultSort, defaultSortId: data?.defaultSortId, defaultSortFieldId: data?.defaultSortFieldId}});
       }
     } else dispatch({ type: Actions.USER_MANAGEMENT_ERROR, data: response.data });
   }
@@ -449,7 +489,8 @@ export const getNonSDProperties= (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        dispatch({ type: Actions.NON_SD_PROPERTIES_SUCCESS, data: response.data.resourceData });
+        await dispatch({ type: Actions.NON_SD_PROPERTIES_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate:data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId} });
+        return response;
       }
     }
   }
@@ -534,7 +575,8 @@ export const getAllProperties = (data) => async (dispatch) => {
   const response = await mainApiService('getAllProperties', data);
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
-      dispatch({ type: Actions.PROPERTY_MODULE_SUCCESS, data: response.data.resourceData });
+      await dispatch({ type: Actions.PROPERTY_MODULE_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate:data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId,} });
+      return response;
     } else dispatch({ type: Actions.PROPERTY_MODULE_ERROR, data: response.data });
   }
 };
@@ -544,7 +586,8 @@ export const getAllDeletedProperties = (data) => async (dispatch) => {
   const response = await mainApiService('getAllDeletedProperties', data);
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
-      dispatch({ type: Actions.DELETED_PROPERTY_DATA_SUCCESS, data: response.data.resourceData });
+      await dispatch({ type: Actions.DELETED_PROPERTY_DATA_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate:data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId} });
+      return response;
     } else dispatch({ type: Actions.DELETED_PROPERTY_DATA_ERROR, data: response.data });
   }
 };
@@ -554,6 +597,17 @@ export const getPropertyDetails = async (data) => {
   const response = await mainApiService('getPropertyDetails', data);
   return response;
 };
+
+export const getPropertyPlanDetails = async(data) => {
+  const response = await mainApiService('getPropertyPlanDetails',data);
+  return response;
+}
+
+//Upload Image File to AWS
+export const uploadImage = async(formData) => {
+  const response = await mainApiService('uploadImage', formData)
+  return response;
+}
 
 //Action to remote unlock by owner
 export const remoteUnlock = async (data) => {
@@ -757,6 +811,16 @@ export const getAllConsumerUsers = (data) => async (dispatch) => {
   }
 };
 
+export const getAllConsumers = (data) => async (dispatch) => {
+  dispatch({ type: Actions.CONSUMSER_MANAGEMENT_LOADING, data: {} });
+  const response = await mainApiService('getAllConsumers', data);
+  if (response) {
+    if (response.data && response.status === 200 && response.data.resourceData) {
+      dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: {consumersData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchString, kycStatus: data.kycStatus, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId} });
+    } else dispatch({ type: Actions.CONSUMSER_MANAGEMENT_ERROR, data: response.data.resourceData });
+  }
+};
+
 // Action to get Consumer Property By UserId
 export const getConsumerPropertyByUserId = async (data) => {
   const response = await mainApiService('getConsumerPropertyByUserId', data);
@@ -804,11 +868,32 @@ export const getConsumerDetails = async (data) => {
   return response;
 };
 
+// Action to gift coins
+export const giftCoinsToConsumer = async (data) => {
+  const response = await mainApiService('giftCoinsToConsumer', data);
+  return response;
+};
+
 // Action to get Consumer details acc to the consumer id
 export const getConsumerDetailsFinance = async (data) => {
   const response = await mainApiService('getConsumerDetailsFinance', data);
   return response;
 };
+
+export const getCoinTransactions = async (data) => {
+  const response = await mainApiService('getCoinTransactions', data);
+  return response;
+}
+
+export const getUpcomingVisits = async (data) => {
+  const response = await mainApiService('getUpcomingVisits', data);
+  return response;
+}
+
+export const getVisitRequests = async (data) => {
+  const response = await mainApiService('getVisitRequests', data);
+  return response;
+}
 
 export const allNotification = async (data) => {
   const response = await mainApiService('allNotification', data);
@@ -1703,6 +1788,19 @@ export const doorClosed = async (data) => {
 //   return response;
 // };
 
+
+//Check if smartlock is installed in city
+export const getInstallationCity = async () => {
+  const response = await mainApiService('getInstallationCity');
+  return response;
+}
+
+//Get all properties by userId
+export const getPropertyByUserId = async(data) => {
+  const response = await mainApiService('getPropertyByUserId', data);
+  return response;
+}
+
 //Action for adding  new property
 export const addNewPost  = (data) => async (dispatch) => {
   dispatch({ type: Actions.ADD_NEW_POST_LOADING, data: {} });
@@ -1746,5 +1844,66 @@ export const addNewPost4 = (data) => async(dispatch) => {
     if ( response?.status !== 200 && response?.status !== 404) {
       showErrorToast('Unexpected error. Please try again later');
     }
+  }
+}
+
+export const deletePropertyById = async(data) => {
+  const response = await mainApiService('deletePropertyById',data)
+  return response
+}
+
+export const restorePropertyById = async(data) => {
+  const response = await mainApiService('restorePropertyById',data)
+  return response
+}
+
+
+export const getStaticMobNumbers = async () => {
+  const response  = await mainApiService('getStaticMobNums');
+  return response
+}
+export const setStaticMobNumbers = async (data) => {
+  const response  = await mainApiService('setStaticMobNums',data);
+  return response
+}
+
+export const setCityServiceStatus = async (data) => {
+  const response  = await mainApiService('setServiceStatus',data);
+  return response
+}
+
+export const getFeaturedVideoList = (data) => async (dispatch) => {
+  dispatch({type: Actions.SAVE_FEATURED_VIDEOS_LOADING, data : {}})
+  const response = await mainApiService('getFeaturedVideosList', data);
+  if(response.status === 200) {
+    let obj = JSON.parse(response.data.resourceData);
+    let videoList = obj.values.toString().split(',')
+    return(dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_SUCCESS, data: videoList }))
+  }
+  if ( response?.status !== 200) {
+    showErrorToast('Unexpected error. Please try again later');
+    return(dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_ERROR, data: response }))
+  }
+};
+
+export const addFeaturedVideoList = (data) => async (dispatch) => {
+  dispatch({type: Actions.SAVE_FEATURED_VIDEOS_LOADING, data : {}})
+  const response = await mainApiService('setFeaturedVideosList', data);
+  if(response.status === 200) {
+    let obj = JSON.parse(data.value);
+    let videoList = obj?.values?.toString()?.split(',')
+    showSuccessToast("Videos saved successfully...")
+    return(dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_SUCCESS, data: videoList }))
+  }
+  if ( response?.status !== 200) {
+    showErrorToast('Unexpected error. Please try again later');
+    return(dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_ERROR, data: data }))
+  }
+};
+
+export const getSystemVariables = async (data) => {
+  const response = await mainApiService('getSystemVariables', data);
+  if(response.status === 200) {
+    return response;
   }
 }

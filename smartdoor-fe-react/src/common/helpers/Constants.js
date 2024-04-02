@@ -65,16 +65,16 @@ const CONSTANTS = {
       bucketName: "smartdoor-uat",
       dirName: "app-images/profile-images" /* optional */,
       region: "ap-south-1",
-      accessKeyId: "AKIA6RL7DX4ACSNOTONG",
-      secretAccessKey: "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",
+      accessKeyId: "AKIA6RL7DX4AARQAF62B",
+      secretAccessKey: "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",
       s3Url: "https://smartdoor-uat.s3.ap-south-1.amazonaws.com" /* optional */,
    },
    CONFIG_PROPERTY: {
       bucketName: "smartdoor-uat",
       dirName: "app-images/property-images" /* optional */,
       region: "ap-south-1",
-      accessKeyId: "AKIA6RL7DX4ACSNOTONG",
-      secretAccessKey: "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",
+      accessKeyId: "AKIA6RL7DX4AARQAF62B",
+      secretAccessKey: "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",
       s3Url: "https://smartdoor-uat.s3.ap-south-1.amazonaws.com" /* optional */,
    },
 
@@ -83,7 +83,8 @@ const CONSTANTS = {
    CAMERA_UUID : "6360eabe28d6ae7c7ae27b9b",
    CAMERA_APP_KEY : "fde345f424b0b32b00502a8e96c1d006",
    CAMERA_APP_SECRET : "fc59834d4c8a4389857d583d3817e9f3",
-   CAMERA_MOVE_CARD : 1
+   CAMERA_MOVE_CARD : 1,
+   FEATURED_VIDEO_KEY : 'YOUTUBE_VIDEO'
 };
 
 export default CONSTANTS;

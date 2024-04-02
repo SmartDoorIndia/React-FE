@@ -254,7 +254,7 @@ const PropertyDetail = (props) => {
                     </div>
                     <div className="locationSelect">
                       {
-                            data.status && data.status === 'COMPLETED' && data?.requestType !=="UN INSTALLATION" && data?.societyEnrolled ?
+                            data.status && data.status === 'COMPLETED' && data?.requestType !=="UN INSTALLATION" ?
                               <Buttons
                                 name={ data.approved ? 'Approved' : 'Approve' }
                                 varient="primary"

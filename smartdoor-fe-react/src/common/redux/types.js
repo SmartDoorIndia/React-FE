@@ -26,6 +26,12 @@ export const ADMIN_ALL_ROLES = 'ADMIN_ALL_ROLES';
 // All cities Constants type
 export const ALL_CITIES = 'ALL_CITIES';
 
+// All cities Constants type with id
+export const ALL_CITIES_ID = 'ALL_CITIES_ID';
+
+// All States Constants type with id
+export const ALL_STATES_ID = 'ALL_STATES_ID';
+
 // All Executives Constants type
 export const ALL_EXECUTIVES = 'ALL_EXECUTIVES';
 
@@ -301,6 +307,6 @@ export const ADD_NEW_POST_INFO_SUCCESS = 'src/pages/Dashboard/AddNewPost4/Succes
 export const ADD_NEW_POST_INFO_ERROR = 'src/pages/Dashboard/AddNewPost4/Error';
 export const ADD_NEW_POST_INFO_LOADING = 'src/pages/Dashboard/AddNewPost4/Loading';
 
-
-//All Broker Modules
-
+export const SAVE_FEATURED_VIDEOS_SUCCESS = 'src/pages/Dashboard/FeaturedVideos/Success';
+export const SAVE_FEATURED_VIDEOS_ERROR = 'src/pages/Dashboard/FeaturedVideos/Error';
+export const SAVE_FEATURED_VIDEOS_LOADING = 'src/pages/Dashboard/FeaturedVideos/Loading';

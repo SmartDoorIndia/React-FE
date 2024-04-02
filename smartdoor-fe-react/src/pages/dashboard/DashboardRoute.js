@@ -14,7 +14,7 @@ const DashboardRoute = () => {
         {routeData.map((data, index) => (
           <PrivateRoute { ...data } key={ index } />
         ))}
-        <Redirect from="/admin" to="/admin/sales" /> 
+        <Redirect from="/admin" to="/admin/execution" /> 
       </Switch>
     </Suspense>
   );

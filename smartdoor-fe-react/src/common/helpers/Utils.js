@@ -238,6 +238,26 @@ export function handleStatusElement(status) {
         className="tagSuccess defaultTag ml-2 fs-11"
       />
     );
+  }
+  else if (status === 'INACTIVE') {
+    return (
+      <Text
+        size="xSmall"
+        fontWeight="mediumbold"
+        color="white"
+        text={ status }
+        className="tagAlert defaultTag ml-2 "
+      />
+    );
+  } else if (status === 'ACTIVE') {
+    return (
+      <Text
+        fontWeight="mediumbold"
+        color="white"
+        text="ACTIVE"
+        className="tagSuccess defaultTag ml-2 fs-11"
+      />
+    );
   } else if (status === 'ON_HOLD') {
     return (
       <Text

@@ -5,7 +5,7 @@ import { Card } from "react-bootstrap";
 import docImg from "../../../../assets/images/docImg.png"
 import { useRef } from "react";
 import S3 from "react-aws-s3";
-import { addImage } from "../../../../common/redux/actions"
+import { addImage, uploadImage } from "../../../../common/redux/actions"
 import Constants from "../../../../common/helpers/Constants";
 import { connect } from "react-redux";
 import { addNewPostReducer } from "../../../../common/redux/reducers/views/addNewPost.reducer";
@@ -14,6 +14,7 @@ import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.m
 import { getPropertyDetails, deletePropertyImage } from "../../../../common/redux/actions";
 import { provideAuth } from "../../../../common/helpers/Auth";
 import closeBtn from "../../../../assets/images/closeBtn.png"
+import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 
 const EditPost3 = (props) => {
 	const fileInputRef = useRef(null);
@@ -53,23 +54,23 @@ const EditPost3 = (props) => {
 
 	const deleteImageHandler = useCallback(
 		(docId) => {
-		   console.log(docId, "doc id");
-		   deletePropertyImage({ docId: docId })
-			  .then((response) => {
-				 if (response.data) {
-					if (response.data.resourceData) {
-					   _getPropertyDetails();
+			console.log(docId, "doc id");
+			deletePropertyImage({ docId: docId })
+				.then((response) => {
+					if (response.data) {
+						if (response.data.resourceData) {
+							_getPropertyDetails();
+						}
 					}
-				 }
-				 console.log("responseDeleteImage", response);
-			  })
-			  .catch((error) => {
-				 // setLoading(false);
-				 console.log("error", error);
-			  });
+					console.log("responseDeleteImage", response);
+				})
+				.catch((error) => {
+					// setLoading(false);
+					console.log("error", error);
+				});
 		},
 		[getPropertyDetails]
-	 );
+	);
 
 	useEffect(() => {
 		console.log(propertyData)
@@ -87,18 +88,16 @@ const EditPost3 = (props) => {
 	};
 
 	const fileUpload = (event) => {
-		if (event.target.files && event.target.files[0]) {
-			let reader = new FileReader();
-			reader.onload = (e) => {
-				console.log(e.target.result, "target.result");
-				// this.setState({ builderPropertyImg: e.target.result });
-			};
-			reader.readAsDataURL(event.target.files[0]);
+		if (event.target.files.length > 10) {
+			alert("Please select up to 10 files only.");
+			return;
 		}
-		console.log(event.target.files[0], "after upload files");
+		
 		const imageData = {
-			propertyId: 554,
+			propertyId: propertyId,
 			propertyDocs: [],
+			draft: false,
+			partial: false,
 			propertyImage: [
 				{
 					docId: null,
@@ -107,35 +106,51 @@ const EditPost3 = (props) => {
 				},
 			],
 		};
-		console.log(event.target.files, "before s3 files");
 		if (event.target.files.length > 0) {
 			setImageLoader(true);
-			ReactS3Client.uploadFile(event.target.files[0], event.target.files[0].name)
-				.then((data) => {
-					console.log("data", data);
-					const property_image = [];
-					property_image.push({
-						docId: null,
-						docName: "",
-						docURL: data.location,
-					});
-					const image_data = {
-						...imageData,
-						propertyDocs: [],
-						propertyImage: property_image,
-					};
-					addImage(
-						image_data
-					)
+			let formData = new FormData();
+			const maxSizeInBytes = 15 * 1024 * 1024; // 10MB
+			Array.from(event.target.files).map((file) => {
+				if(file.size > maxSizeInBytes) {
+					showErrorToast('File must be less than 15MB...')
+					return;
+				}
+			})
+			console.log(event.target.files)
+			let fileList = []
+			for (let i = 0; i < event.target.files.length; i++) {
+				fileList.push(event.target.files[i])
+				formData.append('file', event.target.files[i]);
+			}
+			console.log(fileList)
+			formData.append('id', propertyData.smartdoorPropertyId);
+			formData.append('enumType', 'PROPERTY_IMAGES');
+			uploadImage(formData)
+				.then((response) => {
+					console.log(response)
+					if(response.data.status === 200) {
+						const property_image = [];
+						for(let i = 0; i < response.data.resourceData.length; i++) {
+							property_image.push({
+								docId: null,
+								docName: "",
+								docURL: response.data.resourceData[i],
+							});
+						}
+						const image_data = {
+							...imageData,
+							propertyDocs: [],
+							propertyImage: property_image,
+						};
+						addImage(
+							image_data
+						)
 						.then((response) => {
 							setLoading(false);
 							if (response.data) {
 								if (response.data.resourceData) {
 									setImageLoader(false);
 									_getPropertyDetails();
-									const imageArray = Array.from(event.target.files[0])?.map((file) => URL.createObjectURL(file));
-									setImageArray(imageArray);
-									console.log(imageArray)
 								}
 							}
 						})
@@ -144,11 +159,15 @@ const EditPost3 = (props) => {
 							setLoading(false);
 							console.log("error", error);
 						});
-
+						showSuccessToast(response.data.customMessage)
+					}
 				})
-				.catch((err) => {
+				.catch((error) => {
+					setImageLoader(false);
+					setLoading(false);
+					console.log("error", error);
 				});
-			console.log(event.target.files[0], "end file");
+			// console.log(event.target.files[0], "end file");
 		}
 	};
 
@@ -179,31 +198,32 @@ const EditPost3 = (props) => {
 				<input
 					hidden
 					type="file"
-					multiple={false}
+					accept=".png, .jpg, .jpeg"
+					multiple={true}
 					ref={fileInputRef}
 					onChange={(e) => {
 						fileUpload(e);
 					}}
 				/>
-				<div className="d-flex mt-3 no-wrap">
+				<div className="d-flex mt-3" style={{overflowX:'scroll', flexWrap:'wrap'}}>
 					{imageArr.map((image) => (
 						<>
 							<div>
 								{/* <img src={image?.docURL} style={{ border: '1px #DEDEDE solid', borderRadius: 8, height: '100px', width: '200px',
 									marginInlineEnd: '10px' }} onClick={() => {deleteImageHandler(image.docId)}} /> */}
-								<img className="me-3" src={image.docURL} style={{width: '150px', height: '100px', borderRadius: 8, border: '1px #9BA5AD solid'}}></img> 
-								<img src={closeBtn} style={{float: 'right', width:'15px' , height:'15px', marginInlineStart:'0px'}} onClick={() => {deleteImageHandler(image.docId); console.log(image.docId)}}/>
+								<img className="me-3 mt-3" src={image.docURL} style={{ width: '150px', height: '100px', borderRadius: 8, border: '1px #9BA5AD solid' }}></img>
+								<img className="mt-2" src={closeBtn} style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId); console.log(image.docId) }} />
 							</div> &nbsp; &nbsp; &nbsp; &nbsp;
 						</>
 					))}
 				</div>
 			</div>
 			<div className="d-flex">
-				<button color="gray">Cancel</button> &nbsp;
-				{/* <Link to="/admin/posts/add-new-post/basic-details">
-					</Link> */}
-				<Buttons name="Back" onClick={() => { history.push('/admin/property/edit-address-details',{propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails}) }}></Buttons> &nbsp;
-				<Buttons name="Next" onClick={() => { history.push('/admin/property/edit-more-info',{propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails}) }} />
+				<Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
+					history.replace('/admin/property/property-details', { propertyId: propertyData.smartdoorPropertyId, userId: userData.userid}); window.history.go(-3); 
+				}} name="Cancel" /> &nbsp;
+				<Buttons name="Back" onClick={() => { history.replace('/admin/property/edit-address-details', { propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails }); window.history.go(-1); }}></Buttons> &nbsp;
+				<Buttons name="Next" onClick={() => { history.push('/admin/property/edit-more-info', { propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails }) }} />
 			</div>
 		</>
 	)

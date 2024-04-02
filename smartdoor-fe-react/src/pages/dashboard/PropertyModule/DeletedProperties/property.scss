@@ -264,7 +264,14 @@
 
 /*******Css start here************/
 .propertiesTableWrapper {
+    .rdt_TableBody {
+        max-height: calc(55vh - 20px);
+        height: fit-content;
+        overflow-y: visible;
+        overflow-x: hidden;
+    }
     .rdt_TableRow {
+        min-height: auto;
         .rdt_TableCell {
             text-align: center;
             &:nth-child(4) {

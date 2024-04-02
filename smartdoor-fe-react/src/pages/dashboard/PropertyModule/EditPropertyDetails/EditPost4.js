@@ -13,7 +13,7 @@ import { addNewPostReducer } from "../../../../common/redux/reducers/views/addNe
 import { addNewPost4Reducer } from "../../../../common/redux/reducers/views/addNewPost4.reducer";
 import { connect } from "react-redux";
 import { showErrorToast } from "../../../../common/helpers/Utils";
-import { Chip, InputAdornment, MenuItem, TextField } from "@mui/material";
+import { Chip, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import { addNewPost4 } from "../../../../common/redux/actions";
 import { provideAuth } from "../../../../common/helpers/Auth";
 
@@ -23,30 +23,32 @@ const EditPost4 = (props) => {
 	const location = useLocation();
 	const { userData } = provideAuth();
 	const propertyData = (location?.state?.propertyData)
+	const [basicDetails, setBasicDetails] = useState(location?.state?.basicDetails)
+	const [addressDetails, setAddressDetails] = useState(location?.state?.addressDetails)
 	const history = useHistory();
 	const dispatch = useDispatch();
 	const [data, setData] = useState({
-		postedById: userData.userid,
+		postedById: propertyData.postedById,
 		smartdoorPropertyId: propertyData?.smartdoorPropertyId,
-		isDraft: propertyData?.draft,
+		draft: false,
+        partial: false,
 		propertyFurnishing: propertyData.propertyFurnishing === null ? "" : propertyData.propertyFurnishing,
-		isLoanAvailable: propertyData.propertyInfoResponse.loanAvailable,
+		loanAvailable: propertyData.propertyInfoResponse.loanAvailable,
 		loanFromBank: propertyData.propertyInfoResponse.loanFromBank === null ? "" : propertyData.propertyInfoResponse.loanFromBank,
 		enteranceFacing: propertyData.propertyInfoResponse.enteranceFacing === null ? "" : propertyData.propertyInfoResponse.enteranceFacing,
 		security: propertyData.propertyInfoResponse.security === null ? "" : propertyData.propertyInfoResponse.security,
 		constructionSize: propertyData.propertyInfoResponse.contructionSize === null ? "" : propertyData.propertyInfoResponse.contructionSize,
 		majorityComposition: propertyData.propertyInfoResponse.majorityComposition === null ? "" : propertyData.propertyInfoResponse.majorityComposition,
-		religiousPlace: propertyData.propertyInfoResponse.religiousPlace === null ? "" : propertyData.propertyInfoResponsereligiousPlace,
+		religiousPlace: propertyData.propertyInfoResponse.religiousPlace === null ? "" : propertyData.propertyInfoResponse.religiousPlace,
 		storeDistance: propertyData.propertyInfoResponse.storeDistance === null ? "" : propertyData.propertyInfoResponse.storeDistance,
-		propertyDescription: propertyData.description === null ? "" : propertyData.description,
+		propertyDescription: propertyData?.propertyInfoResponse?.propertyDescription === null ? "" : propertyData?.propertyInfoResponse?.propertyDescription,
 		investmentOpportunity: propertyData.propertyInfoResponse.invetmentOppertunity,
 		oldRate: propertyData.propertyInfoResponse.oldRate === null ? 0 : Number(propertyData.propertyInfoResponse.oldRate),
-		amenities: propertyData.propertyInfoResponse.amenities,
-		isPartial: propertyData.partial,
-		hallAndDining: propertyData.propertyInfoResponse.hallAndDining,
-		furnishKitchen: propertyData.propertyInfoResponse.furnishKitchen,
-		furnishBedrooms: propertyData.propertyInfoResponse.furnishBedrooms,
-		extras: propertyData.propertyInfoResponse.extras,
+		amenities: propertyData.propertyInfoResponse.amenities === null ? [] : propertyData.propertyInfoResponse.amenities,
+		hallAndDining: propertyData.propertyInfoResponse.hallAndDining === null ? [] : propertyData.propertyInfoResponse.hallAndDining,
+		furnishKitchen: propertyData.propertyInfoResponse.furnishKitchen === null ? [] : propertyData.propertyInfoResponse.furnishKitchen,
+		furnishBedrooms: propertyData.propertyInfoResponse.furnishBedrooms === null ? [] : propertyData.propertyInfoResponse.furnishBedrooms,
+		extras: propertyData.propertyInfoResponse.extras === null ? [] : propertyData.propertyInfoResponse.extras,
 		landlordPossible: propertyData.propertyInfoResponse.landlordPossible === null ? "" : propertyData.propertyInfoResponse.landlordPossible,
 	});
 
@@ -65,15 +67,7 @@ const EditPost4 = (props) => {
 	};
 
 	const setAmenities = (value) => {
-		if (!data.amenities?.includes(value)) {
-			let newAmenities = [];
-			newAmenities = (data.amenities !== null ? data.amenities : []);
-			newAmenities?.push(value)
-			setData({ ...data, amenities: [...newAmenities] });
-			console.log(data.amenities)
-		} else {
-			showErrorToast("Amenity exist")
-		}
+		setData({ ...data, amenities: [...value] });
 	}
 
 	const handleDelete = (value) => {
@@ -83,14 +77,22 @@ const EditPost4 = (props) => {
 	}
 
 	const submitInfo = async () => {
-		console.log(data);
-		await dispatch(addNewPost4(data))
-		// history.push('/admin/posts/add-new-post/select_plan')
+		let requestBody = data;
+		requestBody.amenities = data.amenities?.join(', ')
+		requestBody.hallAndDining = data.hallAndDining?.join(', ')
+		requestBody.furnishKitchen = data.furnishKitchen?.join(', ')
+		requestBody.furnishBedrooms = data.furnishBedrooms?.join(', ')
+		requestBody.extras = data.extras?.join(', ')
+		console.log(requestBody)
+		await dispatch(addNewPost4(requestBody))
+		localStorage.setItem('autoRefresh', 'Yes') 
+		history.replace('/admin/property/property-details', { propertyId: propertyData.smartdoorPropertyId, userId: userData.userid})
+		window.history.go(-4);
 	}
 
 	return (
 		<>
-			<div className="whiteBg">
+			<div className="whiteBg" style={{height: '31.5rem', overflowY:'auto'}}>
 				<Text
 					size="medium"
 					fontWeight="mediumbold"
@@ -107,31 +109,129 @@ const EditPost4 = (props) => {
 					label="Description"
 					defaultValue={data?.propertyDescription}
 					onChange={(e) => {
-						setData({ ...data, propertyFurnishing: e.target.value });
-						console.log(data.propertyFurnishing);
+						setData({ ...data, propertyDescription: e.target.value });
+						console.log(data.propertyDescription);
 					}}
 					onInput={(e) => { setData({ ...data, propertyDescription: e.target.value }) }}
 				/>
-				<Row className="mt-3">
-					<Col lg="4">
-						<TextField
-							className="w-100 mt-3"
-							id="outlined-select-currency"
-							select
-							label="Furnishing"
-							defaultValue={data.propertyFurnishing}
-							onChange={(e) => {
-								setData({ ...data, propertyFurnishing: e.target.value });
-								console.log(data.propertyFurnishing);
-							}}>
-							<option value="" disabled> Select </option>
-							{filters.propertyFurnishing?.map((option) => (
-								<MenuItem key={option} value={option}>
-									{option}
-								</MenuItem>
-							))}
-						</TextField>
-					</Col>
+				{basicDetails.propertyCategory !== 'Sale' ? <>
+				<Text
+					className="mt-3 h6"
+					size="medium"
+					fontWeight="mediumbold"
+					color="secondryColor"
+					text="Furnishing"
+					></Text>
+					</> : <></>}
+				<Row className="mt-1">
+					{basicDetails.propertyCategory === 'Sale' ? <>
+						<Col lg="4">
+							<FormControl className="w-100 mt-3">
+								<InputLabel id="demo-simple-select-helper-label">Furnishing</InputLabel>
+								<Select
+									labelId="demo-simple-select-helper-label"
+									id="demo-simple-select-helper"
+									value={data.propertyFurnishing}
+									label="Furnishing"
+									onChange={(e) => {
+										setData({ ...data, propertyFurnishing: e?.target?.value });
+										console.log(e)
+									}}
+								>
+									{filters.propertyFurnishing?.map((option) => (
+										<MenuItem key={option} value={option}>
+											{option}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Col>
+					</> : <>
+						<Col lg="4">
+							<FormControl className="w-100 mt-3">
+								<InputLabel id="demo-simple-select-helper-label">Kitchen</InputLabel>
+								<Select
+									labelId="demo-simple-select-helper-label"
+									id="demo-simple-select-helper"
+									multiple
+									value={data.furnishKitchen}
+									label="Kitchen"
+									onChange={(e) => {
+										setData({ ...data, furnishKitchen: [...e?.target?.value] });
+									}}
+								>
+									{filters.kitchen?.map((option) => (
+										<MenuItem key={option} value={option}>
+											{option}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Col>
+						<Col lg="4">
+							<FormControl className="w-100 mt-3">
+								<InputLabel id="demo-simple-select-helper-label">Hall</InputLabel>
+								<Select
+									labelId="demo-simple-select-helper-label"
+									id="demo-simple-select-helper"
+									multiple
+									value={data.hallAndDining}
+									label="Hall"
+									onChange={(e) => {
+										setData({ ...data, hallAndDining: [...e?.target?.value] });
+									}}
+								>
+									{filters.hallAndDining?.map((option) => (
+										<MenuItem key={option} value={option}>
+											{option}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Col>
+						<Col lg="4">
+							<FormControl className="w-100 mt-3">
+								<InputLabel id="demo-simple-select-helper-label">Bedrooms</InputLabel>
+								<Select
+									labelId="demo-simple-select-helper-label"
+									id="demo-simple-select-helper"
+									multiple
+									value={data.furnishBedrooms}
+									label="Bedrooms"
+									onChange={(e) => {
+										setData({ ...data, furnishBedrooms: [...e?.target?.value] });
+									}}
+								>
+									{filters.bedRooms?.map((option) => (
+										<MenuItem key={option} value={option}>
+											{option}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Col>
+						<Col lg="4">
+							<FormControl className="w-100 mt-3">
+								<InputLabel id="demo-simple-select-helper-label">Extras</InputLabel>
+								<Select
+									labelId="demo-simple-select-helper-label"
+									id="demo-simple-select-helper"
+									multiple
+									value={data.extras}
+									label="Extras"
+									onChange={(e) => {
+										setData({ ...data, extras: [...e?.target?.value] });
+									}}
+								>
+									{filters.extras?.map((option) => (
+										<MenuItem key={option} value={option}>
+											{option}
+										</MenuItem>
+									))}
+								</Select>
+							</FormControl>
+						</Col>
+					</>}
 					<Col lg="4">
 						<TextField
 							className="w-100 mt-3"
@@ -172,39 +272,41 @@ const EditPost4 = (props) => {
 					</Col>
 				</Row>
 				<br />
-				<Row>
-					<Col lg="4">
-						<Form.Label>Loan against property?</Form.Label>
-						<RadioButton
-							items={["Yes", "No"]}
-							name={"isLoanAvailable"}
-							layout={"horizontal"}
-							value={data.isLoanAvailable ? "Yes" : "No"}
-							onValueChanged={(e) => {
-								if (e.value === "Yes") {
-									setData({ ...data, isLoanAvailable: true })
-								} else {
-									setData({ ...data, isLoanAvailable: false })
-								}
-							}}
-						/>
-					</Col>
-				</Row>
-				<br />
-				{data.isLoanAvailable === true && (
+				{basicDetails.propertyCategory === 'Sale' ? <>
 					<Row>
 						<Col lg="4">
-							<TextField
-								className="w-100 mb-4"
-								id="outlined-select-currency"
-								type="text"
-								label="Loan from Bank"
-								defaultValue={data.loanFromBank}
-								onInput={(e) => { setData({ ...data, loanFromBank: e.target.value }) }}>
-							</TextField>
+							<Form.Label style={{top:'0px', left: '0px'}}>Loan against property?</Form.Label>
+							<RadioButton
+								items={["Yes", "No"]}
+								name={"loanAvailable"}
+								layout={"horizontal"}
+								value={data.loanAvailable ? "Yes" : "No"}
+								onValueChanged={(e) => {
+									if (e.value === "Yes") {
+										setData({ ...data, loanAvailable: true })
+									} else {
+										setData({ ...data, loanAvailable: false })
+									}
+								}}
+							/>
 						</Col>
 					</Row>
-				)}
+					<br />
+					{data.loanAvailable === true && (
+						<Row>
+							<Col lg="4">
+								<TextField
+									className="w-100 mb-4"
+									id="outlined-select-currency"
+									type="text"
+									label="Loan from Bank"
+									defaultValue={data.loanFromBank}
+									onInput={(e) => { setData({ ...data, loanFromBank: e.target.value }) }}>
+								</TextField>
+							</Col>
+						</Row>
+					)}
+				</> : null}
 
 				<Text
 					size="medium"
@@ -213,43 +315,29 @@ const EditPost4 = (props) => {
 					text="Social Construct"
 				></Text>
 
-				<Row className="mt-3">
-					<Col lg="4">
-						<TextField
-							className="w-100 mt-3"
-							id="outlined-select-currency"
-							select
-							label="Society size"
-							defaultValue={data.constructionSize}
-							onChange={(e) => {
-								setData({ ...data, constructionSize: e.target.value });
-							}}>
-							<option value="" disabled> Select </option>
-							{filters.socialConstructSize?.map((option) => (
-								<MenuItem key={option} value={option}>
-									{option}
-								</MenuItem>
-							))}
-						</TextField>
-					</Col>
-					<Col lg="4">
-						<TextField
-							className="w-100 mt-3"
-							id="outlined-select-currency"
-							select
-							label="Amenities"
-							defaultValue={data.amenities}
-							onChange={(e) => {
-								setAmenities(e.target.value)
-							}}>
-							<option value="" disabled> Select </option>
-							{filters.socialConstructSpecificAmenity?.map((option) => (
-								<MenuItem key={option} value={option}>
-									{option}
-								</MenuItem>
-							))}
-						</TextField>
-					</Col>
+				<Row className="mt-1">
+					{basicDetails.propertyCategory === 'Sale' ?
+					<>
+						<Col lg="4">
+							<TextField
+								className="w-100 mt-3"
+								id="outlined-select-currency"
+								select
+								label="Society size"
+								defaultValue={data.constructionSize}
+								onChange={(e) => {
+									setData({ ...data, constructionSize: e.target.value });
+								}}>
+								<option value="" disabled> Select </option>
+								{filters.socialConstructSize?.map((option) => (
+									<MenuItem key={option} value={option}>
+										{option}
+									</MenuItem>
+								))}
+							</TextField>
+						</Col>
+					</> : null }
+
 					<Col lg="4">
 						<TextField
 							className="w-100 mt-3"
@@ -262,40 +350,6 @@ const EditPost4 = (props) => {
 							}}>
 							<option value="" disabled> Select </option>
 							{filters.majorityComposition?.map((option) => (
-								<MenuItem key={option} value={option}>
-									{option}
-								</MenuItem>
-							))}
-						</TextField>
-					</Col>
-				</Row>
-				<Row>
-					<Col lg="4"></Col>
-					<Col lg="4">
-						{data.amenities?.map((amenity) => {
-							return (
-								<>
-									<Chip className="mt-1" label={amenity} variant="outlined" color="error" onDelete={() => { handleDelete(amenity) }} >
-									</Chip>	&nbsp;
-								</>
-							)
-						})}
-					</Col>
-					<Col lg="4"></Col>
-				</Row>
-				<Row className="mt-3">
-					<Col lg="4">
-						<TextField
-							className="w-100 mt-3"
-							id="outlined-select-currency"
-							select
-							label="Religious places within 2km"
-							defaultValue={data.religiousPlace}
-							onChange={(e) => {
-								setData({ ...data, religiousPlace: e.target.value });
-							}}>
-							<option value="" disabled> Select </option>
-							{filters.religiousPlace?.map((option) => (
 								<MenuItem key={option} value={option}>
 									{option}
 								</MenuItem>
@@ -321,48 +375,104 @@ const EditPost4 = (props) => {
 						</TextField>
 					</Col>
 					<Col lg="4">
-						<Form.Group>
-							<Form.Label className="mt-3">
-								Would you like to position as good investment opportunity?
-							</Form.Label>
-							<RadioButton
-								items={["Yes", "No"]}
-								name={"investmentOpportunity"}
-								layout={"horizontal"}
-								value={data.investmentOpportunity ? "Yes" : "No"}
-								onValueChanged={(e) => {
-									if (e.value === "Yes") {
-										setData({ ...data, investmentOpportunity: true })
-									} else {
-										setData({ ...data, investmentOpportunity: false })
-									}
-								}}
-							/>
-						</Form.Group>
 						<TextField
 							className="w-100 mt-3"
 							id="outlined-select-currency"
-							label="Price before 1 year"
-							defaultValue={data.oldRate}
+							select
+							label="Religious places within 2km"
+							defaultValue={data.religiousPlace}
 							onChange={(e) => {
-								setData({ ...data, oldRate: e.target.value });
-							}} />
+								setData({ ...data, religiousPlace: e.target.value });
+							}}>
+							<option value="" disabled> Select </option>
+							{filters.religiousPlace?.map((option) => (
+								<MenuItem key={option} value={option}>
+									{option}
+								</MenuItem>
+							))}
+						</TextField>
 					</Col>
+				</Row>
+				<Row>
+					<Col lg="4">
+						<FormControl className="w-100 mt-3">
+							<InputLabel id="demo-simple-select-helper-label">Amenities</InputLabel>
+							<Select
+								labelId="demo-simple-select-helper-label"
+								id="demo-simple-select-helper"
+								multiple
+								value={data.amenities}
+								label="Amenities"
+								onChange={(e) => {
+									setAmenities(e.target.value)
+								}}
+							>
+								{filters.socialConstructSpecificAmenity?.map((option) => (
+									<MenuItem key={option} value={option}>
+										{option}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
+					</Col>
+					<Col lg="6" className="mt-3">
+						{data.amenities?.map((amenity) => {
+							return (
+								<>
+									<Chip className="mt-1" label={amenity} variant="outlined" color="error" onDelete={() => { handleDelete(amenity) }} >
+									</Chip>	&nbsp;
+								</>
+							)
+						})}
+					</Col>
+				</Row>
+				<Row className="mt-3">
+					{basicDetails.propertyCategory === 'Sale' ? 
+					<>
+						<Col lg="4">
+							<Form.Group>
+								<Form.Label className="mt-3" style={{top:'0px', left: '0px', padding:'0px'}}>
+									Would you like to position as good investment opportunity?
+								</Form.Label>
+								<RadioButton
+									items={["Yes", "No"]}
+									name={"investmentOpportunity"}
+									layout={"horizontal"}
+									value={data.investmentOpportunity ? "Yes" : "No"}
+									onValueChanged={(e) => {
+										if (e.value === "Yes") {
+											setData({ ...data, investmentOpportunity: true })
+										} else {
+											setData({ ...data, investmentOpportunity: false, oldRate: 0 })
+										}
+									}}
+								/>
+							</Form.Group>
+							{data.investmentOpportunity ? <>
+								<TextField
+									className="w-100 mt-3"
+									id="outlined-select-currency"
+									label="Price before 1 year"
+									inputProps={{min : 0}}
+									defaultValue={data.oldRate}
+									onChange={(e) => {
+										setData({ ...data, oldRate: e.target.value });
+									}} />
+							</> : null
+							}
+						</Col>
+					</> : null
+					}
 				</Row>
 				<br />
 				<br />
 				<div className="d-flex">
-					<button color="gray" size="medium">Cancel</button> &nbsp;
-					{/* <Link to="/admin/posts/add-new-post/basic-details">
-                        </Link> */}
-					<Buttons
-						name="Back" size="medium"
-						onClick={() => {
-							history.push("/admin/property/upload-property-image",{propertyData: propertyData});
-						}}
-					></Buttons>{" "}
-					&nbsp;
-					<Buttons size="medium" name="Next" onClick={() => { submitInfo() }} />
+					<Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
+                        history.replace('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid}); window.history.go(-4); localStorage.setItem('autoRefresh', 'Yes') 
+					}} name="Cancel" /> &nbsp;
+					<Buttons name="Back" size="medium" onClick={() => {
+							history.replace("/admin/property/upload-property-image", { propertyData: propertyData, basicDetails: basicDetails, addressDetails: addressDetails }); window.history.go(-1); }} ></Buttons> &nbsp;
+					<Buttons size="medium" name="Done" onClick={() => { submitInfo() }} />
 				</div>
 			</div>
 		</>

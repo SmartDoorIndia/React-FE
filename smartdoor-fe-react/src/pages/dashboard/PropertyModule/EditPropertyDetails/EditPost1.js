@@ -2,7 +2,17 @@ import { compose } from "redux";
 import Text from "../../../../shared/Text/Text";
 import mortgage from "../../../../assets/images/mortgage.png";
 import sell from "../../../../assets/images/sell.png";
-import { Col, Button, Row } from "react-bootstrap";
+import sellActive from "../../../../assets/svg/sellActive.svg"
+import sellInactive from "../../../../assets/svg/sellInactive.svg"
+import mortgageActive from "../../../../assets/svg/mortgageAactive.svg"
+import mortgageInactive from "../../../../assets/svg/mortgageInactive.svg"
+import residentialActive from "../../../../assets/svg/residentialActive.svg"
+import residentialInactive from "../../../../assets/svg/residentialInactive.svg"
+import commercialACtive from "../../../../assets/svg/commercialActive.svg"
+import commercialInaCtive from "../../../../assets/svg/commercialInactive.svg"
+import semiCommercialActive from "../../../../assets/svg/SemiCommercialActive.svg"
+import semiCommercialInactive from "../../../../assets/svg/SemiCommercialInactive.svg"
+import { Col, Button, Row, Modal, Card } from "react-bootstrap";
 import residential from "../../../../assets/images/Residential.png";
 import commercial from "../../../../assets/images/Commercial.png";
 import nonCommercial from "../../../../assets/images/NonCommercial.png";
@@ -23,13 +33,15 @@ const EditPost1 = (props) => {
     const { userData } = provideAuth();
     const [data, setData] = useState({
         postedById: propertyData.postedById,
-        propertyCategory: propertyData.propertyCategory === "Lease" ? 'Rent': propertyData.propertyCategory,
+        propertyCategory: propertyData.propertyCategory === "Rent" ? 'Lease': propertyData.propertyCategory,
         propertyType: propertyData.propertyType,
         propertySubType: propertyData.propertySubType,
-        bedRooms: propertyData.bedRooms === null ? 0 : Number(propertyData.bedRooms),
+        furnishedText: propertyData.propertyInfoResponse.furnishedText === null ? '' : propertyData.propertyInfoResponse.furnishedText, 
+        bedRooms: propertyData.bedRooms === null ? (0) : (propertyData.bedRooms),
         numberOfHalls: propertyData.hall === null ? 0 : Number(propertyData.hall),
         kitchens: propertyData.kitchen === null ? 0 : Number(propertyData.kitchen),
         numberOfBaths: propertyData.numberOfBath === null ? 0 : Number(propertyData.numberOfBath),
+        restRoom: propertyData.propertyInfoResponse.restRoom === null ? 0 : Number(propertyData.propertyInfoResponse.restRoom),
         balcony: propertyData.propertyInfoResponse.balcony === null ? 0 : Number(propertyData.propertyInfoResponse.balcony),
         coveredParking: propertyData.propertyInfoResponse.coveredParking === null ? 0 : Number(propertyData.propertyInfoResponse.coveredParking),
         openParking: propertyData.propertyInfoResponse.openParking === null ? 0 : Number(propertyData.propertyInfoResponse.openParking),
@@ -40,16 +52,20 @@ const EditPost1 = (props) => {
         commercialType: propertyData.propertyInfoResponse.commercialType === null ? "" : (propertyData.propertyInfoResponse.commercialType),
         commonReception: propertyData.propertyInfoResponse.commonReception === null ? "" : (propertyData.propertyInfoResponse.commonReception),
         leaseType: propertyData.leaseType === null ? "" : (propertyData.leaseType),
-        preferredFor: null,
+        preferredFor: propertyData.preferredFor,
         purpose: propertyData.purpose === null ? "" : (propertyData.purpose),
+        balconyOpenArea: propertyData.propertyInfoResponse?.balconyOpenArea === null ? 0 : Number(propertyData.propertyInfoResponse?.balconyOpenArea),
         kitchenPantry: propertyData.propertyInfoResponse.kitchenPantry === null ? "" : (propertyData.propertyInfoResponse.kitchenPantry),
-        plotArea: propertyData.carpetArea === null ? 0 : Number(propertyData.carpetArea),
+        plotArea: propertyData.propertyInfoResponse.plotArea === null ? 0 : Number(propertyData.propertyInfoResponse.plotArea),
+        carpetArea: propertyData.carpetArea === null ? 0 : Number(propertyData.carpetArea),
         attachedOpenTerraceArea: propertyData.propertyInfoResponse.attachedOpenTerraceArea === null ? 0 : Number(propertyData.propertyInfoResponse.attachedOpenTerraceArea),
         attachedOpenAreaOrGarden: propertyData.propertyInfoResponse.attachedOpenAreaOrGarden === null ? 0 : Number(propertyData.propertyInfoResponse.attachedOpenAreaOrGarden),
         maintenanceCost: propertyData.propertyInfoResponse.maintenceCost === null ? 0 : Number(propertyData.propertyInfoResponse.maintenceCost),
         propertyRate: propertyData.propertyRate === null ? 0 : Number(propertyData.propertyRate),
         propertyAge: propertyData.propertyInfoResponse.propertyAge === null ? 0 : Number(propertyData.propertyInfoResponse.propertyAge),
         smartdoorPropertyId: propertyData.smartdoorPropertyId,
+        draft: false,
+        partial: false
     });
     const [halfRoomFlag, setHalfRoomFlag] = useState(false)
     const dispatch = useDispatch();
@@ -62,13 +78,30 @@ const EditPost1 = (props) => {
     const [showAllOpenParkings, setShowAllOpenParkings] = useState(false)
     const [showAllRestrooms, setShowAllRestrooms] = useState(false)
 
+    const [draftModal, setDraftModal] = useState(false)
     useEffect(() => {
         if(basicDetails !== undefined) {
             console.log(basicDetails)
             setData(basicDetails)
+            const bedroom = (basicDetails?.bedRooms?.toString())?.split('.')
+           if(bedroom?.length === 2) {
+            if(bedroom[1] === '5') {
+                setHalfRoomFlag(true)
+                setData({...data, bedRooms : Number(bedroom[0])})
+            }
+           }
+        }
+        else if(propertyData !== undefined) {
+            const bedrooms = (data?.bedRooms.toString())?.split('.')
+           if(bedrooms?.length === 2) {
+            if(bedrooms[1] === '5') {
+                setHalfRoomFlag(true)
+                setData({...data, bedRooms : Number(bedrooms[0])})
+            }
+           }
         }
         
-        console.log(propertyData)
+        console.log("test " , propertyData)
     }, [propertyData]);
 
     const assignPropertyCategory = (type) => {
@@ -76,12 +109,14 @@ const EditPost1 = (props) => {
     };
     const assignPropertyType = (type) => {
         setData({
-            ...data, postedById: userData.userid, propertyType: type, propertySubType: '', bedRooms: null, numberOfHalls: null, numberOfBaths: null,
-            kitchens: null, kitchenPantry: null, balcony: null, type: '', isNegotiable: null, coveredParking: null,
-            openParking: null, preferredFor: null, purpose: null, commercialProjectType: null,
-            plotArea: null, attachedOpenTerraceArea: null, attachedOpenAreaOrGarden: null, maintenanceCost: null,
-            propertyAge: null, propertyRate: null
-        })
+            ...data, propertyType: type, propertySubType: '', kitchenPantry: '', commercialProjectType: null,
+            plotArea: 0})
+        if((data.propertyType === 'Residential' || data.propertyType === 'Semi Commercial') && (type === 'Commercial')) {
+            setData({ ...data, propertyType: type, propertySubType: '', bedRooms: null, numberOfHalls: null, numberOfBaths: null,
+            kitchens: null, kitchenPantry: '', balcony: null, leaseType: null, preferredFor: null, purpose: null, commercialProjectType: null,
+            plotArea: 0})
+        }
+        setError({})
     };
     const assignPropertySubType = (type) => {
         setData({ ...data, propertySubType: type });
@@ -91,13 +126,17 @@ const EditPost1 = (props) => {
     };
     const assignHalfRoom = () => {
         if(!halfRoomFlag) {
-            let bedRoom = Number(data.bedRooms) + 0.5
-            setData({...data, bedRooms: bedRoom})
+            // let bedRoom = Number(data.bedRooms) + 0.5
+            // setData({...data, bedRooms: bedRoom})
             setHalfRoomFlag(true)
         }
         if(halfRoomFlag) {
-            let bedRoom = Number(data.bedRooms) - 0.5
-            setData({...data, bedRooms: bedRoom})
+            const bedrooms = (data?.bedRooms.toString())?.split('.')
+           if(bedrooms?.length === 2) {
+            if(bedrooms[1] === '5') {
+                setData({...data, bedRooms : Number(bedrooms[0])})
+            }
+           }
             setHalfRoomFlag(false)
         }
     };
@@ -132,7 +171,17 @@ const EditPost1 = (props) => {
     const [error, setError] = useState({});
     const history = useHistory();
 
-    const handleValidate = () => {
+    const handleValidate = async () => {
+        if(halfRoomFlag === true) {
+            const bedRoom = (data?.bedRooms?.toString())
+            const newValue = bedRoom?.concat(".5")
+            // await assignBedroomCount(newValue)
+            const modifiedData = data
+            modifiedData.bedRooms = newValue
+            setData(modifiedData)
+            console.log(newValue)
+            console.log(data.bedRooms)
+        }
         let validate = validateNewPost1(data);
         setError(validate.errors);
         console.log(validate.errors)
@@ -148,15 +197,24 @@ const EditPost1 = (props) => {
             if(data.smartdoorPropertyId === undefined || data.smartdoorPropertyId === null) {
                 data.smartdoorPropertyId = response?.data?.resourceData?.propertyId;
               }
+              localStorage.setItem('autoRefresh', 'Yes') 
             history.push('/admin/property/edit-address-details',{propertyData : propertyData, basicDetails : data})
         } catch (error) {
             console.error('Error:', error.message);   
         }
     }
+    
+    const showDraftModal = () => {
+        setDraftModal(true)
+    }
+
+    const hideDraftModal = () => {
+        setDraftModal(false)
+    }
 
     return (
         <>
-            <div className="whiteBg">
+            <div className="whiteBg" style={{height:'31.5rem', overflowY:'auto'}}>
                 <Text
                     size="medium"
                     fontWeight="mediumbold"
@@ -174,15 +232,15 @@ const EditPost1 = (props) => {
                     {/* <span style={{ color: 'red', fontSize: '25px' }}>*</span>  */}
                 </div>
                 <div className="d-flex">
-                    <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data?.propertyCategory === 'Rent' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
-                        onClick={() => assignPropertyCategory('Rent')} >
-                        <img className="p-2" src={mortgage} alt="" style={{ alignItems: 'center', width: '200px', height: '50px' }}></img>
+                    <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data?.propertyCategory === 'Lease' || data?.propertyCategory === 'Rent' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
+                        onClick={() => assignPropertyCategory('Lease')} >
+                        <img className="p-2" src={data?.propertyCategory === 'Lease' || data?.propertyCategory === 'Rent' ? mortgageActive : mortgageInactive} alt="" style={{ alignItems: 'center', width: '200px', height: '50px' }}></img>
                         <Text className="text-center mb-2" size="" text="Rent" />
                     </Col> &nbsp; &nbsp;
-                    <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data?.propertyCategory === 'Sell' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
-                        value="Sell" onClick={() => assignPropertyCategory('Sell')}>
-                        <img className="p-2" src={sell} alt="" style={{ alignItems: 'center', width: '200px', height: '50px' }}></img>
-                        <Text className="text-center mb-2" size="" text="Sell" />
+                    <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data?.propertyCategory === 'Sale' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
+                        value="Sell" onClick={() => assignPropertyCategory('Sale')}>
+                        <img className="p-2" src={data?.propertyCategory === 'Sale' ? sellActive : sellInactive} alt="" style={{ alignItems: 'center', width: '200px', height: '50px' }}></img>
+                        <Text className="text-center mb-2" size="" text="Sale" />
                     </Col>
                 </div>
                 <Text
@@ -202,21 +260,22 @@ const EditPost1 = (props) => {
                     {/* <span className="mt-3" style={{ color: 'red', fontSize: '25px' }}>*</span>  */}
                 </div>
                 <div className="d-flex">
-                    <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data?.propertyType === 'Residential' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                    <Card style={{width:'auto', alignItems: 'center', background: 'white', borderRadius: 8, border: data?.propertyType === 'Residential' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                         onClick={() => assignPropertyType('Residential')}>
-                        <img className="p-2" src={residential} alt="" style={{ alignItems: 'center', width: '200px', height: '50px', color: '#BE1452' }}></img>
-                        <Text className="text-center mb-2" size="" text="Residential" />
-                    </Col> &nbsp; &nbsp;
-                    <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data?.propertyType === 'Commercial' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                        <img className="p-2" src={data?.propertyType === 'Residential' ? residentialActive : residentialInactive} alt="" style={{ alignItems: 'center', height: '50px', color: '#BE1452' }}></img>
+                        <Text className="p-2" size="" text="Residential" />
+                    </Card> &nbsp; &nbsp;
+                    <Card style={{width:'auto', alignItems: 'center', background: 'white', borderRadius: 8, border: data?.propertyType === 'Commercial' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                         onClick={async () => assignPropertyType('Commercial')} >
-                        <img className="p-2" src={commercial} alt="" style={{ alignItems: 'center', width: '200px', height: '50px' }}></img>
-                        <Text className="text-center mb-2" size="" text="Commercial" />
-                    </Col> &nbsp; &nbsp;
-                    <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data?.propertyType === 'Semi Commercial' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                        <img className="p-2" src={data?.propertyType === 'Commercial' ? commercialACtive : commercialInaCtive} alt="" style={{ alignItems: 'center', height: '50px' }}></img>
+                        <Text className="p-2" size="" text="Commercial" />
+                    </Card> &nbsp; &nbsp;
+                    <Card style={{width:'auto', alignItems: 'center', background: 'white', borderRadius: 8, border: data?.propertyType === 'Semi Commercial' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                         onClick={async () => assignPropertyType('Semi Commercial')} >
-                        <img className="p-2" src={nonCommercial} alt="" style={{ alignItems: 'center', width: '200px', height: '50px' }}></img>
-                        <Text className="text-center mb-2" size="" text="Semi Commercial" />
-                    </Col>
+                        <img className="p-2" src={data?.propertyType === 'Semi Commercial' ? semiCommercialActive : semiCommercialInactive} alt="" style={{ alignItems: 'center', height: '50px' }}></img>
+                        <Text className="" size="" text="Semi" />
+                        <Text  className="px-2" size="" text="Commercial" />
+                    </Card>
                 </div>
                 <Text
                     className="pt-2"
@@ -237,18 +296,18 @@ const EditPost1 = (props) => {
                                 </Text>
 
                                 <div className="d-flex">
-                                    <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Apartment' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
-                                        onClick={() => assignPropertySubType('Apartment')} >
+                                    <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Apartments' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
+                                        onClick={() => assignPropertySubType('Apartments')} >
                                         <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Apartment" />
-                                    </Col> &nbsp; &nbsp;
-                                    <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Builder Floor' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                                    </Card> &nbsp; &nbsp;
+                                    <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Builder Floor' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                         onClick={() => assignPropertySubType('Builder Floor')} >
                                         <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Builder Floor" />
-                                    </Col> &nbsp; &nbsp;
-                                    <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Independent House Villa' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
-                                        onClick={() => assignPropertySubType('Independent House Villa')}>
+                                    </Card> &nbsp; &nbsp;
+                                    <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Independent House/Villa' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
+                                        onClick={() => assignPropertySubType('Independent House/Villa')}>
                                         <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Independent House Villa" />
-                                    </Col>
+                                    </Card>
                                 </div>
                                 <Text
                                     className="pt-2"
@@ -265,18 +324,18 @@ const EditPost1 = (props) => {
                                     size="medium"
                                     fontWeight="mediumbold"
                                     color="secondryColor"
-                                    text="What type of residential property?">
+                                    text="What type of Semi Commercial property?">
                                 </Text>
 
                                 <div className="d-flex">
-                                    <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Apartment' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
-                                        onClick={() => { setData({ ...data, propertySubType: 'Apartment' }) }} >
+                                    <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Apartments' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
+                                        onClick={() => { setData({ ...data, propertySubType: 'Apartments' }) }} >
                                         <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Apartment" />
-                                    </Col> &nbsp; &nbsp;
-                                    <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Independent House Villa' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
-                                        onClick={() => { setData({ ...data, propertySubType: 'Independent House Villa' }) }}>
+                                    </Card> &nbsp; &nbsp;
+                                    <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.propertySubType === 'Independent House/Villa' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
+                                        onClick={() => { setData({ ...data, propertySubType: 'Independent House/Villa' }) }}>
                                         <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Independent House Villa" />
-                                    </Col>
+                                    </Card>
                                 </div>
                                 <Text
                                     className="pt-2"
@@ -450,22 +509,19 @@ const EditPost1 = (props) => {
                                     <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 3 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }} onClick={() => assignBalconyCount(3)}>3</Button> &nbsp;
                                     <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 4 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
                                         onClick={() => assignBalconyCount(4)}>4</Button>&nbsp;
-                                    {!showAllBalcony ? (
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === '4+' ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                            onClick={() => setShowAllBalcony(true)}>4+</Button>
-                                    ) : (
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 5 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignBalconyCount(5)}>5</Button>
-                                    )}
                                 </div>
                                 {showAllBalcony ? (
                                     <div className="d-flex mt-2">
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 5 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }} onClick={() => assignBalconyCount(5)}>5</Button> &nbsp;
                                         <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 6 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }} onClick={() => assignBalconyCount(6)}>6</Button> &nbsp;
                                         <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 7 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }} onClick={() => assignBalconyCount(7)}>7</Button> &nbsp;
                                         <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 8 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }} onClick={() => assignBalconyCount(8)}>8</Button> &nbsp;
                                         <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 9 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }} onClick={() => assignBalconyCount(9)}>9</Button> &nbsp;
                                     </div>
-                                ) : (null)}
+                                ) : (
+                                    <Button className="py-2 mt-2" style={{ background: 'none', borderColor: data.balcony === '4+' ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => setShowAllBalcony(true)}>4+</Button>
+                                )}
                                 <Text
                                     color="dangerText"
                                     size="xSmall"
@@ -484,35 +540,33 @@ const EditPost1 = (props) => {
                                 </Text>
                                 <div className="d-flex">
                                     <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 0 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignCoveredParking(0)}>0</Button> &nbsp; &nbsp;
+                                        onClick={() => assignCoveredParking(0)}>0</Button> &nbsp;
                                     <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 1 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignCoveredParking(1)}>1</Button> &nbsp; &nbsp;
+                                        onClick={() => assignCoveredParking(1)}>1</Button> &nbsp;
                                     <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 2 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignCoveredParking(2)}>2</Button> &nbsp; &nbsp;
+                                        onClick={() => assignCoveredParking(2)}>2</Button> &nbsp;
                                     <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 3 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignCoveredParking(3)}>3</Button> &nbsp; &nbsp;
+                                        onClick={() => assignCoveredParking(3)}>3</Button> &nbsp;
                                     <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 4 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
                                         onClick={() => assignCoveredParking(4)}>4</Button>
-                                    {!showAllCoveredParkings ? (
-                                        <Button className="py-2" style={{ background: 'none', borderColor: '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                            onClick={() => setShowAllCoveredParkings(true)}>4+</Button>
-                                    ) : (
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 5 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignCoveredParking(5)}>5</Button>
-                                    )}
                                 </div>
                                 {showAllCoveredParkings ? (
                                     <div className="d-flex mt-2">
-                                    <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 6 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignCoveredParking(6)}>6</Button> &nbsp; &nbsp;
-                                    <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 7 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignCoveredParking(7)}>7</Button> &nbsp; &nbsp;
-                                    <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 8 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignCoveredParking(8)}>8</Button> &nbsp; &nbsp;
-                                    <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 9 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => assignCoveredParking(9)}>9</Button>
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.balcony === 5 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                        onClick={() => assignCoveredParking(5)}>5</Button> &nbsp;
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 6 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => assignCoveredParking(6)}>6</Button> &nbsp;
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 7 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => assignCoveredParking(7)}>7</Button> &nbsp;
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 8 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => assignCoveredParking(8)}>8</Button> &nbsp;
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.coveredParking === 9 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => assignCoveredParking(9)}>9</Button>
                                 </div>
-                                ) : (null)}
+                                ) : (
+                                    <Button className="py-2 mt-2" style={{ background: 'none', borderColor: '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => setShowAllCoveredParkings(true)}>4+</Button>
+                                )}
                                 <Text
                                     color="dangerText"
                                     size="xSmall"
@@ -623,18 +677,18 @@ const EditPost1 = (props) => {
                             text="Smart Lock Facility currently not applicable">
                         </Text>
                         <div className="d-flex">
-                            <Col lg="1" style={{ background: 'white', borderRadius: 8, border: data.commercialProjectType === 'Shop' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialProjectType === 'Shop' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => { setData({ ...data, commercialProjectType: 'Shop' }) }} >
                                 <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Shop" />
-                            </Col> &nbsp; &nbsp;
-                            <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.commercialProjectType === 'Restaurant' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                            </Card> &nbsp; &nbsp;
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialProjectType === 'Restaurant' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => { setData({ ...data, commercialProjectType: 'Restaurant' }) }} >
-                                <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Restaurant" />
-                            </Col> &nbsp; &nbsp;
-                            <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.commercialProjectType === 'Office' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                                <Text className="text-center mb-2  mt-2" fontWeight="mediumbold" color="secondryColor" text="Restaurant" />
+                            </Card> &nbsp; &nbsp;
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialProjectType === 'Office' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => { setData({ ...data, commercialProjectType: 'Office' }) }}>
                                 <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Office" />
-                            </Col>
+                            </Card>
                         </div>
                         <Text
                             color="dangerText"
@@ -650,22 +704,22 @@ const EditPost1 = (props) => {
                             text="Area">
                         </Text>
                         <div className="d-flex">
-                            <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.commercialArea === 'High Street' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialArea === 'High Street' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => assignCommercialArea('High Street')} >
                                 <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="High Street" />
-                            </Col> &nbsp; &nbsp;
-                            <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.commercialArea === 'Mall' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                            </Card> &nbsp; &nbsp;
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialArea === 'Mall' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => assignCommercialArea('Mall')} >
                                 <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Mall" />
-                            </Col> &nbsp; &nbsp;
-                            <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.commercialArea === 'Complex' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                            </Card> &nbsp; &nbsp;
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialArea === 'Complex' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => assignCommercialArea('Complex')}>
                                 <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Complex" />
-                            </Col> &nbsp; &nbsp;
-                            <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.commercialArea === 'Standalone' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                            </Card> &nbsp; &nbsp;
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialArea === 'Standalone' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => assignCommercialArea('Standalone')}>
                                 <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Standalone" />
-                            </Col>
+                            </Card>
                         </div>
                         <Text
                             color="dangerText"
@@ -681,18 +735,18 @@ const EditPost1 = (props) => {
                             text="Type">
                         </Text>
                         <div className="d-flex">
-                            <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.commercialType === 'Warm shell' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialType === 'Warm shell' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => assignCommercialType('Warm shell')} >
                                 <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Warm shell" />
-                            </Col> &nbsp; &nbsp;
-                            <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.commercialType === 'Bare shell' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                            </Card> &nbsp; &nbsp;
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialType === 'Bare shell' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => assignCommercialType('Bare shell')} >
                                 <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Bare shell" />
-                            </Col> &nbsp; &nbsp;
-                            <Col lg="2" style={{ background: 'white', borderRadius: 8, border: data.commercialType === 'Furnished' ? '2px #BE1452 solid' : '2px #DEDEDE solid' }}
+                            </Card> &nbsp; &nbsp;
+                            <Card className="px-2" style={{ background: 'white', borderRadius: 8, border: data.commercialType === 'Furnished' ? '2px #BE1452 solid' : '2px #DEDEDE solid', cursor:'pointer' }}
                                 onClick={() => assignCommercialType('Furnished')}>
                                 <Text className="text-center mb-2 mt-2" fontWeight="mediumbold" color="secondryColor" text="Furnished" />
-                            </Col>
+                            </Card>
                         </div>
                         <Text
                             color="dangerText"
@@ -700,6 +754,21 @@ const EditPost1 = (props) => {
                             className="pt-2"
                             text={error.commercialType}
                         />
+                        {data.commercialType === 'Furnished' ? 
+                        <>
+                            <div className="mt-2 col-4">
+                                <TextField
+                                    className="w-100"
+                                    type="text"
+                                    multiline
+                                    maxRows={2}
+                                    id="outlined-required"
+                                    // label="Enter Property Price"
+                                    defaultValue={data?.furnishedText}
+                                    onInput={(e) => { setData({ ...data, furnishedText: (e.target.value) }) }}
+                                    />
+                            </div>
+                        </> : null}
                         <div className="d-flex">
                             <div>
                                 <Text
@@ -710,41 +779,41 @@ const EditPost1 = (props) => {
                                     text="restrooms">
                                 </Text>
                                 <div className="d-flex">
-                                    <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 0 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => { setData({ ...data, numberOfBaths: 0 }) }}>0</Button> &nbsp;
-                                    <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 1 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => { setData({ ...data, numberOfBaths: 1 }) }}>1</Button> &nbsp;
-                                    <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 2 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => { setData({ ...data, numberOfBaths: 2 }) }}>2</Button> &nbsp;
-                                    <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 3 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                        onClick={() => { setData({ ...data, numberOfBaths: 3 }) }}>3</Button> &nbsp;
+                                    <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 0 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                        onClick={() => { setData({ ...data, restRoom: 0 }) }}>0</Button> &nbsp;
+                                    <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 1 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                        onClick={() => { setData({ ...data, restRoom: 1 }) }}>1</Button> &nbsp;
+                                    <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 2 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                        onClick={() => { setData({ ...data, restRoom: 2 }) }}>2</Button> &nbsp;
+                                    <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 3 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                        onClick={() => { setData({ ...data, restRoom: 3 }) }}>3</Button> &nbsp;
                                     {!showAllBathrooms ? (
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === '3+' ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === '3+' ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
                                         onClick={() => { setShowAllBathrooms(true)}}>3+</Button>
                                         ) : (
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 4 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                            onClick={() => { setData({ ...data, numberOfBaths: 4 }) }}>4</Button>
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 4 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => { setData({ ...data, restRoom: 4 }) }}>4</Button>
                                     )}
                                 </div>
                                 {showAllBathrooms ? (
                                     <div className="d-flex mt-2">
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 5 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                            onClick={() => { setData({ ...data, numberOfBaths: 5 }) }}>5</Button> &nbsp;
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 6 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                            onClick={() => { setData({ ...data, numberOfBaths: 6 }) }}>6</Button> &nbsp;
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 7 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                            onClick={() => { setData({ ...data, numberOfBaths: 7 }) }}>7</Button> &nbsp;
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 8 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                            onClick={() => { setData({ ...data, numberOfBaths: 8 }) }}>8</Button> &nbsp;
-                                        <Button className="py-2" style={{ background: 'none', borderColor: data.numberOfBaths === 9 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
-                                            onClick={() => { setData({ ...data, numberOfBaths: 9 }) }}>9</Button> &nbsp;
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 5 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => { setData({ ...data, restRoom: 5 }) }}>5</Button> &nbsp;
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 6 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => { setData({ ...data, restRoom: 6 }) }}>6</Button> &nbsp;
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 7 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => { setData({ ...data, restRoom: 7 }) }}>7</Button> &nbsp;
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 8 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => { setData({ ...data, restRoom: 8 }) }}>8</Button> &nbsp;
+                                        <Button className="py-2" style={{ background: 'none', borderColor: data.restRoom === 9 ? '#BE1452' : '#DEDEDE', color: 'GrayText', borderRadius: '10' }}
+                                            onClick={() => { setData({ ...data, restRoom: 9 }) }}>9</Button> &nbsp;
                                     </div>
                                 ) : (null)}
                                 <Text
                                     color="dangerText"
                                     size="xSmall"
                                     className="pt-2"
-                                    text={error.numberOfBaths}
+                                    text={error.restRoom}
                                 />
                             </div>
                             <Col lg="2"></Col>
@@ -937,7 +1006,7 @@ const EditPost1 = (props) => {
                                     text={error.type}
                                 />
                             </div>
-                            <div className="col-1"></div>
+                            {/* <div className="col-1"></div>
                             <div>
                                 <Text
                                     className="text-capitalize mt-4 h6"
@@ -960,11 +1029,11 @@ const EditPost1 = (props) => {
                                     className="pt-2"
                                     text={error.leaseType}
                                 />
-                            </div>
+                            </div> */}
                         </div>
                     </>
                 )}
-                {data?.propertyType === 'Semi Commercial' && (
+                {((data?.propertyType === 'Semi Commercial' || data?.propertyType === 'Residential') && (data.propertyCategory === 'Rent' || data.propertyCategory === 'Lease')) && (
                     <>
                         <div className="d-flex">
                             <div>
@@ -1061,13 +1130,13 @@ const EditPost1 = (props) => {
                                 required 
                                 borderRadius={10}
                                 type="number"
-                                min={1}
+                                inputProps={{ min: 0 }}
                                 id="outlined-required"
                                 label="Enter Property Age"
                                 InputProps={{
                                     endAdornment: <InputAdornment position="start">sqft</InputAdornment>,
                                 }}
-                                defaultValue={data?.propertyAge}
+                                value={data?.propertyAge}
                                 onInput={(e) => { setData({ ...data, propertyAge: e.target.value }) }}
                                 />
                             <Text
@@ -1093,14 +1162,14 @@ const EditPost1 = (props) => {
                                 className="w-100"
                                 required
                                 type="number"
-                                min={1}
+                                inputProps={{ min: 0 }}
                                 id="outlined-required"
-                                label="Enter Property Price"
+                                label={data.propertyCategory === "Sale" ? "Enter Property Price" : "Rent/Lease(Incl. Maintenance charges)"}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">Rs</InputAdornment>,
                                 }}
-                                defaultValue={data?.propertyRate}
-                                onInput={(e) => { setData({ ...data, propertyRate: Number(e.target.value) }) }}
+                                value={data?.propertyRate}
+                                onInput={(e) => { setData({ ...data, propertyRate: (e.target.value) }) }}
                                 />
                             <Text
                                 color="dangerText"
@@ -1123,16 +1192,15 @@ const EditPost1 = (props) => {
                             </Form.Group> */}
                             <TextField
                                 className="w-100"
-                                required
                                 type="number"
-                                min={1}
+                                inputProps={{ min: 0 }}
                                 id="outlined-required"
-                                label="Enter Maintenance charges"
+                                label="Enter Maintenance charges (Monthly)"
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">Rs</InputAdornment>,
                                 }}
-                                defaultValue={data?.maintenanceCost}
-                                onInput={(e) => { setData({ ...data, maintenanceCost: Number(e.target.value) }) }}
+                                value={data?.maintenanceCost}
+                                onInput={(e) => { setData({ ...data, maintenanceCost: (e.target.value) }) }}
                                 />
                             <Text
                                 color="dangerText"
@@ -1143,6 +1211,29 @@ const EditPost1 = (props) => {
                         </Col>
                     </Row>
                     <Row>
+                        {data.propertySubType === 'Independent House/Villa' ? <>
+                        <Col lg="4">
+                            <TextField
+                                className="w-100 mt-4"
+                                required style={{borderRadius:10}}
+                                type="number"
+                                inputProps={{ min: 0 }}
+                                id="outlined-required"
+                                label="Plot Area"
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">Sq.Ft.</InputAdornment>,
+                                }}
+                                value={data?.plotArea}
+                                onInput={(e) => { setData({ ...data, plotArea: (e.target.value) }) }}
+                                />
+                            <Text
+                                color="dangerText"
+                                size="xSmall"
+                                className="pt-2"
+                                text={error.plotArea}
+                            />
+                        </Col>
+                        </> : null }
                         <Col lg="4">
                             {/* <Form.Group>
                                 <Form.Label>Buildup Area(Including Balcony)</Form.Label>
@@ -1159,20 +1250,20 @@ const EditPost1 = (props) => {
                                 className="w-100 mt-4"
                                 required style={{borderRadius:10}}
                                 type="number"
-                                min={1}
+                                inputProps={{ min: 0 }}
                                 id="outlined-required"
-                                label="Build Up Area (Including Balcony)"
+                                label="Buildup Area (Including Balcony)"
                                 InputProps={{
                                     endAdornment: <InputAdornment position="end">Sq.Ft.</InputAdornment>,
                                 }}
-                                defaultValue={data?.plotArea}
-                                onInput={(e) => { setData({ ...data, plotArea: Number(e.target.value) }) }}
+                                value={data?.carpetArea}
+                                onInput={(e) => { setData({ ...data, carpetArea: (e.target.value) }) }}
                                 />
                             <Text
                                 color="dangerText"
                                 size="xSmall"
                                 className="pt-2"
-                                text={error.plotArea}
+                                text={error.carpetArea}
                             />
                         </Col>
                         <Col lg="4">
@@ -1188,16 +1279,15 @@ const EditPost1 = (props) => {
                             </Form.Group> */}
                             <TextField
                                 className="w-100 mt-4"
-                                required
                                 type="number"
-                                min={1}
+                                inputProps={{ min: 0 }}
                                 id="outlined-required"
                                 label="Attached Open Terrace Area"
                                 InputProps={{
                                     endAdornment: <InputAdornment position="start">Sq.Ft.</InputAdornment>,
                                 }}
-                                defaultValue={data?.attachedOpenTerraceArea}
-                                onInput={(e) => { setData({ ...data, attachedOpenTerraceArea: Number(e.target.value) }) }}
+                                value={data?.attachedOpenTerraceArea}
+                                onInput={(e) => { setData({ ...data, attachedOpenTerraceArea: (e.target.value) }) }}
                                 />
                             <Text
                                 color="dangerText"
@@ -1206,6 +1296,40 @@ const EditPost1 = (props) => {
                                 text={error.attachedOpenTerraceArea}
                             />
                         </Col>
+                        { data.propertyType === "Commercial" ? 
+                        <>
+                            <Col lg="4">
+                            {/* <Form.Group>
+                                <Form.Label>Attached Open Terrace Area</Form.Label>
+                                <Form.Control
+                                    type="number"
+                                    maxLength="35"
+                                    placeholder="Enter Open Terrace Area"
+                                    value={data.attachedOpenTerraceArea}
+                                    onInput={(e) => { setData({ ...data, attachedOpenTerraceArea: e.target.value }) }}
+                                />
+                            </Form.Group> */}
+                            <TextField
+                                className="w-100 mt-4"
+                                required
+                                type="number"
+                                inputProps={{ min: 0 }}
+                                id="outlined-required"
+                                label="Balcony/Open Area"
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="start">Sq.Ft.</InputAdornment>,
+                                }}
+                                value={data?.balconyOpenArea}
+                                onInput={(e) => { setData({ ...data, balconyOpenArea: (e.target.value) }) }}
+                                />
+                            <Text
+                                color="dangerText"
+                                size="xSmall"
+                                className="pt-2"
+                                text={error.balconyOpenArea}
+                            />
+                        </Col>
+                        </> : null}
                         <Col lg="4">
                             {/* <Form.Group>
                                 <Form.Label>Attached Open Area/Garden</Form.Label>
@@ -1219,16 +1343,15 @@ const EditPost1 = (props) => {
                             </Form.Group> */}
                             <TextField
                                 className="w-100 mt-4"
-                                required
                                 type="number"
-                                min={1}
+                                inputProps={{ min: 0 }}
                                 id="outlined-required"
                                 label="Attached Open Area/Garden"
                                 InputProps={{
                                     endAdornment: <InputAdornment position="start">Sq.Ft.</InputAdornment>,
                                 }}
-                                defaultValue={data?.attachedOpenAreaOrGarden}
-                                onInput={(e) => { setData({ ...data, attachedOpenAreaOrGarden: Number(e.target.value) }) }}
+                                value={data?.attachedOpenAreaOrGarden}
+                                onInput={(e) => { setData({ ...data, attachedOpenAreaOrGarden: (e.target.value) }) }}
                                 />
                             <Text
                                 color="dangerText"
@@ -1241,11 +1364,43 @@ const EditPost1 = (props) => {
                 </form>
                 <div className="d-flex mt-4">
                     <Buttons type="button" size={"medium"} color={"secondary"} onClick={() => {
-                        history.goBack();
-                    }} name="Cancel" /> &nbsp;
+                        history.replace('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid}) ;
+                        window.history.go(-1);
+
+                        }} name="Cancel" /> &nbsp;
                     <Buttons name="Next" onClick={() => handleValidate()} />
                 </div>
             </div>
+            <Modal show={ draftModal } onHide={() => { hideDraftModal() }} centered style={{ backgroundImage: 'unset' }}>
+                <Modal.Body>
+                    <div>
+                        <Text
+                            size="regular"
+                            fontWeight="bold"
+                            color="secondryColor"
+                            className="text-center"
+                            text="Confirmation" />
+
+                        <Text
+                            size="regular"
+                            fontWeight="bold"
+                            color="secondryColor"
+                            className="text-center"
+                            text={"Do you want to save ?"} />
+
+                        <div className="text-center mt-5 mb-3">
+                            <Buttons
+                                name="No"
+                                className="mr-3"
+                                onClick={() => { history.push('/admin/property/property-details', {propertyId : propertyData.smartdoorPropertyId, userId: userData.userid}) }} />
+                            <Buttons
+                                name="Yes"
+                                className="mr-3"
+                                onClick={() => { handleValidate() }} />
+                        </div>
+                    </div>
+                </Modal.Body>
+            </Modal>
         </>
     )
 }

@@ -1,18 +1,48 @@
-import { React, useMemo } from 'react'
+import { React, useCallback, useEffect, useMemo } from 'react'
 import SearchInput from '../../../shared/Inputs/SearchInput/SearchInput'
 import Pagination from "../../../shared/DataTable/Pagination";
 import { compose } from "redux";
 import { useState } from 'react';
-import { Form, Card, Row, Col, Button } from 'react-bootstrap';
+import { Card, Row, Col } from 'react-bootstrap';
+import Image from '../../../shared/Image/Image';
+import contentIco from '../../../assets/images/content-ico.svg';
 import Text from '../../../shared/Text/Text';
-import DataTable from '../../../shared/DataTable/DataTable';
 import Buttons from '../../../shared/Buttons/Buttons';
 import { Link } from 'react-router-dom/cjs/react-router-dom';
+import ListingDataTable from '../../../shared/DataTable/ListingDataTable';
+import "./Avisors.scss"
+import { TextField } from '@mui/material';
+import { getPropertyByUserId } from '../../../common/redux/actions';
+import { provideAuth } from '../../../common/helpers/Auth';
+import { ToolTip, formateDate, handleStatusElement } from '../../../common/helpers/Utils';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const Advisors = (props) => {
-
+    const history = useHistory();
     const [filterText, setFilterText] = useState("");
     const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+    const { userData } = provideAuth();
+    const [propertyData, setPropertyData] = useState([])
+
+    const [loading, setLoading] = useState(true);
+    const _getPropertyData = useCallback (() => {
+        getPropertyByUserId({userId: userData.userid, recordes : 1000, pagenumber : 1})
+        .then((response) => {
+            setLoading(false);
+            if(response?.data?.status === 200) {
+                setPropertyData(response?.data?.resourceData)
+            }
+        })
+         .catch((error) => {
+            setLoading(false);
+            console.log("error", error);
+         });
+    },[userData.userid])
+
+    useEffect(async () => {
+        await _getPropertyData();
+    },[_getPropertyData]);
+
     const PaginationComponent = (props) => (
         <Pagination {...props} PaginationActionButton={PaginationActionButton} />
     );
@@ -43,58 +73,83 @@ const Advisors = (props) => {
     const columns = [
         {
             name: "Posted On",
-            selector: "Posted On",
-            maxWidth: "350px",
+            selector: "addedOn",
             sortable: true,
             center: true,
+            minWidth: '150px',
+            style: { padding: "0 !important" },
+            cell: ({ addedOn }) => <span>{`${ formateDate(addedOn) }` || '-'}</span>,
         },
         {
             name: "Customer Name",
-            selector: "Customer Name",
+            selector: (row) => row.propertyPostedBy,
             sortable: true,
-            maxWidth: "200px",
-            center: false
+            minWidth: "200px",
+            style: { padding: "0 !important" },
+            center: true
         },
         {
             name: "Location",
-            selector: "",
+            selector: (row) => row.propertyAddress === null ? '-' : row.propertyAddress,
             sortable: false,
-            maxWidth: "200px",
-            center: false
+            wrap:true,
+            minWidth: "180px",
+            style: { padding: "0 !important" },
+            center: true
         },
         {
             name: "Plan",
-            selector: "Plan",
+            selector: (row) => row.currentPlanName === null ? '-' : row.currentPlanName,
             sortable: true,
-            maxWidth: "100px",
-            center: false
+            minWidth: "50px",
+            style: { padding: "0 !important" },
+            center: true
         },
         {
             name: "Config",
-            selector: "Configuration",
+            selector: (row) => row.propertyInfoResponse.majorityComposition === null ? '-' : row.propertyInfoResponse.majorityComposition,
             sortable: false,
-            maxWidth: "100px",
+            minWidth: "80px",
             center: true
         },
         {
             name: "Status",
-            selector: "Status",
+            selector: "status",
             sortable: false,
-            maxWidth: "150px",
-            center: true
+            minWidth: "80px",
+            center: true,
+            cell: ({ status }) => <span>{status !== null ? handleStatusElement(status) : '-'}</span>,
         },
         {
             name: "Action",
-            selector: "Action",
+            selector: (row) => row,
             sortable: false,
-            maxWidth: "200px",
-            end: true
+            minWidth: "30px",
+            center: false,
+            cell: ({ row, smartdoorPropertyId }) => (
+                <div className="action">
+                  <ToolTip position="left" name="View Details">
+                    <span>
+                        <Image name="contentIco" src={contentIco} onClick={() => {
+                            selectedProperty(smartdoorPropertyId)
+                            console.log(smartdoorPropertyId)
+                            }} />
+                    </span>
+                  </ToolTip>
+                </div>
+              ),
         },
     ]
-
-    let style = {
-        width : "fit-content"
+    
+    const selectedProperty = (data) => {
+        propertyData.forEach((element) => {
+            if(element.smartdoorPropertyId === data) {
+                history.push('/admin/posts/add-new-post/basic-details',{propertyData : element});
+                return true;
+            }
+        })
     }
+
     return (
         <>
             <div className="whiteBg">
@@ -104,60 +159,52 @@ const Advisors = (props) => {
                     color="secondryColor"
                     text="Add New Posting for new/existing User"
                 />
-                <div className="newPost mb-0">
-                    <form noValidate autoComplete="off" className='py-0'>
-                        <Row>
-                            <Col lg="4">
-                                <Form.Group>
-                                    <Form.Label>Mobile No.</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        maxLength="35"
-                                        placeholder="Enter Mobile No." />
-                                </Form.Group>
-                                <Text
-                                    color="dangerText"
-                                    size="xSmall"
-                                    className="pt-2"
-                                    text=""
+                <div className="mt-3">
+                    <Row>
+                        <Col lg="4">
+                            <TextField
+                                className="w-100"
+                                type="number"
+                                id="outlined-required"
+                                label="Enter Mobile No."
                                 />
-                            </Col>
-                            <Col lg="4">
-                                <Form.Group>
-                                    <Form.Label>Full Name</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        maxlength="35"
-                                        placeholder="Enter Full Name"
-
-                                    />
-                                </Form.Group>
-                                <Text
-                                    color="dangerText"
-                                    size="xSmall"
-                                    className="pt-2"
-                                    text=""
+                            <Text
+                                color="dangerText"
+                                size="xSmall"
+                                className="pt-2"
+                                text=""
+                            />
+                        </Col>
+                        <Col lg="4">
+                            <TextField
+                                className="w-100"
+                                type="text"
+                                id="outlined-required"
+                                label="Enter Full Name."
                                 />
-                            </Col>
-                            <Col lg="4">
-                                <Form.Group>
-                                    <Form.Label>Society Name</Form.Label>
-                                    <Form.Control
-                                        type="text"
-                                        maxLength="35"
-                                        placeholder="Enter Society Name"
-                                    />
-                                </Form.Group>
-                                <Text
-                                    color="dangerText"
-                                    size="xSmall"
-                                    className="pt-2"
-                                    text=""
+                            <Text
+                                color="dangerText"
+                                size="xSmall"
+                                className="pt-2"
+                                text=""
+                            />
+                        </Col>
+                        <Col lg="4">
+                            <TextField
+                                className="w-100"
+                                type="text"
+                                id="outlined-required"
+                                label="Enter Society Name"
                                 />
-                            </Col>
-                        </Row>
-                    </form>
-                    <Link to="/admin/posts/add-new-post/basic-details">
+                            <Text
+                                color="dangerText"
+                                size="xSmall"
+                                className="pt-2"
+                                text=""
+                            />
+                        </Col>
+                    </Row>
+                    <Link to={"/admin/posts/add-new-post/basic-details"}>
                         <Buttons type='submit' className='py-2' name='Add New Post' />
                     </Link>
                 </div>
@@ -176,36 +223,26 @@ const Advisors = (props) => {
                 </div>
 
                 <Card>
-                    <Row>
-                        <Col lg="7"></Col>
-                        <Col lg="3">
-                            <div  className="locationSelect d-flex" style={style}>
-                                {subHeaderComponentMemo}
-                            </div>
-                        </Col>
-                        <Col className='align-items-center' lg="1">
-                            <Buttons type='submit' name = "Date" className='mt-3 me-3' size="Small" style={ style} />
-                        </Col>
-                        <Col className='text-center' lg="1">
-                            <Buttons type='submit' name = "Filters" className='mt-3 me-3' size="Small" style={style} />
-                        </Col>
-                    </Row>
-                </Card>
-
-                <Card>
-                    <DataTable
+                    <div  className="locationSelect d-flex mb-0" style={{justifyContent: 'right'}}>
+                        <div className='mt-3'>
+                            {subHeaderComponentMemo}
+                        </div> &nbsp; &nbsp;
+                        <Buttons name = "Date" className='mt-3' size="Small" /> &nbsp; &nbsp;
+                        <Buttons name = "Filters" className='mt-3' size="Small"/> &nbsp; &nbsp;
+                    </div>
+                    <ListingDataTable
                         columns={columns}
+                        data={propertyData}
                         paginationComponent={PaginationComponent}
                         paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                         paginationPerPage={8}
                         perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                         filterText={filterText}
-                        subHeaderComponent={subHeaderComponentMemo}
                         persistTableHead="true"
-                        filterComponent={subHeaderComponentMemo}
+                        style={{borderRadius:'0'}}
                     >
 
-                    </DataTable>
+                    </ListingDataTable>
                 </Card>
             </div>
 

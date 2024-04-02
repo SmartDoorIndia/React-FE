@@ -151,3 +151,28 @@
              margin-right:10px;
          }
      }
+
+     .planDetailTable {
+        .rdt_TableBody {
+            max-height: calc(55vh - 20px);
+            height: 55vh;
+            overflow-y: visible;
+            overflow-x: hidden;
+            .rdt_TableRow {
+                .rdt_TableCell {
+                    text-align: center;
+                    &:nth-child(3) {
+                        text-align: center;
+                        .elipsis-text {
+                            white-space: nowrap;overflow: hidden;
+                            width: 120px;min-width: 120px;
+                            text-overflow: ellipsis;display: block;text-align: center;
+                            @media (max-width:1440px) {
+                             width: 90px;min-width: 90px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }

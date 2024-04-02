@@ -132,7 +132,8 @@ const Broker = (props) => {
          name: "Name",
          selector: "name",
          center: false,
-         minWidth: "100px",
+         minWidth: "150px",
+         maxWidth:"150px",
       },
       {
          name: "Location",
@@ -147,6 +148,7 @@ const Broker = (props) => {
          sortable: true,
          center: false,
          minWidth: "145px",
+         maxWidth:"150px",
       },
       {
          name: "Email",
@@ -189,6 +191,7 @@ const Broker = (props) => {
          sortable: false,
          center: true,
          minWidth: "150px",
+         maxWidth:"150px",
          cell: (row) => (
             <div className="action">
                <ToolTip name="View Details">

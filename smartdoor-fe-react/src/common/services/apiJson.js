@@ -420,12 +420,14 @@ export const ApiJson = {
       url: "/admin/property/getAllPropertyCustom",
       method: "POST",
       data: {
-         userId: "",
-         city: "",
-         location: "",
-         zipcode: "",
-         pageSize: "",
-         pageNo: "",
+        "userId": "",
+        "city":"",
+        "location":"",
+        "zipcode":"",
+        "pageSize": "",
+        "pageNo": "",
+        "fromDate": null,
+        "toDate":null
       },
       headers: {
          Accept: "*/*",
@@ -463,11 +465,11 @@ export const ApiJson = {
       },
       showResultMessage: false,
       showErrorMessage: false,
-   },
-   // GET /property/getPropertyById/{propertyId}/{userId}
-   getPropertyDetails: {
-      url: "/admin/property/getPropertyById/:propertyId/:userId",
-      method: "GET",
+    },
+    // GET /property/getPropertyById/{propertyId}/{userId}
+    getPropertyDetails: {
+      url: '/consumer/property/getPropertyById/:propertyId/:userId',
+      method: 'GET',
       data: {},
       headers: {
          Accept: "*/*",
@@ -654,9 +656,253 @@ export const ApiJson = {
       showErrorMessage: false,
    },
 
-   editUser: {
-      url: "/admin/user/editUser",
-      method: "PUT",
+    getPlansForAdmin: {
+      url: '/consumer/property/getPlansForAdmin',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    
+    getNonSDProperties: {
+      url: '/admin/property/getnonSmartlockProperties',
+      method: 'POST',
+      data: {
+        "userId": "",
+        "city":"",
+        "location":"",
+        "zipcode":"",
+        "pageSize": "",
+        "pageNo": "",
+      },
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    getPropertyAnalyticsByPropertyId: {
+      url: '/admin/property/getPropertyAnalytics/:propertyId',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    getPropertyCity: {
+      url: '/admin/property/getPropertyCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    getSocietyLeadsCity: {
+      url: '/admin/sales/getSocietyLeadsCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    getInstallationRequestCity: {
+      url: '/admin/execution/getInstallationRequestCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    getSalesTeamCity: {
+      url: '/admin/sales/getSalesTeamCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+  
+    getAllPublishedPropertyCity: {
+      url: '/admin/execution/getAllPublishedPropertyCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    getAllExecutiveTeamsCity: {
+      url: '/admin/execution/getAllExecutiveTeamsCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    getServiceRequestCity: {
+      url: '/admin/execution/getServiceRequestCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    getAllSocietyCity: {
+      url: '/admin/society/getAllSocietyCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    getExecutionDashboardCount: {
+      url: 'admin/execution/getExecutionDashboardCount',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    approveProperty: {
+      url: '/admin/execution/approveProperty/:propertyId',
+      method: 'PUT',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    disableSociety: {
+      url: '/admin/society/disableSociety/:societyId',
+      method: 'PUT',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    getAllConsumerUsers: {
+      url: '/admin/consumer/getAllUsers?city=:city&records=:records&pageNumber=:pageNumber',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    getAllConsumers: {
+      url: '/admin/user/getAllUserDetails',
+      method: 'POST',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    getUpcomingVisits: {
+      url: '/consumer/visit/UpcomingVisits/:userId',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    getVisitRequests: {
+      url: '/consumer/visit/getVisitReqHistory/:userId',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    allNotification: {
+      url: '/consumer/notification/:userId',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    getConsumerPropertyByUserId: {
+      url: '/admin/consumer/getPropertyByUserId/:userId?records=:records&pageNumber=:pageNumber',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  // http://localhost:8759/admin/finance/refund/transactions
+    getConsumerTransactionsByUserId: {
+      url: '/admin/finance/refund/transactions',
+      method: 'POST',
       data: {
          active: true,
          city: "",
@@ -704,7 +950,97 @@ export const ApiJson = {
       },
       showResultMessage: false,
       showErrorMessage: false,
-   },
+    },
+  
+    // /finance/getBuybackRequests
+    getBuybackRequests: {
+      url: '/admin/finance/getBuybackRequests',
+      method: 'POST',
+      data: {     
+          // "id": 0,
+          "pageNo": '',
+          "pageSize": '',
+          // "userId": ''      
+      },
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    blockConsumerUser: {
+      url: 'admin/consumer/blockUser/:userId',
+      method: 'PUT',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    getAllServiceRequest: {
+      url: '/admin/consumer/getAllPreviousServiceRequest/:userId',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    // for consumer details
+    getConsumerDetails: {
+      url: '/admin/consumer/getConsumerDetails/:userId',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    giftCoinsToConsumer: {
+      url: '/admin/consumer/addSDcoinsToConsumer/:consumerId/:coins',
+      method: 'PUT',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    //http://103.187.101.53:8751/admin/finance/getUserDetailById/305/67
+    getConsumerDetailsFinance: {
+      url: '/admin/finance/getUserDetailById/:userId/:transactionId',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    // refund request detail page api
+    refundRequestDetail: {
+      url: '/admin/finance/buyback/details/:buybackRequestId',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
 
    //activateDeactivateUser
    //http://localhost:8759/admin/user/activateDeactivateUser/124?isActive=true%27
@@ -850,9 +1186,90 @@ export const ApiJson = {
       showErrorMessage: false,
    },
 
-   getNonSDProperties: {
-      url: "/admin/property/getnonSmartlockProperties",
-      method: "GET",
+    getPlanDetailsById: {
+      url: '/consumer/property/getsingleplandetail/:planId',
+      method: 'GET',
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    getAllExecutionCompletedTask: {
+      url: '/admin/execution/getAllCompletedTask/:userId?fromDate=:fromDate&toDate=:toDate',
+      method: 'GET',
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    getAllExecutionTask: {
+      url: '/admin/execution/getAllTask/:userId?fromDate=:fromDate&toDate=:toDate',
+      method: 'GET',
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    getTaskDetail: {
+      url: '/admin/execution/getTaskDetail/:taskId',
+      method: 'GET',
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    getExecutiveCalendar: {
+      url: '/admin/execution/getExecutiveCalendar?weekStartDate=:weekStartDate&weekEndDate=:weekEndDate&cityId=:city',
+      method: 'GET',
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+    changeAssignee: {
+      url: '/admin/execution/changeAssignee',
+      method: 'PUT',
+      data: {
+        userRequestId: '',
+        executivePersonId: '',
+        timeSlot: '',
+        userRequestDate: '',
+        city: '',
+      },
+    },
+    // consumer/property/rePublishProperty/{propertyId}
+    republish: {
+      url: '/consumer/property/rePublishProperty/:id',
+      method: 'PUT',
+      data: {
+        id: '',
+      },
+    },
+    changeDepartmentAssignee: {
+      url: '/admin/helpdesk/assignTeam/:serviceRequestId?teamName=:teamName',
+      method: 'PUT',
+      data: {},
+    },
+    closeSalesLead: {
+      url: '/admin/sales/closeLead/:leadId',
+      method: 'PUT',
+      data: {},
+    },
+    getAllFilters: {
+      url: '/admin/property/getAllFilters',
+      method: 'GET',
       data: {},
       headers: {
          Accept: "*/*",
@@ -872,10 +1289,23 @@ export const ApiJson = {
       },
       showResultMessage: false,
       showErrorMessage: false,
-   },
-   getPropertyCity: {
-      url: "/admin/property/getPropertyCity",
-      method: "GET",
+    },
+  
+    getInstallationCity: {
+      url: '/consumer/property/getAllInstallationTeamsCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    getSocietyByCity: {
+      url: '/admin/property/getSocietyByCity?city=:city&societyString=:societyString',
+      method: 'GET',
       data: {},
       headers: {
          Accept: "*/*",
@@ -1313,8 +1743,8 @@ export const ApiJson = {
    },
    getExecutiveList: {
       // city=:city&date=:date&timeSlot=:timeSlot
-      url: "admin/execution/getExecutiveList?city=:city&date=:date&timeSlot=:timeSlot&userRequestId=:userRequestId",
-      method: "GET",
+      url: 'admin/execution/getExecutiveList?date=:date&timeSlot=:timeSlot&userRequestId=:userRequestId',
+      method: 'GET',
       headers: {
          Accept: "*/*",
          "Content-Type": "application/json",
@@ -1700,7 +2130,60 @@ export const ApiJson = {
       },
       showResultMessage: false,
       showErrorMessage: false,
-   },
+    },
+  
+    // getAllCityUsingGET
+    getAllCity: {
+      url: '/admin/user/getAllCity',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    // getAllCityUsingGET
+    getAllCityWithId: {
+      url: '/admin/property/getCityList',
+      method: 'POST',
+      data: {
+        stateId: null,
+        smartdoorServiceStatus: true
+      },
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    getAllStateWithId: {
+      url: '/admin/property/getAllStates',
+      method: 'GET',
+      data: {},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+  
+    // getAllCityUsingGET
+    getLocationByCity: {
+      url: '/admin/user/getLocation?city=:city',
+      method: 'GET',
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
 
    // getAllCityUsingGET
    getAllCity: {
@@ -2176,9 +2659,21 @@ export const ApiJson = {
       showErrorMessage: false,
    },
 
-   addNewPost: {
-      url: "/consumer/property/addPropertyBasicDetails",
-      method: "POST",
+    getPropertyByUserId: {
+      url: '/consumer/property/getPropertyByUserId/:userId?records=:recordes&pageNumber=:pagenumber',
+      method: 'GET',
+      data:{},
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+    },
+
+    addNewPost: {
+      url: '/consumer/property/addPropertyBasicDetails',
+      method: 'POST',
       data: {
          smartdoorPropertyId: null,
          postedById: null,
@@ -2290,17 +2785,163 @@ export const ApiJson = {
          "Content-Type": "application/json",
       },
       showResultMessage: true,
-      showErrorMessage: true,
-   },
-   getPlanDetails: {
-      url: "consumer/property/getPlanDetail",
-      method: "GET",
-      data: {},
-      headers: {
-         Accept: "*/*",
-         "Content-Type": "application/json",
+      showErrorMessage: true
+    },
+    deletePropertyById: {
+      url : 'consumer/property/deletePropertyById/:propertyId',
+      method : 'DELETE',
+      data : {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
       },
       showResultMessage: true,
-      showErrorMessage: true,
-   },
-};
+      showErrorMessage: true
+    },
+    restorePropertyById: {
+      url : 'admin/property/restore/:propertyId',
+      method : 'PUT',
+      data : {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    getStaticMobNums: {
+      url:'/admin/admin/getStaticMobile',
+      method : 'GET',
+      data : {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    setStaticMobNums: {
+      url:'/admin/admin/setStaticMobile',
+      method : 'POST',
+      data : {
+        mobile : ''
+      },
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    getCoinTransactions: {
+      url:'consumer/transaction/getTransactionForUser/:userId/:pageNumber/:records',
+      method:'POST',
+      data: {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    getPropertyPlanDetails: {
+      url:'admin/property/getPropertyPlandetails/:propertyId',
+      method:'GET',
+      data: {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    uploadImage: {
+      url: 'consumer/user/uploadImages',
+      method: 'PUT',
+      data: {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'multipart/form-data'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    setWorkCityRequest: {
+      url: '/admin/property/setCityList',
+      method: 'POST',
+      data: {
+        userId: null,
+        cityIdList: []
+      },
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+    setServiceStatus: {
+      url: '/admin/property/setCityServiceStatus/:cityId/:status',
+      method: 'PUT',
+      data: {
+        cityId: null,
+        status: null
+      },
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+
+    getFeaturedVideosList: {
+      url: '/admin/system/getValues/:parameterId',
+      method: 'GET',
+      data: {},
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+
+    setFeaturedVideosList: {
+      url: '/admin/system/addFeaturedVideos',
+      method: 'PUT',
+      data: {
+        parameterId:'',
+        parameterType:'',
+        value:'',
+        parameterDescription:''
+      },
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    },
+
+    getSystemVariables: {
+      url: '/consumer/user/getSystemVariables/:receiverId',
+      method: 'GET',
+      data: { },
+      headers : {
+        'Accept': '*/*',
+        'Content-Type': 'application/json'
+      },
+      showResultMessage: true,
+      showErrorMessage: true
+    }
+  };
+  
+  
+  
+  
+  
+  
+  
+  
+  

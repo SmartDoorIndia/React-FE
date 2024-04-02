@@ -41,6 +41,8 @@ const AutoCompleteInput = (props) => {
     onInputChange,
     onBlurInput,
     onSelectOption,
+    cityLatLng,
+    cityName,
     ...rest
   } = props;
 
@@ -49,9 +51,19 @@ const AutoCompleteInput = (props) => {
   id = id || defaultID;
   placeholder = placeholder || 'Enter Location';
 
+  let cityBounds = {
+    north: cityLatLng?.lat + 1.5,
+    south: cityLatLng?.lat - 1.5,
+    east: cityLatLng?.lng + 1.5,
+    west: cityLatLng?.lng - 1.5,
+  };
+
   let options = {
+    bounds: cityLatLng === null ? null : cityBounds,
+    // types:['(cities)'],
     componentRestrictions: { country: 'IN' },
     strictBounds: true,
+    lang: 'en'
   };
 
   if (radius) {
@@ -137,6 +149,7 @@ const AutoCompleteInput = (props) => {
         const circle = new google.maps.Circle({
           center: new google.maps.LatLng(center.lat, center.lng),
           radius: 15000,
+          language:['en']
         });
         autoComplete.setBounds(circle.getBounds());
 
@@ -262,27 +275,31 @@ const AutoCompleteInput = (props) => {
       <Form.Control
         type="text"
         id={ id }
-        autoComplete="off"
+        contentEditable
+        // autoComplete="off"
         autoFill="off"
         placeholder={ placeholder }
         value={ customValue }
-        onKeyPress={(e)=>{
-          if (/[0-9]/.test(e.key)) {
-            e.preventDefault()
-          }
-        }}
+        // onKeyPress={(e)=>{
+        //   if (/[0-9]/.test(e.key)) {
+        //     e.preventDefault()
+        //   }
+        // }}
         onBlur={()=>{
           if(onBlurInput)
           onBlurInput()
         }}
         onChange={ (e) => {
-          const result = e.target.value.replace(/[^a-z]/gi, '');                               
+          const result = e.target.value.replace(/[^a-z\s0-9]/gi, '');                               
           onInputChange(result)
         }}
-        onInput={(e) => {
-          loadLocationListner()
-        }}
+        // onInput={(e) => {
+        //   console.log(e)
+        //   loadLocationListner()
+        // }}
+        onSelectCapture={()=>{loadLocationListner()}}
         { ...rest }
+        onSelect={()=>{loadLocationListner()}}
       />
     </Form.Group>
   );

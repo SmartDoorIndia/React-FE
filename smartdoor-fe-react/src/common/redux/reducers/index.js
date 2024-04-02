@@ -40,6 +40,8 @@ import {
   dashboardTitle,
   allAdminRoles,
   allCities,
+  allCitiesWithId,
+  allStatesWithId,
   allLocationsByCity,
   userAuthData,
   generalCityDepData,
@@ -81,6 +83,7 @@ import {
 import { allPlanDataBroker } from './views/ManageBroker.reducer';
 import { addNewPostReducer } from './views/addNewPost.reducer';
 import { addNewPost2Reducer } from './views/addNewPost2.reducer';
+import { featuredVideos } from './views/featuredVideos.reducer';
 
 import { USER_LOGOUT } from '../types';
 
@@ -97,6 +100,8 @@ const appReducer = combineReducers({
   allSocietyData,
   allAdminRoles,
   allCities,
+  allCitiesWithId,
+  allStatesWithId,
   allLocationsByCity,
   userAuthData,
   excutiveTeamsData,
@@ -149,6 +154,7 @@ const appReducer = combineReducers({
   addNewPostReducer,
   addNewPost2Reducer,
   allPlanDataBroker,
+  featuredVideos
 });
 
 const rootReducer = (state, action) => {

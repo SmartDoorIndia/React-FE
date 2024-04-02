@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useState, useEffect, memo } from "react";
-import { connect } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { compose } from "redux";
 import Text from "../../../shared/Text/Text";
 import Form from "react-bootstrap/Form";
@@ -31,18 +31,8 @@ import { TableLoader } from "../../../common/helpers/Loader";
 import blockIconActive from "../../../assets/svg/dismiss-icon-active.svg";
 import { provideAuth } from "../../../common/helpers/Auth";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
+import * as Actions from '../../../common/redux/types';
 
-const PaginationActionButton = () => (
-   <div className="d-flex justify-content-between tableBottom">
-      <span></span>
-      <Link to="/admin/user-management/add-new-member">
-         <Buttons name="Add New Entry" varient="success" type="submit" size="Small" color="white" />
-      </Link>
-   </div>
-);
-const PaginationComponent = (props) => (
-   <Pagination {...props} PaginationActionButton={PaginationActionButton} />
-);
 const ProgressComponent = <TableLoader />;
 const POSITION_MODULE_VAL = {
    "Sales Admin": "SALES",
@@ -63,15 +53,15 @@ const getModalActionData = (row) => {
 const UserManagement = (props) => {
    const { userData } = provideAuth();
    const moduleName = props.location?.state?.moduleName ? props.location?.state?.moduleName : ''
-
+   const dispatch = useDispatch();
    console.log("user mgmnt:userData:", userData);
-   console.log(moduleName,"moduleName");
-   console.log(props,"generalCityDepData");
-
+   console.log(moduleName, "moduleName");
+   console.log(props, "generalCityDepData");
+   const data = useSelector(state => state.allUsersData.data);
    const { getAllUsers, allUsersData, getCityAndDept, generalCityDepData, getLocationByCity } =
       props;
-   const [city, setCity] = useState("");
-   const [location, setLocation] = useState("");
+   const [city, setCity] = useState(data.length !== 0 ? allUsersData.data?.city : "");
+   const [location, setLocation] = useState(data.length !== 0 ? allUsersData.data?.city : "");
    const [departments, setDepartment] = useState(props.location?.state?.moduleName ? props.location?.state?.moduleName : "");
 
    const [show, setShow] = useState(false);
@@ -86,9 +76,11 @@ const UserManagement = (props) => {
    const [modalData, setModalData] = useState();
 
    // state to manage the search filter component
-   const [filterText, setFilterText] = React.useState('');
-	const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
-
+   const [filterText, setFilterText] = React.useState(data.length !== 0 ? allUsersData.data?.searchStr :'');
+   const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
+   const [defaultSort, setDefaultSort] = useState(data.length !== 0 ? allUsersData?.data?.defaultSort : true);
+   const [defaultSortId, setDefaultSortId] = useState(data.length !== 0 ? allUsersData?.data?.defaultSortId : 'id');
+   const [defaultSortFieldId, setDefaultSortFieldId] = useState(data.length !== 0 ? allUsersData?.data?.defaultSortFieldId : 1);
    // const [dates, setDates] = useState([
    //    {
    //       startDate: new Date(),
@@ -96,6 +88,97 @@ const UserManagement = (props) => {
    //       key: "selection",
    //    },
    // ]);
+
+   const PaginationActionButton = () => (
+      <div className="d-flex justify-content-between tableBottom">
+         <span></span>
+         <Link to="/admin/user-management/add-new-member">
+            <Buttons name="Add New Entry" varient="success" type="submit" size="Small" color="white" />
+         </Link>
+      </div>
+   );
+
+   const [currentPage, setCurrentPage] = useState(data.length !== 0 ? allUsersData?.data?.currentPage : 1);
+   const [rowsPerPage, setRowsPerPage] = useState(data.length !== 0 ? allUsersData?.data?.rowsPerPage : 8);
+   let recordsPerPage = (data.length !== 0 ? allUsersData?.data?.rowsPerPage : 8);
+   const recordSize = (allUsersData?.data?.records);
+
+   const handlePageChange = (newPage) => {
+      // Handle the page change in the parent component
+      setCurrentPage(Number(newPage));
+      console.log(currentPage)
+
+      const regex = /([^,]+),\s*(\d{6})/;
+      const matches = location.match(regex);
+      if (matches) {
+         let zipcode = matches[2]
+         getAllUsers({
+            searchByCity: city,
+            // searchByzipCode: location,
+            pageSize: rowsPerPage,
+            pageNo: newPage,
+            userId: userData.userid,
+            searchString: filterText,
+            departmentName: departments,
+            defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
+         });
+      } else {
+         let zipcode = ""
+         let location = ""
+         getAllUsers({
+            searchByCity: city,
+            // searchByzipCode: location,
+            pageSize: rowsPerPage,
+            pageNo: newPage,
+            userId: userData.userid,
+            searchString: filterText,
+            departmentName: departments,
+            defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
+         });
+      }
+   };
+
+   const handleRowsPerPageChange = async (newRowsPerPage) => {
+      
+      const regex = /([^,]+),\s*(\d{6})/;
+      const matches = location.match(regex);
+      setRowsPerPage(Number(newRowsPerPage))
+      recordsPerPage = Number(newRowsPerPage)
+      console.log(`Rows per page changed to: ${recordsPerPage}`);
+      if (matches) {
+         let zipcode = matches[2]
+         getAllUsers({
+            searchByCity: city,
+            // searchByzipCode: location,
+            pageSize: Number(newRowsPerPage),
+            pageNo: currentPage,
+            userId: userData.userid,
+            searchString: filterText,
+            departmentName: departments
+         });
+      } else {
+         let zipcode = ""
+         let location = ""
+         getAllUsers({
+            pageNo: currentPage,
+            pageSize: Number(newRowsPerPage),
+            searchByCity: city,
+            // searchByzipCode: location,
+            departmentName: departments,
+            searchString: filterText,
+         });
+      }
+   };
+
+   const PaginationComponent = (props) => (
+      <Pagination {...props}
+         rowCount={recordSize}
+         rowsPerPage={recordsPerPage}
+         onChangeRowsPerPage={handleRowsPerPageChange}
+         currentPage={currentPage}
+         onChangePage={handlePageChange}
+         PaginationActionButton={PaginationActionButton} />
+   );
 
    const handleBlockUser = () => {
       console.log("blockData.isBlocked:", blockData.isBlocked);
@@ -109,7 +192,7 @@ const UserManagement = (props) => {
       );
       blockTeamMember({ userId: blockData.id, startDate: startDt, endDate: endDt })
          .then((data) => {
-            getAllUsers({pageNumber:"", records:"",searchByCity:city, searchByzipCode:location, departmentName: departments});
+            getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments });
             setDatePickerblockvalue([]);
          })
          .catch((error) => {
@@ -118,19 +201,23 @@ const UserManagement = (props) => {
       handleClose();
    };
 
-   useEffect(() => {
-      getCityAndDept();
-   }, [getCityAndDept]);
-
+   // useEffect(() => {
+   //    if(data?.length === 0) {
+   //    }
+   // }, [getCityAndDept]);
+   
    useEffect(() => {
       // if (city === "" && departments === "") {
-         getAllUsers({pageNumber:"", records:"",searchByCity:"", searchByzipCode:"", departmentName: departments});
-      } 
+         if(data?.length === 0 || props?.location?.state?.autoRefresh === 'Yes') {
+         getCityAndDept();
+         getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: "", departmentName: departments,defaultSort: true, defaultSortId: 'id', defaultSortFieldId: 1 });
+      }
+   }
       // else {
       //    getUserByCityAndDept({ city, departments });
       // }
-   // }
-   , [ getAllUsers]);
+      // }
+      , [getAllUsers, getCityAndDept]);
 
    const columns = [
       {
@@ -138,15 +225,17 @@ const UserManagement = (props) => {
          selector: "id",
          center: true,
          sortable: true,
+         id: 1
       },
 
       {
          name: "Joined On",
-         selector: "joiningDate",
+         selector: ((row) => row.joiningDate),
          maxWidth: "120px",
          sortable: true,
          center: true,
          cell: ({ joiningDate }) => <span>{formateDate(joiningDate)}</span>,
+         id: 2
       },
       {
          name: "Name ",
@@ -158,54 +247,60 @@ const UserManagement = (props) => {
                {/* <div className="userImage">
           <Image name="userImage" src={ imageUrl || userImage } />
         </div> */}
-        <ToolTip
-            position="top"
-            name={
-               <div>
-                  {" "}
-                  <span>{name || "-"} </span>
-                  <span> {`(${contactNumber})`} </span>
-               </div>
-            }
-         >
-               <Text size="Small" color="secondryColor" text={name ? name.capitalizeWord() : "-"} />
+               <ToolTip
+                  position="top"
+                  name={
+                     <div>
+                        {" "}
+                        <span>{name || "-"} </span>
+                        <span> {`(${contactNumber})`} </span>
+                     </div>
+                  }
+               >
+                  <Text size="Small" color="secondryColor" text={name ? name.capitalizeWord() : "-"} />
                </ToolTip>
             </div>
          ),
       },
-      {
-         name: "Location",
-         // selector: 'workLocation',
-         selector: (row) => row.workLocation,
-         center: true,
-         maxWidth: "150px",
-         cell: (row) => (
-            // <ToolTip
-            //    position="left"
-            //    style={{ width: "100%" }}
-            //    name={getLocationStr(row.workLocation)}
-            // >
-               <span className="cursor-pointer elipsis-text" title={row?.workLocation?.map(obj => obj.location)}>
-                  {row?.workLocation?.length && row?.workLocation !== null
-                     ? `${row?.workLocation[0]?.location.toString()}...`
-                     : "-"}
-               </span>
-            // </ToolTip>
-         ),
-      },
+      // {
+      //    name: "Location",
+      //    // selector: 'workLocation',
+      //    selector: (row) => row.workLocation,
+      //    center: true,
+      //    wrap: true,
+      //    maxWidth: "150px",
+      //    style: { padding: '0px !important' },
+      //    cell: (row) => (
+      //       // <ToolTip
+      //       //    position="left"
+      //       //    style={{ width: "100%" }}
+      //       //    name={getLocationStr(row.workLocation)}
+      //       // >
+      //       <span className="cursor-pointer elipsis-text" title={row?.workLocation?.map(obj => obj.location)}>
+      //          {row?.workLocation?.length && row?.workLocation !== null
+      //             ? `${row?.workLocation[0]?.location.toString()}...`
+      //             : "-"}
+      //       </span>
+      //       // </ToolTip>
+      //    ),
+      // },
       {
          name: "City",
          selector: "city",
          center: true,
-         maxWidth: "170px",
-         cell: ({ city }) => 
+         maxWidth: "250px",
+         style: { padding: '0px !important' },
+         wrap: true,
+         cell: ({ city }) =>
+            (<span className="cursor-pointer elipsis-text" title={city}>
+               {city.map((element) => <span>{element} {' '}</span>) || "-"}
+            </span>)
          // <ToolTip
          //       position="top"
          //       style={{ width: "100%" }}
          //       name={city}
          //    >
-         
-         <span className="cursor-pointer elipsis-text" title={city}>{city || "-"}</span>
+
          // </ToolTip>
          ,
       },
@@ -262,56 +357,93 @@ const UserManagement = (props) => {
       },
    ];
 
-   const closeModal = (data={isReload : false}) => {
-      if(data?.isReload) {
-         getAllUsers({pageNumber:"", records:"",searchByCity:city, searchByzipCode:location, departmentName: departments});
+   const closeModal = (data = { isReload: false }) => {
+      if (data?.isReload) {
+         getAllUsers({ pageNo: "", pageSize: "", searchString: filterText, searchByCity: city, departmentName: departments,defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
       }
       // getAllUsers({pageNumber:"", records:"",searchByCity:"", searchByzipCode:""});
       setModalData();
    };
 
    const subHeaderComponentMemo = React.useMemo(() => {
-		const handleClear = () => {
-			if (filterText) {
-				setResetPaginationToggle(!resetPaginationToggle);
-				setFilterText('');
-			}
-		};
+      const handleClear = () => {
+         if (filterText) {
+            setResetPaginationToggle(!resetPaginationToggle);
+            setFilterText('');
+         }
+      };
 
-		return (
-			<SearchInput onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} 
-      placeholder="Search here"
-      />
-		);
-	}, [filterText, resetPaginationToggle]);
+      return (
+         <SearchInput onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText}
+            placeholder="Search here"
+         />
+      );
+   }, [filterText, resetPaginationToggle]);
 
    function searchingLocation(element, index, array) {
       return element.location.toLowerCase().includes(filterText.toLowerCase());
-    }
+   }
 
-   const filteredItems = allUsersData.data.length ? 
-   allUsersData.data.filter(item => { 
-   return  item?.id === filterText || 
-   item?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
-   // item?.city?.toLowerCase().includes(filterText.toLowerCase()) ||
-   item?.position?.toLowerCase().includes(filterText.toLowerCase()) ||
-     
-   item?.workLocation?.some(searchingLocation)
-      // item.workLocation.filter(place => 
-      //     place?.location.toLowerCase().includes(filterText.toLowerCase())
-      
+   let filteredItems = allUsersData?.data?.userData?.length ?
+      allUsersData?.data?.userData
+      // ?.filter(item => {
+      //    return item?.id === filterText ||
+      //       item?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
+      //       // item?.city?.toLowerCase().includes(filterText.toLowerCase()) ||
+      //       item?.position?.toLowerCase().includes(filterText.toLowerCase()) ||
 
- }):[];
+      //       item?.workLocation?.some(searchingLocation)
+      //    // item.workLocation.filter(place => 
+      //    //     place?.location.toLowerCase().includes(filterText.toLowerCase())
 
- const _filterData = (city,zipCode,department_name ) => { 
-   // setInstallationCity(city);
-   getAllUsers({pageNumber:"", records:"",searchByCity:city, searchByzipCode:zipCode, departmentName: department_name});
- }
- console.log(allUsersData,"aaaaaaaaaaaaaaaaaaaaaaaaaa")
 
+      // }) 
+      : [];
+
+   const _filterData = (city, zipCode, department_name) => {
+      // setInstallationCity(city);
+      // getAllUsers({ pageNo: "", records: "", searchByCity: city, searchByzipCode: zipCode, departmentName: department_name });
+   }
+   console.log(allUsersData, "aaaaaaaaaaaaaaaaaaaaaaaaaa")
+
+   
+   const handleSortedData = (newSortedData) => {
+      // Store sorted data
+      const { selector, direction } = newSortedData;
+      let selectorVal = newSortedData?.selector?.toString().split('.');
+      selectorVal = selectorVal?.length > 1 ? selectorVal[1] : selectorVal[0]
+      console.log(selectorVal)
+      // Perform sorting based on selector and direction
+      const sorted = [...filteredItems].sort((a, b) => {
+         if (selectorVal === 'id') {
+            if (defaultSort === true) {
+               return a[selectorVal] - b[selectorVal]; // Example sorting logic
+            } else {
+               return b[selectorVal] - a[selectorVal]; // Example sorting logic for descending order
+            }
+         }
+         else if (selectorVal === 'joiningDate') {
+            const dateA = new Date(a[selectorVal]);
+            const dateB = new Date(b[selectorVal]);
+
+            if (defaultSort === true) {
+               return dateA - dateB;
+            } else {
+               return dateB - dateA;
+            }
+         }
+      });
+      setDefaultSort(!defaultSort)
+      // Update sorted data state
+      console.log(sorted);
+      filteredItems = [...sorted]
+      dispatch({ 
+         type: Actions.USER_MANAGEMENT_SUCCESS, 
+         data: {userData : [...sorted], records : recordSize, currentPage : currentPage, rowsPerPage : rowsPerPage, searchStr: filterText, city: city, location: location, department: departments, defaultSort: !defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId}});
+   };
    return (
       <>
-         <div className="tableBox mb-5">
+         <div className="tableBox ">
             <ConfirmationModal
                title={
                   blockData.isBlocked
@@ -337,11 +469,11 @@ const UserManagement = (props) => {
                   closeModal={closeModal}
                   history={{ goBack: closeModal }}
                   getAllUsers={getAllUsers}
-                  city = {city}
-                  location = {location}
-                  departments = {departments}
+                  city={city}
+                  location={location}
+                  departments={departments}
                />
-            )}  
+            )}
             {/* <Route
           path="/admin/user-management/user-details"
           excat
@@ -350,7 +482,7 @@ const UserManagement = (props) => {
           /> }
         /> */}
             {/* <Route path='/admin/user-management/user-details'  render={props=> <ModalModule {...props} allUsersData={allUsersData}/> }  />*/}
-            <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading"> 
+            <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
                <div className="text-nowrap mb-2">
                   <Text
                      size="regular"
@@ -360,107 +492,132 @@ const UserManagement = (props) => {
                   />
                </div>
                <div className="locationSelect d-flex align-items-xl-center align-items-left">
-               {subHeaderComponentMemo} 
-               {/* <div className="m-2"></div> */}
+                  {subHeaderComponentMemo}
+                  {/* <div className="m-2"></div> */}
                   <Form.Group controlId="exampleForm.SelectCustom" className="w-40 userGrp ml-0">
                      {/* <Form.Label>City:</Form.Label> */}
-                     <Form.Control as="select" 
-                     onChange={(e) => {
-                        setLocationsData([]);
-                        setCity(e.target.value)
-                        setLocation('');
-                        _filterData(e.target.value, "", departments);
-                        if(e.target.value.length){
-                        getLocationByCity({ city: e.target.value })
-                        .then((res) => {
-                           if (res.data && res.data.status === 200) {
-                              const locationsByCity = res.data.resourceData.locations.map(
-                                 (loc) => {
-                                    return {
-                                       ...loc,
-                                       location: `${loc.location} ,${loc.pinCode}`,
-                                    };
-                                 }
-                              );
-                              setLocationsData(locationsByCity);
-                              // this.setState({
-                              //    // allLocationsByCity: res.data.resourceData.locations,
-                              //    allLocationsByCity: locationsByCity,
-                              // });
+                     {/* <Form.Control as="select"
+                        onChange={(e) => {
+                           setLocationsData([]);
+                           setCity(e.target.value)
+                           setLocation('');
+                           _filterData(e.target.value, "", departments);
+                           if (e.target.value.length) {
+                              getLocationByCity({ city: e.target.value })
+                                 .then((res) => {
+                                    if (res.data && res.data.status === 200) {
+                                       const locationsByCity = res.data.resourceData.locations.map(
+                                          (loc) => {
+                                             return {
+                                                ...loc,
+                                                location: `${loc.location} ,${loc.pinCode}`,
+                                             };
+                                          }
+                                       );
+                                       setLocationsData(locationsByCity);
+                                       // this.setState({
+                                       //    // allLocationsByCity: res.data.resourceData.locations,
+                                       //    allLocationsByCity: locationsByCity,
+                                       // });
+                                    }
+                                 })
+                                 .catch((err) => console.log("err:", err));
                            }
-                        })
-                        .catch((err) => console.log("err:", err));
-                     }
-                     }}>
+                        }}>
                         <option value="">Select City</option>
                         {generalCityDepData.city
                            ? generalCityDepData.city.length
                               ? generalCityDepData.city.map((_value, index) => (
-                                   <option key={index} value={_value}>
-                                      {_value}
-                                   </option>
-                                ))
+                                 <option key={index} value={_value}>
+                                    {_value}
+                                 </option>
+                              ))
                               : null
                            : null}
-                     </Form.Control>
+                     </Form.Control> */}
                      {/* <div className="m-2"></div> */}
-                     {/* <Form.Label>Location:</Form.Label> */}  
-                     <Form.Control as="select" 
-                      value={location}
-                      className="locationWidth" 
-                     onChange={(e)=> {
-                        _filterData(city ,e.target.value, departments)
-                        setLocation(e.target.value)
-                      }}
+                     {/* <Form.Label>Location:</Form.Label> */}
+                     {/* <Form.Control as="select"
+                        value={location}
+                        className="locationWidth"
+                        onChange={(e) => {
+                           // _filterData(city, e.target.value, departments)
+                           setLocation(e.target.value)
+                        }}
                      >
-                     <option value="">Select Location</option>
+                        <option value="">Select Location</option>
                         {locationsData && locationsData.length
                            ? locationsData.map((_value, index) => (
-                                <option key={_value.pinCode} value={_value.pinCode}>
-                                   {_value.location}
-                                </option>
-                             ))
+                              <option key={_value.pinCode} value={_value.pinCode}>
+                                 {_value.location}
+                              </option>
+                           ))
                            : null}
-                     </Form.Control>
+                     </Form.Control> */}
                      {/* <div className="m-2"></div> */}
                      {/* <Form.Label>Department:</Form.Label> */}
-                        <Form.Control as="select" 
-                     value={departments}
-                     onChange={(e) => {
-                        _filterData(city ,location, e.target.value)
-                        setDepartment(e.target.value)
-                     }}
+                     <Form.Control as="select"
+                        value={departments}
+                        onChange={(e) => {
+                           // _filterData(city, location, e.target.value)
+                           setDepartment(e.target.value)
+                        }}
                      >
                         <option value="">Department</option>
                         {generalCityDepData.departments
                            ? generalCityDepData.departments.length
                               ? generalCityDepData.departments.map((_value, index) => (
-                                   <option key={index} value={_value}>
-                                      {_value}
-                                   </option>
-                                ))
+                                 <option key={index} value={_value}>
+                                    {_value}
+                                 </option>
+                              ))
                               : null
                            : null}
                      </Form.Control>
+                     <div className="ml-3">
+                        <Buttons
+                           name="Search"
+                           varient="primary"
+                           size="Small"
+                           color="white"
+                           style={{ height: "40px !important" }}
+                           onClick={() => {
+                              setCurrentPage(1)
+                              const regex = /([^,]+),\s*(\d{6})/;
+                              const matches = location.match(regex);
+                              getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText,  searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
+                           }}
+                        />
+                     </div>
                   </Form.Group>
                </div>
             </div>
             {/* <div className="d-flex justify-content-center tableBottom">
           <Link  to="/admin/sales/add/newmember"><Buttons name="Manage Team" varient="primary" type="submit" size="Small" color="white" /></Link>
       </div>*/}
+            <div className="userManagementTable">
 
-            <DataTableComponent
-               data={filteredItems}
-               columns={columns}
-               progressPending={allUsersData.isLoading}
-               paginationComponent={PaginationComponent}
-               perPageOptions={ [ 8,  16, 24, 32, 40, 48, 56, 64, 72, 80 ] }
-               paginationPerPage={ 8 }
-               paginationRowsPerPageOptions={ [ 8,  16, 24, 32, 40, 48, 56, 64, 72, 80 ] }
-               progressComponent={ProgressComponent}
-            />
+               <DataTableComponent
+                  data={filteredItems}
+                  columns={columns}
+                  progressPending={allUsersData.isLoading}
+                  paginationComponent={PaginationComponent}
+                  perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  paginationPerPage={recordsPerPage}
+                  currentPage={currentPage}
+                  onChangePage={ handlePageChange }
+                  onChangeRowsPerPage={ handleRowsPerPageChange }
+                  paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  progressComponent={ProgressComponent}
+                  paginationServer={true}
+                  onSort={handleSortedData}
+                  defaultSort={defaultSort}
+                  defaultSortId={defaultSortId}
+                  defaultSortFieldId={defaultSortFieldId}
+               />
+            </div>
 
-            {allUsersData.data.length ? null : (
+            {allUsersData.data.userData?.length ? null : (
                <div className="d-flex justify-content-center">
                   <PaginationActionButton />
                </div>

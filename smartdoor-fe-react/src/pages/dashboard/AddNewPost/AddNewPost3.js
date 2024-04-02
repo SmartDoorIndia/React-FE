@@ -7,8 +7,7 @@ import { useRef } from "react";
 import S3 from "react-aws-s3";
 import { addImage } from "../../../common/redux/actions"
 import Constants from "../../../common/helpers/Constants";
-import { connect, useSelector } from "react-redux";
-import { addNewPost2Reducer } from "../../../common/redux/reducers/views/addNewPost2.reducer";
+import { connect } from "react-redux";
 import { addNewPostReducer } from "../../../common/redux/reducers/views/addNewPost.reducer";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
@@ -22,12 +21,10 @@ const AddNewPost3 = (props) => {
 	const [imageArr, setImageArray] = useState([])
 	const [imageLoader, setImageLoader] = useState(false)
 	const [loading, setLoading] = useState(true);
-	const { basicDetails } = useState(location?.state?.basicDetails)
-	// const { addressDetails } = useSelector(state => state.addNewPost2Reducer)
 	const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 	const history = useHistory();
 	const { userData } = provideAuth();
-	const propertyId = 554
+	const propertyId = location?.state?.propertyId
 	const [propertyData, setpropertyData] = useState({})
 
 	const _getPropertyDetails = useCallback(() => {
@@ -73,7 +70,7 @@ const AddNewPost3 = (props) => {
 	 );
 
 	useEffect(() => {
-		console.log(basicDetails)
+		
 		// console.log(addressDetails)
 		_getPropertyDetails();
 	}, [addNewPostReducer, _getPropertyDetails]);
@@ -98,10 +95,11 @@ const AddNewPost3 = (props) => {
 			reader.readAsDataURL(event.target.files[0]);
 		}
 		console.log(event.target.files[0], "after upload files");
-		console.log(basicDetails)
 		const imageData = {
-			propertyId: 554,
+			propertyId: propertyId,
 			propertyDocs: [],
+			draft: false,
+			partial: true,
 			propertyImage: [
 				{
 					docId: null,
@@ -113,44 +111,47 @@ const AddNewPost3 = (props) => {
 		console.log(event.target.files, "before s3 files");
 		if (event.target.files.length > 0) {
 			setImageLoader(true);
-			ReactS3Client.uploadFile(event.target.files[0], event.target.files[0].name)
-				.then((data) => {
-					console.log("data", data);
-					const property_image = [];
-					property_image.push({
-						docId: null,
-						docName: "",
-						docURL: data.location,
-					});
-					const image_data = {
-						...imageData,
-						propertyDocs: [],
-						propertyImage: property_image,
-					};
-					addImage(
-						image_data
-					)
-						.then((response) => {
-							setLoading(false);
-							if (response.data) {
-								if (response.data.resourceData) {
-									setImageLoader(false);
-									_getPropertyDetails();
-									const imageArray = Array.from(event.target.files[0])?.map((file) => URL.createObjectURL(file));
-									setImageArray(imageArray);
-									console.log(imageArray)
-								}
-							}
-						})
-						.catch((error) => {
-							setImageLoader(false);
-							setLoading(false);
-							console.log("error", error);
-						});
+			Array.from(event.target.files).map((file) => {
 
-				})
-				.catch((err) => {
-				});
+				ReactS3Client.uploadFile(file, file.name)
+					.then((data) => {
+						console.log("data", data);
+						const property_image = [];
+						property_image.push({
+							docId: null,
+							docName: "",
+							docURL: data.location,
+						});
+						const image_data = {
+							...imageData,
+							propertyDocs: [],
+							propertyImage: property_image,
+						};
+						addImage(
+							image_data
+						)
+							.then((response) => {
+								setLoading(false);
+								if (response.data) {
+									if (response.data.resourceData) {
+										setImageLoader(false);
+										_getPropertyDetails();
+										const imageArray = Array.from(file)?.map((file) => URL.createObjectURL(file));
+										setImageArray(imageArray);
+										console.log(imageArray)
+									}
+								}
+							})
+							.catch((error) => {
+								setImageLoader(false);
+								setLoading(false);
+								console.log("error", error);
+							});
+	
+					})
+					.catch((err) => {
+					});
+			})
 			console.log(event.target.files[0], "end file");
 		}
 	};
@@ -182,7 +183,7 @@ const AddNewPost3 = (props) => {
 				<input
 					hidden
 					type="file"
-					multiple={false}
+					multiple={true}
 					ref={fileInputRef}
 					onChange={(e) => {
 						fileUpload(e);
@@ -202,11 +203,9 @@ const AddNewPost3 = (props) => {
 				</div>
 			</div>
 			<div className="d-flex">
-				<button color="gray">Cancel</button> &nbsp;
-				{/* <Link to="/admin/posts/add-new-post/basic-details">
-					</Link> */}
-				<Buttons name="Back" onClick={() => { history.push('/admin/posts/add-new-post/address') }}></Buttons> &nbsp;
-				<Buttons name="Next" onClick={() => { history.push('/admin/posts/add-new-post/info',{basicDetails: basicDetails}) }} />
+			<Buttons type="button" size={"medium"} color={"secondary"} onClick={() => { history.push('/admin/advisors') }} name="Cancel" /> &nbsp;
+				<Buttons name="Back" onClick={() => { history.push('/admin/posts/add-new-post/address', {propertyData: propertyData, propertyId: propertyId}) }}></Buttons> &nbsp;
+				<Buttons name="Next" onClick={() => { history.push('/admin/posts/add-new-post/info', {propertyData: propertyData}) }} />
 			</div>
 		</>
 	)

@@ -1,6 +1,7 @@
 /** @format */
 
 import React from 'react';
+import { sassFalse } from 'sass';
 
 // Lazy import of Dashboard's components
 const SalesDashboard = React.lazy(() => import('./SalesModule/SalesDashboard'));
@@ -36,6 +37,13 @@ const AddNewPost5 = React.lazy(() => import('./AddNewPost/AddNewPost5'));
 const Brokers = React.lazy(() => import('./Broker/Broker'));
 const BrokerApprovedDetail = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
 const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails') );
+const StaticMobNumbers = React.lazy(() => import('./StaticMobileNums/StaticMobNums'))
+const AddCoins = React.lazy(() => import('./AddCoins/AddCoins'))
+const ChatWithOwner = React.lazy(() => import('./ChatWithOwner/chatWithOwner'))
+const FeaturedVideos = React.lazy(() => import('./FeaturedVideos/FeaturedVideos'))
+const MarketingAgency = React.lazy(() => import('./MarketingAgencyModule/MarketingAgency/MarketingAgencyList'))
+const Add_EditAgency = React.lazy(() => import('./MarketingAgencyModule/Add_EditAgency'))
+const AgencyDetail = React.lazy(() => import('./MarketingAgencyModule/AgencyDetials/AgencyDetail'))
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -96,7 +104,7 @@ const TransactionDashboard = React.lazy(() => import('./TransactionDashboard/Tra
 const TransactionDetailsPage = React.lazy(() => import('./TransactionDashboard/TranscationDetails/TransactionDetails'));
 const TransactionListingPage = React.lazy(() => import('./TransactionDashboard/TransactionListing/TransactionListing'));
 const DealApprovalDetailPage = React.lazy(()=> import('./TransactionDashboard/DealApproval/DealApproval'))
-
+const SmartDoorCities = React.lazy(() => import('./SmartdoorCities/SmartDoorCities'))
 
 // Routing data
 const routeData = [
@@ -390,7 +398,8 @@ const routeData = [
   {
     path: '/admin/property/property-details',
     name: 'Properties',
-    bradcrumb: [ 'Property Listed', 'Property Details' ],
+    // bradcrumb: [ 'Property Listed', 'Property Details' ],
+    bradcrumb: false,
     excat: true,
     module: 'EXECUTION',
     component: PropertyDetailsModule,
@@ -432,7 +441,7 @@ const routeData = [
   {
     path: '/admin/property/edit-basic-details',
     name: 'Edit Basic Details',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: [],
     excat: true,
     module: 'EXECUTION',
     component: EditPost1,
@@ -440,7 +449,7 @@ const routeData = [
   {
     path: '/admin/property/edit-address-details',
     name: 'Edit Address Details',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: [],
     excat: true,
     module: 'EXECUTION',
     component: EditPost2,
@@ -448,7 +457,7 @@ const routeData = [
   {
     path: '/admin/property/upload-property-image',
     name: 'Upload Property Images',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: [],
     excat: true,
     module: 'EXECUTION',
     component: EditPost3,
@@ -456,7 +465,7 @@ const routeData = [
   {
     path: '/admin/property/edit-more-info',
     name: 'Edit Info',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: [],
     excat: true,  
     module: 'EXECUTION',
     component: EditPost4,
@@ -464,7 +473,7 @@ const routeData = [
   {
     path: '/admin/deleted-unlisted-property/view-property',
     name: 'Properties',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: false,
     excat: true,
     module: 'EXECUTION',
     component: PropertyDetailsModule,
@@ -930,7 +939,77 @@ const routeData = [
     component: AddNewPost5,
     stepper: '5',
     module : 'NEW POST'
-  }
+  },
+
+  //Static Mobile Numbers
+  {
+    path: '/admin/static-mobile-numbers',
+    name: 'Static Mobile Numbers',
+    bradcrumb: [],
+    excat: true,
+    component: StaticMobNumbers
+  },
+
+  //Add coins
+  {
+    path: '/admin/add-coins',
+    name: 'Add Coins',
+    bradcrumb: [],
+    excat: true,
+    component: AddCoins
+  },
+
+  {
+    path: '/admin/smartdoor-cities',
+    name: 'Smartdoor Cities',
+    bradcrumb: false,
+    excat: true,
+    component: SmartDoorCities
+  },
+
+  {
+    path: '/admin/chat-history',
+    name: 'Chat History',
+    bradcrumb: ['Back'],
+    excat: true,
+    module: 'EXECUTION',
+    component: ChatWithOwner
+  },
+
+  {
+    path: '/admin/featured-videos',
+    name: 'Featured Videos',
+    bradcrumb: false,
+    excat: true,
+    component: FeaturedVideos
+  },
+
+  {
+    path: '/admin/marketingAgency',
+    name: 'Marketing Agency',
+    bradcrumb: false,
+    excat: true,
+    module:'MARKETING',
+    component: MarketingAgency
+  },
+
+  {
+    path: '/admin/marketing-Agency/addAgency',
+    name: 'Add New Agency',
+    bradcrumb: ['Marketing Agency', 'Add New'],
+    excat: true,
+    module:'MARKETING',
+    component: Add_EditAgency
+  },
+
+  {
+    path: '/admin/marketing-Agency/agencyDetails',
+    name: 'Agency Details',
+    bradcrumb: ['Marketing Agency', 'Agency Details'],
+    excat: true,
+    // module:'MARKETING',
+    component: AgencyDetail
+  },
 
   // {
   //   path: '/admin/execution/installation-detail/property-details',
