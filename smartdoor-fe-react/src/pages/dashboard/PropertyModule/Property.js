@@ -31,6 +31,7 @@ const PropertyModule = (props) => {
    const { getAllProperties, allPropertyData, getPropertyCity, getPropertyCityData } = props;
    const [ sliceFrom, setSliceFrom ] = useState(4);
    const userData = getLocalStorage("authData");
+   console.log(userData,"userdatagfjk")
    const [ p_city, setp_City ] = useState('');
 
    function formateAddress(address, city) {

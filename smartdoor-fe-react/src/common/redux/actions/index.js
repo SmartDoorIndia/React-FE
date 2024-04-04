@@ -511,6 +511,7 @@ export const getBrokerListing  = (data) => async (dispatch) => {
 
 export const getBrokerPostedProperty = (data) => async (dispatch) => {
   const response = await mainApiService('getBrokerPostedProperty', data);
+  console.log(response,"response")
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
@@ -573,6 +574,7 @@ export const addHoldRequestComments = async (data) => {
 export const getAllProperties = (data) => async (dispatch) => {
   dispatch({ type: Actions.PROPERTY_MODULE_LOADING, data: {} });
   const response = await mainApiService('getAllProperties', data);
+  console.log(response,'responsrrrrrre');
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
       await dispatch({ type: Actions.PROPERTY_MODULE_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate:data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId,} });

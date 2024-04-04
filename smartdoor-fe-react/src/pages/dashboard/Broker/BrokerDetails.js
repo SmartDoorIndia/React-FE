@@ -15,7 +15,7 @@ import DataTable from "../../../shared/DataTable/DataTable";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useParams } from "react-router-dom";
 import { DateRangePicker, Stack } from "rsuite";
-import { ToolTip } from "../../../common/helpers/Utils";
+import { ToolTip, getLocalStorage } from "../../../common/helpers/Utils";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import Hold from "../../../shared/Modal/BrokerDetailModal/BrokerDetailModal";
@@ -25,6 +25,7 @@ import {
    getBrokerPostedProperty,
    getPropertyDetails,getBrokerListing,
    addHoldRequestComments,
+   getAllProperties,
 } from "../../../common/redux/actions";
 import moment from "moment";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
@@ -36,10 +37,8 @@ const BrokerDetails = (props) => {
    const handleShow = () => setShow(true);
    const [modalData, setModalData] = useState();
    const [count, setCount] = useState(0);
-   const statusArr = CONSTANTS_STATUS.brokerStatus;
+   const statusArr = CONSTANTS_STATUS.brokerPostedProperty;
    const { brokerdetailId } = useParams();
-   const { propertyId } = useParams();
-   const { userId } = useParams();
    const [blockData, setBlockData] = useState(null);
 
    const [Broker_data, setBrokerData] = useState([]);
@@ -52,6 +51,9 @@ const BrokerDetails = (props) => {
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [holdStatus, setHoldStatus] = useState(false);
    const [postedProperty, setPostedProperty] = useState([]);
+   const userData = getLocalStorage("authData");
+   console.log(userData,"userdata")
+
    console.log(postedProperty,"ffjgfhjg")
    const toggleHoldStatus = () => {
       setHoldStatus(!holdStatus);
@@ -191,6 +193,8 @@ useEffect(()=>{
    //    key: "selection",
    // };
 
+   
+
    const columns = [
       {
          name: "Posted On",
@@ -237,20 +241,42 @@ useEffect(()=>{
          center: true,
          cell: ({ status }) => handleStatusElement(status),
       },
+      // {
+      //    name: "Action",
+      //    sortable: false,
+      //    center: true,
+      //    minWidth: "120px",
+      //    maxWidth: "100px",
+      //    cell: ({row, propertyId, userId}) => (
+      //       <div className="action">
+      //          <ToolTip name="View Details">
+      //             <span>
+      //                <Link
+      //                   to={{
+      //                      pathname: "/admin/property/property-details",
+      //                      state: { propertyId: propertyId, userId: userId },
+      //                   }}
+      //                >
+      //                   Details
+      //                </Link>
+      //             </span>
+      //          </ToolTip>
+      //       </div>
+      //    ),
+      // },
       {
          name: "Action",
-         selector: (row) => row.action,
          sortable: false,
          center: true,
-         minWidth: "120px",
-         maxWidth: "100px",
-         cell: (row) => (
+         maxWidth: "40px",
+         cell: ({ row, propertyId, userId }) => (
             <div className="action">
-               <ToolTip name="View Details">
+               <ToolTip position="left" name="View Details">
                   <span>
                      <Link
                         to={{
-                           pathname: `/admin/property/getPropertyById/${propertyId}/${userId}`,
+                           pathname: "/admin/property/property-details",
+                           state: { propertyId: propertyId, userId: userId, menuName: 'Properties', isDeleted: false },
                         }}
                      >
                         Details
@@ -672,11 +698,13 @@ const mapStateToProps = ({ allPlanDataBroker }) => ({
    getBrokerPostedProperty,
    getPropertyDetails,
    getBrokerListing,
+   getAllProperties,
 });
 const actions = {
    getBrokerPostedProperty,
    getPropertyDetails,
    getBrokerListing,
+   getAllProperties,
 };
 const withConnect = connect(mapStateToProps, actions);
 
