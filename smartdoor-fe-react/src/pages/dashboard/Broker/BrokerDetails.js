@@ -95,6 +95,7 @@ useEffect(()=>{
    const _getPostedDetailProperty = useCallback(() => {
       getBrokerPostedProperty({brokerId: brokerdetailId})
       .then((response) => {
+     
          setLoading(false);
          if(response){
             if( response) setPostedProperty(response.data);
@@ -504,7 +505,7 @@ useEffect(()=>{
                                           <span className="details-value">Rent</span>
                                        )}
                                        {(Broker_data?.resourceData?.sell || Broker_data?.resourceData?.buy) && (
-                                             <span className="details-value">Sell / Buy</span>
+                                             <span className="details-value">Buy / Sell</span>
                                           )}
                                                                               
                                     </>
