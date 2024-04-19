@@ -84,6 +84,16 @@ import {
 import { addNewPostReducer } from './views/addNewPost.reducer';
 import { addNewPost2Reducer } from './views/addNewPost2.reducer';
 import { featuredVideos } from './views/featuredVideos.reducer';
+import { agencyList } from './views/agencyList.reducer';
+import { AgencyExecutiveList } from './views/AgencyExeutiveList.reducer';
+import { agencyCustomers } from './views/agencyCustomers.reducer';
+import { agencyProperties } from './views/agencyProperties.reducer';
+import { basicDetailFields } from './views/basicDetails.reducer';
+import { addressDetailFields } from './views/addressDetails.reducer';
+import { specDetailFields } from './views/specDetails.reducer';
+import { pricingDetailFields } from './views/pricingDetails.reducer';
+import { uploadImages } from './views/uploadImages.reducer';
+import { termsConditions } from './views/termsConditions.reducer';
 
 import { USER_LOGOUT } from '../types';
 
@@ -153,7 +163,17 @@ const appReducer = combineReducers({
   getBuybackRequestsData,
   addNewPostReducer,
   addNewPost2Reducer,
-  featuredVideos
+  featuredVideos,
+  agencyList,
+  AgencyExecutiveList,
+  agencyCustomers,
+  agencyProperties,
+  basicDetailFields,
+  addressDetailFields,
+  specDetailFields,
+  pricingDetailFields,
+  uploadImages,
+  termsConditions
 });
 
 const rootReducer = (state, action) => {

@@ -41,6 +41,17 @@ const FeaturedVideos = React.lazy(() => import('./FeaturedVideos/FeaturedVideos'
 const MarketingAgency = React.lazy(() => import('./MarketingAgencyModule/MarketingAgency/MarketingAgencyList'))
 const Add_EditAgency = React.lazy(() => import('./MarketingAgencyModule/Add_EditAgency'))
 const AgencyDetail = React.lazy(() => import('./MarketingAgencyModule/AgencyDetials/AgencyDetail'))
+const AgencyProperty = React.lazy(() => import('./MarketingAgencyModule/AgencyProperties/AgencyProperty'))
+const AgencyCustomers = React.lazy(() => import('./MarketingAgencyModule/AgencyCustomers/AgencyCustomers'))
+const AgencyExecutives = React.lazy(() => import('./MarketingAgencyModule/AgencyUsers/Add_EditExecutives'))
+const ExecutiveList = React.lazy(() => import('./MarketingAgencyModule/AgencyUsers/ExecutiveList'))
+const ExecutiveDetails = React.lazy(() => import('./MarketingAgencyModule/AgencyUsers/ExecutiveDetails'))
+const CustomerDetails = React.lazy(() => import('./MarketingAgencyModule/AgencyCustomers/CustomerDetails'))
+const ExecutiveHome = React.lazy(() => import('./MarketingAgencyModule/AgencyUserPropertyTab/ExecutiveHome'))
+const PostingMainPage = React.lazy(() => import('./PropertyPostingFlow/PostingMainPage'))
+const BasicDetails = React.lazy(() => import('./PropertyPostingFlow/BasicDetails'))
+const Uploads = React.lazy(() => import('./PropertyPostingFlow/Uploads'))
+const TermsConditions = React.lazy(() => import('./PropertyPostingFlow/TermsConditions'))
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -957,6 +968,33 @@ const routeData = [
   },
 
   {
+    path: '/admin/marketingAgency/addAgency',
+    name: 'Marketing Agency',
+    bradcrumb: ['Marketing Agency', 'Add New'],
+    excat: false,
+    module:'MARKETING',
+    component: Add_EditAgency
+  },
+
+  {
+    path: '/admin/marketingAgency/agencyDetails/edit-agency',
+    name: 'Edit Agency Details',
+    bradcrumb: ['Marketing Agency', 'Agency Details', 'Edit Agency Details'],
+    excat: false,
+    module:'MARKETING',
+    component: Add_EditAgency
+  },
+
+  {
+    path: '/admin/marketingAgency/agencyDetails',
+    name: 'Agency Details',
+    bradcrumb: ['Marketing Agency', 'Agency Details'],
+    excat: false,
+    module:'MARKETING',
+    component: AgencyDetail
+  },
+  
+  {
     path: '/admin/marketingAgency',
     name: 'Marketing Agency',
     bradcrumb: false,
@@ -966,22 +1004,116 @@ const routeData = [
   },
 
   {
-    path: '/admin/marketing-Agency/addAgency',
-    name: 'Add New Agency',
-    bradcrumb: ['Marketing Agency', 'Add New'],
+    path: '/admin/agencyProperties',
+    name: 'Properties',
+    bradcrumb: false,
     excat: true,
+    title: {formTitle: 'agencyName'},
     module:'MARKETING',
-    component: Add_EditAgency
+    component: AgencyProperty
   },
 
   {
-    path: '/admin/marketing-Agency/agencyDetails',
-    name: 'Agency Details',
-    bradcrumb: ['Marketing Agency', 'Agency Details'],
+    path: '/admin/agencyCustomers/customer-details',
+    name: 'Customer Details',
+    bradcrumb: ['Customers', 'Customer Details'],
     excat: true,
     // module:'MARKETING',
-    component: AgencyDetail
+    component: CustomerDetails
   },
+
+  {
+    path: '/admin/agencyCustomers',
+    name: 'Customers',
+    bradcrumb: false,
+    excat: true,
+    title: {formTitle: 'agencyName'},
+    // module:'MARKETING',
+    component: AgencyCustomers
+  },
+
+  {
+    path: '/admin/executives/add-new-executive',
+    name: 'Add New Executive',
+    bradcrumb: ['Executive management', 'Add New'],
+    excat: true,
+    // module:'MARKETING',
+    component: AgencyExecutives
+  },
+
+  {
+    path: '/admin/executives/executive-details/edit-executive',
+    name: 'Edit Executive',
+    bradcrumb: ['Executive management', 'Executive Details', 'Edit Executive'],
+    excat: true,
+    // module:'MARKETING',
+    component: AgencyExecutives
+  },
+
+  {
+    path: '/admin/executives/executive-details',
+    name: 'Executive Details',
+    bradcrumb: ['Executive management', 'Executive Details'],
+    excat: true,
+    // module:'MARKETING',
+    component: ExecutiveDetails
+  },
+
+  {
+    path: '/admin/executives',
+    name: 'Executive Management',
+    bradcrumb: false,
+    excat: true,
+    // module:'MARKETING',
+    component: ExecutiveList
+  },
+
+  {
+    path: '/admin/executive/properties/NewPost/BasicDetails',
+    name: 'Basic Details',
+    bradcrumb: ['Property Postings', 'Add New  Post', 'Basic Details'],
+    excat: true,
+    // module:'MARKETING',
+    component: BasicDetails
+  },
+
+  {
+    path: '/admin/executive/properties/NewPost/Uploads',
+    name: 'Uploads',
+    bradcrumb: ['Property Postings', 'Add New  Post', 'Uploads'],
+    excat: true,
+    // module:'MARKETING',
+    component: Uploads
+  },
+
+  {
+    path: '/admin/executive/properties/NewPost/TermsConditions',
+    name: 'TermsConditions',
+    bradcrumb: ['Property Postings', 'Add New  Post', 'TermsConditions'],
+    excat: true,
+    // module:'MARKETING',
+    component: TermsConditions
+  },
+
+  {
+    path: '/admin/executive/properties/NewPost',
+    name: 'Add New Posting',
+    bradcrumb: ['Property Postings', 'Add New  Post'],
+    excat: true,
+    // module:'MARKETING',
+    component: PostingMainPage
+  },
+  
+  {
+    path: '/admin/executive/properties',
+    name: 'Add New Posting',
+    bradcrumb: false,
+    excat: true,
+    // module:'MARKETING',
+    component: ExecutiveHome
+  },
+
+  
 
   // {
   //   path: '/admin/execution/installation-detail/property-details',

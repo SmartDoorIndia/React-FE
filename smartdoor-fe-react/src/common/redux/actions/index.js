@@ -1847,3 +1847,118 @@ export const getSystemVariables = async (data) => {
     return response;
   }
 }
+
+export const addEditAgency = async (data) => {
+  const response = await mainApiService('addEditAgency', data);
+  if(response.status === 200) {
+    return response;
+  }
+}
+
+export const getAllAgencies = (data) => async(dispatch) => {
+  dispatch({type: Actions.AGENCY_LIST_LOADING, data: []});
+  const response = await mainApiService('getAllAgencies', data);
+  if(response.status === 200) {
+    console.log(response)
+    if(data.agencyId === 0) {
+      return(dispatch({ type: Actions.AGENCY_LIST_SUCCESS, data: response.data.resourceData }))
+    } else {return response}
+  }
+  if ( response?.status !== 200) {
+    showErrorToast('Unexpected error. Please try again later');
+    return(dispatch({ type: Actions.AGENCY_LIST_ERROR, data: response }))
+  }
+}
+
+export const getAgencyById = async (data) => {
+  const response = await mainApiService('getAllAgencies', data);
+  if(response.status === 200) {
+    console.log(response)
+    return response;
+  }
+  if ( response?.status !== 200) {
+    showErrorToast('Unexpected error. Please try again later');
+  }
+}
+
+export const getAllAgencyExecutives = (data) => async(dispatch) => {
+  dispatch({type: Actions.AGENCY_EXECUTIVE_LIST_LOADING, data: []});
+  const response = await mainApiService('getAllAgencyExecutives', data);
+  if(response.status === 200) {
+    console.log(response)
+    return(dispatch({ type: Actions.AGENCY_EXECUTIVE_LIST_SUCCESS, data: {executives: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchStr} }))
+  }
+  if ( response?.status !== 200) {
+    showErrorToast('Unexpected error. Please try again later');
+    return(dispatch({ type: Actions.AGENCY_EXECUTIVE_LIST_ERROR, data: response }))
+  }
+}
+
+export const getAgencyExecutiveById = async (data) => {
+  const response = await mainApiService('getAllAgencyExecutives', data);
+  if(response.status === 200) {
+    console.log(response)
+    return response
+  }
+  if ( response?.status !== 200) {
+    showErrorToast('Unexpected error. Please try again later');
+  }
+}
+
+export const addEditExecutive = async (data) => {
+  const response = await mainApiService('addEditExecutive', data);
+  if(response.status === 200) {
+    return response;
+  }
+}
+
+export const getAgencyCustomers = (data) => async (dispatch) => {
+  dispatch({type: Actions.AGENCY_CUSTOMER_LIST_LOADING, data: []});
+  const response = await mainApiService('getAgencyCustomers', data);
+  if(response.status === 200) {
+    console.log(response)
+    return(dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {customerData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, fromDate: data.fromDate, toDate: data.toDate, searchStr: data.searchStr, kycStatus: data.kycStatus} }))
+  }
+  if ( response?.status !== 200) {
+    showErrorToast('Unexpected error. Please try again later');
+    return(dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_ERROR, data: response }))
+  }
+}
+
+export const getAgencyProperties = (data) => async (dispatch) => {
+  dispatch({type: Actions.AGENCY_PROPERTY_LIST_LOADING, data: []});
+  const response = await mainApiService('getAgencyProperty', data);
+  if(response.status === 200) {
+    console.log(response)
+    return(dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {propertyData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, fromDate: data.fromDate, toDate: data.toDate, searchStr: data.searchStr, propertyStatus: data.propertyStatus, propertyType: data.propertyType} }))
+  }
+  if ( response?.status !== 200) {
+    showErrorToast('Unexpected error. Please try again later');
+    return(dispatch({ type: Actions.AGENCY_PROPERTY_LIST_ERROR, data: response }))
+  }
+}
+
+export const transferCustomers = async (data) => {
+  const response = await mainApiService('transferAgencyCustomers', data);
+  return response;
+} 
+
+export const awardCoupons = async (data) => {
+  const response = await mainApiService('awardCoupons', data);
+  return response;
+} 
+
+export const checkExistingCustomers = async (data) => {
+  const response = await mainApiService('checkExistingCustomer', data);
+  return response;
+}
+
+export const addBasicDetails = async (data) => {
+  const response = await mainApiService('addBasicDetails', data);
+  return response;
+}
+
+export const getChatGptDescription = async (data) => {
+  const response = await mainApiService('getChatGptDescription', data);
+  return response;
+}

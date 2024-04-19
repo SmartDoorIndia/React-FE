@@ -670,19 +670,280 @@ export const validateNewPost2 = (data) => {
 
 export const validateAgencyDetails = (data) => {
   const errors = {};
-  if(data.agencyName.trim() === '' || data.agencyName === null) {
+  if(data.agencyName?.trim() === '' || data.agencyName === null) {
     errors.agencyName = ValidationMessages.fieldRequired.required;
   }
-  if(data.location.trim() === '' || data.location === null) {
+  if(data.location?.trim() === '' || data.location === null) {
     errors.location = ValidationMessages.fieldRequired.required;
   }
-  if(data.contactName.trim() === '' || data.contactName === null) {
+  if(data.contactName?.trim() === '' || data.contactName === null) {
     errors.contactName = ValidationMessages.fieldRequired.required;
   }
-  if((data.contactNumber.trim()).length === 0 || data.contactName === null) {
+  if((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
     errors.contactNumber = ValidationMessages.fieldRequired.required;
+    if((data.contactNumber?.trim())?.length !== 10) {
+      errors.contactNumber = 'Contact Number must be 10 digits';
+    }
+  }
+  if(!isBlank(data.contactEmail)) {
+    if(!validateRegex.validateEmail.test(data.contactEmail)) {
+      errors.contactEmail = ValidationMessages.email.invalid;
+    }
   }
   return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateExecutiveDetails = (data) => {
+  const errors = {};
+  if(data.location?.trim() === '' || data.location === null) {
+    errors.location = ValidationMessages.fieldRequired.required;
+  }
+  if(data.contactName?.trim() === '' || data.contactName === null) {
+    errors.contactName = ValidationMessages.fieldRequired.required;
+  }
+  if((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
+    errors.contactNumber = ValidationMessages.fieldRequired.required;
+    if((data.contactNumber?.trim())?.length !== 10) {
+      errors.contactNumber = 'Contact Number must be 10 digits';
+    }
+  }
+  if(!isBlank(data.contactEmail)) {
+    if(!validateRegex.validateEmail.test(data.contactEmail)) {
+      errors.contactEmail = ValidationMessages.email.invalid;
+    }
+  }
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateBasicDetails = (data) => {
+  const errors = {};
+  if(isBlank(data.propertyCategory)) {
+    errors.propertyCategory = true;
+  }
+  if(isBlank(data.stageOfProperty)) {
+    errors.stageOfProperty = true;
+  }
+  if(isBlank(data.propertyType)) {
+    errors.propertyType = true;
+  }
+  if(isBlank(data.propertySubType)) {
+    errors.propertySubType = true;
+  }
+  if(data.stageOfProperty === 'Ready') {
+    if(isBlank(data.ageOfProperty)) {
+      errors.ageOfProperty = true;
+    }
+    if((data.ageOfProperty) < 0) {
+      errors.ageOfProperty = true;
+    }
+  }
+  if(data.stageOfProperty === 'Under Construction') {
+    if(isBlank(data.expectedPossessionDate)) {
+      errors.expectedPossessionDate = true;
+    }
+  }
+  if(data.propertySubType === 'PG/Co-Living') {
+    if(isBlank(data.guestHouseOrPgPropertyType)) {
+      errors.guestHouseOrPgPropertyType = true;
+    }
+    if(isBlank(data.occupancySharing)) {
+      errors.occupancySharing = true;
+    }
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateAddressDetails = (data, floorFlag) => {
+  const errors = {};
+  if(isBlank(data.locality)) {
+    errors.locality = true;
+  }
+  if(isBlank(data.city)) {
+    errors.city = true;
+  }
+  if(isBlank(data.flatNumber)) {
+    errors.flatNumber = true;
+  }
+  if(isBlank(data.landmark)) {
+    errors.landmark = true;
+  }
+  if(isBlank(data.builder)) {
+    errors.builder = true;
+  }
+  if(isBlank(data.buildingProjectSociety)) {
+    errors.buildingProjectSociety = true;
+  }
+  if(floorFlag) {
+    if(isBlank(data.floorNumber)) {
+      errors.floorNumber = true;
+    }
+    if(isBlank(data.totalFloors)) {
+      errors.totalFloors = true;
+    }
+  }
+  
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateSpecs = (data, specList, testDesc) => {
+  const errors = {};
+
+  if(specList?.includes('BHK')) {
+    if(isBlank(data.numberOfRooms)) {
+      errors.numberOfRooms = true;
+    }
+    if(isBlank(data.propertyRoomCompositionType)) {
+      errors.propertyRoomCompositionType = true;
+    }
+  }
+  if(specList?.includes('Attached')) {
+    if(isBlank(data.pgGuestHouseAttachedTo)) {
+      errors.pgGuestHouseAttachedTo = true;
+    }
+  }
+  if(specList?.includes('Flat type')) {
+    if(isBlank(data.flatType)) {
+      errors.flatType = true;
+    }
+  }
+  if(specList?.includes('Carpet area/built-up area')) {
+    if(isBlank(data.carpetArea)) {
+      errors.carpetArea = true;
+    }
+    if(isBlank(data.carpetAreaMeasurementUnit)) {
+      errors.carpetAreaMeasurementUnit = true;
+    }
+    if(isBlank(data.builtUpArea)) {
+      errors.builtUpArea = true;
+    }
+    if(isBlank(data.builtUpAreaMeasurementUnit)) {
+      errors.builtUpAreaMeasurementUnit = true;
+    }
+  }
+  if(specList?.includes('Carpet area/built-up area of the room')) {
+    if(isBlank(data.carpetArea)) {
+      errors.carpetArea = true;
+    }
+    if(isBlank(data.carpetAreaMeasurementUnit)) {
+      errors.carpetAreaMeasurementUnit = true;
+    }
+    if(isBlank(data.builtUpArea)) {
+      errors.builtUpArea = true;
+    }
+    if(isBlank(data.builtUpAreaMeasurementUnit)) {
+      errors.builtUpAreaMeasurementUnit = true;
+    }
+  }
+  if(specList?.includes('Plot area')) {
+    if(isBlank(data.plotArea)) {
+      errors.plotArea = true;
+    }
+    if(isBlank(data.plotAreaMeasurementUnit)) {
+      errors.plotAreaMeasurementUnit = true;
+    }
+  }
+  if(specList?.includes('Open area')) {
+    if(isBlank(data.openArea)) {
+      errors.openArea = true;
+    }
+    if(isBlank(data.openAreaMeasurementUnit)) {
+      errors.openAreaMeasurementUnit = true;
+    }
+  }
+  if(specList?.includes('Property type')) {
+    if(isBlank(data.commercialPropertyType)) {
+      errors.commercialPropertyType = true;
+    }
+  }
+  if(specList?.includes('Purpose')) {
+    if((data.commercialPropertyPurposes).length === 0) {
+      errors.commercialPropertyPurposes = true;
+    }
+  }
+  if(specList?.includes('Number of washrooms')) {
+    if(isBlank(data.numberOfBaths)) {
+      errors.numberOfBaths = true;
+    }
+  }
+  if(specList?.includes('Car parkings')) {
+    if(isBlank(data.numberOfCarParking)) {
+      errors.numberOfCarParking = true;
+    }
+  }
+  if(specList?.includes('Property description') && testDesc === true) {
+    if(isBlank(data.propertyDescription)) {
+      errors.propertyDescription = true;
+    }
+  }
+
+  return{
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validatePricing = (data, pricingList) => {
+  const errors = {};
+
+  if(pricingList.includes('Rent')) {
+    if(isBlank(data.propertyRate)) {
+      errors.propertyRate = true;
+    }
+  }
+  if(pricingList.includes('Security deposit')) {
+    if(isBlank(data.securityAmount)) {
+      errors.securityAmount = true;
+    }
+  }
+  if(pricingList.includes('Preferred for')) {
+    if(isBlank(data.preferredFor)) {
+      errors.preferredFor = true;
+    }
+  }
+  if(pricingList.includes('Selling price')) {
+    if(isBlank(data.propertyRate)) {
+      errors.propertyRate = true;
+    }
+  }
+  if(pricingList.includes('Distress CheckBox')) {
+    if(isBlank(data.isDistressSell)) {
+      errors.isDistressSell = true;
+    }
+    if(pricingList.includes('Expected time')) {
+      if(isBlank(data.expectedTimeToSellThePropertyWithin)) {
+        errors.expectedTimeToSellThePropertyWithin = true;
+      }
+    }
+  }
+  if(pricingList.includes('Add additional fields')) {
+      errors.additionalFieldsForChargesDue = []
+    for(let i = 0; i < data.additionalFieldsForChargesDue.length; i++) {
+      errors.additionalFieldsForChargesDue.push({label:'', dues:''});
+      if(isBlank(data.additionalFieldsForChargesDue[i].label))
+      {
+        errors.additionalFieldsForChargesDue[i].label = true;
+      }
+      if(isBlank(data.additionalFieldsForChargesDue[i].dues))
+      {
+        errors.additionalFieldsForChargesDue[i].dues = true;
+      }
+    }
+  }
+  
+  return{
     errors,
     isValid: isEmpty(errors)
   }

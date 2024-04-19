@@ -70,7 +70,7 @@ const Header = (props) => {
         }
 
       </div>
-      <div className="d-flex justify-content-between mt-3">
+      <div className="d-flex justify-content-between">
         {
           bradcrumb ?
             <>

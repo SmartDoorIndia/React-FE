@@ -11,7 +11,11 @@ const CONSTANTS_STATUS = {
     societyLeadsStatusArr : ["PENDING" , "IN PROGRESS" ,"CONVERTED",  "CANCELLED" , "NOT INTERESTED" ],
     propertyStatusArr :  [ "UNDER REVIEW" , "PUBLISHED" ],
     propertyType :  [ "SMARTDOOR" , "NON SMARTDOOR" ],
-    realtorStatusArr :  [ "SUBMITTED" , "ACCEPTED", "REJECTED" ]
+    realtorStatusArr :  [ "SUBMITTED" , "ACCEPTED", "REJECTED" ],
+    propertyPostType : [ "Renting", "Selling"],
+    propertyStage : [ "Ready" , "Under Construction"],
+    propertySubType : [ "Apartment", "Independent house", "Builder Floor", "Plot", "PG/Co-Living"],
+    monthList : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
  };
  
  export default CONSTANTS_STATUS;

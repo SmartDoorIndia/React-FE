@@ -51,14 +51,16 @@
             text-align: center;
             &:nth-child(1) {
                 &:first-child {
-                    min-width: none;
-                    white-space: nowrap;overflow: visible;
+                    min-width: 100px;
+                    // white-space: nowrap;
+                    overflow: visible;
+                    word-break: break-all;
                 }                
             }
             &:nth-child(4) {
                 .elipsis-text {
                     white-space: nowrap;overflow: hidden;
-                    width: 180px;min-width: 180px;
+                    width: 180px;min-width: 180px;word-break: break-all;
                     text-overflow: ellipsis;display: block;text-align: center;
                 }
             }
