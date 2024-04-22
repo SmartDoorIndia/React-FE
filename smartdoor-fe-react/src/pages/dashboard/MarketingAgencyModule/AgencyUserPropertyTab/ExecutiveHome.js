@@ -27,15 +27,18 @@ const ExecutiveHome = (props) => {
     const handlePhoneChange = (e) => {
         const result = e.target.value.replace(/\D/g, '');
         const mobileNum = (result.slice(0, 10));
+        console.log("mob->",mobileNum)
         setCustomerDetails({ ...customerDetails, mobile: mobileNum });
-        checkExistingCustomer(e);
+        console.log("cust deatails->",customerDetails)
+        checkExistingCustomer({mobile:mobileNum});
         console.log(customerDetails)
     }
 
     const checkExistingCustomer = async (e) => {
         // console.log(e);
-        setCustomerDetails(prevCustomerDetails => ({ ...prevCustomerDetails, name: e.target.value }));
-        const response = await checkExistingCustomers(customerDetails);
+        // setCustomerDetails(prevCustomerDetails => ({ ...prevCustomerDetails, name: e.target.value }));
+        console.log("cust deatails->",e)
+        const response = await checkExistingCustomers(e);
         console.log(response)
         setCustomerDetails(prevCustomerDetails => ({
             ...prevCustomerDetails, useId: response.data.resourceData.userId,
@@ -65,7 +68,7 @@ const ExecutiveHome = (props) => {
                             className="w-90"
                             label={'Search Mobile Number'}
                             type="number"
-                            inputProps={{ min: 0, max: 999999999 }}
+                            inputProps={{ min: 0, max: 9999999999 }}
                             InputProps={{
                                 startAdornment: (
                                     <>
@@ -74,7 +77,7 @@ const ExecutiveHome = (props) => {
                                     </>
                                 )
                             }}
-                            onChange={(e) => { handlePhoneChange(e); }}
+                            onChange={(e) => {console.log("e->",e.target.value); handlePhoneChange(e); }}
                             value={customerDetails.mobile}
                         />
                     </div>

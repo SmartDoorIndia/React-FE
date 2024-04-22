@@ -2638,9 +2638,7 @@ export const ApiJson = {
     url: '/admin/marketingAgency/getCustomersPostings',
     method: 'POST', 
     data: {
-      name:'',
-      mobile:'',
-      email:''
+      mobile:''
     }, 
     showResultMessage: true,
     showErrorMessage: true
