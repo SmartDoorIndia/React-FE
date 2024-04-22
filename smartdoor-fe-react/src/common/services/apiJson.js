@@ -480,17 +480,6 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: false,
   },
-   getPropertyDetailsNew: {
-    url: '/consumer/property/getSearchedPropertyById/:propertyId/:userId',
-    method: 'GET',
-    data: {},
-    headers: {
-      'Accept': '*/*',
-      'Content-Type': 'application/json',
-    },
-    showResultMessage: false,
-    showErrorMessage: false,
-  },
   // Delete /property/deleteDocById/{docId}
   deletePropertyImage: {
     url: '/consumer/property/deleteDocById/:docId',

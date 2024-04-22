@@ -28,10 +28,10 @@ const AddNewPost = (props) => {
     const [propertyData, setpropertyData] = useState(location?.state?.propertyData)
     const [data, setData] = useState({
         postedById: userData.userid,
-        propertyCategory: propertyData?.basicDetails.propertyCategory === "Rent" ? 'Lease': propertyData?.propertyCategory,
-        propertyType: propertyData?.basicDetails.propertyType,
-        propertySubType: propertyData?.basicDetails.propertySubType,
-        furnishedText: propertyData?.basicDetails?.furnishedText === null ? '' : propertyData?.propertyInfoResponse?.furnishedText, 
+        propertyCategory: propertyData?.propertyCategory === "Rent" ? 'Lease': propertyData?.propertyCategory,
+        propertyType: propertyData?.propertyType,
+        propertySubType: propertyData?.propertySubType,
+        furnishedText: propertyData?.propertyInfoResponse?.furnishedText === null ? '' : propertyData?.propertyInfoResponse?.furnishedText, 
         bedRooms: propertyData?.bedRooms === null ? (0) : (propertyData?.bedRooms),
         numberOfHalls: propertyData?.hall === null ? 0 : Number(propertyData?.hall),
         kitchens: propertyData?.kitchen === null ? 0 : Number(propertyData?.kitchen),
@@ -73,15 +73,15 @@ const AddNewPost = (props) => {
     const [halfRoomFlag, setHalfRoomFlag] = useState(false)
 
     const _getPropertyDetails = useCallback(() => {
-        getPropertyDetailsNew({ propertyId: data.smartdoorPropertyId, userId: userData.userid })
+        getPropertyDetails({ propertyId: data.smartdoorPropertyId, userId: userData.userid })
            .then((response) => {
               if (response.data) {
                  if (response.data.resourceData && response.data.status === 200) {
                     setpropertyData(response.data.resourceData);
                  }
               }
-              console.log("response of get property by id ", data);
-              console.log("owner id------>", response.data.resourceData?.postedById);
+              console.log("responseSocietyDetails", data);
+              console.log("owner id", response.data.resourceData?.postedById);
            })
            .catch((error) => {
               console.log("error", error);

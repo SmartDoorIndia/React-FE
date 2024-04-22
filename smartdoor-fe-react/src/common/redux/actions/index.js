@@ -530,13 +530,6 @@ export const getPropertyDetails = async (data) => {
   return response;
 };
 
-
-export const getPropertyDetailsNew = async (data) => {
-  const response = await mainApiService('getPropertyDetailsNew', data);
-  return response;
-};
-
-
 export const getPropertyPlanDetails = async(data) => {
   const response = await mainApiService('getPropertyPlanDetails',data);
   return response;
