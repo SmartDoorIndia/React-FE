@@ -28,6 +28,7 @@ const ExecutiveHome = (props) => {
         const result = e.target.value.replace(/\D/g, '');
         const mobileNum = (result.slice(0, 10));
         setCustomerDetails({ ...customerDetails, mobile: mobileNum });
+        checkExistingCustomer(e);
         console.log(customerDetails)
     }
 
@@ -73,7 +74,7 @@ const ExecutiveHome = (props) => {
                                     </>
                                 )
                             }}
-                            onChange={(e) => { checkExistingCustomer(e); }}
+                            onChange={(e) => { handlePhoneChange(e); }}
                             value={customerDetails.mobile}
                         />
                     </div>
