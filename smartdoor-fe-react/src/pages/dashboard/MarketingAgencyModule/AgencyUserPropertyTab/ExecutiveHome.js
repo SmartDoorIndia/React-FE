@@ -73,7 +73,7 @@ const ExecutiveHome = (props) => {
                                     </>
                                 )
                             }}
-                            onChange={(e) => { handlePhoneChange(e) }}
+                            onChange={(e) => { checkExistingCustomer(e); }}
                             value={customerDetails.mobile}
                         />
                     </div>
@@ -82,7 +82,7 @@ const ExecutiveHome = (props) => {
                             className="w-90"
                             label={'Full Name'}
                             type="text"
-                            onChange={(e) => { checkExistingCustomer(e); }}
+                            onChange={(e) => {setCustomerDetails(prevCustomerDetails => ({ ...prevCustomerDetails, name: e.target.value }))}}
                             value={customerDetails.name}
                         />
                     </div>
