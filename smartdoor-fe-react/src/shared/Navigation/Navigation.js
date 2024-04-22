@@ -347,7 +347,7 @@ const Nav = () => {
                         </Link>
                      </>
                   )}
-                  {userData.roleName === 'MARKETING_ADMIN' ?
+                  {userData.roleName === 'MARKETING ADMIN' ?
                      <>
                         <Link
                            to="/admin/agencyProperties"
@@ -396,7 +396,7 @@ const Nav = () => {
                         </Link>
                      </>
                      : null}
-                  {userData.roleName === 'MARKETING_EXECUTIVE' ?
+                  {userData.roleName === 'MARKETING EXECUTIVE' ?
                      <>
                         <Link
                            to="/admin/executive/properties"

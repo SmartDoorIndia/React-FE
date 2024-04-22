@@ -8,8 +8,9 @@ import { connect, useDispatch } from "react-redux";
 import * as Actions from '../../../common/redux/types';
 import { addBasicDetails } from "../../../common/redux/actions";
 import { getLocalStorage, showSuccessToast } from "../../../common/helpers/Utils";
-
+import { useHistory } from "react-router-dom";
 const TermsConditions = (props) => {
+    const history = useHistory();
     const { basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages, termsConditions, customerDetails} = props;
     const propertyId = props?.propertyId;
     const [termsConditionObj, setTermsConditionObj] = useState({
@@ -76,6 +77,7 @@ const TermsConditions = (props) => {
             if(response.status === 200) {
                 showSuccessToast('Property Posted is under reviewed');
                 setPropertySuccessFlag(true);
+                history.push("/admin/executive/properties");
             }
         }
     }
