@@ -82,7 +82,7 @@ const BasicDetails = (props) => {
 
     const saveBasicDetails = async () => {
         if (basicDetails.stageOfProperty === 'Under Construction') {
-            setBasicDetails({ ...basicDetails, expectedPossessionDate: selectedMonth + '/' + selectedYear })
+            setBasicDetails({ ...basicDetails, expectedPossessionDate: selectedMonth + '-' + selectedYear })
         }
         const valid = validateBasicDetails(basicDetails);
         console.log(valid)
@@ -314,8 +314,8 @@ const BasicDetails = (props) => {
                                 >
                                     <MenuItem value="" disabled>Select</MenuItem>
                                     {monthList?.length > 0
-                                        ? monthList?.map((subType) => (
-                                            <MenuItem key={subType} value={subType}>
+                                        ? monthList?.map((subType, index) => (
+                                            <MenuItem key={subType} value={(index + 1).toString()}>
                                                 {subType}
                                             </MenuItem>
                                         ))
