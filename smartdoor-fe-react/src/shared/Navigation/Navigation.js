@@ -74,58 +74,58 @@ const Nav = () => {
             <ReactBoostrap.Navbar.Toggle aria-controls="basic-navbar-nav" />
             <ReactBoostrap.Navbar.Collapse id="basic-navbar-nav">
                <ReactBoostrap.Nav className="mr-auto">
-                  <ReactBoostrap.NavDropdown
-                     show={isOpen}
-                     onClick={() => {
-                        checkNavActive();
-                     }}
-                     title="Dashboard"
-                     id="basic-nav-dropdown"
-                     name="basic-nav-dropdown"
-                     className={isActive ? "dashboardActiveIcon" : "dashboardIcon"}
-                  >
-                     {/* <Link to='/admin/sales' className={ `dropdown-item  ${ pathname.includes('analytics') ? 'active':'' }` } >Analytics & Management</Link> */}
-                     {/* <Link
+                  {userData.roleName === 'SUPER ADMIN' ?
+                     <ReactBoostrap.NavDropdown
+                        show={isOpen}
+                        onClick={() => {
+                           checkNavActive();
+                        }}
+                        title="Dashboard"
+                        id="basic-nav-dropdown"
+                        name="basic-nav-dropdown"
+                        className={isActive ? "dashboardActiveIcon" : "dashboardIcon"}
+                     >
+                        {/* <Link to='/admin/sales' className={ `dropdown-item  ${ pathname.includes('analytics') ? 'active':'' }` } >Analytics & Management</Link> */}
+                        {/* <Link
                         to="/admin/sales"
                         className={`dropdown-item  ${pathname.includes("sales") ? "active" : ""}`}
                      >
                         Society Sales Team
                      </Link> */}
-                     {userData.roleName !== 'MARKETING_EXECUTIVE' || userData.roleName !== 'MARKETING_ADMIN' ?
-                     <>
-                        <Link
-                           to="/admin/execution"
-                           className={`dropdown-item  ${pathname.includes("execution") ? "active" : ""
-                              }`}
-                        >
-                           Installation Team
-                        </Link>
-                        <Link
-                           to="/admin/helpdesk"
-                           className={`dropdown-item  ${pathname.includes("helpdesk") ? "active" : ""
-                              }`}
-                        >
-                           Helpdesk Team
-                        </Link>
-                        {/* /admin/finance */}
-                        <Link
-                           to="/admin/finance"
-                           className={`dropdown-item  ${pathname.includes("finance") ? "active" : ""}`}
-                        >
-                           Finance Team
-                        </Link>
-                        <Link
-                           to="/admin/transaction"
-                           className={`dropdown-item  ${pathname.includes("/transaction") && !pathname.includes("transactions")
-                              ? "active"
-                              : ""
-                              }`}
-                        >
-                           Transaction Team
-                        </Link>
-                     </>
-                     :null}
-                  </ReactBoostrap.NavDropdown>
+                        <>
+                           <Link
+                              to="/admin/execution"
+                              className={`dropdown-item  ${pathname.includes("execution") ? "active" : ""
+                                 }`}
+                           >
+                              Installation Team
+                           </Link>
+                           <Link
+                              to="/admin/helpdesk"
+                              className={`dropdown-item  ${pathname.includes("helpdesk") ? "active" : ""
+                                 }`}
+                           >
+                              Helpdesk Team
+                           </Link>
+                           {/* /admin/finance */}
+                           <Link
+                              to="/admin/finance"
+                              className={`dropdown-item  ${pathname.includes("finance") ? "active" : ""}`}
+                           >
+                              Finance Team
+                           </Link>
+                           <Link
+                              to="/admin/transaction"
+                              className={`dropdown-item  ${pathname.includes("/transaction") && !pathname.includes("transactions")
+                                 ? "active"
+                                 : ""
+                                 }`}
+                           >
+                              Transaction Team
+                           </Link>
+                        </>
+                     </ReactBoostrap.NavDropdown>
+                     : null}
 
                   {/* <ReactBoostrap.NavDropdown
               show={ isPropertyDDOpen }
@@ -142,7 +142,7 @@ const Nav = () => {
               >Builder Project</Link>
 
             </ReactBoostrap.NavDropdown> */}
-                  {userData.roleName !== 'MARKETING_EXECUTIVE' || userData.roleName !== 'MARKETING_ADMIN' ?
+                  {userData.roleName === 'SUPER ADMIN' ?
                      <>
                         <Link
                            to="/admin/property"
@@ -220,7 +220,7 @@ const Nav = () => {
                            Realtor Advisor Management
                         </Link>
                      </>
-                     :null}
+                     : null}
 
                   {userData.roleName === "SUPER ADMIN" && (
                      <>
