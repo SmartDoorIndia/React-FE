@@ -65,13 +65,13 @@ const Specs = (props) => {
             console.log(fields)
             if (fields.propertyType === 'Residential') {
                 if (fields.propertySubType === 'PG/Co-Living') {
-                    speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
-                    console.log(PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs)
+                    speclist = PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
+                    console.log(PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs)
                 } else {
-                    speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType][fields.propertySubType].Specs
+                    speclist = PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType].Specs
                 }
             } else if (fields.propertyType === 'Commercial') {
-                speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType].Specs
+                speclist = PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType].Specs
             }
             if (fields.propertySubType === 'Independent house' || fields.propertySubType === 'Builder Floor') {
                 setInternalAmenitiesList(POSTING_CONSTANTS.InternalAmeniteis)

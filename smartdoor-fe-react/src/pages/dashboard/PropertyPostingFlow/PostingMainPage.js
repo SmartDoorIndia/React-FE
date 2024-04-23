@@ -10,7 +10,8 @@ import Pricing from "./Pricing";
 
 const PostingMainPage = (props) => {
     const customerDetails = props.location.state.customerDetails;
-    const [saveBasicDetails, setSaveBasicDetails] = useState({propertyId : null, saveFlag: false});
+    const [editPropertyDetails, setEditPropertyDetails ] = useState(props?.location?.state?.existingDetails)
+    const [saveBasicDetails, setSaveBasicDetails] = useState({propertyId : editPropertyDetails?.propertyId || null, saveFlag: editPropertyDetails?.saveFlag || false});
 
     const handleBasicDetails = (value) => {
         console.log(value)

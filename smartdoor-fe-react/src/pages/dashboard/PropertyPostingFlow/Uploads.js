@@ -14,12 +14,13 @@ import * as Actions from '../../../common/redux/types';
 
 const Uploads = (props) => {
 
+    const {uploadImages} = props;
     const fileInputRef = useRef(null);
     const propertyId = props?.propertyId;
-    const [imageArr, setImageArray] = useState([]);
+    const [imageArr, setImageArray] = useState(uploadImages.data.propertyImages || []);
     const [addNewVideoFlag, setAddNewVideoFlag] = useState(false);
-    const [videoUrl1, setVideoUrl1] = useState('');
-    const [videoUrl2, setVideoUrl2] = useState('');
+    const [videoUrl1, setVideoUrl1] = useState(uploadImages?.data?.propertyVideos[0]?.docUrl || '');
+    const [videoUrl2, setVideoUrl2] = useState(uploadImages?.data?.propertyVideos[1]?.docUrl || '');
     const [saveUploadFlag, setSaveUploadFlag] = useState(false);
     const [imageLoader, setImageLoader] = useState(false)
 	const [loading, setLoading] = useState(true);

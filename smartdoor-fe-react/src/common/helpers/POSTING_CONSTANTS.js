@@ -3,7 +3,7 @@ const POSTING_CONSTANTS = {
     propertyPostType: ["Renting", "Selling"],
     propertyStage: ["Ready", "Under Construction"],
     propertyType: ["Residential", "Commercial"],
-    propertySubType: ["Apartment", "Independent house", "Builder Floor", "Plot", "PG/Co-Living"],
+    propertySubType: ["Apartment", "Independent House / Bungalow", "Builder Floor", "Plot", "PG/Co-Living"],
     monthList: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     flatTypeList: ['Regular', 'Graden Flat', 'Penthouse', 'Duplex', 'Duplex Penthouse'],
     attachedList: ['Washroom', 'Balcony'],

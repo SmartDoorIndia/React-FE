@@ -270,7 +270,7 @@ const AgencyCustomers = (props) => {
     };
 
     useEffect(async () => {
-        if (userRole === 'SUPER ADMIN' && agencyCustomers.data.customerData === undefined) {
+        if (userRole === 'SUPER ADMIN') {
             await getAgencyCustomers({
                 agencyId: agencyId,
                 executiveId: 0,
@@ -284,7 +284,7 @@ const AgencyCustomers = (props) => {
             })
             console.log(agencyCustomers)
         };
-        if ((userRole === 'MARKETING ADMIN' || userRole === 'MARKETING EXECUTIVE') && agencyCustomers.data.customerData === undefined) {
+        if ((userRole === 'MARKETING ADMIN' || userRole === 'MARKETING EXECUTIVE') && agencyCustomers?.data?.customerData?.length === 0) {
             await getAgencyCustomers({
                 agencyId: agencyId,
                 executiveId: executiveId,

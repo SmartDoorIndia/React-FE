@@ -213,6 +213,12 @@ const PropertyDetails = (props) => {
                   setVisitorReviewList(response.data.resourceData.visitorReviewList)
                   console.log(response.data.resourceData.propertyPostedBy)
                   _getSmartLockData({ propertyId });
+                  dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: response.data.resourceData.basicDetails })
+                  dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: response.data.resourceData.address })
+                  dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: response.data.resourceData.specs })
+                  dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: response.data.resourceData.pricing })
+                  dispatch({ type: Actions.UPLOAD_IMAGES_SUCCESS, data: response.data.resourceData.uploads })
+                  dispatch({ type: Actions.TERMS_CONDITIONS_SUCCESS, data: response.data.resourceData.terms })
                   if (!response.data.resourceData.basicPlan) _getContactSensor(propertyId);
                }
             }
@@ -1317,7 +1323,7 @@ const PropertyDetails = (props) => {
                                     size="xSmall"
                                     color="white"
                                     className=" mb-2"
-                                    onClick={() => { history.push('/admin/property/edit-basic-details', { propertyData: propertyData }) }} /> &nbsp; &nbsp;
+                                    onClick={() => { history.push('/admin/property/property-details/EditPost', {existingDetails: {propertyId : propertyData.smartdoorPropertyId, saveFlag: true}}) }} /> &nbsp; &nbsp;
 
                                  {isDeleted === false && userData.roleName === 'SUPER ADMIN' ?
                                     <>

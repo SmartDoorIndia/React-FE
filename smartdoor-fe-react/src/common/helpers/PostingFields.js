@@ -40,7 +40,7 @@ const PostingFields = {
                             ]
                         }
                     },
-                    "Independent house": {
+                    "Independent House / Bungalow": {
                         "Specs": [
                             "BHK",
                             "Structure",
@@ -255,7 +255,7 @@ const PostingFields = {
                             "Fractional Ownership checkbox": false
                         }
                     },
-                    "Independent house": {
+                    "Independent House / Bungalow": {
                         "Specs": [
                             "BHK",
                             "Structure",
@@ -400,7 +400,7 @@ const PostingFields = {
                             "Fractional Ownership checkbox": false
                         }
                     },
-                    "Independent house": {
+                    "Independent House / Bungalow": {
                         "Specs": [
                             "BHK",
                             "Structure",

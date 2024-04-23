@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Col, Form, Modal, Row } from "react-bootstrap";
 import { compose } from "redux"
 import { getAllAgencies, getAllCityWithId } from "../../../../common/redux/actions";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import './MarketingAgencyList.scss';
 import Buttons from "../../../../shared/Buttons/Buttons";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
@@ -17,6 +17,7 @@ import rightArrow from "../../../../assets/images/arrow-right.svg";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import Image from "../../../../shared/Image/Image";
 import contentIcon from '../../../../assets/images/content-ico.svg';
+import * as Actions from '../../../../common/redux/types';
 
 const MarketingAgency = (props) => {
     const { getAllCityWithId, allCitiesWithId, getAllAgencies, agencyList } = props;
@@ -44,6 +45,7 @@ const MarketingAgency = (props) => {
     const [totalFreeCoupons, setTotalFreeCoupons] = useState(0);
     const [totalSpent, setTotalSpent] = useState(0);
     const history = useHistory();
+    const dispatch = useDispatch();
 
     const agencyColumns = [
         {
@@ -168,7 +170,9 @@ const MarketingAgency = (props) => {
                 setTotalSpent(prev => prev + item.totalCustomerSpendTillNow);
             }
         });
-    }, [totalCustomers]);
+        dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {} })
+        dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {} })
+    }, [getAllAgencies]);
 
     const PaginationActionButton = () => (
         <div className="d-flex justify-content-center tableBottom">

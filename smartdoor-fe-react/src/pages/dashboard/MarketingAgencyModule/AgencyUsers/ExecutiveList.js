@@ -250,6 +250,8 @@ const ExecutiveList = (props) => {
                 searchStr: ''
             });
         }
+        dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {} })
+        dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {} })
     }, []);
 
     let filteredItems = [];

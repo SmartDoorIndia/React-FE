@@ -43,13 +43,13 @@ const Pricing = (props) => {
             console.log(fields)
             if (fields.propertyType === 'Residential') {
                 if (fields.propertySubType === 'PG/Co-Living') {
-                    pricingObj = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Pricing
+                    pricingObj = PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Pricing
                     // console.log(PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Pricing)
                 } else {
-                    pricingObj = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType][fields.propertySubType].Pricing
+                    pricingObj = PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType].Pricing
                 }
             } else if (fields.propertyType === 'Commercial') {
-                pricingObj = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType].Pricing
+                pricingObj = PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType].Pricing
             }
             console.log(pricingObj)
             setPricingList(Object.keys(pricingObj));
