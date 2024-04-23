@@ -23,7 +23,7 @@ const AgencyCustomers = (props) => {
     const userData = getLocalStorage('authData');
     const userRole = props?.userRole || userData.roleName;
     const agencyId = props?.agencyId || userData.agencyId;
-    const executiveId = props?.executiveId;
+    const executiveId = props?.executiveId || userData.userid;
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
     const [defaultSort, setDefaultSort] = useState(agencyCustomers.data.defaultSort ||false);
@@ -284,7 +284,7 @@ const AgencyCustomers = (props) => {
             })
             console.log(agencyCustomers)
         };
-        if (userRole === 'MARKETING_ADMIN' && agencyCustomers.data.customerData === undefined) {
+        if ((userRole === 'MARKETING ADMIN' || userRole === 'MARKETING EXECUTIVE') && agencyCustomers.data.customerData === undefined) {
             await getAgencyCustomers({
                 agencyId: agencyId,
                 executiveId: executiveId,

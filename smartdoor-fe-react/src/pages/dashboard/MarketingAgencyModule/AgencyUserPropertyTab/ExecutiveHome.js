@@ -8,7 +8,7 @@ import { useState } from "react";
 import AgencyCustomers from "../AgencyCustomers/AgencyCustomers";
 import AgencyProperty from "../AgencyProperties/AgencyProperty";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { showErrorToast } from "../../../../common/helpers/Utils";
+import { getLocalStorage, showErrorToast } from "../../../../common/helpers/Utils";
 import { checkExistingCustomers } from "../../../../common/redux/actions";
 
 const ExecutiveHome = (props) => {
@@ -23,13 +23,15 @@ const ExecutiveHome = (props) => {
         propertyCount: null
     });
     const history = useHistory();
+    const userData = getLocalStorage('authData');
 
     const handlePhoneChange = (e) => {
         const inputValue = e.target.value;
-        if (inputValue.length === 10) {
-            const result = inputValue.replace(/\D/g, '');
+        const result = inputValue.replace(/\D/g, '');
+        const mobileNum = (result.slice(0, 10));
+        if (mobileNum.length === 10) {
             console.log("mob->", result);
-            setCustomerDetails({ ...customerDetails, mobile: result });
+            setCustomerDetails({ ...customerDetails, mobile: mobileNum });
             checkExistingCustomer({ mobile: result });
         }else {
             setCustomerDetails({ ...customerDetails, mobile: null });
@@ -43,7 +45,7 @@ const ExecutiveHome = (props) => {
         const response = await checkExistingCustomers(e);
         console.log(response)
         setCustomerDetails(prevCustomerDetails => ({
-            ...prevCustomerDetails, useId: response.data.resourceData.userId,
+            ...prevCustomerDetails, userId: response.data.resourceData.userId,
             propertyCount: response.data.resourceData.propertyCount
         }));
     }
@@ -152,7 +154,7 @@ const ExecutiveHome = (props) => {
                             fontWeight='bold'
                             style={{ fontSize: '16px' }}
                         ></Text>
-                        <AgencyProperty></AgencyProperty>
+                        <AgencyProperty agencyId={userData.agencyId} executiveId = {userData.userid} customerId={0} ></AgencyProperty>
                     </>
                     : null}
                 {showCustomersFlag ?

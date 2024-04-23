@@ -19,19 +19,19 @@ const Pricing = (props) => {
     const [preferredForList, setPreferredForList] = useState([]);
     const currentDate = new Date().toISOString().split('T')[0];
     const [additionalFieldsList, setAdditionalFieldsList] = useState([]);
-    const [pricingDetails, setPricingDetails] = useState(Object.keys(pricingDetailFields.data).length !== 0 ? 
-	pricingDetailFields.data : {
-        propertyRate: null,
-        maintenanceCharge: null,
-        securityAmount: null,
-        expectedDiscountInPercent: null,
-        expectedTimeToSellThePropertyWithin: '',
-        isDistressSell: null,
-        isOpenToBuyersOnFractionalOwnershipBasis: null,
-        additionalFieldsForChargesDue: [],
-        preferredFor: '',
-        leaseType: ''
-    });
+    const [pricingDetails, setPricingDetails] = useState(Object.keys(pricingDetailFields.data).length !== 0 ?
+        pricingDetailFields.data : {
+            propertyRate: null,
+            maintenanceCharge: null,
+            securityAmount: null,
+            expectedDiscountInPercent: null,
+            expectedTimeToSellThePropertyWithin: '',
+            isDistressSell: null,
+            isOpenToBuyersOnFractionalOwnershipBasis: null,
+            additionalFieldsForChargesDue: [],
+            preferredFor: '',
+            leaseType: ''
+        });
     const [error, setError] = useState({});
     const [savePricingFlag, setSavePricingFlag] = useState(false);
     const dispatch = useDispatch();
@@ -63,8 +63,8 @@ const Pricing = (props) => {
     const addNewFields = () => {
         if (pricingDetails.additionalFieldsForChargesDue.length < 3) {
             let additionalList = additionalFieldsList;
-            additionalList.push({ label: '', dues: null });
-            setAdditionalFieldsList(additionalList);
+            additionalList.push({ label: null, dues: null });
+            setAdditionalFieldsList([...additionalList]);
             setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
         }
         else {
@@ -73,15 +73,22 @@ const Pricing = (props) => {
         }
     }
 
+    const removeDues = (index) => {
+        let additionalList = additionalFieldsList;
+            additionalList.splice(index, 1);
+            setAdditionalFieldsList([...additionalList]);
+            setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
+    }
+
     const savePricingDetails = () => {
         let valid = {}
-		valid = validatePricing(pricingDetails, pricingList);
-		setError(valid.errors);
-		console.log(valid)
-		if (valid.isValid) {
-			dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
-			setSavePricingFlag(true);
-		}
+        valid = validatePricing(pricingDetails, pricingList);
+        setError(valid.errors);
+        console.log(valid)
+        if (valid.isValid) {
+            dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
+            setSavePricingFlag(true);
+        }
     }
     return (
         <>
@@ -199,18 +206,21 @@ const Pricing = (props) => {
                         : null}
                     {pricingList.includes('Distress CheckBox') ?
                         <Col lg='4' className="d-flex">
-                            <Checkbox onChange={(e) => { console.log(e) }} checked={pricingDetails.isDistressSell} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                            <Checkbox onChange={(e) => { console.log(e); setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isDistressSell: (e.target.checked) })) }}
+                                checked={pricingDetails.isDistressSell} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
                             <Text text={'Do you want to additionally  publish in Distress property section '}
                                 fontWeight={'500'} style={{ fontSize: '13px' }} />
                         </Col>
                         : null}
                     {pricingList.includes('Fractional Ownership checkbox') ?
                         <Col lg='4' className="d-flex">
-                            <Checkbox onChange={(e) => { console.log(e) }} checked={pricingDetails.isOpenToBuyersOnFractionalOwnershipBasis} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                            <Checkbox onChange={(e) => { console.log(e); setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isOpenToBuyersOnFractionalOwnershipBasis: (e.target.checked) })) }}
+                                checked={pricingDetails.isOpenToBuyersOnFractionalOwnershipBasis} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
                             <Text text={'Open to Buyers on Fractional Ownership basis? '}
                                 fontWeight={'500'} style={{ fontSize: '13px' }} />
                         </Col>
                         : null}
+                </Row>
                     {pricingList.includes('Add additional fields') ?
                         <>
                             <Col lg='4'>
@@ -219,32 +229,47 @@ const Pricing = (props) => {
                             </Col>
 
                             {pricingDetails.additionalFieldsForChargesDue.length > 0 ?
-                                pricingDetails.additionalFieldsForChargesDue.map((fields) => (
-                                    <>
-                                        <Col lg='3' className="d-flex">
-                                            <TextField
-                                                className="w-100 mb-2"
-                                                type="text"
-                                                label={'Label'}
-                                                value={fields.label}
-                                                inputProps={{ min: 0 }}
-                                            />
-                                        </Col>
-                                        <Col lg='3' className="d-flex">
-                                            <TextField
-                                                className="w-100 mb-2"
-                                                type="number"
-                                                label={'Dues'}
-                                                value={fields.dues}
-                                                inputProps={{ min: 0 }}
-                                            />
-                                        </Col>
+                                pricingDetails.additionalFieldsForChargesDue.map((fields, index) => (
+                                    <>  
+                                        <div className="d-flex mt-3">
+
+                                            <Col lg='3' className="d-flex">
+                                                <TextField
+                                                    className="w-100 mb-2"
+                                                    type="text"
+                                                    label={'Label'}
+                                                    onChange={(e) => {setAdditionalFieldsList(prevAdditionalFieldsList => {
+                                                        
+                                                        let newList = [...prevAdditionalFieldsList];
+                                                        newList[index] = { ...newList[index], label: e.target.value };
+                                                        return newList;
+                                                    }); console.log(additionalFieldsList)}}
+                                                    value={fields.label}
+                                                />
+                                            </Col>
+                                            <Col lg='3' className="d-flex">
+                                                <TextField
+                                                    className="w-100 mb-2"
+                                                    type="number"
+                                                    label={'Dues'}
+                                                    onChange={(e) => {setAdditionalFieldsList(prevAdditionalFieldsList => {
+                                                        let newList = [...prevAdditionalFieldsList];
+                                                        newList[index] = { ...newList[index], dues: e.target.value };
+                                                        return newList;
+                                                    })}}
+                                                    value={fields.dues}
+                                                    inputProps={{ min: 0 }}
+                                                />
+                                            </Col>
+                                            <Col lg='3' className="mt-2">
+                                                <Buttons name='Remove' className='p-2' onClick={()=>{removeDues(index)}}></Buttons>
+                                            </Col>
+                                        </div>
                                     </>
                                 ))
                                 : null}
                         </>
                         : null}
-                </Row>
             </div>
             {savePricingFlag === false ?
                 <div className="d-flex">

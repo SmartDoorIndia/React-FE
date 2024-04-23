@@ -10,6 +10,7 @@ import { validateAgencyDetails, validateExecutiveDetails } from "../../../../com
 import '../Add_EditAgency.scss';
 import { addEditExecutive } from '../../../../common/redux/actions';
 import { showSuccessToast } from "../../../../common/helpers/Utils";
+import { showErrorToast } from "../../../../common/helpers/Utils";
 import AutoCompleteTextField from "../../../../shared/Inputs/AutoComplete/textField";
 
 const AgencyExecutives = (props) => {
@@ -30,12 +31,23 @@ const AgencyExecutives = (props) => {
         console.log(valid);
         console.log(executiveDetails);
         if (valid.isValid) {
-            const response = await addEditExecutive(executiveDetails);
-            console.log(response);
-            if (response.status === 200) {
-                showSuccessToast('Agency added successfully...');
-                history.goBack();
-            }
+            const response = await addEditExecutive(executiveDetails).then((response) => {
+                if (response.status === 200) {
+                    showSuccessToast('Agency Executive added successfully...');
+                       history.goBack();
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                showErrorToast("Number Already exist...")
+            });
+           
+            // if (response.status === 200) {
+            //     showSuccessToast('Agency Executive added successfully...');
+            //     history.goBack();
+            // }else{
+            //     showErrorToast(response.data.message);
+            // }
         }
     }
 

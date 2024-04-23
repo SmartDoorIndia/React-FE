@@ -732,8 +732,10 @@ export const validateBasicDetails = (data) => {
   if(isBlank(data.propertyType)) {
     errors.propertyType = true;
   }
-  if(isBlank(data.propertySubType)) {
-    errors.propertySubType = true;
+  if(data.propertyType === 'Residential') {
+    if(isBlank(data.propertySubType)) {
+      errors.propertySubType = true;
+    }
   }
   if(data.stageOfProperty === 'Ready') {
     if(isBlank(data.ageOfProperty)) {
@@ -919,7 +921,7 @@ export const validatePricing = (data, pricingList) => {
     }
   }
   if(pricingList.includes('Distress CheckBox')) {
-    if(isBlank(data.isDistressSell)) {
+    if((data.isDistressSell) === null) {
       errors.isDistressSell = true;
     }
     if(pricingList.includes('Expected time')) {
