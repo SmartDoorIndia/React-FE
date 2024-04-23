@@ -69,7 +69,7 @@ const BasicDetails = (props) => {
         setBasicDetails((prevBasicDetails) => ({
             ...prevBasicDetails,
             stageOfProperty: e.target.value, ageOfProperty: e.target.value === 'Under Construction' ? 0 : basicDetails.ageOfProperty,
-            expectedPossessionDate : e.target.value === 'Ready' ? '' : basicDetails.expectedPossessionDate
+            // expectedPossessionDate : e.target.value === 'Ready' ? '' : basicDetails.expectedPossessionDate
         }));
     }
     
@@ -81,11 +81,8 @@ const BasicDetails = (props) => {
     }
 
     const saveBasicDetails = async () => {
-        if (basicDetails.stageOfProperty === 'Under Construction') {
-            setBasicDetails({ ...basicDetails, expectedPossessionDate: selectedMonth + '-' + selectedYear })
-        }
-        const valid = validateBasicDetails(basicDetails);
-        console.log(valid)
+        const valid = await validateBasicDetails(basicDetails);
+        console.log("validate response", valid)
         setError(valid.errors);
         if (valid.isValid) {
             let userId = getLocalStorage('authData');
@@ -290,6 +287,9 @@ const BasicDetails = (props) => {
                                     onChange={(e) => {
                                         console.log(e)
                                         setSelectedYear(e.target.value)
+                                        setBasicDetails((prevBasicDetails) => ({
+                                            ...prevBasicDetails, expectedPossessionDate : selectedMonth + '-' + e.target.value
+                                        }))
                                     }}
                                     value={selectedYear}
                                 >
@@ -309,6 +309,9 @@ const BasicDetails = (props) => {
                                     onChange={(e) => {
                                         console.log(e)
                                         setSelectedMonth(e.target.value)
+                                        setBasicDetails((prevBasicDetails) => ({
+                                            ...prevBasicDetails, expectedPossessionDate : e.target.value + '-' + selectedYear
+                                        }))
                                     }}
                                     value={selectedMonth}
                                 >
