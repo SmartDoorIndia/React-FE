@@ -470,7 +470,7 @@ export const ApiJson = {
   },
   // GET /property/getPropertyById/{propertyId}/{userId}
   getPropertyDetails: {
-    url: '/consumer/property/getPropertyById/:propertyId/:userId',
+    url: '/consumer/property/getSearchedPropertyById/:propertyId/:userId',
     method: 'GET',
     data: {},
     headers: {
