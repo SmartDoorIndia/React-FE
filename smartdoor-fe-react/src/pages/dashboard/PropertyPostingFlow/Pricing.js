@@ -239,6 +239,7 @@ const Pricing = (props) => {
                                                     type="text"
                                                     label={'Label'}
                                                     onChange={(e) => {setAdditionalFieldsList(prevAdditionalFieldsList => {
+                                                        
                                                         let newList = [...prevAdditionalFieldsList];
                                                         newList[index] = { ...newList[index], label: e.target.value };
                                                         return newList;
