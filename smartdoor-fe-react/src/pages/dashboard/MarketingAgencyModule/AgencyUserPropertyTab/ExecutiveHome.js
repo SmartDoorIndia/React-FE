@@ -25,13 +25,15 @@ const ExecutiveHome = (props) => {
     const history = useHistory();
 
     const handlePhoneChange = (e) => {
-        const result = e.target.value.replace(/\D/g, '');
-        const mobileNum = (result.slice(0, 10));
-        console.log("mob->",mobileNum)
-        setCustomerDetails({ ...customerDetails, mobile: mobileNum });
-        console.log("cust deatails->",customerDetails)
-        checkExistingCustomer({mobile:mobileNum});
-        console.log(customerDetails)
+        const inputValue = e.target.value;
+        if (inputValue.length === 10) {
+            const result = inputValue.replace(/\D/g, '');
+            console.log("mob->", result);
+            setCustomerDetails({ ...customerDetails, mobile: result });
+            checkExistingCustomer({ mobile: result });
+        }else {
+            setCustomerDetails({ ...customerDetails, mobile: null });
+        }
     }
 
     const checkExistingCustomer = async (e) => {
