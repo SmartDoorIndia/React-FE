@@ -11,9 +11,9 @@ import { getLocalStorage, showSuccessToast } from "../../../common/helpers/Utils
 import { useHistory } from "react-router-dom";
 const TermsConditions = (props) => {
     const history = useHistory();
-    const { basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages, termsConditions, customerDetails} = props;
+    const { basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages, termsConditions, customerDetails, miscellaneousDetails} = props;
     const propertyId = props?.propertyId;
-    const [termsConditionObj, setTermsConditionObj] = useState({
+    const [termsConditionObj, setTermsConditionObj] = useState( termsConditions.data || {
         visitGuidelines: '',
         areTermsAndConditionsForPostingPropertyAccepted: null
     });
@@ -30,7 +30,7 @@ const TermsConditions = (props) => {
 
     const notifyCustomer = async () => {
         let isValid = true;
-        if((termsConditionObj.visitGuidelines.trim()).length === 0) {
+        if((termsConditionObj?.visitGuidelines?.trim())?.length === 0) {
             setError({visitGuidelines : true});
             isValid = false;
         }
@@ -61,8 +61,8 @@ const TermsConditions = (props) => {
                     postedByName: userData.name,
                     postedByMobile: userData.mobile,
                     postedByProfileImageUrl: '',
-                    ownerName: customerDetails.name,
-                    ownerMobileNumber: customerDetails.mobile,
+                    ownerName: customerDetails?.name || miscellaneousDetails?.ownerName,
+                    ownerMobileNumber: customerDetails?.mobile || miscellaneousDetails?.ownerMobileNumber,
                     isPostingForOthers: true
                 },
                 basicDetails: basicDetailFields,
@@ -77,7 +77,7 @@ const TermsConditions = (props) => {
             if(response.status === 200) {
                 showSuccessToast('Property Posted is under reviewed');
                 setPropertySuccessFlag(true);
-                history.push("/admin/executive/properties");
+                history.goBack();
             }
         }
     }
@@ -133,7 +133,7 @@ const TermsConditions = (props) => {
                             <Text className='mt-1' text='I accept on ' fontWeight={'500'} style={{ fontSize: '14px' }} /> &nbsp;
                             <Text className='mt-1' text=' terms and condition' fontWeight={'500'} style={{ fontSize: '14px', color: '#BE1452' }} />
                         </div>
-                        <text text={error.areTermsAndConditionsForPostingPropertyAccepted} style={{color:'red'}} />
+                        <Text text={error.areTermsAndConditionsForPostingPropertyAccepted} style={{color:'red'}} />
                     </Col>
                 </div>
             </div>

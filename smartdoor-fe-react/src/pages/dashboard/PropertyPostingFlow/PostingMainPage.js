@@ -21,7 +21,7 @@ const PostingMainPage = (props) => {
     return (
         <>
             <Text text={'Basic Details'} fontWeight='bold' style={{fontSize: '18px'}} />
-            <BasicDetails saveBasicDetailsFields={handleBasicDetails} customerDetails={customerDetails}></BasicDetails>
+            <BasicDetails saveBasicDetailsFields={handleBasicDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails}></BasicDetails>
             {saveBasicDetails.saveFlag ?
             <>
                 <Text text={'Address'} fontWeight='bold' style={{fontSize: '18px'}} />
@@ -33,7 +33,7 @@ const PostingMainPage = (props) => {
                 <Text text={'Uploads'} fontWeight='bold' style={{fontSize: '18px'}} />
                 <Uploads propertyId={saveBasicDetails.propertyId} ></Uploads>
                 <Text text={'Terms and Conditions'} fontWeight='bold' style={{fontSize: '18px'}} />
-                <TermsConditions propertyId={saveBasicDetails.propertyId} customerDetails={customerDetails} ></TermsConditions>
+                <TermsConditions propertyId={saveBasicDetails.propertyId} miscellaneousDetails={editPropertyDetails.miscellaneousDetails} customerDetails={customerDetails} ></TermsConditions>
             </>
             :null}
         </>

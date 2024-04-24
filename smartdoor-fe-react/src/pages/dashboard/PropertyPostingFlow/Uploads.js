@@ -19,8 +19,8 @@ const Uploads = (props) => {
     const propertyId = props?.propertyId;
     const [imageArr, setImageArray] = useState(uploadImages.data.propertyImages || []);
     const [addNewVideoFlag, setAddNewVideoFlag] = useState(false);
-    const [videoUrl1, setVideoUrl1] = useState(uploadImages?.data?.propertyVideos[0]?.docUrl || '');
-    const [videoUrl2, setVideoUrl2] = useState(uploadImages?.data?.propertyVideos[1]?.docUrl || '');
+    const [videoUrl1, setVideoUrl1] = useState( '');
+    const [videoUrl2, setVideoUrl2] = useState('');
     const [saveUploadFlag, setSaveUploadFlag] = useState(false);
     const [imageLoader, setImageLoader] = useState(false)
 	const [loading, setLoading] = useState(true);
@@ -178,7 +178,7 @@ const Uploads = (props) => {
             }];
         }
         if(isValid) {
-            saveUploadFlag(true);
+            setSaveUploadFlag(true);
 
             dispatch({type: Actions.UPLOAD_IMAGES_SUCCESS, data: {imapropertyImages: imageArr, propertyVideos: videoUrlObj}});
         }

@@ -14,7 +14,7 @@ import { addBasicDetails } from "../../../common/redux/actions";
 import { getLocalStorage } from "../../../common/helpers/Utils";
 
 const BasicDetails = (props) => {
-    const { basicDetailFields, saveBasicDetailsFields, customerDetails } = props;
+    const { basicDetailFields, saveBasicDetailsFields, customerDetails, editPropertyFlag } = props;
     const propertyPostTypeList = POSTING_CONSTANTS.propertyPostType;
     const propertyStageList = POSTING_CONSTANTS.propertyStage;
     const propertyTypeList = POSTING_CONSTANTS.propertyType;
@@ -23,10 +23,6 @@ const BasicDetails = (props) => {
     const PGSharingList = ['Single', 'Double', 'Triple'];
     const [yearList, setYearList] = useState([]);
     const monthList = CONSTANTS_STATUS.monthList;
-    const [selectedYear, setSelectedYear] = useState('');
-    const [selectedMonth, setSelectedMonth] = useState('');
-    const [saveBasicDetailsFlag, setSaveBasicDetailsFlag] = useState(false);
-    const [error, setError]  = useState({});
     const [basicDetails, setBasicDetails] = useState(Object.keys(basicDetailFields.data).length !== 0 ? basicDetailFields.data : {
         propertyCategory: "",
         propertyType: "",
@@ -37,6 +33,10 @@ const BasicDetails = (props) => {
         expectedPossessionDate: "",
         occupancySharing: 0
     });
+    const [selectedYear, setSelectedYear] = useState(basicDetails.expectedPossessionDate?.split('-')[1] || '');
+    const [selectedMonth, setSelectedMonth] = useState(Number(basicDetails.expectedPossessionDate?.split('-')[0]) || '');
+    const [saveBasicDetailsFlag, setSaveBasicDetailsFlag] = useState(editPropertyFlag || false);
+    const [error, setError]  = useState({});
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -106,8 +106,8 @@ const BasicDetails = (props) => {
                     postedByName: userId.name,
                     postedByMobile: userId.mobile,
                     postedByProfileImageUrl: '',
-                    ownerName: customerDetails.name,
-                    ownerMobileNumber: customerDetails.mobile,
+                    ownerName: customerDetails?.name,
+                    ownerMobileNumber: customerDetails?.mobile,
                     isPostingForOthers: true
                 },
                 basicDetails: basicDetails

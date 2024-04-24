@@ -18,7 +18,6 @@ const Pricing = (props) => {
     const [pricingObject, setPricingObject] = useState({});
     const [preferredForList, setPreferredForList] = useState([]);
     const currentDate = new Date().toISOString().split('T')[0];
-    const [additionalFieldsList, setAdditionalFieldsList] = useState([]);
     const [pricingDetails, setPricingDetails] = useState(Object.keys(pricingDetailFields.data).length !== 0 ?
         pricingDetailFields.data : {
             propertyRate: null,
@@ -32,6 +31,7 @@ const Pricing = (props) => {
             preferredFor: '',
             leaseType: ''
         });
+    const [additionalFieldsList, setAdditionalFieldsList] = useState(pricingDetails.additionalFieldsForChargesDue || []);
     const [error, setError] = useState({});
     const [savePricingFlag, setSavePricingFlag] = useState(false);
     const dispatch = useDispatch();
@@ -41,17 +41,25 @@ const Pricing = (props) => {
             let pricingObj = {};
             let fields = basicDetailFields.data;
             console.log(fields)
+            let category = '';
+            if(fields.propertyCategory === 'Lease') {
+                category = 'Renting'
+            } else if( fields.propertyCategory === 'Sale') {
+                category = 'Selling'
+            } else {
+                category = fields.propertyCategory
+            }
             if (fields.propertyType === 'Residential') {
                 if (fields.propertySubType === 'PG/Co-Living') {
-                    pricingObj = PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Pricing
+                    pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Pricing
                     // console.log(PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Pricing)
                 } else {
-                    pricingObj = PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType].Pricing
+                    pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType].Pricing
                 }
             } else if (fields.propertyType === 'Commercial') {
-                pricingObj = PostingFields.postingFieldsObject[fields.propertyCategory === 'Lease' ? 'Renting' : fields.propertyCategory][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType].Pricing
+                pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType].Pricing
             }
-            console.log(pricingObj)
+            console.log(pricingDetails)
             setPricingList(Object.keys(pricingObj));
             setPricingObject(pricingObj);
             if ((Object.keys(pricingObj)).includes('Preferred for')) {
@@ -185,8 +193,8 @@ const Pricing = (props) => {
                             </span>
                             <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
                                 valueLabelDisplay="auto"
-                                min={30}
-                                max={100}
+                                min={0}
+                                max={30}
                                 style={{ color: "#BE142" }}
                             />
                         </Col>
