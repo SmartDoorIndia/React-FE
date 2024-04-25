@@ -10,6 +10,8 @@ import * as Actions from '../../../common/redux/types';
 import Buttons from "../../../shared/Buttons/Buttons";
 import { validateSpecs } from "../../../common/validations";
 import { getChatGptDescription } from "../../../common/redux/actions";
+import Loader from "../../../common/helpers/Loader";
+import './property.scss';
 
 const Specs = (props) => {
 
@@ -59,6 +61,8 @@ const Specs = (props) => {
     const [internalAmenitiesList, setInternalAmenitiesList] = useState([]);
     const [saveSpecsFlag, setSaveSpecsFlag] = useState(false);
     const [error, setError] = useState({});
+    const [descLoader, setDescLoader] = useState(false)
+	const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (Object.keys(basicDetailFields.data).length !== 0) {
@@ -111,7 +115,7 @@ const Specs = (props) => {
     const generatePropertyDescription = async () => {
         const valid = validateSpecs(specDetails, specList, false);
         if(valid.isValid) {
-
+            setDescLoader(true);
             const requestBody = {
                 "Type": basicDetailFields?.data?.propertyType,
                 "Purpose": basicDetailFields?.data?.propertyCategory,
@@ -134,7 +138,11 @@ const Specs = (props) => {
 
             const response = await getChatGptDescription(requestBody);
             console.log(response);
-            setSpecDetails(prevSpecDetails => ({...prevSpecDetails, propertyDescription: response?.data?.resourceData}))
+            if(response.status === 200) {
+                setDescLoader(false)
+                setSpecDetails(prevSpecDetails => ({...prevSpecDetails, propertyDescription: response?.data?.resourceData}))
+            }
+            setDescLoader(false)
         }
 }
 
@@ -190,8 +198,8 @@ const handleBuiltupAreaChange = (e) => {
     const carpetArea = parseFloat(builtUpArea * (1 - (specDetails.loadingFactorInPercent * 0.01)));
     setSpecDetails(prevSpecDetails => ({
         ...prevSpecDetails,
-        carpetArea: carpetArea.toFixed(3),
-        builtUpArea: builtUpArea // Adjust decimal places as needed
+        carpetArea: carpetArea,
+        builtUpArea: builtUpArea.toFixed(3) // Adjust decimal places as needed
     }));
 };
 
@@ -299,8 +307,8 @@ return (
                                 error={error.carpetArea}
                                 className="w-100"
                                 label={'Carpet area'}
-                                onChange={(e) => { handleCarpetAreaChange(e) }}
-                                value={specDetails.carpetArea}
+                                onChange={ async (e) => { await handleCarpetAreaChange(e) }}
+                                defaultValue={specDetails.carpetArea}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
@@ -344,7 +352,7 @@ return (
                                 className="w-100"
                                 label={'Built-up area'}
                                 onChange={(e) => { handleBuiltupAreaChange(e) }}
-                                value={specDetails.builtUpArea}
+                                defaultValue={specDetails.builtUpArea}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
@@ -377,7 +385,7 @@ return (
                                 className="w-100"
                                 label={'Carpet area'}
                                 onChange={(e) => { handleCarpetAreaChange(e) }}
-                                value={specDetails.carpetArea}
+                                defaultValue={specDetails.carpetArea}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
@@ -426,7 +434,7 @@ return (
                                 className="w-100"
                                 label={'Built-up area'}
                                 onChange={(e) => { handleBuiltupAreaChange(e) }}
-                                value={specDetails.builtUpArea}
+                                defaultValue={specDetails.builtUpArea}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
@@ -771,6 +779,7 @@ return (
                 {specList.includes('Property description') ?
                     <Col lg='12' className='mb-2'>
                         <Buttons className='mb-2' name={'Generate ChatGpt description'} onClick={() => {generatePropertyDescription()}} />
+                        {descLoader ? <Loader /> :null}
                         <TextField
                             required
                             multiline

@@ -10,40 +10,43 @@ import { addBasicDetails } from "../../../common/redux/actions";
 import { getLocalStorage, showSuccessToast } from "../../../common/helpers/Utils";
 import { useHistory } from "react-router-dom";
 import { validateTermsConditions } from "../../../common/validations";
+import Loader from "../../../common/helpers/Loader";
 const TermsConditions = (props) => {
     const history = useHistory();
-    const { basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages, termsConditions, customerDetails, editPropertyFlag} = props;
+    const { basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages, termsConditions, customerDetails, editPropertyFlag } = props;
     const propertyId = props?.propertyId;
     const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
-    const [termsConditionObj, setTermsConditionObj] = useState( termsConditions.data || {
+    const [termsConditionObj, setTermsConditionObj] = useState(termsConditions.data || {
         visitGuidelines: '',
         areTermsAndConditionsForPostingPropertyAccepted: false,
-        securityGuardNumber:''
+        securityGuardNumber: ''
     });
     const [error, setError] = useState({});
     const [propertySuccessFlag, setPropertySuccessFlag] = useState(false);
     const userData = getLocalStorage('authData');
-
+    const [imageLoader, setImageLoader] = useState(false)
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if(editPropertyFlag) {
-            setmiscellaneousDetails(prevMiscellaneousDetails => ({...prevMiscellaneousDetails, ownerName: null, ownerMobileNumber: null}));
+        if (editPropertyFlag) {
+            setmiscellaneousDetails(prevMiscellaneousDetails => ({ ...prevMiscellaneousDetails, ownerName: null, ownerMobileNumber: null }));
         }
-    },[]);
+    }, []);
 
     const handlePhoneChange = (e) => {
         const result = e.target.value.replace(/\D/g, '');
         const mobileNum = (result.slice(0, 10));
-        setTermsConditionObj(prevTermsConditionsObj => ({...prevTermsConditionsObj, securityGuardNumber: mobileNum}));
+        setTermsConditionObj(prevTermsConditionsObj => ({ ...prevTermsConditionsObj, securityGuardNumber: mobileNum }));
     }
 
     const notifyCustomer = async () => {
         let valid = {};
         valid = validateTermsConditions(termsConditionObj);
         setError(valid.errors);
-        if(valid.isValid) {
-            dispatch({type: Actions.TERMS_CONDITIONS_SUCCESS, data: {termsConditionObj : termsConditionObj}});
+        if (valid.isValid) {
+            setLoading(true);
+            dispatch({ type: Actions.TERMS_CONDITIONS_SUCCESS, data: { termsConditionObj: termsConditionObj } });
             const postProperty = {
                 smartdoorPropertyId: propertyId,
                 miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
@@ -78,7 +81,8 @@ const TermsConditions = (props) => {
             }
 
             const response = await addBasicDetails(postProperty);
-            if(response.status === 200) {
+            setLoading(false);
+            if (response.status === 200) {
                 showSuccessToast('Property Posted is under reviewed');
                 setPropertySuccessFlag(true);
                 history.goBack();
@@ -103,9 +107,9 @@ const TermsConditions = (props) => {
                             onChange={(e) => {
                                 setTermsConditionObj(prevTermsConditionObj =>
                                     ({ ...prevTermsConditionObj, visitGuidelines: e.target.value }))
-                                }}
-                                value={termsConditionObj.visitGuidelines}
-                                ></TextField>
+                            }}
+                            value={termsConditionObj.visitGuidelines}
+                        ></TextField>
                         <TextField
                             className="mt-3 w-50"
                             label={'Manager/Sec. Guard Number'}
@@ -144,8 +148,12 @@ const TermsConditions = (props) => {
                 </div>
             </div>
             <div className="d-flex">
-                <Buttons className='p-2 px-4' name='Notify Customer' onClick={() => { notifyCustomer(); }}></Buttons> &nbsp; &nbsp;
-                <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
+                {loading ? <Loader /> :
+                    <>
+                        <Buttons className='p-2 px-4' name='Notify Customer' onClick={() => { notifyCustomer(); }}></Buttons> &nbsp; &nbsp;
+                        <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
+                    </>
+                }
             </div>
         </>
     );

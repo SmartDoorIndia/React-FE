@@ -29,9 +29,9 @@ const PostingMainPage = (props) => {
                 <AddressSection></AddressSection>
                 <Text text={'Specs'} fontWeight='bold' style={{fontSize: '18px'}} />
                 <Specs></Specs>
+                <Text text={'Uploads'} fontWeight='bold' style={{fontSize: '18px'}} />
                 <Text text={'Pricing'} fontWeight='bold' style={{fontSize: '18px'}} />
                 <Pricing></Pricing>
-                <Text text={'Uploads'} fontWeight='bold' style={{fontSize: '18px'}} />
                 <Uploads propertyId={saveBasicDetails.propertyId} ></Uploads>
                 <Text text={'Terms and Conditions'} fontWeight='bold' style={{fontSize: '18px'}} />
                 <TermsConditions propertyId={saveBasicDetails.propertyId} miscellaneousDetails={miscellaneousDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails} ></TermsConditions>

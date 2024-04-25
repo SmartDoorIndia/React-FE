@@ -12,6 +12,7 @@ import { validateBasicDetails } from "../../../common/validations";
 import POSTING_CONSTANTS from "../../../common/helpers/POSTING_CONSTANTS";
 import { addBasicDetails } from "../../../common/redux/actions";
 import { getLocalStorage } from "../../../common/helpers/Utils";
+import Loader from '../../../common/helpers/Loader';
 
 const BasicDetails = (props) => {
     const { basicDetailFields, saveBasicDetailsFields, customerDetails, editPropertyFlag } = props;
@@ -36,7 +37,9 @@ const BasicDetails = (props) => {
     const [selectedYear, setSelectedYear] = useState(basicDetails.expectedPossessionDate?.split('-')[1] || '');
     const [selectedMonth, setSelectedMonth] = useState(Number(basicDetails.expectedPossessionDate?.split('-')[0]) || '');
     const [saveBasicDetailsFlag, setSaveBasicDetailsFlag] = useState(editPropertyFlag || false);
-    const [error, setError]  = useState({});
+    const [error, setError] = useState({});
+    const [imageLoader, setImageLoader] = useState(false)
+	const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -72,7 +75,7 @@ const BasicDetails = (props) => {
             // expectedPossessionDate : e.target.value === 'Ready' ? '' : basicDetails.expectedPossessionDate
         }));
     }
-    
+
     const setPropertyType = (e) => {
         setBasicDetails((prevBasicDetails) => ({
             ...prevBasicDetails,
@@ -113,11 +116,16 @@ const BasicDetails = (props) => {
                 basicDetails: basicDetails
             }
             console.log(userId)
+            setLoading(true)
             const response = await addBasicDetails(data);
             console.log(response?.data?.resourceData?.propertyId)
-            dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
-            setSaveBasicDetailsFlag(true)
-            saveBasicDetailsFields({propertyId : response?.data?.resourceData?.propertyId, saveFlag: true})
+            if(response.status === 200) {
+                setLoading(false)
+                dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
+                setSaveBasicDetailsFlag(true)
+                saveBasicDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
+            }
+            setLoading(false)
         }
     }
 
@@ -198,7 +206,7 @@ const BasicDetails = (props) => {
                                         ...prevBasicDetails,
                                         propertySubType: e.target.value,
                                     }));
-                                    if(e.target.value !== 'PG/Co-Living') {
+                                    if (e.target.value !== 'PG/Co-Living') {
                                         setBasicDetails((prevBasicDetails) => ({
                                             ...prevBasicDetails,
                                             guestHouseOrPgPropertyType: '', occupancySharing: ''
@@ -288,7 +296,7 @@ const BasicDetails = (props) => {
                                         console.log(e)
                                         setSelectedYear(e.target.value)
                                         setBasicDetails((prevBasicDetails) => ({
-                                            ...prevBasicDetails, expectedPossessionDate : selectedMonth + '-' + e.target.value
+                                            ...prevBasicDetails, expectedPossessionDate: selectedMonth + '-' + e.target.value
                                         }))
                                     }}
                                     value={selectedYear}
@@ -310,7 +318,7 @@ const BasicDetails = (props) => {
                                         console.log(e)
                                         setSelectedMonth(e.target.value)
                                         setBasicDetails((prevBasicDetails) => ({
-                                            ...prevBasicDetails, expectedPossessionDate : e.target.value + '-' + selectedYear
+                                            ...prevBasicDetails, expectedPossessionDate: e.target.value + '-' + selectedYear
                                         }))
                                     }}
                                     value={selectedMonth}
@@ -349,10 +357,15 @@ const BasicDetails = (props) => {
                 </Row>
             </div>
             {saveBasicDetailsFlag === false ?
-                <div className="d-flex">
-                    <Buttons className='p-2 px-4' name='Confirm' onClick={() => { saveBasicDetails(); }}></Buttons> &nbsp; &nbsp;
-                    <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
-                </div>
+                <>
+                    {loading ? <Loader /> 
+                    :
+                    <div className="d-flex">
+                        <Buttons className='p-2 px-4' name='Confirm' onClick={() => { saveBasicDetails(); }}></Buttons> &nbsp; &nbsp;
+                        <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
+                    </div>
+                    }
+                </>
                 :
                 null}
         </>

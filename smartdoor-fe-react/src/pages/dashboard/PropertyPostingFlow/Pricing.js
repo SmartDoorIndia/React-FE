@@ -191,19 +191,7 @@ const Pricing = (props) => {
                             />
                         </Col>
                         : null}
-                    {pricingList.includes('discount %') ?
-                        <Col className="p-0" lg='4'>
-                            <span className="d-flex">
-                                <Text text='Expected Discount' fontWeight='bold' style={{ fontSize: '16px' }} />
-                            </span>
-                            <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
-                                valueLabelDisplay="auto"
-                                min={0}
-                                max={30}
-                                style={{ color: "#BE142" }}
-                            />
-                        </Col>
-                        : null}
+                    
                     {pricingList.includes('Expected time') ?
                         <Col lg='4'>
                             <TextField
@@ -218,12 +206,28 @@ const Pricing = (props) => {
                         </Col>
                         : null}
                     {pricingList.includes('Distress CheckBox') ?
+                    <>
                         <Col lg='4' className="d-flex">
                             <Checkbox onChange={(e) => { console.log(e); setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isDistressSell: (e.target.checked) })) }}
                                 checked={pricingDetails.isDistressSell} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
                             <Text text={'Do you want to additionally  publish in Distress property section '}
                                 fontWeight={'500'} style={{ fontSize: '13px' }} />
                         </Col>
+                        {pricingList.includes('discount %') && pricingDetails.isDistressSell === true ?
+                        <Col className="p-0" lg='4'>
+                            <span className="d-flex">
+                                <Text className='ml-3' text='Expected Discount' fontWeight='bold' style={{ fontSize: '16px' }} />
+                            </span>
+                            <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
+                                className="ml-4"
+                                valueLabelDisplay="auto"
+                                min={20}
+                                max={100}
+                                style={{ color: "#BE142" }}
+                            />
+                        </Col>
+                        : null}
+                    </>
                         : null}
                     {pricingList.includes('Fractional Ownership checkbox') ?
                         <Col lg='4' className="d-flex">
