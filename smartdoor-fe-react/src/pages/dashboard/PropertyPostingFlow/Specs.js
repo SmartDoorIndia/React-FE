@@ -39,6 +39,8 @@ const Specs = (props) => {
             numberOfBaths: null,
             numberOfCarParking: null,
             numberOfTwoWheelerParking: null,
+            numberOfReservedCarParking: null,
+            numberOfReservedTwoWheelerParking: null,
             numberOfBalconies: null,
             unitFurnishing: '',
             structure: '',
@@ -599,8 +601,8 @@ return (
                             type="number"
                             className="w-100"
                             label={'Reserved Car Parkings'}
-                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfCarParking: e.target.value })) }}
-                            value={specDetails.numberOfCarParking}
+                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfReservedCarParking: e.target.value })) }}
+                            value={specDetails.numberOfReservedCarParking}
                         >
                         </TextField>
                     </Col>
@@ -611,8 +613,8 @@ return (
                             type="number"
                             className="w-100"
                             label={'Reserved Two Wheeler Parkings'}
-                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfTwoWheelerParking: e.target.value })) }}
-                            value={specDetails.numberOfTwoWheelerParking}
+                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfReservedTwoWheelerParking: e.target.value })) }}
+                            value={specDetails.numberOfReservedTwoWheelerParking}
                         >
                         </TextField>
                     </Col>

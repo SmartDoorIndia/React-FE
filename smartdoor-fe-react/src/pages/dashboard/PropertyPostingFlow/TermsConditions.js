@@ -9,6 +9,7 @@ import * as Actions from '../../../common/redux/types';
 import { addBasicDetails } from "../../../common/redux/actions";
 import { getLocalStorage, showSuccessToast } from "../../../common/helpers/Utils";
 import { useHistory } from "react-router-dom";
+import { validateTermsConditions } from "../../../common/validations";
 const TermsConditions = (props) => {
     const history = useHistory();
     const { basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages, termsConditions, customerDetails, editPropertyFlag} = props;
@@ -16,9 +17,10 @@ const TermsConditions = (props) => {
     const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
     const [termsConditionObj, setTermsConditionObj] = useState( termsConditions.data || {
         visitGuidelines: '',
-        areTermsAndConditionsForPostingPropertyAccepted: null
+        areTermsAndConditionsForPostingPropertyAccepted: false,
+        securityGuardNumber:''
     });
-    const [error, setError] = useState('');
+    const [error, setError] = useState({});
     const [propertySuccessFlag, setPropertySuccessFlag] = useState(false);
     const userData = getLocalStorage('authData');
 
@@ -33,19 +35,14 @@ const TermsConditions = (props) => {
     const handlePhoneChange = (e) => {
         const result = e.target.value.replace(/\D/g, '');
         const mobileNum = (result.slice(0, 10));
+        setTermsConditionObj(prevTermsConditionsObj => ({...prevTermsConditionsObj, securityGuardNumber: mobileNum}));
     }
 
     const notifyCustomer = async () => {
-        let isValid = true;
-        if((termsConditionObj?.visitGuidelines?.trim())?.length === 0) {
-            setError({visitGuidelines : true});
-            isValid = false;
-        }
-        if(termsConditionObj.areTermsAndConditionsForPostingPropertyAccepted === null) {
-            setError({areTermsAndConditionsForPostingPropertyAccepted : 'Please accept terms and conditions'});
-            isValid = false;
-        }
-        if(isValid) {
+        let valid = {};
+        valid = validateTermsConditions(termsConditionObj);
+        setError(valid.errors);
+        if(valid.isValid) {
             dispatch({type: Actions.TERMS_CONDITIONS_SUCCESS, data: {termsConditionObj : termsConditionObj}});
             const postProperty = {
                 smartdoorPropertyId: propertyId,
@@ -106,13 +103,14 @@ const TermsConditions = (props) => {
                             onChange={(e) => {
                                 setTermsConditionObj(prevTermsConditionObj =>
                                     ({ ...prevTermsConditionObj, visitGuidelines: e.target.value }))
-                            }}
-                            value={termsConditionObj.visitGuidelines}
-                        ></TextField>
-                        {/* <TextField
+                                }}
+                                value={termsConditionObj.visitGuidelines}
+                                ></TextField>
+                        <TextField
                             className="mt-3 w-50"
                             label={'Manager/Sec. Guard Number'}
                             type="number"
+                            error={error.securityGuardNumber}
                             inputProps={{ min: 0, max: 999999999 }}
                             InputProps={{
                                 startAdornment: (
@@ -121,7 +119,8 @@ const TermsConditions = (props) => {
                                     </>
                                 )
                             }}
-                            onChange={(e) => { handlePhoneChange(e) }} /> */}
+                            onChange={(e) => { handlePhoneChange(e) }}
+                            value={termsConditionObj.securityGuardNumber} />
                     </Col>
                     <Col lg='6'>
                         <Text text={'Terms and Conditions'} fontWeight={'bold'} style={{ fontSize: '16px' }} />
@@ -131,7 +130,7 @@ const TermsConditions = (props) => {
                         congue scelerisque malesuada euismod lacus. Aliquet semper vitae eget pharetra sit sed. Sollicitudin quis \
                         dapibus vel parturient eros tellus sed tellus. Integer aliquam elit leo quam at vel gravida eleifend sit.'}
                             fontWeight={'500'} style={{ fontSize: '14px' }} />
-                        <div className="d-flex">
+                        {/* <div className="d-flex">
                             <Checkbox onChange={(e) => {
                                 setTermsConditionObj(prevTermsConditionObj =>
                                     ({ ...prevTermsConditionObj, areTermsAndConditionsForPostingPropertyAccepted: e.target.checked }))
@@ -140,7 +139,7 @@ const TermsConditions = (props) => {
                             <Text className='mt-1' text='I accept on ' fontWeight={'500'} style={{ fontSize: '14px' }} /> &nbsp;
                             <Text className='mt-1' text=' terms and condition' fontWeight={'500'} style={{ fontSize: '14px', color: '#BE1452' }} />
                         </div>
-                        <Text text={error.areTermsAndConditionsForPostingPropertyAccepted} style={{color:'red'}} />
+                        <Text text={error.areTermsAndConditionsForPostingPropertyAccepted} style={{color:'red'}} /> */}
                     </Col>
                 </div>
             </div>

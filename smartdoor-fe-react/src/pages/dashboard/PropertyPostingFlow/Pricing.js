@@ -71,7 +71,7 @@ const Pricing = (props) => {
 
     const addNewFields = () => {
         if (pricingDetails.additionalFieldsForChargesDue.length < 3) {
-            let additionalList = additionalFieldsList;
+            let additionalList = pricingDetails.additionalFieldsForChargesDue;
             additionalList.push({ label: null, dues: null });
             setAdditionalFieldsList([...additionalList]);
             setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
@@ -83,7 +83,7 @@ const Pricing = (props) => {
     }
 
     const removeDues = (index) => {
-        let additionalList = additionalFieldsList;
+        let additionalList = pricingDetails.additionalFieldsForChargesDue;
         additionalList.splice(index, 1);
         setAdditionalFieldsList([...additionalList]);
         setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
@@ -250,15 +250,17 @@ const Pricing = (props) => {
                                             <TextField
                                                 className="w-100 mb-2"
                                                 type="text"
-                                                error={false}
+                                                error={error.additionalFieldsForChargesDue && error.additionalFieldsForChargesDue[index]?.label}
                                                 label={'Label'}
                                                 onChange={(e) => {
                                                     setAdditionalFieldsList(prevAdditionalFieldsList => {
 
                                                         let newList = [...prevAdditionalFieldsList];
                                                         newList[index] = { ...newList[index], label: e.target.value };
+                                                        setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: newList }));
                                                         return newList;
-                                                    }); console.log(additionalFieldsList)
+                                                    }); 
+                                                    console.log(pricingDetails.additionalFieldsForChargesDue)
                                                 }}
                                                 value={fields.label}
                                             />
@@ -268,11 +270,12 @@ const Pricing = (props) => {
                                                 className="w-100 mb-2"
                                                 type="number"
                                                 label={'Dues'}
-                                                error={false}
+                                                error={error.additionalFieldsForChargesDue && error.additionalFieldsForChargesDue[index]?.dues}
                                                 onChange={(e) => {
                                                     setAdditionalFieldsList(prevAdditionalFieldsList => {
                                                         let newList = [...prevAdditionalFieldsList];
                                                         newList[index] = { ...newList[index], dues: e.target.value };
+                                                        setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: newList }));
                                                         return newList;
                                                     })
                                                 }}

@@ -31,24 +31,30 @@ const Uploads = (props) => {
     },[])
 
     const deleteImageHandler = useCallback(
-        (docId) => {
-            console.log(docId, "doc id");
-            deletePropertyImage({ docId: docId })
-            	.then((response) => {
-            		if (response.data) {
-            			if (response.data.resourceData) {
-                            const newList = imageArr.filter(item => item.docId !== docId);
-                            setImageArray(newList);
-            			}
-            		}
-            		console.log("responseDeleteImage", response);
-            	})
-            	.catch((error) => {
-            		// setLoading(false);
-            		console.log("error", error);
-            	});
+        (docId, index) => {
+            // console.log(docId, "doc id");
+            // deletePropertyImage({ docId: docId })
+            // 	.then((response) => {
+            // 		if (response.data) {
+            // 			if (response.data.resourceData) {
+            //                 const newList = imageArr.filter(item => item.docId !== docId);
+            //                 setImageArray(newList);
+            // 			}
+            // 		}
+            // 		console.log("responseDeleteImage", response);
+            // 	})
+            // 	.catch((error) => {
+            // 		// setLoading(false);
+            // 		console.log("error", error);
+            // 	});
+            let imageList = [];
+            imageList = [...imageArr];
+            console.log(imageList)
+            console.log(index)
+            imageList.splice(index, 1);
+            setImageArray(imageList)
         },
-        []
+        [imageArr]
     );
 
     const fileUpload = (event) => {
@@ -150,8 +156,8 @@ const Uploads = (props) => {
             setError({videoUrl2: true})
             isValid = false;
         }
-        if(imageArr.length === 0) {
-            showErrorToast("Please upload images");
+        if(imageArr.length < 3) {
+            showErrorToast("Please upload minimum 3 images");
             isValid = false;
         }
         let videoUrlObj = []
@@ -210,15 +216,15 @@ const Uploads = (props) => {
                             }}
                         />
                         <div className="d-flex mt-3" style={{ overflowX: 'scroll', flexWrap: 'wrap' }}>
-                            {imageArr.map((image) => (
+                            {imageArr.map((image, index) => (
                                 <>
                                     <div className="d-flex">
                                         <img src={image?.docURL} style={{
                                             border: '1px #DEDEDE solid', borderRadius: 8, height: '100px', width: '200px',
                                             marginInlineEnd: '10px'
-                                        }} onClick={() => { deleteImageHandler(image.docId) }} />
+                                        }} />
                                         {/* <img className="me-3 mt-3" src={image.docURL} style={{ width: '150px', height: '100px', borderRadius: 8, border: '1px #9BA5AD solid' }}></img> */}
-                                        <img className="mt-2" src={closeBtn} style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId); console.log(image.docId) }} />
+                                        <img className="mt-2" src={closeBtn} style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId, index); console.log(image.docId) }} />
                                     </div> &nbsp; &nbsp; &nbsp; &nbsp;
                                 </>
                             ))}

@@ -885,6 +885,11 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.numberOfCarParking = true;
     }
   }
+  if(specList?.includes('Reserved car parkings')) {
+    if(isBlank(data.numberOfReservedCarParking)) {
+      errors.numberOfReservedCarParking = true;
+    }
+  }
   if(specList?.includes('Property description') && testDesc === true) {
     if(isBlank(data.propertyDescription)) {
       errors.propertyDescription = true;
@@ -948,6 +953,25 @@ export const validatePricing = (data, pricingList) => {
     }
   }
   
+  return{
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateTermsConditions = (data) => {
+  const errors = {};
+  
+  if(isBlank(data.visitGuidelines)) {
+    errors.visitGuidelines = true;
+  }
+  if(isBlank(data.securityGuardNumber)) {
+    errors.securityGuardNumber = true;
+  }
+  if((data.securityGuardNumber.trim()).length < 10) {
+    errors.securityGuardNumber = true;
+  }
+
   return{
     errors,
     isValid: isEmpty(errors)
