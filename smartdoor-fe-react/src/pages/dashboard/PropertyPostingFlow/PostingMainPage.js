@@ -10,6 +10,7 @@ import Pricing from "./Pricing";
 
 const PostingMainPage = (props) => {
     const customerDetails = props.location.state.customerDetails;
+    const miscellaneousDetails = props.location.state.miscellaneousDetails;
     const [editPropertyDetails, setEditPropertyDetails ] = useState(props?.location?.state?.existingDetails)
     const [saveBasicDetails, setSaveBasicDetails] = useState({propertyId : editPropertyDetails?.propertyId || null, saveFlag: editPropertyDetails?.saveFlag || false});
 
@@ -33,7 +34,7 @@ const PostingMainPage = (props) => {
                 <Text text={'Uploads'} fontWeight='bold' style={{fontSize: '18px'}} />
                 <Uploads propertyId={saveBasicDetails.propertyId} ></Uploads>
                 <Text text={'Terms and Conditions'} fontWeight='bold' style={{fontSize: '18px'}} />
-                <TermsConditions propertyId={saveBasicDetails.propertyId} miscellaneousDetails={editPropertyDetails.miscellaneousDetails} customerDetails={customerDetails} ></TermsConditions>
+                <TermsConditions propertyId={saveBasicDetails.propertyId} miscellaneousDetails={miscellaneousDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails} ></TermsConditions>
             </>
             :null}
         </>

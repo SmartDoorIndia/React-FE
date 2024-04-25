@@ -9,7 +9,7 @@ const POSTING_CONSTANTS = {
     attachedList: ['Washroom', 'Balcony'],
     roomCompositionList: ['R', 'RK', 'BHK'],
     structureList: ['G', 'G + 1', 'G + 2', 'G + 3'],
-    measurementUnits: ['Sq. feet', 'Sq. Mt.'],
+    measurementUnits: ['Sq. Ft.', 'Sq. Mt.', 'Sq. Yd.'],
     commercialPurpose: ['Office', 'Shop/Showroom', 'Restaurant', 'Warehouse'],
     commercialPropertyType: ['Complex', 'Standalone', 'Mall', 'High Street', 'Mixed'],
     entranceFacingList: ['East', 'West', 'North', 'South', 'North East', 'North West', 'South East', 'South West'],

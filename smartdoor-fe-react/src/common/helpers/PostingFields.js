@@ -138,7 +138,7 @@ const PostingFields = {
                                 ]
                             }
                         },
-                        "Independent House": {
+                        "Independent House / Bungalow": {
                             "Specs": [
                                 "BHK",
                                 "Attached",

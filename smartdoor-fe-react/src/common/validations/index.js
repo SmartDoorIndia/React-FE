@@ -933,15 +933,18 @@ export const validatePricing = (data, pricingList) => {
   if(pricingList.includes('Add additional fields')) {
       errors.additionalFieldsForChargesDue = []
     for(let i = 0; i < data.additionalFieldsForChargesDue.length; i++) {
-      errors.additionalFieldsForChargesDue.push({label:'', dues:''});
       if(isBlank(data.additionalFieldsForChargesDue[i].label))
       {
+        errors.additionalFieldsForChargesDue.push({label:'', dues:''});
         errors.additionalFieldsForChargesDue[i].label = true;
       }
       if(isBlank(data.additionalFieldsForChargesDue[i].dues))
       {
         errors.additionalFieldsForChargesDue[i].dues = true;
       }
+    }
+    if(errors.additionalFieldsForChargesDue.length === 0) {
+      delete errors.additionalFieldsForChargesDue;
     }
   }
   

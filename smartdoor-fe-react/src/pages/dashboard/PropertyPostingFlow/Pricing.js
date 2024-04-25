@@ -23,12 +23,12 @@ const Pricing = (props) => {
             propertyRate: null,
             maintenanceCharge: null,
             securityAmount: null,
-            expectedDiscountInPercent: null,
+            expectedDiscountInPercent: 0,
             expectedTimeToSellThePropertyWithin: '',
-            isDistressSell: null,
-            isOpenToBuyersOnFractionalOwnershipBasis: null,
+            isDistressSell: false,
+            isOpenToBuyersOnFractionalOwnershipBasis: false,
             additionalFieldsForChargesDue: [],
-            preferredFor: '',
+            preferredFor: [],
             leaseType: ''
         });
     const [additionalFieldsList, setAdditionalFieldsList] = useState(pricingDetails.additionalFieldsForChargesDue || []);
@@ -40,27 +40,28 @@ const Pricing = (props) => {
         if (Object.keys(basicDetailFields.data).length !== 0) {
             let pricingObj = {};
             let fields = basicDetailFields.data;
-            console.log(fields)
             let category = '';
-            if(fields.propertyCategory === 'Lease') {
+            if (fields.propertyCategory === 'Lease') {
                 category = 'Renting'
-            } else if( fields.propertyCategory === 'Sale') {
+            } else if (fields.propertyCategory === 'Sale') {
                 category = 'Selling'
             } else {
                 category = fields.propertyCategory
             }
             if (fields.propertyType === 'Residential') {
                 if (fields.propertySubType === 'PG/Co-Living') {
-                    pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Pricing
-                    // console.log(PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Pricing)
+                    pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType]?.Pricing
                 } else {
-                    pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType].Pricing
+                    pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Pricing
+                    console.log(PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Pricing)
                 }
             } else if (fields.propertyType === 'Commercial') {
-                pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType].Pricing
+                pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]?.Pricing
             }
+            console.log(fields)
+            console.log(pricingObj)
             console.log(pricingDetails)
-            setPricingList(Object.keys(pricingObj));
+            setPricingList(Object?.keys(pricingObj));
             setPricingObject(pricingObj);
             if ((Object.keys(pricingObj)).includes('Preferred for')) {
                 setPreferredForList(Object.values(pricingObj['Preferred for']));
@@ -83,9 +84,9 @@ const Pricing = (props) => {
 
     const removeDues = (index) => {
         let additionalList = additionalFieldsList;
-            additionalList.splice(index, 1);
-            setAdditionalFieldsList([...additionalList]);
-            setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
+        additionalList.splice(index, 1);
+        setAdditionalFieldsList([...additionalList]);
+        setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
     }
 
     const savePricingDetails = () => {
@@ -145,6 +146,10 @@ const Pricing = (props) => {
                             <TextField
                                 className="w-100 mb-2"
                                 select
+                                multiple
+                                SelectProps={{
+                                    multiple: true
+                                }}
                                 error={error.preferredFor}
                                 label={'Preferred For'}
                                 inputProps={{ min: 0 }}
@@ -229,55 +234,61 @@ const Pricing = (props) => {
                         </Col>
                         : null}
                 </Row>
-                    {pricingList.includes('Add additional fields') ?
-                        <>
-                            <Col lg='4'>
-                                <Buttons name={'>>Add Additional Field to mention other Dues '} fontWeight={'700'}
-                                    style={{ fontSize: '14px', color: '#BE1452' }} onClick={() => { addNewFields() }} />
-                            </Col>
+                {pricingList.includes('Add additional fields') ?
+                    <>
+                        <Col lg='4'>
+                            <Buttons disabled={savePricingFlag} name={'>>Add Additional Field to mention other Dues '} fontWeight={'700'}
+                                style={{ fontSize: '14px', color: '#BE1452' }} onClick={() => { addNewFields() }} />
+                        </Col>
 
-                            {pricingDetails.additionalFieldsForChargesDue.length > 0 ?
-                                pricingDetails.additionalFieldsForChargesDue.map((fields, index) => (
-                                    <>  
-                                        <div className="d-flex mt-3">
+                        {pricingDetails.additionalFieldsForChargesDue.length > 0 ?
+                            pricingDetails.additionalFieldsForChargesDue.map((fields, index) => (
+                                <>
+                                    <div className="d-flex mt-3">
 
-                                            <Col lg='3' className="d-flex">
-                                                <TextField
-                                                    className="w-100 mb-2"
-                                                    type="text"
-                                                    label={'Label'}
-                                                    onChange={(e) => {setAdditionalFieldsList(prevAdditionalFieldsList => {
-                                                        
+                                        <Col lg='3' className="d-flex">
+                                            <TextField
+                                                className="w-100 mb-2"
+                                                type="text"
+                                                error={false}
+                                                label={'Label'}
+                                                onChange={(e) => {
+                                                    setAdditionalFieldsList(prevAdditionalFieldsList => {
+
                                                         let newList = [...prevAdditionalFieldsList];
                                                         newList[index] = { ...newList[index], label: e.target.value };
                                                         return newList;
-                                                    }); console.log(additionalFieldsList)}}
-                                                    value={fields.label}
-                                                />
-                                            </Col>
-                                            <Col lg='3' className="d-flex">
-                                                <TextField
-                                                    className="w-100 mb-2"
-                                                    type="number"
-                                                    label={'Dues'}
-                                                    onChange={(e) => {setAdditionalFieldsList(prevAdditionalFieldsList => {
+                                                    }); console.log(additionalFieldsList)
+                                                }}
+                                                value={fields.label}
+                                            />
+                                        </Col>
+                                        <Col lg='3' className="d-flex">
+                                            <TextField
+                                                className="w-100 mb-2"
+                                                type="number"
+                                                label={'Dues'}
+                                                error={false}
+                                                onChange={(e) => {
+                                                    setAdditionalFieldsList(prevAdditionalFieldsList => {
                                                         let newList = [...prevAdditionalFieldsList];
                                                         newList[index] = { ...newList[index], dues: e.target.value };
                                                         return newList;
-                                                    })}}
-                                                    value={fields.dues}
-                                                    inputProps={{ min: 0 }}
-                                                />
-                                            </Col>
-                                            <Col lg='3' className="mt-2">
-                                                <Buttons name='Remove' className='p-2' onClick={()=>{removeDues(index)}}></Buttons>
-                                            </Col>
-                                        </div>
-                                    </>
-                                ))
-                                : null}
-                        </>
-                        : null}
+                                                    })
+                                                }}
+                                                value={fields.dues}
+                                                inputProps={{ min: 0 }}
+                                            />
+                                        </Col>
+                                        <Col lg='3' className="mt-2">
+                                            <Buttons name='Remove' className='p-2' onClick={() => { removeDues(index) }}></Buttons>
+                                        </Col>
+                                    </div>
+                                </>
+                            ))
+                            : null}
+                    </>
+                    : null}
             </div>
             {savePricingFlag === false ?
                 <div className="d-flex">

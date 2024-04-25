@@ -2,7 +2,7 @@ import { compose } from "redux";
 import { TextField, Checkbox } from '@mui/material';
 import Text from "../../../shared/Text/Text";
 import { Col } from 'react-bootstrap';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { connect, useDispatch } from "react-redux";
 import * as Actions from '../../../common/redux/types';
@@ -11,8 +11,9 @@ import { getLocalStorage, showSuccessToast } from "../../../common/helpers/Utils
 import { useHistory } from "react-router-dom";
 const TermsConditions = (props) => {
     const history = useHistory();
-    const { basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages, termsConditions, customerDetails, miscellaneousDetails} = props;
+    const { basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages, termsConditions, customerDetails, editPropertyFlag} = props;
     const propertyId = props?.propertyId;
+    const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
     const [termsConditionObj, setTermsConditionObj] = useState( termsConditions.data || {
         visitGuidelines: '',
         areTermsAndConditionsForPostingPropertyAccepted: null
@@ -22,6 +23,12 @@ const TermsConditions = (props) => {
     const userData = getLocalStorage('authData');
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if(editPropertyFlag) {
+            setmiscellaneousDetails(prevMiscellaneousDetails => ({...prevMiscellaneousDetails, ownerName: null, ownerMobileNumber: null}));
+        }
+    },[]);
 
     const handlePhoneChange = (e) => {
         const result = e.target.value.replace(/\D/g, '');
@@ -42,7 +49,7 @@ const TermsConditions = (props) => {
             dispatch({type: Actions.TERMS_CONDITIONS_SUCCESS, data: {termsConditionObj : termsConditionObj}});
             const postProperty = {
                 smartdoorPropertyId: propertyId,
-                miscellaneousDetails: {
+                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
                     postedById: userData.userid,
                     lastPageOfInfoFilled: 0,
                     draft: false,
@@ -61,15 +68,15 @@ const TermsConditions = (props) => {
                     postedByName: userData.name,
                     postedByMobile: userData.mobile,
                     postedByProfileImageUrl: '',
-                    ownerName: customerDetails?.name || miscellaneousDetails?.ownerName,
-                    ownerMobileNumber: customerDetails?.mobile || miscellaneousDetails?.ownerMobileNumber,
+                    ownerName: customerDetails?.name,
+                    ownerMobileNumber: customerDetails?.mobile,
                     isPostingForOthers: true
                 },
-                basicDetails: basicDetailFields,
-                address: addressDetailFields,
-                specs: specDetailFields,
-                pricing: pricingDetailFields,
-                uploads: uploadImages,
+                basicDetails: basicDetailFields?.data,
+                address: addressDetailFields?.data,
+                specs: specDetailFields?.data,
+                pricing: pricingDetailFields?.data,
+                uploads: uploadImages?.data,
                 terms: termsConditionObj
             }
 

@@ -18,9 +18,9 @@ const Uploads = (props) => {
     const fileInputRef = useRef(null);
     const propertyId = props?.propertyId;
     const [imageArr, setImageArray] = useState(uploadImages.data.propertyImages || []);
-    const [addNewVideoFlag, setAddNewVideoFlag] = useState(false);
-    const [videoUrl1, setVideoUrl1] = useState( '');
-    const [videoUrl2, setVideoUrl2] = useState('');
+    const [addNewVideoFlag, setAddNewVideoFlag] = useState(uploadImages?.data?.propertyVideos?.length > 1 ? true : false);
+    const [videoUrl1, setVideoUrl1] = useState(uploadImages?.data?.propertyVideos !== undefined ? uploadImages?.data?.propertyVideos[0]?.docURL : '');
+    const [videoUrl2, setVideoUrl2] = useState(uploadImages?.data?.propertyVideos !== undefined ? uploadImages?.data?.propertyVideos[0]?.docURL : '');
     const [saveUploadFlag, setSaveUploadFlag] = useState(false);
     const [imageLoader, setImageLoader] = useState(false)
 	const [loading, setLoading] = useState(true);
@@ -96,7 +96,7 @@ const Uploads = (props) => {
         				const property_image = [];
         				for(let i = 0; i < response.data.resourceData.length; i++) {
         					property_image.push({
-        						docId: null,
+        						docId: 0,
         						docName: "",
         						docURL: response.data.resourceData[i],
         					});
@@ -180,7 +180,7 @@ const Uploads = (props) => {
         if(isValid) {
             setSaveUploadFlag(true);
 
-            dispatch({type: Actions.UPLOAD_IMAGES_SUCCESS, data: {imapropertyImages: imageArr, propertyVideos: videoUrlObj}});
+            dispatch({type: Actions.UPLOAD_IMAGES_SUCCESS, data: {propertyImages: imageArr, propertyVideos: videoUrlObj}});
         }
 
     }

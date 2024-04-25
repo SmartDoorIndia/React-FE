@@ -74,9 +74,9 @@ const Specs = (props) => {
             if (fields.propertyType === 'Residential') {
                 if (fields.propertySubType === 'PG/Co-Living') {
                     speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
-                    console.log(PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs)
+                    console.log(PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType]?.Specs)
                 } else {
-                    speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType].Specs
+                    speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Specs
                 }
             } else if (fields.propertyType === 'Commercial') {
                 speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType].Specs
@@ -116,7 +116,7 @@ const Specs = (props) => {
                 "Stage of property": basicDetailFields?.data?.stageOfProperty,
                 "Sub type": basicDetailFields?.data?.propertySubType,
                 "Location": addressDetailFields.data.city,
-                "BHK": specDetails.numberOfRooms,
+                "BHK": (specDetails.numberOfRooms).toString(),
                 "Attached": JSON.stringify(specDetails.pgGuestHouseAttachedTo) || '',
                 "Flat type": specDetails.flatType,
                 "Commercial purpose": JSON.stringify(specDetails.commercialPropertyPurposes),
@@ -307,7 +307,7 @@ return (
                                             select
                                             error={error.carpetAreaMeasurementUnit}
                                             InputProps={{ style: { border: 'unset' } }}
-                                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, carpetAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value })) }}
+                                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, carpetAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value, openAreaMeasurementUnit: e.target.value })) }}
                                             value={specDetails.carpetAreaMeasurementUnit}
                                         >
                                             {POSTING_CONSTANTS.measurementUnits.map(item => (
@@ -351,7 +351,7 @@ return (
                                             select
                                             error={error.builtUpAreaMeasurementUnit}
                                             InputProps={{ style: { border: 'unset' } }}
-                                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value })) }}
+                                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value, openAreaMeasurementUnit: e.target.value })) }}
                                             value={specDetails.builtUpAreaMeasurementUnit}
                                         >
                                             {POSTING_CONSTANTS.measurementUnits.map(item => (

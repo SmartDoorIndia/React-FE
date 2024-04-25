@@ -1323,7 +1323,7 @@ const PropertyDetails = (props) => {
                                     size="xSmall"
                                     color="white"
                                     className=" mb-2"
-                                    onClick={() => { history.push('/admin/property/property-details/EditPost', {existingDetails: {propertyId : propertyData.smartdoorPropertyId, saveFlag: true}}) }} /> &nbsp; &nbsp;
+                                    onClick={() => { history.push('/admin/property/property-details/EditPost', {existingDetails: {propertyId : propertyData.smartdoorPropertyId, saveFlag: true}, miscellaneousDetails: propertyData.miscellaneousDetails}) }} /> &nbsp; &nbsp;
 
                                  {isDeleted === false && userData.roleName === 'SUPER ADMIN' ?
                                     <>
