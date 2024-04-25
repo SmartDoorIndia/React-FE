@@ -16,7 +16,7 @@ const ExecutiveHome = (props) => {
     const [showPropertyFlag, setShowPropertyFlag] = useState(true);
     const [showCustomersFlag, setShowCustomersFlag] = useState(false);
     const [customerDetails, setCustomerDetails] = useState({
-        useId: null,
+        userId: null,
         mobile: '',
         name: '',
         email: '',
@@ -106,7 +106,7 @@ const ExecutiveHome = (props) => {
                 </div>
                 <div className="d-flex mt-3">
                     <Buttons className='p-2' name='Add New Post' onClick={() => { redirectToPosting(); }} /> &nbsp;&nbsp;
-                    {customerDetails.useId !== null ?
+                    {customerDetails.userId !== null ?
                         <>
                             <span className="d-flex">
                                 <Text

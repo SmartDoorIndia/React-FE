@@ -127,7 +127,7 @@ const AgencyDetail = (props) => {
                         </Row>
                     </div>
                     <div>
-                        <Button variant='outlined' className='mb-2 w-90 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452' }} onClick={() => { history.push('/admin/marketingAgency/agencyDetails/edit-agency', { agencyDetails: agencyDetails }) }}>Edit</Button>
+                        <Button variant='outlined' className='mb-2 w-90 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452' }} onClick={() => { history.push('/admin/marketingAgency/agencyDetails/edit-agency', { agencyDetails: agencyDetails, addNew: false }) }}>Edit</Button>
                         {agencyDetails.status === false ?
                         <>
                             <Button variant='primary' className='mb-2 w-90 text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { setdeactivateAgencyModalShow(true) }}>Deactivate</Button>

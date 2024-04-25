@@ -93,7 +93,7 @@ const ExecutiveDetails = (props) => {
                     </div>
                     <div>
                         <div className="d-flex justify-content-start mt-2">
-                            <Button variant='outlined' className='py-0 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452' }} onClick={() => { history.push('/admin/executives/executive-details/edit-executive', { executiveDetails: executiveDetails, agencyId: agencyId }) }}>Edit</Button>&nbsp;&nbsp;
+                            <Button variant='outlined' className='py-0 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452' }} onClick={() => { history.push('/admin/executives/executive-details/edit-executive', { executiveDetails: executiveDetails, agencyId: agencyId, addNew: false }) }}>Edit</Button>&nbsp;&nbsp;
                             <Button variant='primary' className='text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { setShowDeleteModal(true) }}>Delete</Button>
                         </div>
                     </div>

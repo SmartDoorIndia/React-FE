@@ -241,15 +241,15 @@ const ExecutiveList = (props) => {
     }, [filterText, resetPaginationToggle]);
 
     useEffect(async () => {
-        if(AgencyExecutiveList.data.executives === undefined) {
-            await getAllAgencyExecutives({
-                agencyId: userData.agencyId,
-                executiveId: null,
-                pageNo: 1,
-                pageSize: 8,
-                searchStr: ''
-            });
-        }
+        // if(AgencyExecutiveList.data.executives === undefined || AgencyExecutiveList.data.executives === null) {
+        // }
+        await getAllAgencyExecutives({
+            agencyId: userData.agencyId,
+            executiveId: null,
+            pageNo: 1,
+            pageSize: 8,
+            searchStr: ''
+        });
         dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {} })
         dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {} })
     }, []);
@@ -309,7 +309,7 @@ const ExecutiveList = (props) => {
                             varient="primary"
                             size="xSmall"
                             color="white"
-                            onClick={() => { history.push('/admin/executives/add-new-executive', { agencyId: userData.agencyId }) }} ></Buttons> &nbsp;&nbsp;
+                            onClick={() => { history.push('/admin/executives/add-new-executive', { agencyId: userData.agencyId, addNew: true }) }} ></Buttons> &nbsp;&nbsp;
                         {/* <Buttons
                             name='View Executive'
                             varient="primary"

@@ -14,7 +14,7 @@ import { showErrorToast } from "../../../../common/helpers/Utils";
 import AutoCompleteTextField from "../../../../shared/Inputs/AutoComplete/textField";
 
 const AgencyExecutives = (props) => {
-
+    const addNew = props.location.state.addNew;
     const [executiveDetails, setExecutiveDetails] = useState({
         agencyId: props?.location?.state?.agencyId || null,
         executiveId: props?.location?.state?.executiveDetails?.executiveId || null,
@@ -34,14 +34,14 @@ const AgencyExecutives = (props) => {
             const response = await addEditExecutive(executiveDetails).then((response) => {
                 if (response.status === 200) {
                     showSuccessToast('Agency Executive added successfully...');
-                       history.goBack();
+                    history.goBack();
                 }
             })
-            .catch(error => {
-                console.log(error);
-                showErrorToast("Number Already exist...")
-            });
-           
+                .catch(error => {
+                    console.log(error);
+                    showErrorToast("Number Already exist...")
+                });
+
             // if (response.status === 200) {
             //     showSuccessToast('Agency Executive added successfully...');
             //     history.goBack();
@@ -101,6 +101,7 @@ const AgencyExecutives = (props) => {
                             className="w-100"
                             type="number"
                             label="Phone"
+                            disabled={!addNew}
                             inputProps={{ min: 0 }}
                             onInput={(e) => {
                                 setExecutiveDetails({ ...executiveDetails, executiveNumber: e.target.value });

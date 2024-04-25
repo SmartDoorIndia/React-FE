@@ -13,9 +13,9 @@ import { addEditAgency } from "../../../common/redux/actions";
 import { showSuccessToast } from "../../../common/helpers/Utils";
 import AutoCompleteTextField from '../../../shared/Inputs/AutoComplete/textField';
 const Add_EditAgency = (props) => {
-
+    const addNew = props.location.state.addNew;
     const [agencyDetails, setAgencyDetails] = useState(props.location.state?.agencyDetails || {
-        agencyId:null,
+        agencyId: null,
         agencyName: '',
         location: '',
         contactName: '',
@@ -37,11 +37,16 @@ const Add_EditAgency = (props) => {
         const valid = validateAgencyDetails(agencyDetails);
         console.log(valid);
         console.log(agencyDetails);
-        if(valid.isValid) {
+        if (valid.isValid) {
             const response = await addEditAgency(agencyDetails);
             console.log(response);
-            if(response.status === 200 ) {
-                showSuccessToast('Agency added successfully...');
+            if (response.status === 200) {
+                if (addNew) {
+                    showSuccessToast('Agency added successfully...');
+                } else {
+                    showSuccessToast('Agency edited successfully...');
+                }
+
                 history.goBack();
             }
         }
@@ -49,15 +54,18 @@ const Add_EditAgency = (props) => {
 
     const handlePhoneChange = (e) => {
         const result = e.target.value.replace(/\D/g, '');
-        const mobileNum = (result.slice(0,10));
-        setAgencyDetails({...agencyDetails, contactNumber: mobileNum});
+        const mobileNum = (result.slice(0, 10));
+        if((mobileNum.trim()).length !== 10) {
+            setError({...error, contactNumber:'Contact Number must be 10 digits'}) }
+            else { setError({...error, contactNumber:''}) }
+        setAgencyDetails({ ...agencyDetails, contactNumber: mobileNum });
     }
 
     return (
         <>
             <div className="whiteBg">
                 <Row>
-                    <Col lg='4' style={{marginTop:'0%'}}>
+                    <Col lg='4' style={{ marginTop: '0%' }}>
                         <TextField
                             className="w-100 mt-4"
                             type="text"
@@ -101,7 +109,7 @@ const Add_EditAgency = (props) => {
                             label="Contact Name"
                             onInput={(e) => { setAgencyDetails({ ...agencyDetails, contactName: e.target.value }) }}
                             defaultValue={agencyDetails.contactName}
-                            
+
                         />
                         <Text
                             color="dangerText"
@@ -115,13 +123,13 @@ const Add_EditAgency = (props) => {
                             className="w-100"
                             type="number"
                             label="Phone"
+                            disabled={!addNew}
                             inputProps={{ min: 0 }}
-                            onInput={(e) => { setAgencyDetails({ ...agencyDetails, contactNumber: e.target.value });
-                                                if(e.target.value.length !== 10) {
-                                                    setError({...error, contactNumber:'Contact Number must be 10 digits'}) }
-                                                    else { setError({...error, contactNumber:''}) }    }
-                                                }
-                                                onChange={(e) => {handlePhoneChange(e)}}
+                            onInput={(e) => {
+                                setAgencyDetails({ ...agencyDetails, contactNumber: e.target.value });
+                            }
+                            }
+                            onChange={(e) => { handlePhoneChange(e) }}
                             value={agencyDetails.contactNumber}
                         />
                         <Text

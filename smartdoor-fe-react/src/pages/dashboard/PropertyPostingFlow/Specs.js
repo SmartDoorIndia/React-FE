@@ -307,8 +307,8 @@ return (
                                 error={error.carpetArea}
                                 className="w-100"
                                 label={'Carpet area'}
-                                onChange={ async (e) => { await handleCarpetAreaChange(e) }}
-                                defaultValue={specDetails.carpetArea}
+                                onInput={ async (e) => { await handleCarpetAreaChange(e) }}
+                                value={specDetails.carpetArea}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
@@ -351,8 +351,8 @@ return (
                                 error={error.builtUpArea}
                                 className="w-100"
                                 label={'Built-up area'}
-                                onChange={(e) => { handleBuiltupAreaChange(e) }}
-                                defaultValue={specDetails.builtUpArea}
+                                onInput={(e) => { handleBuiltupAreaChange(e) }}
+                                value={specDetails.builtUpArea}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
@@ -384,8 +384,8 @@ return (
                                 error={error.carpetArea}
                                 className="w-100"
                                 label={'Carpet area'}
-                                onChange={(e) => { handleCarpetAreaChange(e) }}
-                                defaultValue={specDetails.carpetArea}
+                                onInput={(e) => { handleCarpetAreaChange(e) }}
+                                value={specDetails.carpetArea}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
@@ -433,8 +433,8 @@ return (
                                 error={error.builtUpArea}
                                 className="w-100"
                                 label={'Built-up area'}
-                                onChange={(e) => { handleBuiltupAreaChange(e) }}
-                                defaultValue={specDetails.builtUpArea}
+                                onInput={(e) => { handleBuiltupAreaChange(e) }}
+                                value={specDetails.builtUpArea}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField

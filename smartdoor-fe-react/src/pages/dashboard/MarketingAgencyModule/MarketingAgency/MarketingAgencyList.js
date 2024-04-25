@@ -282,7 +282,7 @@ const MarketingAgency = (props) => {
                         varient="primary"
                         size="xSmall"
                         color="white"
-                        onClick={() => { history.push('/admin/marketingAgency/addAgency') }} ></Buttons>
+                        onClick={() => { history.push('/admin/marketingAgency/addAgency', {addNew: true}) }} ></Buttons>
                     {subHeaderComponentMemo} &nbsp;&nbsp;
                 </div>
                 {/* <Buttons
