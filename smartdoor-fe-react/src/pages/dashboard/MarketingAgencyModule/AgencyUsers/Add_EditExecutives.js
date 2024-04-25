@@ -27,28 +27,28 @@ const AgencyExecutives = (props) => {
     const history = useHistory();
 
     const validateExecutiveDetail = async () => {
-        const valid = await validateExecutiveDetails(executiveDetails);
-        console.log(valid);
-        console.log(executiveDetails);
-        if (valid.isValid) {
-            const response = await addEditExecutive(executiveDetails).then((response) => {
-                if (response.status === 200) {
-                    showSuccessToast('Agency Executive added successfully...');
-                    history.goBack();
-                }
-            })
-                .catch(error => {
-                    console.log(error);
-                    showErrorToast("Number Already exist...")
-                });
-
-            // if (response.status === 200) {
-            //     showSuccessToast('Agency Executive added successfully...');
-            //     history.goBack();
-            // }else{
-            //     showErrorToast(response.data.message);
-            // }
+        if (executiveDetails.executiveNumber == null || executiveDetails.executiveNumber == "") {
+            showErrorToast("Mobile Number is Mandatory...")
+        } else if (executiveDetails.executiveNumber != null && executiveDetails.executiveNumber.length != 10) {
+            showErrorToast("Mobile Number is not valid...")
+        } else {
+            const valid = await validateExecutiveDetails(executiveDetails);
+            console.log(valid);
+            console.log(executiveDetails);
+            if (valid.isValid) {
+                const response = await addEditExecutive(executiveDetails).then((response) => {
+                    if (response.status === 200) {
+                        showSuccessToast('Agency Executive added successfully...');
+                        history.goBack();
+                    }
+                })
+                    .catch(error => {
+                        console.log(error);
+                        showErrorToast("Number Already exist...")
+                    });
+            }
         }
+
     }
 
     useEffect(() => {

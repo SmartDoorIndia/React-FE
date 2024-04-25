@@ -10,8 +10,9 @@ import AutoCompleteInput from "../../../shared/Inputs/AutoComplete";
 // import './Add_EditAgency.scss';
 import Text from "../../../shared/Text/Text";
 import { addEditAgency } from "../../../common/redux/actions";
-import { showSuccessToast } from "../../../common/helpers/Utils";
+import { showSuccessToast, showErrorToast } from "../../../common/helpers/Utils";
 import AutoCompleteTextField from '../../../shared/Inputs/AutoComplete/textField';
+
 const Add_EditAgency = (props) => {
     const addNew = props.location.state.addNew;
     const [agencyDetails, setAgencyDetails] = useState(props.location.state?.agencyDetails || {
@@ -38,17 +39,22 @@ const Add_EditAgency = (props) => {
         console.log(valid);
         console.log(agencyDetails);
         if (valid.isValid) {
-            const response = await addEditAgency(agencyDetails);
-            console.log(response);
-            if (response.status === 200) {
-                if (addNew) {
-                    showSuccessToast('Agency added successfully...');
-                } else {
-                    showSuccessToast('Agency edited successfully...');
+            await addEditAgency(agencyDetails)
+            .then((response)=> {
+                console.log(response);
+                if (response.status === 200) {
+                    if (addNew) {
+                        showSuccessToast('Agency added successfully...');
+                    } else {
+                        showSuccessToast('Agency edited successfully...');
+                    }
+    
+                    history.goBack();
                 }
-
-                history.goBack();
-            }
+            })
+            .catch(error => {
+                showErrorToast('Number already exist');
+            });
         }
     }
 

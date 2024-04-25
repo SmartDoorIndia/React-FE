@@ -51,13 +51,9 @@ const ExecutiveHome = (props) => {
     }
 
     const redirectToPosting = () => {
-        if (customerDetails.mobile === null && customerDetails.name === null) {
-            showErrorToast("Mobile number and name is mandatory...");
-            return null;
-        }
-        else {
+        
             history.push('/admin/executive/properties/NewPost', { customerDetails: customerDetails })
-        }
+        
     }
     return (
         <>
@@ -105,7 +101,14 @@ const ExecutiveHome = (props) => {
                     </div>
                 </div>
                 <div className="d-flex mt-3">
-                    <Buttons className='p-2' name='Add New Post' onClick={() => { redirectToPosting(); }} /> &nbsp;&nbsp;
+                    <Buttons className='p-2' name='Add New Post' onClick={() => { if(!userData.isActive){
+                            showErrorToast("Your Account has been deactivated...");
+                         }
+                         else if(customerDetails.mobile != null && customerDetails.mobile.length === 10 ){
+                            redirectToPosting(); 
+                         }else{
+                          showErrorToast("Mobile Number is Mandatory...");
+                         } }} /> &nbsp;&nbsp;
                     {customerDetails.userId !== null ?
                         <>
                             <span className="d-flex">
