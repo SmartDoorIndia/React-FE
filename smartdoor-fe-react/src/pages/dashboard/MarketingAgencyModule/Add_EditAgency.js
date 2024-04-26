@@ -7,7 +7,7 @@ import Buttons from "../../../shared/Buttons/Buttons";
 import { validateAgencyDetails } from "../../../common/validations";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import AutoCompleteInput from "../../../shared/Inputs/AutoComplete";
-// import './Add_EditAgency.scss';
+import './Add_EditAgency.scss';
 import Text from "../../../shared/Text/Text";
 import { addEditAgency } from "../../../common/redux/actions";
 import { showSuccessToast, showErrorToast } from "../../../common/helpers/Utils";

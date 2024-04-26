@@ -38,7 +38,7 @@ const ExecutiveDetails = (props) => {
     useEffect(() => {
         _getAgencyById();
         getAllAgencyExecutives({
-            agencyId: agencyId, executiveId: 0, pageNo : 1, pageSize : 1000, searchStr : ""
+            agencyId: agencyId, executiveId: 0, pageNo: 1, pageSize: 1000, searchStr: ""
         });
     }, [_getAgencyById]);
 
@@ -50,7 +50,8 @@ const ExecutiveDetails = (props) => {
             newExecutiveId: executiveDetails.customerCount !== null ? destAgencyExecutive : 0,
             deactivateAgency: false,
             deleteExecutive: true,
-            propTransfer: executiveDetails.customerCount !== null ? true : false
+            propTransfer: executiveDetails.customerCount !== null ? true : false,
+            customerTransfer: true
         }
         const response = await transferCustomers(data);
         if (response.status === 200) {
@@ -163,9 +164,11 @@ const ExecutiveDetails = (props) => {
                                     >
                                         <option value="" disabled> Select </option>
                                         {AgencyExecutiveList.data.executives?.map((option) => (
-                                            <MenuItem key={option.executiveId} value={option.executiveId}>
-                                                {option.name}
-                                            </MenuItem>
+                                            (executiveDetails.executiveId !== option.executiveId &&
+                                                <MenuItem key={option.executiveId} value={option.executiveId}>
+                                                    {option.name}
+                                                </MenuItem>
+                                            )
                                         ))}
                                     </TextField>
                                 </div>

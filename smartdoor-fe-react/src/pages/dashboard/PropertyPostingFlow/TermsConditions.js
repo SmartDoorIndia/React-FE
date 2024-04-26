@@ -51,7 +51,7 @@ const TermsConditions = (props) => {
                 smartdoorPropertyId: propertyId,
                 miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
                     postedById: userData.userid,
-                    lastPageOfInfoFilled: 0,
+                    lastPageOfInfoFilled: 5,
                     draft: false,
                     partial: false,
                     requestAlerts: false,
@@ -150,7 +150,7 @@ const TermsConditions = (props) => {
             <div className="d-flex">
                 {loading ? <Loader /> :
                     <>
-                        <Buttons className='p-2 px-4' name='Notify Customer' onClick={() => { notifyCustomer(); }}></Buttons> &nbsp; &nbsp;
+                        <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Edit Property' : 'Notify Customer'} onClick={() => { notifyCustomer(); }}></Buttons> &nbsp; &nbsp;
                         <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
                     </>
                 }

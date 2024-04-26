@@ -669,6 +669,7 @@ return (
                                 row
                                 aria-labelledby="demo-row-radio-buttons-group-label"
                                 name="row-radio-buttons-group"
+                                onChange={(e) => {setSpecDetails(prevSpecDetails => ({...prevSpecDetails, isUnusedProperty: JSON.parse(e.target.value)}))}}
                                 value={specDetails.isUnusedProperty}
                             >
                                 <FormControlLabel value={true} control={<Radio />} label="Yes" />

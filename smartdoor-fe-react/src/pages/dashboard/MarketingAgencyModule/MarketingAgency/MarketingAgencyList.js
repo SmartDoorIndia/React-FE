@@ -104,15 +104,19 @@ const MarketingAgency = (props) => {
             sortable: true,
             center: true,
             cell: ({ totalCustomerSpendCurrentMonth, totalMonthlySpentPreviousMonth }) => (
-                <span className="d-flex">
-                    <ToolTip position="top" style={{ width: '100%' }} name={totalCustomerSpendCurrentMonth}>
-                        <Text size="Small" color="secondryColor elipsis-text" text={totalCustomerSpendCurrentMonth} />
-                    </ToolTip> &nbsp;&nbsp;&nbsp;
-                    <Text text={' | '} style={{ fontSize: '14px', color: '#B4B4B4' }} /> &nbsp;&nbsp;&nbsp;
-                    <ToolTip position="top" style={{ width: '100%' }} name={totalMonthlySpentPreviousMonth}>
-                        <Text size="Small" color="secondryColor elipsis-text" text={totalMonthlySpentPreviousMonth} />
-                    </ToolTip>
-                </span>
+                totalCustomerSpendCurrentMonth !== null && totalMonthlySpentPreviousMonth !== null ? (
+                    <span className="d-flex">
+                        <ToolTip position="top" style={{ width: '100%' }} name={totalCustomerSpendCurrentMonth}>
+                            <Text size="Small" color="secondryColor elipsis-text" text={totalCustomerSpendCurrentMonth} />
+                        </ToolTip> &nbsp;&nbsp;&nbsp;
+                        <Text text={' | '} style={{ fontSize: '14px', color: '#B4B4B4' }} /> &nbsp;&nbsp;&nbsp;
+                        <ToolTip position="top" style={{ width: '100%' }} name={totalMonthlySpentPreviousMonth}>
+                            <Text size="Small" color="secondryColor elipsis-text" text={totalMonthlySpentPreviousMonth} />
+                        </ToolTip>
+                    </span>
+                ) : (
+                    <Text text={' - '} style={{ fontSize: '14px', color: '#B4B4B4' }} />
+                )
             ),
             id: 5
         },
@@ -263,6 +267,7 @@ const MarketingAgency = (props) => {
                         as="select"
                         onChange={(e) => {
                             setp_City(e.target.value);
+                            //call here to filtered list 
                         }}
                         value={p_city}
                     >
@@ -282,7 +287,7 @@ const MarketingAgency = (props) => {
                         varient="primary"
                         size="xSmall"
                         color="white"
-                        onClick={() => { history.push('/admin/marketingAgency/addAgency', {addNew: true}) }} ></Buttons>
+                        onClick={() => { history.push('/admin/marketingAgency/addAgency', { addNew: true }) }} ></Buttons>
                     {subHeaderComponentMemo} &nbsp;&nbsp;
                 </div>
                 {/* <Buttons

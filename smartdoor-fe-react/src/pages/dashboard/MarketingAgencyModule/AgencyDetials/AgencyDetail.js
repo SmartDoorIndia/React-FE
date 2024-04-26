@@ -44,13 +44,13 @@ const AgencyDetail = (props) => {
         getAllAgencies({ agencyId: 0 });
     }, [_getAgencyById]);
 
-    const onAgencyChange = (e) => {
+    const onAgencyChange = async (e) => {
         // console.log(e);
         setDestAgencyId(e.target.value);
         let agency = agencyList?.data?.agencylist?.find(item => item.agencyId === e.target.value)
         setDestAgencyCustomers(agency.customerCount);
         setDestAgencyName(agency.agencyName)
-        getAllAgencyExecutives({ agencyId: e.target.value, executiveId: 0 });
+        await getAllAgencyExecutives({ agencyId: e.target.value, executiveId: null });
     }
 
     const transferAgency = async () => {
@@ -63,11 +63,13 @@ const AgencyDetail = (props) => {
             newExecutiveId: destAgencyExecutive,
             deactivateAgency: false,
             deleteExecutive: false,
-            propTransfer: false
+            propTransfer: false,
+            customerTransfer: true
         }
         const response = await transferCustomers(data);
         if (response.status === 200) {
             console.log(response);
+            _getAgencyById();
             setShowCustomersFlag(true);
             setShowPropertyFlag(false);
         }
@@ -81,11 +83,13 @@ const AgencyDetail = (props) => {
             newExecutiveId: agencyDetails.customerCount !== null ? destAgencyExecutive: 0,
             deactivateAgency: true,
             deleteExecutive: false,
-            propTransfer: false
+            propTransfer: false,
+            customerTransfer: true
         }
         const response = await transferCustomers(data);
         if (response.status === 200) {
             console.log(response);
+            _getAgencyById();
             setShowCustomersFlag(true);
             setShowPropertyFlag(false);
             setdeactivateAgencyModalShow(false);
@@ -216,9 +220,11 @@ const AgencyDetail = (props) => {
                             >
                                 <option value="" disabled> Select </option>
                                 {agencyList?.data?.agencylist?.map((option) => (
-                                    <MenuItem key={option.agencyId} value={option.agencyId}>
+                                    (agencyDetails.agencyId !== option.agencyId &&
+                                        <MenuItem key={option.agencyId} value={option.agencyId}>
                                         {option.agencyName}
                                     </MenuItem>
+                                    )
                                 ))}
                             </TextField>
                             <Text
@@ -239,7 +245,7 @@ const AgencyDetail = (props) => {
                                 onChange={(e) => { setDestAgencyExecutive(e.target.value) }}
                             >
                                 <option value="" disabled> Select </option>
-                                {AgencyExecutiveList?.data?.map((option) => (
+                                {AgencyExecutiveList?.data?.executives?.map((option) => (
                                     <MenuItem key={option.executiveId} value={option.executiveId}>
                                         {option.name}
                                     </MenuItem>
@@ -256,7 +262,7 @@ const AgencyDetail = (props) => {
             <Modal size="lg" show={deactivateAgencyModalShow} onHide={() => { setdeactivateAgencyModalShow(false) }} centered={true}>
                 <Modal.Body className="p-4">
                     <Text size="medium" fontWeight="smbold" color="black" text="Deactivate Marketing Agency" />
-                    {agencyDetails.status ?
+                    {agencyDetails.customerCount !== null ?
                         <>
                             <span className="d-flex">
                                 <Text fontWeight="500" text="Please select another marketing agency to assign  "
@@ -275,9 +281,11 @@ const AgencyDetail = (props) => {
                                     >
                                         <option value="" disabled> Select </option>
                                         {agencyList?.data?.agencylist?.map((option) => (
-                                            <MenuItem key={option.agencyId} value={option.agencyId}>
+                                            (agencyDetails.agencyId !== option.agencyId &&
+                                                <MenuItem key={option.agencyId} value={option.agencyId}>
                                                 {option.agencyName}
                                             </MenuItem>
+                                            )
                                         ))}
                                     </TextField>
                                     <Text
@@ -296,7 +304,7 @@ const AgencyDetail = (props) => {
                                         onChange={(e) => { setDestAgencyExecutive(e.target.value) }}
                                     >
                                         <option value="" disabled> Select </option>
-                                        {AgencyExecutiveList?.data?.map((option) => (
+                                        {AgencyExecutiveList?.data?.executives?.map((option) => (
                                             <MenuItem key={option.executiveId} value={option.executiveId}>
                                                 {option.name}
                                             </MenuItem>
