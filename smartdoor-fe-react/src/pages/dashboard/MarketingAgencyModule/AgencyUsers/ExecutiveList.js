@@ -306,16 +306,11 @@ const ExecutiveList = (props) => {
                     <div className="locationSelect d-flex justify-content-end">
                         <Buttons
                             name='Add New Executive'
+                            disabled={userData.isActive ? false : true}
                             varient="primary"
                             size="xSmall"
                             color="white"
                             onClick={() => { history.push('/admin/executives/add-new-executive', { agencyId: userData.agencyId, addNew: true }) }} ></Buttons> &nbsp;&nbsp;
-                        {/* <Buttons
-                            name='View Executive'
-                            varient="primary"
-                            size="xSmall"
-                            color="white"
-                            onClick={() => { history.push('/admin/executives/executive-details') }} ></Buttons> &nbsp;&nbsp; */}
                         {subHeaderComponentMemo} &nbsp;&nbsp;
                         {/* <Form.Group controlId="exampleForm.SelectCustom">
                             <Form.Control

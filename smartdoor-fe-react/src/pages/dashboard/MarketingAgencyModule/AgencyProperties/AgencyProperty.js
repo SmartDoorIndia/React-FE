@@ -21,8 +21,8 @@ const AgencyProperty = (props) => {
     const { getAgencyProperties } = props;
     const userData = getLocalStorage('authData');
     const userRole = props?.userRole;
-    const agencyId = props?.agencyId;
-    const executiveId = props?.executiveId;
+    const agencyId = props?.agencyId || userData.agencyId || 0;
+    const executiveId = props?.executiveId || 0;
     const customerId = props?.customerId || 0;
     const agencyProperty = useSelector(state => state.agencyProperties);
     const [filterText, setFilterText] = useState('');

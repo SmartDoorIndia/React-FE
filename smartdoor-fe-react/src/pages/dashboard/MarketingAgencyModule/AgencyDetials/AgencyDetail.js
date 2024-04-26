@@ -64,7 +64,8 @@ const AgencyDetail = (props) => {
             deactivateAgency: false,
             deleteExecutive: false,
             propTransfer: false,
-            customerTransfer: true
+            customerTransfer: true,
+            reactivateAgency: false
         }
         const response = await transferCustomers(data);
         if (response.status === 200) {
@@ -84,7 +85,30 @@ const AgencyDetail = (props) => {
             deactivateAgency: true,
             deleteExecutive: false,
             propTransfer: false,
-            customerTransfer: true
+            customerTransfer: true,
+            reactivateAgency: false
+        }
+        const response = await transferCustomers(data);
+        if (response.status === 200) {
+            console.log(response);
+            _getAgencyById();
+            setShowCustomersFlag(true);
+            setShowPropertyFlag(false);
+            setdeactivateAgencyModalShow(false);
+        }
+    };
+
+    const reactivateAgency = async () => {
+        let data = {
+            existingAgencyId: agencyId,
+            newAgencyId: 0,
+            existingExecutiveId: null,
+            newExecutiveId: 0,
+            deactivateAgency: false,
+            deleteExecutive: false,
+            propTransfer: false,
+            customerTransfer: false,
+            reactivateAgency: true
         }
         const response = await transferCustomers(data);
         if (response.status === 200) {
@@ -138,7 +162,7 @@ const AgencyDetail = (props) => {
                         </>
                             :
                             <>
-                            <Button variant='primary' className='mb-2 w-90 text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => {  }}>Reactivate</Button>
+                            <Button variant='primary' className='mb-2 w-90 text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { reactivateAgency() }}>Reactivate</Button>
                             </>
                         }
                         <Button variant='outlined' className='w-90 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452', cursor: agencyDetails.customerCount === null || agencyDetails.customerCount === 0 ? 'not-allowed' : 'pointer' }} onClick={() => { if (agencyDetails.customerCount !== null) { setTransferCustModalShow(true) } }}>Transfer</Button>

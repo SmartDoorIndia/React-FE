@@ -23,7 +23,7 @@ const AgencyCustomers = (props) => {
     const userData = getLocalStorage('authData');
     const userRole = props?.userRole || userData.roleName;
     const agencyId = props?.agencyId || userData.agencyId;
-    const executiveId = props?.executiveId || userData.userid;
+    const executiveId = props?.executiveId || 0;
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
     const [defaultSort, setDefaultSort] = useState(agencyCustomers.data.defaultSort ||false);
@@ -202,7 +202,7 @@ const AgencyCustomers = (props) => {
         }
         await getAgencyCustomers({
             agencyId: agencyId,
-            executiveId: 0,
+            executiveId: userData.roleId === 17 ? executiveId : userData.userid,
             searchString: filterText,
             pageNo: newPage,
             pageSize: rowsPerPage,
@@ -225,7 +225,7 @@ const AgencyCustomers = (props) => {
         }
         await getAgencyCustomers({
             agencyId: agencyId,
-            executiveId: 0,
+            executiveId: userData.roleId === 17 ? executiveId : userData.userid,
             searchString: filterText,
             pageNo: currentPage,
             pageSize: newRowsPerPage,
@@ -283,11 +283,11 @@ const AgencyCustomers = (props) => {
                 defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
             })
             console.log(agencyCustomers)
-        };
-        if ((userRole === 'MARKETING ADMIN' || userRole === 'MARKETING EXECUTIVE') && agencyCustomers?.data?.customerData?.length === 0) {
+        }
+        else {
             await getAgencyCustomers({
                 agencyId: agencyId,
-                executiveId: executiveId,
+                executiveId: userData.roleId === 17 ? executiveId : userData.userid,
                 searchString: "",
                 pageNo: currentPage,
                 pageSize: rowsPerPage,
@@ -435,7 +435,7 @@ const AgencyCustomers = (props) => {
                                         }
                                         await getAgencyCustomers({
                                             agencyId: agencyId,
-                                            executiveId: 0,
+                                            executiveId: userData.roleId === 17 ? executiveId : userData.userid,
                                             searchString: filterText,
                                             pageNo: currentPage,
                                             pageSize: rowsPerPage,

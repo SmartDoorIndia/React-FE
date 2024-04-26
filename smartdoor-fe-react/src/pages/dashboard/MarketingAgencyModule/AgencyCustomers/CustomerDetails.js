@@ -88,7 +88,7 @@ const CustomerDetails = (props) => {
                         </Row>
                     </div>
                     <div>
-                        <Button size="sm" variant='outlined' className='mb-2 w-90 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452' }} onClick={() => {
+                        <Button disabled={userData.isActive ? false : true} size="sm" variant='outlined' className='mb-2 w-90 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452' }} onClick={() => {
                             history.push('/admin/chat-history', {
                                 userId: userData?.userid,
                                 ownerId: customerDetails.userId,
@@ -96,7 +96,7 @@ const CustomerDetails = (props) => {
                                 roleId: 1
                               })
                          }}>Chat</Button>
-                        <Button size="sm" variant='primary' className='mb-2 w-90 text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { setShowAwardCouponsModal(true) }}>Award Coupons</Button>
+                        <Button disabled={userData.isActive ? false : true} size="sm" variant='primary' className='mb-2 w-90 text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { setShowAwardCouponsModal(true) }}>Award Coupons</Button>
                     </div>
                 </div>
             </div>

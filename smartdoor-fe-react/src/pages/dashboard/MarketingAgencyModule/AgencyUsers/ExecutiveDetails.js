@@ -37,6 +37,7 @@ const ExecutiveDetails = (props) => {
 
     useEffect(() => {
         _getAgencyById();
+        console.log(executiveId)
         getAllAgencyExecutives({
             agencyId: agencyId, executiveId: 0, pageNo: 1, pageSize: 1000, searchStr: ""
         });
@@ -51,7 +52,8 @@ const ExecutiveDetails = (props) => {
             deactivateAgency: false,
             deleteExecutive: true,
             propTransfer: executiveDetails.customerCount !== null ? true : false,
-            customerTransfer: true
+            customerTransfer: true,
+            reactivateAgency: false
         }
         const response = await transferCustomers(data);
         if (response.status === 200) {

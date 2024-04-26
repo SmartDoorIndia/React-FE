@@ -192,7 +192,7 @@ const PropertyDetails = (props) => {
                console.log("smart lock data after update", smartLockData);
             }, 3000);
 
-          
+
          }
       } catch (err) {
          showErrorToast("Unexpected Error.");
@@ -203,7 +203,7 @@ const PropertyDetails = (props) => {
    const _getPropertyDetails = useCallback(() => {
       getPropertyDetails({ propertyId: propertyId, userId: userId })
          .then((response) => {
-            console.log("resp data => ",response);
+            console.log("resp data => ", response);
             setLoading(false);
             if (response.data) {
                if (response.data.resourceData && response.data.status === 200) {
@@ -983,8 +983,8 @@ const PropertyDetails = (props) => {
             type: Actions.PROPERTY_MODULE_SUCCESS,
             data: { propertyData: [...sorted], records: allPropertyData?.data?.records, currentPage: allPropertyData?.data?.currentPage, rowsPerPage: allPropertyData?.data?.rowsPerPage, searchStr: allPropertyData?.data?.searchStr, propertyId: allPropertyData?.data?.propertyId, city: allPropertyData?.data?.city, location: allPropertyData?.data?.location, smartLockProperty: allPropertyData?.data?.smartLockProperty, propertyStatus: allPropertyData?.data?.propertyStatus, fromDate: allPropertyData?.data?.fromDate, toDate: allPropertyData?.data?.toDate, defaultSort: allPropertyData?.data?.defaultSort, defaultSortId: allPropertyData?.data?.defaultSortId }
          });
-         if(isGoBack !== false) {
-            history.push("/admin/property", {defaultSort: props.location.state.defaultSort, defaultSortId: props.location.state.defaultSortId})
+         if (isGoBack !== false) {
+            history.push("/admin/property", { defaultSort: props.location.state.defaultSort, defaultSortId: props.location.state.defaultSortId })
          }
       }
       else if (menuName === 'NonSDProperties') {
@@ -992,7 +992,7 @@ const PropertyDetails = (props) => {
             type: Actions.NON_SD_PROPERTIES_SUCCESS,
             data: { propertyData: [...sorted], records: allNonSDProperties?.data?.records, currentPage: allNonSDProperties?.data?.currentPage, rowsPerPage: allNonSDProperties?.data?.rowsPerPage, searchStr: allNonSDProperties?.data?.searchStr, propertyId: allNonSDProperties?.data?.propertyId, city: allNonSDProperties?.data?.city, location: allNonSDProperties?.data?.location, smartLockProperty: allNonSDProperties?.data?.smartLockProperty, propertyStatus: allNonSDProperties?.data?.propertyStatus, fromDate: allNonSDProperties?.data?.fromDate, toDate: allNonSDProperties?.data?.toDate, defaultSort: allNonSDProperties?.data?.defaultSort, defaultSortId: allNonSDProperties?.data?.defaultSortId }
          });
-         if(isGoBack !== false) {
+         if (isGoBack !== false) {
             history.push("/admin/nonsdproperty")
          }
       }
@@ -1009,9 +1009,9 @@ const PropertyDetails = (props) => {
       <>
          {Object.keys(propertyData).length > 0 ? (
             <>
-            {menuName !== "" ?
-               <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => { handleBackButton() }}></Buttons>
-            : null}
+               {menuName !== "" ?
+                  <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => { handleBackButton() }}></Buttons>
+                  : null}
                <div className="container" style={{ height: '84vh', overflowY: 'auto' }}>
                   {/* {menuName === 'Properties' ?
                   <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => { history.push('/admin/property') }}></Buttons>
@@ -1220,7 +1220,7 @@ const PropertyDetails = (props) => {
                               className="mt-2 mb-2" />  */}
                               {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
                               <div className="d-flex justify-content-end">
-                                 {propertyData.miscellaneousDetails.status === 'UNDER REVIEW' && propertyData.miscellaneousDetails.smartLockProperty === false && propertyData?.deleted === false ?
+                                 {userData.roleName === 'SUPER ADMIN' && propertyData.miscellaneousDetails.status === 'UNDER REVIEW' && propertyData.miscellaneousDetails.smartLockProperty === false && propertyData?.deleted === false ?
                                     <>
                                        <Buttons
                                           name="Approve"
@@ -1233,25 +1233,27 @@ const PropertyDetails = (props) => {
                                           }}
                                        /> &nbsp; &nbsp;
                                     </> : null}
-                                 <Link
-                                    to={{
-                                       pathname: "/admin/chat-history",
-                                       state: {
-                                          userId: userData.userid,
-                                          ownerId: ownerId,
-                                          ownerName: ownerName,
-                                          roleId: propertyData?.ownerRoleId
-                                       },
-                                    }}
-                                 >
-                                    <Buttons
-                                       style={{ float: 'left' }}
-                                       name="Chat"
-                                       varient="primary"
-                                       size="xSmall"
-                                       color="white"
-                                       className=" mb-2" />
-                                 </Link> 
+                                 {userData.roleName === 'SUPER ADMIN' ?
+                                    <Link
+                                       to={{
+                                          pathname: "/admin/chat-history",
+                                          state: {
+                                             userId: userData.userid,
+                                             ownerId: ownerId,
+                                             ownerName: ownerName,
+                                             roleId: propertyData?.ownerRoleId
+                                          },
+                                       }}
+                                    >
+                                       <Buttons
+                                          style={{ float: 'left' }}
+                                          name="Chat"
+                                          varient="primary"
+                                          size="xSmall"
+                                          color="white"
+                                          className=" mb-2" />
+                                    </Link>
+                                    : null}
                               </div>
                               <div className="d-flex mt-2">
                                  {showQr ?
@@ -1266,7 +1268,7 @@ const PropertyDetails = (props) => {
                                     </>
                                     : null}
 
-                                 {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData.miscellaneousDetails?.deleted === false ?
+                                 {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData.miscellaneousDetails?.deleted === false && userData.roleName === 'SUPER ADMIN' ?
                                     <>
                                        <Link
                                           to={{
@@ -1293,7 +1295,7 @@ const PropertyDetails = (props) => {
                               </div>
 
                               <div className="d-flex mt-2">
-                                 {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData?.deleted === false ? (
+                                 {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData?.deleted === false && userData.roleName === 'SUPER ADMIN' ? (
                                     <>
                                        <Buttons
                                           style={{ float: 'right' }}
@@ -1314,17 +1316,20 @@ const PropertyDetails = (props) => {
                                     </>
                                  ) : (null)}
                               </div>
-
                               <div className="d-flex mt-2">
-                                 <Buttons
-                                    style={{ float: 'left' }}
-                                    name="Edit Property"
-                                    varient="primary"
-                                    size="xSmall"
-                                    color="white"
-                                    className=" mb-2"
-                                    onClick={() => { history.push('/admin/property/property-details/EditPost', {existingDetails: {propertyId : propertyData.smartdoorPropertyId, saveFlag: true}, miscellaneousDetails: propertyData.miscellaneousDetails}) }} /> &nbsp; &nbsp;
+                                 {userData.roleName === 'SUPER ADMIN' ?
+                                    <>
+                                       <Buttons
+                                          style={{ float: 'left' }}
+                                          name="Edit Property"
+                                          varient="primary"
+                                          size="xSmall"
+                                          color="white"
+                                          className=" mb-2"
+                                          onClick={() => { history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: propertyData.miscellaneousDetails }) }} /> & nbsp; &nbsp;
 
+                                    </>
+                                    : null}
                                  {isDeleted === false && userData.roleName === 'SUPER ADMIN' ?
                                     <>
                                        <Buttons
@@ -1414,7 +1419,7 @@ const PropertyDetails = (props) => {
                                  <tbody>
                                     <tr>
                                        <td className="pl-0 ">
-                                          
+
                                           <Text
                                              size="xSmall"
                                              fontWeight="fw500"
@@ -1444,7 +1449,7 @@ const PropertyDetails = (props) => {
                                           />
                                        </td>
                                        <td className="p-2">
-                                        
+
 
                                           <Text
                                              size="xSmall"
@@ -1462,7 +1467,7 @@ const PropertyDetails = (props) => {
                                     </tr>
                                     <tr>
                                        <td className="pl-0">
-                                         
+
 
                                           <Text
                                              size="xSmall"
@@ -1478,7 +1483,7 @@ const PropertyDetails = (props) => {
                                           />
                                        </td>
                                        <td className="p-2">
-                                          
+
 
                                           <Text
                                              size="xSmall"
@@ -1494,7 +1499,7 @@ const PropertyDetails = (props) => {
                                           />
                                        </td>
                                        <td className="p-2">
-                                         
+
                                        </td>
                                     </tr>
                                  </tbody>
@@ -1606,7 +1611,7 @@ const PropertyDetails = (props) => {
                                           />
                                        </div>
                                        <div className="flex-1 ml-2 ownerdetail">
-                                         
+
                                           <ToolTip
                                              position="top"
                                              name={propertyData.miscellaneousDetails.ownerName || "-"}
@@ -1656,7 +1661,7 @@ const PropertyDetails = (props) => {
                                                       }}
                                                    >
                                                       {/* <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " /> */}
-                                                      <img className="doc docOwner" src={doc} alt=""/>
+                                                      <img className="doc docOwner" src={doc} alt="" />
                                                    </Link>
                                                 </ToolTip>
                                              </>
@@ -1697,7 +1702,7 @@ const PropertyDetails = (props) => {
                                                          }}
                                                       >
                                                          {/* <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " /> */}
-                                                         <img className={"doc docOwner "} src={doc} alt=""/>
+                                                         <img className={"doc docOwner "} src={doc} alt="" />
                                                       </Link>
                                                    ) : (
                                                       <img

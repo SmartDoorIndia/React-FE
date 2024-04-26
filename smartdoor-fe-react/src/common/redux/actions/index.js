@@ -1962,3 +1962,8 @@ export const getChatGptDescription = async (data) => {
   const response = await mainApiService('getChatGptDescription', data);
   return response;
 }
+
+export const revokeToken = async (data) => {
+  const response = await mainApiService('logoutUser', data);
+  return response;
+}

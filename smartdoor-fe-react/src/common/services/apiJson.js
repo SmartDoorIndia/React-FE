@@ -1,5 +1,9 @@
 /** @format */
 
+import { getLocalStorage } from "../helpers/Utils";
+
+const userData = getLocalStorage('authData');
+
 export const ApiJson = {
   login: {
     // url: 'userauth/oauth/token?username=:username&password=:password&roleId=&loginBy=password&grant_type=password&deviceId=4343&deviceType=crome&appName=admin',
@@ -2644,6 +2648,18 @@ export const ApiJson = {
     showErrorMessage: true
   },
 
+  logoutUser: {
+    url: '/userauth/public/revokeToken',
+    method: 'DELETE',
+    data: {},
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'bearer ' + userData?.access_token
+    },
+    showResultMessage: true,
+    showErrorMessage: true
+  }
 };
 
 

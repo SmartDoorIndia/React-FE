@@ -13,6 +13,7 @@ import { useSocket } from '../../../common/helpers/SocketProvider';
 import { useUserContext } from '../../../common/helpers/Auth';
 import NotificationModal from '../../Modal/NotificationModal/NotificationModal';
 import { ToolTip, getLocalStorage } from '../../../common/helpers/Utils';
+import { revokeToken } from '../../../common/redux/actions';
 
 const HeaderAction = (props) => {
   const { disconnectSocket, socket } = useSocket();
@@ -24,6 +25,7 @@ const HeaderAction = (props) => {
     props._handleCallReject();
     props._handleCallEnd();
     disconnectSocket(socket);
+    revokeToken();
     logoutUser();
   }
   const handleClose = () => {
