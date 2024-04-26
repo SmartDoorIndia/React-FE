@@ -65,6 +65,7 @@ import reviewIcon from "../../../assets/svg/reviewIcon.svg"
 import { getLocalStorage } from "../../../common/helpers/Utils";
 import { useSocket } from "../../../common/helpers/SocketProvider";
 import { userAuthData } from "../../../common/redux/reducers/dashboard.reducer";
+import PostingFields from "../../../common/helpers/PostingFields";
 const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
 const PropertyDetails = (props) => {
@@ -106,6 +107,8 @@ const PropertyDetails = (props) => {
    const [visitorReviewList, setVisitorReviewList] = useState([])
    const userData = getLocalStorage("authData");
    const dispatch = useDispatch();
+   const [specList, setSpecList] = useState([]);
+
 
    const batteryStatusCensor = (censorBatteryStatus) => {
       if (censorBatteryStatus === 0) {
@@ -200,18 +203,18 @@ const PropertyDetails = (props) => {
    }, [propertyId, getPropertyDetails]);
 
    // getPropertyDetails()
-   const _getPropertyDetails = useCallback(() => {
-      getPropertyDetails({ propertyId: propertyId, userId: userId })
+   const _getPropertyDetails = useCallback(async () => {
+      await getPropertyDetails({ propertyId: propertyId, userId: userId })
          .then((response) => {
             console.log("resp data => ", response);
             setLoading(false);
+
             if (response.data) {
                if (response.data.resourceData && response.data.status === 200) {
                   setpropertyData(response.data.resourceData);
                   setOwnerId(response.data.resourceData.miscellaneousDetails.postedById);
                   setOwnerName(response.data.resourceData.miscellaneousDetails.ownerName);
                   setVisitorReviewList(response.data.resourceData.visitorReviewList)
-                  console.log(response.data.resourceData.propertyPostedBy)
                   _getSmartLockData({ propertyId });
                   dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: response.data.resourceData.basicDetails })
                   dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: response.data.resourceData.address })
@@ -219,6 +222,22 @@ const PropertyDetails = (props) => {
                   dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: response.data.resourceData.pricing })
                   dispatch({ type: Actions.UPLOAD_IMAGES_SUCCESS, data: response.data.resourceData.uploads })
                   dispatch({ type: Actions.TERMS_CONDITIONS_SUCCESS, data: response.data.resourceData.terms })
+                  if (Object.keys(response.data.resourceData.basicDetails)?.length !== 0) {
+                     let speclist = [];
+                     let fields = response.data.resourceData.basicDetails;
+                     if (fields?.propertyType === 'Residential') {
+                         if (fields?.propertySubType === 'PG/Co-Living') {
+                             speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
+                             console.log("specs=> ",PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs)
+                         } else {
+                             speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType][fields.propertySubType].Specs
+                         }
+                     } else if (fields?.propertyType === 'Commercial') {
+                         speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType].Specs
+                         console.log("speclist",speclist)
+                     }
+                     setSpecList(speclist);
+                 }
                   if (!response.data.resourceData.basicPlan) _getContactSensor(propertyId);
                }
             }
@@ -229,7 +248,11 @@ const PropertyDetails = (props) => {
             setLoading(false);
             console.log("error", error);
          });
-   }, [propertyId, getPropertyDetails]);
+   }, []);
+
+   console.log("propertyData=> ",propertyData);
+
+   
 
 
    const _getPropertyPlanDetailsById = useCallback(
@@ -599,10 +622,11 @@ const PropertyDetails = (props) => {
 
    }, [socket]);
 
-   useEffect(() => {
-      _getPropertyDetails();
+   useEffect( () =>  { 
+       _getPropertyDetails();
       getPropertyAnalyticsByPropertyId({ propertyId: propertyId });
       _getPropertyPlanDetailsById();
+     
       // _handleCallEvents();
    }, [propertyId, _getPropertyDetails, getPropertyAnalyticsByPropertyId]);
 
@@ -1024,7 +1048,7 @@ const PropertyDetails = (props) => {
                   : <></>} */}
                   <Row>
                      <Col md={8}>
-                        {propertyData.uploads.propertyImages?.length > 0 ? (
+                        {propertyData.uploads?.propertyImages?.length > 0 ? (
                            <ImageSliderComponent
                               imagesArr={propertyData.uploads.propertyImages}
                               deleteImageHandler={deleteImageHandler}
@@ -1058,22 +1082,16 @@ const PropertyDetails = (props) => {
                                     size="large"
                                     fontWeight="mediumbold"
                                     color="secondry-color"
-                                    text={
-                                       propertyData.basicDetails.propertyCategory === "Sale"
-                                          ? `${setPrice(propertyData.pricing.propertyRate)}`
-                                          : `${setPrice(propertyData.pricing.propertyRate)}/month`
-                                    }
+                                    text={propertyData.basicDetails?.propertyCategory === "Selling"
+                                          ? `${setPrice(propertyData.pricing?.propertyRate)}/month`
+                                          : ""}
                                  />
                                  <Text
                                     className="fw500"
                                     size="Small"
                                     fontWeight="smbold"
                                     color="secondry-color"
-                                    text={
-                                       propertyData.basicDetails.propertyCategory === "Lease"
-                                          ? "For Rent"
-                                          : `For ${propertyData.basicDetails.propertyCategory || "-"}`
-                                    }
+                                    text={propertyData.basicDetails?.propertyCategory}
                                  />
                               </div>
                            </h5>
@@ -1108,7 +1126,7 @@ const PropertyDetails = (props) => {
                                           {/* <div>
                                        Smartlock Power % : {smartdoorBattery}%
                                     </div> */}
-                                          {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData?.deleted === false && propertyData.miscellaneousDetails.status === "UNDER REVIEW" ?
+                                          {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData.miscellaneousDetails?.deleted === false && propertyData.miscellaneousDetails.status === "UNDER REVIEW" ?
                                              <>
                                                 <Text
                                                    className=" mt-2"
@@ -1220,7 +1238,9 @@ const PropertyDetails = (props) => {
                               className="mt-2 mb-2" />  */}
                               {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
                               <div className="d-flex justify-content-end">
+
                                  {userData.roleName === 'SUPER ADMIN' && propertyData.miscellaneousDetails.status === 'UNDER REVIEW' && propertyData.miscellaneousDetails.smartLockProperty === false && propertyData?.deleted === false ?
+
                                     <>
                                        <Buttons
                                           name="Approve"
@@ -1295,7 +1315,9 @@ const PropertyDetails = (props) => {
                               </div>
 
                               <div className="d-flex mt-2">
+
                                  {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData?.deleted === false && userData.roleName === 'SUPER ADMIN' ? (
+
                                     <>
                                        <Buttons
                                           style={{ float: 'right' }}
@@ -1326,7 +1348,7 @@ const PropertyDetails = (props) => {
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2"
-                                          onClick={() => { history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: propertyData.miscellaneousDetails }) }} /> & nbsp; &nbsp;
+                                          onClick={() => { history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: propertyData.miscellaneousDetails }) }} /> &nbsp; &nbsp;
 
                                     </>
                                     : null}
@@ -1598,7 +1620,7 @@ const PropertyDetails = (props) => {
                                     </div>
                                  )}
                               </div>
-                              <div className="ownerInfoWrap">
+                              {/* <div className="ownerInfoWrap">
                                  <div className="d-flex justify-content-between mb-2 propertyOwnerInfoWrap align-items-baseline">
                                     <div className="d-flex userName propertyOwnerInfoWrapFirst mb-3 align-items-end">
                                        <div className="uName">
@@ -1649,7 +1671,6 @@ const PropertyDetails = (props) => {
                                                    <Link
                                                       to={{
                                                          pathname:
-                                                            // props.module==='EXECUTION SALES LEAD'?'/admin/sales/sales-lead/consumer/property/property-documents':
                                                             "/admin/property/property-documents",
                                                          state: {
                                                             propertyId:
@@ -1660,8 +1681,10 @@ const PropertyDetails = (props) => {
                                                          },
                                                       }}
                                                    >
-                                                      {/* <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " /> */}
-                                                      <img className="doc docOwner" src={doc} alt="" />
+
+                                                       <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " />
+                                                      <img className="doc docOwner" src={doc} alt=""/>
+
                                                    </Link>
                                                 </ToolTip>
                                              </>
@@ -1690,7 +1713,6 @@ const PropertyDetails = (props) => {
                                                          }}
                                                          to={{
                                                             pathname:
-                                                               // props.module==='EXECUTION SALES LEAD'?'/admin/sales/sales-lead/consumer/property/property-documents':
                                                                "/admin/property/property-documents",
                                                             state: {
                                                                propertyId:
@@ -1701,8 +1723,11 @@ const PropertyDetails = (props) => {
                                                             },
                                                          }}
                                                       >
-                                                         {/* <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " /> */}
+
+                                                       <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " />
                                                          <img className={"doc docOwner "} src={doc} alt="" />
+                                                         <img className={"doc docOwner "} src={doc} alt=""/>
+
                                                       </Link>
                                                    ) : (
                                                       <img
@@ -1720,10 +1745,9 @@ const PropertyDetails = (props) => {
                                              </>
                                           )}
                                        </span>
-                                       {/* '/admin/property/property-documents' */}
                                     </div>
                                  </div>
-                              </div>
+                                       </div> */}
                            </div>
                         )}
                      </Col>
@@ -1731,214 +1755,11 @@ const PropertyDetails = (props) => {
 
                   <Row>
                      <Col md={12} className="propertyDetailsTable">
+                     <div className=" bg-white">
                         <table className="w-100 bg-white">
-                           {/* First ROW */}
-                           {propertyData.basicDetails.propertyType !== "Commercial" ? (
-                              <tr>
-                                 {/* <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Hall"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={propertyData.hall}
-                                    />
-                                 </td> */}
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Kitchen"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={propertyData.specs.hasExtraKitchen || "-"}
-                                    />
-                                 </td>
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Beds"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={propertyData.specs.numberOfRooms || "-"}
-                                    />
-                                 </td>
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Baths"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={propertyData.specs.numberOfBaths || "-"}
-                                    />
-                                 </td>
-                              </tr>
-                           ) : null}
-                           {/* {propertyData.propertyType === "Commercial" ? (
-                              <tr>
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Commercial Area"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={propertyData.propertyInfoResponse.commercialArea}
-                                    />
-                                 </td>
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Commercial Type"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={propertyData.propertyInfoResponse.commercialType || "-"}
-                                    />
-                                 </td>
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"commonReception"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={propertyData.propertyInfoResponse.commonReception || "-"}
-                                    />
-                                 </td>
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Kitchen Pantry"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={propertyData.propertyInfoResponse.kitchenPantry || "-"}
-                                    />
-                                 </td>
-                              </tr>
-                           ) : null} */}
-
-                           {/* Second Row */}
+                           {/* First ROW */}    
+                          
                            <tr>
-                              <td className="p-2">
-                                 <Text
-                                    size="xSmall"
-                                    fontWeight="bold"
-                                    color="secondryColor"
-                                    text={"Entrance Facing"}
-                                 />
-                                 <Text
-                                    size="Small"
-                                    fontWeight="semibold"
-                                    color="secondryColor"
-                                    text={
-                                       propertyData.specs.entranceFacing
-                                          ? propertyData.specs.entranceFacing
-                                          : "-"
-                                    }
-                                 />
-                              </td>
-                              {/* <td className="p-2">
-                                 <Text
-                                    size="xSmall"
-                                    fontWeight="bold"
-                                    color="secondryColor"
-                                    text={"Security"}
-                                 />
-                                 <Text
-                                    size="Small"
-                                    fontWeight="semibold"
-                                    color="secondryColor"
-                                    text={propertyData.propertyInfoResponse.security || "-"}
-                                 />
-                              </td>
-                              <td className="p-2">
-                                 <Text
-                                    size="xSmall"
-                                    fontWeight="bold"
-                                    color="secondryColor"
-                                    text={"Majority Composition"}
-                                 />
-                                 <Text
-                                    size="Small"
-                                    fontWeight="semibold"
-                                    color="secondryColor"
-                                    text={propertyData.propertyInfoResponse.majorityComposition || "-"}
-                                 />
-                              </td>
-                              <td className="p-2">
-                                 <Text
-                                    size="xSmall"
-                                    fontWeight="bold"
-                                    color="secondryColor"
-                                    text={"Distance To Convenience Store"}
-                                 />
-                                 <Text
-                                    size="Small"
-                                    fontWeight="semibold"
-                                    color="secondryColor"
-                                    text={propertyData.propertyInfoResponse.storeDistance || "-"}
-                                 />
-                              </td> */}
-                           </tr>
-
-                           {/* Third Row */}
-
-                           <tr>
-                              <td className="p-2">
-                                 <Text
-                                    size="xSmall"
-                                    fontWeight="bold"
-                                    color="secondryColor"
-                                    text={"Area"}
-                                 />
-                                 <Text
-                                    size="Small"
-                                    fontWeight="semibold"
-                                    color="secondryColor"
-                                    text={
-                                       propertyData.specs.carpetArea === null
-                                          ? "-"
-                                          : propertyData.specs.carpetArea + " Sq. Ft."
-                                    }
-                                 />
-                              </td>
                               <td className="p-2">
                                  <Text
                                     size="xSmall"
@@ -1950,7 +1771,21 @@ const PropertyDetails = (props) => {
                                     size="Small"
                                     fontWeight="semibold"
                                     color="secondryColor"
-                                    text={propertyData.basicDetails.propertySubType || "-"}
+                                    text={propertyData.basicDetails?.propertyType || "-"}
+                                 />
+                              </td>
+                              <td className="p-2">
+                                 <Text
+                                    size="xSmall"
+                                    fontWeight="bold"
+                                    color="secondryColor"
+                                    text={"Property Sub Type"}
+                                 />
+                                 <Text
+                                    size="Small"
+                                    fontWeight="semibold"
+                                    color="secondryColor"
+                                    text={propertyData.basicDetails?.propertySubType || "-"}
                                  />
                               </td>
                               <td className="p-2">
@@ -1964,29 +1799,120 @@ const PropertyDetails = (props) => {
                                     size="Small"
                                     fontWeight="semibold"
                                     color="secondryColor"
-                                    text={propertyData.basicDetails.propertyType || "-"}
+                                    text={propertyData.basicDetails?.propertyCategory || "-"}
                                  />
                               </td>
-                              {/* <td className="p-2">
+                              <td className="p-2">
                                  <Text
                                     size="xSmall"
                                     fontWeight="bold"
                                     color="secondryColor"
-                                    text={"Negotiable"}
+                                    text={"Stage of Property"}
                                  />
                                  <Text
                                     size="Small"
                                     fontWeight="semibold"
                                     color="secondryColor"
-                                    text={propertyData.negotiable.toString() === "true" ? "Yes" : "No"}
+                                    text={propertyData.basicDetails?.stageOfProperty || "-"}
                                  />
-                              </td> */}
+                              </td>
+                           </tr>
+
+                           {/* second Row */}
+
+                           <tr>
+                           {specList.includes('Carpet area/built-up area') ?
+                              <td className="p-2">
+                                 <Text
+                                    size="xSmall"
+                                    fontWeight="bold"
+                                    color="secondryColor"
+                                    text={"Carpet Area"}
+                                 />
+                                 <Text
+                                    size="Small"
+                                    fontWeight="semibold"
+                                    color="secondryColor"
+                                    text={
+                                       propertyData.specs?.carpetArea === null
+                                          ? "-"
+                                          : (propertyData.specs?.carpetArea + " " + propertyData.specs?.carpetAreaMeasurementUnit)
+                                    }
+                                 />
+                              </td> : "" }
+                           {specList.includes('Carpet area/built-up area') ?
+                              <td className="p-2">
+                                 <Text
+                                    size="xSmall"
+                                    fontWeight="bold"
+                                    color="secondryColor"
+                                    text={"Build up Area"}
+                                 />
+                                 <Text
+                                    size="Small"
+                                    fontWeight="semibold"
+                                    color="secondryColor"
+                                    text={
+                                       propertyData.specs?.builtUpArea === null
+                                          ? "-"
+                                          : (propertyData.specs?.builtUpArea + " " + propertyData.specs?.builtUpAreaMeasurementUnit)
+                                    }
+                                 />
+                              </td> : ""}
+                            {specList.includes('Plot area') ?
+                              <td className="p-2">
+                                 <Text
+                                    size="xSmall"
+                                    fontWeight="bold"
+                                    color="secondryColor"
+                                    text={"Plot Area"}
+                                 />
+                                 <Text
+                                    size="Small"
+                                    fontWeight="semibold"
+                                    color="secondryColor"
+                                    text={
+                                       propertyData.specs?.plotArea === null
+                                          ? "-"
+                                          : (propertyData.specs?.plotArea + " " + propertyData.specs?.plotAreaMeasurementUnit)
+                                    }
+                                 />
+                              </td> : ""}
+                              {specList.includes('Open area') ?
+                                 <td className="p-2">
+                                    <Text
+                                       size="xSmall"
+                                       fontWeight="bold"
+                                       color="secondryColor"
+                                       text={"Open Area"}
+                                    />
+                                    <Text
+                                       size="Small"
+                                       fontWeight="semibold"
+                                       color="secondryColor"
+                                       text={propertyData.specs?.openArea + " "+propertyData.specs?.openAreaMeasurementUnit}
+                                    />
+                                 </td>:""}
+                              {specList.includes('Loading factor') ?
+                              <td className="p-2">
+                                 <Text
+                                    size="xSmall"
+                                    fontWeight="bold"
+                                    color="secondryColor"
+                                    text={"Loading factor"}
+                                 />
+                                 <Text
+                                    size="Small"
+                                    fontWeight="semibold"
+                                    color="secondryColor"
+                                    text={propertyData.specs?.loadingFactorInPercent+"%"}
+                                 />
+                              </td> : ""}
                            </tr>
 
                            {showMore ? (
-                              //  Fourth Row
+                              //  third Row
                               <tr>
-                                 {/* {propertyData.propertyCategory === 'Sale' || propertyData.propertyCategory === 'Buy' ? */}
                                  <td className="p-2">
                                     <Text
                                        size="xSmall"
@@ -2004,32 +1930,32 @@ const PropertyDetails = (props) => {
                                              : "-"
                                        }
                                     />
-                                 </td>
-                                 {/* // : null } */}
-                                 {/* <td className="p-2">
+                                 </td> 
+                                 <td className="p-2">
                                     <Text
                                        size="xSmall"
                                        fontWeight="bold"
                                        color="secondryColor"
-                                       text={"Religious Place"}
+                                       text={"Property Rate"}
                                     />
                                     <Text
                                        size="Small"
                                        fontWeight="semibold"
                                        color="secondryColor"
                                        text={
-                                          propertyData?.propertyInfoResponse?.religiousPlace
-                                             ? propertyData?.propertyInfoResponse?.religiousPlace
+                                          propertyData?.pricing?.propertyRate
+                                             ? `${propertyData?.pricing?.propertyRate}`
                                              : "-"
                                        }
                                     />
-                                 </td> */}
+                                 </td> 
+                                    {specList.includes('Reserved car parkings') ?
                                  <td className="p-2">
                                     <Text
                                        size="xSmall"
                                        fontWeight="bold"
                                        color="secondryColor"
-                                       text={"Car Parking"}
+                                       text={"Reserved Car Parking"}
                                     />
                                     <Text
                                        size="Small"
@@ -2041,13 +1967,14 @@ const PropertyDetails = (props) => {
                                              : "-"
                                        }
                                     />
-                                 </td>
+                                 </td> :""}
+                                 {specList.includes('Reserved two wheeler parkings') ?
                                  <td className="p-2">
                                     <Text
                                        size="xSmall"
                                        fontWeight="bold"
                                        color="secondryColor"
-                                       text={"Two Wheeler Parking"}
+                                       text={"Reserved Two Wheeler Parking"}
                                     />
                                     <Text
                                        size="Small"
@@ -2059,65 +1986,93 @@ const PropertyDetails = (props) => {
                                              : "-"
                                        }
                                     />
-                                 </td>
+                                 </td> : ""}
                               </tr>
                            ) : null}
+
+                           {/* forth row */}
                            {showMore ? (
-                              // Fifth Row
+                                 <tr>
+                                    {specList.includes('BHK') ?
+                                    <td className="p-2">
+                                       <Text
+                                          size="xSmall"
+                                          fontWeight="bold"
+                                          color="secondryColor"
+                                          text={"No of rooms"}
+                                       />
+                                       <Text
+                                          size="Small"
+                                          fontWeight="semibold"
+                                          color="secondryColor"
+                                          text={propertyData.specs?.numberOfRooms || "-"}
+                                       />
+                                    </td> : ""}
+                                    {specList.includes('Number of washrooms') ?
+                                    <td className="p-2">
+                                       <Text
+                                          size="xSmall"
+                                          fontWeight="bold"
+                                          color="secondryColor"
+                                          text={"Baths"}
+                                       />
+                                       <Text
+                                          size="Small"
+                                          fontWeight="semibold"
+                                          color="secondryColor"
+                                          text={propertyData.specs?.numberOfBaths || "-"}
+                                       />
+                                    </td> : ""}
+                                    {specList.includes('Entrance facing') ?
+                                    <td className="p-2">
+                                    <Text
+                                       size="xSmall"
+                                       fontWeight="bold"
+                                       color="secondryColor"
+                                       text={"Entrance Facing"}
+                                    />
+                                    <Text
+                                       size="Small"
+                                       fontWeight="semibold"
+                                       color="secondryColor"
+                                       text={
+                                          propertyData.specs?.entranceFacing
+                                             ? propertyData.specs?.entranceFacing
+                                             : "-"
+                                       }
+                                    />
+                                 </td> : ""}
+                                 {specList.includes('Overlooking') ?
+                                    <td className="p-2">
+                                    <Text
+                                       size="xSmall"
+                                       fontWeight="bold"
+                                       color="secondryColor"
+                                       text={"Overlooking"}
+                                    />
+                                    <Text
+                                       size="Small"
+                                       fontWeight="semibold"
+                                       color="secondryColor"
+                                       text={
+                                          propertyData.specs?.propertyOverlookings
+                                             ? propertyData.specs?.propertyOverlookings.join(', ')
+                                             : "-"
+                                       }
+                                    />
+                                 </td> : ""}
+                                 </tr>
+                              ) : null}
+                              {/* fifth row */}
+                           {showMore ? (
                               <tr>
-                                 {/* {propertyData.propertyInfoResponse.loanFromBank ? (
+                                  {specList.includes('Number of balconies') ?
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
                                           fontWeight="bold"
                                           color="secondryColor"
-                                          text={"Loan From Bank"}
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={
-                                             propertyData?.propertyInfoResponse?.loanFromBank
-                                                ? propertyData?.propertyInfoResponse?.loanFromBank
-                                                : "-"
-                                          }
-                                       />
-                                    </td>
-                                 ) : null} */}
-                                 {/* {propertyData.basicDetails.propertyType === "Commercial" ? (
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text={"Rest Room"}
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={
-                                             propertyData?.propertyInfoResponse?.restRoom
-                                                ? propertyData?.propertyInfoResponse?.restRoom
-                                                : "-"
-                                          }
-                                       />
-                                    </td>
-                                 ) : null} */}
-                                 {/* {propertyData.propertyType !== "Commercial" ?
-                      <td className="p-2">
-                        <Text className='fw500' size="xSmall" fontWeight="semibold" color="TaupeGrey" text={'Balcony'} />
-                        <Text size="Small" fontWeight="mediumbold" color="secondry-color" text={(propertyData?.propertyInfoResponse?.balconyOpenArea === null) ? '-' : propertyData?.propertyInfoResponse?.balconyOpenArea + ' Sq. Ft.'} />
-                      </td>
-                      : null} */}
-                                 {propertyData.basicDetails.propertyType !== "Commercial" ? (
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text={"Balcony"}
+                                          text={"Number of balconies"}
                                        />
                                        <Text
                                           size="Small"
@@ -2125,37 +2080,28 @@ const PropertyDetails = (props) => {
                                           color="secondryColor"
                                           text={propertyData?.specs?.numberOfBalconies || "-"}
                                        />
-                                    </td>
-                                 ) : null}
-
-                                 {propertyData.basicDetails.propertySubType === "Independent House/Villa" ? (
+                                    </td> : ""}
+                                    {specList.includes('General amenities' || 'Internal amenities') ?
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
                                           fontWeight="bold"
                                           color="secondryColor"
-                                          text={"Plot Size"}
+                                          text={"Amenities"}
                                        />
                                        <Text
                                           size="Small"
                                           fontWeight="semibold"
                                           color="secondryColor"
-                                          text={
-                                             propertyData.specs.plotArea
-                                                ? propertyData.specs.plotArea +
-                                                " Sq. Ft."
-                                                : "-"
-                                          }
+                                          text={propertyData.specs?.internalAmenities +"," +propertyData.specs?.generalAmenities+","+propertyData.specs?.commercialGeneralAmenities}
                                        />
-                                    </td>
-                                 ) : null}
+                                    </td> : ""}
                               </tr>
                            ) : null}
                            {showMore ? (
                               // Sixth Row
                               <tr>
-                                 {propertyData.basicDetails.propertyCategory === "Lease" &&
-                                    propertyData.basicDetails.propertyType !== "Commercial" ? (
+                                 {specList.includes('Preferred for') ? (
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -2170,9 +2116,8 @@ const PropertyDetails = (props) => {
                                           text={propertyData.pricing.preferredFor || "-"}
                                        />
                                     </td>
-                                 ) : null}
-                                 {propertyData.basicDetails.propertyCategory === "Lease" &&
-                                    propertyData.basicDetails.propertyType !== "Commercial" ? (
+                                 ) : ""}
+                                 {specList.includes('Purpose') ? (
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -2184,7 +2129,7 @@ const PropertyDetails = (props) => {
                                           size="Small"
                                           fontWeight="semibold"
                                           color="secondryColor"
-                                          text={propertyData.specs.purposes || "-"}
+                                          text={propertyData.specs?.purposes ? propertyData.specs.purposes.join(', ') : "-"}
                                        />
                                     </td>
                                  ) : null}
@@ -2193,80 +2138,23 @@ const PropertyDetails = (props) => {
                            {showMore ? (
                               //  Seventh Row
                               <tr>
+                                {specList.includes('Maintenance') ?
                                  <td className="p-2">
                                     <Text
                                        size="xSmall"
                                        fontWeight="bold"
                                        color="secondryColor"
-                                       text={"Maintenance Charges (Monthly)"}
+                                       text={"Maintenance Charge"}
                                     />
                                     <Text
                                        size="Small"
                                        fontWeight="semibold"
                                        color="secondryColor"
                                        text={
-                                          propertyData.specs.maintenanceCharge
-                                             ? `₹${propertyData.specs.maintenanceCharge}`
-                                             : "-"
-                                       }
+                                          propertyData.specs.maintenanceCharge}
                                     />
-                                 </td>
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Open Area"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={
-                                          propertyData.specs.openArea
-                                             ? propertyData.specs
-                                                .openArea + " Sq. Ft."
-                                             : "-"
-                                       }
-                                    />
-                                 </td>
-                                 {/* <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Attached Open Terrace Area"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"   
-                                       text={
-                                          propertyData.propertyInfoResponse.attachedOpenTerraceArea
-                                             ? propertyData.propertyInfoResponse
-                                                .attachedOpenTerraceArea + " Sq. Ft."
-                                             : "-"
-                                       }
-                                    />
-                                 </td> */}
-                                 {/* <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Extras"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={
-                                          propertyData.propertyInfoResponse.extras
-                                             ? `${propertyData.propertyInfoResponse.extras}`
-                                             : "-"
-                                       }
-                                    />
-                                 </td> */}
+                                 </td>:""}
+                               
                               </tr>
                            ) : null}
                            {showMore ? (
@@ -2308,25 +2196,7 @@ const PropertyDetails = (props) => {
                                        }
                                     />
                                  </td>
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Amenities"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={
-                                          propertyData?.propertyInfoResponse?.amenities
-                                             ? `${propertyData?.propertyInfoResponse?.amenities} `
-                                             : "-"
-                                       }
-                                    />
-                                 </td>
-                                 {propertyData.propertyCategory === "Lease" ? (
+                                 {specList.includes('Type of lease:') ?
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -2338,50 +2208,15 @@ const PropertyDetails = (props) => {
                                           size="Small"
                                           fontWeight="semibold"
                                           color="secondryColor"
-                                          text={propertyData.leaseType}
+                                          text={propertyData.pricing?.leaseType}
                                        />
-                                    </td>
-                                 ) : null}
+                                    </td>:""}
                               </tr>
                            ) : null}
                            {showMore ? (
                               //  Nineth Row
                               <tr>
-                                 {propertyData.propertyCategory === "Sale" ? (
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text={"Society Size"}
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={
-                                             propertyData.propertyInfoResponse.contructionSize || "-"
-                                          }
-                                       />
-                                    </td>
-                                 ) : null}
-                                 {propertyData.propertyCategory === "Sale" ? (
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text={"Type"}
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={propertyData.propertyInfoResponse.type || "-"}
-                                       />
-                                    </td>
-                                 ) : null}
-                                 {propertyData.propertyCategory === "Lease" ? null : (
+                                 {specList.includes('Furnishing type' || 'Unit furnishing') ?
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -2389,103 +2224,61 @@ const PropertyDetails = (props) => {
                                           color="secondryColor"
                                           text={"Furnishing"}
                                        />
+                                      {propertyData.basicDetails?.propertyCategory === "Commercial" ? 
+                                        (<Text
+                                        size="Small"
+                                        fontWeight="semibold"
+                                        color="secondryColor"
+                                        text={propertyData.specs?.unitFurnishing || "-"} />)  :
+                                        (<Text
+                                        size="Small"
+                                        fontWeight="semibold"
+                                        color="secondryColor"
+                                        text={propertyData.specs?.furnishing || "-"}
+                                        />)
+                                     }
+                                    </td>:""}
+                                    {specList.includes('Furnishing description') ?
+                                    <td className="p-2">
+                                       <Text
+                                          size="xSmall"
+                                          fontWeight="bold"
+                                          color="secondryColor"
+                                          text={"Furnishing description"}
+                                       />
                                        <Text
                                           size="Small"
                                           fontWeight="semibold"
                                           color="secondryColor"
-                                          text={propertyData.furnishBedrooms || "-"}
+                                          text={
+                                             propertyData.specs.furnishingDescription || "-"
+                                          }
                                        />
-                                    </td>
-                                 )}
+                                    </td>:""}
+                                
+                                  
                               </tr>
                            ) : null}
-                           {showMore ? (
-                              <tr>
-                                 {propertyData.propertyCategory === "Lease" ? (
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text={"Furnish Bedrooms"}
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={
-                                             propertyData.propertyInfoResponse.furnishBedrooms
-                                                ? `${propertyData.propertyInfoResponse.furnishBedrooms} `
-                                                : "-"
-                                          }
-                                       />
-                                    </td>
-                                 ) : null}
-
-                                 {propertyData.propertyCategory === "Lease" ? (
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text={"Furnish Hall And Dining"}
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={
-                                             propertyData.propertyInfoResponse.hallAndDining
-                                                ? `${propertyData?.propertyInfoResponse?.hallAndDining}`
-                                                : "-"
-                                          }
-                                       />
-                                    </td>
-                                 ) : null}
-
-                                 {propertyData.propertyCategory === "Lease" ? (
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text={"Furnish Kitchen"}
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={
-                                             propertyData.propertyInfoResponse.furnishKitchen
-                                                ? `${propertyData.propertyInfoResponse.furnishKitchen} `
-                                                : "-"
-                                          }
-                                       />
-                                    </td>
-                                 ) : null}
-                                 <td className="p-2">
-                                    <Text
-                                       size="xSmall"
-                                       fontWeight="bold"
-                                       color="secondryColor"
-                                       text={"Built In"}
-                                    />
-                                    <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={
-                                          propertyData.propertyInfoResponse.propertyAge === null
-                                             ? "-"
-                                             : `${Number(moment().year()) -
-                                             propertyData.propertyInfoResponse.propertyAge
-                                             }`
-                                       }
-                                    />
-                                 </td>
-                              </tr>
-                           ) : null}
+                         
                         </table>
+                        {showMore ? (
+                        <div className="ml-2">
+                              <Text
+                                 size="xSmall"
+                                 fontWeight="bold"
+                                 color="secondryColor"
+                                 text={"property description"}
+                              />
+                              <Text
+                                 size="Small"
+                                 fontWeight="semibold"
+                                 color="secondryColor"
+                                 text={
+                                    propertyData.specs?.propertyDescription || "-"
+                                 }
+                              />
+                        </div>):""}
+                     </div>
                         <div
                            onClick={() => setShowMore(!showMore)}
                            className="showMore moreinfosection py-4"
