@@ -315,7 +315,7 @@ const AddressSection = (props) => {
 						>
 						</TextField>
 					</Col>
-					{basicDetailFields.data.propertySubType !== 'Independent house' ?
+					{basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' ?
 						<Col lg='4' >
 							<div className="d-flex">
 								<TextField

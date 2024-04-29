@@ -114,12 +114,12 @@ const CustomerDetails = (props) => {
                         <Text fontWeight="500" text="Coupons will deduct from your account"
                             style={{ fontSize: '16px', color: '#8E878A' }} />
                     </span>
-                    <span className="d-flex">
+                    {/* <span className="d-flex">
                         <Text fontWeight="500" text="Your balance: "
                             style={{ fontSize: '16px', color: '#8E878A' }} /> &nbsp;&nbsp;
                         <Text fontWeight="bold" text=" 22000 coupons"
                             style={{ fontSize: '16px', color: '#252525' }} />
-                    </span>
+                    </span> */}
                     <div className="mt-3 w-100 p-0">
                         <Text fontWeight="bold" text=" Customer Name"
                             style={{ fontSize: '16px', color: '#252525' }} />

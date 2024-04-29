@@ -20,7 +20,7 @@ const BasicDetails = (props) => {
     const propertyStageList = POSTING_CONSTANTS.propertyStage;
     const propertyTypeList = POSTING_CONSTANTS.propertyType;
     let propertySubTypeList = POSTING_CONSTANTS.propertySubType;
-    const PGInList = ["Apartment", "Independent house", "Builder Floor"];
+    const PGInList = ["Apartment", "Independent House / Bungalow", "Builder Floor"];
     const PGSharingList = ['Single', 'Double', 'Triple'];
     const [yearList, setYearList] = useState([]);
     const monthList = CONSTANTS_STATUS.monthList;

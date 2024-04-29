@@ -87,7 +87,7 @@ const Specs = (props) => {
             } else if (fields.propertyType === 'Commercial') {
                 speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType].Specs
             }
-            if (fields.propertySubType === 'Independent house' || fields.propertySubType === 'Builder Floor') {
+            if (fields.propertySubType === 'Independent House / Bungalow' || fields.propertySubType === 'Builder Floor') {
                 setInternalAmenitiesList(POSTING_CONSTANTS.InternalAmeniteis)
             }
             if (fields.propertySubType === 'Apartment') {
