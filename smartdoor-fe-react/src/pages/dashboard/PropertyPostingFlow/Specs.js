@@ -114,6 +114,7 @@ const Specs = (props) => {
 
     const generatePropertyDescription = async () => {
         const valid = validateSpecs(specDetails, specList, false);
+        setError(valid.errors);
         if(valid.isValid) {
             setDescLoader(true);
             const requestBody = {
@@ -163,7 +164,7 @@ const handleCarpetAreaChange = (e) => {
     setSpecDetails(prevSpecDetails => ({
         ...prevSpecDetails,
         carpetArea: carpetArea,
-        builtUpArea: builtUpArea.toFixed(3) // Adjust decimal places as needed
+        builtUpArea: builtUpArea.toFixed(0) // Adjust decimal places as needed
     }));
 };
 
@@ -176,7 +177,7 @@ const handleLoadingFactorChange = (e) => {
             ...prevSpecDetails,
             loadingFactorInPercent: loadingFactor,
             carpetArea: carpetArea,
-            builtUpArea: builtUpArea.toFixed(3) // Adjust decimal places as needed
+            builtUpArea: builtUpArea.toFixed(0) // Adjust decimal places as needed
         }));
     }
     if (specDetails.builtUpArea !== null) {
@@ -186,7 +187,7 @@ const handleLoadingFactorChange = (e) => {
         setSpecDetails(prevSpecDetails => ({
             ...prevSpecDetails,
             loadingFactorInPercent: loadingFactor,
-            carpetArea: carpetArea.toFixed(3),
+            carpetArea: carpetArea.toFixed(0),
             builtUpArea: builtUpArea // Adjust decimal places as needed
         }));
     }
@@ -194,12 +195,11 @@ const handleLoadingFactorChange = (e) => {
 
 const handleBuiltupAreaChange = (e) => {
     const builtUpArea = parseFloat(e.target.value);
-    const loadingFactor = parseFloat(specDetails.loadingFactorInPercent)
     const carpetArea = parseFloat(builtUpArea * (1 - (specDetails.loadingFactorInPercent * 0.01)));
     setSpecDetails(prevSpecDetails => ({
         ...prevSpecDetails,
         carpetArea: carpetArea,
-        builtUpArea: builtUpArea.toFixed(3) // Adjust decimal places as needed
+        builtUpArea: builtUpArea.toFixed(0) // Adjust decimal places as needed
     }));
 };
 
@@ -218,6 +218,7 @@ return (
                                 label={'BHK'}
                                 onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: e.target.value })) }}
                                 value={specDetails.numberOfRooms}
+                                inputProps={{min:0}}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
@@ -306,8 +307,9 @@ return (
                                 required
                                 error={error.carpetArea}
                                 className="w-100"
+                                inputProps={{min:0}}
                                 label={'Carpet area'}
-                                onInput={ async (e) => { await handleCarpetAreaChange(e) }}
+                                onChange={ async (e) => { await handleCarpetAreaChange(e) }}
                                 value={specDetails.carpetArea}
                                 InputProps={{
                                     endAdornment: <>
@@ -351,7 +353,8 @@ return (
                                 error={error.builtUpArea}
                                 className="w-100"
                                 label={'Built-up area'}
-                                onInput={(e) => { handleBuiltupAreaChange(e) }}
+                                inputProps={{min:0}}
+                                onChange={(e) => { handleBuiltupAreaChange(e) }}
                                 value={specDetails.builtUpArea}
                                 InputProps={{
                                     endAdornment: <>
@@ -384,7 +387,8 @@ return (
                                 error={error.carpetArea}
                                 className="w-100"
                                 label={'Carpet area'}
-                                onInput={(e) => { handleCarpetAreaChange(e) }}
+                                inputProps={{min:0}}
+                                onChange={(e) => { handleCarpetAreaChange(e) }}
                                 value={specDetails.carpetArea}
                                 InputProps={{
                                     endAdornment: <>
@@ -421,7 +425,7 @@ return (
                                     valueLabelDisplay="auto"
                                     min={10}
                                     max={100}
-                                    onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, loadingFactorInPercent: e.target.value })) }}
+                                    onChange={(e) => { handleLoadingFactorChange(e) }}
                                     style={{ color: "#BE142" }}
                                 />
                             </Col>
@@ -433,7 +437,8 @@ return (
                                 error={error.builtUpArea}
                                 className="w-100"
                                 label={'Built-up area'}
-                                onInput={(e) => { handleBuiltupAreaChange(e) }}
+                                inputProps={{min:0}}
+                                onChange={(e) => { handleBuiltupAreaChange(e) }}
                                 value={specDetails.builtUpArea}
                                 InputProps={{
                                     endAdornment: <>
@@ -470,6 +475,7 @@ return (
                             required
                             error={error.plotArea}
                             className="w-100"
+                            inputProps={{min:0}}
                             label={'Plot area'}
                             onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, plotArea: e.target.value })) }}
                             value={specDetails.plotArea}
@@ -501,6 +507,7 @@ return (
                             required
                             error={error.openArea}
                             className="w-100"
+                            inputProps={{min:0}}
                             label={'Open, Garden or Terrace Area'}
                             onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, openArea: e.target.value })) }}
                             value={specDetails.openArea}
@@ -568,6 +575,7 @@ return (
                         <TextField
                             type="number"
                             className="w-100"
+                            inputProps={{min:0}}
                             label={'Number of Balconies Including in Carpet Area'}
                             onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfBalconies: e.target.value })) }}
                             value={specDetails.numberOfBalconies}
@@ -580,6 +588,7 @@ return (
                         <TextField
                             type="number"
                             required
+                            inputProps={{min:0}}
                             error={error.numberOfBaths}
                             className="w-100"
                             label={'Number of Washrooms'}
@@ -597,6 +606,7 @@ return (
                             error={error.numberOfCarParking}
                             className="w-100"
                             label={'Car Parkings'}
+                            inputProps={{min:0}}
                             onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfCarParking: e.target.value })) }}
                             value={specDetails.numberOfCarParking}
                         >
@@ -609,6 +619,7 @@ return (
                             type="number"
                             className="w-100"
                             label={'Reserved Car Parkings'}
+                            inputProps={{min:0}}
                             onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfReservedCarParking: e.target.value })) }}
                             value={specDetails.numberOfReservedCarParking}
                         >
@@ -621,6 +632,7 @@ return (
                             type="number"
                             className="w-100"
                             label={'Reserved Two Wheeler Parkings'}
+                            inputProps={{min:0}}
                             onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfReservedTwoWheelerParking: e.target.value })) }}
                             value={specDetails.numberOfReservedTwoWheelerParking}
                         >

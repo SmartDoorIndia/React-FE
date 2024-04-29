@@ -26,8 +26,8 @@ const AgencyCustomers = (props) => {
     const executiveId = props?.executiveId || 0;
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
-    const [defaultSort, setDefaultSort] = useState(agencyCustomers.data.defaultSort ||false);
-    const [defaultSortId, setDefaultSortId] = useState(agencyCustomers.data.defaultSortId ||'postedDate');
+    const [defaultSort, setDefaultSort] = useState(agencyCustomers.data.defaultSort || false);
+    const [defaultSortId, setDefaultSortId] = useState(agencyCustomers.data.defaultSortId || 'postedDate');
     const [defaultSortFieldId, setDefaultSortFieldId] = useState(() => {
         if (defaultSortId === 'addedDate') {
             return 1
@@ -146,7 +146,7 @@ const AgencyCustomers = (props) => {
                                     state: {
                                         customerDetails: {
                                             userId: userId, addedDate: addedDate, name: name, mobile: mobile,
-                                            giftedCoupens: giftedCoupens, propertyCount, propertyCount, monthlySpent: monthlySpent, 
+                                            giftedCoupens: giftedCoupens, propertyCount, propertyCount, monthlySpent: monthlySpent,
                                             totalSpent: totalSpent, kycStatus: kycStatus, email: email, totalCoinBalance: totalCoinBalance
                                         }, agencyId: agencyId
                                     },
@@ -345,111 +345,95 @@ const AgencyCustomers = (props) => {
 
     return (
         <>
-            <div className="tableBox ">
+            <div className="tableBox">
                 <div className="align-items-center tableHeading">
-                    <div className="d-flex  justify-content-end">
-                        {/* <div>
-                            <Text
-                                size="regular"
-                                fontWeight="mediumbold"
-                                color="secondryColor"
-                                text="Customers"
-                            />
-                        </div> */}
-                        <div className="locationSelect d-flex ">
-                            {/* <Buttons
-                                name='View Details'
-                                varient="primary"
-                                size="xSmall"
-                                color="white"
-                                onClick={() => { history.push('/admin/agencyCustomers/customer-details') }} ></Buttons> &nbsp;&nbsp; */}
-                            {statusArr.length ? (
-                                <Form.Group controlId="exampleForm.SelectCustom">
-                                    <Form.Control
-                                        as="select"
-                                        value={statusSelected}
-                                        onChange={(e) => {
-                                            _filterStatus(e.target.value);
-                                        }}
-                                    >
-                                        <option value="">Select Status</option>
-                                        {statusArr.length
-                                            ? statusArr.map((_value, index) => (
-                                                <option key={index} value={_value}>
-                                                    {_value}
-                                                </option>
-                                            ))
-                                            : null}
-                                    </Form.Control>
-                                </Form.Group>
-                            ) : (
-                                ""
-                            )}
-
-                            {subHeaderComponentMemo} &nbsp;
+                    <div className="locationSelect d-flex justify-content-end">
+                        {statusArr.length ? (
                             <Form.Group controlId="exampleForm.SelectCustom">
                                 <Form.Control
-                                    type="date"
-                                    max={new Date().toISOString().split("T")[0]}
-                                    placeholder="From Date"
-                                    value={fromDate}
+                                    as="select"
+                                    value={statusSelected}
                                     onChange={(e) => {
-                                        console.log(e.target.value);
-                                        const selectedDate = new Date(e.target.value);
-                                        setFromDate(e.target.value)
+                                        _filterStatus(e.target.value);
                                     }}
-                                />
-                            </Form.Group> &nbsp;
-                            <Form.Group controlId="exampleForm.SelectCustom">
-                                <Form.Control
-                                    type="date"
-                                    max={new Date().toISOString().split("T")[0]}
-                                    placeholder="To Date"
-                                    value={toDate}
-                                    onChange={(e) => {
-                                        console.log(e.target.value);
-                                        const selectedDate = new Date(e.target.value);
-                                        setToDate(e.target.value)
-                                    }}
-                                />
+                                >
+                                    <option value="">Select Status</option>
+                                    {statusArr.length
+                                        ? statusArr.map((_value, index) => (
+                                            <option key={index} value={_value}>
+                                                {_value}
+                                            </option>
+                                        ))
+                                        : null}
+                                </Form.Control>
                             </Form.Group>
-                            <div className="ml-3">
-                                <Buttons
-                                    name="Search"
-                                    varient="primary"
-                                    size="Small"
-                                    color="white"
-                                    style={{ height: "40px !important" }}
-                                    onClick={async () => {
-                                        setCurrentPage(1)
-                                        let type = null
-                                        if (statusSelected === 'COMPLETED') {
-                                            type = true
-                                        } else if (statusSelected === 'PENDING') {
-                                            type = false
-                                        } else {
-                                            type = null
-                                        }
-                                        if (!validateDates()) {
-                                            return null;
-                                        }
-                                        await getAgencyCustomers({
-                                            agencyId: agencyId,
-                                            executiveId: userData.roleId === 17 ? executiveId : userData.userid,
-                                            searchString: filterText,
-                                            pageNo: currentPage,
-                                            pageSize: rowsPerPage,
-                                            fromDate: fromDate,
-                                            toDate: toDate,
-                                            kycStatus: type
-                                        })
-                                    }}
-                                />
-                            </div>
+                        ) : (
+                            ""
+                        )}
+
+                        {subHeaderComponentMemo} &nbsp;
+                        <Form.Group controlId="exampleForm.SelectCustom">
+                            <Form.Control
+                                type="date"
+                                max={new Date().toISOString().split("T")[0]}
+                                placeholder="From Date"
+                                value={fromDate}
+                                onChange={(e) => {
+                                    console.log(e.target.value);
+                                    const selectedDate = new Date(e.target.value);
+                                    setFromDate(e.target.value)
+                                }}
+                            />
+                        </Form.Group> &nbsp;
+                        <Form.Group controlId="exampleForm.SelectCustom">
+                            <Form.Control
+                                type="date"
+                                max={new Date().toISOString().split("T")[0]}
+                                placeholder="To Date"
+                                value={toDate}
+                                onChange={(e) => {
+                                    console.log(e.target.value);
+                                    const selectedDate = new Date(e.target.value);
+                                    setToDate(e.target.value)
+                                }}
+                            />
+                        </Form.Group>
+                        <div className="ml-3">
+                            <Buttons
+                                name="Search"
+                                varient="primary"
+                                size="Small"
+                                color="white"
+                                style={{ height: "40px !important" }}
+                                onClick={async () => {
+                                    setCurrentPage(1)
+                                    let type = null
+                                    if (statusSelected === 'COMPLETED') {
+                                        type = true
+                                    } else if (statusSelected === 'PENDING') {
+                                        type = false
+                                    } else {
+                                        type = null
+                                    }
+                                    if (!validateDates()) {
+                                        return null;
+                                    }
+                                    await getAgencyCustomers({
+                                        agencyId: agencyId,
+                                        executiveId: userData.roleId === 17 ? executiveId : userData.userid,
+                                        searchString: filterText,
+                                        pageNo: currentPage,
+                                        pageSize: rowsPerPage,
+                                        fromDate: fromDate,
+                                        toDate: toDate,
+                                        kycStatus: type
+                                    })
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
-                <div className="propertiesTableWrapper" >
+                <div className="agencyTable" >
                     <DataTableComponent
                         data={showData()}
                         columns={columns}

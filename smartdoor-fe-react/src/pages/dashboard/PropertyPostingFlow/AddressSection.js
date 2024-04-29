@@ -197,8 +197,9 @@ const AddressSection = (props) => {
 				return null;
 			}
 			valid = validateAddressDetails(addressDetails, true);
+		} else {
+			valid = validateAddressDetails(addressDetails, false);
 		}
-		valid = validateAddressDetails(addressDetails, false);
 		setError(valid.errors);
 		console.log(valid)
 		if (valid.isValid) {
@@ -268,7 +269,7 @@ const AddressSection = (props) => {
 							error={error.flatNumber}
 							className=" w-100 mt-4"
 							label="Block Number/Flat Number"
-							type='number'
+							type='text'
 							onChange={(e) => { setAddressDetails({ ...addressDetails, flatNumber: e.target.value }) }}
 							value={addressDetails.flatNumber}
 						>
@@ -320,6 +321,7 @@ const AddressSection = (props) => {
 								<TextField
 									error={error.floorNumber}
 									className="mt-4 w-50"
+									required
 									label='Floor No.'
 									type='number'
 									onChange={(e) => setAddressDetails({ ...addressDetails, floorNumber: e.target.value })}
@@ -329,6 +331,7 @@ const AddressSection = (props) => {
 								<TextField
 									error={error.totalFloors}
 									type='number'
+									required
 									className="mt-4 w-50"
 									label='Total No. of Floors'
 									onChange={(e) => setAddressDetails({ ...addressDetails, totalFloors: e.target.value })}

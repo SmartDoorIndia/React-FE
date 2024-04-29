@@ -219,7 +219,7 @@ const Pricing = (props) => {
                                 <Text className='ml-3' text='Expected Discount' fontWeight='bold' style={{ fontSize: '16px' }} />
                             </span>
                             <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
-                                className="ml-4"
+                                className="ml-3 mr-4"
                                 valueLabelDisplay="auto"
                                 min={20}
                                 max={100}

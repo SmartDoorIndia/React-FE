@@ -1106,6 +1106,15 @@ const routeData = [
   },
 
   {
+    path: '/admin/properties/property-details',
+    name: 'Properties',
+    bradcrumb: ['Add New Posting', 'Property Details'],
+    excat: true,
+    // module:'MARKETING',
+    component: PropertyDetailsModule
+  },
+
+  {
     path: '/admin/executive/properties/NewPost',
     name: 'Add New Posting',
     bradcrumb: ['Property Postings', 'Add New  Post'],

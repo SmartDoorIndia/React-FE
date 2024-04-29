@@ -53,12 +53,13 @@ const MarketingAgency = (props) => {
             selector: ((row) => row.agencyName),
             sortable: false,
             center: false,
-            minWidth: '300px',
+            minWidth: '250px',
             cell: ({ agencyName }) => (
-                <ToolTip position="top" style={{ width: '100%' }} name={agencyName}>
+                <span>
                     <Text size="Small" color="secondryColor elipsis-text" text={agencyName} />
-                </ToolTip>
+                </span>
             ),
+            // style:{padding:'0px'},
             id: 1
         },
         {
@@ -66,11 +67,11 @@ const MarketingAgency = (props) => {
             selector: ((row) => row.agencyLocation),
             sortable: false,
             center: true,
-            minWidth: '200px',
+            minWidth: '350px',
             cell: ({ agencyLocation }) => (
-                <ToolTip position="top" style={{ width: '100%' }} name={agencyLocation}>
+                <span>
                     <Text size="Small" color="secondryColor elipsis-text" text={agencyLocation} />
-                </ToolTip>
+                </span>
             ),
             id: 2
         },
@@ -80,9 +81,9 @@ const MarketingAgency = (props) => {
             sortable: false,
             center: true,
             cell: ({ contactName }) => (
-                <ToolTip position="top" style={{ width: '100%' }} name={contactName}>
+                <span>
                     <Text size="Small" color="secondryColor elipsis-text" text={contactName === null ? '-' : contactName} />
-                </ToolTip>
+                </span>
             ),
             id: 3
         },
@@ -92,9 +93,9 @@ const MarketingAgency = (props) => {
             sortable: false,
             center: true,
             cell: ({ contactNumber }) => (
-                <ToolTip position="top" style={{ width: '100%' }} name={contactNumber}>
+                <span>
                     <Text size="Small" color="secondryColor elipsis-text" text={contactNumber} />
-                </ToolTip>
+                </span>
             ),
             id: 4
         },
@@ -156,11 +157,9 @@ const MarketingAgency = (props) => {
 
     const [transferCustModalShow, setTransferCustModalShow] = useState(false);
 
-    useEffect(async () => {
-        getAllCityWithId({ smartdoorServiceStatus: null, stateId: null });
-        await getAllAgencies({ agencyId: 0 });
-        const data = showData();
-        data?.forEach(item => {
+    const setDashBoardValues = () => {
+
+        agencyList?.data?.agencylist?.forEach(item => {
             if (item.totalCustomerSpendCurrentMonth !== null) {
                 setTotalMonthSpend(prev => prev + item.totalCustomerSpendCurrentMonth);
             }
@@ -174,6 +173,12 @@ const MarketingAgency = (props) => {
                 setTotalSpent(prev => prev + item.totalCustomerSpendTillNow);
             }
         });
+    }
+
+    useEffect(async () => {
+        getAllCityWithId({ smartdoorServiceStatus: null, stateId: null });
+        await getAllAgencies({ agencyId: 0 });
+        await setDashBoardValues();
         dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {} })
         dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {} })
     }, [getAllAgencies]);
@@ -261,41 +266,6 @@ const MarketingAgency = (props) => {
 
     return (
         <>
-            <div className="d-flex">
-                <Form.Group controlId="exampleForm.SelectCustom">
-                    <Form.Control
-                        as="select"
-                        onChange={(e) => {
-                            setp_City(e.target.value);
-                            //call here to filtered list 
-                        }}
-                        value={p_city}
-                    >
-                        <option value="">All Cities</option>
-                        {allCitiesWithId?.data?.length > 0
-                            ? allCitiesWithId?.data?.map((city) => (
-                                <option key={city.cityId} value={city.cityName}>
-                                    {city.cityName}
-                                </option>
-                            ))
-                            : null}
-                    </Form.Control>
-                </Form.Group> &nbsp;&nbsp;
-                <div className="d-flex col-8 justify-content-end">
-                    <Buttons
-                        name='Add New Agency'
-                        varient="primary"
-                        size="xSmall"
-                        color="white"
-                        onClick={() => { history.push('/admin/marketingAgency/addAgency', { addNew: true }) }} ></Buttons>
-                    {subHeaderComponentMemo} &nbsp;&nbsp;
-                </div>
-                {/* <Buttons
-                    name='Agency'
-                    varient="primary"
-                    size="xSmall"
-                    color="white" onClick={() => { history.push('/admin/marketingAgency/agencyDetails') }}></Buttons> */}
-            </div>
             <div className='d-flex mt-2'>
                 <Card className="p-3 px-4">
                     <Row>
@@ -340,28 +310,64 @@ const MarketingAgency = (props) => {
                     </Row>
                 </Card>
             </div>
-            <div className="mt-3 agencyTable">
-                <DataTableComponent
-                    data={showData()}
-                    columns={agencyColumns}
-                    progressComponent={ProgressComponent}
-                    paginationComponent={PaginationComponent}
-                    paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                    paginationPerPage={recordsPerPage}
-                    currentPage={currentPage}
-                    onChangePage={handlePageChange}
-                    onChangeRowsPerPage={handleRowsPerPageChange}
-                    perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                    filterText={filterText}
-                    paginationServer={true}
-                    subHeaderComponent={subHeaderComponentMemo}
-                    persistTableHead
-                    filterComponent={subHeaderComponentMemo}
-                    // onSort={handleSortedData}
-                    defaultSort={defaultSort}
-                    defaultSortId={defaultSortId}
-                    defaultSortFieldId={defaultSortFieldId}
-                />
+            <div className="tableBox">
+                <div className="align-items-center tableHeading">
+                    <div className="locationSelect d-flex">
+                        <Form.Group controlId="exampleForm.SelectCustom">
+                            <Form.Control
+                                as="select"
+                                onChange={(e) => {
+                                    setp_City(e.target.value);
+                                    //call here to filtered list 
+                                }}
+                                value={p_city}
+                            >
+                                <option value="">All Cities</option>
+                                {allCitiesWithId?.data?.length > 0
+                                    ? allCitiesWithId?.data?.map((city) => (
+                                        <option key={city.cityId} value={city.cityName}>
+                                            {city.cityName}
+                                        </option>
+                                    ))
+                                    : null}
+                            </Form.Control>
+                        </Form.Group> &nbsp;&nbsp;
+                        <div className="d-flex col-8 justify-content-end">
+                            <Buttons
+                                name='Add New Agency'
+                                varient="primary"
+                                size="xSmall"
+                                color="white"
+                                onClick={() => { history.push('/admin/marketingAgency/addAgency', { addNew: true }) }} ></Buttons>
+                            {subHeaderComponentMemo} &nbsp;&nbsp;
+                        </div>
+                    </div>
+
+                </div>
+
+                <div className="agencyTable">
+                    <DataTableComponent
+                        data={showData()}
+                        columns={agencyColumns}
+                        progressComponent={ProgressComponent}
+                        // paginationComponent={PaginationComponent}
+                        // paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                        // paginationPerPage={recordsPerPage}
+                        // currentPage={currentPage}
+                        // onChangePage={handlePageChange}
+                        // onChangeRowsPerPage={handleRowsPerPageChange}
+                        // perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                        filterText={filterText}
+                        // paginationServer={true}
+                        subHeaderComponent={subHeaderComponentMemo}
+                        persistTableHead
+                        filterComponent={subHeaderComponentMemo}
+                        // onSort={handleSortedData}
+                        defaultSort={defaultSort}
+                        defaultSortId={defaultSortId}
+                        defaultSortFieldId={defaultSortFieldId}
+                    />
+                </div>
             </div>
             <Modal size="lg" show={transferCustModalShow} onHide={() => { setTransferCustModalShow(false) }} centered>
                 <Modal.Body className="p-4">

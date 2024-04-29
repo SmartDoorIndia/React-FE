@@ -132,7 +132,7 @@
     .tableBox{
         overflow: auto;
         display: block;
-        margin-top: 0px;
+        margin-top: 30px;
         background-color: $white;
         @include border;
         border-radius: 4px;
@@ -263,6 +263,9 @@
 
 
 /*******Css start here************/
+@media screen {
+    
+}
 .propertiesTableWrapper {
     .rdt_TableBody {
         max-height: calc(51vh);
@@ -270,75 +273,12 @@
         overflow-y: scroll;
         overflow-x: hidden;
     }
-    .rdt_TableRow {
-        min-height: auto;
-        .rdt_TableCell {
-            text-align: center;
+    .rdt_TableHeadRow {
+        .rdt_TableCol{
             &:nth-child(1) {
-                &:first-child {
-                    min-width: none;
-                    white-space: nowrap;overflow: visible;
-                }                
-            }
-            &:nth-child(4) {
-                .elipsis-text {
-                    white-space: nowrap;overflow: hidden;
-                    width: 180px;min-width: 180px;
-                    text-overflow: ellipsis;display: block;text-align: center;
-                }
+                width: 120px;min-width: 150px;
             }
         }
-        // &:active {
-        //     background-color: aqua;
-        // }
-    }
-}
-/*******Css ends here************/
-@import '../../../../scss/modules/variables.scss';
-
-.form-label{        
-    position: relative;
-/*    top: 18px;*/
-    left:11px;
-    font-size:$xSmall;
-    padding-left: 5px;
-    padding-right: 5px;
-    color:$gray;
-}
-
-.form-group{
-    display: flex;
-    margin-bottom: 0;
-    align-items: end;
-    label{
-        margin-right: 15px;
-        margin-bottom: 0;
-        font-size: $body;
-        color:$secondry-color;
-        font-weight:$smbold;
-    }
-    .form-control{
-        background: $white;
-        @include border;                    
-        font-weight: $smbold;                    
-        font-size: $xSmall !important;
-        border-radius: 4px !important;
-        height: 30px !important;      
-        box-shadow: none;
-        padding-top: 4px;
-        
-    }
-
-}
-
-
-/*******Css start here************/
-.agencyTable {
-    .rdt_TableBody {
-        max-height: calc(51vh);
-        height: fit-content;
-        overflow-y: scroll;
-        overflow-x: hidden;
     }
     .rdt_TableRow {
         min-height: auto;
@@ -346,7 +286,7 @@
             text-align: center;
             &:nth-child(1) {
                 &:first-child {
-                    min-width: none;
+                    min-width: 150px;
                     white-space: nowrap;overflow: visible;
                 }                
             }

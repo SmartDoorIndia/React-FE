@@ -99,7 +99,8 @@ const Uploads = (props) => {
                 .then((response) => {
         			console.log(response)
         			if(response.data.status === 200) {
-        				const property_image = [];
+        				// const property_image = [];
+        				const property_image = [...imageArr];
         				for(let i = 0; i < response.data.resourceData.length; i++) {
         					property_image.push({
         						docId: 0,
@@ -143,19 +144,19 @@ const Uploads = (props) => {
 
     const saveUploads = () => {
         let isValid = true;
-        if((videoUrl1.trim()).length === 0 && (videoUrl2.trim()).length === 0 && addNewVideoFlag === true) {
-            setError({videoUrl1: true, videoUrl2: true})
-            isValid = false;
-            showErrorToast("Please upload atleast one video url");
-        }
-        if((videoUrl1.trim()).length === 0 && addNewVideoFlag === false) {
-            setError({videoUrl1: true})
-            isValid = false;
-        }
-        if((videoUrl2.trim()).length === 0 && addNewVideoFlag === true) {
-            setError({videoUrl2: true})
-            isValid = false;
-        }
+        // if((videoUrl1.trim()).length === 0 && (videoUrl2.trim()).length === 0 && addNewVideoFlag === true) {
+        //     setError({videoUrl1: true, videoUrl2: true})
+        //     isValid = false;
+        //     showErrorToast("Please upload atleast one video url");
+        // }
+        // if((videoUrl1.trim()).length === 0 && addNewVideoFlag === false) {
+        //     setError({videoUrl1: true})
+        //     isValid = false;
+        // }
+        // if((videoUrl2.trim()).length === 0 && addNewVideoFlag === true) {
+        //     setError({videoUrl2: true})
+        //     isValid = false;
+        // }
         if(imageArr.length < 3) {
             showErrorToast("Please upload minimum 3 images");
             isValid = false;

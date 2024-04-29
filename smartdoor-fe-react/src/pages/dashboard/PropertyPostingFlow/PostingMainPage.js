@@ -23,10 +23,10 @@ const PostingMainPage = (props) => {
         <>
             <Text text={'Basic Details'} fontWeight='bold' style={{fontSize: '18px'}} />
             <BasicDetails saveBasicDetailsFields={handleBasicDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails}></BasicDetails>
+            <Text text={'Address'} fontWeight='bold' style={{fontSize: '18px'}} />
+            <AddressSection></AddressSection>
             {saveBasicDetails.saveFlag ?
             <>
-                <Text text={'Address'} fontWeight='bold' style={{fontSize: '18px'}} />
-                <AddressSection></AddressSection>
                 <Text text={'Specs'} fontWeight='bold' style={{fontSize: '18px'}} />
                 <Specs></Specs>
                 <Text text={'Pricing'} fontWeight='bold' style={{fontSize: '18px'}} />

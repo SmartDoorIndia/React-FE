@@ -890,7 +890,7 @@ const InstallationRequestsColumns = [
                             </Form.Control>
                       </Form.Group> */}
                       <Link to={{ pathname: "/admin/execution/installation-calender", 
-                                state: {city : ''}}} >
+                                state: {city : installationCity}}} >
                         <Image name="sort_icon" src={calendarIcon} className='ml-3' />
                       </Link>
                   </div>

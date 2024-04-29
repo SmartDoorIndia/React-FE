@@ -82,7 +82,7 @@ const AgencyProperty = (props) => {
             name: "Mobile",
             // selector: "ownerName",
             center: true,
-            maxWidth: "120px",
+            minWidth: "150px",
             cell: ({ mobile }) => (
                 <span>{mobile}</span>
             )
@@ -138,8 +138,8 @@ const AgencyProperty = (props) => {
                         <span>
                             <Link
                                 to={{
-                                    pathname: "/admin/property/property-details",
-                                    state: { propertyId: propertyId, userId: postedById, menuName: 'Properties', isDeleted: false, defaultSort: defaultSort, defaultSortId: defaultSortId },
+                                    pathname: "/admin/properties/property-details",
+                                    state: { propertyId: propertyId, userId: postedById, menuName: '', isDeleted: false, defaultSort: defaultSort, defaultSortId: defaultSortId },
                                 }}
                             >
                                 <Image name="editIcon" src={contentIcon} />
@@ -318,122 +318,111 @@ const AgencyProperty = (props) => {
     return (
         <>
             <div className="tableBox ">
-
-                <div className="align-items-center tableHeading mb-0">
-                    <div className="d-flex justify-content-end">
-                        {/* <div>
-                            <Text
-                                size="regular"
-                                fontWeight="mediumbold"
-                                color="secondryColor"
-                                text="Properties Posted"
-                            />
-                        </div> */}
-                        <div className="locationSelect justify-content-end d-flex">
-                            {propertyType.length ? (
-                                <Form.Group controlId="exampleForm.SelectCustom">
-                                    <Form.Control
-                                        as="select"
-                                        value={typeSelected}
-                                        onChange={(e) => {
-                                            _filterPropertyType(e.target.value);
-                                        }}
-                                    >
-                                        <option value="">Select Property Type</option>
-                                        {propertyType.length
-                                            ? propertyType.map((_value, index) => (
-                                                <option key={index} value={_value}>
-                                                    {_value}
-                                                </option>
-                                            ))
-                                            : null}
-                                    </Form.Control>
-                                </Form.Group>
-                            ) : (
-                                ""
-                            )} &nbsp;
-                            {statusArr.length ? (
-                                <Form.Group controlId="exampleForm.SelectCustom">
-                                    <Form.Control
-                                        as="select"
-                                        value={statusSelected}
-                                        onChange={(e) => {
-                                            _filterStatus(e.target.value);
-                                        }}
-                                    >
-                                        <option value="">Select Status</option>
-                                        {statusArr.length
-                                            ? statusArr.map((_value, index) => (
-                                                <option key={index} value={_value}>
-                                                    {_value}
-                                                </option>
-                                            ))
-                                            : null}
-                                    </Form.Control>
-                                </Form.Group>
-                            ) : (
-                                ""
-                            )}
-                            {subHeaderComponentMemo} &nbsp;
+                <div className="tableHeading">
+                    <div className="locationSelect justify-content-end d-flex">
+                        {propertyType.length ? (
                             <Form.Group controlId="exampleForm.SelectCustom">
                                 <Form.Control
-                                    type="date"
-                                    max={new Date().toISOString().split("T")[0]}
-                                    placeholder="From Date"
-                                    value={fromDate}
+                                    as="select"
+                                    value={typeSelected}
                                     onChange={(e) => {
-                                        console.log(e.target.value);
-                                        const selectedDate = new Date(e.target.value);
-                                        setFromDate(e.target.value)
+                                        _filterPropertyType(e.target.value);
                                     }}
-                                />
-                            </Form.Group> &nbsp;
-                            <Form.Group controlId="exampleForm.SelectCustom">
-                                <Form.Control
-                                    type="date"
-                                    max={new Date().toISOString().split("T")[0]}
-                                    placeholder="To Date"
-                                    value={toDate}
-                                    onChange={(e) => {
-                                        console.log(e.target.value);
-                                        const selectedDate = new Date(e.target.value);
-                                        setToDate(e.target.value)
-                                    }}
-                                />
+                                >
+                                    <option value="">Select Property Type</option>
+                                    {propertyType.length
+                                        ? propertyType.map((_value, index) => (
+                                            <option key={index} value={_value}>
+                                                {_value}
+                                            </option>
+                                        ))
+                                        : null}
+                                </Form.Control>
                             </Form.Group>
-                            <div className="ml-3">
-                                <Buttons
-                                    name="Search"
-                                    varient="primary"
-                                    size="Small"
-                                    color="white"
-                                    style={{ height: "40px !important" }}
-                                    onClick={async () => {
-                                        setCurrentPage(1)
-                                        let type = null
-                                        if (typeSelected === 'SMARTDOOR') {
-                                            type = true
-                                        } else if (typeSelected === 'NON SMARTDOOR') {
-                                            type = false
-                                        }
-                                        if (!validateDates()) {
-                                            return null;
-                                        }
-                                        await getAgencyProperties({
-                                            agencyId: agencyId,
-                                            executiveId: executiveId,
-                                            customerId: customerId,
-                                            searchString: filterText,
-                                            pageNo: currentPage,
-                                            pageSize: rowsPerPage,
-                                            fromDate: fromDate,
-                                            toDate: toDate,
-                                            propertyStatus: statusSelected,
-                                            propertyType: type
-                                        });
+                        ) : (
+                            ""
+                        )} &nbsp;
+                        {statusArr.length ? (
+                            <Form.Group controlId="exampleForm.SelectCustom">
+                                <Form.Control
+                                    as="select"
+                                    value={statusSelected}
+                                    onChange={(e) => {
+                                        _filterStatus(e.target.value);
                                     }}
-                                />
-                            </div>
+                                >
+                                    <option value="">Select Status</option>
+                                    {statusArr.length
+                                        ? statusArr.map((_value, index) => (
+                                            <option key={index} value={_value}>
+                                                {_value}
+                                            </option>
+                                        ))
+                                        : null}
+                                </Form.Control>
+                            </Form.Group>
+                        ) : (
+                            ""
+                        )}
+                        {subHeaderComponentMemo} &nbsp;
+                        <Form.Group controlId="exampleForm.SelectCustom">
+                            <Form.Control
+                                type="date"
+                                max={new Date().toISOString().split("T")[0]}
+                                placeholder="From Date"
+                                value={fromDate}
+                                onChange={(e) => {
+                                    console.log(e.target.value);
+                                    const selectedDate = new Date(e.target.value);
+                                    setFromDate(e.target.value)
+                                }}
+                            />
+                        </Form.Group> &nbsp;
+                        <Form.Group controlId="exampleForm.SelectCustom">
+                            <Form.Control
+                                type="date"
+                                max={new Date().toISOString().split("T")[0]}
+                                placeholder="To Date"
+                                value={toDate}
+                                onChange={(e) => {
+                                    console.log(e.target.value);
+                                    const selectedDate = new Date(e.target.value);
+                                    setToDate(e.target.value)
+                                }}
+                            />
+                        </Form.Group>
+                        <div className="ml-3">
+                            <Buttons
+                                name="Search"
+                                varient="primary"
+                                size="Small"
+                                color="white"
+                                style={{ height: "40px !important" }}
+                                onClick={async () => {
+                                    setCurrentPage(1)
+                                    let type = null
+                                    if (typeSelected === 'SMARTDOOR') {
+                                        type = true
+                                    } else if (typeSelected === 'NON SMARTDOOR') {
+                                        type = false
+                                    }
+                                    if (!validateDates()) {
+                                        return null;
+                                    }
+                                    await getAgencyProperties({
+                                        agencyId: agencyId,
+                                        executiveId: executiveId,
+                                        customerId: customerId,
+                                        searchString: filterText,
+                                        pageNo: currentPage,
+                                        pageSize: rowsPerPage,
+                                        fromDate: fromDate,
+                                        toDate: toDate,
+                                        propertyStatus: statusSelected,
+                                        propertyType: type
+                                    });
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
@@ -455,7 +444,7 @@ const AgencyProperty = (props) => {
                         subHeaderComponent={subHeaderComponentMemo}
                         persistTableHead
                         filterComponent={subHeaderComponentMemo}
-                          onSort={handleSortedData}
+                        onSort={handleSortedData}
                         defaultSort={defaultSort}
                         defaultSortId={defaultSortId}
                         defaultSortFieldId={defaultSortFieldId}

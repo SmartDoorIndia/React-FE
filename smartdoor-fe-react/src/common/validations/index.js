@@ -909,10 +909,15 @@ export const validatePricing = (data, pricingList) => {
     if(isBlank(data.propertyRate)) {
       errors.propertyRate = true;
     }
+    if(data.propertyRate < 0) {
+      errors.propertyRate = true;
+    }
   }
   if(pricingList.includes('Security deposit')) {
-    if(isBlank(data.securityAmount)) {
-      errors.securityAmount = true;
+    if(!isBlank(data.securityAmount)) {
+      if(data.securityAmount < 0) {
+        errors.securityAmount = true;
+      }
     }
   }
   if(pricingList.includes('Preferred for')) {
@@ -922,6 +927,9 @@ export const validatePricing = (data, pricingList) => {
   }
   if(pricingList.includes('Selling price')) {
     if(isBlank(data.propertyRate)) {
+      errors.propertyRate = true;
+    }
+    if(data.propertyRate < 0) {
       errors.propertyRate = true;
     }
   }
@@ -962,14 +970,16 @@ export const validatePricing = (data, pricingList) => {
 export const validateTermsConditions = (data) => {
   const errors = {};
   
-  if(isBlank(data.visitGuidelines)) {
-    errors.visitGuidelines = true;
-  }
-  if(isBlank(data.securityGuardNumber)) {
-    errors.securityGuardNumber = true;
-  }
-  if((data.securityGuardNumber.trim()).length < 10) {
-    errors.securityGuardNumber = true;
+  // if(isBlank(data.visitGuidelines)) {
+  //   errors.visitGuidelines = true;
+  // }
+  // if(isBlank(data.securityGuardNumber)) {
+  //   errors.securityGuardNumber = true;
+  // }
+  if(!isBlank(data.securityGuardNumber)) {
+    if((data.securityGuardNumber.trim()).length < 10) {
+      errors.securityGuardNumber = true;
+    }
   }
 
   return{

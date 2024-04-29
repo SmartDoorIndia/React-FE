@@ -38,12 +38,11 @@ class InstallationCalender extends Component {
       // this.getAllInstallationCity = this.getAllInstallationCity.bind(this);
    }
 
-   componentDidMount() {
+   async componentDidMount() {
       let week = this.formateWeek(moment().format());
       this.setState({ firstDay: week.firstDay, lastDay: week.lastDay });
-      this._getCalenderData(week);
       //getAllInstallationCity
-      this.props.getAllCityWithId({stateId: null, smartdoorServiceStatus: true})
+      await this.props.getAllCityWithId({stateId: null, smartdoorServiceStatus: true})
       .then((response) => {
          console.log(response)
          if(response.data.status === 200) {
@@ -51,6 +50,7 @@ class InstallationCalender extends Component {
             console.log(this.state.allCitiesWithId)
          }
       });
+      this._getCalenderData(week);
       // console.log(allCitiesWithId)
       // getAllInstallationCity()//this.state.city
       //    .then(res=> {
@@ -87,7 +87,10 @@ class InstallationCalender extends Component {
 
    _getCalenderData({ firstDay, lastDay }) {
       this.setState({ loading: true });
-      let city = this.props.location.state ? this.props.location.state.city || "" : "";
+      let cityName = this.props.location.state ? this.props.location.state.city || "" : "";
+      let cityId = this.state.allCitiesWithId?.filter(city => city.cityName === cityName);
+      console.log(cityId)
+      let city = cityId[0]?.cityId || null
 
       try {
          getExecutiveCalendar({ weekStartDate: firstDay, weekEndDate: lastDay, city  })
