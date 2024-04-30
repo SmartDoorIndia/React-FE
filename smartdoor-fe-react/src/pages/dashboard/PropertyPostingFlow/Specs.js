@@ -59,6 +59,7 @@ const Specs = (props) => {
 
         });
     const [internalAmenitiesList, setInternalAmenitiesList] = useState([]);
+    const [roomCompositionList, setRoomCompositionList] = useState([]);
     const [saveSpecsFlag, setSaveSpecsFlag] = useState(false);
     const [error, setError] = useState({});
     const [descLoader, setDescLoader] = useState(false)
@@ -95,6 +96,11 @@ const Specs = (props) => {
             }
             if (fields.propertyType === 'Commercial') {
                 setInternalAmenitiesList(POSTING_CONSTANTS.CommercialAmeniteis)
+            }
+            if(fields.propertySubType === 'PG/Co-Living') {
+                setRoomCompositionList(POSTING_CONSTANTS.roomCompositionList)
+            } else {
+                setRoomCompositionList(['BHK'])
             }
             console.log(specDetails)
             setSpecList(speclist);
@@ -230,7 +236,7 @@ return (
                                             onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, propertyRoomCompositionType: e.target.value })) }}
                                             value={specDetails.propertyRoomCompositionType}
                                         >
-                                            {POSTING_CONSTANTS.roomCompositionList.map(item => (
+                                            {roomCompositionList.map(item => (
                                                 <MenuItem key={item} value={item}>{item}</MenuItem>
                                             ))}
                                         </TextField>
