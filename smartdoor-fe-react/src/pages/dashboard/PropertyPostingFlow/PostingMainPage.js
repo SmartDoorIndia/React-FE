@@ -11,8 +11,8 @@ import Pricing from "./Pricing";
 const PostingMainPage = (props) => {
     const customerDetails = props.location.state.customerDetails;
     const miscellaneousDetails = props.location.state.miscellaneousDetails;
-    const [editPropertyDetails, setEditPropertyDetails ] = useState(props?.location?.state?.existingDetails)
-    const [saveBasicDetails, setSaveBasicDetails] = useState({propertyId : editPropertyDetails?.propertyId || null, saveFlag: editPropertyDetails?.saveFlag || false});
+    const [editPropertyDetails, setEditPropertyDetails] = useState(props?.location?.state?.existingDetails)
+    const [saveBasicDetails, setSaveBasicDetails] = useState({ propertyId: editPropertyDetails?.propertyId || null, saveFlag: editPropertyDetails?.saveFlag || false });
 
     const handleBasicDetails = (value) => {
         console.log(value)
@@ -21,22 +21,22 @@ const PostingMainPage = (props) => {
 
     return (
         <>
-            <Text text={'Basic Details'} fontWeight='bold' style={{fontSize: '18px'}} />
+            <Text text={'Basic Details'} fontWeight='bold' style={{ fontSize: '18px' }} />
             <BasicDetails saveBasicDetailsFields={handleBasicDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails}></BasicDetails>
-            <Text text={'Address'} fontWeight='bold' style={{fontSize: '18px'}} />
-            <AddressSection></AddressSection>
             {saveBasicDetails.saveFlag ?
-            <>
-                <Text text={'Specs'} fontWeight='bold' style={{fontSize: '18px'}} />
-                <Specs></Specs>
-                <Text text={'Pricing'} fontWeight='bold' style={{fontSize: '18px'}} />
-                <Pricing></Pricing>
-                <Text text={'Uploads'} fontWeight='bold' style={{fontSize: '18px'}} />
-                <Uploads propertyId={saveBasicDetails.propertyId} ></Uploads>
-                <Text text={'Terms and Conditions'} fontWeight='bold' style={{fontSize: '18px'}} />
-                <TermsConditions propertyId={saveBasicDetails.propertyId} miscellaneousDetails={miscellaneousDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails} ></TermsConditions>
-            </>
-            :null}
+                <>
+                    <Text text={'Address'} fontWeight='bold' style={{ fontSize: '18px' }} />
+                    <AddressSection></AddressSection>
+                    <Text text={'Specs'} fontWeight='bold' style={{ fontSize: '18px' }} />
+                    <Specs></Specs>
+                    <Text text={'Pricing'} fontWeight='bold' style={{ fontSize: '18px' }} />
+                    <Pricing></Pricing>
+                    <Text text={'Uploads'} fontWeight='bold' style={{ fontSize: '18px' }} />
+                    <Uploads propertyId={saveBasicDetails.propertyId} ></Uploads>
+                    <Text text={'Terms and Conditions'} fontWeight='bold' style={{ fontSize: '18px' }} />
+                    <TermsConditions propertyId={saveBasicDetails.propertyId} miscellaneousDetails={miscellaneousDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails} ></TermsConditions>
+                </>
+                : null}
         </>
     );
 }

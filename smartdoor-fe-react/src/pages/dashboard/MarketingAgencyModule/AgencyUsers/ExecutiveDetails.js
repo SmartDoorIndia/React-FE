@@ -38,9 +38,9 @@ const ExecutiveDetails = (props) => {
     useEffect(() => {
         _getAgencyById();
         console.log(executiveId)
-        // getAllAgencyExecutives({
-        //     agencyId: agencyId, executiveId: 0, pageNo: 1, pageSize: 1000, searchStr: ""
-        // });
+        getAllAgencyExecutives({
+            agencyId: agencyId, executiveId: null, pageNo: 1, pageSize: 1000, searchStr: ""
+        });
     }, [_getAgencyById]);
 
     const deleteExecutive = async () => {

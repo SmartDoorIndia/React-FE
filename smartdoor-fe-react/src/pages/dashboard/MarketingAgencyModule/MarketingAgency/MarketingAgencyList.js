@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Col, Form, Modal, Row } from "react-bootstrap";
 import { compose } from "redux"
 import { getAllAgencies, getAllCityWithId } from "../../../../common/redux/actions";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import './MarketingAgencyList.scss';
 import Buttons from "../../../../shared/Buttons/Buttons";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
@@ -21,6 +21,7 @@ import * as Actions from '../../../../common/redux/types';
 
 const MarketingAgency = (props) => {
     const { getAllCityWithId, allCitiesWithId, getAllAgencies, agencyList } = props;
+    const agencylist = useSelector(state => state.agencyList);
     const [p_city, setp_City] = useState('');
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
@@ -158,21 +159,28 @@ const MarketingAgency = (props) => {
     const [transferCustModalShow, setTransferCustModalShow] = useState(false);
 
     const setDashBoardValues = () => {
-
-        agencyList?.data?.agencylist?.forEach(item => {
+        let monthSpend = 0;
+        let totalSpend = 0;
+        let customerSpent = 0;
+        let propertyCount = 0;
+        agencylist?.data?.agencylist?.forEach(item => {
             if (item.totalCustomerSpendCurrentMonth !== null) {
-                setTotalMonthSpend(prev => prev + item.totalCustomerSpendCurrentMonth);
+                monthSpend = monthSpend + item.totalCustomerSpendCurrentMonth
             }
             if (item.postingCount !== null) {
-                setTotalProperies(prev => prev + item.postingCount);
+                propertyCount = propertyCount + item.postingCount
             }
             if (item.customerCount !== null) {
-                setTotalCustomers(prev => prev + item.customerCount);
+                customerSpent = customerSpent + item.customerCount;
             }
             if (item.totalCustomerSpendTillNow !== null) {
-                setTotalSpent(prev => prev + item.totalCustomerSpendTillNow);
+                totalSpend = totalSpend + item.totalCustomerSpendTillNow;
             }
         });
+        setTotalMonthSpend(monthSpend.toFixed(1));
+        setTotalSpent(totalSpend.toFixed(1));
+        setTotalCustomers(customerSpent);
+        setTotalProperies(propertyCount);
     }
 
     useEffect(async () => {
@@ -260,7 +268,6 @@ const MarketingAgency = (props) => {
     const showData = () => {
         filteredItems = [];
         filteredItems = agencyList?.data?.agencylist
-        console.log(agencyList)
         return agencyList?.data?.agencylist;
     };
 
@@ -295,7 +302,7 @@ const MarketingAgency = (props) => {
                             <Text size="xSmall" fontWeight="smbold" color="black" text="Free Coupons" />
                         </Col>
                         <Col lg='6' className="p-0">
-                            <Text fontWeight="300" color="#BE1452" text={'101K'} style={{ fontSize: '35px', color: '#BE1452' }} />
+                            <Text fontWeight="300" color="#BE1452" text={agencyList?.data?.freeCoins} style={{ fontSize: '35px', color: '#BE1452' }} />
                         </Col>
                     </Row>
                 </Card> &nbsp;&nbsp;&nbsp;

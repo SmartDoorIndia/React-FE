@@ -4,12 +4,14 @@ import { TextField } from "@mui/material";
 import Image from "../../../../shared/Image";
 import searchIcon from '../../../../assets/images/search-icon.svg'
 import Buttons from "../../../../shared/Buttons/Buttons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AgencyCustomers from "../AgencyCustomers/AgencyCustomers";
 import AgencyProperty from "../AgencyProperties/AgencyProperty";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { getLocalStorage, showErrorToast } from "../../../../common/helpers/Utils";
 import { checkExistingCustomers } from "../../../../common/redux/actions";
+import { useDispatch } from "react-redux";
+import * as Actions from '../../../../common/redux/types';
 
 const ExecutiveHome = (props) => {
 
@@ -24,7 +26,16 @@ const ExecutiveHome = (props) => {
     });
     const history = useHistory();
     const userData = getLocalStorage('authData');
+    const dispatch = useDispatch();
 
+    useEffect(() => {
+        dispatch({type: Actions.BASIC_DETAILS_SUCCESS, data : {}});
+        dispatch({type: Actions.ADDRESS_DETAILS_SUCCESS, data : {}});
+        dispatch({type: Actions.SPEC_DETAILS_SUCCESS, data : {}});
+        dispatch({type: Actions.PRICING_DETAILS_SUCCESS, data : {}});
+        dispatch({type: Actions.UPLOAD_IMAGES_SUCCESS, data : {}});
+        dispatch({type: Actions.TERMS_CONDITIONS_SUCCESS, data : {}});
+    })
     const handlePhoneChange = (e) => {
         const inputValue = e.target.value;
         const result = inputValue.replace(/\D/g, '');
