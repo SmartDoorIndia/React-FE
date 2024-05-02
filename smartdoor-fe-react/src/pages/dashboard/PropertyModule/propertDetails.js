@@ -1239,7 +1239,7 @@ const PropertyDetails = (props) => {
                               {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
                               <div className="d-flex justify-content-end">
 
-                                 {userData.roleName === 'SUPER ADMIN' && propertyData.miscellaneousDetails.status === 'UNDER REVIEW' && propertyData.miscellaneousDetails.smartLockProperty === false && propertyData?.deleted === false ?
+                                 {userData.roleName === 'SUPER ADMIN' && propertyData.miscellaneousDetails.status === 'UNDER REVIEW' && propertyData.miscellaneousDetails.smartLockProperty === false && propertyData?.miscellaneousDetails?.deleted === false ?
 
                                     <>
                                        <Buttons
@@ -1316,7 +1316,7 @@ const PropertyDetails = (props) => {
 
                               <div className="d-flex mt-2">
 
-                                 {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData?.deleted === false && userData.roleName === 'SUPER ADMIN' ? (
+                                 {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData?.miscellaneousDetails?.deleted === false && userData.roleName === 'SUPER ADMIN' ? (
 
                                     <>
                                        <Buttons
