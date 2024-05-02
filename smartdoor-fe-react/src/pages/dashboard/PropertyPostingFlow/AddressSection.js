@@ -86,6 +86,10 @@ const AddressSection = (props) => {
 				console.log(newData.state);
 				stateFlag = true
 			}
+			if (element.types.includes('country')) {
+				newData.country = element.long_name;
+				console.log(newData.country);
+			}
 		});
 		if (allCitiesWithId.data.find(city => city.cityName === newData.city)) {
 			setSDIconFlag(true)
@@ -132,6 +136,10 @@ const AddressSection = (props) => {
 			if (element.types.includes('administrative_area_level_1')) {
 				newData.state = element.long_name;
 				stateFlag = true
+			}
+			if (element.types.includes('country')) {
+				newData.country = element.long_name;
+				console.log(newData.country);
 			}
 		});
 		if (localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {

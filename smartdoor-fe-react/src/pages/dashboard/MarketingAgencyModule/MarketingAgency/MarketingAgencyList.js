@@ -256,19 +256,26 @@ const MarketingAgency = (props) => {
 
         return (
             <SearchInput
-                onFilter={(e) => setFilterText(e.target.value)}
+                onFilter={(e) => {setFilterText(e.target.value); console.log(e)}}
+                onChange={(e) => setFilterText(e.target.value)}
                 onClear={() => handleClear}
                 filterText={filterText}
-                placeholder="Search"
+                placeholder="Search agency name"
             />
         );
     }, [filterText, resetPaginationToggle]);
 
     let filteredItems = [];
     const showData = () => {
+        console.log(filterText)
         filteredItems = [];
-        filteredItems = agencyList?.data?.agencylist
-        return agencyList?.data?.agencylist;
+        filteredItems = agencyList?.data?.agencylist;
+        filteredItems = agencyList?.data?.agencylist?.filter((item) => {
+            return item?.agencyLocation?.toString().includes(p_city) &&
+                item?.agencyName?.toLowerCase().includes(filterText.toLowerCase());
+        });
+        return filteredItems;
+        // return agencyList?.data?.agencylist;
     };
 
     return (
@@ -347,6 +354,12 @@ const MarketingAgency = (props) => {
                                 color="white"
                                 onClick={() => { history.push('/admin/marketingAgency/addAgency', { addNew: true }) }} ></Buttons>
                             {subHeaderComponentMemo} &nbsp;&nbsp;
+                            {/* <Buttons
+                                name='Search'
+                                varient="primary"
+                                size="xSmall"
+                                color="white"
+                                onClick={() => { showData(); }} ></Buttons> */}
                         </div>
                     </div>
 
