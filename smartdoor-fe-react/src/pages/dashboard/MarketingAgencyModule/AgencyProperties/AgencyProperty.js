@@ -268,21 +268,21 @@ const AgencyProperty = (props) => {
     };
 
     useEffect(async () => {
-        if (agencyProperty.data.propertyData === undefined) {
-            await getAgencyProperties({
-                agencyId: agencyId,
-                executiveId: executiveId,
-                customerId: customerId,
-                searchString: "",
-                pageNo: currentPage,
-                pageSize: rowsPerPage,
-                fromDate: "",
-                toDate: "",
-                propertyStatus: "",
-                propertyType: null,
-                defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
-            });
-        }
+        // if (agencyProperty.data.propertyData === undefined) {
+        // }
+        await getAgencyProperties({
+            agencyId: agencyId,
+            executiveId: executiveId,
+            customerId: customerId,
+            searchString: "",
+            pageNo: currentPage,
+            pageSize: rowsPerPage,
+            fromDate: "",
+            toDate: "",
+            propertyStatus: "",
+            propertyType: null,
+            defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
+        });
     }, []);
 
     let filteredItems = [];

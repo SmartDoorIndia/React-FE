@@ -12,41 +12,43 @@ import sdIcon from '../../../assets/svg/sdIcon.svg';
 import Buttons from '../../../shared/Buttons/Buttons';
 import * as Actions from '../../../common/redux/types';
 import { geocodeByAddress } from 'react-google-places-autocomplete';
-import { showErrorToast } from '../../../common/helpers/Utils';
-import { getAllCityWithId, getSocietyByCity } from '../../../common/redux/actions';
+import { getLocalStorage, showErrorToast } from '../../../common/helpers/Utils';
+import { addBasicDetails, getAllCityWithId, getSocietyByCity } from '../../../common/redux/actions';
 import { Autocomplete } from 'devextreme-react';
 import './property.scss'
 import { validateAddressDetails } from '../../../common/validations';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const AddressSection = (props) => {
-	const { getAllCityWithId, allCitiesWithId, basicDetailFields, addressDetailFields } = props;
+	const { getAllCityWithId, allCitiesWithId, basicDetailFields, addressDetailFields, saveAddressDetailsFields, customerDetails, editPropertyFlag } = props;
 	const [error, setError] = useState({});
 	const [sdIconFlag, setSDIconFlag] = useState(false);
 	const [societyArray, setSocietyArray] = useState([])
 	const [saveAddressFlag, setSaveAddressFlag] = useState(false);
 	const dispatch = useDispatch();
+	const history = useHistory();
 
-	const [addressDetails, setAddressDetails] = useState(Object.keys(addressDetailFields.data).length !== 0 ? 
-	addressDetailFields.data : {
-		latitude: '',
-		longitude: '',
-		zipCode: '',
-		country: '',
-		state: '',
-		city: '',
-		societyId: '',
-		societyName: '',
-		locality: '',
-		address: '',
-		cityLat: '',
-		cityLong: '',
-		landmark: '',
-		builder: '',
-		buildingProjectSociety: '',
-		floorNumber: '',
-		totalFloors: '',
-		flatNumber: ''
-	});
+	const [addressDetails, setAddressDetails] = useState(Object.keys(addressDetailFields.data).length !== 0 ?
+		addressDetailFields.data : {
+			latitude: '',
+			longitude: '',
+			zipCode: '',
+			country: '',
+			state: '',
+			city: '',
+			societyId: '',
+			societyName: '',
+			locality: '',
+			address: '',
+			cityLat: '',
+			cityLong: '',
+			landmark: '',
+			builder: '',
+			buildingProjectSociety: '',
+			floorNumber: '',
+			totalFloors: '',
+			houseNumber: ''
+		});
 
 	useEffect(() => {
 		getAllCityWithId({ smartdoorServiceStatus: true, stateId: null });
@@ -191,7 +193,7 @@ const AddressSection = (props) => {
 
 	const saveAddressDetails = () => {
 		let valid = {}
-		if(basicDetailFields.data.propertySubType === 'Independent house') {
+		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot') {
 			if (addressDetails.floorNumber > addressDetails.totalFloors) {
 				showErrorToast("In valid floor number...");
 				return null;
@@ -205,7 +207,65 @@ const AddressSection = (props) => {
 		if (valid.isValid) {
 			dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetails })
 			setSaveAddressFlag(true);
+			saveAddressDetailsFields({ saveFlag: true })
 		}
+	}
+
+	const notifyAddressDetails = async () => {
+		let valid = {}
+		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot') {
+			if (addressDetails.floorNumber > addressDetails.totalFloors) {
+				showErrorToast("In valid floor number...");
+				return null;
+			}
+			valid = validateAddressDetails(addressDetails, true);
+		} else {
+			valid = validateAddressDetails(addressDetails, false);
+		}
+		setError(valid.errors);
+		let userId = getLocalStorage('authData');
+		if (valid.isValid) {
+			const data = {
+				miscellaneousDetails: {
+					postedById: userId.userid,
+					lastPageOfInfoFilled: 1,
+					draft: true,
+					partial: false,
+					requestAlerts: false,
+					favourite: false,
+					smartLockProperty: false,
+					autoRenew: null,
+					autoApproval: null,
+					cityProvidesSmartdoorSevice: null,
+					planId: null,
+					currentPlanName: null,
+					expiryDate: null,
+					numberOfDaysLeft: null,
+					status: "",
+					postedByName: userId.name,
+					postedByMobile: userId.mobile,
+					postedByProfileImageUrl: '',
+					ownerName: customerDetails?.name,
+					ownerMobileNumber: customerDetails?.mobile,
+					isPostingForOthers: true,
+                    notifyCustomer: true
+				},
+				basicDetails: basicDetailFields?.data,
+				address: addressDetails
+			}
+			console.log(userId)
+			// setLoading(true)
+			const response = await addBasicDetails(data);
+			console.log(response?.data?.resourceData?.propertyId)
+			if (response.status === 200) {
+				// setLoading(false)
+				dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetails })
+				saveAddressFlag(true)
+				saveAddressDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
+				history.goBack();
+			}
+		}
+		// setLoading(false)
 	}
 
 	return (
@@ -266,12 +326,12 @@ const AddressSection = (props) => {
 				<Row>
 					<Col lg={4}>
 						<TextField
-							error={error.flatNumber}
+							error={error.houseNumber}
 							className=" w-100 mt-4"
-							label="Block Number/Flat Number"
+							label="Block No./Flat No./Plot No."
 							type='text'
-							onChange={(e) => { setAddressDetails({ ...addressDetails, flatNumber: e.target.value }) }}
-							value={addressDetails.flatNumber}
+							onChange={(e) => { setAddressDetails({ ...addressDetails, houseNumber: e.target.value }) }}
+							value={addressDetails.houseNumber}
 						>
 						</TextField>
 					</Col>
@@ -315,7 +375,7 @@ const AddressSection = (props) => {
 						>
 						</TextField>
 					</Col>
-					{basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' ?
+					{basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot' ?
 						<Col lg='4' >
 							<div className="d-flex">
 								<TextField
@@ -324,6 +384,7 @@ const AddressSection = (props) => {
 									required
 									label='Floor No.'
 									type='number'
+									inputProps={{ min: 0 }}
 									onChange={(e) => setAddressDetails({ ...addressDetails, floorNumber: e.target.value })}
 									value={addressDetails.floorNumber}
 								/>
@@ -331,6 +392,7 @@ const AddressSection = (props) => {
 								<TextField
 									error={error.totalFloors}
 									type='number'
+									inputProps={{ min: 0 }}
 									required
 									className="mt-4 w-50"
 									label='Total No. of Floors'
@@ -339,13 +401,14 @@ const AddressSection = (props) => {
 								/>
 							</div>
 						</Col>
-					:null}
+						: null}
 				</Row>
 			</div>
 			{saveAddressFlag === false ?
 				<div className="d-flex">
 					<Buttons className='p-2 px-4' name='Confirm' onClick={() => { saveAddressDetails(); }}></Buttons> &nbsp; &nbsp;
-					<Buttons className='p-2 px-4' name='Cancel' ></Buttons>
+					{/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
+					<Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyAddressDetails(); }}></Buttons> &nbsp; &nbsp;
 				</div>
 				: null}
 		</>

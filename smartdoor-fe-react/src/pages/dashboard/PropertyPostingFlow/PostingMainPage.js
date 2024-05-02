@@ -13,10 +13,30 @@ const PostingMainPage = (props) => {
     const miscellaneousDetails = props.location.state.miscellaneousDetails;
     const [editPropertyDetails, setEditPropertyDetails] = useState(props?.location?.state?.existingDetails)
     const [saveBasicDetails, setSaveBasicDetails] = useState({ propertyId: editPropertyDetails?.propertyId || null, saveFlag: editPropertyDetails?.saveFlag || false });
+    const [saveAddressDetails, setSaveAddressDetails] = useState({ saveFlag: editPropertyDetails?.saveFlag || false });
+    const [saveSpecDetails, setSaveSpecDetails] = useState({ saveFlag: editPropertyDetails?.saveFlag || false });
+    const [savePricingDetails, setSavePricingDetails] = useState({ saveFlag: editPropertyDetails?.saveFlag || false });
+    const [saveUploads, setSaveUploads] = useState({ propertyId: editPropertyDetails?.propertyId || null, saveFlag: editPropertyDetails?.saveFlag || false });
 
     const handleBasicDetails = (value) => {
         console.log(value)
         setSaveBasicDetails(value)
+    }
+    const handleAddressDetails = (value) => {
+        console.log(value)
+        setSaveAddressDetails(value)
+    }
+    const handleSpecDetails = (value) => {
+        console.log(value)
+        setSaveSpecDetails(value)
+    }
+    const handlePricingDetails = (value) => {
+        console.log(value)
+        setSavePricingDetails(value)
+    }
+    const handleUploads = (value) => {
+        console.log(value)
+        setSaveUploads(value)
     }
 
     return (
@@ -26,17 +46,33 @@ const PostingMainPage = (props) => {
             {saveBasicDetails.saveFlag ?
                 <>
                     <Text text={'Address'} fontWeight='bold' style={{ fontSize: '18px' }} />
-                    <AddressSection></AddressSection>
-                    <Text text={'Specs'} fontWeight='bold' style={{ fontSize: '18px' }} />
-                    <Specs></Specs>
-                    <Text text={'Pricing'} fontWeight='bold' style={{ fontSize: '18px' }} />
-                    <Pricing></Pricing>
-                    <Text text={'Uploads'} fontWeight='bold' style={{ fontSize: '18px' }} />
-                    <Uploads propertyId={saveBasicDetails.propertyId} ></Uploads>
-                    <Text text={'Terms and Conditions'} fontWeight='bold' style={{ fontSize: '18px' }} />
-                    <TermsConditions propertyId={saveBasicDetails.propertyId} miscellaneousDetails={miscellaneousDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails} ></TermsConditions>
+                    <AddressSection saveAddressDetailsFields={handleAddressDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}></AddressSection>
                 </>
                 : null}
+            {saveAddressDetails.saveFlag ? 
+            <>
+                <Text text={'Specs'} fontWeight='bold' style={{ fontSize: '18px' }} />
+                <Specs saveSpecDetailsFields={handleSpecDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}></Specs>
+            </>
+            :null}
+            {saveSpecDetails.saveFlag ?
+            <>
+                <Text text={'Pricing'} fontWeight='bold' style={{ fontSize: '18px' }} />
+                <Pricing savePricingDetailsFields={handlePricingDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}></Pricing>
+            </>
+            :null}
+            {savePricingDetails.saveFlag ?
+            <>
+                <Text text={'Uploads'} fontWeight='bold' style={{ fontSize: '18px' }} />
+                <Uploads saveUploadsFields={handleUploads} propertyId={saveBasicDetails.propertyId} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}></Uploads>
+            </>
+            :null}
+            {saveUploads.saveFlag ?
+            <>
+                <Text text={'Terms and Conditions'} fontWeight='bold' style={{ fontSize: '18px' }} />
+                <TermsConditions propertyId={saveBasicDetails.propertyId} miscellaneousDetails={miscellaneousDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails} ></TermsConditions>
+            </>
+            :null}
         </>
     );
 }

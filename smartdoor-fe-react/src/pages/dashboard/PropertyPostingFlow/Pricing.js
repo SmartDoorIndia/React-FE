@@ -6,14 +6,16 @@ import { connect, useDispatch } from "react-redux";
 import { Checkbox, MenuItem, Slider, TextField } from "@mui/material";
 import POSTING_CONSTANTS from "../../../common/helpers/POSTING_CONSTANTS";
 import Text from "../../../shared/Text/Text";
-import { showErrorToast } from '../../../common/helpers/Utils';
+import { getLocalStorage, showErrorToast } from '../../../common/helpers/Utils';
 import Buttons from "../../../shared/Buttons/Buttons";
 import { validatePricing } from "../../../common/validations";
 import * as Actions from '../../../common/redux/types';
+import { addBasicDetails } from "../../../common/redux/actions";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Pricing = (props) => {
 
-    const { basicDetailFields, pricingDetailFields } = props;
+    const { basicDetailFields, addressDetailFields, pricingDetailFields, specDetailFields, savePricingDetailsFields, editPropertyFlag, customerDetails } = props;
     const [pricingList, setPricingList] = useState([]);
     const [pricingObject, setPricingObject] = useState({});
     const [preferredForList, setPreferredForList] = useState([]);
@@ -35,7 +37,8 @@ const Pricing = (props) => {
     const [error, setError] = useState({});
     const [savePricingFlag, setSavePricingFlag] = useState(false);
     const dispatch = useDispatch();
-
+    const history = useHistory();
+    
     useEffect(() => {
         if (Object.keys(basicDetailFields.data).length !== 0) {
             let pricingObj = {};
@@ -97,8 +100,61 @@ const Pricing = (props) => {
         if (valid.isValid) {
             dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
             setSavePricingFlag(true);
+            savePricingDetailsFields({ saveFlag: true })
         }
     }
+
+    const notifyPricingDetails = async () => {
+        let valid = {}
+        valid = validatePricing(pricingDetails, pricingList);
+        setError(valid.errors);
+        console.log(valid)
+        if (valid.isValid) {
+            let userId = getLocalStorage('authData');
+            const data = {
+                miscellaneousDetails: {
+                    postedById: userId.userid,
+                    lastPageOfInfoFilled: 3,
+                    draft: true,
+                    partial: false,
+                    requestAlerts: false,
+                    favourite: false,
+                    smartLockProperty: false,
+                    autoRenew: null,
+                    autoApproval: null,
+                    cityProvidesSmartdoorSevice: null,
+                    planId: null,
+                    currentPlanName: null,
+                    expiryDate: null,
+                    numberOfDaysLeft: null,
+                    status: "",
+                    postedByName: userId.name,
+                    postedByMobile: userId.mobile,
+                    postedByProfileImageUrl: '',
+                    ownerName: customerDetails?.name,
+                    ownerMobileNumber: customerDetails?.mobile,
+                    isPostingForOthers: true,
+                    notifyCustomer: true
+                },
+                basicDetails: basicDetailFields?.data,
+                address: addressDetailFields,
+                specs: specDetailFields,
+                pricing: pricingDetails
+            }
+            console.log(userId)
+            // setLoading(true)
+            const response = await addBasicDetails(data);
+            console.log(response?.data?.resourceData?.propertyId)
+            if (response.status === 200) {
+                // setLoading(false)
+                dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
+                savePricingFlag(true)
+                savePricingDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
+                history.goBack();
+            }
+        }
+    }
+
     return (
         <>
             <div className="whiteBg">
@@ -191,7 +247,7 @@ const Pricing = (props) => {
                             />
                         </Col>
                         : null}
-                    
+
                     {pricingList.includes('Expected time') ?
                         <Col lg='4'>
                             <TextField
@@ -199,35 +255,35 @@ const Pricing = (props) => {
                                 type="date"
                                 error={error.expectedTimeToSellThePropertyWithin}
                                 inputProps={{ min: currentDate }}
-                                label={'Expected time within which you want to sell the property '}
+                                placeholder={'Expected time within which you want to sell the property '}
                                 onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedTimeToSellThePropertyWithin: (e.target.value) })) }}
                                 value={pricingDetails.expectedTimeToSellThePropertyWithin}
                             />
                         </Col>
                         : null}
                     {pricingList.includes('Distress CheckBox') ?
-                    <>
-                        <Col lg='4' className="d-flex">
-                            <Checkbox onChange={(e) => { console.log(e); setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isDistressSell: (e.target.checked) })) }}
-                                checked={pricingDetails.isDistressSell} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
-                            <Text text={'Do you want to additionally  publish in Distress property section '}
-                                fontWeight={'500'} style={{ fontSize: '13px' }} />
-                        </Col>
-                        {pricingList.includes('discount %') && pricingDetails.isDistressSell === true ?
-                        <Col className="p-0" lg='4'>
-                            <span className="d-flex">
-                                <Text className='ml-3' text='Expected Discount' fontWeight='bold' style={{ fontSize: '16px' }} />
-                            </span>
-                            <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
-                                className="ml-3 mr-4"
-                                valueLabelDisplay="auto"
-                                min={20}
-                                max={100}
-                                style={{ color: "#BE142" }}
-                            />
-                        </Col>
-                        : null}
-                    </>
+                        <>
+                            <Col lg='4' className="d-flex">
+                                <Checkbox onChange={(e) => { console.log(e); setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isDistressSell: (e.target.checked) })) }}
+                                    checked={pricingDetails.isDistressSell} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                                <Text text={'Do you want to additionally  publish in Distress property section '}
+                                    fontWeight={'500'} style={{ fontSize: '13px' }} />
+                            </Col>
+                            {pricingList.includes('discount %') && pricingDetails.isDistressSell === true ?
+                                <Col className="p-0" lg='4'>
+                                    <span className="d-flex">
+                                        <Text className='ml-3' text='Expected Discount' fontWeight='bold' style={{ fontSize: '16px' }} />
+                                    </span>
+                                    <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
+                                        className="ml-3 mr-4"
+                                        valueLabelDisplay="auto"
+                                        min={20}
+                                        max={100}
+                                        style={{ color: "#BE142" }}
+                                    />
+                                </Col>
+                                : null}
+                        </>
                         : null}
                     {pricingList.includes('Fractional Ownership checkbox') ?
                         <Col lg='4' className="d-flex">
@@ -263,7 +319,7 @@ const Pricing = (props) => {
                                                         newList[index] = { ...newList[index], label: e.target.value };
                                                         setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: newList }));
                                                         return newList;
-                                                    }); 
+                                                    });
                                                     console.log(pricingDetails.additionalFieldsForChargesDue)
                                                 }}
                                                 value={fields.label}
@@ -288,7 +344,7 @@ const Pricing = (props) => {
                                             />
                                         </Col>
                                         <Col lg='3' className="mt-2">
-                                            <Buttons name='Remove' className='p-2' onClick={() => { removeDues(index) }}></Buttons>
+                                            <Buttons disabled={savePricingFlag} name='Remove' className='p-2' onClick={() => { removeDues(index) }}></Buttons>
                                         </Col>
                                     </div>
                                 </>
@@ -300,15 +356,16 @@ const Pricing = (props) => {
             {savePricingFlag === false ?
                 <div className="d-flex">
                     <Buttons className='p-2 px-4' name='Confirm' onClick={() => { savePricingDetails(); }}></Buttons> &nbsp; &nbsp;
-                    <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
+                    <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyPricingDetails(); }}></Buttons> &nbsp; &nbsp;
+                    {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                 </div>
                 : null}
         </>
     );
 }
 
-const mapStateToProps = ({ basicDetailFields, pricingDetailFields }) => ({
-    basicDetailFields, pricingDetailFields
+const mapStateToProps = ({ basicDetailFields, pricingDetailFields, specDetailFields, addressDetailFields }) => ({
+    basicDetailFields, pricingDetailFields, specDetailFields, addressDetailFields
 })
 
 const actions = {

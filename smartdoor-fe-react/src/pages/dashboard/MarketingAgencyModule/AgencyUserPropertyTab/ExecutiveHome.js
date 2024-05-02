@@ -37,8 +37,10 @@ const ExecutiveHome = (props) => {
         dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: {} });
         dispatch({ type: Actions.UPLOAD_IMAGES_SUCCESS, data: {} });
         dispatch({ type: Actions.TERMS_CONDITIONS_SUCCESS, data: {} });
-        if (userData.transfered_cusomers.length > 0) {
-            setShowTransferCustModal(true);
+        if(userData.transfered_cusomers) {
+            if (userData?.transfered_cusomers?.length > 0) {
+                setShowTransferCustModal(true);
+            }
         }
     }, []);
 
@@ -63,7 +65,8 @@ const ExecutiveHome = (props) => {
         console.log(response)
         setCustomerDetails(prevCustomerDetails => ({
             ...prevCustomerDetails, userId: response.data.resourceData.userId,
-            propertyCount: response.data.resourceData.propertyCount
+            propertyCount: response.data.resourceData.propertyCount,
+            name: response.data.resourceData.name
         }));
     }
 
@@ -193,23 +196,25 @@ const ExecutiveHome = (props) => {
                         : null}
                 </div>
             </div>
-            <Modal size="lg" show={showTransferCustModal} onHide={() => { setShowTransferCustModal(false) }} centered={true}>
-                <Modal.Body>
-                    <div className="d-flex justify-content-center">
-                        <Text text={'Your customer ' + userData.transfered_cusomers[0] + ' '}
-                            fontWeight={'bold'} style={{ fontSize: '20px' }} />&nbsp;
-                        <Text text={userData?.transfered_cusomers?.length > 1 ? ' and ' + (userData.transfered_cusomers.length - 1) + '+' : ''}
-                            fontWeight={'bold'} style={{ fontSize: '20px' }} />
-                    </div>
-                    <div className="d-flex justify-content-center">
-                        <Text text={' has now been acquired by another MARKETING AGENCY.'}
-                            fontWeight={'bold'} style={{ fontSize: '20px' }} />
-                    </div>
-                    <div className="text-center mt-3">
-                        <Buttons name="Okay" onClick={() => { setShowTransferCustModal(false) }}></Buttons>
-                    </div>
-                </Modal.Body>
-            </Modal>
+            {userData.transfered_cusomers ?
+                <Modal size="lg" show={showTransferCustModal} onHide={() => { setShowTransferCustModal(false) }} centered={true}>
+                    <Modal.Body>
+                        <div className="d-flex justify-content-center">
+                            <Text text={'Your customer ' + userData?.transfered_cusomers[0] + ' '}
+                                fontWeight={'bold'} style={{ fontSize: '20px' }} />&nbsp;
+                            <Text text={userData?.transfered_cusomers?.length > 1 ? ' and ' + (userData.transfered_cusomers.length - 1) + '+' : ''}
+                                fontWeight={'bold'} style={{ fontSize: '20px' }} />
+                        </div>
+                        <div className="d-flex justify-content-center">
+                            <Text text={' has now been acquired by another MARKETING AGENCY.'}
+                                fontWeight={'bold'} style={{ fontSize: '20px' }} />
+                        </div>
+                        <div className="text-center mt-3">
+                            <Buttons name="Okay" onClick={() => { setShowTransferCustModal(false) }}></Buttons>
+                        </div>
+                    </Modal.Body>
+                </Modal>
+            :null}
         </>
     );
 }

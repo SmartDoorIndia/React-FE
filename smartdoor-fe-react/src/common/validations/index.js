@@ -41,7 +41,7 @@ export const validateNewLeadEntry = (data) => {
   };
 };
 
-export const validateNewPlan = (data) =>{
+export const validateNewPlan = (data) => {
   const errors = {};
 
   if (isBlank(data.TNC)) {
@@ -51,16 +51,16 @@ export const validateNewPlan = (data) =>{
 
   if (isBlank(data.description)) {
     errors.description = ValidationMessages.fieldRequired.required;
-  }   
+  }
   if (isBlank(data.gstValue)) {
     errors.gstValue = ValidationMessages.fieldRequired.required;
-  }      
+  }
   if (isBlank(data.planName)) {
     errors.planName = ValidationMessages.fieldRequired.required;
-  }   
+  }
   if (isBlank(data.subscriptionMonth)) {
     errors.subscriptionMonth = ValidationMessages.fieldRequired.required;
-  }   
+  }
   if (isBlank(data.isDeviceCamera)) {
     errors.isDeviceCamera = ValidationMessages.fieldRequired.required;
   }
@@ -90,41 +90,41 @@ export const validateNewPlan = (data) =>{
   }
 
 
-  if(data.planHirarchy < 0 ){
+  if (data.planHirarchy < 0) {
     errors.planHirarchy = ValidationMessages.negativeNumber.invalid;
   }
-  
-  if(data.depositeAmount < 0 ){
+
+  if (data.depositeAmount < 0) {
     errors.depositeAmount = ValidationMessages.negativeNumber.invalid;
   }
 
-  if(data.subscriptionMonth < 0 ){
+  if (data.subscriptionMonth < 0) {
     errors.subscriptionMonth = ValidationMessages.negativeNumber.invalid;
   }
 
-  if(data.installationCharges < 0 ){
+  if (data.installationCharges < 0) {
     errors.installationCharges = ValidationMessages.negativeNumber.invalid;
   }
-  if(data.baseRentalCoins < 0 ){
+  if (data.baseRentalCoins < 0) {
     errors.baseRentalCoins = ValidationMessages.negativeNumber.invalid;
   }
 
-  if(data.renewalCoins < 0 ){
+  if (data.renewalCoins < 0) {
     errors.baseRentalCoins = ValidationMessages.negativeNumber.invalid;
   }
 
-  if(data.renewalInterval < 0 ){
+  if (data.renewalInterval < 0) {
     errors.renewalInterval = ValidationMessages.negativeNumber.invalid;
   }
 
-  if(data.gstValue <=0 ){
+  if (data.gstValue <= 0) {
     errors.gstValue = ValidationMessages.negativeNumber.invalid;
   }
   if (isBlank(data.gstValue)) {
     errors.gstValue = ValidationMessages.fieldRequired.required;
   }
 
-  if(isBlank(data.imageLocation)) {
+  if (isBlank(data.imageLocation)) {
     errors.imageLocation = "Image required"
   }
 
@@ -132,7 +132,7 @@ export const validateNewPlan = (data) =>{
   //   errors.amount = ValidationMessages.fieldRequired.required;
   // } 
 
-  console.log("Erros: ",errors)
+  console.log("Erros: ", errors)
 
   return {
     errors,
@@ -160,8 +160,8 @@ export const validateNewTeamMember = (data) => {
   if ((data.city?.length === 0)) {
     errors.city = ValidationMessages.fieldRequired.required;
   }
-  console.log(data,"ddddddddddddddddddddddddddd")
-  
+  console.log(data, "ddddddddddddddddddddddddddd")
+
   // if ( !(data.post==='3' || data.post==='7' || data.post==='8' || data.post==='10' || data.post==='13' || data.post==='14' || data.post==='16' ||  data.post==='1' || (data.post.toLowerCase().includes("admin"))) && data.location.length < 1) {
   //   errors.location = ValidationMessages.fieldRequired.required;
   // }
@@ -407,25 +407,25 @@ export const validateBuilderProperty = (data) => {
   // building component validations
   data.addProjectBuildingRequest.map((cVal, cInd) => {
     if (isBlank(cVal.floors)) {
-      errors[ `floors${ cInd }` ] = ValidationMessages.fieldRequired.required;
+      errors[`floors${cInd}`] = ValidationMessages.fieldRequired.required;
     }
     if (isBlank(cVal.phase)) {
-      errors[ `phase${ cInd }` ] = ValidationMessages.fieldRequired.required;
+      errors[`phase${cInd}`] = ValidationMessages.fieldRequired.required;
     }
     if (isBlank(cVal.possessionDate)) {
-      errors[ `possessionDate${ cInd }` ] = ValidationMessages.fieldRequired.required;
+      errors[`possessionDate${cInd}`] = ValidationMessages.fieldRequired.required;
     }
     if (isBlank(cVal.proposedCompletion)) {
-      errors[ `proposedCompletion${ cInd }` ] = ValidationMessages.fieldRequired.required;
+      errors[`proposedCompletion${cInd}`] = ValidationMessages.fieldRequired.required;
     }
     if (isBlank(cVal.revisedDate)) {
-      errors[ `revisedDate${ cInd }` ] = ValidationMessages.fieldRequired.required;
+      errors[`revisedDate${cInd}`] = ValidationMessages.fieldRequired.required;
     }
     if (isBlank(cVal.startDate)) {
-      errors[ `startDate${ cInd }` ] = ValidationMessages.fieldRequired.required;
+      errors[`startDate${cInd}`] = ValidationMessages.fieldRequired.required;
     }
     if (isBlank(cVal.towerName)) {
-      errors[ `towerName${ cInd }` ] = ValidationMessages.fieldRequired.required;
+      errors[`towerName${cInd}`] = ValidationMessages.fieldRequired.required;
     }
   });
 
@@ -504,129 +504,129 @@ export const validateAddComments = (data) => {
 
 export const validateNewPost1 = (data) => {
   const errors = {};
-  if(isBlank(data.propertyCategory)) {
+  if (isBlank(data.propertyCategory)) {
     errors.propertyCategory = ValidationMessages.fieldRequired.required
   }
 
-  if(isBlank(data.propertyType)) {
+  if (isBlank(data.propertyType)) {
     errors.propertyType = ValidationMessages.fieldRequired.required
   }
   else {
-    if(data.propertyType === 'Residential' || data.propertyType === 'Semi Commercial') {
-      if(isBlank(data.propertySubType)) {
+    if (data.propertyType === 'Residential' || data.propertyType === 'Semi Commercial') {
+      if (isBlank(data.propertySubType)) {
         errors.propertySubType = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.bedRooms) || data.bedRooms === 0) {
+      if (isBlank(data.bedRooms) || data.bedRooms === 0) {
         errors.bedRooms = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.numberOfHalls) && data.numberOfHalls !== 0) {
+      if (isBlank(data.numberOfHalls) && data.numberOfHalls !== 0) {
         errors.numberOfHalls = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.kitchens) || data.kitchens === 0) {
+      if (isBlank(data.kitchens) || data.kitchens === 0) {
         errors.kitchens = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.numberOfBaths) || data.numberOfBaths === 0) {
+      if (isBlank(data.numberOfBaths) || data.numberOfBaths === 0) {
         errors.numberOfBaths = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.balcony) && data.balcony !== 0) {
+      if (isBlank(data.balcony) && data.balcony !== 0) {
         errors.balcony = ValidationMessages.fieldRequired.required
       }
     }
-    
-    if(data.propertyType === 'Commercial') {
-      if(isBlank(data.commercialProjectType)) {
+
+    if (data.propertyType === 'Commercial') {
+      if (isBlank(data.commercialProjectType)) {
         errors.commercialProjectType = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.commercialArea)) {
+      if (isBlank(data.commercialArea)) {
         errors.commercialArea = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.commercialType)) {
+      if (isBlank(data.commercialType)) {
         errors.commercialType = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.restRoom) && data.restRoom !== 0) {
+      if (isBlank(data.restRoom) && data.restRoom !== 0) {
         errors.restRoom = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.commonReception) && data.commonReception !== 0) {
+      if (isBlank(data.commonReception) && data.commonReception !== 0) {
         errors.commonReception = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.kitchenPantry)) {
+      if (isBlank(data.kitchenPantry)) {
         errors.kitchenPatry = ValidationMessages.fieldRequired.required
       }
       // if(isBlank(data.leaseType)) {
       //   errors.leaseType = ValidationMessages.fieldRequired.required
       // }
     }
-    
-    if(data.propertyType === 'Semi Commercial') {
-      if(isBlank(data.propertySubType)) {
+
+    if (data.propertyType === 'Semi Commercial') {
+      if (isBlank(data.propertySubType)) {
         errors.propertySubType = ValidationMessages.fieldRequired.required
       }
     }
-    if((data.propertyType === 'Semi Commercial' || data.propertyType === 'Residential') && (data.propertyCategory === 'Rent' ||  data.propertyCategory === 'Lease')) {
-      if(isBlank(data.leaseType)) {
+    if ((data.propertyType === 'Semi Commercial' || data.propertyType === 'Residential') && (data.propertyCategory === 'Rent' || data.propertyCategory === 'Lease')) {
+      if (isBlank(data.leaseType)) {
         errors.leaseType = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.preferredFor)) {
+      if (isBlank(data.preferredFor)) {
         errors.preferredFor = ValidationMessages.fieldRequired.required
       }
-      if(isBlank(data.purpose)) {
+      if (isBlank(data.purpose)) {
         errors.purpose = ValidationMessages.fieldRequired.required
       }
     }
-    
-    if(isBlank(data.coveredParking) && data.coveredParking !== 0) {
+
+    if (isBlank(data.coveredParking) && data.coveredParking !== 0) {
       errors.coveredParking = ValidationMessages.fieldRequired.required
     }
-    if(isBlank(data.openParking) && data.openParking !== 0) {
+    if (isBlank(data.openParking) && data.openParking !== 0) {
       errors.openParking = ValidationMessages.fieldRequired.required
     }
     console.log(data)
-    
-    if(isBlank(data.type)) {
+
+    if (isBlank(data.type)) {
       errors.type = ValidationMessages.fieldRequired.required
     }
-    if((data.isNegotiable) === null) {
+    if ((data.isNegotiable) === null) {
       errors.isNegotiable = ValidationMessages.fieldRequired.required
     }
 
   }
 
-  if(isBlank(data.propertyAge) && data.propertyAge !== 0) {
+  if (isBlank(data.propertyAge) && data.propertyAge !== 0) {
     errors.propertyAge = ValidationMessages.fieldRequired.required
   }
-  if(isBlank(data.propertyRate) && data.propertyRate !== 0) {
+  if (isBlank(data.propertyRate) && data.propertyRate !== 0) {
     errors.propertyRate = ValidationMessages.fieldRequired.required
   }
-  if(data.propertySubType === 'Independent House/Villa') {
-    if(isBlank(data.plotArea) && data.plotArea !== 0) {
+  if (data.propertySubType === 'Independent House/Villa') {
+    if (isBlank(data.plotArea) && data.plotArea !== 0) {
       errors.plotArea = ValidationMessages.fieldRequired.required
     }
-  } 
-    if(isBlank(data.carpetArea) && data.carpetArea !== 0) {
-      errors.carpetArea = ValidationMessages.fieldRequired.required
-    }
-  
-  if(data.propertyAge < 0) {
+  }
+  if (isBlank(data.carpetArea) && data.carpetArea !== 0) {
+    errors.carpetArea = ValidationMessages.fieldRequired.required
+  }
+
+  if (data.propertyAge < 0) {
     errors.propertyAge = "Enter positive values"
   }
-  if(data.propertyRate < 0) {
+  if (data.propertyRate < 0) {
     errors.propertyRate = "Enter positive values"
   }
-  if(data.plotArea < 0) {
+  if (data.plotArea < 0) {
     errors.plotArea = "Enter positive values"
   }
-  if(data.propertyType === "Commercial") {
-    if(isBlank(data.balconyOpenArea) && data.balconyOpenArea !== 0) {
+  if (data.propertyType === "Commercial") {
+    if (isBlank(data.balconyOpenArea) && data.balconyOpenArea !== 0) {
       errors.balconyOpenArea = ValidationMessages.fieldRequired.required
     }
-    if((data.balconyOpenArea < 0)) {
+    if ((data.balconyOpenArea < 0)) {
       errors.balconyOpenArea = "Enter positive values"
-    }  
+    }
   }
-  if((data.attachedOpenAreaOrGarden < 0)) {
+  if ((data.attachedOpenAreaOrGarden < 0)) {
     errors.attachedOpenAreaOrGarden = "Enter positive values"
   }
-  if(data.attachedOpenTerraceArea < 0) {
+  if (data.attachedOpenTerraceArea < 0) {
     errors.attachedOpenTerraceArea = "Enter positive values"
   }
 
@@ -640,19 +640,19 @@ export const validateNewPost1 = (data) => {
 export const validateNewPost2 = (data) => {
   const errors = {};
 
-  if(isBlank(data.city)) {
+  if (isBlank(data.city)) {
     errors.city = ValidationMessages.fieldRequired.required
   }
-  if(isBlank(data.buildingProjectSociety)) {
+  if (isBlank(data.buildingProjectSociety)) {
     errors.buildingProjectSociety = ValidationMessages.fieldRequired.required
   }
-  if(isBlank(data.locality)) {
+  if (isBlank(data.locality)) {
     errors.locality = ValidationMessages.fieldRequired.required
   }
   // if(isBlank(data.towerName)) {
   //   errors.towerName = ValidationMessages.fieldRequired.required
   // }
-  if(isBlank(data.houseNumber)) {
+  if (isBlank(data.houseNumber)) {
     errors.houseNumber = "Required"
   }
   // if(isBlank(data.floorNumber)) {
@@ -670,23 +670,23 @@ export const validateNewPost2 = (data) => {
 
 export const validateAgencyDetails = (data) => {
   const errors = {};
-  if(data.agencyName?.trim() === '' || data.agencyName === null) {
+  if (data.agencyName?.trim() === '' || data.agencyName === null) {
     errors.agencyName = ValidationMessages.fieldRequired.required;
   }
-  if(data.location?.trim() === '' || data.location === null) {
+  if (data.location?.trim() === '' || data.location === null) {
     errors.location = ValidationMessages.fieldRequired.required;
   }
-  if(data.contactName?.trim() === '' || data.contactName === null) {
+  if (data.contactName?.trim() === '' || data.contactName === null) {
     errors.contactName = ValidationMessages.fieldRequired.required;
   }
-  if((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
+  if ((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
     errors.contactNumber = ValidationMessages.fieldRequired.required;
-    if((data.contactNumber?.trim())?.length !== 10) {
+    if ((data.contactNumber?.trim())?.length !== 10) {
       errors.contactNumber = 'Contact Number must be 10 digits';
     }
   }
-  if(!isBlank(data.contactEmail)) {
-    if(!validateRegex.validateEmail.test(data.contactEmail)) {
+  if (!isBlank(data.contactEmail)) {
+    if (!validateRegex.validateEmail.test(data.contactEmail)) {
       errors.contactEmail = ValidationMessages.email.invalid;
     }
   }
@@ -698,20 +698,20 @@ export const validateAgencyDetails = (data) => {
 
 export const validateExecutiveDetails = (data) => {
   const errors = {};
-  if(data.location?.trim() === '' || data.location === null) {
+  if (data.location?.trim() === '' || data.location === null) {
     errors.location = ValidationMessages.fieldRequired.required;
   }
-  if(data.contactName?.trim() === '' || data.contactName === null) {
+  if (data.contactName?.trim() === '' || data.contactName === null) {
     errors.contactName = ValidationMessages.fieldRequired.required;
   }
-  if((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
+  if ((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
     errors.contactNumber = ValidationMessages.fieldRequired.required;
-    if((data.contactNumber?.trim())?.length !== 10) {
+    if ((data.contactNumber?.trim())?.length !== 10) {
       errors.contactNumber = 'Contact Number must be 10 digits';
     }
   }
-  if(!isBlank(data.contactEmail)) {
-    if(!validateRegex.validateEmail.test(data.contactEmail)) {
+  if (!isBlank(data.contactEmail)) {
+    if (!validateRegex.validateEmail.test(data.contactEmail)) {
       errors.contactEmail = ValidationMessages.email.invalid;
     }
   }
@@ -723,38 +723,38 @@ export const validateExecutiveDetails = (data) => {
 
 export const validateBasicDetails = (data) => {
   const errors = {};
-  if(isBlank(data.propertyCategory)) {
+  if (isBlank(data.propertyCategory)) {
     errors.propertyCategory = true;
   }
-  if(isBlank(data.stageOfProperty)) {
+  if (isBlank(data.stageOfProperty)) {
     errors.stageOfProperty = true;
   }
-  if(isBlank(data.propertyType)) {
+  if (isBlank(data.propertyType)) {
     errors.propertyType = true;
   }
-  if(data.propertyType === 'Residential') {
-    if(isBlank(data.propertySubType)) {
+  if (data.propertyType === 'Residential') {
+    if (isBlank(data.propertySubType)) {
       errors.propertySubType = true;
     }
   }
-  if(data.stageOfProperty === 'Ready') {
-    if(isBlank(data.ageOfProperty)) {
+  if (data.stageOfProperty === 'Ready') {
+    if (isBlank(data.ageOfProperty)) {
       errors.ageOfProperty = true;
     }
-    if((data.ageOfProperty) < 0) {
+    if ((data.ageOfProperty) < 0) {
       errors.ageOfProperty = true;
     }
   }
-  if(data.stageOfProperty === 'Under Construction') {
-    if(isBlank(data.expectedPossessionDate)) {
+  if (data.stageOfProperty === 'Under Construction') {
+    if (isBlank(data.expectedPossessionDate)) {
       errors.expectedPossessionDate = true;
     }
   }
-  if(data.propertySubType === 'PG/Co-Living') {
-    if(isBlank(data.guestHouseOrPgPropertyType)) {
+  if (data.propertySubType === 'PG/Co-Living') {
+    if (isBlank(data.guestHouseOrPgPropertyType)) {
       errors.guestHouseOrPgPropertyType = true;
     }
-    if(isBlank(data.occupancySharing)) {
+    if (isBlank(data.occupancySharing)) {
       errors.occupancySharing = true;
     }
   }
@@ -767,33 +767,39 @@ export const validateBasicDetails = (data) => {
 
 export const validateAddressDetails = (data, floorFlag) => {
   const errors = {};
-  if(isBlank(data.locality)) {
+  if (isBlank(data.locality)) {
     errors.locality = true;
   }
-  if(isBlank(data.city)) {
+  if (isBlank(data.city)) {
     errors.city = true;
   }
-  if(isBlank(data.flatNumber)) {
-    errors.flatNumber = true;
+  if (isBlank(data.houseNumber)) {
+    errors.houseNumber = true;
   }
-  if(isBlank(data.landmark)) {
+  if (isBlank(data.landmark)) {
     errors.landmark = true;
   }
-  if(isBlank(data.builder)) {
+  if (isBlank(data.builder)) {
     errors.builder = true;
   }
-  if(isBlank(data.buildingProjectSociety)) {
+  if (isBlank(data.buildingProjectSociety)) {
     errors.buildingProjectSociety = true;
   }
-  if(floorFlag) {
-    if(isBlank(data.floorNumber)) {
+  if (floorFlag) {
+    if (isBlank(data.floorNumber)) {
       errors.floorNumber = true;
     }
-    if(isBlank(data.totalFloors)) {
+    if (data.floorNumber < 0) {
+      errors.floorNumber = true;
+    }
+    if (isBlank(data.totalFloors)) {
+      errors.totalFloors = true;
+    }
+    if (data.totalFloors < 0) {
       errors.totalFloors = true;
     }
   }
-  
+
   return {
     errors,
     isValid: isEmpty(errors)
@@ -803,100 +809,100 @@ export const validateAddressDetails = (data, floorFlag) => {
 export const validateSpecs = (data, specList, testDesc) => {
   const errors = {};
 
-  if(specList?.includes('BHK')) {
-    if(isBlank(data.numberOfRooms)) {
+  if (specList?.includes('BHK')) {
+    if (isBlank(data.numberOfRooms)) {
       errors.numberOfRooms = true;
     }
-    if(isBlank(data.propertyRoomCompositionType)) {
+    if (isBlank(data.propertyRoomCompositionType)) {
       errors.propertyRoomCompositionType = true;
     }
   }
-  if(specList?.includes('Attached')) {
-    if(isBlank(data.pgGuestHouseAttachedTo)) {
+  if (specList?.includes('Attached')) {
+    if (isBlank(data.pgGuestHouseAttachedTo)) {
       errors.pgGuestHouseAttachedTo = true;
     }
   }
-  if(specList?.includes('Flat type')) {
-    if(isBlank(data.flatType)) {
+  if (specList?.includes('Flat type')) {
+    if (isBlank(data.flatType)) {
       errors.flatType = true;
     }
   }
-  if(specList?.includes('Carpet area/built-up area')) {
-    if(isBlank(data.carpetArea)) {
+  if (specList?.includes('Carpet area/built-up area')) {
+    if (isBlank(data.carpetArea)) {
       errors.carpetArea = true;
     }
-    if(isBlank(data.carpetAreaMeasurementUnit)) {
+    if (isBlank(data.carpetAreaMeasurementUnit)) {
       errors.carpetAreaMeasurementUnit = true;
     }
-    if(isBlank(data.builtUpArea)) {
+    if (isBlank(data.builtUpArea)) {
       errors.builtUpArea = true;
     }
-    if(isBlank(data.builtUpAreaMeasurementUnit)) {
+    if (isBlank(data.builtUpAreaMeasurementUnit)) {
       errors.builtUpAreaMeasurementUnit = true;
     }
   }
-  if(specList?.includes('Carpet area/built-up area of the room')) {
-    if(isBlank(data.carpetArea)) {
+  if (specList?.includes('Carpet area/built-up area of the room')) {
+    if (isBlank(data.carpetArea)) {
       errors.carpetArea = true;
     }
-    if(isBlank(data.carpetAreaMeasurementUnit)) {
+    if (isBlank(data.carpetAreaMeasurementUnit)) {
       errors.carpetAreaMeasurementUnit = true;
     }
-    if(isBlank(data.builtUpArea)) {
+    if (isBlank(data.builtUpArea)) {
       errors.builtUpArea = true;
     }
-    if(isBlank(data.builtUpAreaMeasurementUnit)) {
+    if (isBlank(data.builtUpAreaMeasurementUnit)) {
       errors.builtUpAreaMeasurementUnit = true;
     }
   }
-  if(specList?.includes('Plot area')) {
-    if(isBlank(data.plotArea)) {
+  if (specList?.includes('Plot area')) {
+    if (isBlank(data.plotArea)) {
       errors.plotArea = true;
     }
-    if(isBlank(data.plotAreaMeasurementUnit)) {
+    if (isBlank(data.plotAreaMeasurementUnit)) {
       errors.plotAreaMeasurementUnit = true;
     }
   }
-  if(specList?.includes('Open area')) {
-    if(isBlank(data.openArea)) {
+  if (specList?.includes('Open area')) {
+    if (isBlank(data.openArea)) {
       errors.openArea = true;
     }
-    if(isBlank(data.openAreaMeasurementUnit)) {
+    if (isBlank(data.openAreaMeasurementUnit)) {
       errors.openAreaMeasurementUnit = true;
     }
   }
-  if(specList?.includes('Property type')) {
-    if(isBlank(data.commercialPropertyType)) {
+  if (specList?.includes('Property type')) {
+    if (isBlank(data.commercialPropertyType)) {
       errors.commercialPropertyType = true;
     }
   }
-  if(specList?.includes('Purpose')) {
-    if((data.commercialPropertyPurposes).length === 0) {
+  if (specList?.includes('Purpose')) {
+    if ((data.commercialPropertyPurposes).length === 0) {
       errors.commercialPropertyPurposes = true;
     }
   }
-  if(specList?.includes('Number of washrooms')) {
-    if(isBlank(data.numberOfBaths)) {
+  if (specList?.includes('Number of washrooms')) {
+    if (isBlank(data.numberOfBaths)) {
       errors.numberOfBaths = true;
     }
   }
-  if(specList?.includes('Car parkings')) {
-    if(isBlank(data.numberOfCarParking)) {
+  if (specList?.includes('Car parkings')) {
+    if (isBlank(data.numberOfCarParking)) {
       errors.numberOfCarParking = true;
     }
   }
-  if(specList?.includes('Reserved car parkings')) {
-    if(isBlank(data.numberOfReservedCarParking)) {
+  if (specList?.includes('Reserved car parkings')) {
+    if (isBlank(data.numberOfReservedCarParking)) {
       errors.numberOfReservedCarParking = true;
     }
   }
-  if(specList?.includes('Property description') && testDesc === true) {
-    if(isBlank(data.propertyDescription)) {
+  if (specList?.includes('Property description') && testDesc === true) {
+    if (isBlank(data.propertyDescription)) {
       errors.propertyDescription = true;
     }
   }
 
-  return{
+  return {
     errors,
     isValid: isEmpty(errors)
   }
@@ -905,63 +911,65 @@ export const validateSpecs = (data, specList, testDesc) => {
 export const validatePricing = (data, pricingList) => {
   const errors = {};
 
-  if(pricingList.includes('Rent')) {
-    if(isBlank(data.propertyRate)) {
+  if (pricingList.includes('Rent')) {
+    if (isBlank(data.propertyRate)) {
       errors.propertyRate = true;
     }
-    if(data.propertyRate < 0) {
+    if (data.propertyRate < 0) {
       errors.propertyRate = true;
     }
   }
-  if(pricingList.includes('Security deposit')) {
-    if(!isBlank(data.securityAmount)) {
-      if(data.securityAmount < 0) {
+  if (pricingList.includes('Security deposit')) {
+    if (!isBlank(data.securityAmount)) {
+      if (data.securityAmount < 0) {
         errors.securityAmount = true;
       }
     }
   }
-  if(pricingList.includes('Preferred for')) {
-    if(isBlank(data.preferredFor)) {
+  if (pricingList.includes('Preferred for')) {
+    if (isBlank(data.preferredFor)) {
       errors.preferredFor = true;
     }
   }
-  if(pricingList.includes('Selling price')) {
-    if(isBlank(data.propertyRate)) {
+  if (pricingList.includes('Selling price')) {
+    if (isBlank(data.propertyRate)) {
       errors.propertyRate = true;
     }
-    if(data.propertyRate < 0) {
+    if (data.propertyRate < 0) {
       errors.propertyRate = true;
     }
   }
-  if(pricingList.includes('Distress CheckBox')) {
-    if((data.isDistressSell) === null) {
+  if (pricingList.includes('Distress CheckBox')) {
+    if ((data.isDistressSell) === null) {
       errors.isDistressSell = true;
     }
-    if(pricingList.includes('Expected time')) {
-      if(isBlank(data.expectedTimeToSellThePropertyWithin)) {
+    if (pricingList.includes('Expected time')) {
+      if (isBlank(data.expectedTimeToSellThePropertyWithin)) {
         errors.expectedTimeToSellThePropertyWithin = true;
       }
     }
   }
-  if(pricingList.includes('Add additional fields')) {
-      errors.additionalFieldsForChargesDue = []
-    for(let i = 0; i < data.additionalFieldsForChargesDue.length; i++) {
-      if(isBlank(data.additionalFieldsForChargesDue[i].label))
-      {
-        errors.additionalFieldsForChargesDue.push({label:'', dues:''});
-        errors.additionalFieldsForChargesDue[i].label = true;
+  if (pricingList.includes('Add additional fields')) {
+    errors.additionalFieldsForChargesDue = []
+    let hasError = false
+    for (let i = 0; i < data.additionalFieldsForChargesDue.length; i++) {
+      errors.additionalFieldsForChargesDue.push({ label: false, dues: false });
+      if (isBlank(data.additionalFieldsForChargesDue[i].label)) {
+        // errors.additionalFieldsForChargesDue[i].label = true;
+        errors.additionalFieldsForChargesDue[errors.additionalFieldsForChargesDue.length - 1].label = true;
+        hasError = true;
       }
-      if(isBlank(data.additionalFieldsForChargesDue[i].dues))
-      {
-        errors.additionalFieldsForChargesDue[i].dues = true;
+      if (isBlank(data.additionalFieldsForChargesDue[i].dues)) {
+        errors.additionalFieldsForChargesDue[errors.additionalFieldsForChargesDue.length - 1].dues = true;
+        hasError = true;
       }
     }
-    if(errors.additionalFieldsForChargesDue.length === 0) {
+    if (!hasError) {
       delete errors.additionalFieldsForChargesDue;
     }
   }
-  
-  return{
+
+  return {
     errors,
     isValid: isEmpty(errors)
   }
@@ -969,20 +977,20 @@ export const validatePricing = (data, pricingList) => {
 
 export const validateTermsConditions = (data) => {
   const errors = {};
-  
+
   // if(isBlank(data.visitGuidelines)) {
   //   errors.visitGuidelines = true;
   // }
   // if(isBlank(data.securityGuardNumber)) {
   //   errors.securityGuardNumber = true;
   // }
-  if(!isBlank(data.securityGuardNumber)) {
-    if((data.securityGuardNumber.trim()).length < 10) {
+  if (!isBlank(data.securityGuardNumber)) {
+    if ((data.securityGuardNumber.trim()).length < 10) {
       errors.securityGuardNumber = true;
     }
   }
 
-  return{
+  return {
     errors,
     isValid: isEmpty(errors)
   }

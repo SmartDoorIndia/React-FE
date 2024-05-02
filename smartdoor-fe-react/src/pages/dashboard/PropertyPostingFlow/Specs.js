@@ -9,13 +9,15 @@ import POSTING_CONSTANTS from "../../../common/helpers/POSTING_CONSTANTS";
 import * as Actions from '../../../common/redux/types';
 import Buttons from "../../../shared/Buttons/Buttons";
 import { validateSpecs } from "../../../common/validations";
-import { getChatGptDescription } from "../../../common/redux/actions";
+import { addBasicDetails, getChatGptDescription } from "../../../common/redux/actions";
 import Loader from "../../../common/helpers/Loader";
 import './property.scss';
+import { getLocalStorage } from "../../../common/helpers/Utils";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Specs = (props) => {
 
-    const { basicDetailFields, addressDetailFields, specDetailFields } = props;
+    const { basicDetailFields, addressDetailFields, specDetailFields, saveSpecDetailsFields, customerDetails, editPropertyFlag } = props;
     const [specList, setSpecList] = useState([]);
     const dispatch = useDispatch();
     const [specDetails, setSpecDetails] = useState(Object.keys(specDetailFields.data).length !== 0 ?
@@ -66,6 +68,7 @@ const Specs = (props) => {
     const [addRoomFlag, setAddRoomFlag] = useState(false);
     const [descLoader, setDescLoader] = useState(false)
     const [loading, setLoading] = useState(false);
+    const history = useHistory();
 
     useEffect(() => {
         if (Object.keys(basicDetailFields.data).length !== 0) {
@@ -108,11 +111,13 @@ const Specs = (props) => {
             setSpecList(speclist);
         }
         if (Object.keys(specDetailFields.data).length !== 0) {
-            const bedrooms = (specDetails?.numberOfRooms.toString())?.split('.')
-            if (bedrooms?.length === 2) {
-                if (bedrooms[1] === '5') {
-                    setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: bedrooms[0] }));
-                    setAddRoomFlag(true);
+            if(specDetailFields?.data?.numberOfRooms !== null) {
+                const bedrooms = (specDetailFields?.data?.numberOfRooms?.toString())?.split('.')
+                if (bedrooms?.length === 2) {
+                    if (bedrooms[1] === '5') {
+                        setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: bedrooms[0] }));
+                        setAddRoomFlag(true);
+                    }
                 }
             }
         }
@@ -171,6 +176,7 @@ const Specs = (props) => {
         if (valid.isValid) {
             dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetails })
             setSaveSpecsFlag(true);
+            saveSpecDetailsFields({ saveFlag: true })
         }
     }
 
@@ -220,6 +226,55 @@ const Specs = (props) => {
             builtUpArea: builtUpArea.toFixed(0) // Adjust decimal places as needed
         }));
     };
+
+    const notifySpecDetails = async () => {
+        const valid = validateSpecs(specDetails, specList, true);
+        setError(valid.errors);
+        if (valid.isValid) {
+            let userId = getLocalStorage('authData');
+            const data = {
+                miscellaneousDetails: {
+                    postedById: userId.userid,
+                    lastPageOfInfoFilled: 2,
+                    draft: true,
+                    partial: false,
+                    requestAlerts: false,
+                    favourite: false,
+                    smartLockProperty: false,
+                    autoRenew: null,
+                    autoApproval: null,
+                    cityProvidesSmartdoorSevice: null,
+                    planId: null,
+                    currentPlanName: null,
+                    expiryDate: null,
+                    numberOfDaysLeft: null,
+                    status: "",
+                    postedByName: userId.name,
+                    postedByMobile: userId.mobile,
+                    postedByProfileImageUrl: '',
+                    ownerName: customerDetails?.name,
+                    ownerMobileNumber: customerDetails?.mobile,
+                    isPostingForOthers: true,
+                    notifyCustomer: true
+                },
+                basicDetails: basicDetailFields?.data,
+                address: addressDetailFields,
+                specs: specDetails
+            }
+            console.log(userId)
+            // setLoading(true)
+            const response = await addBasicDetails(data);
+            console.log(response?.data?.resourceData?.propertyId)
+            if (response.status === 200) {
+                // setLoading(false)
+                dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetails })
+                saveSpecsFlag(true)
+                saveSpecDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
+                history.goBack();
+            }
+        }
+        // setLoading(false)
+    }
 
     return (
         <>
@@ -829,7 +884,8 @@ const Specs = (props) => {
             {saveSpecsFlag === false ?
                 <div className="d-flex">
                     <Buttons className='p-2 px-4' name='Confirm' onClick={() => { saveSpecDetails(); }}></Buttons> &nbsp; &nbsp;
-                    <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
+                    {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
+                    <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifySpecDetails(); }}></Buttons> &nbsp; &nbsp;
                 </div>
                 : null}
 

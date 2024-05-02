@@ -318,7 +318,7 @@ const PostingFields = {
                     "Plot": {
                         "Specs": [
                             "Plot area",
-                            "Entrance facing",
+                            "Overlooking",
                             "General amenities",
                             "Property description"
                         ],

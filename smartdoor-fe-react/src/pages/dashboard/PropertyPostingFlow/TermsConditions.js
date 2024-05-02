@@ -52,7 +52,7 @@ const TermsConditions = (props) => {
                 miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
                     postedById: userData.userid,
                     lastPageOfInfoFilled: 5,
-                    draft: false,
+                    draft: true,
                     partial: false,
                     requestAlerts: false,
                     favourite: false,
@@ -64,13 +64,14 @@ const TermsConditions = (props) => {
                     currentPlanName: null,
                     expiryDate: null,
                     numberOfDaysLeft: null,
-                    status: "UNDER REVIEWED",
+                    status: "",
                     postedByName: userData.name,
                     postedByMobile: userData.mobile,
                     postedByProfileImageUrl: '',
                     ownerName: customerDetails?.name,
                     ownerMobileNumber: customerDetails?.mobile,
-                    isPostingForOthers: true
+                    isPostingForOthers: true,
+                    notifyCustomer: true
                 },
                 basicDetails: basicDetailFields?.data,
                 address: addressDetailFields?.data,

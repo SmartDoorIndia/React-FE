@@ -7,14 +7,15 @@ import cameraIcon from '../../../assets/images/camra-icon.svg';
 import closeBtn from '../../../assets/images/closeBtn.png';
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TextField } from "@mui/material";
-import { showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
-import { addImage, deletePropertyImage, uploadImage } from "../../../common/redux/actions";
+import { getLocalStorage, showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
+import { addBasicDetails, addImage, deletePropertyImage, uploadImage } from "../../../common/redux/actions";
 import { connect, useDispatch } from "react-redux";
 import * as Actions from '../../../common/redux/types';
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Uploads = (props) => {
 
-    const {uploadImages} = props;
+    const {basicDetailFields, uploadImages, saveUploadsFields, addressDetailFields, pricingDetailFields, specDetailFields, editPropertyFlag, customerDetails} = props;
     const fileInputRef = useRef(null);
     const propertyId = props?.propertyId;
     const [imageArr, setImageArray] = useState(uploadImages.data.propertyImages || []);
@@ -25,6 +26,7 @@ const Uploads = (props) => {
     const [imageLoader, setImageLoader] = useState(false)
 	const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
+    const history = useHistory();
 
     useEffect(() => {
         console.log(props)
@@ -186,8 +188,85 @@ const Uploads = (props) => {
         }
         if(isValid) {
             setSaveUploadFlag(true);
-
+            saveUploadsFields({saveFlag: true})
             dispatch({type: Actions.UPLOAD_IMAGES_SUCCESS, data: {propertyImages: imageArr, propertyVideos: videoUrlObj}});
+        }
+
+    }
+
+    const notifyUploads = async () => {
+        let isValid = true;
+        if(imageArr.length < 3) {
+            showErrorToast("Please upload minimum 3 images");
+            isValid = false;
+        }
+        let videoUrlObj = []
+        if((videoUrl1.trim()).length !== 0 && addNewVideoFlag === false) {
+            videoUrlObj = [{
+                docId: null,
+                docName: '',
+                docDescription:'',
+                docURL: videoUrl1
+            }];
+        }
+        if(addNewVideoFlag === true && isValid) {
+            videoUrlObj = [{
+                docId: null,
+                docName: '',
+                docDescription:'',
+                docURL: videoUrl1
+            }, 
+            {
+                docId: null,
+                docName: '',
+                docDescription:'',
+                docURL: videoUrl2
+            }];
+        }
+        if(isValid) {
+            let userId = getLocalStorage('authData');
+            const data = {
+                miscellaneousDetails: {
+                    postedById: userId.userid,
+                    lastPageOfInfoFilled: 4,
+                    draft: true,
+                    partial: false,
+                    requestAlerts: false,
+                    favourite: false,
+                    smartLockProperty: false,
+                    autoRenew: null,
+                    autoApproval: null,
+                    cityProvidesSmartdoorSevice: null,
+                    planId: null,
+                    currentPlanName: null,
+                    expiryDate: null,
+                    numberOfDaysLeft: null,
+                    status: "",
+                    postedByName: userId.name,
+                    postedByMobile: userId.mobile,
+                    postedByProfileImageUrl: '',
+                    ownerName: customerDetails?.name,
+                    ownerMobileNumber: customerDetails?.mobile,
+                    isPostingForOthers: true,
+                    notifyCustomer: true
+                },
+                basicDetails: basicDetailFields?.data,
+                address: addressDetailFields?.data,
+                specs: specDetailFields?.data,
+                pricing: pricingDetailFields?.data,
+                uploads: {propertyImages: imageArr, propertyVideos: videoUrlObj}
+            }
+            console.log(userId)
+            // setLoading(true)
+            const response = await addBasicDetails(data);
+            console.log(response?.data?.resourceData?.propertyId)
+            if (response.status === 200) {
+                // setLoading(false)
+                setSaveUploadFlag(true);
+                saveUploadsFields({saveFlag: true})
+                dispatch({type: Actions.UPLOAD_IMAGES_SUCCESS, data: {propertyImages: imageArr, propertyVideos: videoUrlObj}});
+                history.goBack();
+            }
         }
 
     }
@@ -273,14 +352,15 @@ const Uploads = (props) => {
             {saveUploadFlag === false ?
                 <div className="d-flex">
                     <Buttons className='p-2 px-4' name='Confirm' onClick={() => { saveUploads(); }}></Buttons> &nbsp; &nbsp;
-                    <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
+                    <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'}  onClick={() => { notifyUploads(); }}></Buttons> &nbsp; &nbsp;
+                    {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                 </div>
                 : null}
         </>
     );
 }
-const mapStateToProps = ({ uploadImages }) => ({
-    uploadImages
+const mapStateToProps = ({ basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages }) => ({
+    basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages
 });
 
 const actions = {

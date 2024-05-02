@@ -11,8 +11,9 @@ import * as Actions from '../../../common/redux/types';
 import { validateBasicDetails } from "../../../common/validations";
 import POSTING_CONSTANTS from "../../../common/helpers/POSTING_CONSTANTS";
 import { addBasicDetails } from "../../../common/redux/actions";
-import { getLocalStorage } from "../../../common/helpers/Utils";
+import { getLocalStorage, showErrorToast } from "../../../common/helpers/Utils";
 import Loader from '../../../common/helpers/Loader';
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const BasicDetails = (props) => {
     const { basicDetailFields, saveBasicDetailsFields, customerDetails, editPropertyFlag } = props;
@@ -39,8 +40,9 @@ const BasicDetails = (props) => {
     const [saveBasicDetailsFlag, setSaveBasicDetailsFlag] = useState(editPropertyFlag || false);
     const [error, setError] = useState({});
     const [imageLoader, setImageLoader] = useState(false)
-	const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
+    const history = useHistory();
 
     useEffect(() => {
         let currentYear = new Date().getFullYear();
@@ -66,6 +68,7 @@ const BasicDetails = (props) => {
                 stageOfProperty: 'Ready',
             }));
         }
+        
     };
 
     const setPropertyStage = (e) => {
@@ -81,9 +84,21 @@ const BasicDetails = (props) => {
             ...prevBasicDetails,
             propertyType: e.target.value,
         }));
+        
     }
 
     const saveBasicDetails = async () => {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const currentYear = currentDate.getFullYear();
+        if(selectedYear === currentYear.toString()) {
+            if(selectedMonth < currentMonth.toString()) {
+                showErrorToast('Please select appropriate possession date...');
+                setError({})
+                return null;
+            }
+        }
+
         const valid = await validateBasicDetails(basicDetails);
         console.log("validate response", valid)
         setError(valid.errors);
@@ -105,12 +120,12 @@ const BasicDetails = (props) => {
                     currentPlanName: null,
                     expiryDate: null,
                     numberOfDaysLeft: null,
-                    status: "UNDER REVIEWED",
+                    status: "",
                     postedByName: userId.name,
                     postedByMobile: userId.mobile,
                     postedByProfileImageUrl: '',
-                    ownerName: customerDetails?.name,
-                    ownerMobileNumber: customerDetails?.mobile,
+                    ownerName: '',
+                    ownerMobileNumber: '',
                     isPostingForOthers: true
                 },
                 basicDetails: basicDetails
@@ -119,11 +134,70 @@ const BasicDetails = (props) => {
             setLoading(true)
             const response = await addBasicDetails(data);
             console.log(response?.data?.resourceData?.propertyId)
-            if(response.status === 200) {
+            if (response.status === 200) {
                 setLoading(false)
                 dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
                 setSaveBasicDetailsFlag(true)
                 saveBasicDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
+            }
+            setLoading(false)
+        }
+    }
+
+    const notifyBasicDetails = async () => {
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const currentYear = currentDate.getFullYear();
+        if(selectedYear === currentYear.toString()) {
+            if(selectedMonth < currentMonth.toString()) {
+                showErrorToast('Please select appropriate possession date...');
+                setError({})
+                return null;
+            }
+        }
+
+        const valid = await validateBasicDetails(basicDetails);
+        console.log("validate response", valid)
+        setError(valid.errors);
+        if (valid.isValid) {
+            let userId = getLocalStorage('authData');
+            const data = {
+                miscellaneousDetails: {
+                    postedById: userId.userid,
+                    lastPageOfInfoFilled: 0,
+                    draft: true,
+                    partial: true,
+                    requestAlerts: false,
+                    favourite: false,
+                    smartLockProperty: false,
+                    autoRenew: null,
+                    autoApproval: null,
+                    cityProvidesSmartdoorSevice: null,
+                    planId: null,
+                    currentPlanName: null,
+                    expiryDate: null,
+                    numberOfDaysLeft: null,
+                    status: "",
+                    postedByName: userId.name,
+                    postedByMobile: userId.mobile,
+                    postedByProfileImageUrl: '',
+                    ownerName: customerDetails.ownerName,
+                    ownerMobileNumber: customerDetails.ownerMobileNumber,
+                    isPostingForOthers: true,
+                    notifyCustomer: true
+                },
+                basicDetails: basicDetails
+            }
+            console.log(userId)
+            setLoading(true)
+            const response = await addBasicDetails(data);
+            console.log(response?.data?.resourceData?.propertyId)
+            if (response.status === 200) {
+                setLoading(false)
+                dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
+                setSaveBasicDetailsFlag(true)
+                saveBasicDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
+                history.goBack();
             }
             setLoading(false)
         }
@@ -217,7 +291,18 @@ const BasicDetails = (props) => {
                             >
                                 <MenuItem value="" disabled>Select</MenuItem>
                                 {propertySubTypeList?.length > 0
-                                    ? propertySubTypeList?.map((subType) => (
+                                    ? propertySubTypeList?.filter(subType => {
+                                        if (basicDetails.propertyCategory === 'Renting') {
+                                            return subType !== 'Plot'; // Exclude 'PG/Co-Living' for Renting category
+                                        } else if (basicDetails.propertyCategory === 'Selling') {
+                                            if (basicDetails.stageOfProperty === 'Ready') {
+                                                return subType !== 'Plot' && subType !== 'PG/Co-Living'; // Exclude 'Plot' and 'PG/Co-Living' for Selling category with stage 'Ready'
+                                            } else if (basicDetails.stageOfProperty === 'Under Construction') {
+                                                return subType !== 'PG/Co-Living'; // Exclude 'Plot' for Selling category with stage 'Under Construction'
+                                            }
+                                        }
+                                        return true; // Include all other property subtypes
+                                    }).map((subType) => (
                                         <MenuItem key={subType} value={subType}>
                                             {subType}
                                         </MenuItem>
@@ -358,12 +443,13 @@ const BasicDetails = (props) => {
             </div>
             {saveBasicDetailsFlag === false ?
                 <>
-                    {loading ? <Loader /> 
-                    :
-                    <div className="d-flex">
-                        <Buttons className='p-2 px-4' name='Confirm' onClick={() => { saveBasicDetails(); }}></Buttons> &nbsp; &nbsp;
-                        <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
-                    </div>
+                    {loading ? <Loader />
+                        :
+                        <div className="d-flex">
+                            <Buttons className='p-2 px-4' name='Confirm' onClick={() => { saveBasicDetails(); }}></Buttons> &nbsp; &nbsp;
+                            <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'}  onClick={() => { notifyBasicDetails(); }}></Buttons> &nbsp; &nbsp;
+                            {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
+                        </div>
                     }
                 </>
                 :
