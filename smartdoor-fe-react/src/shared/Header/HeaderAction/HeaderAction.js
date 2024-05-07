@@ -21,12 +21,12 @@ const HeaderAction = (props) => {
   const [show, setShow] = useState(false)
   const userData = getLocalStorage("authData")
 
-  function logout() {
+  async function logout() {
     props._handleCallReject();
     props._handleCallEnd();
-    disconnectSocket(socket);
-    revokeToken();
+    const response = await revokeToken();
     logoutUser();
+    disconnectSocket(socket);
   }
   const handleClose = () => {
     setShow(false)

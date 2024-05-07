@@ -25,7 +25,7 @@ export const AuthProvider = (props) => {
     disconnectSocket();
     clearLocalStorage();
     setIsAuth({ isAuth: false, userData: null });
-    history.push('/');
+    history.push('/login');
     dispatch({ type: USER_LOGOUT });
   };
 

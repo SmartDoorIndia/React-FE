@@ -2655,7 +2655,7 @@ export const ApiJson = {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': 'bearer ' + userData?.access_token
+      // 'Authorization': 'bearer ' + userData?.access_token
     },
     showResultMessage: true,
     showErrorMessage: true
