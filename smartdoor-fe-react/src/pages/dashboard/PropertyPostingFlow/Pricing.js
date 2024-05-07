@@ -280,7 +280,7 @@ const Pricing = (props) => {
                                         valueLabelDisplay="auto"    
                                         min={20}
                                         max={100}
-                                        onChange={(e) => {setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedDiscountInPercent: Number(e.target.checked) }))}}
+                                        onChange={(e) => {setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedDiscountInPercent: Number(e.target.value) }))}}
                                         style={{ color: "#BE142" }}
                                     />
                                 </Col>

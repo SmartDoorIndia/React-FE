@@ -146,7 +146,7 @@ const Specs = (props) => {
                 "Stage of property": basicDetailFields?.data?.stageOfProperty,
                 "Sub type": basicDetailFields?.data?.propertySubType,
                 "Location": addressDetailFields.data.city,
-                "BHK": (specDetails.numberOfRooms).toString(),
+                "BHK": (specDetails?.numberOfRooms)?.toString(),
                 "Attached": JSON.stringify(specDetails.pgGuestHouseAttachedTo) || '',
                 "Flat type": specDetails.flatType,
                 "Commercial purpose": JSON.stringify(specDetails.commercialPropertyPurposes),

@@ -164,7 +164,7 @@ const Uploads = (props) => {
             isValid = false;
         }
         let videoUrlObj = []
-        if((videoUrl1.trim()).length !== 0 && addNewVideoFlag === false) {
+        if((videoUrl1?.trim())?.length !== 0 && addNewVideoFlag === false) {
             videoUrlObj = [{
                 docId: null,
                 docName: '',

@@ -19,7 +19,7 @@ const POSTING_CONSTANTS = {
     FacilityIncluded: ['Electricity', 'Internet', 'Food'],
     InternalAmeniteis: ['Personal Lift', 'Swimming Pool', 'Gym', 'Splash Pool', 'Jacuzzi', 'Bar', 'Media Room'],
     CommercialAmeniteis: ['Conference Hall', 'Common Lobby', 'Gym', 'Lift', 'Power backup', 'Common Cafeteria'],
-    GeneralAmenities: ["Gated community", "Security Services", "Club Hall", "Swimming Pool", "Gym", "Lift", "Common Guest Parking", "Power backup", "Playground", "Inhouse Market/Groceries", "Children Play Area", "Tennis Court", "Table Tennis", "Podium Space", "Basketball", "Sauna", "Steam", "Squash Court", "Piped Gas", "Cricket Pitch/Lawn", "Snooker/Billiards", "Jogging Track", "Badminton"],
+    GeneralAmenities: ["Gated community", "Security Services", "Club House", "Swimming Pool", "Gym", "Lift", "Common Guest Parking", "Power backup", "Playground", "Inhouse Market/Groceries", "Children Play Area", "Tennis Court", "Table Tennis", "Podium Space", "Basketball", "Sauna", "Steam", "Squash Court", "Piped Gas", "Cricket Pitch/Lawn", "Snooker/Billiards", "Jogging Track", "Badminton"],
     preferredFor : [ "Salaried", "professional", "family", "self employed", "guest house", "bachelors"],
     leaseType : [ "Individual lease", "Company Lease" ],
 }

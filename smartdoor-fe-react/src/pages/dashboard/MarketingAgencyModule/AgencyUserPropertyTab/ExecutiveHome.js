@@ -206,7 +206,7 @@ const ExecutiveHome = (props) => {
                         <div className="d-flex justify-content-center">
                             <Text text={'Your customer ' + userData?.transfered_cusomers[0] + ' '}
                                 fontWeight={'bold'} style={{ fontSize: '20px' }} />&nbsp;
-                            <Text text={userData?.transfered_cusomers?.length > 1 ? ' and ' + (userData.transfered_cusomers.length - 1) + '+' : ''}
+                            <Text text={userData?.transfered_cusomers?.length > 1 ? ' and ' + ' +' + (userData.transfered_cusomers.length - 1) : ''}
                                 fontWeight={'bold'} style={{ fontSize: '20px' }} />
                         </div>
                         <div className="d-flex justify-content-center">
