@@ -125,13 +125,20 @@ const Specs = (props) => {
 
     const setAddRoom = (e) => {
         if (e.target.checked) {
-            setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: specDetails.numberOfRooms + 0.5 }))
-            console.log(specDetails.numberOfRooms)
-            setAddRoomFlag(true);
+            const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
+        // Round the updated number to avoid precision issues
+        const roundedRooms = Math.round(updatedRooms * 10) / 10;
+        
+        setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+        console.log(roundedRooms);
+        setAddRoomFlag(true);
         }
         else {
-            setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: specDetails.numberOfRooms - 0.5 }))
-            setAddRoomFlag(false);
+            const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+        const roundedRooms = Math.round(updatedRooms * 10) / 10;
+
+        setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+        setAddRoomFlag(false);
         }
     }
 
