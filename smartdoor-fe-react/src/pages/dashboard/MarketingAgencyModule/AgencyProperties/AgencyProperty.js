@@ -124,7 +124,7 @@ const AgencyProperty = (props) => {
             style: { padding: "0 !important" },
             cell: ({ status }) => <span>{status !== null ? <>
                 {handleStatusElement(status)}
-            </> : '-'}
+            </> : handleStatusElement('Pending form Cusomter')}
             </span>,
         },
         {
@@ -215,6 +215,7 @@ const AgencyProperty = (props) => {
         if (!validateDates()) {
             return null;
         }
+        setRowsPerPage(newRowsPerPage)
         await getAgencyProperties({
             agencyId: agencyId,
             executiveId: executiveId,

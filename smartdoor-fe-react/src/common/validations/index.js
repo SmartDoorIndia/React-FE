@@ -4,6 +4,7 @@
 import isEmpty from 'lodash/isEmpty';
 import ValidationMessages from '../helpers/ValidationMessages';
 import validateRegex from '../helpers/ValidateRegex';
+import { isValid } from 'date-fns';
 
 function isBlank(str) {
   return !str || /^\s*$/.test(str);
@@ -737,7 +738,7 @@ export const validateBasicDetails = (data) => {
       errors.propertySubType = true;
     }
   }
-  if (data.stageOfProperty === 'Ready') {
+  if (data.stageOfProperty === 'Ready'  && data.propertySubType !== 'Plot') {
     if (isBlank(data.ageOfProperty)) {
       errors.ageOfProperty = true;
     }
@@ -745,7 +746,7 @@ export const validateBasicDetails = (data) => {
       errors.ageOfProperty = true;
     }
   }
-  if (data.stageOfProperty === 'Under Construction') {
+  if (data.stageOfProperty === 'Under Construction'  && data.propertySubType !== 'Plot') {
     if (isBlank(data.expectedPossessionDate)) {
       errors.expectedPossessionDate = true;
     }
@@ -940,8 +941,8 @@ export const validatePricing = (data, pricingList) => {
     }
   }
   if (pricingList.includes('Distress CheckBox')) {
-    if ((data.isDistressSell) === null) {
-      errors.isDistressSell = true;
+    if ((data.isQuickSale) === null) {
+      errors.isQuickSale = true;
     }
     if (pricingList.includes('Expected time')) {
       if (isBlank(data.expectedTimeToSellThePropertyWithin)) {
@@ -987,6 +988,35 @@ export const validateTermsConditions = (data) => {
   if (!isBlank(data.securityGuardNumber)) {
     if ((data.securityGuardNumber.trim()).length < 10) {
       errors.securityGuardNumber = true;
+    }
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateCameraData = (data, addNewFlag) => {
+  const errors = {};
+  if(isBlank(data.uuId)) {
+    errors.uuId = true;
+  }
+  if(isBlank(data.userName)) {
+    errors.userName = true;
+  }
+  if(isBlank(data.password)) {
+    errors.password = true;
+  }
+  if(isBlank(data.nickName)) {
+    errors.nickName = true;
+  }
+  if(isBlank(data.CameraType)) {
+    errors.CameraType = true;
+  }
+  if(addNewFlag) {
+    if(isBlank(data.cameraId)) {
+      errors.cameraId = true;
     }
   }
 

@@ -101,7 +101,7 @@ const AgencyExecutives = (props) => {
                             className="w-100"
                             type="number"
                             label="Phone"
-                            disabled={!addNew}
+                            // disabled={!addNew}
                             inputProps={{ min: 0 }}
                             onInput={(e) => {
                                 setExecutiveDetails({ ...executiveDetails, executiveNumber: e.target.value });

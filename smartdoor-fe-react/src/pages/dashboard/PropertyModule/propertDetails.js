@@ -1083,8 +1083,8 @@ const PropertyDetails = (props) => {
                                     fontWeight="mediumbold"
                                     color="secondry-color"
                                     text={propertyData.basicDetails?.propertyCategory === "Selling"
-                                          ? `${setPrice(propertyData.pricing?.propertyRate)}/month`
-                                          : ""}
+                                          ? `${setPrice(propertyData.pricing?.propertyRate)}`
+                                          : `${setPrice(propertyData.pricing?.propertyRate)}/month`}
                                  />
                                  <Text
                                     className="fw500"
@@ -1565,7 +1565,7 @@ const PropertyDetails = (props) => {
                                                 className="fw500 wordWrap"
                                                 size="xSmall"
                                                 color="secondry-color"
-                                                text={propertyData.ownerMobileNumber || "-"}
+                                                text={propertyData.miscellaneousDetails.ownerMobileNumber || "-"}
                                              />
                                           </div>
                                        </div>
@@ -1575,7 +1575,7 @@ const PropertyDetails = (props) => {
                                              <Buttons
                                                 onClick={() => setShowMsgModal(true)}
                                                 disabled={
-                                                   propertyData.ownerNotAvailable ? true : false
+                                                   propertyData.miscellaneousDetails.ownerAvailable ? true : false
                                                 }
                                                 name="Owner"
                                                 varient="primary"
@@ -1589,10 +1589,10 @@ const PropertyDetails = (props) => {
                                           {/* </ToolTip> */}
 
                                           <ToolTip position="top" name="Property Document">
-                                             {propertyData?.ownerNotAvailable ? (
+                                             {propertyData?.miscellaneousDetails.ownerAvailable ? (
                                                 <img
                                                    className={
-                                                      "doc docOwner" + propertyData?.ownerNotAvailable
+                                                      "doc docOwner" + propertyData?.miscellaneousDetails.ownerAvailable
                                                          ? "doc docOwner disabled-icon"
                                                          : ""
                                                    }
@@ -1890,7 +1890,9 @@ const PropertyDetails = (props) => {
                                        size="Small"
                                        fontWeight="semibold"
                                        color="secondryColor"
-                                       text={propertyData.specs?.openArea + " "+propertyData.specs?.openAreaMeasurementUnit}
+                                       text={ propertyData.specs?.openArea === null
+                                          ? "-"
+                                          : propertyData.specs?.openArea + " "+propertyData.specs?.openAreaMeasurementUnit}
                                     />
                                  </td>:""}
                               {specList.includes('Loading factor') ?
@@ -2093,7 +2095,7 @@ const PropertyDetails = (props) => {
                                           size="Small"
                                           fontWeight="semibold"
                                           color="secondryColor"
-                                          text={propertyData.specs?.internalAmenities +"," +propertyData.specs?.generalAmenities+","+propertyData.specs?.commercialGeneralAmenities}
+                                          text={propertyData.specs?.internalAmenities +", " +propertyData.specs?.generalAmenities+", "+propertyData.specs?.commercialGeneralAmenities}
                                        />
                                     </td> : ""}
                               </tr>
@@ -2150,7 +2152,9 @@ const PropertyDetails = (props) => {
                                        size="Small"
                                        fontWeight="semibold"
                                        color="secondryColor"
-                                       text={
+                                       text={ propertyData.specs?.maintenanceCharge === null
+                                          ? "-"
+                                          : 
                                           propertyData.specs.maintenanceCharge}
                                     />
                                  </td>:""}

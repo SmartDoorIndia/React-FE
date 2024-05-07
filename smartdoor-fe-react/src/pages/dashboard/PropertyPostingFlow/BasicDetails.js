@@ -366,7 +366,7 @@ const BasicDetails = (props) => {
                             </Col>
                         </>
                         : null}
-                    {basicDetails.stageOfProperty === 'Under Construction' ?
+                    {basicDetails.stageOfProperty === 'Under Construction' && basicDetails.propertySubType !== 'Plot' ?
                         <>
                             <Col lg='1'>
                                 <Text className='mt-3' fontWeight={'700'} text={'Expected Possession'} style={{ fontSize: '14px' }} />
@@ -420,7 +420,7 @@ const BasicDetails = (props) => {
                             </Col>
                         </>
                         : null}
-                    {basicDetails.stageOfProperty === 'Ready' ?
+                    {basicDetails.stageOfProperty === 'Ready' && basicDetails.propertySubType !== 'Plot' ?
                         <Col lg='4'>
                             <TextField
                                 error={error.ageOfProperty}

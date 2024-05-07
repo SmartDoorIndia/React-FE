@@ -129,11 +129,10 @@ const TermsConditions = (props) => {
                     </Col>
                     <Col lg='6'>
                         <Text text={'Terms and Conditions'} fontWeight={'bold'} style={{ fontSize: '16px' }} />
-                        <Text className='w-100 mt-3' text={'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Viverra urna facilisis \
-                        nibh et, eu, nulla laoreet sodales donec. Leo ultrices id lectus tristique massa nunc, venenatis \
-                        elit non. Et, pellentesque gravida mauris scelerisque est sed tellus vel consequat. Turpis libero \
-                        congue scelerisque malesuada euismod lacus. Aliquet semper vitae eget pharetra sit sed. Sollicitudin quis \
-                        dapibus vel parturient eros tellus sed tellus. Integer aliquam elit leo quam at vel gravida eleifend sit.'}
+                    <Text className='w-100 mt-3' text={'The posting details and safety of SmartDoor kit and the property are entirely \
+                         your responsibility at your cost. SmartDoor will not be responsible for checking for any details or ownership \
+                         of the property or any visitor and will only provide services as a platform for posting the property. \
+                         Details term and conditions for posting are available below.'}
                             fontWeight={'500'} style={{ fontSize: '14px' }} />
                         {/* <div className="d-flex">
                             <Checkbox onChange={(e) => {

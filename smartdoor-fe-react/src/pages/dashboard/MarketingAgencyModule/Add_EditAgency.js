@@ -133,7 +133,7 @@ const Add_EditAgency = (props) => {
                                         className="w-100"
                                         type="number"
                                         label="Phone"
-                                        disabled={!addNew}
+                                        // disabled={!addNew}
                                         inputProps={{ min: 0 }}
                                         onInput={(e) => {
                                             setAgencyDetails({ ...agencyDetails, contactNumber: e.target.value });

@@ -27,7 +27,7 @@ const Pricing = (props) => {
             securityAmount: null,
             expectedDiscountInPercent: 0,
             expectedTimeToSellThePropertyWithin: '',
-            isDistressSell: false,
+            isQuickSale: false,
             isOpenToBuyersOnFractionalOwnershipBasis: false,
             additionalFieldsForChargesDue: [],
             preferredFor: [],
@@ -148,7 +148,7 @@ const Pricing = (props) => {
             if (response.status === 200) {
                 // setLoading(false)
                 dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
-                savePricingFlag(true)
+                setSavePricingFlag(true)
                 savePricingDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
                 history.goBack();
             }
@@ -255,30 +255,32 @@ const Pricing = (props) => {
                                 type="date"
                                 error={error.expectedTimeToSellThePropertyWithin}
                                 inputProps={{ min: currentDate }}
-                                placeholder={'Expected time within which you want to sell the property '}
+                                // label={'Expected time within which you want to sell the property '}
                                 onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedTimeToSellThePropertyWithin: (e.target.value) })) }}
                                 value={pricingDetails.expectedTimeToSellThePropertyWithin}
                             />
+                            <Text text={'Expected time within which you want to sell the property'} />
                         </Col>
                         : null}
                     {pricingList.includes('Distress CheckBox') ?
                         <>
                             <Col lg='4' className="d-flex">
-                                <Checkbox onChange={(e) => { console.log(e); setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isDistressSell: (e.target.checked) })) }}
-                                    checked={pricingDetails.isDistressSell} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                                <Checkbox onChange={(e) => { console.log(e); setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isQuickSale: (e.target.checked) })) }}
+                                    checked={pricingDetails.isQuickSale} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
                                 <Text text={'Do you want to additionally  publish in Distress property section '}
                                     fontWeight={'500'} style={{ fontSize: '13px' }} />
                             </Col>
-                            {pricingList.includes('discount %') && pricingDetails.isDistressSell === true ?
+                            {pricingList.includes('discount %') && pricingDetails.isQuickSale === true ?
                                 <Col className="p-0" lg='4'>
                                     <span className="d-flex">
                                         <Text className='ml-3' text='Expected Discount' fontWeight='bold' style={{ fontSize: '16px' }} />
                                     </span>
                                     <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
                                         className="ml-3 mr-4"
-                                        valueLabelDisplay="auto"
+                                        valueLabelDisplay="auto"    
                                         min={20}
                                         max={100}
+                                        onChange={(e) => {setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedDiscountInPercent: Number(e.target.checked) }))}}
                                         style={{ color: "#BE142" }}
                                     />
                                 </Col>

@@ -13,6 +13,7 @@ import { checkExistingCustomers, transferCustomers } from "../../../../common/re
 import { useDispatch } from "react-redux";
 import * as Actions from '../../../../common/redux/types';
 import { Modal } from "react-bootstrap";
+import validateRegex from "../../../../common/helpers/ValidateRegex";
 
 const ExecutiveHome = (props) => {
 
@@ -51,7 +52,7 @@ const ExecutiveHome = (props) => {
         if (mobileNum.length === 10) {
             console.log("mob->", result);
             setCustomerDetails({ ...customerDetails, mobile: mobileNum });
-            checkExistingCustomer({ mobile: result });
+            checkExistingCustomer({ mobile: mobileNum });
         } else {
             setCustomerDetails({ ...customerDetails, mobile: null });
         }
@@ -127,6 +128,9 @@ const ExecutiveHome = (props) => {
                             if (!userData.isActive) {
                                 showErrorToast("Your Account has been deactivated...");
                             }
+                            // else if(!validateRegex?.numberOnly?.test(String(customerDetails.mobile).toLowerCase())) {
+                            //     showErrorToast("Mobile Number is not valid...");
+                            // }
                             else if (customerDetails.mobile != null && customerDetails.mobile.length === 10) {
                                 redirectToPosting();
                             } else {

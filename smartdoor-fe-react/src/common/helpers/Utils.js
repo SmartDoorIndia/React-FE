@@ -268,6 +268,17 @@ export function handleStatusElement(status) {
         className="tagDangerous defaultTag ml-1 labelFontSize"
       />
     );
+  }
+  else if (status === 'Pending form Cusomter') {
+    return (
+      <Text
+        fontWeight="mediumbold"
+        color="white"
+        text="Pending form Cusomter"
+        style={{backgroundColor:'#FF6C1A'}}
+        className="tagAlert defaultTag ml-2 "
+      />
+    );
   } else {
     return (
       <Text

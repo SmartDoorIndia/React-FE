@@ -202,7 +202,7 @@ const AddressSection = (props) => {
 	const saveAddressDetails = () => {
 		let valid = {}
 		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot') {
-			if (addressDetails.floorNumber > addressDetails.totalFloors) {
+			if (Number(addressDetails.floorNumber) > Number(addressDetails.totalFloors)) {
 				showErrorToast("In valid floor number...");
 				return null;
 			}
@@ -268,7 +268,7 @@ const AddressSection = (props) => {
 			if (response.status === 200) {
 				// setLoading(false)
 				dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetails })
-				saveAddressFlag(true)
+				setSaveAddressFlag(true)
 				saveAddressDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
 				history.goBack();
 			}
@@ -285,7 +285,7 @@ const AddressSection = (props) => {
 							error={error.locality}
 							className='w-100'
 							sdIconFlag={false}
-							currentLocFlag={true}
+							currentLocFlag={false}
 							label="Select  location of property"
 							cityLatLng={null}
 							placeholder="Enter location"

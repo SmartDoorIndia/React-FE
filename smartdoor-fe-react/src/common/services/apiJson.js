@@ -2651,7 +2651,7 @@ export const ApiJson = {
   logoutUser: {
     url: '/userauth/public/revokeToken',
     method: 'DELETE',
-    data: {},
+    // data: {},
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -2659,8 +2659,54 @@ export const ApiJson = {
     },
     showResultMessage: true,
     showErrorMessage: true
-  }
+  },
+
+  editCameraData: {
+    url: '/smartlock/smartlock/saverrupdateCameraDevice',
+    method: 'PUT',
+    data: {
+      uuId: null,
+      userName: '',
+      password: '',
+      nickName: '',
+      CameraType: '',
+      propertyId: ''
+    },
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json'
+    },
+    showResultMessage: true,
+    showErrorMessage: true
+  },
+
+  getCameraTypes: {
+    url: '/smartlock/smartlock/getCameraTypes',
+    method: 'GET',
+    data: {
+    },
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json'
+    },
+    showResultMessage: true,
+    showErrorMessage: true
+  },
+
+  setCallbackUrl: {
+    url: '/smartlock/smartlock/setCallBackURL/:type/:sns/:propertyId',
+    method: 'PUT',
+    data: {
+    },
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json'
+    },
+    showResultMessage: true,
+    showErrorMessage: true
+  },
 };
+console.log(userData)
 
 
 

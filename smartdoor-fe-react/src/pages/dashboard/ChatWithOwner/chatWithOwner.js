@@ -50,6 +50,7 @@ const ChatWithOwner = (props) => {
 
     useEffect(() => {
         console.log('CONNECT SOCKET SERVER', socket.id, socket, socketLoggedInUserData);
+        console.log(ownerId)
         if (!socketLoggedInUserData) {
             connectSocket(socket);
         }
@@ -73,6 +74,7 @@ const ChatWithOwner = (props) => {
     }, [chatHistory?.length]);
 
     const sendMessageEvent = async () => {
+        console.log(message)
         setMessage(message.trim())
         if ((message.trim()).length !== 0) {
             if (message !== null || message !== '') {

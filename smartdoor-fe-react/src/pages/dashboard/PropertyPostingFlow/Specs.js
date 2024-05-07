@@ -268,7 +268,7 @@ const Specs = (props) => {
             if (response.status === 200) {
                 // setLoading(false)
                 dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetails })
-                saveSpecsFlag(true)
+                setSaveSpecsFlag(true)
                 saveSpecDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
                 history.goBack();
             }
@@ -291,7 +291,7 @@ const Specs = (props) => {
                                     label={'BHK'}
                                     onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: e.target.value })) }}
                                     value={specDetails.numberOfRooms}
-                                    inputProps={{ min: 0 }}
+                                    inputProps={{ min: 1, max: 6 }}
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
@@ -648,7 +648,7 @@ const Specs = (props) => {
                             <TextField
                                 type="number"
                                 className="w-100"
-                                inputProps={{ min: 0 }}
+                                inputProps={{ min: 0, max: 6 }}
                                 label={'Number of Balconies Including in Carpet Area'}
                                 onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfBalconies: e.target.value })) }}
                                 value={specDetails.numberOfBalconies}
@@ -661,7 +661,7 @@ const Specs = (props) => {
                             <TextField
                                 type="number"
                                 required
-                                inputProps={{ min: 0 }}
+                                inputProps={{ min: 0, max: 6 }}
                                 error={error.numberOfBaths}
                                 className="w-100"
                                 label={'Number of Washrooms'}
@@ -679,7 +679,7 @@ const Specs = (props) => {
                                 error={error.numberOfCarParking}
                                 className="w-100"
                                 label={'Car Parkings'}
-                                inputProps={{ min: 0 }}
+                                inputProps={{ min: 0, max: 6 }}
                                 onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfCarParking: e.target.value })) }}
                                 value={specDetails.numberOfCarParking}
                             >
@@ -692,7 +692,7 @@ const Specs = (props) => {
                                 type="number"
                                 className="w-100"
                                 label={'Reserved Car Parkings'}
-                                inputProps={{ min: 0 }}
+                                inputProps={{ min: 0, max: 6 }}
                                 onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfReservedCarParking: e.target.value })) }}
                                 value={specDetails.numberOfReservedCarParking}
                             >

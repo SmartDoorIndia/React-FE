@@ -1,12 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
-import { getSmartLockData, getContactSensor, getCameraDevice } from "../../../../common/redux/actions";
-import { showErrorToast } from "../../../../common/helpers/Utils";
+import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes, setCallBackUrl } from "../../../../common/redux/actions";
+import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import ListingDataTable from "../../../../shared/DataTable/ListingDataTable";
-import { Divider, TextField } from "@mui/material";
+import { Divider, MenuItem, TextField } from "@mui/material";
 import TextArea from "../../../../shared/Inputs/TextArea/TextArea";
+import { Modal } from "react-bootstrap";
+import { validateCameraData } from "../../../../common/validations";
 
 const PropertyDevice = (props) => {
 
@@ -20,14 +22,18 @@ const PropertyDevice = (props) => {
     const [smartLockData, setSmartLockData] = useState([]);
     const [showEditSmartLockData, setShowEditSmartLockData] = useState(false);
     const [selectedSmartLockData, setselectedSmartLockData] = useState({})
-    
+
     const [censorData, setCensorData] = useState([])
     const [showEditCensorData, setShowEditCensorData] = useState(false);
     const [selectedCensorData, setselectedCensorData] = useState({})
-    
+
     const [cameraData, setCameraData] = useState([])
     const [showEditCameraData, setShowEditCameraData] = useState(false);
     const [selectedCameraData, setselectedCameraData] = useState({})
+    const [addCameraFlag, setAddCameraFlag] = useState(false);
+    const [changeUUIDFlag, setChangeUUIDFlag] = useState(false);
+    const [cameraTypeList, setCameraTypeList] = useState([]);
+    const [error, setError] = useState({});
 
     const _getSmartLockData = useCallback(async () => {
         try {
@@ -83,7 +89,15 @@ const PropertyDevice = (props) => {
     useEffect(() => {
         _getSmartLockData();
         _getContactSensor(propertyId);
-        _getCameraDevice(propertyId)
+        _getCameraDevice(propertyId);
+        getCameraTypes({})
+            .then((response) => {
+                setCameraTypeList(response.data.resourceData)
+            })
+            .catch(error => {
+                console.log(error)
+            });
+
     }, [propertyId, _getSmartLockData, _getContactSensor, _getCameraDevice])
 
     const columns = [
@@ -100,68 +114,6 @@ const PropertyDevice = (props) => {
             maxWidth: '120px',
             center: true,
         },
-        // {
-        //     name: 'Created On',
-        //     selector: 'createdDate',
-        //     maxWidth: '180px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Last Modified On',
-        //     selector: 'lastModifiedDate',
-        //     maxWidth: '180px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'is Deleted',
-        //     selector: 'deleted',
-        //     maxWidth: '60px',
-        //     center: true,
-        //     cell: ({ deleted }) => (
-        //         deleted ?
-        //             <Text
-        //                 text='Yes' /> :
-        //             <Text
-        //                 text='No' />
-
-        //     )
-        // },
-        // {
-        //     name: 'Lock mac',
-        //     selector: 'lockmac',
-        //     maxWidth: '200px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Lock Data',
-        //     selector: 'lockData',
-        //     maxWidth: '800px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Lock Power %',
-        //     selector: 'lockPowerPercentage',
-        //     maxWidth: '100px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Is Door Open',
-        //     selector: 'doorOpen',
-        //     maxWidth: '60px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Username',
-        //     selector: 'username',
-        //     maxWidth: '120px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Password',
-        //     selector: 'password',
-        //     maxWidth: '120px',
-        //     center: true,
-        // },
         {
             name: 'Access Token',
             selector: 'accessToken',
@@ -174,82 +126,6 @@ const PropertyDevice = (props) => {
             maxWidth: '300px',
             center: true,
         },
-        // {
-        //     name: 'UID',
-        //     selector: 'uid',
-        //     maxWidth: '60px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Open ID',
-        //     selector: 'openId',
-        //     maxWidth: '60px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Scope',
-        //     selector: 'scope',
-        //     maxWidth: '60px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Token Type',
-        //     selector: 'tokenType',
-        //     maxWidth: '60px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Expires On',
-        //     selector: 'expiresIn',
-        //     maxWidth: '60px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Lock Id',
-        //     selector: 'lockId',
-        //     maxWidth: '60px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Key Id',
-        //     selector: 'keyId',
-        //     maxWidth: '60px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'SmartLock Admin Passcode',
-        //     selector: 'smartlockAdminPasscode',
-        //     maxWidth: '60px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Is SmartLock Installed',
-        //     selector: 'isSmartlockInstalled',
-        //     maxWidth: '60px',
-        //     center: true,
-        //     cell: ({ isSmartlockInstalled }) => (
-        //         isSmartlockInstalled ?
-        //             <Text
-        //                 text='Yes' /> :
-        //             <Text
-        //                 text='No' />
-
-        //     )
-        // },
-        // {
-        //     name: 'Is Gateway Installed',
-        //     selector: 'isGatewayInstalled',
-        //     maxWidth: '60px',
-        //     center: true,
-        //     cell: ({ isGatewayInstalled }) => (
-        //         isGatewayInstalled ?
-        //             <Text
-        //                 text='Yes' /> :
-        //             <Text
-        //                 text='No' />
-
-        //     )
-        // },
         {
             name: "Action",
             sortable: false,
@@ -277,18 +153,6 @@ const PropertyDevice = (props) => {
             maxWidth: '60px',
             center: true,
         },
-        // {
-        //     name: 'Created On',
-        //     selector: 'createdDate',
-        //     maxWidth: '200px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Last Modified On',
-        //     selector: 'lastModifiedDate',
-        //     maxWidth: '200px',
-        //     center: true,
-        // },
         {
             name: 'Serial No.',
             selector: 'serialNumber',
@@ -358,36 +222,6 @@ const PropertyDevice = (props) => {
             maxWidth: '150px',
             center: true,
         },
-        // {
-        //     name: 'Created On',
-        //     selector: 'createdDate',
-        //     minWidth: '200px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Last Modified On',
-        //     selector: 'lastModifiedDate',
-        //     minWidth: '200px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Username',
-        //     selector: 'userName',
-        //     maxWidth: '120px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Password',
-        //     selector: 'password',
-        //     maxWidth: '120px',
-        //     center: true,
-        // },
-        // {
-        //     name: 'Nick Name',
-        //     selector: 'nickName',
-        //     maxWidth: '200px',
-        //     center: true,
-        // },
         {
             name: 'Is Deleted',
             selector: 'deleted',
@@ -447,17 +281,37 @@ const PropertyDevice = (props) => {
         setShowEditCameraData(true)
         cameraData.forEach(element => {
             if (element.uuId === uuId) {
-                setselectedCameraData(element)
+                setselectedCameraData({...element, cameraId: element.cameraDeviceId})
                 console.log(element)
             }
         });
     }
 
+    const editCameraDetails = async (addNewFlag) => {
+        if(addNewFlag === false) {
+            await setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: selectedCameraData.cameraDeviceId }))
+        }
+        const valid = await validateCameraData(selectedCameraData, addNewFlag);
+        console.log(valid)
+        if(valid.isValid) {
+            const response = await editCameraData(selectedCameraData);
+            if (response.status === 200) {
+                showSuccessToast("CameraDevice Data updated successfully");
+                setShowEditCameraData(false);
+                setAddCameraFlag(false);
+                // if (changeUUIDFlag) {
+                //     setCallBackUrl({ type: 'prod', sns: selectedCameraData.uuId, propertyId: propertyId });
+                // }
+                _getCameraDevice(propertyId);
+            }
+        }
+    }
+
     return (
         <>
-            <div className="whiteBg">
+            <div className="whiteBg" style={{ height: '32rem', overflowY: 'auto' }}>
                 <Text
-                    className="m-2 h5"
+                    className="h5"
                     size="medium"
                     text={"Smart Lock Data"}
                 />
@@ -611,7 +465,7 @@ const PropertyDevice = (props) => {
                                 <Buttons
                                     name="Hide Data"
                                     varient="primary"
-                                    style={{float:'right', marginInlineEnd: '4%'}}
+                                    style={{ float: 'right', marginInlineEnd: '4%' }}
                                     size="xSmall"
                                     color="white"
                                     className="mt-2 mb-2"
@@ -622,7 +476,7 @@ const PropertyDevice = (props) => {
                     ) : (<></>)}
                 </div>
                 <Text
-                    className="px-2 mt-4 h5"
+                    className="mt-3 h5"
                     size="medium"
                     text={"Contact Sensor Data"}
                 />
@@ -639,9 +493,9 @@ const PropertyDevice = (props) => {
                 {showEditCensorData ? (
                     <>
                         <Text
-                                className="m-2 h5"
-                                size="medium"
-                                text="View Contact Sensor Data"
+                            className="m-2 h5"
+                            size="medium"
+                            text="View Contact Sensor Data"
                         />
                         <div className="d-flex mt-3 row col-12">
                             <TextField
@@ -651,20 +505,6 @@ const PropertyDevice = (props) => {
                                 label="id"
                                 value={selectedCensorData?.id}
                             />
-                            {/* <TextField
-                                className='col-4 px-1 mt-3'
-                                id="createdOn"
-                                contentEditable='false'
-                                label="createdOn"
-                                value={selectedCensorData?.createdDate}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="lastModifiedDate"
-                                contentEditable='false'
-                                label="lastModified On"
-                                value={selectedCensorData?.lastModifiedDate}
-                            /> */}
                             <TextField
                                 className='col-4 px-1 mt-3'
                                 id="serialNumber"
@@ -695,25 +535,26 @@ const PropertyDevice = (props) => {
                             />
                         </div>
                         <div className="mb-5">
-                                <Buttons
-                                    name="Hide Data"
-                                    varient="primary"
-                                    style={{float:'right', marginInlineEnd: '4%'}}
-                                    size="xSmall"
-                                    color="white"
-                                    className="mt-2 mb-2"
-                                    onClick={() => { setShowEditCensorData(false) }} />
+                            <Buttons
+                                name="Hide Data"
+                                varient="primary"
+                                style={{ float: 'right', marginInlineEnd: '4%' }}
+                                size="xSmall"
+                                color="white"
+                                className="mt-2 mb-2"
+                                onClick={() => { setShowEditCensorData(false) }} />
                         </div>
                         <Divider />
                     </>
-                ):(null)}
+                ) : (null)}
 
                 <Text
-                    className="px-2 mt-4 h5"
+                    className="mt-3 mb-0 h5"
                     size="medium"
                     text={"Camera Device Data"}
                 />
                 <ListingDataTable
+                    className='mt-0'
                     columns={cameraDeviceColumns}
                     data={cameraData}
                     paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
@@ -722,92 +563,227 @@ const PropertyDevice = (props) => {
                     persistTableHead="true"
                 >
                 </ListingDataTable>
+                <Buttons
+                    name="Add New Camera"
+                    varient="primary"
+                    // style={{float:'right'}}
+                    size="xSmall"
+                    color="white"
+                    className="mt-2 mb-2"
+                    onClick={() => {
+                        setAddCameraFlag(true);
+                        setChangeUUIDFlag(false);
+                        setselectedCameraData(prevCameraData => ({
+                            ...prevCameraData,
+                            uuId: '',
+                            userName: '',
+                            password: '',
+                            nickName: '',
+                            cameraDeviceId: '',
+                            cameraId: '',
+                            CameraType: '',
+                            propertyId: propertyId
+                        }))
+                    }} /> &nbsp;&nbsp;
 
                 {showEditCameraData ? (
                     <>
                         <Text
-                                className="m-2 h5"
-                                size="medium"
-                                text="View Camera Device Data"
+                            className="m-2 h5"
+                            size="medium"
+                            text="View Camera Device Data"
                         />
                         <div className="d-flex mt-3 row col-12">
                             <TextField
                                 className='col-4 px-1 mt-3'
                                 id="uuId"
-                                contentEditable='false'
+                                contentEditable={true}
+                                error={error.uuId}
                                 label="UUID"
+                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, uuId: e.target.value }));
+                                                    setChangeUUIDFlag(true); }}
                                 value={selectedCameraData?.uuId}
                             />
                             <TextField
                                 className='col-4 px-1 mt-3'
                                 id="propertyId"
-                                contentEditable='false'
+                                contentEditable={false}
                                 label="Property Id"
                                 value={selectedCameraData?.propertyId}
                             />
                             <TextField
                                 className='col-4 px-1 mt-3'
                                 id="propertyId"
-                                contentEditable='false'
+                                contentEditable={false}
                                 label="Camera DeviceId"
                                 value={selectedCameraData?.cameraDeviceId}
                             />
-                            {/* <TextField
-                                className='col-4 px-1 mt-3'
-                                id="createdOn"
-                                contentEditable='false'
-                                label="createdOn"
-                                value={selectedCameraData?.createdDate}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="lastModifiedDate"
-                                contentEditable='false'
-                                label="Last Modified On"
-                                value={selectedCameraData?.lastModifiedDate}
-                            /> */}
                             <TextField
                                 className='col-4 px-1 mt-3'
                                 id="userName"
-                                contentEditable='false'
+                                contentEditable={true}
+                                error={error.userName}
+                                type="text"
                                 label="userName"
+                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, userName: e.target.value })) }}
                                 value={selectedCameraData?.userName}
                             />
                             <TextField
                                 className='col-4 px-1 mt-3'
                                 id="password"
-                                contentEditable='false'
+                                contentEditable={true}
+                                error={error.password}
+                                type="text"
                                 label="Password"
+                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, password: e.target.value })) }}
                                 value={selectedCameraData?.password}
                             />
                             <TextField
                                 className='col-4 px-1 mt-3'
+                                id="cameraType"
+                                select
+                                error={error.CameraType}
+                                label="Camera Type"
+                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, CameraType: e.target.value, type: e.target.value })) }}
+                                value={selectedCameraData?.type}
+                            >
+                                {cameraTypeList.map(item => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                            <TextField
+                                className='col-4 px-1 mt-3'
                                 id="nickName"
-                                contentEditable='false'
+                                contentEditable={true}
+                                error={error.nickName}
+                                type="text"
                                 label="Nick Name"
+                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, nickName: e.target.value })) }}
                                 value={selectedCameraData?.nickName}
                             />
                             <TextField
                                 className='col-4 px-1 mt-3'
                                 id="deleted"
-                                contentEditable='false'
+                                contentEditable={false}
                                 label="Is deleted"
                                 value={selectedCameraData?.deleted ? 'Yes' : 'No'}
                             />
                         </div>
-                        <div className="mb-5">
-                                <Buttons
-                                    name="Hide Data"
-                                    varient="primary"
-                                    style={{float:'right', marginInlineEnd: '4%'}}
-                                    size="xSmall"
-                                    color="white"
-                                    className="mt-2 mb-2"
-                                    onClick={() => { setShowEditCameraData(false) }} />
+                        <div className="d-flex justify-content-end">
+                            <Buttons
+                                name="Hide Data"
+                                varient="primary"
+                                // style={{float:'right'}}
+                                size="xSmall"
+                                color="white"
+                                className="mt-2 mb-2"
+                                onClick={() => { setShowEditCameraData(false); setChangeUUIDFlag(false); }} /> &nbsp;&nbsp;
+                            <Buttons
+                                name="Edit Data"
+                                varient="primary"
+                                // style={{float:'right'}}
+                                size="xSmall"
+                                color="white"
+                                className="mt-2 mb-2"
+                                onClick={() => { setShowEditCameraData(false); editCameraDetails(false); }} />
                         </div>
                     </>
-                ):(null)}
+                ) : (null)}
             </div>
+            <Modal size="lg" show={addCameraFlag} onHide={() => { setAddCameraFlag(false) }} centered={true} >
+                <Modal.Body>
+                    <Text
+                        className="m-2 h5"
+                        size="medium"
+                        text="Add New Camera Device Data"
+                    />
+                    <div className="d-flex mt-3 row col-12">
+                        <TextField
+                            className='col-4 px-1 mt-3'
+                            id="uuId"
+                            error={error.uuId}
+                            contentEditable={true}
+                            label="UUID"
+                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, uuId: e.target.value })) }}
+                            value={selectedCameraData?.uuId}
+                        />
+                        <TextField
+                            className='col-4 px-1 mt-3'
+                            id="propertyId"
+                            contentEditable={false}
+                            label="Property Id"
+                            value={selectedCameraData?.propertyId}
+                        />
+                        <TextField
+                            className='col-4 px-1 mt-3'
+                            id="propertyId"
+                            contentEditable={false}
+                            label="Camera DeviceId"
+                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: e.target.value })) }}
+                            value={selectedCameraData?.cameraId}
+                        />
+                        <TextField
+                            className='col-4 px-1 mt-3'
+                            id="userName"
+                            contentEditable={true}
+                            error={error.userName}
+                            type="text"
+                            label="userName"
+                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, userName: e.target.value })) }}
+                            value={selectedCameraData?.userName}
+                        />
+                        <TextField
+                            className='col-4 px-1 mt-3'
+                            id="password"
+                            contentEditable={true}
+                            error={error.password}
+                            type="text"
+                            label="Password"
+                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, password: e.target.value })) }}
+                            value={selectedCameraData?.password}
+                        />
+                        <TextField
+                            className='col-4 px-1 mt-3'
+                            id="cameraType"
+                            select
+                            error={error.CameraType}
+                            label="Camera Type"
+                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, CameraType: e.target.value })) }}
+                            value={selectedCameraData?.CameraType}
+                        >
+                            {cameraTypeList.map(item => (
+                                <MenuItem key={item} value={item}>{item}</MenuItem>
+                            ))}
+                        </TextField>
+                        <TextField
+                            className='col-4 px-1 mt-3'
+                            id="nickName"
+                            contentEditable={true}
+                            error={error.nickName}
+                            type="text"
+                            label="Nick Name"
+                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, nickName: e.target.value })) }}
+                            value={selectedCameraData?.nickName}
+                        />
+                        <TextField
+                            className='col-4 px-1 mt-3'
+                            id="deleted"
+                            contentEditable={false}
+                            label="Is deleted"
+                            value={selectedCameraData?.deleted ? 'Yes' : 'No'}
+                        />
+                    </div>
+                    <div className="d-flex justify-content-center">
+                        <Buttons
+                            name="Add Camera Data"
+                            varient="primary"
+                            size="xSmall"
+                            color="white"
+                            className="mt-2 mb-2 p-3"
+                            onClick={() => { editCameraDetails(true); }} />
+                    </div>
+                </Modal.Body>
+            </Modal>
         </>
     )
 }

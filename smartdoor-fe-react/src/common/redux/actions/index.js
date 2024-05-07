@@ -5,7 +5,7 @@ import notify from 'devextreme/ui/notify';
 import mainApiService from '../../services/apiService';
 import * as Actions from '../types';
 
-import { setLocalStorage } from '../../../common/helpers/Utils';
+import { clearLocalStorage, setLocalStorage } from '../../../common/helpers/Utils';
 import { showSuccessToast, showErrorToast } from '../../../common/helpers/Utils';
 import { provideAuth } from '../../../common/helpers/Auth';
 
@@ -1964,6 +1964,24 @@ export const getChatGptDescription = async (data) => {
 }
 
 export const revokeToken = async (data) => {
-  const response = await mainApiService('logoutUser', data);
+  const response = await mainApiService('logoutUser', {});
+  if(response.status === 200) {
+    clearLocalStorage();
+  }
+  return response;
+}
+
+export const editCameraData = async (data) => {
+  const response = await mainApiService('editCameraData', data);
+  return response;
+}
+
+export const getCameraTypes = async (data) => {
+  const response = await mainApiService('getCameraTypes', data);
+  return response;
+}
+
+export const setCallBackUrl = async (data) => {
+  const response = await mainApiService('setCallbackUrl', data);
   return response;
 }
