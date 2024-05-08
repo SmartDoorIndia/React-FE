@@ -9,7 +9,7 @@ import AgencyCustomers from "../AgencyCustomers/AgencyCustomers";
 import { TextField, MenuItem } from "@mui/material";
 import { getAgencyExecutiveById, getAllAgencyExecutives, transferCustomers } from "../../../../common/redux/actions";
 import { connect } from "react-redux";
-import { getLocalStorage, showSuccessToast } from "../../../../common/helpers/Utils";
+import { getLocalStorage, showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 
 const ExecutiveDetails = (props) => {
     const { getAllAgencyExecutives, AgencyExecutiveList } = props;
@@ -46,12 +46,12 @@ const ExecutiveDetails = (props) => {
     const deleteExecutive = async () => {
         let data = {
             existingAgencyId: agencyId,
-            newAgencyId: null,
+            newAgencyId: agencyId,
             existingExecutiveId: executiveId,
             newExecutiveId: executiveDetails.customerCount !== null ? destAgencyExecutive : 0,
             deactivateAgency: false,
             deleteExecutive: true,
-            propTransfer: executiveDetails.customerCount !== null ? true : false,
+            propTransfer: true,
             customerTransfer: true,
             reactivateAgency: false
         }
@@ -97,7 +97,13 @@ const ExecutiveDetails = (props) => {
                     <div>
                         <div className="d-flex justify-content-start mt-2">
                             <Button variant='outlined' className='py-0 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452' }} onClick={() => { history.push('/admin/executives/executive-details/edit-executive', { executiveDetails: executiveDetails, agencyId: agencyId, addNew: false }) }}>Edit</Button>&nbsp;&nbsp;
-                            <Button variant='primary' className='text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { setShowDeleteModal(true) }}>Delete</Button>
+                            <Button variant='primary' className='text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => {
+                                if(AgencyExecutiveList.data.executives.length < 2) {
+                                    showErrorToast("Please add another executive to delete existing executive");
+                                    return null;
+                                } else {
+                                    setShowDeleteModal(true) 
+                                } }}>Delete</Button>
                         </div>
                     </div>
                 </div>

@@ -24,6 +24,7 @@ const Add_EditAgency = (props) => {
         contactEmail: ''
     });
     const [error, setError] = useState({});
+    const [disableFlag, setDisableFlag] = useState(false);
     const history = useHistory();
 
     useEffect(() => {
@@ -37,20 +38,25 @@ const Add_EditAgency = (props) => {
     const validateAgencyDetail = async () => {
         const valid = validateAgencyDetails(agencyDetails);
         console.log(valid);
+        setError(valid.errors)
         console.log(agencyDetails);
         if (valid.isValid) {
+            setDisableFlag(true);
             await addEditAgency(agencyDetails)
-                .then((response) => {
-                    console.log(response);
-                    if (response.status === 200) {
-                        if (addNew) {
-                            showSuccessToast('Agency added successfully...');
-                        } else {
-                            showSuccessToast('Agency edited successfully...');
-                        }
-
-                        history.goBack();
+            .then((response) => {
+                console.log(response);
+                if (response.status === 200) {
+                    setDisableFlag(true);
+                    if (addNew) {
+                        showSuccessToast('Agency added successfully...');
+                    } else {
+                        showSuccessToast('Agency edited successfully...');
                     }
+                    
+                    history.goBack();
+                } else {
+                    setDisableFlag(false);
+                }
                 })
                 .catch(error => {
                     showErrorToast('Number already exist');
@@ -167,7 +173,7 @@ const Add_EditAgency = (props) => {
                             </Row>
                             <div className="d-flex mt-3">
                                 <Buttons name='Cancel' size='medium' varient='secondary' onClick={() => { history.goBack(); }}></Buttons> &nbsp;&nbsp;&nbsp;&nbsp;
-                                <Buttons name='Submit' size='medium' varient='primary' onClick={() => { validateAgencyDetail() }}></Buttons>
+                                <Buttons name='Submit' disabled={disableFlag} size='medium' varient='primary' onClick={() => { validateAgencyDetail() }}></Buttons>
                             </div>
                         </div>
                     </div>

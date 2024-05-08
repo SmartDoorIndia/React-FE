@@ -9,7 +9,7 @@ const CONSTANTS_STATUS = {
     meetingRequestsStatusArr  :  [ "ASSIGNED" , "IN PROGRESS" , "COMPLETED" , "NOT DONE" ],
     dealApprovalsStatusArr  :  [ "PENDING" , "CANCELLED" , "APPROVED" ],
     societyLeadsStatusArr : ["PENDING" , "IN PROGRESS" ,"CONVERTED",  "CANCELLED" , "NOT INTERESTED" ],
-    propertyStatusArr :  [ "UNDER REVIEW" , "PUBLISHED" ],
+    propertyStatusArr :  [ "UNDER REVIEW" , "PUBLISHED" , "Pending from Customer"],
     propertyType :  [ "SMARTDOOR" , "NON SMARTDOOR" ],
     realtorStatusArr :  [ "SUBMITTED" , "ACCEPTED", "REJECTED" ],
     propertyPostType : [ "Renting", "Selling"],

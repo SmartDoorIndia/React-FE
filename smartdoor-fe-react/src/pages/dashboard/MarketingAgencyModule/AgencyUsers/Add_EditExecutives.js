@@ -24,6 +24,7 @@ const AgencyExecutives = (props) => {
         executiveEmail: props?.location?.state?.executiveDetails?.email || ''
     });
     const [error, setError] = useState({});
+    const [disableFlag, setDisableFlag] = useState(false);
     const history = useHistory();
 
     const validateExecutiveDetail = async () => {
@@ -36,10 +37,14 @@ const AgencyExecutives = (props) => {
             console.log(valid);
             console.log(executiveDetails);
             if (valid.isValid) {
+                setDisableFlag(true);
                 const response = await addEditExecutive(executiveDetails).then((response) => {
                     if (response.status === 200) {
                         showSuccessToast('Agency Executive added successfully...');
+                        setDisableFlag(true)
                         history.goBack();
+                    } else {
+                        setDisableFlag(false)
                     }
                 })
                     .catch(error => {
@@ -103,15 +108,17 @@ const AgencyExecutives = (props) => {
                             label="Phone"
                             // disabled={!addNew}
                             inputProps={{ min: 0 }}
-                            onInput={(e) => {
-                                setExecutiveDetails({ ...executiveDetails, executiveNumber: e.target.value });
+                            onChange={(e) => {
+                                const result = e.target.value.replace(/\D/g, '');
+                                const mobileNum = (result.slice(0, 10));
+                                setExecutiveDetails({ ...executiveDetails, executiveNumber: mobileNum });
                                 if (e.target.value.length !== 10) {
                                     setError({ ...error, executiveNumber: 'Contact Number must be 10 digits' })
                                 }
                                 else { setError({ ...error, executiveNumber: '' }) }
                             }
                             }
-                            defaultValue={executiveDetails.executiveNumber}
+                            value={executiveDetails.executiveNumber}
                         />
                         <Text
                             color="dangerText"
@@ -138,7 +145,7 @@ const AgencyExecutives = (props) => {
                 </Row>
                 <div className="d-flex mt-3">
                     <Buttons name='Cancel' size='medium' varient='secondary' onClick={() => { history.goBack(); }}></Buttons> &nbsp;&nbsp;&nbsp;&nbsp;
-                    <Buttons name='Submit' size='medium' varient='primary' onClick={() => { validateExecutiveDetail() }}></Buttons>
+                    <Buttons name='Submit' disabled={disableFlag} size='medium' varient='primary' onClick={() => { validateExecutiveDetail() }}></Buttons>
                 </div>
             </div>
         </>

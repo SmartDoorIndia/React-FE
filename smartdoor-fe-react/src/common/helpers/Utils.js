@@ -269,12 +269,12 @@ export function handleStatusElement(status) {
       />
     );
   }
-  else if (status === 'Pending form Cusomter') {
+  else if (status === 'Pending from Customer') {
     return (
       <Text
         fontWeight="mediumbold"
         color="white"
-        text="Pending form Cusomter"
+        text="Pending form Customer"
         style={{backgroundColor:'#FF6C1A'}}
         className="tagAlert defaultTag ml-2 "
       />

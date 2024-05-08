@@ -124,7 +124,7 @@ const AgencyProperty = (props) => {
             style: { padding: "0 !important" },
             cell: ({ status }) => <span>{status !== null ? <>
                 {handleStatusElement(status)}
-            </> : handleStatusElement('Pending form Cusomter')}
+            </> : handleStatusElement('Pending from Customer')}
             </span>,
         },
         {
@@ -349,7 +349,7 @@ const AgencyProperty = (props) => {
                                     as="select"
                                     value={statusSelected}
                                     onChange={(e) => {
-                                        _filterStatus(e.target.value);
+                                        _filterStatus(e.target.value === 'Pending from Customer' ? "Pending from Customer" : e.target.value);
                                     }}
                                 >
                                     <option value="">Select Status</option>

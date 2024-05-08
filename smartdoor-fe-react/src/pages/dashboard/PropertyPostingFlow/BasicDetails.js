@@ -356,8 +356,8 @@ const BasicDetails = (props) => {
                                 >
                                     <MenuItem value="" disabled>Select</MenuItem>
                                     {PGSharingList?.length > 0
-                                        ? PGSharingList?.map((subType) => (
-                                            <MenuItem key={subType} value={subType}>
+                                        ? PGSharingList?.map((subType, index) => (
+                                            <MenuItem key={subType} value={Number(index + 1)}>
                                                 {subType}
                                             </MenuItem>
                                         ))
@@ -446,7 +446,7 @@ const BasicDetails = (props) => {
                     {loading ? <Loader />
                         :
                         <div className="d-flex">
-                            <Buttons className='p-2 px-4' name='Confirm' onClick={() => { saveBasicDetails(); }}></Buttons> &nbsp; &nbsp;
+                            <Buttons className='p-2 px-4' name='Next' onClick={() => { saveBasicDetails(); }}></Buttons> &nbsp; &nbsp;
                             <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'}  onClick={() => { notifyBasicDetails(); }}></Buttons> &nbsp; &nbsp;
                             {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                         </div>

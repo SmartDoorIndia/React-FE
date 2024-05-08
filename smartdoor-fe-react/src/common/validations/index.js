@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import ValidationMessages from '../helpers/ValidationMessages';
 import validateRegex from '../helpers/ValidateRegex';
 import { isValid } from 'date-fns';
+import { da } from 'date-fns/locale';
 
 function isBlank(str) {
   return !str || /^\s*$/.test(str);
@@ -671,18 +672,34 @@ export const validateNewPost2 = (data) => {
 
 export const validateAgencyDetails = (data) => {
   const errors = {};
-  if (data.agencyName?.trim() === '' || data.agencyName === null) {
+  if(!isBlank(data.agencyName)) {
+    if (data.agencyName?.trim() === '' || data.agencyName === null) {
+      errors.agencyName = ValidationMessages.fieldRequired.required;
+    }
+  } else {
     errors.agencyName = ValidationMessages.fieldRequired.required;
   }
-  if (data.location?.trim() === '' || data.location === null) {
+  if(!isBlank(data.location)) {
+    if (data.location?.trim() === '' || data.location === null) {
+      errors.location = ValidationMessages.fieldRequired.required;
+    }
+  } else {
     errors.location = ValidationMessages.fieldRequired.required;
   }
-  if (data.contactName?.trim() === '' || data.contactName === null) {
+  if(!isBlank(data.contactName)) {
+    if (data.contactName?.trim() === '' || data.contactName === null) {
+      errors.contactName = ValidationMessages.fieldRequired.required;
+    }
+  } else {
     errors.contactName = ValidationMessages.fieldRequired.required;
   }
-  if ((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
+
+  if(isBlank(data.contactNumber)) {
     errors.contactNumber = ValidationMessages.fieldRequired.required;
-    if ((data.contactNumber?.trim())?.length !== 10) {
+  }
+  else if ((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
+    errors.contactNumber = ValidationMessages.fieldRequired.required;
+    if ((data.contactNumber?.trim())?.length !== 10 || Number(data.contactNumber) < 0) {
       errors.contactNumber = 'Contact Number must be 10 digits';
     }
   }
@@ -702,18 +719,23 @@ export const validateExecutiveDetails = (data) => {
   if (data.location?.trim() === '' || data.location === null) {
     errors.location = ValidationMessages.fieldRequired.required;
   }
-  if (data.contactName?.trim() === '' || data.contactName === null) {
-    errors.contactName = ValidationMessages.fieldRequired.required;
+  if (data.executiveName?.trim() === '' || data.executiveName === null) {
+    errors.executiveName = ValidationMessages.fieldRequired.required;
   }
-  if ((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
-    errors.contactNumber = ValidationMessages.fieldRequired.required;
-    if ((data.contactNumber?.trim())?.length !== 10) {
-      errors.contactNumber = 'Contact Number must be 10 digits';
+  if(isBlank(data.executiveNumber)) {
+    errors.executiveNumber = ValidationMessages.fieldRequired.required;
+  }
+  if ((data.executiveNumber?.trim())?.length === 0 || data.executiveNumber === null) {
+    errors.executiveNumber = ValidationMessages.fieldRequired.required;
+    // if(data.executiveNumber.includes('-') || data.executiveNumber.includes('+')) {
+    // }
+    if ((data.executiveNumber?.trim())?.length !== 10 || Number(data.executiveNumber) < 0) {
+      errors.executiveNumber = 'Contact Number must be 10 digits';
     }
   }
-  if (!isBlank(data.contactEmail)) {
-    if (!validateRegex.validateEmail.test(data.contactEmail)) {
-      errors.contactEmail = ValidationMessages.email.invalid;
+  if (!isBlank(data.executiveEmail)) {
+    if (!validateRegex.validateEmail.test(data.executiveEmail)) {
+      errors.executiveEmail = ValidationMessages.email.invalid;
     }
   }
   return {

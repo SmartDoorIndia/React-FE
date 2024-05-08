@@ -414,7 +414,7 @@ const AddressSection = (props) => {
 			</div>
 			{saveAddressFlag === false ?
 				<div className="d-flex">
-					<Buttons className='p-2 px-4' name='Confirm' onClick={() => { saveAddressDetails(); }}></Buttons> &nbsp; &nbsp;
+					<Buttons className='p-2 px-4' name='Next' onClick={() => { saveAddressDetails(); }}></Buttons> &nbsp; &nbsp;
 					{/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
 					<Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyAddressDetails(); }}></Buttons> &nbsp; &nbsp;
 				</div>
