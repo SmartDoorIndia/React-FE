@@ -40,6 +40,10 @@ const ExecutiveList = (props) => {
             return 1
         }
     });
+    const [totalCustomers, setTotalCustomers] = useState(0);
+    const [totalPostings, setTotalPostings] = useState(0);
+    const [totalCustomerSpent, setTotalCustomerSpent] = useState(0);
+
     const history = useHistory();
     const userData = getLocalStorage('authData');
 
@@ -250,6 +254,23 @@ const ExecutiveList = (props) => {
             pageSize: 8,
             searchStr: ''
         });
+        let totalCust = 0;
+        let totalPost = 0;
+        let totalCustSpent = 0;
+        AgencyExecutiveList?.data.executives?.forEach(element => {
+            if(element.totalCustomerSpendCurrentMonth !== null) {
+                totalCustomerSpent = totalCustomerSpent + element.totalCustomerSpendCurrentMonth;
+            }
+            if(element.postingCount !== null) {
+                totalPost = totalPost + element.postingCount
+            }
+            if(element.customerCount !== null) {
+                totalCust = totalCust + element.customerCount
+            }
+        });
+        setTotalCustomers(totalCust);
+        setTotalPostings(totalPost);
+        setTotalCustomerSpent(totalCustSpent);
         dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {} })
         dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {} })
     }, []);
@@ -385,13 +406,13 @@ const ExecutiveList = (props) => {
             </div>
             <div className="d-flex justify-content-end p-0" >
                 <Text text={'Total Customers: '} fontWeight='bold' style={{ fontSize: '14px' }} />
-                <Text text={'0'} fontWeight={'bold'} style={{ fontSize: '14px' }} />
+                <Text text={totalCustomers} fontWeight={'bold'} style={{ fontSize: '14px' }} />
                 <div className="col-1"></div>
                 <Text text={'Total Postings: '} fontWeight={'bold'} style={{ fontSize: '14px' }} />
-                <Text text={'0'} fontWeight={'bold'} style={{ fontSize: '14px' }} />
+                <Text text={totalPostings} fontWeight={'bold'} style={{ fontSize: '14px' }} />
                 <div className="col-1"></div>
                 <Text text={'Total Customer Spend(Month): '} fontWeight={'bold'} style={{ fontSize: '14px' }} />
-                <Text text={'Rs' + '0'} fontWeight={'bold'} style={{ fontSize: '14px' }} />
+                <Text text={'Rs' + totalCustomerSpent} fontWeight={'bold'} style={{ fontSize: '14px' }} />
             </div>
         </>
     );
