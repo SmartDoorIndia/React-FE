@@ -332,8 +332,9 @@ const Specs = (props) => {
                         <Col lg='4' className='mb-2'>
                             <TextField
                                 select
+                                required
                                 className="w-100"
-                                label={'Attached'}
+                                label={'Structure'}
                                 onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, structure: e.target.value })) }}
                                 value={specDetails.structure}
                             >
@@ -697,6 +698,7 @@ const Specs = (props) => {
                         <Col lg='4' className='mb-2'>
                             <TextField
                                 type="number"
+                                required
                                 className="w-100"
                                 label={'Reserved Car Parkings'}
                                 inputProps={{ min: 0, max: 6 }}

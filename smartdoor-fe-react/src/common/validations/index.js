@@ -845,6 +845,11 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.pgGuestHouseAttachedTo = true;
     }
   }
+  if (specList?.includes('Structure')) {
+    if (isBlank(data.structure)) {
+      errors.structure = true;
+    }
+  }
   if (specList?.includes('Flat type')) {
     if (isBlank(data.flatType)) {
       errors.flatType = true;
@@ -905,11 +910,17 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
   }
   if (specList?.includes('Number of washrooms')) {
+    if(data.numberOfBaths > 6) {
+      errors.numberOfBaths = true;
+    }
     if (isBlank(data.numberOfBaths)) {
       errors.numberOfBaths = true;
     }
   }
   if (specList?.includes('Car parkings')) {
+    if(data.numberOfCarParking > 6) {
+      errors.numberOfCarParking = true;
+    }
     if (isBlank(data.numberOfCarParking)) {
       errors.numberOfCarParking = true;
     }
