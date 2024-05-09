@@ -10,7 +10,7 @@ import './AgencyUsers.scss';
 import { Form, Tooltip } from "react-bootstrap";
 import DataTableComponent from '../../../../shared/DataTable/DataTable';
 import { getAllAgencyExecutives } from "../../../../common/redux/actions";
-import { connect, useDispatch } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import Image from "../../../../shared/Image/Image";
 import contentIcon from '../../../../assets/images/content-ico.svg';
 import * as Actions from '../../../../common/redux/types';
@@ -189,6 +189,7 @@ const ExecutiveList = (props) => {
     const [currentPage, setCurrentPage] = useState(AgencyExecutiveList.data.currentPage || 1);
     const [rowsPerPage, setRowsPerPage] = useState(AgencyExecutiveList.data.rowsPerPage || 8);
     const recordSize = (AgencyExecutiveList?.data?.records);
+    const executivelist = useSelector(state => state?.AgencyExecutiveList?.data?.executives);
     let recordsPerPage = 0
     recordsPerPage = rowsPerPage;
 
@@ -257,7 +258,7 @@ const ExecutiveList = (props) => {
         let totalCust = 0;
         let totalPost = 0;
         let totalCustSpent = 0;
-        AgencyExecutiveList?.data.executives?.forEach(element => {
+        executivelist?.forEach(element => {
             if(element.totalCustomerSpendCurrentMonth !== null) {
                 totalCustomerSpent = totalCustomerSpent + element.totalCustomerSpendCurrentMonth;
             }
@@ -273,7 +274,7 @@ const ExecutiveList = (props) => {
         setTotalCustomerSpent(totalCustSpent);
         dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {} })
         dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {} })
-    }, []);
+    }, [getAllAgencyExecutives, executivelist?.length]);
 
     let filteredItems = [];
     const showData = () => {

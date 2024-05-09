@@ -21,7 +21,7 @@ import * as Actions from '../../../../common/redux/types';
 
 const MarketingAgency = (props) => {
     const { getAllCityWithId, allCitiesWithId, getAllAgencies, agencyList } = props;
-    const agencylist = useSelector(state => state.agencyList);
+    const agencylist = useSelector(state => state?.agencyList?.data?.agencylist);
     const [p_city, setp_City] = useState('');
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
@@ -106,8 +106,8 @@ const MarketingAgency = (props) => {
             sortable: true,
             center: true,
             cell: ({ totalCustomerSpendCurrentMonth, totalMonthlySpentPreviousMonth }) => (
-                totalCustomerSpendCurrentMonth !== null && totalMonthlySpentPreviousMonth !== null ? (
-                    <span className="d-flex">
+                totalCustomerSpendCurrentMonth !== null || totalMonthlySpentPreviousMonth !== null ? (
+                    <span className="d-flex mt-2">
                         <ToolTip position="top" style={{ width: '100%' }} name={totalCustomerSpendCurrentMonth}>
                             <Text size="Small" color="secondryColor elipsis-text" text={totalCustomerSpendCurrentMonth} />
                         </ToolTip> &nbsp;&nbsp;&nbsp;
@@ -163,7 +163,7 @@ const MarketingAgency = (props) => {
         let totalSpend = 0;
         let customerSpent = 0;
         let propertyCount = 0;
-        agencylist?.data?.agencylist?.forEach(item => {
+        agencylist?.forEach(item => {
             if (item.totalCustomerSpendCurrentMonth !== null) {
                 monthSpend = monthSpend + item.totalCustomerSpendCurrentMonth
             }
@@ -177,10 +177,10 @@ const MarketingAgency = (props) => {
                 totalSpend = totalSpend + item.totalCustomerSpendTillNow;
             }
         });
-        setTotalMonthSpend(monthSpend.toFixed(1));
-        setTotalSpent(totalSpend.toFixed(1));
-        setTotalCustomers(customerSpent);
-        setTotalProperies(propertyCount);
+        setTotalMonthSpend(prevState => monthSpend.toFixed(1));
+        setTotalSpent(prevState => totalSpend.toFixed(1));
+        setTotalCustomers(prevState => customerSpent);
+        setTotalProperies(prevState => propertyCount);
     }
 
     useEffect(async () => {
@@ -189,7 +189,7 @@ const MarketingAgency = (props) => {
         await setDashBoardValues();
         dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {} })
         dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {} })
-    }, [getAllAgencies]);
+    }, [getAllAgencies, agencylist?.length]);
 
     const PaginationActionButton = () => (
         <div className="d-flex justify-content-center tableBottom">
@@ -287,20 +287,20 @@ const MarketingAgency = (props) => {
                             <Text size="xSmall" fontWeight="smbold" color="black" text="Total Spent (month)" />
                         </Col>
                         <Col lg='6' className="p-0">
-                            <Text fontWeight="300" color="#BE1452" text={totalMonthSpent} style={{ fontSize: '35px', color: '#BE1452' }} />
+                            <Text fontWeight="300" color="#BE1452" text={totalMonthSpent} style={{ fontSize: '25px', color: '#BE1452' }} />
                         </Col>
                     </Row>
                 </Card> &nbsp;&nbsp;&nbsp;
                 <Card className="p-3 px-4">
                     <div className="d-flex ">
                         <Text className='mt-2 w-60' size="xSmall" fontWeight="smbold" color="black" text="Total properties posted" style={{ wordBreak: 'break-word' }} />
-                        <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={totalProperies} style={{ fontSize: '35px', color: '#BE1452' }} />
+                        <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={totalProperies} style={{ fontSize: '25px', color: '#BE1452' }} />
                     </div>
                 </Card> &nbsp;&nbsp;&nbsp;
                 <Card className="p-3 px-4">
                     <div className="d-flex">
                         <Text className='w-50 mt-2' size="xSmall" fontWeight="smbold" color="black" text="Total customers" />
-                        <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={totalCustomers} style={{ fontSize: '35px', color: '#BE1452' }} />
+                        <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={totalCustomers} style={{ fontSize: '25px', color: '#BE1452' }} />
                     </div>
                 </Card> &nbsp;&nbsp;&nbsp;
                 <Card className="p-3 px-4">
@@ -309,7 +309,7 @@ const MarketingAgency = (props) => {
                             <Text size="xSmall" fontWeight="smbold" color="black" text="Free Coupons" />
                         </Col>
                         <Col lg='6' className="p-0">
-                            <Text fontWeight="300" color="#BE1452" text={agencyList?.data?.freeCoins} style={{ fontSize: '35px', color: '#BE1452' }} />
+                            <Text fontWeight="300" color="#BE1452" text={agencyList?.data?.freeCoins} style={{ fontSize: '25px', color: '#BE1452' }} />
                         </Col>
                     </Row>
                 </Card> &nbsp;&nbsp;&nbsp;
@@ -319,7 +319,7 @@ const MarketingAgency = (props) => {
                             <Text size="xSmall" fontWeight="smbold" color="black" text="Total Spend" />
                         </Col>
                         <Col lg='6' className="p-0">
-                            <Text fontWeight="300" color="#BE1452" text={totalSpent} style={{ fontSize: '35px', color: '#BE1452' }} />
+                            <Text fontWeight="300" color="#BE1452" text={totalSpent} style={{ fontSize: '25px', color: '#BE1452' }} />
                         </Col>
                     </Row>
                 </Card>

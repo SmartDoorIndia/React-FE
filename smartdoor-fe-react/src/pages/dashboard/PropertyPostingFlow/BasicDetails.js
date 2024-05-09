@@ -296,7 +296,7 @@ const BasicDetails = (props) => {
                                             return subType !== 'Plot'; // Exclude 'PG/Co-Living' for Renting category
                                         } else if (basicDetails.propertyCategory === 'Selling') {
                                             if (basicDetails.stageOfProperty === 'Ready') {
-                                                return subType !== 'Plot' && subType !== 'PG/Co-Living'; // Exclude 'Plot' and 'PG/Co-Living' for Selling category with stage 'Ready'
+                                                return subType !== 'PG/Co-Living'; // Exclude 'Plot' and 'PG/Co-Living' for Selling category with stage 'Ready'
                                             } else if (basicDetails.stageOfProperty === 'Under Construction') {
                                                 return subType !== 'PG/Co-Living'; // Exclude 'Plot' for Selling category with stage 'Under Construction'
                                             }

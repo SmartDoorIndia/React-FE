@@ -270,13 +270,20 @@
         overflow-y: scroll;
         overflow-x: hidden;
     }
+    .rdt_TableHeadRow {
+        .rdt_TableCol{
+            &:nth-child(1) {
+                width: 180px;min-width: 180px;
+            }
+        }
+    }
     .rdt_TableRow {
         min-height: auto;
         .rdt_TableCell {
             text-align: center;
             &:nth-child(1) {
                 &:first-child {
-                    min-width: none;
+                    min-width: 180px;
                     white-space: inherit;overflow: visible;
                 }                
             }

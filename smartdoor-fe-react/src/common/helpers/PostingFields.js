@@ -461,6 +461,25 @@ const PostingFields = {
                             "Expected time": "",
                             "Fractional Ownership checkbox": false
                         }
+                    },
+                    "Plot": {
+                        "Specs": [
+                            "Plot area",
+                            "Overlooking",
+                            "General amenities",
+                            "Property description"
+                        ],
+                        "Pricing": {
+                            "Selling price": "",
+                            "Add additional fields": {
+                                "Label": "",
+                                "Dues": 0.0
+                            },
+                            "Distress CheckBox": false,
+                            "discount %": "",
+                            "Expected time": "",
+                            "Fractional Ownership checkbox": false
+                        }
                     }
                 },
                 "Commercial": {
