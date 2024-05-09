@@ -683,7 +683,6 @@ const Specs = (props) => {
                         <Col lg='4' className='mb-2'>
                             <TextField
                                 type="number"
-                                required
                                 error={error.numberOfCarParking}
                                 className="w-100"
                                 label={'Car Parkings'}

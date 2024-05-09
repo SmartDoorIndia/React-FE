@@ -107,7 +107,7 @@ const MarketingAgency = (props) => {
             center: true,
             cell: ({ totalCustomerSpendCurrentMonth, totalMonthlySpentPreviousMonth }) => (
                 totalCustomerSpendCurrentMonth !== null || totalMonthlySpentPreviousMonth !== null ? (
-                    <span className="d-flex mt-2">
+                    <span className="d-flex mt-3">
                         <ToolTip position="top" style={{ width: '100%' }} name={totalCustomerSpendCurrentMonth}>
                             <Text size="Small" color="secondryColor elipsis-text" text={totalCustomerSpendCurrentMonth} />
                         </ToolTip> &nbsp;&nbsp;&nbsp;

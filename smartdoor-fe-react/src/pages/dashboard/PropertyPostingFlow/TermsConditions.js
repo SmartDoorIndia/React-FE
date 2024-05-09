@@ -46,6 +46,20 @@ const TermsConditions = (props) => {
         setError(valid.errors);
         if (valid.isValid) {
             setLoading(true);
+            const dateString = pricingDetailFields?.data.expectedTimeToSellThePropertyWithin ;
+
+            // Create a new Date object using the date string
+            const dateObject = new Date(dateString);
+
+            // Extract day, month, and year from the Date object
+            const day = String(dateObject.getDate()).padStart(2, '0');
+            const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+            const year = dateObject.getFullYear();
+
+            // Format the date to 'dd-mm-yyyy' format
+            const formattedDate = `${day}-${month}-${year}`;
+            let pricingDetail = pricingDetailFields?.data;
+            pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
             dispatch({ type: Actions.TERMS_CONDITIONS_SUCCESS, data: { termsConditionObj: termsConditionObj } });
             const postProperty = {
                 smartdoorPropertyId: propertyId,
@@ -76,7 +90,7 @@ const TermsConditions = (props) => {
                 basicDetails: basicDetailFields?.data,
                 address: addressDetailFields?.data,
                 specs: specDetailFields?.data,
-                pricing: pricingDetailFields?.data,
+                pricing: pricingDetail,
                 uploads: uploadImages?.data,
                 terms: termsConditionObj
             }

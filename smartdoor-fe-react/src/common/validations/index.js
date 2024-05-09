@@ -672,21 +672,21 @@ export const validateNewPost2 = (data) => {
 
 export const validateAgencyDetails = (data) => {
   const errors = {};
-  if(!isBlank(data.agencyName)) {
+  if (!isBlank(data.agencyName)) {
     if (data.agencyName?.trim() === '' || data.agencyName === null) {
       errors.agencyName = ValidationMessages.fieldRequired.required;
     }
   } else {
     errors.agencyName = ValidationMessages.fieldRequired.required;
   }
-  if(!isBlank(data.location)) {
+  if (!isBlank(data.location)) {
     if (data.location?.trim() === '' || data.location === null) {
       errors.location = ValidationMessages.fieldRequired.required;
     }
   } else {
     errors.location = ValidationMessages.fieldRequired.required;
   }
-  if(!isBlank(data.contactName)) {
+  if (!isBlank(data.contactName)) {
     if (data.contactName?.trim() === '' || data.contactName === null) {
       errors.contactName = ValidationMessages.fieldRequired.required;
     }
@@ -694,7 +694,7 @@ export const validateAgencyDetails = (data) => {
     errors.contactName = ValidationMessages.fieldRequired.required;
   }
 
-  if(isBlank(data.contactNumber)) {
+  if (isBlank(data.contactNumber)) {
     errors.contactNumber = ValidationMessages.fieldRequired.required;
   }
   else if ((data.contactNumber?.trim())?.length === 0 || data.contactName === null) {
@@ -722,7 +722,7 @@ export const validateExecutiveDetails = (data) => {
   if (data.executiveName?.trim() === '' || data.executiveName === null) {
     errors.executiveName = ValidationMessages.fieldRequired.required;
   }
-  if(isBlank(data.executiveNumber)) {
+  if (isBlank(data.executiveNumber)) {
     errors.executiveNumber = ValidationMessages.fieldRequired.required;
   }
   if ((data.executiveNumber?.trim())?.length === 0 || data.executiveNumber === null) {
@@ -760,7 +760,7 @@ export const validateBasicDetails = (data) => {
       errors.propertySubType = true;
     }
   }
-  if (data.stageOfProperty === 'Ready'  && data.propertySubType !== 'Plot') {
+  if (data.stageOfProperty === 'Ready' && data.propertySubType !== 'Plot') {
     if (isBlank(data.ageOfProperty)) {
       errors.ageOfProperty = true;
     }
@@ -768,7 +768,7 @@ export const validateBasicDetails = (data) => {
       errors.ageOfProperty = true;
     }
   }
-  if (data.stageOfProperty === 'Under Construction'  && data.propertySubType !== 'Plot') {
+  if (data.stageOfProperty === 'Under Construction' && data.propertySubType !== 'Plot') {
     if (isBlank(data.expectedPossessionDate)) {
       errors.expectedPossessionDate = true;
     }
@@ -910,7 +910,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
   }
   if (specList?.includes('Number of washrooms')) {
-    if(data.numberOfBaths > 6) {
+    if (data.numberOfBaths > 6) {
       errors.numberOfBaths = true;
     }
     if (isBlank(data.numberOfBaths)) {
@@ -918,14 +918,17 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
   }
   if (specList?.includes('Car parkings')) {
-    if(data.numberOfCarParking > 6) {
+    if (data.numberOfCarParking > 6) {
       errors.numberOfCarParking = true;
     }
-    if (isBlank(data.numberOfCarParking)) {
-      errors.numberOfCarParking = true;
-    }
+    // if (isBlank(data.numberOfCarParking)) {
+    //   errors.numberOfCarParking = true;
+    // }
   }
   if (specList?.includes('Reserved car parkings')) {
+    if (data.numberOfReservedCarParking > 6) {
+      errors.numberOfReservedCarParking = true;
+    }
     if (isBlank(data.numberOfReservedCarParking)) {
       errors.numberOfReservedCarParking = true;
     }
@@ -1032,23 +1035,23 @@ export const validateTermsConditions = (data) => {
 
 export const validateCameraData = (data, addNewFlag) => {
   const errors = {};
-  if(isBlank(data.uuId)) {
+  if (isBlank(data.uuId)) {
     errors.uuId = true;
   }
-  if(isBlank(data.userName)) {
+  if (isBlank(data.userName)) {
     errors.userName = true;
   }
-  if(isBlank(data.password)) {
+  if (isBlank(data.password)) {
     errors.password = true;
   }
-  if(isBlank(data.nickName)) {
+  if (isBlank(data.nickName)) {
     errors.nickName = true;
   }
-  if(isBlank(data.CameraType)) {
+  if (isBlank(data.CameraType)) {
     errors.CameraType = true;
   }
-  if(addNewFlag) {
-    if(isBlank(data.cameraId)) {
+  if (addNewFlag) {
+    if (isBlank(data.cameraId)) {
       errors.cameraId = true;
     }
   }

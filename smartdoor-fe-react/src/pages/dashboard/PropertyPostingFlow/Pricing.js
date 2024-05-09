@@ -6,7 +6,7 @@ import { connect, useDispatch } from "react-redux";
 import { Checkbox, MenuItem, Slider, TextField } from "@mui/material";
 import POSTING_CONSTANTS from "../../../common/helpers/POSTING_CONSTANTS";
 import Text from "../../../shared/Text/Text";
-import { getLocalStorage, showErrorToast } from '../../../common/helpers/Utils';
+import { dateWithFormate, formateDate, formateDateTime, getLocalStorage, showErrorToast } from '../../../common/helpers/Utils';
 import Buttons from "../../../shared/Buttons/Buttons";
 import { validatePricing } from "../../../common/validations";
 import * as Actions from '../../../common/redux/types';
@@ -38,7 +38,7 @@ const Pricing = (props) => {
     const [savePricingFlag, setSavePricingFlag] = useState(false);
     const dispatch = useDispatch();
     const history = useHistory();
-    
+
     useEffect(() => {
         if (Object.keys(basicDetailFields.data).length !== 0) {
             let pricingObj = {};
@@ -69,6 +69,27 @@ const Pricing = (props) => {
             if ((Object.keys(pricingObj)).includes('Preferred for')) {
                 setPreferredForList(Object.values(pricingObj['Preferred for']));
             }
+            if ((Object.keys(pricingObj)).includes('Expected time')) {
+                if(pricingDetails.expectedTimeToSellThePropertyWithin.toString().length !== 0) {
+                    // pricingDetails.expectedTimeToSellThePropertyWithin
+                    const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
+    
+                    // Split the date string by '-'
+                    const parts = dateString.split('-');
+    
+                    // Create a new Date object using the parts (year, month, day)
+                    const dateObject = new Date(parts[2], parts[1] - 1, parts[0]);
+    
+                    // Extract year, month, and day from the Date object
+                    const year = dateObject.getFullYear();
+                    const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+                    const day = String(dateObject.getDate()).padStart(2, '0');
+    
+                    // Format the date to 'YYYY-MM-DD' format
+                    const formattedDate = `${year}-${month}-${day}`;
+                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
+                }
+            }
         }
     }, []);
 
@@ -92,12 +113,27 @@ const Pricing = (props) => {
         setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
     }
 
-    const savePricingDetails = () => {
+    const savePricingDetails = async () => {
         let valid = {}
         valid = validatePricing(pricingDetails, pricingList);
         setError(valid.errors);
         console.log(valid)
         if (valid.isValid) {
+            const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
+
+            // Create a new Date object using the date string
+            const dateObject = new Date(dateString);
+
+            // Extract day, month, and year from the Date object
+            const day = String(dateObject.getDate()).padStart(2, '0');
+            const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+            const year = dateObject.getFullYear();
+
+            // Format the date to 'dd-mm-yyyy' format
+            const formattedDate = `${day}-${month}-${year}`;
+            let pricingDetail = pricingDetails;
+            pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
+            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
             dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
             setSavePricingFlag(true);
             savePricingDetailsFields({ saveFlag: true })
@@ -110,6 +146,21 @@ const Pricing = (props) => {
         setError(valid.errors);
         console.log(valid)
         if (valid.isValid) {
+            const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
+
+            // Create a new Date object using the date string
+            const dateObject = new Date(dateString);
+
+            // Extract day, month, and year from the Date object
+            const day = String(dateObject.getDate()).padStart(2, '0');
+            const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+            const year = dateObject.getFullYear();
+
+            // Format the date to 'dd-mm-yyyy' format
+            const formattedDate = `${day}-${month}-${year}`;
+            let pricingDetail = pricingDetails;
+            pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
+            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
             let userId = getLocalStorage('authData');
             const data = {
                 miscellaneousDetails: {
@@ -139,7 +190,7 @@ const Pricing = (props) => {
                 basicDetails: basicDetailFields?.data,
                 address: addressDetailFields,
                 specs: specDetailFields,
-                pricing: pricingDetails
+                pricing: pricingDetail
             }
             console.log(userId)
             // setLoading(true)
@@ -256,7 +307,9 @@ const Pricing = (props) => {
                                 error={error.expectedTimeToSellThePropertyWithin}
                                 inputProps={{ min: currentDate }}
                                 // label={'Expected time within which you want to sell the property '}
-                                onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedTimeToSellThePropertyWithin: (e.target.value) })) }}
+                                onChange={(e) => {
+                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: e.target.value }));
+                                }}
                                 value={pricingDetails.expectedTimeToSellThePropertyWithin}
                             />
                             <Text text={'Expected time within which you want to sell the property'} />
@@ -277,10 +330,10 @@ const Pricing = (props) => {
                                     </span>
                                     <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
                                         className="ml-3 mr-4"
-                                        valueLabelDisplay="auto"    
+                                        valueLabelDisplay="auto"
                                         min={20}
                                         max={100}
-                                        onChange={(e) => {setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedDiscountInPercent: Number(e.target.value) }))}}
+                                        onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedDiscountInPercent: Number(e.target.value) })) }}
                                         style={{ color: "#BE142" }}
                                     />
                                 </Col>
