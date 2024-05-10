@@ -287,7 +287,7 @@ const Specs = (props) => {
 
     return (
         <>
-            <div className="whiteBg">
+            <div className="whiteBg mb-1">
                 <Row>
                     {specList.includes('BHK') ?
                         <>

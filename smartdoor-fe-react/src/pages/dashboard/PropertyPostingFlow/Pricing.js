@@ -210,7 +210,7 @@ const Pricing = (props) => {
 
     return (
         <>
-            <div className="whiteBg">
+            <div className="whiteBg mb-1">
                 <Row>
                     {pricingList.includes('Rent') ?
                         <Col lg='4'>
@@ -219,7 +219,7 @@ const Pricing = (props) => {
                                 className="w-100 mb-2"
                                 type="number"
                                 label={'Rent (Monthly)'}
-                                inputProps={{ min: 0 }}
+                                inputProps={{ min: 5000 }}
                                 onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, propertyRate: Number(e.target.value) })) }}
                                 value={pricingDetails.propertyRate}
                             />
@@ -294,7 +294,7 @@ const Pricing = (props) => {
                                 type="number"
                                 error={error.propertyRate}
                                 label={'Selling Price'}
-                                inputProps={{ min: 0 }}
+                                inputProps={{ min: 1000000 }}
                                 onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, propertyRate: Number(e.target.value) })) }}
                                 value={pricingDetails.propertyRate}
                             />

@@ -121,9 +121,9 @@ const ConsumerManagement = (props) => {
       sortable: false,
       center: true,
       minWidth: '140px',
-      cell: ({ imageUrl, name }) => (
+      cell: ({ imageUrl, name, nameMatch }) => (
         <ToolTip position="top" style={{ width: '100%' }} name={name || ''}>
-          <Text size="Small" color="secondryColor elipsis-text" text={name ? name.capitalizeWord() : "-"} />
+          <Text size="Small" style={{color: nameMatch ? '#252525' : '#be1452'}} color="secondryColor elipsis-text" text={name ? name.capitalizeWord() : "-"} />
         </ToolTip>
       ),
     },

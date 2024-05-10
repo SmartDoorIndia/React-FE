@@ -107,7 +107,7 @@ const TermsConditions = (props) => {
 
     return (
         <>
-            <div className="whiteBg">
+            <div className="whiteBg mb-1">
                 <div className="d-flex">
                     <Col lg='6'>
                         <TextField
