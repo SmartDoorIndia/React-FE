@@ -226,6 +226,7 @@ const Uploads = (props) => {
         if(isValid) {
             let userId = getLocalStorage('authData');
             const data = {
+                smartdoorPropertyId: propertyId,
                 miscellaneousDetails: {
                     postedById: userId.userid,
                     lastPageOfInfoFilled: 4,

@@ -20,6 +20,7 @@ const Specs = (props) => {
     const { basicDetailFields, addressDetailFields, specDetailFields, saveSpecDetailsFields, customerDetails, editPropertyFlag } = props;
     const [specList, setSpecList] = useState([]);
     const dispatch = useDispatch();
+    const propertyId = props?.propertyId;
     const [specDetails, setSpecDetails] = useState(Object.keys(specDetailFields.data).length !== 0 ?
         specDetailFields.data : {
             numberOfRooms: 0.0,
@@ -240,6 +241,7 @@ const Specs = (props) => {
         if (valid.isValid) {
             let userId = getLocalStorage('authData');
             const data = {
+                smartdoorPropertyId: propertyId,
                 miscellaneousDetails: {
                     postedById: userId.userid,
                     lastPageOfInfoFilled: 2,

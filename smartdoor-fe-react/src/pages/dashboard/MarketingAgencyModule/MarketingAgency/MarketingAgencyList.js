@@ -294,13 +294,13 @@ const MarketingAgency = (props) => {
                 <Card className="p-3 px-4">
                     <div className="d-flex ">
                         <Text className='mt-2 w-60' size="xSmall" fontWeight="smbold" color="black" text="Total properties posted" style={{ wordBreak: 'break-word' }} />
-                        <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={totalProperies} style={{ fontSize: '25px', color: '#BE1452' }} />
+                        <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={agencyList?.data?.propertyCurrentMonth} style={{ fontSize: '25px', color: '#BE1452' }} />
                     </div>
                 </Card> &nbsp;&nbsp;&nbsp;
                 <Card className="p-3 px-4">
                     <div className="d-flex">
                         <Text className='w-50 mt-2' size="xSmall" fontWeight="smbold" color="black" text="Total customers" />
-                        <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={totalCustomers} style={{ fontSize: '25px', color: '#BE1452' }} />
+                        <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={agencyList?.data?.customerCurrentMonth} style={{ fontSize: '25px', color: '#BE1452' }} />
                     </div>
                 </Card> &nbsp;&nbsp;&nbsp;
                 <Card className="p-3 px-4">

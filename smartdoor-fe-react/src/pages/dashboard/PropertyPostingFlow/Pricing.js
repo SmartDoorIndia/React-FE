@@ -36,6 +36,7 @@ const Pricing = (props) => {
     const [additionalFieldsList, setAdditionalFieldsList] = useState(pricingDetails.additionalFieldsForChargesDue || []);
     const [error, setError] = useState({});
     const [savePricingFlag, setSavePricingFlag] = useState(false);
+    const propertyId = props?.propertyId;
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -163,6 +164,7 @@ const Pricing = (props) => {
             setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
             let userId = getLocalStorage('authData');
             const data = {
+                smartdoorPropertyId: propertyId,
                 miscellaneousDetails: {
                     postedById: userId.userid,
                     lastPageOfInfoFilled: 3,
@@ -331,8 +333,8 @@ const Pricing = (props) => {
                                     <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
                                         className="ml-3 mr-4"
                                         valueLabelDisplay="auto"
-                                        min={20}
-                                        max={100}
+                                        min={10}
+                                        max={70}
                                         onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedDiscountInPercent: Number(e.target.value) })) }}
                                         style={{ color: "#BE142" }}
                                     />

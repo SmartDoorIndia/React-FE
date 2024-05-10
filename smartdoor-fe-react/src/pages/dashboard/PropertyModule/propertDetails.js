@@ -1907,7 +1907,9 @@ const PropertyDetails = (props) => {
                                     size="Small"
                                     fontWeight="semibold"
                                     color="secondryColor"
-                                    text={propertyData.specs?.loadingFactorInPercent+"%"}
+                                    text={propertyData.specs?.loadingFactorInPercent === null
+                                       ? "-"
+                                       : propertyData.specs?.loadingFactorInPercent+"%"}
                                  />
                               </td> : ""}
                            </tr>
@@ -2095,9 +2097,10 @@ const PropertyDetails = (props) => {
                                           size="Small"
                                           fontWeight="semibold"
                                           color="secondryColor"
-                                          text={propertyData.specs?.internalAmenities +", " +propertyData.specs?.generalAmenities+", "+propertyData.specs?.commercialGeneralAmenities}
+                                          text={propertyData.specs?.internalAmenities.length !== 0 || propertyData.specs?.generalAmenities.length !== 0 || propertyData.specs?.commercialGeneralAmenities.length !== 0 ?
+                                             propertyData.specs?.internalAmenities +", " +propertyData.specs?.generalAmenities+", "+propertyData.specs?.commercialGeneralAmenities : '-'}
                                        />
-                                    </td> : ""}
+                                    </td> : "-"}
                               </tr>
                            ) : null}
                            {showMore ? (
@@ -2212,7 +2215,7 @@ const PropertyDetails = (props) => {
                                           size="Small"
                                           fontWeight="semibold"
                                           color="secondryColor"
-                                          text={propertyData.pricing?.leaseType}
+                                          text={propertyData.pricing?.leaseType || '-'}
                                        />
                                     </td>:""}
                               </tr>

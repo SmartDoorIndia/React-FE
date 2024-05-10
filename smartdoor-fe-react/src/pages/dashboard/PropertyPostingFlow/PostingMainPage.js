@@ -46,19 +46,22 @@ const PostingMainPage = (props) => {
             {saveBasicDetails.saveFlag ?
                 <>
                     <Text text={'Address'} fontWeight='bold' style={{ fontSize: '18px' }} />
-                    <AddressSection saveAddressDetailsFields={handleAddressDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}></AddressSection>
+                    <AddressSection saveAddressDetailsFields={handleAddressDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}
+                        propertyId={saveBasicDetails.propertyId}></AddressSection>
                 </>
                 : null}
             {saveAddressDetails.saveFlag ? 
             <>
                 <Text text={'Specs'} fontWeight='bold' style={{ fontSize: '18px' }} />
-                <Specs saveSpecDetailsFields={handleSpecDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}></Specs>
+                <Specs saveSpecDetailsFields={handleSpecDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}
+                    propertyId={saveBasicDetails.propertyId}></Specs>
             </>
             :null}
             {saveSpecDetails.saveFlag ?
             <>
                 <Text text={'Pricing'} fontWeight='bold' style={{ fontSize: '18px' }} />
-                <Pricing savePricingDetailsFields={handlePricingDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}></Pricing>
+                <Pricing savePricingDetailsFields={handlePricingDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}
+                    propertyId={saveBasicDetails.propertyId} ></Pricing>
             </>
             :null}
             {savePricingDetails.saveFlag ?

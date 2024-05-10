@@ -27,6 +27,7 @@ const AddressSection = (props) => {
 	const [saveAddressFlag, setSaveAddressFlag] = useState(false);
 	const dispatch = useDispatch();
 	const history = useHistory();
+	const propertyId = props?.propertyId;
 
 	const [addressDetails, setAddressDetails] = useState(Object.keys(addressDetailFields.data).length !== 0 ?
 		addressDetailFields.data : {
@@ -234,6 +235,7 @@ const AddressSection = (props) => {
 		let userId = getLocalStorage('authData');
 		if (valid.isValid) {
 			const data = {
+				smartdoorPropertyId: propertyId,
 				miscellaneousDetails: {
 					postedById: userId.userid,
 					lastPageOfInfoFilled: 1,
