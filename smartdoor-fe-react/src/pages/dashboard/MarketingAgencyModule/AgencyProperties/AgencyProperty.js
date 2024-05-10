@@ -255,7 +255,7 @@ const AgencyProperty = (props) => {
                 onFilter={(e) => setFilterText(e.target.value)}
                 onClear={() => handleClear}
                 filterText={filterText}
-                placeholder="Search"
+                placeholder="Search name/mobile"
             />
         );
     }, [filterText, resetPaginationToggle]);

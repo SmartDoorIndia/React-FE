@@ -119,23 +119,26 @@ const Pricing = (props) => {
         valid = validatePricing(pricingDetails, pricingList);
         setError(valid.errors);
         console.log(valid)
+        let pricingDetail = pricingDetails;
         if (valid.isValid) {
-            const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
+            if(pricingList.includes('Expected time')) {
 
-            // Create a new Date object using the date string
-            const dateObject = new Date(dateString);
-
-            // Extract day, month, and year from the Date object
-            const day = String(dateObject.getDate()).padStart(2, '0');
-            const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
-            const year = dateObject.getFullYear();
-
-            // Format the date to 'dd-mm-yyyy' format
-            const formattedDate = `${day}-${month}-${year}`;
-            let pricingDetail = pricingDetails;
-            pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
-            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
-            dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
+                const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
+    
+                // Create a new Date object using the date string
+                const dateObject = new Date(dateString);
+    
+                // Extract day, month, and year from the Date object
+                const day = String(dateObject.getDate()).padStart(2, '0');
+                const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+                const year = dateObject.getFullYear();
+    
+                // Format the date to 'dd-mm-yyyy' format
+                const formattedDate = `${day}-${month}-${year}`;
+                pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
+                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
+            }
+            dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetail })
             setSavePricingFlag(true);
             savePricingDetailsFields({ saveFlag: true })
         }
@@ -147,21 +150,23 @@ const Pricing = (props) => {
         setError(valid.errors);
         console.log(valid)
         if (valid.isValid) {
-            const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
-
-            // Create a new Date object using the date string
-            const dateObject = new Date(dateString);
-
-            // Extract day, month, and year from the Date object
-            const day = String(dateObject.getDate()).padStart(2, '0');
-            const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
-            const year = dateObject.getFullYear();
-
-            // Format the date to 'dd-mm-yyyy' format
-            const formattedDate = `${day}-${month}-${year}`;
             let pricingDetail = pricingDetails;
-            pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
-            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
+            if(pricingList.includes('Expected time')) {
+                const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
+    
+                // Create a new Date object using the date string
+                const dateObject = new Date(dateString);
+    
+                // Extract day, month, and year from the Date object
+                const day = String(dateObject.getDate()).padStart(2, '0');
+                const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+                const year = dateObject.getFullYear();
+    
+                // Format the date to 'dd-mm-yyyy' format
+                const formattedDate = `${day}-${month}-${year}`;
+                pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
+                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
+            }
             let userId = getLocalStorage('authData');
             const data = {
                 smartdoorPropertyId: propertyId,

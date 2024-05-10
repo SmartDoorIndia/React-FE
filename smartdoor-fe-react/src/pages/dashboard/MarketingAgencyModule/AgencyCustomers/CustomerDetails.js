@@ -121,7 +121,7 @@ const CustomerDetails = (props) => {
                             style={{ fontSize: '16px', color: '#252525' }} />
                     </span> */}
                     <div className="mt-3 w-100 p-0">
-                        <Text fontWeight="bold" text=" Customer Name"
+                        <Text fontWeight="bold" text={customerDetails.name}
                             style={{ fontSize: '16px', color: '#252525' }} />
                         <div className="col-6 mt-2" style={{ padding: '0%' }}>
                             <TextField

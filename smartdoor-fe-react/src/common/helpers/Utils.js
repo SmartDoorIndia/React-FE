@@ -99,7 +99,7 @@ export const setLocalStorage = (key, value) => {
 
 // used to get localstorage item
 export const getLocalStorage = (key) => {
- try {
+  try {
     if (key) {
       let data = localStorage.getItem(key);
       if (data) {
@@ -109,11 +109,11 @@ export const getLocalStorage = (key) => {
         return data;
       }
     }
-    return null;   
- } catch (e) {
-   clearLocalStorage();
-   window.location.reload();
- }
+    return null;
+  } catch (e) {
+    clearLocalStorage();
+    window.location.reload();
+  }
 };
 
 // used to remove localstorage item
@@ -142,7 +142,7 @@ export const generateUUID = () => {
   let d = new Date().getTime(); // Timestamp
   let d2 = (performance && performance.now && performance.now() * 1000) || 0; // Time in microseconds since page-load or 0 if unsupported
 
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     let r = Math.random() * 16; // random number between 0 and 16
     if (d > 0) {
       // Use timestamp until depleted
@@ -168,39 +168,39 @@ export const capitalize = (s) => {
  * @param {string} status
  */
 export function handleStatusElement(status) {
-  if ([ 'COMPLETED', 'PUBLISHED', 'CONVERTED', 'APPROVED', 'VISITED', 'Yes, I’m interested', 'completed', 'Completed' ].includes(status)) {
+  if (['COMPLETED', 'PUBLISHED', 'CONVERTED', 'APPROVED', 'VISITED', 'Yes, I’m interested', 'completed', 'Completed'].includes(status)) {
     return (
       <Text
         size="xSmall"
         fontWeight="mediumbold"
         color="white"
-        text={ status }
+        text={status}
         className="tagSuccess defaultTag ml-2 "
       />
     );
-  } else if ([ 'PENDING', 'ASSIGNED', 'UNDER REVIEW', 'Will decide later','Make an offer' ].includes(status)) {
+  } else if (['PENDING', 'ASSIGNED', 'UNDER REVIEW', 'Will decide later', 'Make an offer'].includes(status)) {
     return (
       <Text
         size="xSmall"
         fontWeight="mediumbold"
         color="white"
-        text={ status }
+        text={status}
         className="tagAlert defaultTag ml-2 "
       />
     );
   } else if (
-    [ 'CANCELLED', 'PROBLEM', 'NOT INTERESTED', 'ON HOLD', 'REJECTED', 'CLOSED', 'FAILED', 'NOT_ACCEPTED', 'DISCARDED' , 'NOT VISITED', 'No, does not look interesting', 'Closed', 'Rejected'].includes(status)
+    ['CANCELLED', 'PROBLEM', 'NOT INTERESTED', 'ON HOLD', 'REJECTED', 'CLOSED', 'FAILED', 'NOT_ACCEPTED', 'DISCARDED', 'NOT VISITED', 'No, does not look interesting', 'Closed', 'Rejected'].includes(status)
   ) {
     return (
       <Text
         size="xSmall"
         fontWeight="mediumbold"
         color="white"
-        text={ status }
+        text={status}
         className="tagDangerous defaultTag ml-2"
       />
     );
-  } else if (status === 'IN_PROGRESS' || status ==='IN PROGRESS'|| status ==='In progress' ) {
+  } else if (status === 'IN_PROGRESS' || status === 'IN PROGRESS' || status === 'In progress') {
     return (
       <Text
         size="xSmall"
@@ -225,7 +225,7 @@ export function handleStatusElement(status) {
         size="xSmall"
         fontWeight="mediumbold"
         color="white"
-        text={ status }
+        text={status}
         className="tagAlert defaultTag ml-2 "
       />
     );
@@ -245,7 +245,7 @@ export function handleStatusElement(status) {
         size="xSmall"
         fontWeight="mediumbold"
         color="white"
-        text={ status }
+        text={status}
         className="tagAlert defaultTag ml-2 "
       />
     );
@@ -272,10 +272,11 @@ export function handleStatusElement(status) {
   else if (status === 'Pending from Customer') {
     return (
       <Text
+        size="xSmall"
         fontWeight="mediumbold"
         color="white"
         text="Pending form Customer"
-        style={{backgroundColor:'#FF6C1A'}}
+        style={{ backgroundColor: '#FF6C1A' }}
         className="tagAlert defaultTag ml-2 "
       />
     );
@@ -285,7 +286,7 @@ export function handleStatusElement(status) {
         size="xSmall"
         fontWeight="mediumbold"
         color="white"
-        text={ status }
+        text={status}
         className="tagAlert defaultTag ml-2 "
       />
     );
@@ -304,10 +305,10 @@ export function ToolTip({ position, name, children, disable, ...rest }) {
   return (
     <span className="cursor-pointer">
       <OverlayTrigger
-        placement={ position }
-        delay={ { show: 250, hide: 400 } }
-        overlay={ !disable ? <Tooltip id="button-tooltip">{name}</Tooltip> : <span></span> }
-        { ...rest }>
+        placement={position}
+        delay={{ show: 250, hide: 400 }}
+        overlay={!disable ? <Tooltip id="button-tooltip">{name}</Tooltip> : <span></span>}
+        {...rest}>
         {children}
       </OverlayTrigger>
     </span>
@@ -339,46 +340,52 @@ export function ToolTip({ position, name, children, disable, ...rest }) {
 //   }
 // }
 
-export function showModalDataWrtPosition( position, rowData ) {
-  if(position==="Sales Admin" || position==="Sales Executive"){
-    return <Link to={ { pathname: '/admin/sales/user-details',
-        state: { userData: rowData, module: 'SALES' },
-        } }>
-        <Image name="editIcon" src={ actionIcon } />
-      </Link>
+export function showModalDataWrtPosition(position, rowData) {
+  if (position === "Sales Admin" || position === "Sales Executive") {
+    return <Link to={{
+      pathname: '/admin/sales/user-details',
+      state: { userData: rowData, module: 'SALES' },
+    }}>
+      <Image name="editIcon" src={actionIcon} />
+    </Link>
   }
-  else if(position==="Transaction Admin" || position==="Transaction Executive"){
-    return <Link to={ { pathname: '/admin/user-management/user-details',///admin/transaction/user-detail
-        state: { userData: rowData, module: 'TRANSACTION' },
-        } }>
-        <Image name="editIcon" src={ actionIcon } />
-      </Link>
+  else if (position === "Transaction Admin" || position === "Transaction Executive") {
+    return <Link to={{
+      pathname: '/admin/user-management/user-details',///admin/transaction/user-detail
+      state: { userData: rowData, module: 'TRANSACTION' },
+    }}>
+      <Image name="editIcon" src={actionIcon} />
+    </Link>
   }
-  else if(position==="Help Desk Executive" || position==="Help Desk Admin"){
-    return <Link to={ { pathname: '/admin/helpdesk/user-detail',
-        state: { userData: rowData, module: 'HELPDESK' },
-        } }>
-        <Image name="editIcon" src={ actionIcon } />
-      </Link>
+  else if (position === "Help Desk Executive" || position === "Help Desk Admin") {
+    return <Link to={{
+      pathname: '/admin/helpdesk/user-detail',
+      state: { userData: rowData, module: 'HELPDESK' },
+    }}>
+      <Image name="editIcon" src={actionIcon} />
+    </Link>
   }
-  else if(position==="Installation Executive" || position==="Installation Admin"){
-    return <Link to={ { pathname: '/admin/execution/user-detail',
-        state: { userData: rowData, module: 'EXECUTION' },
-        } }>
-        <Image name="editIcon" src={ actionIcon } />
-      </Link>
+  else if (position === "Installation Executive" || position === "Installation Admin") {
+    return <Link to={{
+      pathname: '/admin/execution/user-detail',
+      state: { userData: rowData, module: 'EXECUTION' },
+    }}>
+      <Image name="editIcon" src={actionIcon} />
+    </Link>
   }
-  else if(position==="Installation Executive" || position==="Installation Admin"){
-    return <Link to={ { pathname: '/admin/execution/user-detail',
-        state: { userData: rowData, module: 'EXECUTION' },
-        } }>
-        <Image name="editIcon" src={ actionIcon } />
-      </Link>
-  }else{
-    return <Link to={ { pathname: '/admin/user-management/user-details',
-    state: { userData: rowData, module: 'USER' },
-    } }>
-    <Image name="editIcon" src={ actionIcon } />
+  else if (position === "Installation Executive" || position === "Installation Admin") {
+    return <Link to={{
+      pathname: '/admin/execution/user-detail',
+      state: { userData: rowData, module: 'EXECUTION' },
+    }}>
+      <Image name="editIcon" src={actionIcon} />
+    </Link>
+  } else {
+    return <Link to={{
+      pathname: '/admin/user-management/user-details',
+      state: { userData: rowData, module: 'USER' },
+    }}>
+      <Image name="editIcon" src={actionIcon} />
     </Link>
   }
 }
@@ -542,9 +549,9 @@ export function createDate(date, time, isEnd) {
     time = moment(time, 'h:mm A');
     if (isEnd) {
       time = moment(time, 'h:mm A').add(2, 'hour');
-      return moment(`${ date } ${ time.format('HH:mm') }`).format();
+      return moment(`${date} ${time.format('HH:mm')}`).format();
     } else {
-      return moment(`${ date } ${ time.format('HH:mm') }`).format();
+      return moment(`${date} ${time.format('HH:mm')}`).format();
     }
   } catch (e) {
     return '';
@@ -553,20 +560,20 @@ export function createDate(date, time, isEnd) {
 
 // eslint-disable-next-line no-extend-native
 // Used to capatilize the String
-String.prototype.capitalize = function() {
+String.prototype.capitalize = function () {
   return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
 };
 
 // eslint-disable-next-line no-extend-native
 // Used to capatilize the Words in String
-String.prototype.capitalizeWord = function() {
-  return this.replace(/\w\S*/g, function(txt) {
+String.prototype.capitalizeWord = function () {
+  return this.replace(/\w\S*/g, function (txt) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   });
 };
 
-export function getLocationStr(locationArr){
-  const locations= locationArr && locationArr.length ? locationArr.map(val => val.location): [];
+export function getLocationStr(locationArr) {
+  const locations = locationArr && locationArr.length ? locationArr.map(val => val.location) : [];
   return locations.toString().split(',').join(' , ');
 }
 
@@ -593,7 +600,7 @@ export function fileExtension(_urlStr_) {
     // ];
     if (_urlStr_) {
       const f_extnsn =
-            ('img file type:', /[.]/.exec(_urlStr_) ? /[^.]+$/.exec(_urlStr_) : undefined);
+        ('img file type:', /[.]/.exec(_urlStr_) ? /[^.]+$/.exec(_urlStr_) : undefined);
       return f_extnsn;
     } else return '';
   } catch (e) {
@@ -628,10 +635,10 @@ export const getLocationByGeoCode = async (options) => {
   if (google) {
     const geocoder = new google.maps.Geocoder();
     const { results } = await geocoder.geocode(options);
-    if (results && results[ 0 ]) {
-      const lat = await results[ 0 ].geometry.location.lat();
-      const lng = await results[ 0 ].geometry.location.lng();
-      const location = results[ 0 ];
+    if (results && results[0]) {
+      const lat = await results[0].geometry.location.lat();
+      const lng = await results[0].geometry.location.lng();
+      const location = results[0];
 
       return { lat, lng, location, status: true };
     }
@@ -708,29 +715,29 @@ export const getReverseGeocodingDataai = async (lat, lng) => {
 
 export const getReverseGeocodingData = async (lat, lng) => {
   // export const getReverseGeocodingData = (latlng) => {
-  let zipcode =''
+  let zipcode = ''
   var latlng = new google.maps.LatLng(lat, lng);
   // This is making the Geocode request
-  var geocoder =  new google.maps.Geocoder();
-  await geocoder.geocode({ 'latLng': latlng },  (results, status) =>{
-      if (status !== google.maps.GeocoderStatus.OK) {
-          // alert(status);
-          console.log(status, "status from getReverseGeocodingData")
-      }
-      // This is checking to see if the Geoeode Status is OK before proceeding
-      if (status === google.maps.GeocoderStatus.OK) {          
-          console.log(results);
-          for(let i =0; i< results.length; i++){
-            for(let j = 0;j< results[i]?.address_components?.length;j++){
-              if(results[i]?.address_components[j]?.types[0]==='postal_code'){
-                console.log("postal code:", results[i]?.address_components[j]?.long_name);
-                zipcode = results[i]?.address_components[j]?.long_name
-              }
-              if(zipcode.length)break;
-            }
-            if(zipcode.length)break;
+  var geocoder = new google.maps.Geocoder();
+  await geocoder.geocode({ 'latLng': latlng }, (results, status) => {
+    if (status !== google.maps.GeocoderStatus.OK) {
+      // alert(status);
+      console.log(status, "status from getReverseGeocodingData")
+    }
+    // This is checking to see if the Geoeode Status is OK before proceeding
+    if (status === google.maps.GeocoderStatus.OK) {
+      console.log(results);
+      for (let i = 0; i < results.length; i++) {
+        for (let j = 0; j < results[i]?.address_components?.length; j++) {
+          if (results[i]?.address_components[j]?.types[0] === 'postal_code') {
+            console.log("postal code:", results[i]?.address_components[j]?.long_name);
+            zipcode = results[i]?.address_components[j]?.long_name
           }
-      }      
+          if (zipcode.length) break;
+        }
+        if (zipcode.length) break;
+      }
+    }
   });
   return zipcode;
 }
@@ -746,12 +753,12 @@ export const getReverseGeocodingData = async (lat, lng) => {
  */
 export const getPredictionByName = async (name, type = '(cities)') => {
   if (google) {
-    const options = { input: name, types: [ type ], componentRestrictions: { country: 'IN' } };
+    const options = { input: name, types: [type], componentRestrictions: { country: 'IN' } };
     const service = new google.maps.places.AutocompleteService();
     const { predictions } = await service.getPlacePredictions(options);
 
     if (predictions.length) {
-      const result = await getLocationByGeoCode({ placeId: predictions[ 0 ].place_id });
+      const result = await getLocationByGeoCode({ placeId: predictions[0].place_id });
 
       return await result;
     }
@@ -777,55 +784,55 @@ export const getPredictionByName = async (name, type = '(cities)') => {
  *
  */
 
-export function showHideEditIcon(loginuserRole, position ) {
-  if(loginuserRole === "SUPER ADMIN"){
+export function showHideEditIcon(loginuserRole, position) {
+  if (loginuserRole === "SUPER ADMIN") {
     return true
   }
-  if(loginuserRole === "ADMIN"){
+  if (loginuserRole === "ADMIN") {
     return true
   }
-  if(loginuserRole === "HELP DESK ADMIN" &&  position === "Help Desk Executive"){
+  if (loginuserRole === "HELP DESK ADMIN" && position === "Help Desk Executive") {
     return true
   }
-  if(loginuserRole === "TRANSACTION ADMIN" &&  position === "TRANSACTION EXECUTIVE"){
+  if (loginuserRole === "TRANSACTION ADMIN" && position === "TRANSACTION EXECUTIVE") {
     return true
   }
-  if(loginuserRole === "FINANCE ADMIN" &&  position === "Finance Executive"){
+  if (loginuserRole === "FINANCE ADMIN" && position === "Finance Executive") {
     return true
   }
-  if(loginuserRole === "SALES ADMIN" &&  position === "Sales Executive"){
+  if (loginuserRole === "SALES ADMIN" && position === "Sales Executive") {
     return true
   }
-  if(loginuserRole === "INSTALLATION ADMIN" &&  position === "Installation Executive"){
+  if (loginuserRole === "INSTALLATION ADMIN" && position === "Installation Executive") {
     return true
   }
-  else{
+  else {
     return false
   }
   // if(loginuserRole)//HELP DESK EXECUTIVE
 }
 
 
-export function sensorBatteryStatus(loginuserRole, position ) {
-  if(loginuserRole === "SUPER ADMIN"){
+export function sensorBatteryStatus(loginuserRole, position) {
+  if (loginuserRole === "SUPER ADMIN") {
     return true
   }
-  if(loginuserRole === "HELP DESK ADMIN" &&  position === "Help Desk Executive"){
+  if (loginuserRole === "HELP DESK ADMIN" && position === "Help Desk Executive") {
     return true
   }
-  if(loginuserRole === "TRANSACTION ADMIN" &&  position === "TRANSACTION EXECUTIVE"){
+  if (loginuserRole === "TRANSACTION ADMIN" && position === "TRANSACTION EXECUTIVE") {
     return true
   }
-  if(loginuserRole === "FINANCE ADMIN" &&  position === "Finance Executive"){
+  if (loginuserRole === "FINANCE ADMIN" && position === "Finance Executive") {
     return true
   }
-  if(loginuserRole === "SALES ADMIN" &&  position === "Sales Executive"){
+  if (loginuserRole === "SALES ADMIN" && position === "Sales Executive") {
     return true
   }
-  if(loginuserRole === "INSTALLATION ADMIN" &&  position === "Installation Executive"){
+  if (loginuserRole === "INSTALLATION ADMIN" && position === "Installation Executive") {
     return true
   }
-  else{
+  else {
     return false
   }
   // if(loginuserRole)//HELP DESK EXECUTIVE
