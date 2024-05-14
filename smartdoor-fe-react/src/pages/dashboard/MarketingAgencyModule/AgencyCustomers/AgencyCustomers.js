@@ -202,7 +202,7 @@ const AgencyCustomers = (props) => {
         }
         await getAgencyCustomers({
             agencyId: agencyId,
-            executiveId: userData.roleId === 17 ? executiveId : userData.userid,
+            executiveId: executiveId,
             searchString: filterText,
             pageNo: newPage,
             pageSize: rowsPerPage,
@@ -225,7 +225,7 @@ const AgencyCustomers = (props) => {
         }
         await getAgencyCustomers({
             agencyId: agencyId,
-            executiveId: userData.roleId === 17 ? executiveId : userData.userid,
+            executiveId: executiveId,
             searchString: filterText,
             pageNo: currentPage,
             pageSize: newRowsPerPage,
@@ -420,7 +420,7 @@ const AgencyCustomers = (props) => {
                                     }
                                     await getAgencyCustomers({
                                         agencyId: agencyId,
-                                        executiveId: userData.roleId === 17 ? executiveId : userData.userid,
+                                        executiveId: executiveId,
                                         searchString: filterText,
                                         pageNo: currentPage,
                                         pageSize: rowsPerPage,

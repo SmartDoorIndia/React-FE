@@ -195,7 +195,7 @@ const ExecutiveHome = (props) => {
                                 fontWeight='bold'
                                 style={{ fontSize: '16px' }}
                             ></Text>
-                            <AgencyCustomers></AgencyCustomers>
+                            <AgencyCustomers agencyId={userData.agencyId} executiveId={userData.userid}></AgencyCustomers>
                         </>
                         : null}
                 </div>

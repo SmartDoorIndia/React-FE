@@ -71,21 +71,21 @@ const Pricing = (props) => {
                 setPreferredForList(Object.values(pricingObj['Preferred for']));
             }
             if ((Object.keys(pricingObj)).includes('Expected time')) {
-                if(pricingDetails.expectedTimeToSellThePropertyWithin.toString().length !== 0) {
+                if (pricingDetails.expectedTimeToSellThePropertyWithin.toString().length !== 0) {
                     // pricingDetails.expectedTimeToSellThePropertyWithin
                     const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
-    
+
                     // Split the date string by '-'
                     const parts = dateString.split('-');
-    
+
                     // Create a new Date object using the parts (year, month, day)
                     const dateObject = new Date(parts[2], parts[1] - 1, parts[0]);
-    
+
                     // Extract year, month, and day from the Date object
                     const year = dateObject.getFullYear();
                     const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
                     const day = String(dateObject.getDate()).padStart(2, '0');
-    
+
                     // Format the date to 'YYYY-MM-DD' format
                     const formattedDate = `${year}-${month}-${day}`;
                     setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
@@ -96,9 +96,9 @@ const Pricing = (props) => {
 
     const addNewFields = () => {
         if (pricingDetails.additionalFieldsForChargesDue.length < 3) {
-            let additionalList = pricingDetails.additionalFieldsForChargesDue;
-            additionalList.push({ label: null, charge: null });
-            setAdditionalFieldsList([...additionalList]);
+            let additionalList = [...pricingDetails.additionalFieldsForChargesDue];
+            additionalList.push({ label: '', charge: 0.0 });
+            // setAdditionalFieldsList([...additionalList]);
             setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
         }
         else {
@@ -108,10 +108,17 @@ const Pricing = (props) => {
     }
 
     const removeDues = (index) => {
-        let additionalList = pricingDetails.additionalFieldsForChargesDue;
+        console.log(index)
+        console.log(pricingDetails.additionalFieldsForChargesDue[index])
+        let additionalList = [...pricingDetails.additionalFieldsForChargesDue];
         additionalList.splice(index, 1);
-        setAdditionalFieldsList([...additionalList]);
-        setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
+        // setAdditionalFieldsList([...additionalList]);
+        // setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: [...additionalList] }))
+        setPricingDetails(prevPricingDetials => {
+            const updatedPricingDetails = { ...prevPricingDetials, additionalFieldsForChargesDue: additionalList };
+            console.log(updatedPricingDetails); // Log the updated state
+            return updatedPricingDetails;
+        });
     }
 
     const savePricingDetails = async () => {
@@ -121,18 +128,18 @@ const Pricing = (props) => {
         console.log(valid)
         let pricingDetail = pricingDetails;
         if (valid.isValid) {
-            if(pricingList.includes('Expected time')) {
+            if (pricingList.includes('Expected time')) {
 
                 // const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
-    
+
                 // // Create a new Date object using the date string
                 // const dateObject = new Date(dateString);
-    
+
                 // // Extract day, month, and year from the Date object
                 // const day = String(dateObject.getDate()).padStart(2, '0');
                 // const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
                 // const year = dateObject.getFullYear();
-    
+
                 // // Format the date to 'dd-mm-yyyy' format
                 // const formattedDate = `${day}-${month}-${year}`;
                 // pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
@@ -151,17 +158,17 @@ const Pricing = (props) => {
         console.log(valid)
         if (valid.isValid) {
             let pricingDetail = pricingDetails;
-            if(pricingList.includes('Expected time')) {
-                const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
-    
+            if (pricingList.includes('Expected time')) {
+                const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
+
                 // Create a new Date object using the date string
                 const dateObject = new Date(dateString);
-    
+
                 // Extract day, month, and year from the Date object
                 const day = String(dateObject.getDate()).padStart(2, '0');
                 const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
                 const year = dateObject.getFullYear();
-    
+
                 // Format the date to 'dd-mm-yyyy' format
                 const formattedDate = `${day}-${month}-${year}`;
                 pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
@@ -306,22 +313,6 @@ const Pricing = (props) => {
                         </Col>
                         : null}
 
-                    {pricingList.includes('Expected time') ?
-                        <Col lg='4'>
-                            <TextField
-                                className="w-100"
-                                type="date"
-                                error={error.expectedTimeToSellThePropertyWithin}
-                                inputProps={{ min: currentDate }}
-                                // label={'Expected time within which you want to sell the property '}
-                                onChange={(e) => {
-                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: e.target.value }));
-                                }}
-                                value={pricingDetails.expectedTimeToSellThePropertyWithin}
-                            />
-                            <Text text={'Expected time within which you want to sell the property'} />
-                        </Col>
-                        : null}
                     {pricingList.includes('Distress CheckBox') ?
                         <>
                             <Col lg='4' className="d-flex">
@@ -343,6 +334,22 @@ const Pricing = (props) => {
                                         onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, expectedDiscountInPercent: Number(e.target.value) })) }}
                                         style={{ color: "#BE142" }}
                                     />
+                                </Col>
+                                : null}
+                            {pricingList.includes('Expected time') ?
+                                <Col lg='4'>
+                                    <TextField
+                                        className="w-100"
+                                        type="date"
+                                        error={error.expectedTimeToSellThePropertyWithin}
+                                        inputProps={{ min: currentDate }}
+                                        // label={'Expected time within which you want to sell the property '}
+                                        onChange={(e) => {
+                                            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: e.target.value }));
+                                        }}
+                                        value={pricingDetails.expectedTimeToSellThePropertyWithin}
+                                    />
+                                    <Text text={'Expected time within which you want to sell the property'} />
                                 </Col>
                                 : null}
                         </>

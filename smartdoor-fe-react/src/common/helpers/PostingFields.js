@@ -28,14 +28,14 @@ const PostingFields = {
                             "Security deposit": "",
                             "Preferred for": [
                                 "Salaried",
-                                "professional",
-                                "family",
-                                "self employed",
-                                "guest house",
-                                "bachelors"
+                                "Professional",
+                                "Family",
+                                "Self Employed",
+                                "Guest House",
+                                "Bachelors"
                             ],
-                            "Type of lease:": [
-                                "Individual lease",
+                            "Type of lease": [
+                                "Individual Lease",
                                 "Company Lease"
                             ]
                         }
@@ -63,14 +63,14 @@ const PostingFields = {
                             "Security deposit": "",
                             "Preferred for": [
                                 "Salaried",
-                                "professional",
-                                "family",
-                                "self employed",
-                                "guest house",
-                                "bachelors"
+                                "Professional",
+                                "Family",
+                                "Self Employed",
+                                "Guest House",
+                                "Bachelors"
                             ],
-                            "Type of lease:": [
-                                "Individual lease",
+                            "Type of lease": [
+                                "Individual Lease",
                                 "Company Lease"
                             ]
                         }
@@ -100,14 +100,14 @@ const PostingFields = {
                             "Security deposit": "",
                             "Preferred for": [
                                 "Salaried",
-                                "professional",
-                                "family",
-                                "self employed",
-                                "guest house",
-                                "bachelors"
+                                "Professional",
+                                "Family",
+                                "Self Employed",
+                                "Guest House",
+                                "Bachelors"
                             ],
-                            "Type of lease:": [
-                                "Individual lease",
+                            "Type of lease": [
+                                "Individual Lease",
                                 "Company Lease"
                             ]
                         }
@@ -132,9 +132,9 @@ const PostingFields = {
                                 "Maintenance": "",
                                 "Security deposit": "",
                                 "Preferred for": [
-                                    "Only girls",
-                                    "only boys",
-                                    "both"
+                                    "Only Girls",
+                                    "Only Boys",
+                                    "Both"
                                 ]
                             }
                         },
@@ -157,9 +157,9 @@ const PostingFields = {
                                 "Maintenance": "",
                                 "Security deposit": "",
                                 "Preferred for": [
-                                    "Only girls",
-                                    "only boys",
-                                    "both"
+                                    "Only Girls",
+                                    "Only Boys",
+                                    "Both"
                                 ]
                             }
                         },
@@ -182,9 +182,9 @@ const PostingFields = {
                                 "Maintenance": "",
                                 "Security deposit": "",
                                 "Preferred for": [
-                                    "Only girls",
-                                    "only boys",
-                                    "both"
+                                    "Only Girls",
+                                    "Only Boys",
+                                    "Both"
                                 ]
                             }
                         }
@@ -213,9 +213,9 @@ const PostingFields = {
                         "Maintenance": "",
                         "Security deposit": "",
                         "Preferred for": [
-                            "Small business",
-                            "large business",
-                            "professionals"
+                            "Small Business",
+                            "Large Business",
+                            "Professionals"
                         ]
                     }
                 },

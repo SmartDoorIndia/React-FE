@@ -6,6 +6,7 @@ import ValidationMessages from '../helpers/ValidationMessages';
 import validateRegex from '../helpers/ValidateRegex';
 import { isValid } from 'date-fns';
 import { da } from 'date-fns/locale';
+import { showErrorToast } from '../helpers/Utils';
 
 function isBlank(str) {
   return !str || /^\s*$/.test(str);
@@ -766,6 +767,7 @@ export const validateBasicDetails = (data) => {
     }
     if ((data.ageOfProperty) < 0) {
       errors.ageOfProperty = true;
+      showErrorToast("Invalid property age")
     }
   }
   if (data.stageOfProperty === 'Under Construction' && data.propertySubType !== 'Plot') {
@@ -814,9 +816,11 @@ export const validateAddressDetails = (data, floorFlag) => {
     }
     if (data.floorNumber < 0) {
       errors.floorNumber = true;
+      showErrorToast("Invalid floor number")
     }
     if (isBlank(data.totalFloors)) {
       errors.totalFloors = true;
+      showErrorToast("Invalid total floor")
     }
     if (data.totalFloors < 0) {
       errors.totalFloors = true;
@@ -834,6 +838,12 @@ export const validateSpecs = (data, specList, testDesc) => {
 
   if (specList?.includes('BHK')) {
     if (isBlank(data.numberOfRooms)) {
+      errors.numberOfRooms = true;
+    }
+    if ((data.numberOfRooms) > 8) {
+      errors.numberOfRooms = true;
+    }
+    if ((data.numberOfRooms) < 0) {
       errors.numberOfRooms = true;
     }
     if (isBlank(data.propertyRoomCompositionType)) {
@@ -859,10 +869,16 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.carpetArea)) {
       errors.carpetArea = true;
     }
+    if ((data.carpetArea) < 0) {
+      errors.carpetArea = true;
+    }
     if (isBlank(data.carpetAreaMeasurementUnit)) {
       errors.carpetAreaMeasurementUnit = true;
     }
     if (isBlank(data.builtUpArea)) {
+      errors.builtUpArea = true;
+    }
+    if ((data.builtUpArea) < 0) {
       errors.builtUpArea = true;
     }
     if (isBlank(data.builtUpAreaMeasurementUnit)) {
@@ -873,10 +889,16 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.carpetArea)) {
       errors.carpetArea = true;
     }
+    if ((data.carpetArea) < 0) {
+      errors.carpetArea = true;
+    }
     if (isBlank(data.carpetAreaMeasurementUnit)) {
       errors.carpetAreaMeasurementUnit = true;
     }
     if (isBlank(data.builtUpArea)) {
+      errors.builtUpArea = true;
+    }
+    if ((data.builtUpArea) < 0) {
       errors.builtUpArea = true;
     }
     if (isBlank(data.builtUpAreaMeasurementUnit)) {
@@ -887,12 +909,18 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.plotArea)) {
       errors.plotArea = true;
     }
+    if ((data.plotArea) < 0) {
+      errors.plotArea = true;
+    }
     if (isBlank(data.plotAreaMeasurementUnit)) {
       errors.plotAreaMeasurementUnit = true;
     }
   }
   if (specList?.includes('Open area')) {
-    if (isBlank(data.openArea)) {
+    // if (isBlank(data.openArea)) {
+    //   errors.openArea = true;
+    // }
+    if ((data.openArea) < 0) {
       errors.openArea = true;
     }
     if (isBlank(data.openAreaMeasurementUnit)) {
@@ -909,24 +937,48 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.commercialPropertyPurposes = true;
     }
   }
+  if (specList?.includes('Number of balconies')) {
+    if ((data.numberOfBalconies) < 0) {
+      errors.numberOfBalconies = true;
+      showErrorToast('Invalid number of balconies')
+    }
+    if ((data.numberOfBalconies) > 6) {
+      errors.numberOfBalconies = true;
+      showErrorToast('Maximum 6 balconies allowed')
+    }
+  }
+  if (specList?.includes('Number of balconies')) {
+    if ((data.numberOfBalconies) < 0) {
+      errors.numberOfBalconies = true;
+    }
+  }
   if (specList?.includes('Number of washrooms')) {
     if (data.numberOfBaths > 6) {
       errors.numberOfBaths = true;
+      showErrorToast('Maximum 6 washrooms allowed')
     }
     if (isBlank(data.numberOfBaths)) {
+      errors.numberOfBaths = true;
+    }
+    if ((data.numberOfBaths) < 0) {
       errors.numberOfBaths = true;
     }
   }
   if (specList?.includes('Car parkings')) {
     if (data.numberOfCarParking > 6) {
       errors.numberOfCarParking = true;
+      showErrorToast('Maximum 6 Car parkings allowed')
     }
-    // if (isBlank(data.numberOfCarParking)) {
-    //   errors.numberOfCarParking = true;
-    // }
+    if (data.numberOfCarParking < 0) {
+      errors.numberOfCarParking = true;
+    }
   }
   if (specList?.includes('Reserved car parkings')) {
     if (data.numberOfReservedCarParking > 6) {
+      errors.numberOfReservedCarParking = true;
+      showErrorToast('Maximum 6 Reserved Car parkings allowed')
+    }
+    if (data.numberOfReservedCarParking < 0) {
       errors.numberOfReservedCarParking = true;
     }
     if (isBlank(data.numberOfReservedCarParking)) {
@@ -954,12 +1006,14 @@ export const validatePricing = (data, pricingList) => {
     }
     if (data.propertyRate < 0) {
       errors.propertyRate = true;
+      showErrorToast("Invalid rent value")
     }
   }
   if (pricingList.includes('Security deposit')) {
     if (!isBlank(data.securityAmount)) {
       if (data.securityAmount < 0) {
         errors.securityAmount = true;
+        showErrorToast("Invalid deposit value")
       }
     }
   }
@@ -974,15 +1028,18 @@ export const validatePricing = (data, pricingList) => {
     }
     if (data.propertyRate < 0) {
       errors.propertyRate = true;
+      showErrorToast("Invalid selling price")
     }
   }
   if (pricingList.includes('Distress CheckBox')) {
     if ((data.isQuickSale) === null) {
       errors.isQuickSale = true;
     }
-    if (pricingList.includes('Expected time')) {
-      if (isBlank(data.expectedTimeToSellThePropertyWithin)) {
-        errors.expectedTimeToSellThePropertyWithin = true;
+    if(data.isQuickSale === true) {
+      if (pricingList.includes('Expected time')) {
+        if (isBlank(data.expectedTimeToSellThePropertyWithin)) {
+          errors.expectedTimeToSellThePropertyWithin = true;
+        }
       }
     }
   }
@@ -996,7 +1053,7 @@ export const validatePricing = (data, pricingList) => {
         errors.additionalFieldsForChargesDue[errors.additionalFieldsForChargesDue.length - 1].label = true;
         hasError = true;
       }
-      if (isBlank(data.additionalFieldsForChargesDue[i].charge)) {
+      if (isBlank(data.additionalFieldsForChargesDue[i].charge) || data.additionalFieldsForChargesDue[i].charge <= 0) {
         errors.additionalFieldsForChargesDue[errors.additionalFieldsForChargesDue.length - 1].charge = true;
         hasError = true;
       }

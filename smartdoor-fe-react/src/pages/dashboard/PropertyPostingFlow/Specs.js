@@ -300,7 +300,7 @@ const Specs = (props) => {
                                     label={'BHK'}
                                     onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: e.target.value })) }}
                                     value={specDetails.numberOfRooms}
-                                    inputProps={{ min: 1, max: 6 }}
+                                    inputProps={{ min: 1, max: 8 }}
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
@@ -391,7 +391,7 @@ const Specs = (props) => {
                                     error={error.carpetArea}
                                     className="w-100"
                                     inputProps={{ min: 0 }}
-                                    placeholder={'Carpet area'}
+                                    placeholder={'Carpet area*'}
                                     onChange={async (e) => { await handleCarpetAreaChange(e) }}
                                     value={specDetails.carpetArea}
                                     InputProps={{
@@ -435,7 +435,7 @@ const Specs = (props) => {
                                     required
                                     error={error.builtUpArea}
                                     className="w-100"
-                                    placeholder={'Built-up area'}
+                                    placeholder={'Built-up area*'}
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => { handleBuiltupAreaChange(e) }}
                                     value={specDetails.builtUpArea}
@@ -469,7 +469,7 @@ const Specs = (props) => {
                                     required
                                     error={error.carpetArea}
                                     className="w-100"
-                                    placeholder={'Carpet area'}
+                                    placeholder={'Carpet area*'}
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => { handleCarpetAreaChange(e) }}
                                     value={specDetails.carpetArea}
@@ -519,7 +519,7 @@ const Specs = (props) => {
                                     required
                                     error={error.builtUpArea}
                                     className="w-100"
-                                    placeholder={'Built-up area'}
+                                    placeholder={'Built-up area*'}
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => { handleBuiltupAreaChange(e) }}
                                     value={specDetails.builtUpArea}

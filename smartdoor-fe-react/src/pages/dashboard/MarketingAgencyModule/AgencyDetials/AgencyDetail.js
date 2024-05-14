@@ -244,7 +244,7 @@ const AgencyDetail = (props) => {
                             >
                                 <option value="" disabled> Select </option>
                                 {agencyList?.data?.agencylist?.map((option) => (
-                                    (agencyDetails.agencyId !== option.agencyId &&
+                                    (agencyDetails.agencyId !== option.agencyId && option.status !== true  &&
                                         <MenuItem key={option.agencyId} value={option.agencyId}>
                                         {option.agencyName}
                                     </MenuItem>
@@ -305,7 +305,7 @@ const AgencyDetail = (props) => {
                                     >
                                         <option value="" disabled> Select </option>
                                         {agencyList?.data?.agencylist?.map((option) => (
-                                            (agencyDetails.agencyId !== option.agencyId &&
+                                            (agencyDetails.agencyId !== option.agencyId && option.status !== true &&
                                                 <MenuItem key={option.agencyId} value={option.agencyId}>
                                                 {option.agencyName}
                                             </MenuItem>

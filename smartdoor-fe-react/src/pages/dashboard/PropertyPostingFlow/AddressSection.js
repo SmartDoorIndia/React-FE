@@ -202,6 +202,30 @@ const AddressSection = (props) => {
 
 	const saveAddressDetails = () => {
 		let valid = {}
+		let mAddress = "";
+		if (addressDetails?.houseNumber != null) {
+			mAddress = mAddress + addressDetails.houseNumber;
+		}
+		if (addressDetails?.buildingProjectSociety != null) {
+			mAddress = mAddress + addressDetails.buildingProjectSociety;
+		} else if (addressDetails?.otherSociety != null) {
+			mAddress = mAddress + addressDetails.otherSociety;
+		}
+		if (addressDetails?.locality != null) {
+			mAddress = mAddress + addressDetails.locality;
+		}
+		if (addressDetails?.city != null) {
+			mAddress = mAddress + addressDetails.city;
+		}
+		if (addressDetails?.state != null) {
+			mAddress = mAddress + addressDetails.state;
+		}
+		if (addressDetails?.zipCode != null) {
+			mAddress = mAddress + addressDetails.zipCode;
+		}
+		setAddressDetails({
+			...addressDetails, address: mAddress});
+
 		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot') {
 			if (Number(addressDetails.floorNumber) > Number(addressDetails.totalFloors)) {
 				showErrorToast("In valid floor number...");
@@ -222,6 +246,29 @@ const AddressSection = (props) => {
 
 	const notifyAddressDetails = async () => {
 		let valid = {}
+		let mAddress = "";
+		if (addressDetails?.houseNumber != null) {
+			mAddress = mAddress + addressDetails.houseNumber;
+		}
+		if (addressDetails?.buildingProjectSociety != null) {
+			mAddress = mAddress + addressDetails.buildingProjectSociety;
+		} else if (addressDetails?.otherSociety != null) {
+			mAddress = mAddress + addressDetails.otherSociety;
+		}
+		if (addressDetails?.locality != null) {
+			mAddress = mAddress + addressDetails.locality;
+		}
+		if (addressDetails?.city != null) {
+			mAddress = mAddress + addressDetails.city;
+		}
+		if (addressDetails?.state != null) {
+			mAddress = mAddress + addressDetails.state;
+		}
+		if (addressDetails?.zipCode != null) {
+			mAddress = mAddress + addressDetails.zipCode;
+		}
+		setAddressDetails({
+			...addressDetails, address: mAddress});
 		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot') {
 			if (addressDetails.floorNumber > addressDetails.totalFloors) {
 				showErrorToast("In valid floor number...");
@@ -258,7 +305,7 @@ const AddressSection = (props) => {
 					ownerName: customerDetails?.name,
 					ownerMobileNumber: customerDetails?.mobile,
 					isPostingForOthers: true,
-                    notifyCustomer: true
+					notifyCustomer: true
 				},
 				basicDetails: basicDetailFields?.data,
 				address: addressDetails
