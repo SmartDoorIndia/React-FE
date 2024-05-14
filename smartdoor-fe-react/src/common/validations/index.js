@@ -799,12 +799,12 @@ export const validateAddressDetails = (data, floorFlag) => {
   if (isBlank(data.houseNumber)) {
     errors.houseNumber = true;
   }
-  if (isBlank(data.landmark)) {
-    errors.landmark = true;
-  }
-  if (isBlank(data.builder)) {
-    errors.builder = true;
-  }
+  // if (isBlank(data.landmark)) {
+  //   errors.landmark = true;
+  // }
+  // if (isBlank(data.builder)) {
+  //   errors.builder = true;
+  // }
   if (isBlank(data.buildingProjectSociety)) {
     errors.buildingProjectSociety = true;
   }
@@ -990,14 +990,14 @@ export const validatePricing = (data, pricingList) => {
     errors.additionalFieldsForChargesDue = []
     let hasError = false
     for (let i = 0; i < data.additionalFieldsForChargesDue.length; i++) {
-      errors.additionalFieldsForChargesDue.push({ label: false, dues: false });
+      errors.additionalFieldsForChargesDue.push({ label: false, charge: false });
       if (isBlank(data.additionalFieldsForChargesDue[i].label)) {
         // errors.additionalFieldsForChargesDue[i].label = true;
         errors.additionalFieldsForChargesDue[errors.additionalFieldsForChargesDue.length - 1].label = true;
         hasError = true;
       }
-      if (isBlank(data.additionalFieldsForChargesDue[i].dues)) {
-        errors.additionalFieldsForChargesDue[errors.additionalFieldsForChargesDue.length - 1].dues = true;
+      if (isBlank(data.additionalFieldsForChargesDue[i].charge)) {
+        errors.additionalFieldsForChargesDue[errors.additionalFieldsForChargesDue.length - 1].charge = true;
         hasError = true;
       }
     }

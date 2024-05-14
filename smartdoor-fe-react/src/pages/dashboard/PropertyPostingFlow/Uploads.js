@@ -224,6 +224,16 @@ const Uploads = (props) => {
             }];
         }
         if(isValid) {
+            let pricingDetail = { ...pricingDetailFields?.data }; // Make a copy of pricingDetailFields.data
+            if (basicDetailFields?.data.propertyCategory === 'Selling') {
+                const dateString = pricingDetail.expectedTimeToSellThePropertyWithin;
+                const dateObject = new Date(dateString);
+                const day = String(dateObject.getDate()).padStart(2, '0');
+                const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+                const year = dateObject.getFullYear();
+                const formattedDate = `${day}-${month}-${year}`;
+                pricingDetail = { ...pricingDetail, expectedTimeToSellThePropertyWithin: formattedDate }; // Update the copied object with formattedDate
+            }
             let userId = getLocalStorage('authData');
             const data = {
                 smartdoorPropertyId: propertyId,
@@ -254,7 +264,7 @@ const Uploads = (props) => {
                 basicDetails: basicDetailFields?.data,
                 address: addressDetailFields?.data,
                 specs: specDetailFields?.data,
-                pricing: pricingDetailFields?.data,
+                pricing: pricingDetail,
                 uploads: {propertyImages: imageArr, propertyVideos: videoUrlObj}
             }
             console.log(userId)

@@ -46,11 +46,17 @@ const TermsConditions = (props) => {
         setError(valid.errors);
         if (valid.isValid) {
             setLoading(true);
-            let pricingDetail = pricingDetailFields?.data;
-            // if(pricingDetailFields?.data.expectedTimeToSellThePropertyWithin !== null) {
+            let pricingDetail = { ...pricingDetailFields?.data }; // Make a copy of pricingDetailFields.data
+            if (basicDetailFields?.data.propertyCategory === 'Selling') {
+                const dateString = pricingDetail.expectedTimeToSellThePropertyWithin;
+                const dateObject = new Date(dateString);
+                const day = String(dateObject.getDate()).padStart(2, '0');
+                const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+                const year = dateObject.getFullYear();
+                const formattedDate = `${day}-${month}-${year}`;
+                pricingDetail = { ...pricingDetail, expectedTimeToSellThePropertyWithin: formattedDate }; // Update the copied object with formattedDate
+            }
 
-                
-            // }
 
             dispatch({ type: Actions.TERMS_CONDITIONS_SUCCESS, data: { termsConditionObj: termsConditionObj } });
             const postProperty = {
@@ -135,7 +141,7 @@ const TermsConditions = (props) => {
                     </Col>
                     <Col lg='6'>
                         <Text text={'Terms and Conditions'} fontWeight={'bold'} style={{ fontSize: '16px' }} />
-                    <Text className='w-100 mt-3' text={'The posting details and safety of SmartDoor kit and the property are entirely \
+                        <Text className='w-100 mt-3' text={'The posting details and safety of SmartDoor kit and the property are entirely \
                          your responsibility at your cost. SmartDoor will not be responsible for checking for any details or ownership \
                          of the property or any visitor and will only provide services as a platform for posting the property. \
                          Details term and conditions for posting are available below.'}

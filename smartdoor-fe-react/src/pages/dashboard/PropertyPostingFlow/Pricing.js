@@ -97,7 +97,7 @@ const Pricing = (props) => {
     const addNewFields = () => {
         if (pricingDetails.additionalFieldsForChargesDue.length < 3) {
             let additionalList = pricingDetails.additionalFieldsForChargesDue;
-            additionalList.push({ label: null, dues: null });
+            additionalList.push({ label: null, charge: null });
             setAdditionalFieldsList([...additionalList]);
             setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
         }
@@ -123,20 +123,20 @@ const Pricing = (props) => {
         if (valid.isValid) {
             if(pricingList.includes('Expected time')) {
 
-                const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
+                // const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
     
-                // Create a new Date object using the date string
-                const dateObject = new Date(dateString);
+                // // Create a new Date object using the date string
+                // const dateObject = new Date(dateString);
     
-                // Extract day, month, and year from the Date object
-                const day = String(dateObject.getDate()).padStart(2, '0');
-                const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
-                const year = dateObject.getFullYear();
+                // // Extract day, month, and year from the Date object
+                // const day = String(dateObject.getDate()).padStart(2, '0');
+                // const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+                // const year = dateObject.getFullYear();
     
-                // Format the date to 'dd-mm-yyyy' format
-                const formattedDate = `${day}-${month}-${year}`;
-                pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
-                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
+                // // Format the date to 'dd-mm-yyyy' format
+                // const formattedDate = `${day}-${month}-${year}`;
+                // pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
+                // setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
             }
             dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetail })
             setSavePricingFlag(true);
@@ -392,16 +392,16 @@ const Pricing = (props) => {
                                                 className="w-100 mb-2"
                                                 type="number"
                                                 label={'Dues'}
-                                                error={error.additionalFieldsForChargesDue && error.additionalFieldsForChargesDue[index]?.dues}
+                                                error={error.additionalFieldsForChargesDue && error.additionalFieldsForChargesDue[index]?.charge}
                                                 onChange={(e) => {
                                                     setAdditionalFieldsList(prevAdditionalFieldsList => {
                                                         let newList = [...prevAdditionalFieldsList];
-                                                        newList[index] = { ...newList[index], dues: e.target.value };
+                                                        newList[index] = { ...newList[index], charge: e.target.value };
                                                         setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: newList }));
                                                         return newList;
                                                     })
                                                 }}
-                                                value={fields.dues}
+                                                value={fields.charge}
                                                 inputProps={{ min: 0 }}
                                             />
                                         </Col>

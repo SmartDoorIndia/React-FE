@@ -34,12 +34,13 @@ const AgencyExecutives = (props) => {
             showErrorToast("Mobile Number is not valid...")
         } else {
             const valid = await validateExecutiveDetails(executiveDetails);
+            setError(valid.errors)
             console.log(valid);
             console.log(executiveDetails);
             if (valid.isValid) {
                 setDisableFlag(true);
-                const response = await addEditExecutive(executiveDetails).then((response) => {
-                    if (response.status === 200) {
+                await addEditExecutive(executiveDetails).then((response) => {
+                    if (response?.status === 200) {
                         showSuccessToast('Agency Executive added successfully...');
                         setDisableFlag(true)
                         history.goBack();
@@ -47,7 +48,8 @@ const AgencyExecutives = (props) => {
                         setDisableFlag(false)
                     }
                 })
-                    .catch(error => {
+                .catch(error => {
+                        setDisableFlag(false)
                         console.log(error);
                         showErrorToast("Number Already exist...")
                     });

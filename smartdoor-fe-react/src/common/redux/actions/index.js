@@ -1907,9 +1907,9 @@ export const getAgencyExecutiveById = async (data) => {
 
 export const addEditExecutive = async (data) => {
   const response = await mainApiService('addEditExecutive', data);
-  if(response.status === 200) {
-    return response;
-  }
+  // if(response.status === 200) {
+  // }
+  return response;
 }
 
 export const getAgencyCustomers = (data) => async (dispatch) => {
