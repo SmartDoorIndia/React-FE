@@ -2601,7 +2601,7 @@ export const ApiJson = {
       newExecutiveId: null,
       deactivateAgency: null,
       deleteExecutive: null,
-      propTransfer: null
+      propertyTransfer: null
     },
     showResultMessage: true,
     showErrorMessage: true

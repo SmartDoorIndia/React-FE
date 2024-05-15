@@ -63,7 +63,7 @@ const AgencyDetail = (props) => {
             newExecutiveId: destAgencyExecutive,
             deactivateAgency: false,
             deleteExecutive: false,
-            propTransfer: false,
+            propertyTransfer: false,
             customerTransfer: true,
             reactivateAgency: false
         }
@@ -84,7 +84,7 @@ const AgencyDetail = (props) => {
             newExecutiveId: agencyDetails.customerCount !== null ? destAgencyExecutive: 0,
             deactivateAgency: true,
             deleteExecutive: false,
-            propTransfer: false,
+            propertyTransfer: false,
             customerTransfer: true,
             reactivateAgency: false
         }
@@ -106,7 +106,7 @@ const AgencyDetail = (props) => {
             newExecutiveId: 0,
             deactivateAgency: false,
             deleteExecutive: false,
-            propTransfer: false,
+            propertyTransfer: false,
             customerTransfer: false,
             reactivateAgency: true
         }

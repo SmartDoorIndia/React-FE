@@ -158,6 +158,18 @@ const MarketingAgency = (props) => {
 
     const [transferCustModalShow, setTransferCustModalShow] = useState(false);
 
+    const formatAmount = (amount) => {
+        if (amount >= 100000) {
+            // Convert to lacs
+            return (amount / 100000).toFixed(1) + 'L';
+        } else if (amount >= 1000) {
+            // Convert to thousands
+            return (amount / 1000).toFixed(1) + 'K';
+        } else {
+            return amount.toFixed(1); // No conversion needed
+        }
+    }
+    
     const setDashBoardValues = () => {
         let monthSpend = 0;
         let totalSpend = 0;
@@ -177,10 +189,10 @@ const MarketingAgency = (props) => {
                 totalSpend = totalSpend + item.totalCustomerSpendTillNow;
             }
         });
-        setTotalMonthSpend(prevState => monthSpend.toFixed(1));
-        setTotalSpent(prevState => totalSpend.toFixed(1));
-        setTotalCustomers(prevState => customerSpent);
-        setTotalProperies(prevState => propertyCount);
+        setTotalMonthSpend(prevState => formatAmount(monthSpend));
+        setTotalSpent(prevState => formatAmount(totalSpend));
+        setTotalCustomers(prevState => formatAmount(customerSpent));
+        setTotalProperies(prevState => formatAmount(propertyCount));
     }
 
     useEffect(async () => {
@@ -293,20 +305,20 @@ const MarketingAgency = (props) => {
                 </Card> &nbsp;&nbsp;&nbsp;
                 <Card className="p-3 px-4">
                     <div className="d-flex ">
-                        <Text className='mt-2 w-60' size="xSmall" fontWeight="smbold" color="black" text="Total properties posted" style={{ wordBreak: 'break-word' }} />
+                        <Text className='mt-2 w-60' size="xSmall" fontWeight="smbold" color="black" text="Properties posted(month)" style={{ wordBreak: 'break-word' }} />
                         <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={agencyList?.data?.propertyCurrentMonth} style={{ fontSize: '25px', color: '#BE1452' }} />
                     </div>
                 </Card> &nbsp;&nbsp;&nbsp;
                 <Card className="p-3 px-4">
                     <div className="d-flex">
-                        <Text className='w-50 mt-2' size="xSmall" fontWeight="smbold" color="black" text="Total customers" />
+                        <Text className='w-50 mt-2' size="xSmall" fontWeight="smbold" color="black" text="Customers(month)" />
                         <Text className='w-50 text-center' fontWeight="300" color="#BE1452" text={agencyList?.data?.customerCurrentMonth} style={{ fontSize: '25px', color: '#BE1452' }} />
                     </div>
                 </Card> &nbsp;&nbsp;&nbsp;
                 <Card className="p-3 px-4">
                     <Row>
                         <Col lg='6' className="mt-2">
-                            <Text size="xSmall" fontWeight="smbold" color="black" text="Free Coupons" />
+                            <Text size="xSmall" fontWeight="smbold" color="black" text="Free Coupons (month)" />
                         </Col>
                         <Col lg='6' className="p-0">
                             <Text fontWeight="300" color="#BE1452" text={agencyList?.data?.freeCoins} style={{ fontSize: '25px', color: '#BE1452' }} />

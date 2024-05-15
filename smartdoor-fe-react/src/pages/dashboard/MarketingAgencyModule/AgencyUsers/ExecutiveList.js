@@ -260,7 +260,7 @@ const ExecutiveList = (props) => {
         let totalCustSpent = 0;
         executivelist?.forEach(element => {
             if(element.totalCustomerSpendCurrentMonth !== null) {
-                totalCustomerSpent = totalCustomerSpent + element.totalCustomerSpendCurrentMonth;
+                totalCustSpent = totalCustSpent + element.totalCustomerSpendCurrentMonth;
             }
             if(element.postingCount !== null) {
                 totalPost = totalPost + element.postingCount

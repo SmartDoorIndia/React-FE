@@ -51,7 +51,7 @@ const ExecutiveDetails = (props) => {
             newExecutiveId: executiveDetails.customerCount !== null ? destAgencyExecutive : 0,
             deactivateAgency: false,
             deleteExecutive: true,
-            propTransfer: true,
+            propertyTransfer: true,
             customerTransfer: true,
             reactivateAgency: false
         }
