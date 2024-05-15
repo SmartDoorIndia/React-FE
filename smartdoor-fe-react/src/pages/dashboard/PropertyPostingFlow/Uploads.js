@@ -201,7 +201,7 @@ const Uploads = (props) => {
             isValid = false;
         }
         let videoUrlObj = []
-        if((videoUrl1.trim()).length !== 0 && addNewVideoFlag === false) {
+        if((videoUrl1?.trim()).length !== 0 && addNewVideoFlag === false) {
             videoUrlObj = [{
                 docId: null,
                 docName: '',
@@ -225,7 +225,7 @@ const Uploads = (props) => {
         }
         if(isValid) {
             let pricingDetail = { ...pricingDetailFields?.data }; // Make a copy of pricingDetailFields.data
-            if (basicDetailFields?.data.propertyCategory === 'Selling') {
+            if (basicDetailFields?.data.propertyCategory === 'Selling' && pricingDetail.isQuickSale === true) {
                 const dateString = pricingDetail.expectedTimeToSellThePropertyWithin;
                 const dateObject = new Date(dateString);
                 const day = String(dateObject.getDate()).padStart(2, '0');

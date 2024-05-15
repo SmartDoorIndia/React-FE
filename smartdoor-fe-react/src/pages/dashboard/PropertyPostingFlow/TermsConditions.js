@@ -47,7 +47,7 @@ const TermsConditions = (props) => {
         if (valid.isValid) {
             setLoading(true);
             let pricingDetail = { ...pricingDetailFields?.data }; // Make a copy of pricingDetailFields.data
-            if (basicDetailFields?.data.propertyCategory === 'Selling') {
+            if (basicDetailFields?.data.propertyCategory === 'Selling' && pricingDetail.isQuickSale === true) {
                 const dateString = pricingDetail.expectedTimeToSellThePropertyWithin;
                 const dateObject = new Date(dateString);
                 const day = String(dateObject.getDate()).padStart(2, '0');

@@ -267,7 +267,7 @@ const Specs = (props) => {
                     notifyCustomer: true
                 },
                 basicDetails: basicDetailFields?.data,
-                address: addressDetailFields,
+                address: addressDetailFields?.data,
                 specs: specDetails
             }
             console.log(userId)
@@ -397,8 +397,8 @@ const Specs = (props) => {
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
-                                                style={{ borderStyle: 'unset', paddingRight: '0%' }}
-                                                className="w-50 p-0"
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%' }}
+                                                className="p-0"
                                                 select
                                                 error={error.carpetAreaMeasurementUnit}
                                                 InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
@@ -442,8 +442,8 @@ const Specs = (props) => {
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
-                                                style={{ borderStyle: 'unset', paddingRight: '0%' }}
-                                                className="w-50 p-0"
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                                className="p-0"
                                                 select
                                                 error={error.builtUpAreaMeasurementUnit}
                                                 InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
@@ -476,8 +476,8 @@ const Specs = (props) => {
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
-                                                style={{ borderStyle: 'unset', paddingRight: '0%' }}
-                                                className="w-50 p-0"
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                                className="p-0"
                                                 select
                                                 error={error.carpetAreaMeasurementUnit}
                                                 InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
@@ -526,8 +526,8 @@ const Specs = (props) => {
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
-                                                style={{ borderStyle: 'unset', paddingRight: '0%' }}
-                                                className="w-50 p-0"
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                                className="p-0"
                                                 select
                                                 error={error.builtUpAreaMeasurementUnit}
                                                 InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
@@ -565,8 +565,8 @@ const Specs = (props) => {
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
-                                            style={{ borderStyle: 'unset', paddingRight: '0%' }}
-                                            className="w-50 p-0"
+                                            style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                            className="p-0"
                                             select
                                             error={error.plotAreaMeasurementUnit}
                                             InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
@@ -591,14 +591,14 @@ const Specs = (props) => {
                                 error={error.openArea}
                                 className="w-100"
                                 inputProps={{ min: 0 }}
-                                label={'Open, Garden or Terrace Area'}
+                                label={'Open/Garden/Terrace Area'}
                                 onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, openArea: e.target.value })) }}
                                 value={specDetails.openArea}
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
-                                            style={{ borderStyle: 'unset', paddingRight: '0%' }}
-                                            className="w-50 p-0"
+                                            style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                            className=" p-0"
                                             select
                                             error={error.openAreaMeasurementUnit}
                                             InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}

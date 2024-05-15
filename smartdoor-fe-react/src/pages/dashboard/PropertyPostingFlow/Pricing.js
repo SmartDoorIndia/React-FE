@@ -98,7 +98,7 @@ const Pricing = (props) => {
         if (pricingDetails.additionalFieldsForChargesDue.length < 3) {
             let additionalList = [...pricingDetails.additionalFieldsForChargesDue];
             additionalList.push({ label: '', charge: 0.0 });
-            // setAdditionalFieldsList([...additionalList]);
+            setAdditionalFieldsList([...additionalList]);
             setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: additionalList }))
         }
         else {
@@ -112,7 +112,7 @@ const Pricing = (props) => {
         console.log(pricingDetails.additionalFieldsForChargesDue[index])
         let additionalList = [...pricingDetails.additionalFieldsForChargesDue];
         additionalList.splice(index, 1);
-        // setAdditionalFieldsList([...additionalList]);
+        setAdditionalFieldsList([...additionalList]);
         // setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: [...additionalList] }))
         setPricingDetails(prevPricingDetials => {
             const updatedPricingDetails = { ...prevPricingDetials, additionalFieldsForChargesDue: additionalList };
@@ -158,7 +158,7 @@ const Pricing = (props) => {
         console.log(valid)
         if (valid.isValid) {
             let pricingDetail = pricingDetails;
-            if (pricingList.includes('Expected time')) {
+            if (pricingList.includes('Expected time') && pricingDetail.isQuickSale === true) {
                 const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
 
                 // Create a new Date object using the date string
@@ -202,8 +202,8 @@ const Pricing = (props) => {
                     notifyCustomer: true
                 },
                 basicDetails: basicDetailFields?.data,
-                address: addressDetailFields,
-                specs: specDetailFields,
+                address: addressDetailFields?.data,
+                specs: specDetailFields?.data,
                 pricing: pricingDetail
             }
             console.log(userId)
@@ -336,7 +336,7 @@ const Pricing = (props) => {
                                     />
                                 </Col>
                                 : null}
-                            {pricingList.includes('Expected time') ?
+                            {pricingList.includes('Expected time') && pricingDetails.isQuickSale === true ?
                                 <Col lg='4'>
                                     <TextField
                                         className="w-100"
@@ -381,13 +381,13 @@ const Pricing = (props) => {
                                                 type="text"
                                                 error={error.additionalFieldsForChargesDue && error.additionalFieldsForChargesDue[index]?.label}
                                                 label={'Label'}
-                                                onChange={(e) => {
-                                                    setAdditionalFieldsList(prevAdditionalFieldsList => {
+                                                onChange={async(e) => {
+                                                    await setAdditionalFieldsList((prevAdditionalFieldsList) => {
 
                                                         let newList = [...prevAdditionalFieldsList];
                                                         newList[index] = { ...newList[index], label: e.target.value };
-                                                        setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: newList }));
-                                                        return newList;
+                                                        setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: [...newList] }));
+                                                        return [...newList];
                                                     });
                                                     console.log(pricingDetails.additionalFieldsForChargesDue)
                                                 }}
@@ -404,8 +404,8 @@ const Pricing = (props) => {
                                                     setAdditionalFieldsList(prevAdditionalFieldsList => {
                                                         let newList = [...prevAdditionalFieldsList];
                                                         newList[index] = { ...newList[index], charge: e.target.value };
-                                                        setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: newList }));
-                                                        return newList;
+                                                        setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: [...newList] }));
+                                                        return [...newList];
                                                     })
                                                 }}
                                                 value={fields.charge}

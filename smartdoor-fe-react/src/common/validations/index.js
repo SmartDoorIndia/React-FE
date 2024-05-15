@@ -1004,7 +1004,7 @@ export const validatePricing = (data, pricingList) => {
     if (isBlank(data.propertyRate)) {
       errors.propertyRate = true;
     }
-    if (data.propertyRate < 0) {
+    if (data.propertyRate < 0 || data.propertyRate < 5000) {
       errors.propertyRate = true;
       showErrorToast("Invalid rent value")
     }
@@ -1013,7 +1013,7 @@ export const validatePricing = (data, pricingList) => {
     if (!isBlank(data.securityAmount)) {
       if (data.securityAmount < 0) {
         errors.securityAmount = true;
-        showErrorToast("Invalid deposit value")
+        showErrorToast("Invalid deposit value, minimum 5000 required")
       }
     }
   }
@@ -1026,9 +1026,9 @@ export const validatePricing = (data, pricingList) => {
     if (isBlank(data.propertyRate)) {
       errors.propertyRate = true;
     }
-    if (data.propertyRate < 0) {
+    if (data.propertyRate < 0 || data.propertyRate < 1000000) {
       errors.propertyRate = true;
-      showErrorToast("Invalid selling price")
+      showErrorToast("Invalid selling price, minimum 1000000 required")
     }
   }
   if (pricingList.includes('Distress CheckBox')) {
