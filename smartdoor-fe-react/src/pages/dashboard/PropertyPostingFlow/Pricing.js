@@ -25,7 +25,7 @@ const Pricing = (props) => {
             propertyRate: null,
             maintenanceCharge: null,
             securityAmount: null,
-            expectedDiscountInPercent: 0,
+            expectedDiscountInPercent: 30,
             expectedTimeToSellThePropertyWithin: '',
             isQuickSale: false,
             isOpenToBuyersOnFractionalOwnershipBasis: false,
@@ -327,7 +327,7 @@ const Pricing = (props) => {
                                         <Text className='ml-3' text='Expected Discount' fontWeight='bold' style={{ fontSize: '16px' }} />
                                     </span>
                                     <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
-                                        className="ml-3 mr-4"
+                                        className="ml-0 mr-4"
                                         valueLabelDisplay="auto"
                                         min={10}
                                         max={70}

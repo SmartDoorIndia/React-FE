@@ -840,10 +840,10 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.numberOfRooms)) {
       errors.numberOfRooms = true;
     }
-    if ((data.numberOfRooms) > 8) {
+    if (Number(data.numberOfRooms) > 8) {
       errors.numberOfRooms = true;
     }
-    if ((data.numberOfRooms) < 0) {
+    if (Number(data.numberOfRooms) < 0) {
       errors.numberOfRooms = true;
     }
     if (isBlank(data.propertyRoomCompositionType)) {
