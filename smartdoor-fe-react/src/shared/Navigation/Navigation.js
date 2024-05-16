@@ -415,20 +415,6 @@ const Nav = () => {
                         </Link>
                      </>
                      : null}
-
-                     <>
-                        <Link
-                           to="/admin/corporate"
-                           className={`nav-link ${pathname.includes("/admin/corporate") ? "nav-active" : ""
-                              }`}
-                        >
-                           <Image
-                              name="borkerIcon"
-                              src={pathname.includes("/admin/corporate") ? borkerIcon : dashboard}
-                           />
-                           Corporate
-                        </Link>
-                     </>
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>

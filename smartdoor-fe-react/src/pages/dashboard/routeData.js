@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { sassFalse } from 'sass';
-import CorporateHome from './CorporateModule/CorporateHome';
 
 // Lazy import of Dashboard's components
 const SalesDashboard = React.lazy(() => import('./SalesModule/SalesDashboard'));
@@ -53,8 +52,6 @@ const PostingMainPage = React.lazy(() => import('./PropertyPostingFlow/PostingMa
 const BasicDetails = React.lazy(() => import('./PropertyPostingFlow/BasicDetails'))
 const Uploads = React.lazy(() => import('./PropertyPostingFlow/Uploads'))
 const TermsConditions = React.lazy(() => import('./PropertyPostingFlow/TermsConditions'))
-const Corporate = React.lazy(() => import('./CorporateModule/CorporateHome'))
-const AddnewCorporate = React.lazy(() => import('./CorporateModule/AddNew/AddNewCorporate'))
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -1135,23 +1132,8 @@ const routeData = [
     component: ExecutiveHome
   },
 
-  {
-    path: '/admin/corporate',
-    name: 'Corporate',
-    bradcrumb: false,
-    excat: false,
-    module:'Corporate',
-    component: Corporate
-  },
+  
 
-  {
-    path: '/admin/corporate/addNewCorporate',
-    name: 'Add New corporate',
-    bradcrumb: false,
-    excat: false,
-    // module:'Corporate',
-    component: AddnewCorporate
-  },
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',
