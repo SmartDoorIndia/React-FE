@@ -203,29 +203,29 @@ const AddressSection = (props) => {
 	const saveAddressDetails = () => {
 		let valid = {}
 		let mAddress = "";
+		let addressDetail = addressDetails;
 		if (addressDetails?.houseNumber != null) {
-			mAddress = mAddress + addressDetails.houseNumber;
+			mAddress = mAddress + " " + addressDetails.houseNumber;
 		}
 		if (addressDetails?.buildingProjectSociety != null) {
-			mAddress = mAddress + addressDetails.buildingProjectSociety;
+			mAddress = mAddress + ", " + addressDetails.buildingProjectSociety;
 		} else if (addressDetails?.otherSociety != null) {
-			mAddress = mAddress + addressDetails.otherSociety;
+			mAddress = mAddress + ", " + addressDetails.otherSociety;
 		}
 		if (addressDetails?.locality != null) {
-			mAddress = mAddress + addressDetails.locality;
+			mAddress = mAddress + ", " + addressDetails.locality;
 		}
 		if (addressDetails?.city != null) {
-			mAddress = mAddress + addressDetails.city;
+			mAddress = mAddress + ", " + addressDetails.city;
 		}
 		if (addressDetails?.state != null) {
-			mAddress = mAddress + addressDetails.state;
+			mAddress = mAddress + ", " + addressDetails.state;
 		}
 		if (addressDetails?.zipCode != null) {
-			mAddress = mAddress + addressDetails.zipCode;
+			mAddress = mAddress + ", " + addressDetails.zipCode;
 		}
-		setAddressDetails({
-			...addressDetails, address: mAddress});
-
+		setAddressDetails(prevAddresDetails => ({ ...prevAddresDetails, address: mAddress }));
+		addressDetail.address = mAddress;
 		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot') {
 			if (Number(addressDetails.floorNumber) > Number(addressDetails.totalFloors)) {
 				showErrorToast("In valid floor number...");
@@ -238,7 +238,7 @@ const AddressSection = (props) => {
 		setError(valid.errors);
 		console.log(valid)
 		if (valid.isValid) {
-			dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetails })
+			dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetail })
 			setSaveAddressFlag(true);
 			saveAddressDetailsFields({ saveFlag: true })
 		}
@@ -247,28 +247,36 @@ const AddressSection = (props) => {
 	const notifyAddressDetails = async () => {
 		let valid = {}
 		let mAddress = "";
+		let addressDetail = addressDetails;
 		if (addressDetails?.houseNumber != null) {
-			mAddress = mAddress + addressDetails.houseNumber;
+			mAddress += addressDetails.houseNumber;
 		}
 		if (addressDetails?.buildingProjectSociety != null) {
-			mAddress = mAddress + addressDetails.buildingProjectSociety;
+			mAddress += ", " + addressDetails.buildingProjectSociety;
 		} else if (addressDetails?.otherSociety != null) {
-			mAddress = mAddress + addressDetails.otherSociety;
+			mAddress += ", " + addressDetails.otherSociety;
 		}
 		if (addressDetails?.locality != null) {
-			mAddress = mAddress + addressDetails.locality;
+			mAddress += ", " + addressDetails.locality;
 		}
 		if (addressDetails?.city != null) {
-			mAddress = mAddress + addressDetails.city;
+			mAddress += ", " + addressDetails.city;
 		}
 		if (addressDetails?.state != null) {
-			mAddress = mAddress + addressDetails.state;
+			mAddress += ", " + addressDetails.state;
 		}
 		if (addressDetails?.zipCode != null) {
-			mAddress = mAddress + addressDetails.zipCode;
+			mAddress += ", " + addressDetails.zipCode;
 		}
-		setAddressDetails({
-			...addressDetails, address: mAddress});
+
+		// Remove any leading or trailing commas and spaces
+		mAddress = mAddress.replace(/^,|,$/g, '').trim();
+
+		setAddressDetails(prevAddressDetails => ({
+			...prevAddressDetails,
+			address: mAddress
+		}));
+		addressDetail.address = mAddress;
 		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot') {
 			if (addressDetails.floorNumber > addressDetails.totalFloors) {
 				showErrorToast("In valid floor number...");
@@ -308,7 +316,7 @@ const AddressSection = (props) => {
 					notifyCustomer: true
 				},
 				basicDetails: basicDetailFields?.data,
-				address: addressDetails
+				address: addressDetail
 			}
 			console.log(userId)
 			// setLoading(true)

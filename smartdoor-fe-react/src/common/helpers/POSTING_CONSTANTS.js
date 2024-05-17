@@ -8,7 +8,7 @@ const POSTING_CONSTANTS = {
     flatTypeList: ['Regular', 'Garden Flat', 'Penthouse', 'Duplex', 'Duplex Penthouse'],
     attachedList: ['Washroom', 'Balcony'],
     roomCompositionList: ['R', 'RK', 'BHK'],
-    structureList: ['G', 'G + 1', 'G + 2', 'G + 3'],
+    structureList: ['G', 'G+1', 'G+2', 'G+3'],
     measurementUnits: ['Sq. Ft.', 'Sq. Mt.'],
     commercialPurpose: ['Office', 'Shop/Showroom', 'Restaurant', 'Warehouse'],
     commercialPropertyType: ['Complex', 'Standalone', 'Mall', 'High Street', 'Mixed'],
