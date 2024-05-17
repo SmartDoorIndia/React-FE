@@ -842,9 +842,11 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
     if (Number(data.numberOfRooms) > 8) {
       errors.numberOfRooms = true;
+      showErrorToast("Maximum no. of rooms should be 8")
     }
     if (Number(data.numberOfRooms) < 0) {
       errors.numberOfRooms = true;
+      showErrorToast("Minimum no. of rooms should be 1")
     }
     if (isBlank(data.propertyRoomCompositionType)) {
       errors.propertyRoomCompositionType = true;
@@ -869,7 +871,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.carpetArea)) {
       errors.carpetArea = true;
     }
-    if ((data.carpetArea) < 0) {
+    if (Number(data.carpetArea) < 0) {
       errors.carpetArea = true;
     }
     if (isBlank(data.carpetAreaMeasurementUnit)) {
@@ -878,7 +880,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.builtUpArea)) {
       errors.builtUpArea = true;
     }
-    if ((data.builtUpArea) < 0) {
+    if (Number(data.builtUpArea) < 0) {
       errors.builtUpArea = true;
     }
     if (isBlank(data.builtUpAreaMeasurementUnit)) {
@@ -889,7 +891,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.carpetArea)) {
       errors.carpetArea = true;
     }
-    if ((data.carpetArea) < 0) {
+    if (Number(data.carpetArea) < 0) {
       errors.carpetArea = true;
     }
     if (isBlank(data.carpetAreaMeasurementUnit)) {
@@ -898,7 +900,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.builtUpArea)) {
       errors.builtUpArea = true;
     }
-    if ((data.builtUpArea) < 0) {
+    if (Number(data.builtUpArea) < 0) {
       errors.builtUpArea = true;
     }
     if (isBlank(data.builtUpAreaMeasurementUnit)) {
@@ -909,7 +911,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.plotArea)) {
       errors.plotArea = true;
     }
-    if ((data.plotArea) < 0) {
+    if (Number(data.plotArea) < 0) {
       errors.plotArea = true;
     }
     if (isBlank(data.plotAreaMeasurementUnit)) {
@@ -920,7 +922,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     // if (isBlank(data.openArea)) {
     //   errors.openArea = true;
     // }
-    if ((data.openArea) < 0) {
+    if (Number(data.openArea) < 0) {
       errors.openArea = true;
     }
     if (isBlank(data.openAreaMeasurementUnit)) {
@@ -938,47 +940,47 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
   }
   if (specList?.includes('Number of balconies')) {
-    if ((data.numberOfBalconies) < 0) {
+    if (Number(data.numberOfBalconies) < 0) {
       errors.numberOfBalconies = true;
       showErrorToast('Invalid number of balconies')
     }
-    if ((data.numberOfBalconies) > 6) {
+    if (Number(data.numberOfBalconies) > 6) {
       errors.numberOfBalconies = true;
       showErrorToast('Maximum 6 balconies allowed')
     }
   }
   if (specList?.includes('Number of balconies')) {
-    if ((data.numberOfBalconies) < 0) {
+    if (Number(data.numberOfBalconies) < 0) {
       errors.numberOfBalconies = true;
     }
   }
   if (specList?.includes('Number of washrooms')) {
-    if (data.numberOfBaths > 6) {
+    if (Number(data.numberOfBaths) > 6) {
       errors.numberOfBaths = true;
       showErrorToast('Maximum 6 washrooms allowed')
     }
     if (isBlank(data.numberOfBaths)) {
       errors.numberOfBaths = true;
     }
-    if ((data.numberOfBaths) < 0) {
+    if (Number(data.numberOfBaths) < 0) {
       errors.numberOfBaths = true;
     }
   }
   if (specList?.includes('Car parkings')) {
-    if (data.numberOfCarParking > 6) {
+    if (Number(data.numberOfCarParking) > 6) {
       errors.numberOfCarParking = true;
       showErrorToast('Maximum 6 Car parkings allowed')
     }
-    if (data.numberOfCarParking < 0) {
+    if (Number(data.numberOfCarParking) < 0) {
       errors.numberOfCarParking = true;
     }
   }
   if (specList?.includes('Reserved car parkings')) {
-    if (data.numberOfReservedCarParking > 6) {
+    if (Number(data.numberOfReservedCarParking) > 6) {
       errors.numberOfReservedCarParking = true;
       showErrorToast('Maximum 6 Reserved Car parkings allowed')
     }
-    if (data.numberOfReservedCarParking < 0) {
+    if (Number(data.numberOfReservedCarParking) < 0) {
       errors.numberOfReservedCarParking = true;
     }
     if (isBlank(data.numberOfReservedCarParking)) {
@@ -1004,14 +1006,14 @@ export const validatePricing = (data, pricingList) => {
     if (isBlank(data.propertyRate)) {
       errors.propertyRate = true;
     }
-    if (data.propertyRate < 0 || data.propertyRate < 5000) {
+    if (Number(data.propertyRate) < 0 || Number(data.propertyRate) < 5000) {
       errors.propertyRate = true;
       showErrorToast("Invalid rent value")
     }
   }
   if (pricingList.includes('Security deposit')) {
     if (!isBlank(data.securityAmount)) {
-      if (data.securityAmount < 0) {
+      if (Number(data.securityAmount) < 0) {
         errors.securityAmount = true;
         showErrorToast("Invalid deposit value, minimum 5000 required")
       }
@@ -1026,7 +1028,7 @@ export const validatePricing = (data, pricingList) => {
     if (isBlank(data.propertyRate)) {
       errors.propertyRate = true;
     }
-    if (data.propertyRate < 0 || data.propertyRate < 1000000) {
+    if (Number(data.propertyRate) < 0 || Number(data.propertyRate) < 1000000) {
       errors.propertyRate = true;
       showErrorToast("Invalid selling price, minimum 1000000 required")
     }

@@ -181,6 +181,7 @@ const Specs = (props) => {
     const saveSpecDetails = () => {
         const valid = validateSpecs(specDetails, specList, true);
         setError(valid.errors);
+        console.log(valid)
         if (valid.isValid) {
             dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetails })
             setSaveSpecsFlag(true);
