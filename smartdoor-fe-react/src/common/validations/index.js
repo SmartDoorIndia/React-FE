@@ -973,6 +973,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
     if (Number(data.numberOfCarParking) < 0) {
       errors.numberOfCarParking = true;
+      showErrorToast('Invalid no. of car parkings')
     }
   }
   if (specList?.includes('Reserved car parkings')) {
@@ -982,9 +983,20 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
     if (Number(data.numberOfReservedCarParking) < 0) {
       errors.numberOfReservedCarParking = true;
+      showErrorToast('Invalid no. of reserved car parkings')
     }
     if (isBlank(data.numberOfReservedCarParking)) {
       errors.numberOfReservedCarParking = true;
+    }
+  }
+  if (specList?.includes('Reserved two wheeler parkings')) {
+    if (Number(data.numberOfReservedTwoWheelerParking) > 6) {
+      errors.numberOfReservedTwoWheelerParking = true;
+      showErrorToast('Maximum 6 Reserved two wheeler parkings allowed')
+    }
+    if (Number(data.numberOfReservedTwoWheelerParking) < 0) {
+      errors.numberOfReservedTwoWheelerParking = true;
+      showErrorToast('Invalid no. of reserved two wheeler parkings')
     }
   }
   if (specList?.includes('Property description') && testDesc === true) {
