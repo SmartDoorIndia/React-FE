@@ -162,8 +162,8 @@ const TermsConditions = (props) => {
             <div className="d-flex">
                 {loading ? <Loader /> :
                     <>
-                        <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Edit Property' : 'Notify Customer'} onClick={() => { notifyCustomer(); }}></Buttons> &nbsp; &nbsp;
                         <Buttons className='p-2 px-4' name='Cancel' ></Buttons>
+                        <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyCustomer(); }}></Buttons> &nbsp; &nbsp;
                     </>
                 }
             </div>

@@ -362,8 +362,8 @@ const Uploads = (props) => {
             </div>
             {saveUploadFlag === false ?
                 <div className="d-flex">
-                    <Buttons className='p-2 px-4' name='Next' onClick={() => { saveUploads(); }}></Buttons> &nbsp; &nbsp;
                     <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'}  onClick={() => { notifyUploads(); }}></Buttons> &nbsp; &nbsp;
+                    <Buttons className='p-2 px-4' name='Next' onClick={() => { saveUploads(); }}></Buttons> &nbsp; &nbsp;
                     {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                 </div>
                 : null}

@@ -424,8 +424,8 @@ const Pricing = (props) => {
             </div>
             {savePricingFlag === false ?
                 <div className="d-flex">
-                    <Buttons className='p-2 px-4' name='Next' onClick={() => { savePricingDetails(); }}></Buttons> &nbsp; &nbsp;
                     <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyPricingDetails(); }}></Buttons> &nbsp; &nbsp;
+                    <Buttons className='p-2 px-4' name='Next' onClick={() => { savePricingDetails(); }}></Buttons> &nbsp; &nbsp;
                     {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                 </div>
                 : null}

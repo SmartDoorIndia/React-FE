@@ -893,9 +893,9 @@ const Specs = (props) => {
             </div>
             {saveSpecsFlag === false ?
                 <div className="d-flex">
+                    <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifySpecDetails(); }}></Buttons> &nbsp; &nbsp;
                     <Buttons className='p-2 px-4' name='Next' onClick={() => { saveSpecDetails(); }}></Buttons> &nbsp; &nbsp;
                     {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
-                    <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifySpecDetails(); }}></Buttons> &nbsp; &nbsp;
                 </div>
                 : null}
 
