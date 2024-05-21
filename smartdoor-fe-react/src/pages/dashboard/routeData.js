@@ -1136,6 +1136,15 @@ const routeData = [
   },
 
   {
+    path: '/admin/corporate/addNewCorporate',
+    name: 'Add New corporate',
+    bradcrumb: false,
+    excat: false,
+    // module:'Corporate',
+    component: AddnewCorporate
+  },
+  
+  {
     path: '/admin/corporate',
     name: 'Corporate',
     bradcrumb: false,
@@ -1144,14 +1153,7 @@ const routeData = [
     component: Corporate
   },
 
-  {
-    path: '/admin/corporate/addNewCorporate',
-    name: 'Add New corporate',
-    bradcrumb: false,
-    excat: false,
-    // module:'Corporate',
-    component: AddnewCorporate
-  },
+  
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

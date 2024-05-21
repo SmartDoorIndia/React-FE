@@ -28,7 +28,7 @@ const AddressSection = (props) => {
 	const dispatch = useDispatch();
 	const history = useHistory();
 	const propertyId = props?.propertyId;
-
+	const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
 	const [addressDetails, setAddressDetails] = useState(Object.keys(addressDetailFields.data).length !== 0 ?
 		addressDetailFields.data : {
 			latitude: '',
@@ -203,7 +203,7 @@ const AddressSection = (props) => {
 	const saveAddressDetails = () => {
 		let valid = {}
 		let mAddress = "";
-		let addressDetail = addressDetails;
+		let addressDetail = {...addressDetails};
 		if (addressDetails?.houseNumber != null) {
 			mAddress = mAddress + " " + addressDetails.houseNumber;
 		}
@@ -241,13 +241,16 @@ const AddressSection = (props) => {
 			dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetail })
 			setSaveAddressFlag(true);
 			saveAddressDetailsFields({ saveFlag: true })
+			if(editPropertyFlag) {
+				notifyAddressDetails(true);
+			}
 		}
 	}
 
-	const notifyAddressDetails = async () => {
+	const notifyAddressDetails = async (loadNext) => {
 		let valid = {}
 		let mAddress = "";
-		let addressDetail = addressDetails;
+		let addressDetail = {...addressDetails};
 		if (addressDetails?.houseNumber != null) {
 			mAddress += addressDetails.houseNumber;
 		}
@@ -290,8 +293,8 @@ const AddressSection = (props) => {
 		let userId = getLocalStorage('authData');
 		if (valid.isValid) {
 			const data = {
-				smartdoorPropertyId: propertyId,
-				miscellaneousDetails: {
+				...(propertyId && { smartdoorPropertyId: propertyId }),
+                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
 					postedById: userId.userid,
 					lastPageOfInfoFilled: 1,
 					draft: true,
@@ -327,7 +330,9 @@ const AddressSection = (props) => {
 				dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetails })
 				setSaveAddressFlag(true)
 				saveAddressDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
-				history.goBack();
+				if(!loadNext) {
+					history.goBack();
+				}
 			}
 		}
 		// setLoading(false)
@@ -471,7 +476,11 @@ const AddressSection = (props) => {
 			</div>
 			{saveAddressFlag === false ?
 				<div className="d-flex">
-					<Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyAddressDetails(); }}></Buttons> &nbsp; &nbsp;
+					{!editPropertyFlag ?
+						<>
+							<Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyAddressDetails(false); }}></Buttons> &nbsp; &nbsp;
+						</>
+					:null}
 					<Buttons className='p-2 px-4' name='Next' onClick={() => { saveAddressDetails(); }}></Buttons> &nbsp; &nbsp;
 					{/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
 				</div>

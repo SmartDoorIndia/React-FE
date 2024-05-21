@@ -33,6 +33,7 @@ const PropertyDevice = (props) => {
     const [addCameraFlag, setAddCameraFlag] = useState(false);
     const [changeUUIDFlag, setChangeUUIDFlag] = useState(false);
     const [cameraTypeList, setCameraTypeList] = useState([]);
+    const endPointList = ['prod', 'uat'];
     const [error, setError] = useState({});
 
     const _getSmartLockData = useCallback(async () => {
@@ -281,19 +282,19 @@ const PropertyDevice = (props) => {
         setShowEditCameraData(true)
         cameraData.forEach(element => {
             if (element.uuId === uuId) {
-                setselectedCameraData({...element, cameraId: element.cameraDeviceId})
+                setselectedCameraData({ ...element, cameraId: element.cameraDeviceId, cameraType: element.type, endpointType: 'prod' })
                 console.log(element)
             }
         });
     }
 
     const editCameraDetails = async (addNewFlag) => {
-        if(addNewFlag === false) {
-            await setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: selectedCameraData.cameraDeviceId }))
+        if (addNewFlag === false) {
+            await setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: selectedCameraData.cameraDeviceId  }))
         }
         const valid = await validateCameraData(selectedCameraData, addNewFlag);
         console.log(valid)
-        if(valid.isValid) {
+        if (valid.isValid) {
             const response = await editCameraData(selectedCameraData);
             if (response.status === 200) {
                 showSuccessToast("CameraDevice Data updated successfully");
@@ -581,7 +582,8 @@ const PropertyDevice = (props) => {
                             nickName: '',
                             cameraDeviceId: '',
                             cameraId: '',
-                            CameraType: '',
+                            cameraType: '',
+                            endpointType: '',
                             propertyId: propertyId
                         }))
                     }} /> &nbsp;&nbsp;
@@ -600,8 +602,10 @@ const PropertyDevice = (props) => {
                                 contentEditable={true}
                                 error={error.uuId}
                                 label="UUID"
-                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, uuId: e.target.value }));
-                                                    setChangeUUIDFlag(true); }}
+                                onChange={(e) => {
+                                    setselectedCameraData(prevCameraData => ({ ...prevCameraData, uuId: e.target.value }));
+                                    setChangeUUIDFlag(true);
+                                }}
                                 value={selectedCameraData?.uuId}
                             />
                             <TextField
@@ -642,9 +646,9 @@ const PropertyDevice = (props) => {
                                 className='col-4 px-1 mt-3'
                                 id="cameraType"
                                 select
-                                error={error.CameraType}
+                                error={error.cameraType}
                                 label="Camera Type"
-                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, CameraType: e.target.value, type: e.target.value })) }}
+                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraType: e.target.value, type: e.target.value })) }}
                                 value={selectedCameraData?.type}
                             >
                                 {cameraTypeList.map(item => (
@@ -661,6 +665,19 @@ const PropertyDevice = (props) => {
                                 onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, nickName: e.target.value })) }}
                                 value={selectedCameraData?.nickName}
                             />
+                            <TextField
+                                className='col-4 px-1 mt-3'
+                                id="endPointType"
+                                select
+                                error={error.endpointType}
+                                label="EndPoint Type"
+                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, endpointType: e.target.value })) }}
+                                value={selectedCameraData?.endpointType}
+                            >
+                                {endPointList.map(item => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
                             <TextField
                                 className='col-4 px-1 mt-3'
                                 id="deleted"
@@ -714,14 +731,14 @@ const PropertyDevice = (props) => {
                             label="Property Id"
                             value={selectedCameraData?.propertyId}
                         />
-                        <TextField
+                        {/* <TextField
                             className='col-4 px-1 mt-3'
                             id="propertyId"
                             contentEditable={false}
                             label="Camera DeviceId"
-                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: e.target.value })) }}
+                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: Number(e.target.value )})) }}
                             value={selectedCameraData?.cameraId}
-                        />
+                        /> */}
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="userName"
@@ -746,10 +763,10 @@ const PropertyDevice = (props) => {
                             className='col-4 px-1 mt-3'
                             id="cameraType"
                             select
-                            error={error.CameraType}
+                            error={error.cameraType}
                             label="Camera Type"
-                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, CameraType: e.target.value })) }}
-                            value={selectedCameraData?.CameraType}
+                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraType: e.target.value })) }}
+                            value={selectedCameraData?.cameraType}
                         >
                             {cameraTypeList.map(item => (
                                 <MenuItem key={item} value={item}>{item}</MenuItem>
@@ -765,6 +782,19 @@ const PropertyDevice = (props) => {
                             onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, nickName: e.target.value })) }}
                             value={selectedCameraData?.nickName}
                         />
+                        <TextField
+                            className='col-4 px-1 mt-3'
+                            id="endPointType"
+                            select
+                            error={error.endpointType}
+                            label="EndPoint Type"
+                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, endpointType: e.target.value })) }}
+                            value={selectedCameraData?.endpointType}
+                        >
+                            {endPointList.map(item => (
+                                <MenuItem key={item} value={item}>{item}</MenuItem>
+                            ))}
+                        </TextField>
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="deleted"

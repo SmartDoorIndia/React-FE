@@ -15,22 +15,23 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Uploads = (props) => {
 
-    const {basicDetailFields, uploadImages, saveUploadsFields, addressDetailFields, pricingDetailFields, specDetailFields, editPropertyFlag, customerDetails} = props;
+    const { basicDetailFields, uploadImages, saveUploadsFields, addressDetailFields, pricingDetailFields, specDetailFields, editPropertyFlag, customerDetails } = props;
     const fileInputRef = useRef(null);
     const propertyId = props?.propertyId;
+    const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
     const [imageArr, setImageArray] = useState(uploadImages.data.propertyImages || []);
     const [addNewVideoFlag, setAddNewVideoFlag] = useState(uploadImages?.data?.propertyVideos?.length > 1 ? true : false);
     const [videoUrl1, setVideoUrl1] = useState(uploadImages?.data?.propertyVideos !== undefined ? uploadImages?.data?.propertyVideos[0]?.docURL : '');
     const [videoUrl2, setVideoUrl2] = useState(uploadImages?.data?.propertyVideos !== undefined ? uploadImages?.data?.propertyVideos[0]?.docURL : '');
     const [saveUploadFlag, setSaveUploadFlag] = useState(false);
     const [imageLoader, setImageLoader] = useState(false)
-	const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     const history = useHistory();
 
     useEffect(() => {
         console.log(props)
-    },[])
+    }, [])
 
     const deleteImageHandler = useCallback(
         (docId, index) => {
@@ -66,80 +67,82 @@ const Uploads = (props) => {
         }
 
         const imageData = {
-        	propertyId: propertyId,
-        	propertyDocs: [],
-        	draft: false,
-        	partial: false,
-        	propertyImage: [
-        		{
-        			docId: null,
-        			docName: "",
-        			docURL: "",
-        		},
-        	],
+            propertyId: propertyId,
+            propertyDocs: [],
+            draft: false,
+            partial: false,
+            propertyImage: [
+                {
+                    docId: null,
+                    docName: "",
+                    docDescription: "",
+                    docURL: "",
+                },
+            ],
         };
         if (event.target.files.length > 0) {
-        	setImageLoader(true);
-        	let formData = new FormData();
-        	const maxSizeInBytes = 15 * 1024 * 1024; // 10MB
-        	Array.from(event.target.files).map((file) => {
-        		if(file.size > maxSizeInBytes) {
-        			showErrorToast('File must be less than 15MB...')
-        			return;
-        		}
-        	})
-        	console.log(event.target.files)
-        	let fileList = []
-        	for (let i = 0; i < event.target.files.length; i++) {
-        		fileList.push(event.target.files[i])
-        		formData.append('file', event.target.files[i]);
-        	}
-        	console.log(fileList)
-        	formData.append('id', propertyId);
-        	formData.append('enumType', 'PROPERTY_IMAGES');
-        	uploadImage(formData)
+            setImageLoader(true);
+            let formData = new FormData();
+            const maxSizeInBytes = 15 * 1024 * 1024; // 10MB
+            Array.from(event.target.files).map((file) => {
+                if (file.size > maxSizeInBytes) {
+                    showErrorToast('File must be less than 15MB...')
+                    return;
+                }
+            })
+            console.log(event.target.files)
+            let fileList = []
+            for (let i = 0; i < event.target.files.length; i++) {
+                fileList.push(event.target.files[i])
+                formData.append('file', event.target.files[i]);
+            }
+            console.log(fileList)
+            formData.append('id', propertyId);
+            formData.append('enumType', 'PROPERTY_IMAGES');
+            uploadImage(formData)
                 .then((response) => {
-        			console.log(response)
-        			if(response.data.status === 200) {
-        				// const property_image = [];
-        				const property_image = [...imageArr];
-        				for(let i = 0; i < response.data.resourceData.length; i++) {
-        					property_image.push({
-        						docId: 0,
-        						docName: "",
-        						docURL: response.data.resourceData[i],
-        					});
-        				}
-        				const image_data = {
-        					...imageData,
-        					propertyDocs: [],
-        					propertyImage: property_image,
-        				};
+                    console.log(response)
+                    if (response.data.status === 200) {
+                        // const property_image = [];
+                        const property_image = [...imageArr];
+                        for (let i = 0; i < response.data.resourceData.length; i++) {
+                            property_image.push({
+                                docId: 0,
+                                docName: "",
+                                docDescription: "",
+                                docURL: response.data.resourceData[i],
+                            });
+                        }
+                        const image_data = {
+                            ...imageData,
+                            propertyDocs: [],
+                            propertyImage: property_image,
+                        };
                         setImageArray(property_image)
-        				addImage(
-        					image_data
-        				)
-        				.then((response) => {
-        					setLoading(false);
-        					if (response.data) {
-        						if (response.data.resourceData) {
-        							setImageLoader(false);
-        						}
-        					}
-        				})
-        				.catch((error) => {
-        					setImageLoader(false);
-        					setLoading(false);
-        					console.log("error", error);
-        				});
-        				showSuccessToast(response.data.customMessage)
-        			}
-        		})
-        		.catch((error) => {
-        			setImageLoader(false);
-        			setLoading(false);
-        			console.log("error", error);
-        		});
+                        addImage(
+                            image_data
+                        )
+                            .then((response) => {
+                                setLoading(false);
+                                if (response.data) {
+                                    if (response.data.resourceData) {
+                                        setImageLoader(false);
+                                    }
+                                }
+                            })
+                            .catch((error) => {
+                                setImageLoader(false);
+                                setLoading(false);
+                                console.log("error", error);
+                            });
+                        showSuccessToast(response.data.customMessage)
+                    }
+                })
+                .catch((error) => {
+                    setImageLoader(false);
+                    setLoading(false);
+                    console.log("error", error);
+                });
         }
     };
     const [error, setError] = useState({});
@@ -159,71 +162,74 @@ const Uploads = (props) => {
         //     setError({videoUrl2: true})
         //     isValid = false;
         // }
-        if(imageArr.length < 3) {
+        if (imageArr.length < 3) {
             showErrorToast("Please upload minimum 3 images");
             isValid = false;
         }
         let videoUrlObj = []
-        if((videoUrl1?.trim())?.length !== 0 && addNewVideoFlag === false) {
+        if ((videoUrl1?.trim())?.length !== 0 && addNewVideoFlag === false) {
             videoUrlObj = [{
                 docId: null,
                 docName: '',
-                docDescription:'',
+                docDescription: '',
                 docURL: videoUrl1
             }];
         }
-        if(addNewVideoFlag === true && isValid) {
+        if (addNewVideoFlag === true && isValid) {
             videoUrlObj = [{
                 docId: null,
                 docName: '',
-                docDescription:'',
+                docDescription: '',
                 docURL: videoUrl1
-            }, 
+            },
             {
                 docId: null,
                 docName: '',
-                docDescription:'',
+                docDescription: '',
                 docURL: videoUrl2
             }];
         }
-        if(isValid) {
+        if (isValid) {
             setSaveUploadFlag(true);
-            saveUploadsFields({saveFlag: true})
-            dispatch({type: Actions.UPLOAD_IMAGES_SUCCESS, data: {propertyImages: imageArr, propertyVideos: videoUrlObj}});
+            saveUploadsFields({ saveFlag: true })
+            dispatch({ type: Actions.UPLOAD_IMAGES_SUCCESS, data: { propertyImages: imageArr, propertyVideos: videoUrlObj } });
+            if (editPropertyFlag) {
+                notifyUploads(true);
+            }
         }
 
     }
 
-    const notifyUploads = async () => {
+    const notifyUploads = async (loadNext) => {
         let isValid = true;
-        if(imageArr.length < 3) {
+        if (imageArr.length < 3) {
             showErrorToast("Please upload minimum 3 images");
             isValid = false;
         }
         let videoUrlObj = []
-        if((videoUrl1?.trim()).length !== 0 && addNewVideoFlag === false) {
+        if ((videoUrl1?.trim())?.length !== 0 && addNewVideoFlag === false) {
             videoUrlObj = [{
                 docId: null,
                 docName: '',
-                docDescription:'',
+                docDescription: '',
                 docURL: videoUrl1
             }];
         }
-        if(addNewVideoFlag === true && isValid) {
+        if (addNewVideoFlag === true && isValid) {
             videoUrlObj = [{
                 docId: null,
                 docName: '',
-                docDescription:'',
+                docDescription: '',
                 docURL: videoUrl1
-            }, 
+            },
             {
                 docId: null,
                 docName: '',
-                docDescription:'',
+                docDescription: '',
                 docURL: videoUrl2
             }];
         }
-        if(isValid) {
+        if (isValid) {
             let pricingDetail = { ...pricingDetailFields?.data }; // Make a copy of pricingDetailFields.data
             if (basicDetailFields?.data.propertyCategory === 'Selling' && pricingDetail.isQuickSale === true) {
                 const dateString = pricingDetail.expectedTimeToSellThePropertyWithin;
@@ -236,8 +242,8 @@ const Uploads = (props) => {
             }
             let userId = getLocalStorage('authData');
             const data = {
-                smartdoorPropertyId: propertyId,
-                miscellaneousDetails: {
+                ...(propertyId && { smartdoorPropertyId: propertyId }),
+                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
                     postedById: userId.userid,
                     lastPageOfInfoFilled: 4,
                     draft: true,
@@ -265,7 +271,7 @@ const Uploads = (props) => {
                 address: addressDetailFields?.data,
                 specs: specDetailFields?.data,
                 pricing: pricingDetail,
-                uploads: {propertyImages: imageArr, propertyVideos: videoUrlObj}
+                uploads: { propertyImages: imageArr, propertyVideos: videoUrlObj }
             }
             console.log(userId)
             // setLoading(true)
@@ -274,9 +280,11 @@ const Uploads = (props) => {
             if (response.status === 200) {
                 // setLoading(false)
                 setSaveUploadFlag(true);
-                saveUploadsFields({saveFlag: true})
-                dispatch({type: Actions.UPLOAD_IMAGES_SUCCESS, data: {propertyImages: imageArr, propertyVideos: videoUrlObj}});
-                history.goBack();
+                saveUploadsFields({ saveFlag: true })
+                dispatch({ type: Actions.UPLOAD_IMAGES_SUCCESS, data: { propertyImages: imageArr, propertyVideos: videoUrlObj } });
+                if (!loadNext) {
+                    history.goBack();
+                }
             }
         }
 
@@ -309,13 +317,26 @@ const Uploads = (props) => {
                         <div className="d-flex mt-3" style={{ overflowX: 'scroll', flexWrap: 'wrap' }}>
                             {imageArr.map((image, index) => (
                                 <>
-                                    <div className="d-flex">
+                                    <div key={index} className="d-flex">
                                         <img src={image?.docURL} style={{
                                             border: '1px #DEDEDE solid', borderRadius: 8, height: '100px', width: '200px',
                                             marginInlineEnd: '10px'
                                         }} />
                                         {/* <img className="me-3 mt-3" src={image.docURL} style={{ width: '150px', height: '100px', borderRadius: 8, border: '1px #9BA5AD solid' }}></img> */}
                                         <img className="mt-2" src={closeBtn} style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId, index); console.log(image.docId) }} />
+                                        <TextField
+                                            label='Image Desc.'
+                                            type="text"
+                                            value={image.docDescription}
+                                            onChange={(e) => {
+                                                const newDescription = e.target.value;
+                                                setImageArray(prevImageArr =>
+                                                    prevImageArr.map((img, idx) =>
+                                                        idx === index ? { ...img, docDescription: newDescription } : img
+                                                    )
+                                                );
+                                            }}
+                                        />
                                     </div> &nbsp; &nbsp; &nbsp; &nbsp;
                                 </>
                             ))}
@@ -331,7 +352,7 @@ const Uploads = (props) => {
                                 type="text"
                                 InputProps={{
                                     endAdornment: <>
-                                        <Image src={closeBtn} className='mt-3' style={{ scale: '1.5' }} />
+                                        <Image src={closeBtn} className='mt-3' style={{ scale: '1.5' }} onClick={() => { setVideoUrl1('') }} />
                                     </>
                                 }}
                                 onChange={(e) => { setVideoUrl1(e.target.value) }}
@@ -348,7 +369,7 @@ const Uploads = (props) => {
                                     type="text"
                                     InputProps={{
                                         endAdornment: <>
-                                            <Image src={closeBtn} className='mt-3' style={{ scale: '1.5' }} />
+                                            <Image src={closeBtn} className='mt-3' style={{ scale: '1.5' }} onClick={() => { setVideoUrl2('') }} />
                                         </>
                                     }}
                                     onChange={(e) => { setVideoUrl2(e.target.value) }}
@@ -362,7 +383,11 @@ const Uploads = (props) => {
             </div>
             {saveUploadFlag === false ?
                 <div className="d-flex">
-                    <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'}  onClick={() => { notifyUploads(); }}></Buttons> &nbsp; &nbsp;
+                    {!editPropertyFlag ?
+                        <>
+                            <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyUploads(false); }}></Buttons> &nbsp; &nbsp;
+                        </>
+                        : null}
                     <Buttons className='p-2 px-4' name='Next' onClick={() => { saveUploads(); }}></Buttons> &nbsp; &nbsp;
                     {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                 </div>

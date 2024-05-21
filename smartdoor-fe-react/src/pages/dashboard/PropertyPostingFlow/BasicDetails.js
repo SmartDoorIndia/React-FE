@@ -25,6 +25,8 @@ const BasicDetails = (props) => {
     const PGSharingList = ['Single', 'Double', 'Triple'];
     const [yearList, setYearList] = useState([]);
     const monthList = CONSTANTS_STATUS.monthList;
+    const propertyId = props?.propertyId;
+    const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
     const [basicDetails, setBasicDetails] = useState(Object.keys(basicDetailFields.data).length !== 0 ? basicDetailFields.data : {
         propertyCategory: "",
         propertyType: "",
@@ -105,7 +107,8 @@ const BasicDetails = (props) => {
         if (valid.isValid) {
             let userId = getLocalStorage('authData');
             const data = {
-                miscellaneousDetails: {
+                ...(propertyId && { smartdoorPropertyId: propertyId }),
+                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails :{
                     postedById: userId.userid,
                     lastPageOfInfoFilled: 0,
                     draft: true,
@@ -131,16 +134,18 @@ const BasicDetails = (props) => {
                 basicDetails: basicDetails
             }
             console.log(userId)
-            setLoading(true)
-            const response = await addBasicDetails(data);
-            console.log(response?.data?.resourceData?.propertyId)
-            if (response.status === 200) {
+            if(!editPropertyFlag) {
+                setLoading(true)
+                const response = await addBasicDetails(data);
+                console.log(response?.data?.resourceData?.propertyId)
+                if (response.status === 200) {
+                    setLoading(false)
+                    dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
+                    setSaveBasicDetailsFlag(true)
+                    saveBasicDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
+                }
                 setLoading(false)
-                dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
-                setSaveBasicDetailsFlag(true)
-                saveBasicDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
             }
-            setLoading(false)
         }
     }
 
@@ -319,6 +324,7 @@ const BasicDetails = (props) => {
                                     select
                                     error={error.guestHouseOrPgPropertyType}
                                     label='PG In'
+                                    disabled={saveBasicDetailsFlag === true ? true : false}
                                     className=" w-100 mt-3"
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => {
@@ -344,6 +350,7 @@ const BasicDetails = (props) => {
                                     select
                                     error={error.occupancySharing}
                                     label='Occupancy Sharing'
+                                    disabled={saveBasicDetailsFlag === true ? true : false}
                                     className=" w-100 mt-3"
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => {
@@ -375,6 +382,7 @@ const BasicDetails = (props) => {
                                 <TextField
                                     select
                                     error={error.expectedPossessionDate && selectedYear === ''}
+                                    disabled={saveBasicDetailsFlag === true ? true : false}
                                     label='Year'
                                     className="w-100 mt-3"
                                     onChange={(e) => {
@@ -397,6 +405,7 @@ const BasicDetails = (props) => {
                                 <TextField
                                     select
                                     error={error.expectedPossessionDate && selectedMonth === ''}
+                                    disabled={saveBasicDetailsFlag === true ? true : false}
                                     label='Month'
                                     className="w-100 mt-3"
                                     onChange={(e) => {
@@ -424,6 +433,7 @@ const BasicDetails = (props) => {
                         <Col lg='4'>
                             <TextField
                                 error={error.ageOfProperty}
+                                disabled={saveBasicDetailsFlag === true ? true : false}
                                 label='Age of Property'
                                 className=" w-100 mt-3"
                                 type="number"

@@ -13,10 +13,10 @@ const PostingMainPage = (props) => {
     const miscellaneousDetails = props.location.state.miscellaneousDetails;
     const [editPropertyDetails, setEditPropertyDetails] = useState(props?.location?.state?.existingDetails)
     const [saveBasicDetails, setSaveBasicDetails] = useState({ propertyId: editPropertyDetails?.propertyId || null, saveFlag: editPropertyDetails?.saveFlag || false });
-    const [saveAddressDetails, setSaveAddressDetails] = useState({ saveFlag: editPropertyDetails?.saveFlag || false });
-    const [saveSpecDetails, setSaveSpecDetails] = useState({ saveFlag: editPropertyDetails?.saveFlag || false });
-    const [savePricingDetails, setSavePricingDetails] = useState({ saveFlag: editPropertyDetails?.saveFlag || false });
-    const [saveUploads, setSaveUploads] = useState({ propertyId: editPropertyDetails?.propertyId || null, saveFlag: editPropertyDetails?.saveFlag || false });
+    const [saveAddressDetails, setSaveAddressDetails] = useState({ saveFlag: false });
+    const [saveSpecDetails, setSaveSpecDetails] = useState({ saveFlag: false });
+    const [savePricingDetails, setSavePricingDetails] = useState({ saveFlag: false });
+    const [saveUploads, setSaveUploads] = useState({ propertyId: editPropertyDetails?.propertyId || null, saveFlag: false });
 
     const handleBasicDetails = (value) => {
         console.log(value)
@@ -42,32 +42,32 @@ const PostingMainPage = (props) => {
     return (
         <>
             <Text text={'Basic Details'} fontWeight='bold' style={{ fontSize: '18px' }} />
-            <BasicDetails saveBasicDetailsFields={handleBasicDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails}></BasicDetails>
+            <BasicDetails saveBasicDetailsFields={handleBasicDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails} miscellaneousDetails={miscellaneousDetails}></BasicDetails>
             {saveBasicDetails.saveFlag ?
                 <>
                     <Text text={'Address'} fontWeight='bold' style={{ fontSize: '18px' }} />
                     <AddressSection saveAddressDetailsFields={handleAddressDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}
-                        propertyId={saveBasicDetails.propertyId}></AddressSection>
+                        propertyId={saveBasicDetails.propertyId} miscellaneousDetails={miscellaneousDetails}></AddressSection>
                 </>
                 : null}
             {saveAddressDetails.saveFlag ? 
             <>
                 <Text text={'Specs'} fontWeight='bold' style={{ fontSize: '18px' }} />
                 <Specs saveSpecDetailsFields={handleSpecDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}
-                    propertyId={saveBasicDetails.propertyId}></Specs>
+                    propertyId={saveBasicDetails.propertyId} miscellaneousDetails={miscellaneousDetails} ></Specs>
             </>
             :null}
             {saveSpecDetails.saveFlag ?
             <>
                 <Text text={'Pricing'} fontWeight='bold' style={{ fontSize: '18px' }} />
                 <Pricing savePricingDetailsFields={handlePricingDetails} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}
-                    propertyId={saveBasicDetails.propertyId} ></Pricing>
+                    propertyId={saveBasicDetails.propertyId} miscellaneousDetails={miscellaneousDetails} ></Pricing>
             </>
             :null}
             {savePricingDetails.saveFlag ?
             <>
                 <Text text={'Uploads'} fontWeight='bold' style={{ fontSize: '18px' }} />
-                <Uploads saveUploadsFields={handleUploads} propertyId={saveBasicDetails.propertyId} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false}></Uploads>
+                <Uploads saveUploadsFields={handleUploads} propertyId={saveBasicDetails.propertyId} customerDetails={customerDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} miscellaneousDetails={miscellaneousDetails} ></Uploads>
             </>
             :null}
             {saveUploads.saveFlag ?

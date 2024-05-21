@@ -43,23 +43,24 @@ const Add_EditAgency = (props) => {
         if (valid.isValid) {
             setDisableFlag(true);
             await addEditAgency(agencyDetails)
-            .then((response) => {
-                console.log(response);
-                if (response.status === 200) {
-                    setDisableFlag(true);
-                    if (addNew) {
-                        showSuccessToast('Agency added successfully...');
+                .then((response) => {
+                    console.log(response);
+                    if (response.status === 200) {
+                        setDisableFlag(true);
+                        if (addNew) {
+                            showSuccessToast('Agency added successfully...');
+                        } else {
+                            showSuccessToast('Agency edited successfully...');
+                        }
+
+                        history.goBack();
                     } else {
-                        showSuccessToast('Agency edited successfully...');
+                        setDisableFlag(false);
                     }
-                    
-                    history.goBack();
-                } else {
-                    setDisableFlag(false);
-                }
                 })
                 .catch(error => {
                     showErrorToast('Number already exist');
+                    setDisableFlag(false);
                 });
         }
     }
@@ -79,15 +80,15 @@ const Add_EditAgency = (props) => {
             <div className="tableBox mt-0 w-100">
                 <div className="tableHeading">
                     <div className="locationSelect">
-                        <div className="w-100" style={{overflowX:'hidden'}}>
+                        <div className="w-100" style={{ overflowX: 'hidden' }}>
                             <Row>
                                 <Col lg='4' style={{ marginTop: '0%' }}>
                                     <TextField
                                         className="w-100 mt-4"
                                         type="text"
                                         label="Agency Name"
-                                        onInput={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
-                                        defaultValue={agencyDetails.agencyName}
+                                        onChange={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
+                                        value={agencyDetails.agencyName}
                                     />
                                     <Text
                                         color="dangerText"
@@ -141,10 +142,10 @@ const Add_EditAgency = (props) => {
                                         label="Phone"
                                         // disabled={!addNew}
                                         inputProps={{ min: 0 }}
-                                        onInput={(e) => {
-                                            setAgencyDetails({ ...agencyDetails, contactNumber: e.target.value });
-                                        }
-                                        }
+                                        // onInput={(e) => {
+                                        //     setAgencyDetails({ ...agencyDetails, contactNumber: e.target.value });
+                                        // }
+                                        // }
                                         onChange={(e) => { handlePhoneChange(e) }}
                                         value={agencyDetails.contactNumber}
                                     />

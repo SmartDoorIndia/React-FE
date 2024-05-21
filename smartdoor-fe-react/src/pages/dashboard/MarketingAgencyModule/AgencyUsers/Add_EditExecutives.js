@@ -35,8 +35,6 @@ const AgencyExecutives = (props) => {
         } else {
             const valid = await validateExecutiveDetails(executiveDetails);
             setError(valid.errors)
-            console.log(valid);
-            console.log(executiveDetails);
             if (valid.isValid) {
                 setDisableFlag(true);
                 await addEditExecutive(executiveDetails).then((response) => {
@@ -46,12 +44,13 @@ const AgencyExecutives = (props) => {
                         history.goBack();
                     } else {
                         setDisableFlag(false)
+                        showErrorToast(response?.data?.message)
                     }
                 })
-                .catch(error => {
+                    .catch(error => {
+                        showErrorToast("Number Already exist...")
                         setDisableFlag(false)
                         console.log(error);
-                        showErrorToast("Number Already exist...")
                     });
             }
         }

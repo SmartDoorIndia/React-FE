@@ -416,7 +416,7 @@ const Nav = () => {
                      </>
                      : null}
 
-                     <>
+                     {/* <>
                         <Link
                            to="/admin/corporate"
                            className={`nav-link ${pathname.includes("/admin/corporate") ? "nav-active" : ""
@@ -428,7 +428,7 @@ const Nav = () => {
                            />
                            Corporate
                         </Link>
-                     </>
+                     </> */}
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>

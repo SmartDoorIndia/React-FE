@@ -21,6 +21,7 @@ const Specs = (props) => {
     const [specList, setSpecList] = useState([]);
     const dispatch = useDispatch();
     const propertyId = props?.propertyId;
+    const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
     const [specDetails, setSpecDetails] = useState(Object.keys(specDetailFields.data).length !== 0 ?
         specDetailFields.data : {
             numberOfRooms: 0.0,
@@ -37,7 +38,7 @@ const Specs = (props) => {
             plotAreaMeasurementUnit: 'Sq. Ft.',
             loadingFactorInPercent: Number(30),
             flatType: '',
-            isUnusedProperty: null,
+            isUnusedProperty: false,
             furnishingDescription: '',
             furnishing: '',
             entranceFacing: '',
@@ -112,7 +113,7 @@ const Specs = (props) => {
             setSpecList(speclist);
         }
         if (Object.keys(specDetailFields.data).length !== 0) {
-            if(specDetailFields?.data?.numberOfRooms !== null) {
+            if (specDetailFields?.data?.numberOfRooms !== null) {
                 const bedrooms = (specDetailFields?.data?.numberOfRooms?.toString())?.split('.')
                 if (bedrooms?.length === 2) {
                     if (bedrooms[1] === '5') {
@@ -127,19 +128,19 @@ const Specs = (props) => {
     const setAddRoom = (e) => {
         if (e.target.checked) {
             const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
-        // Round the updated number to avoid precision issues
-        const roundedRooms = Math.round(updatedRooms * 10) / 10;
-        
-        setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
-        console.log(roundedRooms);
-        setAddRoomFlag(true);
+            // Round the updated number to avoid precision issues
+            const roundedRooms = Math.round(updatedRooms * 10) / 10;
+
+            setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+            console.log(roundedRooms);
+            setAddRoomFlag(true);
         }
         else {
             const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
-        const roundedRooms = Math.round(updatedRooms * 10) / 10;
+            const roundedRooms = Math.round(updatedRooms * 10) / 10;
 
-        setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
-        setAddRoomFlag(false);
+            setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+            setAddRoomFlag(false);
         }
     }
 
@@ -158,6 +159,7 @@ const Specs = (props) => {
                 "Attached": JSON.stringify(specDetails.pgGuestHouseAttachedTo) || '',
                 "Flat type": specDetails.flatType,
                 "Commercial purpose": JSON.stringify(specDetails.commercialPropertyPurposes),
+                "purposes": JSON.stringify(specDetails.purposes),
                 "Structure": specDetails.structure,
                 "Entrance facing": specDetails.entranceFacing,
                 "Overlooking": JSON.stringify(specDetails.propertyOverlookings),
@@ -186,6 +188,9 @@ const Specs = (props) => {
             dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetails })
             setSaveSpecsFlag(true);
             saveSpecDetailsFields({ saveFlag: true })
+            if(editPropertyFlag) {
+                notifySpecDetails(true)
+            }
         }
     }
 
@@ -197,7 +202,7 @@ const Specs = (props) => {
         setSpecDetails(prevSpecDetails => ({
             ...prevSpecDetails,
             carpetArea: carpetArea,
-            builtUpArea: builtUpArea.toFixed(0) // Adjust decimal places as needed
+            builtUpArea: builtUpArea.toFixed(2) // Adjust decimal places as needed
         }));
     };
 
@@ -210,21 +215,64 @@ const Specs = (props) => {
                 ...prevSpecDetails,
                 loadingFactorInPercent: loadingFactor,
                 carpetArea: carpetArea,
-                builtUpArea: builtUpArea.toFixed(0) // Adjust decimal places as needed
+                builtUpArea: builtUpArea.toFixed(2) // Adjust decimal places as needed
             }));
         }
-        if (specDetails.builtUpArea !== null) {
+        else if (specDetails.builtUpArea !== null) {
             const builtUpArea = parseFloat(specDetails.carpetArea)
             const loadingFactor = parseFloat(e.target.value);
             const carpetArea = parseFloat(builtUpArea * (1 - (loadingFactor * 0.01)));
             setSpecDetails(prevSpecDetails => ({
                 ...prevSpecDetails,
                 loadingFactorInPercent: loadingFactor,
-                carpetArea: carpetArea.toFixed(0),
+                carpetArea: carpetArea.toFixed(2),
                 builtUpArea: builtUpArea // Adjust decimal places as needed
             }));
         }
     };
+
+    const handleUnitChanged = (e) => {
+        const newUnit = e.target.value;
+    
+        const convertArea = (area, currentUnit) => {
+            if (currentUnit === 'Sq. Mt.' && newUnit === 'Sq. Ft.') {
+                return (parseFloat(area) * 10.7639).toFixed(2);
+            } else if (currentUnit === 'Sq. Ft.' && newUnit === 'Sq. Mt.') {
+                return (parseFloat(area) / 10.7639).toFixed(2);
+            }
+            return area;
+        };
+    
+        setSpecDetails(prevSpecDetails => ({
+            ...prevSpecDetails,
+            openArea: convertArea(prevSpecDetails.openArea, prevSpecDetails.openAreaMeasurementUnit),
+            builtUpArea: convertArea(prevSpecDetails.builtUpArea, prevSpecDetails.builtUpAreaMeasurementUnit),
+            carpetArea: convertArea(prevSpecDetails.carpetArea, prevSpecDetails.carpetAreaMeasurementUnit),
+            openAreaMeasurementUnit: newUnit,
+            builtUpAreaMeasurementUnit: newUnit,
+            carpetAreaMeasurementUnit: newUnit,
+        }));
+    };
+
+    const handlePlotAreaUnitChanged = (e) => {
+        const newUnit = e.target.value;
+    
+        const convertArea = (area, currentUnit) => {
+            if (currentUnit === 'Sq. Mt.' && newUnit === 'Sq. Ft.') {
+                return (parseFloat(area) * 10.7639).toFixed(2);
+            } else if (currentUnit === 'Sq. Ft.' && newUnit === 'Sq. Mt.') {
+                return (parseFloat(area) / 10.7639).toFixed(2);
+            }
+            return area;
+        };
+    
+        setSpecDetails(prevSpecDetails => ({
+            ...prevSpecDetails,
+            plotArea: convertArea(prevSpecDetails.plotArea, prevSpecDetails.plotAreaMeasurementUnit),
+            plotAreaMeasurementUnit: newUnit,
+        }));
+    };
+    
 
     const handleBuiltupAreaChange = (e) => {
         const builtUpArea = parseFloat(e.target.value);
@@ -232,18 +280,18 @@ const Specs = (props) => {
         setSpecDetails(prevSpecDetails => ({
             ...prevSpecDetails,
             carpetArea: carpetArea,
-            builtUpArea: builtUpArea.toFixed(0) // Adjust decimal places as needed
+            builtUpArea: builtUpArea.toFixed(2) // Adjust decimal places as needed
         }));
     };
 
-    const notifySpecDetails = async () => {
+    const notifySpecDetails = async (loadNext) => {
         const valid = validateSpecs(specDetails, specList, true);
         setError(valid.errors);
         if (valid.isValid) {
             let userId = getLocalStorage('authData');
             const data = {
-                smartdoorPropertyId: propertyId,
-                miscellaneousDetails: {
+                ...(propertyId && { smartdoorPropertyId: propertyId }),
+                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails :{
                     postedById: userId.userid,
                     lastPageOfInfoFilled: 2,
                     draft: true,
@@ -280,7 +328,9 @@ const Specs = (props) => {
                 dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetails })
                 setSaveSpecsFlag(true)
                 saveSpecDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
-                history.goBack();
+                if(!loadNext) {
+                    history.goBack();
+                }
             }
         }
         // setLoading(false)
@@ -321,14 +371,16 @@ const Specs = (props) => {
                                     }}
                                 ></TextField>
                             </Col>
-                            <Col className="d-flex p-0" lg='4'>
-                                <Checkbox ref={hasExtraRoom} checked={addRoomFlag} onChange={(e) => { setAddRoom(e) }} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
-                                <Text className='mt-3' text={'.5'} style={{ fontSize: '16px' }} ></Text> &nbsp;&nbsp;
-                                <Checkbox onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, hasServantRoom: e.target.checked })) }} defaultChecked={specDetails.hasServantRoom} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
-                                <Text className='mt-3' text={'Servant Room'} style={{ fontSize: '16px' }} ></Text> &nbsp;&nbsp;
-                                <Checkbox onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, hasExtraKitchen: e.target.checked })) }} defaultChecked={specDetails.hasExtraKitchen} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
-                                <Text className='mt-3' text={'Extra Kitchen'} style={{ fontSize: '16px' }} ></Text>
-                            </Col>
+                            {basicDetailFields.data.propertySubType !== 'PG/Co-Living' ?
+                                <Col className="d-flex p-0" lg='4'>
+                                    <Checkbox ref={hasExtraRoom} checked={addRoomFlag} onChange={(e) => { setAddRoom(e) }} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                                    <Text className='mt-3' text={'.5'} style={{ fontSize: '16px' }} ></Text> &nbsp;&nbsp;
+                                    <Checkbox onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, hasServantRoom: e.target.checked })) }} defaultChecked={specDetails.hasServantRoom} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                                    <Text className='mt-3' text={'Servant Room'} style={{ fontSize: '16px' }} ></Text> &nbsp;&nbsp;
+                                    <Checkbox onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, hasExtraKitchen: e.target.checked })) }} defaultChecked={specDetails.hasExtraKitchen} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                                    <Text className='mt-3' text={'Extra Kitchen'} style={{ fontSize: '16px' }} ></Text>
+                                </Col>
+                                : null}
                         </>
                         : null}
                     {specList.includes('Structure') ?
@@ -388,7 +440,7 @@ const Specs = (props) => {
                             <Col lg='4' className='mb-2'>
                                 <TextField
                                     type="number"
-                                    required
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-Living' ? true : false}
                                     error={error.carpetArea}
                                     className="w-100"
                                     inputProps={{ min: 0 }}
@@ -398,12 +450,14 @@ const Specs = (props) => {
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
-                                                style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%' }}
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
                                                 className="p-0"
                                                 select
                                                 error={error.carpetAreaMeasurementUnit}
                                                 InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
-                                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, carpetAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value, openAreaMeasurementUnit: e.target.value })) }}
+                                                onChange={(e) => { 
+                                                    // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, carpetAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value, openAreaMeasurementUnit: e.target.value }));
+                                                                    handleUnitChanged(e); }}
                                                 value={specDetails.carpetAreaMeasurementUnit}
                                             >
                                                 {POSTING_CONSTANTS.measurementUnits.map(item => (
@@ -418,8 +472,8 @@ const Specs = (props) => {
                             {specList.includes('Loading factor') ?
                                 <Col className="p-0" lg='4'>
                                     <span className="d-flex">
-                                        <Text text='Loading Factor' fontWeight='bold' style={{ fontSize: '16px' }} />
-                                        <Text className='mt-1' text='Add carpet area or Built up area only' fontWeight='500' style={{ fontSize: '12px' }} />
+                                        <Text text={'Loading Factor: ' + specDetails.loadingFactorInPercent + '% '} fontWeight='bold' style={{ fontSize: '16px' }} />
+                                        <Text className='mt-1' text='Add carpet area/Built up area' fontWeight='500' style={{ fontSize: '12px' }} />
                                     </span>
                                     <Slider defaultValue={specDetails.loadingFactorInPercent}
                                         valueLabelDisplay="auto"
@@ -433,7 +487,7 @@ const Specs = (props) => {
                             <Col lg='4' className='mb-2'>
                                 <TextField
                                     type="number"
-                                    required
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-Living' ? true : false}
                                     error={error.builtUpArea}
                                     className="w-100"
                                     placeholder={'Built-up area*'}
@@ -443,12 +497,14 @@ const Specs = (props) => {
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
-                                                style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
                                                 className="p-0"
                                                 select
                                                 error={error.builtUpAreaMeasurementUnit}
                                                 InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
-                                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value, openAreaMeasurementUnit: e.target.value })) }}
+                                                onChange={(e) => { 
+                                                    // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value, openAreaMeasurementUnit: e.target.value }));
+                                                                    handleUnitChanged(e); }}
                                                 value={specDetails.builtUpAreaMeasurementUnit}
                                             >
                                                 {POSTING_CONSTANTS.measurementUnits.map(item => (
@@ -467,26 +523,27 @@ const Specs = (props) => {
                             <Col lg='4' className='mb-2'>
                                 <TextField
                                     type="number"
-                                    required
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-Living' ? true : false}
                                     error={error.carpetArea}
                                     className="w-100"
-                                    placeholder={'Carpet area*'}
+                                    placeholder={'Carpet area'}
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => { handleCarpetAreaChange(e) }}
                                     value={specDetails.carpetArea}
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
-                                                style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
                                                 className="p-0"
                                                 select
                                                 error={error.carpetAreaMeasurementUnit}
                                                 InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
                                                 onChange={(e) => {
-                                                    setSpecDetails(prevSpecDetails => ({
-                                                        ...prevSpecDetails, carpetAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value,
-                                                        openAreaMeasurementUnit: e.target.value,
-                                                    }))
+                                                    // setSpecDetails(prevSpecDetails => ({
+                                                    //     ...prevSpecDetails, carpetAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value,
+                                                    //     openAreaMeasurementUnit: e.target.value,
+                                                    // }));
+                                                    handleUnitChanged(e);
                                                 }}
                                                 value={specDetails.carpetAreaMeasurementUnit}
                                             >
@@ -517,26 +574,27 @@ const Specs = (props) => {
                             <Col lg='4' className='mb-2'>
                                 <TextField
                                     type="number"
-                                    required
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-Living' ? true : false}
                                     error={error.builtUpArea}
                                     className="w-100"
-                                    placeholder={'Built-up area*'}
+                                    placeholder={'Built-up area'}
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => { handleBuiltupAreaChange(e) }}
                                     value={specDetails.builtUpArea}
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
-                                                style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
                                                 className="p-0"
                                                 select
                                                 error={error.builtUpAreaMeasurementUnit}
                                                 InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
                                                 onChange={(e) => {
-                                                    setSpecDetails(prevSpecDetails => ({
-                                                        ...prevSpecDetails, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value,
-                                                        openAreaMeasurementUnit: e.target.value,
-                                                    }))
+                                                    // setSpecDetails(prevSpecDetails => ({
+                                                    //     ...prevSpecDetails, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value,
+                                                    //     openAreaMeasurementUnit: e.target.value,
+                                                    // }));
+                                                    handleUnitChanged(e);
                                                 }}
                                                 value={specDetails.builtUpAreaMeasurementUnit}
                                             >
@@ -566,12 +624,14 @@ const Specs = (props) => {
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
-                                            style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                            style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
                                             className="p-0"
                                             select
                                             error={error.plotAreaMeasurementUnit}
                                             InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
-                                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, plotAreaMeasurementUnit: e.target.value })) }}
+                                            onChange={(e) => { 
+                                                // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, plotAreaMeasurementUnit: e.target.value })) 
+                                                handlePlotAreaUnitChanged(e);}}
                                             value={specDetails.plotAreaMeasurementUnit}
                                         >
                                             {POSTING_CONSTANTS.measurementUnits.map(item => (
@@ -598,12 +658,14 @@ const Specs = (props) => {
                                 InputProps={{
                                     endAdornment: <>
                                         <TextField
-                                            style={{ borderStyle: 'unset', paddingRight: '0%', width:'60%'  }}
+                                            style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
                                             className=" p-0"
                                             select
                                             error={error.openAreaMeasurementUnit}
                                             InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
-                                            onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, openAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value })) }}
+                                            onChange={(e) => { 
+                                                // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, openAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value }))
+                                                    handleUnitChanged(e) }}
                                             value={specDetails.openAreaMeasurementUnit}
                                         >
                                             {POSTING_CONSTANTS.measurementUnits.map(item => (
@@ -637,7 +699,7 @@ const Specs = (props) => {
                         <Col lg='4' className='mb-2'>
                             <TextField
                                 required
-                                error={error.commercialPropertyPurposes}
+                                error={error.purposes}
                                 select
                                 multiple
                                 SelectProps={{
@@ -645,8 +707,8 @@ const Specs = (props) => {
                                 }}
                                 className="w-100"
                                 label={'Purpose'}
-                                onChange={(e) => { console.log(e); setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, commercialPropertyPurposes: e.target.value })) }}
-                                value={specDetails.commercialPropertyPurposes}
+                                onChange={(e) => { console.log(e); setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, purposes: e.target.value })) }}
+                                value={specDetails.purposes}
                             >
                                 {POSTING_CONSTANTS.commercialPurpose.map((item) => (
                                     <MenuItem key={item} value={item}>{item}</MenuItem>
@@ -894,7 +956,11 @@ const Specs = (props) => {
             </div>
             {saveSpecsFlag === false ?
                 <div className="d-flex">
-                    <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifySpecDetails(); }}></Buttons> &nbsp; &nbsp;
+                    {!editPropertyFlag ?
+                    <>
+                        <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifySpecDetails(false); }}></Buttons> &nbsp; &nbsp;
+                    </>
+                    :null}
                     <Buttons className='p-2 px-4' name='Next' onClick={() => { saveSpecDetails(); }}></Buttons> &nbsp; &nbsp;
                     {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                 </div>

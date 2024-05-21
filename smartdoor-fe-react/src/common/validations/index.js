@@ -873,6 +873,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
     if (Number(data.carpetArea) < 0) {
       errors.carpetArea = true;
+      showErrorToast("Invalid carpet area")
     }
     if (isBlank(data.carpetAreaMeasurementUnit)) {
       errors.carpetAreaMeasurementUnit = true;
@@ -882,37 +883,41 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
     if (Number(data.builtUpArea) < 0) {
       errors.builtUpArea = true;
+      showErrorToast("Invalid built up area")
     }
     if (isBlank(data.builtUpAreaMeasurementUnit)) {
       errors.builtUpAreaMeasurementUnit = true;
     }
   }
   if (specList?.includes('Carpet area/built-up area of the room')) {
-    if (isBlank(data.carpetArea)) {
-      errors.carpetArea = true;
-    }
+    // if (isBlank(data.carpetArea)) {
+    //   errors.carpetArea = true;
+    // }
     if (Number(data.carpetArea) < 0) {
       errors.carpetArea = true;
+      showErrorToast("Invalid carpet area")
     }
     if (isBlank(data.carpetAreaMeasurementUnit)) {
       errors.carpetAreaMeasurementUnit = true;
     }
-    if (isBlank(data.builtUpArea)) {
-      errors.builtUpArea = true;
+    // if (isBlank(data.builtUpArea)) {
+      //   errors.builtUpArea = true;
+      // }
+      if (Number(data.builtUpArea) < 0) {
+        errors.builtUpArea = true;
+        showErrorToast("Invalid built up area")
+      }
+      if (isBlank(data.builtUpAreaMeasurementUnit)) {
+        errors.builtUpAreaMeasurementUnit = true;
+      }
     }
-    if (Number(data.builtUpArea) < 0) {
-      errors.builtUpArea = true;
-    }
-    if (isBlank(data.builtUpAreaMeasurementUnit)) {
-      errors.builtUpAreaMeasurementUnit = true;
-    }
-  }
-  if (specList?.includes('Plot area')) {
-    if (isBlank(data.plotArea)) {
-      errors.plotArea = true;
-    }
-    if (Number(data.plotArea) < 0) {
-      errors.plotArea = true;
+    if (specList?.includes('Plot area')) {
+      if (isBlank(data.plotArea)) {
+        errors.plotArea = true;
+      }
+      if (Number(data.plotArea) < 0) {
+        errors.plotArea = true;
+        showErrorToast("Invalid plot area")
     }
     if (isBlank(data.plotAreaMeasurementUnit)) {
       errors.plotAreaMeasurementUnit = true;
@@ -924,6 +929,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     // }
     if (Number(data.openArea) < 0) {
       errors.openArea = true;
+      showErrorToast("Invalid open area value")
     }
     if (isBlank(data.openAreaMeasurementUnit)) {
       errors.openAreaMeasurementUnit = true;
@@ -935,8 +941,8 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
   }
   if (specList?.includes('Purpose')) {
-    if ((data.commercialPropertyPurposes).length === 0) {
-      errors.commercialPropertyPurposes = true;
+    if ((data.purposes).length === 0) {
+      errors.purposes = true;
     }
   }
   if (specList?.includes('Number of balconies')) {
@@ -964,6 +970,7 @@ export const validateSpecs = (data, specList, testDesc) => {
     }
     if (Number(data.numberOfBaths) < 0) {
       errors.numberOfBaths = true;
+      showErrorToast('Invalid no. of washrooms')
     }
   }
   if (specList?.includes('Car parkings')) {
@@ -1018,9 +1025,16 @@ export const validatePricing = (data, pricingList) => {
     if (isBlank(data.propertyRate)) {
       errors.propertyRate = true;
     }
-    if (Number(data.propertyRate) < 0 || Number(data.propertyRate) < 5000) {
+    if (Number(data.propertyRate) < 0) {
       errors.propertyRate = true;
       showErrorToast("Invalid rent value")
+    } else if (Number(data.propertyRate) < 5000) {
+      errors.propertyRate = true;
+      showErrorToast("Minimum rent value 5000 required")
+    }
+    else if (Number(data.propertyRate) > 1000000) {
+      errors.propertyRate = true;
+      showErrorToast("Maximum rent value 10 lacs required")
     }
   }
   if (pricingList.includes('Security deposit')) {
@@ -1118,14 +1132,17 @@ export const validateCameraData = (data, addNewFlag) => {
   if (isBlank(data.nickName)) {
     errors.nickName = true;
   }
-  if (isBlank(data.CameraType)) {
-    errors.CameraType = true;
+  if (isBlank(data.cameraType)) {
+    errors.cameraType = true;
   }
-  if (addNewFlag) {
-    if (isBlank(data.cameraId)) {
-      errors.cameraId = true;
-    }
+  if (isBlank(data.endpointType)) {
+    errors.endpointType = true;
   }
+  // if (addNewFlag) {
+  //   if (isBlank(data.cameraId)) {
+  //     errors.cameraId = true;
+  //   }
+  // }
 
   return {
     errors,

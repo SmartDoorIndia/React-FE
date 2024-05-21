@@ -2662,7 +2662,7 @@ export const ApiJson = {
   },
 
   editCameraData: {
-    url: '/smartlock/smartlock/saverrupdateCameraDevice',
+    url: '/smartlock/smartlock/saveorupdateCameraDevice',
     method: 'PUT',
     data: {
       uuId: null,

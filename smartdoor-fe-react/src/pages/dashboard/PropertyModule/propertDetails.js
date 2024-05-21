@@ -1348,7 +1348,12 @@ const PropertyDetails = (props) => {
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2"
-                                          onClick={() => { history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: propertyData.miscellaneousDetails }) }} /> &nbsp; &nbsp;
+                                          onClick={() => { 
+                                             let miscellaneousDetailsDto = propertyData.miscellaneousDetails;
+                                             if(propertyData.miscellaneousDetails.status !== null) {
+                                                miscellaneousDetailsDto.draft = false;
+                                             }
+                                             history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: miscellaneousDetailsDto }) }} /> &nbsp; &nbsp;
 
                                     </>
                                     : null}

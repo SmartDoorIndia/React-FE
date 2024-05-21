@@ -20,6 +20,7 @@ const Pricing = (props) => {
     const [pricingObject, setPricingObject] = useState({});
     const [preferredForList, setPreferredForList] = useState([]);
     const currentDate = new Date().toISOString().split('T')[0];
+    const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
     const [pricingDetails, setPricingDetails] = useState(Object.keys(pricingDetailFields.data).length !== 0 ?
         pricingDetailFields.data : {
             propertyRate: null,
@@ -71,24 +72,26 @@ const Pricing = (props) => {
                 setPreferredForList(Object.values(pricingObj['Preferred for']));
             }
             if ((Object.keys(pricingObj)).includes('Expected time')) {
-                if (pricingDetails.expectedTimeToSellThePropertyWithin.toString().length !== 0) {
-                    // pricingDetails.expectedTimeToSellThePropertyWithin
-                    const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
-
-                    // Split the date string by '-'
-                    const parts = dateString.split('-');
-
-                    // Create a new Date object using the parts (year, month, day)
-                    const dateObject = new Date(parts[2], parts[1] - 1, parts[0]);
-
-                    // Extract year, month, and day from the Date object
-                    const year = dateObject.getFullYear();
-                    const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
-                    const day = String(dateObject.getDate()).padStart(2, '0');
-
-                    // Format the date to 'YYYY-MM-DD' format
-                    const formattedDate = `${year}-${month}-${day}`;
-                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
+                if(pricingDetails?.expectedTimeToSellThePropertyWithin !== null) {
+                    if (pricingDetails?.expectedTimeToSellThePropertyWithin?.toString()?.length !== 0) {
+                        // pricingDetails.expectedTimeToSellThePropertyWithin
+                        const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
+    
+                        // Split the date string by '-'
+                        const parts = dateString?.split('-');
+    
+                        // Create a new Date object using the parts (year, month, day)
+                        const dateObject = new Date(parts[2], parts[1] - 1, parts[0]);
+    
+                        // Extract year, month, and day from the Date object
+                        const year = dateObject.getFullYear();
+                        const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
+                        const day = String(dateObject.getDate()).padStart(2, '0');
+    
+                        // Format the date to 'YYYY-MM-DD' format
+                        const formattedDate = `${year}-${month}-${day}`;
+                        setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
+                    }
                 }
             }
         }
@@ -148,10 +151,13 @@ const Pricing = (props) => {
             dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetail })
             setSavePricingFlag(true);
             savePricingDetailsFields({ saveFlag: true })
+            if(editPropertyFlag) {
+                notifyPricingDetails(true)
+            }
         }
     }
 
-    const notifyPricingDetails = async () => {
+    const notifyPricingDetails = async (loadNext) => {
         let valid = {}
         valid = validatePricing(pricingDetails, pricingList);
         setError(valid.errors);
@@ -176,8 +182,8 @@ const Pricing = (props) => {
             }
             let userId = getLocalStorage('authData');
             const data = {
-                smartdoorPropertyId: propertyId,
-                miscellaneousDetails: {
+                ...(propertyId && { smartdoorPropertyId: propertyId }),
+                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails :{
                     postedById: userId.userid,
                     lastPageOfInfoFilled: 3,
                     draft: true,
@@ -215,7 +221,9 @@ const Pricing = (props) => {
                 dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
                 setSavePricingFlag(true)
                 savePricingDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
-                history.goBack();
+                if(!loadNext) {
+                    history.goBack();
+                }
             }
         }
     }
@@ -324,7 +332,7 @@ const Pricing = (props) => {
                             {pricingList.includes('discount %') && pricingDetails.isQuickSale === true ?
                                 <Col className="p-0" lg='4'>
                                     <span className="d-flex">
-                                        <Text className='ml-3' text='Expected Discount' fontWeight='bold' style={{ fontSize: '16px' }} />
+                                        <Text className='ml-3' text={'Expected Discount : ' + pricingDetails.expectedDiscountInPercent + '%'} fontWeight='bold' style={{ fontSize: '16px' }} />
                                     </span>
                                     <Slider defaultValue={pricingDetails.expectedDiscountInPercent}
                                         className="ml-0 mr-4"
@@ -373,7 +381,7 @@ const Pricing = (props) => {
                         {pricingDetails.additionalFieldsForChargesDue.length > 0 ?
                             pricingDetails.additionalFieldsForChargesDue.map((fields, index) => (
                                 <>
-                                    <div className="d-flex mt-3">
+                                    <div key={index} className="d-flex mt-3">
 
                                         <Col lg='3' className="d-flex">
                                             <TextField
@@ -424,7 +432,11 @@ const Pricing = (props) => {
             </div>
             {savePricingFlag === false ?
                 <div className="d-flex">
-                    <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyPricingDetails(); }}></Buttons> &nbsp; &nbsp;
+                    {!editPropertyFlag ?
+                    <>
+                        <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyPricingDetails(false); }}></Buttons> &nbsp; &nbsp;
+                    </>
+                    :null}
                     <Buttons className='p-2 px-4' name='Next' onClick={() => { savePricingDetails(); }}></Buttons> &nbsp; &nbsp;
                     {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                 </div>
