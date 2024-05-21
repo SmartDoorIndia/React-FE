@@ -1126,9 +1126,9 @@ export const validateCameraData = (data, addNewFlag) => {
   if (isBlank(data.userName)) {
     errors.userName = true;
   }
-  if (isBlank(data.password)) {
-    errors.password = true;
-  }
+  // if (isBlank(data.password)) {
+  //   errors.password = true;
+  // }
   if (isBlank(data.nickName)) {
     errors.nickName = true;
   }

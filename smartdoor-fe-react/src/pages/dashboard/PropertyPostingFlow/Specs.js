@@ -136,10 +136,11 @@ const Specs = (props) => {
             setAddRoomFlag(true);
         }
         else {
-            const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
-            const roundedRooms = Math.round(updatedRooms * 10) / 10;
-
-            setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+            if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
+                const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+                const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+            }
             setAddRoomFlag(false);
         }
     }

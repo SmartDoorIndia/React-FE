@@ -317,7 +317,7 @@ const Uploads = (props) => {
                         <div className="d-flex mt-3" style={{ overflowX: 'scroll', flexWrap: 'wrap' }}>
                             {imageArr.map((image, index) => (
                                 <>
-                                    <div key={index} className="d-flex">
+                                    <div key={editPropertyFlag ? image.docId : index} className="d-flex">
                                         <img src={image?.docURL} style={{
                                             border: '1px #DEDEDE solid', borderRadius: 8, height: '100px', width: '200px',
                                             marginInlineEnd: '10px'
