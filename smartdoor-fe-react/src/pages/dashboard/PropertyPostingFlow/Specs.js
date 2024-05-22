@@ -99,7 +99,7 @@ const Specs = (props) => {
                 setInternalAmenitiesList(POSTING_CONSTANTS.InternalAmeniteis)
             }
             if (fields.propertySubType === 'Apartment') {
-                setInternalAmenitiesList(['Personal lift', 'Gym', 'Bar'])
+                setInternalAmenitiesList(['Personal lift', 'Gym', 'Bar', 'Entertainment Room'])
             }
             if (fields.propertyType === 'Commercial') {
                 setInternalAmenitiesList(POSTING_CONSTANTS.CommercialAmeniteis)
