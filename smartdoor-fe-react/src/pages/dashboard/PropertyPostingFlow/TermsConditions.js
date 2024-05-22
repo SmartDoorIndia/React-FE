@@ -96,7 +96,7 @@ const TermsConditions = (props) => {
             const response = await addBasicDetails(postProperty);
             setLoading(false);
             if (response.status === 200) {
-                showSuccessToast('Property Posted is under reviewed');
+                showSuccessToast('Property Posted successfully');
                 setPropertySuccessFlag(true);
                 history.goBack();
             }

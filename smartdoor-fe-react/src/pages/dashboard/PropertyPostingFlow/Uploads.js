@@ -283,6 +283,7 @@ const Uploads = (props) => {
                 saveUploadsFields({ saveFlag: true })
                 dispatch({ type: Actions.UPLOAD_IMAGES_SUCCESS, data: { propertyImages: imageArr, propertyVideos: videoUrlObj } });
                 if (!loadNext) {
+                    showSuccessToast('Property Posted successfully');
                     history.goBack();
                 }
             }

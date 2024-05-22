@@ -6,7 +6,7 @@ import { connect, useDispatch } from "react-redux";
 import { Checkbox, MenuItem, Slider, TextField } from "@mui/material";
 import POSTING_CONSTANTS from "../../../common/helpers/POSTING_CONSTANTS";
 import Text from "../../../shared/Text/Text";
-import { dateWithFormate, formateDate, formateDateTime, getLocalStorage, showErrorToast } from '../../../common/helpers/Utils';
+import { dateWithFormate, formateDate, formateDateTime, getLocalStorage, showErrorToast, showSuccessToast } from '../../../common/helpers/Utils';
 import Buttons from "../../../shared/Buttons/Buttons";
 import { validatePricing } from "../../../common/validations";
 import * as Actions from '../../../common/redux/types';
@@ -222,6 +222,7 @@ const Pricing = (props) => {
                 setSavePricingFlag(true)
                 savePricingDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
                 if(!loadNext) {
+                    showSuccessToast('Property Posted successfully');
                     history.goBack();
                 }
             }

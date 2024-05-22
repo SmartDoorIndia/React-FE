@@ -92,7 +92,7 @@ const ExecutiveList = (props) => {
             selector: ((row) => row.email),
             sortable: false,
             center: true,
-            maxWidth: '250px',
+            minWidth: '200px',
             cell: ({ email }) => (
                 <ToolTip position="top" style={{ width: '100%' }} name={email}>
                     <Text size="Small" color="secondryColor elipsis-text" text={email} />

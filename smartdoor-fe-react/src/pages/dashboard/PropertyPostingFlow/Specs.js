@@ -12,7 +12,7 @@ import { validateSpecs } from "../../../common/validations";
 import { addBasicDetails, getChatGptDescription } from "../../../common/redux/actions";
 import Loader from "../../../common/helpers/Loader";
 import './property.scss';
-import { getLocalStorage } from "../../../common/helpers/Utils";
+import { getLocalStorage, showSuccessToast } from "../../../common/helpers/Utils";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Specs = (props) => {
@@ -127,26 +127,32 @@ const Specs = (props) => {
 
     const setAddRoom = (e) => {
         if (e.target.checked) {
-            const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
-            // Round the updated number to avoid precision issues
-            const roundedRooms = Math.round(updatedRooms * 10) / 10;
-
-            setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
-            console.log(roundedRooms);
             setAddRoomFlag(true);
         }
         else {
-            if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
-                const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
-                const roundedRooms = Math.round(updatedRooms * 10) / 10;
-                setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
-            }
             setAddRoomFlag(false);
         }
     }
 
     const generatePropertyDescription = async () => {
-        const valid = validateSpecs(specDetails, specList, false);
+        let specDetail = {...specDetails}
+        if(specList.includes('BHK')) {
+            if (addRoomFlag) {
+                const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
+                const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                specDetail.numberOfRooms = roundedRooms;
+                setAddRoomFlag(true);
+            } 
+            else {
+                if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
+                    const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+                    const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                    specDetail.numberOfRooms = roundedRooms;
+                }
+                setAddRoomFlag(false);
+            }
+        }
+        const valid = validateSpecs(specDetail, specList, false);
         setError(valid.errors);
         if (valid.isValid) {
             setDescLoader(true);
@@ -156,7 +162,7 @@ const Specs = (props) => {
                 "Stage of property": basicDetailFields?.data?.stageOfProperty,
                 "Sub type": basicDetailFields?.data?.propertySubType,
                 "Location": addressDetailFields.data.city,
-                "BHK": (specDetails?.numberOfRooms)?.toString(),
+                "BHK": (specDetail?.numberOfRooms)?.toString(),
                 "Attached": JSON.stringify(specDetails.pgGuestHouseAttachedTo) || '',
                 "Flat type": specDetails.flatType,
                 "Commercial purpose": JSON.stringify(specDetails.commercialPropertyPurposes),
@@ -182,11 +188,30 @@ const Specs = (props) => {
     }
 
     const saveSpecDetails = () => {
-        const valid = validateSpecs(specDetails, specList, true);
+        let specDetail = {...specDetails}
+        if(specList.includes('BHK')) {
+            if (addRoomFlag) {
+                const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
+                const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+                specDetail.numberOfRooms = roundedRooms;
+                setAddRoomFlag(true);
+            } 
+            else {
+                if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
+                    const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+                    const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                    // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+                    specDetail.numberOfRooms = roundedRooms;
+                }
+                setAddRoomFlag(false);
+            }
+        }
+        const valid = validateSpecs(specDetail, specList, true);
         setError(valid.errors);
         console.log(valid)
         if (valid.isValid) {
-            dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetails })
+            dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetail })
             setSaveSpecsFlag(true);
             saveSpecDetailsFields({ saveFlag: true })
             if(editPropertyFlag) {
@@ -196,6 +221,23 @@ const Specs = (props) => {
     }
 
     const handleCarpetAreaChange = (e) => {
+        if (e.target.checked) {
+            const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
+            // Round the updated number to avoid precision issues
+            const roundedRooms = Math.round(updatedRooms * 10) / 10;
+
+            setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+            console.log(roundedRooms);
+            setAddRoomFlag(true);
+        }
+        else {
+            if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
+                const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+                const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+            }
+            setAddRoomFlag(false);
+        }
         const carpetArea = parseFloat(e.target.value);
         const loadingFactor = parseFloat(specDetails.loadingFactorInPercent);
         const builtUpArea = carpetArea / (1 - (loadingFactor * 0.01));
@@ -286,7 +328,25 @@ const Specs = (props) => {
     };
 
     const notifySpecDetails = async (loadNext) => {
-        const valid = validateSpecs(specDetails, specList, true);
+        let specDetail = {...specDetails}
+        if(specList.includes('BHK')) {
+            if (addRoomFlag) {
+                const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
+                const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+                specDetail.numberOfRooms = roundedRooms;
+                setAddRoomFlag(true);
+            } else {
+                if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
+                    const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+                    const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                    // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+                    specDetail.numberOfRooms = roundedRooms;
+                }
+                setAddRoomFlag(false);
+            }
+        }
+        const valid = validateSpecs(specDetail, specList, true);
         setError(valid.errors);
         if (valid.isValid) {
             let userId = getLocalStorage('authData');
@@ -318,7 +378,7 @@ const Specs = (props) => {
                 },
                 basicDetails: basicDetailFields?.data,
                 address: addressDetailFields?.data,
-                specs: specDetails
+                specs: specDetail
             }
             console.log(userId)
             // setLoading(true)
@@ -326,10 +386,11 @@ const Specs = (props) => {
             console.log(response?.data?.resourceData?.propertyId)
             if (response.status === 200) {
                 // setLoading(false)
-                dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetails })
+                dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetail })
                 setSaveSpecsFlag(true)
                 saveSpecDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
                 if(!loadNext) {
+                    showSuccessToast('Property Posted successfully');
                     history.goBack();
                 }
             }

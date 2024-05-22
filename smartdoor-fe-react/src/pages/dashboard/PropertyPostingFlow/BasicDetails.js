@@ -11,7 +11,7 @@ import * as Actions from '../../../common/redux/types';
 import { validateBasicDetails } from "../../../common/validations";
 import POSTING_CONSTANTS from "../../../common/helpers/POSTING_CONSTANTS";
 import { addBasicDetails } from "../../../common/redux/actions";
-import { getLocalStorage, showErrorToast } from "../../../common/helpers/Utils";
+import { getLocalStorage, showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
 import Loader from '../../../common/helpers/Loader';
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
@@ -201,6 +201,7 @@ const BasicDetails = (props) => {
                 setLoading(false)
                 dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
                 setSaveBasicDetailsFlag(true)
+                showSuccessToast('Property Posted successfully');
                 saveBasicDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
                 history.goBack();
             }

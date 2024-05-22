@@ -57,7 +57,7 @@ const MarketingAgency = (props) => {
             minWidth: '250px',
             cell: ({ agencyName }) => (
                 <span>
-                    <Text size="Small" color="secondryColor elipsis-text" text={agencyName} />
+                    {agencyName}
                 </span>
             ),
             // style:{padding:'0px'},
@@ -65,13 +65,14 @@ const MarketingAgency = (props) => {
         },
         {
             name: 'Location',
-            selector: ((row) => row.agencyLocation),
             sortable: false,
+            wrap: true,
+            style: { padding: "0 !important" },
+            minWidth: "300px",
             center: true,
-            minWidth: '350px',
             cell: ({ agencyLocation }) => (
                 <span>
-                    <Text size="Small" color="secondryColor elipsis-text" text={agencyLocation} />
+                    {agencyLocation}
                 </span>
             ),
             id: 2
@@ -169,7 +170,7 @@ const MarketingAgency = (props) => {
             return amount.toFixed(1); // No conversion needed
         }
     }
-    
+
     const setDashBoardValues = () => {
         let monthSpend = 0;
         let totalSpend = 0;
@@ -268,7 +269,7 @@ const MarketingAgency = (props) => {
 
         return (
             <SearchInput
-                onFilter={(e) => {setFilterText(e.target.value); console.log(e)}}
+                onFilter={(e) => { setFilterText(e.target.value); console.log(e) }}
                 onChange={(e) => setFilterText(e.target.value)}
                 onClear={() => handleClear}
                 filterText={filterText}

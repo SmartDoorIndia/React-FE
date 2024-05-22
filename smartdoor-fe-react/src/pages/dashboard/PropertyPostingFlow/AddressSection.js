@@ -12,7 +12,7 @@ import sdIcon from '../../../assets/svg/sdIcon.svg';
 import Buttons from '../../../shared/Buttons/Buttons';
 import * as Actions from '../../../common/redux/types';
 import { geocodeByAddress } from 'react-google-places-autocomplete';
-import { getLocalStorage, showErrorToast } from '../../../common/helpers/Utils';
+import { getLocalStorage, showErrorToast, showSuccessToast } from '../../../common/helpers/Utils';
 import { addBasicDetails, getAllCityWithId, getSocietyByCity } from '../../../common/redux/actions';
 import { Autocomplete } from 'devextreme-react';
 import './property.scss'
@@ -331,6 +331,7 @@ const AddressSection = (props) => {
 				setSaveAddressFlag(true)
 				saveAddressDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
 				if(!loadNext) {
+					showSuccessToast('Property Posted successfully');
 					history.goBack();
 				}
 			}
