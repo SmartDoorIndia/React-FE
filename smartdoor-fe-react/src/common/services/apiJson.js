@@ -2705,6 +2705,103 @@ export const ApiJson = {
     showResultMessage: true,
     showErrorMessage: true
   },
+
+  //Broker API details
+  getBrokerListing: {
+    url: "/consumer/broker/brokerlisting",
+    method: "GET",
+    data: {},
+    headers: {
+       Accept: "*/*",
+       "content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+ },
+
+ getBrokerDetails: {
+    url: "/consumer/broker/getBrokerDetails/:brokerId",
+    method: "GET",
+    headers: {
+       Accept: "*/*",
+       "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+ },
+
+ getBrokerPropertyById: {
+    url: "/consumer/property/getPropertyById/:propertyId/:brokerId",
+    method: "GET",
+    headers: {
+       Accept: "*/*",
+       "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+ },
+
+ getBrokerPostedProperty:{
+    url:"/consumer/broker/postedProperty/:brokerId",
+    method:"GET",
+    headers:{
+       Accept :"*/*",
+       "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+ },
+
+ getBrokerDetailsForApprove: {
+    url: "/consumer/broker/getBrokerDetailsForApprove/:brokerId",
+    method: "GET",
+    data: {},
+    headers: {
+       Accept: "*/*",
+       "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+ },
+ 
+ getBrokerStatusDetail: {
+    url: "/consumer/broker/updateStatus/:brokerId/:status",
+    method: "PUT",
+    data: {},
+    headers: {
+       Accept: "*/*",
+       "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+ },
+ getBrokerDeclineStatusDetail: {
+    url: "/consumer/broker/updateStatusAsRejected/:brokerId/:status",
+    method: "PUT",
+    data: {},
+    headers: {
+       Accept: "*/*",
+       "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+ },
+ 
+ addHoldRequestComments: {
+    url: "/consumer/broker/updateStatus/:brokerId/:status",
+    method: "PUT",
+    data: {
+       comments: "string",
+       id: 0,
+    },
+    headers: {
+       Accept: "*/*",
+       "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+ },
+
 };
 console.log(userData)
 

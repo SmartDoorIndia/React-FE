@@ -80,7 +80,7 @@ import {
   allTransactionLocationsByCity,
   dealApprovalData
 } from './views/transaction.reducer';
-
+import { allPlanDataBroker } from './views/ManageBroker.reducer';
 import { addNewPostReducer } from './views/addNewPost.reducer';
 import { addNewPost2Reducer } from './views/addNewPost2.reducer';
 import { featuredVideos } from './views/featuredVideos.reducer';
@@ -173,7 +173,8 @@ const appReducer = combineReducers({
   specDetailFields,
   pricingDetailFields,
   uploadImages,
-  termsConditions
+  termsConditions,
+  allPlanDataBroker
 });
 
 const rootReducer = (state, action) => {

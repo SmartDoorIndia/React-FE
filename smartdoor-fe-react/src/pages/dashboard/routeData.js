@@ -55,6 +55,9 @@ const Uploads = React.lazy(() => import('./PropertyPostingFlow/Uploads'))
 const TermsConditions = React.lazy(() => import('./PropertyPostingFlow/TermsConditions'))
 const Corporate = React.lazy(() => import('./CorporateModule/CorporateHome'))
 const AddnewCorporate = React.lazy(() => import('./CorporateModule/AddNew/AddNewCorporate'))
+const Brokers = React.lazy(() => import('./Broker/Broker'));
+const BrokerApprovedDetail = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
+const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails') );
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -1153,7 +1156,28 @@ const routeData = [
     component: Corporate
   },
 
-  
+  {
+    path: '/admin/broker',
+    name: 'Brokers',
+    bradcrumb: false,
+    excat: true,
+    component: Brokers,
+  },
+  {
+    path:'/admin/getBrokerDetailsForApprove/:brokerdetailId',
+    name:'Brokers',
+    bradcrumb: ['Brokers', 'Brokers Approved'],
+    excat: true,
+    component: BrokerApprovedDetail,
+  },
+  {
+    path:'/admin/BrokerDetails/:brokerdetailId',
+    name:'Brokers',
+    bradcrumb: [ 'Brokers', 'Broker Details' ],
+    breadcrumb: false,
+    excat: true,
+    component: BrokerDetail,
+  },
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

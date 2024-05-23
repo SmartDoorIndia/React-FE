@@ -290,6 +290,17 @@ const Nav = () => {
                   {userData.roleName === "SUPER ADMIN" && (
                      <>
                         <Link
+                           to="/admin/broker"
+                           className={`nav-link ${pathname.includes("broker") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("broker") ? propertyActive : houseIcon}
+                           />
+                           Brokers
+                        </Link>
+                        <Link
                            to="/admin/static-mobile-numbers"
                            className={`nav-link ${pathname.includes("static-mobile-numbers") ? "nav-active" : ""
                               }`}
@@ -416,7 +427,7 @@ const Nav = () => {
                      </>
                      : null}
 
-                     {/* <>
+                  {/* <>
                         <Link
                            to="/admin/corporate"
                            className={`nav-link ${pathname.includes("/admin/corporate") ? "nav-active" : ""

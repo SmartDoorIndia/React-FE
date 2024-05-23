@@ -343,3 +343,7 @@ export const  UPLOAD_IMAGES_LOADING = 'UPLOAD_IMAGES_LOADING';
 export const  TERMS_CONDITIONS_SUCCESS = 'TERMS_CONDITIONS_SUCCESS';
 export const  TERMS_CONDITIONS_ERROR = 'TERMS_CONDITIONS_ERROR';
 export const  TERMS_CONDITIONS_LOADING = 'TERMS_CONDITIONS_LOADING';
+
+export const BROKERS_MODULE_SUCCESS = 'src/pages/Dashboard/Broker/Success';
+export const BROKERS_MODULE_ERROR = 'src/pages/Dashboard/Broker/Error';
+export const BROKERS_MODULE_LOADING = 'src/pages/Dashboard/Broker/Loading';
