@@ -90,7 +90,7 @@ const ServiceRequestDetails = (props) => {
         break;
     }
 
-    {detailData.teamName=='Installation Team' ? 
+    {detailData.teamName==='Installation Team' ? 
     closeRequestInstallation(reqData)
       .then((response) => {
         if (response) {
@@ -211,7 +211,7 @@ const ServiceRequestDetails = (props) => {
           //   onClick={()=>props.history.push({pathname:'/admin/helpdesk/serviceRequest/create-ticket',state: {callerId:detailData?.requestedById}})}
           // />
           ''
-          : detailData.status=="Closed" ?
+          : detailData.status==="Closed" ?
             <Buttons
               disabled={detailData.status === 'COMPLETED' || detailData.status === 'Closed' ? false : true}
               name="ReOpen"
@@ -373,7 +373,7 @@ const ServiceRequestDetails = (props) => {
       
          
                   {
-                    detailData.status=="Closed" ? null :
+                    detailData.status==="Closed" ? null :
                     <div className='commentInput'>
                     <TextArea
                       id="description"
@@ -393,7 +393,7 @@ const ServiceRequestDetails = (props) => {
                       size="Small"
                       color="white"
                       className="mt-3"
-                      disabled={commentValue.trim()=="" ? true : false}
+                      disabled={commentValue.trim()==="" ? true : false}
                       onClick={() => commentPosted(commentValue.trim())}
                     />
                   </div>}
@@ -405,7 +405,7 @@ const ServiceRequestDetails = (props) => {
           <Text size="regular" fontWeight="smbold" color="secondryColor" text="Add Comments" className="m-1" />
           <button className='modalcross-btn'
             onClick={() => setShow(false)}>
-            <img src={crossIcon} />
+            <img src={crossIcon} alt='' />
           </button>
         </Modal.Header>
         <Modal.Body className="m-2 p-2">

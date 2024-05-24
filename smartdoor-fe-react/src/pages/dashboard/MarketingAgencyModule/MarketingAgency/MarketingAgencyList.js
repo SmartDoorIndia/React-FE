@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Form, Modal, Row } from "react-bootstrap";
-import { compose } from "redux"
 import { getAllAgencies, getAllCityWithId } from "../../../../common/redux/actions";
 import { connect, useDispatch, useSelector } from "react-redux";
 import './MarketingAgencyList.scss';
 import Buttons from "../../../../shared/Buttons/Buttons";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import Text from "../../../../shared/Text/Text";
-import { ToolTip, handleStatusElement, showErrorToast } from "../../../../common/helpers/Utils";
-import Pagination from "../../../../shared/DataTable/Pagination";
+import { ToolTip, handleStatusElement } from "../../../../common/helpers/Utils";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import { Link } from "react-router-dom";
@@ -25,8 +23,8 @@ const MarketingAgency = (props) => {
     const [p_city, setp_City] = useState('');
     const [filterText, setFilterText] = useState('');
     const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
-    const [fromDate, setFromDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
+    // const [fromDate, setFromDate] = useState(null);
+    // const [toDate, setToDate] = useState(null);
     const [defaultSort, setDefaultSort] = useState(false);
     const [defaultSortId, setDefaultSortId] = useState('agencyName');
     const [defaultSortFieldId, setDefaultSortFieldId] = useState(() => {
@@ -41,9 +39,6 @@ const MarketingAgency = (props) => {
         }
     });
     const [totalMonthSpent, setTotalMonthSpend] = useState(0);
-    const [totalProperies, setTotalProperies] = useState(0);
-    const [totalCustomers, setTotalCustomers] = useState(0);
-    const [totalFreeCoupons, setTotalFreeCoupons] = useState(0);
     const [totalSpent, setTotalSpent] = useState(0);
     const history = useHistory();
     const dispatch = useDispatch();
@@ -192,8 +187,6 @@ const MarketingAgency = (props) => {
         });
         setTotalMonthSpend(prevState => formatAmount(monthSpend));
         setTotalSpent(prevState => formatAmount(totalSpend));
-        setTotalCustomers(prevState => formatAmount(customerSpent));
-        setTotalProperies(prevState => formatAmount(propertyCount));
     }
 
     useEffect(async () => {
@@ -204,60 +197,60 @@ const MarketingAgency = (props) => {
         dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {} })
     }, [getAllAgencies, agencylist?.length]);
 
-    const PaginationActionButton = () => (
-        <div className="d-flex justify-content-center tableBottom">
-        </div>
-    );
+    // const PaginationActionButton = () => (
+    //     <div className="d-flex justify-content-center tableBottom">
+    //     </div>
+    // );
 
-    const validateDates = () => {
-        if ((fromDate === null && toDate === null) || (fromDate === '' && toDate === '')) {
-            return true;
-        } else if (fromDate !== null && toDate !== null && fromDate !== '' && toDate !== '') {
-            if (new Date(fromDate) > new Date(toDate)) {
-                showErrorToast("Start date should be less than end date");
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            showErrorToast("Please enter start date and end date or set both empty");
-            return false;
-        }
-    }
+    // const validateDates = () => {
+    //     if ((fromDate === null && toDate === null) || (fromDate === '' && toDate === '')) {
+    //         return true;
+    //     } else if (fromDate !== null && toDate !== null && fromDate !== '' && toDate !== '') {
+    //         if (new Date(fromDate) > new Date(toDate)) {
+    //             showErrorToast("Start date should be less than end date");
+    //             return false;
+    //         } else {
+    //             return true;
+    //         }
+    //     } else {
+    //         showErrorToast("Please enter start date and end date or set both empty");
+    //         return false;
+    //     }
+    // }
     const ProgressComponent = <TableLoader />;
-    const [currentPage, setCurrentPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(8);
-    const recordSize = (agencyList?.data?.agencylist?.length);
-    let recordsPerPage = 0
-    recordsPerPage = rowsPerPage;
+    // const [currentPage, setCurrentPage] = useState(1);
+    // const [rowsPerPage, setRowsPerPage] = useState(8);
+    // const recordSize = (agencyList?.data?.agencylist?.length);
+    // let recordsPerPage = 0
+    // recordsPerPage = rowsPerPage;
 
-    const handlePageChange = (newPage) => {
-        setCurrentPage(Number(newPage));
-        if (!validateDates()) {
-            return null;
-        }
+    // const handlePageChange = (newPage) => {
+    //     setCurrentPage(Number(newPage));
+    //     if (!validateDates()) {
+    //         return null;
+    //     }
 
-    };
+    // };
 
-    const handleRowsPerPageChange = async (newRowsPerPage) => {
-        if (!validateDates()) {
-            return null;
-        }
-        recordsPerPage = Number(newRowsPerPage)
-        setRowsPerPage(Number(newRowsPerPage))
+    // const handleRowsPerPageChange = async (newRowsPerPage) => {
+    //     if (!validateDates()) {
+    //         return null;
+    //     }
+    //     recordsPerPage = Number(newRowsPerPage)
+    //     setRowsPerPage(Number(newRowsPerPage))
 
-    };
+    // };
 
-    let PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
-        <Pagination {...props}
-            rowCount={recordSize}
-            rowsPerPage={recordsPerPage}
-            onChangeRowsPerPage={handleRowsPerPageChange}
-            currentPage={currentPage}
-            onChangePage={handlePageChange}
-            paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-            PaginationActionButton={PaginationActionButton} />
-    );
+    // let PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
+    //     <Pagination {...props}
+    //         rowCount={recordSize}
+    //         rowsPerPage={recordsPerPage}
+    //         onChangeRowsPerPage={handleRowsPerPageChange}
+    //         currentPage={currentPage}
+    //         onChangePage={handlePageChange}
+    //         paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+    //         PaginationActionButton={PaginationActionButton} />
+    // );
 
     const subHeaderComponentMemo = React.useMemo(() => {
         const handleClear = () => {
@@ -420,7 +413,7 @@ const MarketingAgency = (props) => {
                                 style={{ fontSize: '16px' }}
                             />
                         </div>
-                        <img className="mb-4 col-1" src={rightArrow}></img>
+                        <img alt="" className="mb-4 col-1" src={rightArrow}></img>
                         <div className="col-5" style={{ padding: '0%' }}>
                             <TextField
                                 className="w-100"
@@ -463,6 +456,6 @@ const actions = {
     getAllAgencies
 }
 
-const withConnect = connect(mapStateToProps, actions);
+// const withConnect = connect(mapStateToProps, actions);
 
 export default connect(mapStateToProps, actions)(MarketingAgency);

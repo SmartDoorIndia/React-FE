@@ -1,19 +1,16 @@
-import React, { useRef, useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import Image from '../../../../shared/Image/Image';
-import Buttons from '../../../../shared/Buttons/Buttons'
 import { useUserContext } from '../../../../common/helpers/Auth';
 import { 
   getConsumerTransactionsData, 
   getBuybackRequests,
 } from '../../../../common/redux/actions';
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
-import { Link, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Text from '../../../../shared/Text/Text';
-import ListingDataTable from '../../../../shared/DataTable/ListingDataTable';
-import Pagination from '../../../../shared/DataTable/Pagination';
-import { handleStatusElement, ToolTip,setPrice, formateDate, showErrorToast, dateWithFormate } from '../../../../common/helpers/Utils';
+import { handleStatusElement, ToolTip,setPrice, formateDate } from '../../../../common/helpers/Utils';
 import contentIcon from '../../../../assets/images/content-ico.svg';
 import SearchInput from '../../../../shared/Inputs/SearchInput/SearchInput';
 import './FinanceListingPage.scss';
@@ -55,7 +52,7 @@ const FinanceListingPage = (props) => {
     // getBuybackRequests
   ]);
 
-  const PaginationComponent = (props) => (<Pagination { ...props } />);
+  // const PaginationComponent = (props) => (<Pagination { ...props } />);
  
   const consumerTransactionsColumns = [
     {
@@ -229,7 +226,7 @@ const FinanceListingPage = (props) => {
       let filteredItems = [];
       if(props.tabName === "Consumer Transactions" ){          filteredItems =  consumerTransactionsDataTable?.data?.consumerResp?.length ?
         consumerTransactionsDataTable?.data?.consumerResp?.filter(item => { 
-            return  item?.sno == filterText 
+            return  item?.sno === filterText 
             || item?.invoiceId === filterText 
             || item?.customer?.toLowerCase().includes(filterText.toLowerCase())
             || item?.type?.toLowerCase().includes(filterText.toLowerCase())
@@ -237,7 +234,7 @@ const FinanceListingPage = (props) => {
             }):[]
           if(status && filteredItems.length){
             filteredItems = filteredItems.filter(item => { 
-              return  item?.status.toUpperCase() == status.toUpperCase();
+              return  item?.status.toUpperCase() === status.toUpperCase();
             })
           } 
          return filteredItems;
@@ -246,8 +243,8 @@ const FinanceListingPage = (props) => {
       if(props?.tabName === "Buyback Request" ){ 
       filteredItems =  getBuybackRequestsData.data.length ?
       getBuybackRequestsData.data.filter(item => { 
-            return  item?.buybackRequestId == filterText ||
-              item?.propertyId == filterText 
+            return  item?.buybackRequestId === filterText ||
+              item?.propertyId === filterText 
              || item?.from?.toLowerCase().includes(filterText.toLowerCase())
              || item?.phoneNo?.includes(filterText)
             // || item?.city?.toLowerCase().includes(filterText.toLowerCase())
@@ -255,7 +252,7 @@ const FinanceListingPage = (props) => {
             }):[]
         if(status && filteredItems.length){
           filteredItems = filteredItems.filter(item => { 
-            return  item?.status.toUpperCase() == status.toUpperCase();
+            return  item?.status.toUpperCase() === status.toUpperCase();
           })
         } 
          return filteredItems;

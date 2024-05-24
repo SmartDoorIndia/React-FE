@@ -1,8 +1,6 @@
 /** @format */
 
 import React from 'react';
-import { sassFalse } from 'sass';
-import CorporateHome from './CorporateModule/CorporateHome';
 
 // Lazy import of Dashboard's components
 const SalesDashboard = React.lazy(() => import('./SalesModule/SalesDashboard'));

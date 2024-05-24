@@ -99,15 +99,15 @@ const BrokerApprovedDetail = (props) => {
                         text="Location Assigned"
                      />
                      <div className="details-heading d-flex" >
-                     
+
                         {brokerApprovedData && brokerApprovedData.resourceData && (
                            <>
-                           {brokerApprovedData?.resourceData.brokerlocation?.city && (
-                              <span className="details-value">
-                                 {brokerApprovedData.resourceData?.brokerlocation?.city}
+                              {brokerApprovedData?.resourceData.brokerlocation?.city && (
+                                 <span className="details-value">
+                                    {brokerApprovedData.resourceData?.brokerlocation?.city}
 
-                              </span>
-                           )}
+                                 </span>
+                              )}
                            </>
                         )}
                      </div>
@@ -125,7 +125,7 @@ const BrokerApprovedDetail = (props) => {
                               brokerApprovedData.resourceData.specializedIn.map(
                                  (data, index) =>
                                     index ===
-                                       brokerApprovedData.resourceData.specializedIn.length - 1 && (
+                                    brokerApprovedData.resourceData.specializedIn.length - 1 && (
                                        <p key={index} className="details-value">
                                           {data.specializedIn}
                                        </p>
@@ -141,18 +141,18 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Services Offered"
                      />
-                      <div className="details-heading d-flex">
-                           {brokerApprovedData && brokerApprovedData.resourceData &&  (
-                                 <>
-                                    {brokerApprovedData?.resourceData?.rent  && (
-                                       <span className="details-value">Rent</span>
-                                    )}
-                                    {(brokerApprovedData?.resourceData?.sale || brokerApprovedData?.resourceData?.buy) && (
-                                       <span className="details-value">Buy / Sell </span>
-                                    )}
-                                 </>
-                           )}
-                        </div>
+                     <div className="details-heading d-flex">
+                        {brokerApprovedData && brokerApprovedData.resourceData && (
+                           <>
+                              {brokerApprovedData?.resourceData?.rent && (
+                                 <span className="details-value">Rent</span>
+                              )}
+                              {(brokerApprovedData?.resourceData?.sale || brokerApprovedData?.resourceData?.buy) && (
+                                 <span className="details-value">Buy / Sell </span>
+                              )}
+                           </>
+                        )}
+                     </div>
                   </Col>
                   <Col>
                      <Text
@@ -181,7 +181,7 @@ const BrokerApprovedDetail = (props) => {
                   text="Personal Details"
                />
                <Row className="mt-2">
-                  <Col>
+                  <Col lg='2'>
                      <Text
                         size="xSmall"
                         fontWeight="semibold"
@@ -199,7 +199,7 @@ const BrokerApprovedDetail = (props) => {
                         </p>
                      </div>
                   </Col>
-                  <Col>
+                  <Col lg='2'>
                      <Text
                         size="xSmall"
                         fontWeight="semibold"
@@ -217,7 +217,7 @@ const BrokerApprovedDetail = (props) => {
                         </p>
                      </div>
                   </Col>
-                  <Col>
+                  <Col lg='3'>
                      <Text size="xSmall" fontWeight="semibold" color="TaupeGrey" text="Email" />
                      <div className="details-heading">
                         <p
@@ -230,7 +230,7 @@ const BrokerApprovedDetail = (props) => {
                         </p>
                      </div>
                   </Col>
-                  <Col>
+                  <Col lg='5'>
                      <Text
                         size="xSmall"
                         fontWeight="semibold"
@@ -238,10 +238,9 @@ const BrokerApprovedDetail = (props) => {
                         text="Office Address"
                      />
                      <div className="details-heading">
-                      
                         <p className="details-value approved-loca">
-                                        {brokerApprovedData?.resourceData?.companyName ? brokerApprovedData?.resourceData?.companyName + "," : ""}
-                                        {brokerApprovedData?.resourceData?.companyAddress ? brokerApprovedData?.resourceData?.companyAddress : ""} 
+                           {brokerApprovedData?.resourceData?.companyName ? brokerApprovedData?.resourceData?.companyName + "," : ""}
+                           {brokerApprovedData?.resourceData?.companyAddress ? brokerApprovedData?.resourceData?.companyAddress : ""}
                         </p>
                      </div>
                   </Col>

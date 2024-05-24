@@ -233,33 +233,33 @@ const ServiceRequest = (props) => {
   if(props.module==='HELPDESK' ){   
       filteredItems =  helpdeskServiceReq.data.length ?
       helpdeskServiceReq.data.filter(item => { 
-      return item?.id == filterText || 
+      return item?.id === filterText || 
       item?.ticketName?.toLowerCase().includes(filterText.toLowerCase()) ||
       item?.from?.toLowerCase().includes(filterText.toLowerCase()) ||
       (item?.contactNumber?.toLowerCase().includes(filterText.toLowerCase())) 
     }):[]
     if(statusVal && filteredItems.length){
       filteredItems = filteredItems.filter(item => { 
-        return  item?.status.toUpperCase() == statusVal.toUpperCase();
+        return  item?.status.toUpperCase() === statusVal.toUpperCase();
       })
     }
     if(teamVal && filteredItems.length){
       filteredItems = filteredItems.filter(item => { 
-        return  item?.teamName.toUpperCase() == teamVal.toUpperCase();
+        return  item?.teamName.toUpperCase() === teamVal.toUpperCase();
       })
     }
      return filteredItems;
   }else{ 
   filteredItems =  serviceRequestData.data.length ?
   serviceRequestData.data.filter(item => { 
-    return item?.id == filterText || 
+    return item?.id === filterText || 
     item?.ticketName?.toLowerCase().includes(filterText.toLowerCase()) ||
     item?.from?.toLowerCase().includes(filterText.toLowerCase()) ||
     (item?.contactNumber?.toLowerCase().includes(filterText.toLowerCase())) 
         }):[]
     if(statusVal && filteredItems.length){
       filteredItems = filteredItems.filter(item => { 
-        return  item?.status.toUpperCase() == statusVal.toUpperCase();
+        return  item?.status.toUpperCase() === statusVal.toUpperCase();
       })
     } 
      return filteredItems;

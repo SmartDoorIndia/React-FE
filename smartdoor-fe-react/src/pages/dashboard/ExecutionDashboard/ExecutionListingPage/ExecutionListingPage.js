@@ -1,8 +1,7 @@
-import React, { useRef, useState, useEffect, memo, useCallback } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import { compose } from 'redux';
 import Image from '../../../../shared/Image/Image';
-import Buttons from '../../../../shared/Buttons/Buttons'
 import { getInstallationRequest,
     getServiceRequest,
     getAllPublishedProperty,
@@ -14,13 +13,12 @@ import { getInstallationRequest,
     changeInstallationAssignee
 } from '../../../../common/redux/actions';
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
-import { Link, Route, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Text from '../../../../shared/Text/Text';
 import Pagination from '../../../../shared/DataTable/Pagination';
-import { handleStatusElement, ToolTip, formateDate, showErrorToast, dateWithFormate } from '../../../../common/helpers/Utils';
+import { handleStatusElement, ToolTip, formateDate } from '../../../../common/helpers/Utils';
 import contentIcon from '../../../../assets/images/content-ico.svg';
 import Form from 'react-bootstrap/Form';
-import filterIcon from '../../../../assets/images/filter-icon.svg';
 import SearchInput from '../../../../shared/Inputs/SearchInput/SearchInput';
 import './ExecutionListingPage.scss';
 import CONSTANTS_STATUS from '../../../../common/helpers/ConstantsStatus';
@@ -34,10 +32,10 @@ const ExecutionListing = (props) => {
       publishedProperyData, 
       installationReqData,
       getAllCity,
-      allTransactionCities,
+      // allTransactionCities,
       allCities
   } = props;
-  const location = useLocation()
+  // const location = useLocation()
   const dispatch = useDispatch();
   const [city, setCity] = useState("");
   const [locationsData, setLocationsData] = useState([]);
@@ -58,7 +56,7 @@ const ExecutionListing = (props) => {
     if(props?.tabName === "Installation/Un-installation Requests" ){   
         filteredItems =  installationReqData.data.length ?
         installationReqData.data.filter(item => { 
-        return  item?.id == filterText 
+        return  item?.id === filterText 
         // || (item?.assignedTo !== null ? item?.assignedTo?.toLowerCase().includes(filterText.toLowerCase()): [])
         || ( item?.location?.toLowerCase().includes(filterText.toLowerCase())) 
         || (item?.city !== null ? item?.city?.toLowerCase().includes(filterText.toLowerCase()): [])
@@ -68,7 +66,7 @@ const ExecutionListing = (props) => {
       }):[]
        if(status && filteredItems.length){
           filteredItems = filteredItems.filter(item => { 
-            return  item?.status == status;
+            return  item?.status === status;
           })
        } 
       return filteredItems;
@@ -76,7 +74,7 @@ const ExecutionListing = (props) => {
     if(props?.tabName === "Published Property" ){ 
     filteredItems =  publishedProperyData.data.length ?
       publishedProperyData.data.filter(item => { 
-          return  item?.smartdoorPropertyId == filterText || 
+          return  item?.smartdoorPropertyId === filterText || 
           item?.propertyPostedBy?.toLowerCase().includes(filterText.toLowerCase())
           || item?.phoneNumber?.includes(filterText)
           || item?.city?.toLowerCase().includes(filterText.toLowerCase())
@@ -323,7 +321,7 @@ const ExecutionListing = (props) => {
         getInstallationRequest({city, zipcode, location, pageSize:"", pageNo:"1" });
 
       }
-    if(locationData==""){
+    if(locationData===""){
       console.log("outside match");
         setCity(city);
       getInstallationRequest({city , location: locationData, records:"", pageNumber:""});
@@ -554,8 +552,7 @@ const mapStateToProps = ({ salesLeadsDataTable,
     excutiveDashboardCity,
     allLocationsByCity, 
     allTransactionCities,
-    allCities,
-    allLocationsByCity,  
+    allCities, 
 });
 
 const actions = {

@@ -1,9 +1,9 @@
 import { compose } from "redux"
 import Text from "../../../shared/Text/Text";
 import { connect } from "react-redux";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSocket } from "../../../common/helpers/SocketProvider";
-import { Card, Chip, Divider, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
+import { Card, Divider, InputAdornment, TextField } from "@mui/material";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { formateDate, getLocalStorage, showErrorToast } from "../../../common/helpers/Utils";
 import { Col, Row } from "react-bootstrap";
@@ -13,8 +13,7 @@ const ChatWithOwner = (props) => {
 
     const [chatHistory, setChatHistory] = useState([]);
     const { roleId, userId, ownerId, ownerName } = props.location.state
-    const { socket, socketLoggedInUserData, connectSocket, subscribeSocketEvents, callInProgress, setCallInProgress } =
-        useSocket();
+    const { socket, socketLoggedInUserData, connectSocket, subscribeSocketEvents } = useSocket();
     const [message, setMessage] = useState('');
     const [disableSend, setDisableSend] = useState(true);
     const userData = getLocalStorage('authData');

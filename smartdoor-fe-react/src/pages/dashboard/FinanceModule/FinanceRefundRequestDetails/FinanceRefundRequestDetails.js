@@ -1,5 +1,5 @@
-import react, { useCallback, useEffect, useState } from 'react';
-import { Col, Form, Row } from 'react-bootstrap';
+import { useCallback, useEffect, useState } from 'react';
+import { Col, Row } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
 import Loader from '../../../../common/helpers/Loader';
 import { formateDate, formateDateTime, getLocalStorage, handleStatusElement } from '../../../../common/helpers/Utils';

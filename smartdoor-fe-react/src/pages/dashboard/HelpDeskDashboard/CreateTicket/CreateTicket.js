@@ -129,11 +129,11 @@ console.log(props,"tttttttttttttttttttttttt")
    render() {
       const {
          error,
-         actionToSolve,
+         // actionToSolve,
          assignTo,
          callFrom,
          email,
-         notify,
+         // notify,
          phoneNumber,
          problem,
          property,
@@ -141,7 +141,7 @@ console.log(props,"tttttttttttttttttttttttt")
          ticketName,
          propertyList,
          ticketNameList,
-         ticketNameVal,
+         // ticketNameVal,
          otherTicketName,
          buttonDisable,
       } = this.state;

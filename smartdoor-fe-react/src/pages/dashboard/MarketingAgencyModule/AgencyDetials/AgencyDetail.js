@@ -233,7 +233,7 @@ const AgencyDetail = (props) => {
                                 style={{ fontSize: '16px' }}
                             />
                         </div>
-                        <img className="mb-4 col-1" src={rightArrow}></img>
+                        <img className="mb-4 col-1" src={rightArrow} alt="" ></img>
                         <div className="col-5" style={{ padding: '0%' }}>
                             <TextField
                                 className="w-100"

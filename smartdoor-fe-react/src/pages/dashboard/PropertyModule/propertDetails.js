@@ -1,8 +1,7 @@
 /** @format */
 
 import React, { useState, useEffect, useCallback } from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
-import moment from "moment";
+import { connect, useDispatch } from "react-redux";
 import { Row, Col, Modal } from "react-bootstrap";
 import ImageSliderComponent from "./ImageSliderComponent";
 import Buttons from "../../../shared/Buttons/Buttons";
@@ -59,14 +58,13 @@ import AesAlgo from "../../../camera-related/aesAlgorithm";
 import SignatureAlgo from "../../../camera-related/signatureAlgorithm";
 import TimeStampAlgo from "../../../camera-related/timeMilis";
 import QrModal from "../../../shared/Modal/QrModal/QrModal";
-import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Switch } from "@mui/material";
 import reviewIcon from "../../../assets/svg/reviewIcon.svg"
 import { getLocalStorage } from "../../../common/helpers/Utils";
 import { useSocket } from "../../../common/helpers/SocketProvider";
-import { userAuthData } from "../../../common/redux/reducers/dashboard.reducer";
 import PostingFields from "../../../common/helpers/PostingFields";
-const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
+// const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
 const PropertyDetails = (props) => {
    const { getPropertyAnalyticsByPropertyId, propertyAnalyticsData, module, getAllDeletedProperties, deletedPropertyData,
@@ -389,18 +387,18 @@ const PropertyDetails = (props) => {
    };
 
 
-   const handleViewRecording = async () => {
-      try {
-         const result = await getCameraDevice({ propertyid: propertyId });
-         if (result.data.status === 200) {
-            console.log("camera Data is :", result.data.resourceData);
-            setCameraData(result.data.resourceData);
-            setShowCameraDD(true);
-         }
-      } catch (err) {
-         console.log("err:", err);
-      }
-   };
+   // const handleViewRecording = async () => {
+   //    try {
+   //       const result = await getCameraDevice({ propertyid: propertyId });
+   //       if (result.data.status === 200) {
+   //          console.log("camera Data is :", result.data.resourceData);
+   //          setCameraData(result.data.resourceData);
+   //          setShowCameraDD(true);
+   //       }
+   //    } catch (err) {
+   //       console.log("err:", err);
+   //    }
+   // };
 
 
 
@@ -594,33 +592,6 @@ const PropertyDetails = (props) => {
    }
 
    const [chatHistory, setChatHistory] = useState([]);
-
-   const { socket, socketLoggedInUserData, connectSocket, subscribeSocketEvents, callInProgress, setCallInProgress } =
-      useSocket();
-   const _handleCallEvents = useCallback(async () => {
-      // socket.removeAllListeners();
-      subscribeSocketEvents(socket);
-      await socket.emit(
-         'chat-history',
-         {
-            sender_id: 361,
-            receiver_id: 271,
-            pagination: 10,
-            page: 1,
-            visit_id: 3,
-            is_visit: true
-         },
-         (response) => {
-            let chatData = response.data;
-            let newChatHistory = [...chatData]; // Create a new array based on response data
-            console.log(newChatHistory); // Log newChatHistory to verify the data
-            // Use setChatHistory to update state with newChatHistory
-            // setChatHistory(newChatHistory);
-            // Optionally, you can use chatHistory if it's a state variable instead of a local variable
-            setChatHistory(chatHistory => [...chatHistory, ...newChatHistory]);
-         })
-
-   }, [socket]);
 
    useEffect(() => {
       _getPropertyDetails();

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
-import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes, setCallBackUrl } from "../../../../common/redux/actions";
+import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import Buttons from "../../../../shared/Buttons/Buttons";
@@ -16,9 +16,9 @@ const PropertyDevice = (props) => {
         props.location.state.propertyId ?
             props.location.state.propertyId :
             null
-    const userId = props.location.state.userId ?
-        props.location.state.userId :
-        null
+    // const userId = props.location.state.userId ?
+    //     props.location.state.userId :
+    //     null
     const [smartLockData, setSmartLockData] = useState([]);
     const [showEditSmartLockData, setShowEditSmartLockData] = useState(false);
     const [selectedSmartLockData, setselectedSmartLockData] = useState({})
@@ -56,7 +56,7 @@ const PropertyDevice = (props) => {
             try {
                 console.log(" not a basic plan");
                 const result_data = await getContactSensor({ propertyId });
-                if (result_data.data.status == 200 && result_data.data.resourceData) {
+                if (result_data.data.status === 200 && result_data.data.resourceData) {
                     let data = []
                     data.push(result_data.data.resourceData)
                     setCensorData(data);
@@ -74,7 +74,7 @@ const PropertyDevice = (props) => {
             try {
                 console.log(" not a basic plan");
                 const result_data = await getCameraDevice({ propertyid });
-                if (result_data.data.status == 200 && result_data.data.resourceData) {
+                if (result_data.data.status === 200 && result_data.data.resourceData) {
                     let data = []
                     data.push(result_data.data.resourceData)
                     setCameraData(result_data.data.resourceData);
@@ -107,7 +107,6 @@ const PropertyDevice = (props) => {
             selector: 'id',
             center: false,
             maxWidth: '60px',
-            center: true,
         },
         {
             name: 'PropertyId',

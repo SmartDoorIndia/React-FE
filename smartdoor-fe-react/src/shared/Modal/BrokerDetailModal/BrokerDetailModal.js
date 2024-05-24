@@ -1,20 +1,19 @@
 import  React,{useState,useEffect} from "react";
-import {Modal, Row, Col} from 'react-bootstrap';
+import {Modal} from 'react-bootstrap';
 import { getBrokerDetails,addHoldRequestComments } from '../../../common/redux/actions';
 import { useParams } from "react-router-dom";
 import TextArea from "../../Inputs/TextArea/TextArea";
 import Buttons from "../../Buttons/Buttons";
-import { showErrorToast } from '../../../common/helpers/Utils';
 import { useHistory } from "react-router-dom";
 const Hold = (props) => {
 
-    const modalData = props.modalData;
+    // const modalData = props.modalData;
     const [data, setData] = useState({});
     const { brokerdetailId } = useParams();
-    const history = useHistory();
-    const [allComments, setAllComments] = useState([])
+    // const history = useHistory();
+    // const [allComments, setAllComments] = useState([])
     const [commentValue, setCommentValue] = useState("");
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     useEffect(() => {
         (async () => {
           if(brokerdetailId){

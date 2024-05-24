@@ -90,10 +90,10 @@ const ExecutionDashboard = (props) => {
       getAllPublishedProperty,
       getAllExecutiveTeams,
       getExecutionDashboardCount,
-      getExcutionDashboardCity,
+      // getExcutionDashboardCity,
       getAllCity,
       getAllCityWithId,
-      getLocationByCity,
+      // getLocationByCity,
       excutiveTeamsData, 
       publishedProperyData, 
       serviceRequestData, 
@@ -102,7 +102,7 @@ const ExecutionDashboard = (props) => {
       excutiveDashboardCity,
       allCities,
       allCitiesWithId,
-      allExecutiveLocationsByCity
+      // allExecutiveLocationsByCity
       }= props;
 
     const dispatch = useDispatch();
@@ -133,7 +133,7 @@ const ExecutionDashboard = (props) => {
     const [installationCity, setInstallationCity] = useState("");
     const [installationLocation, setInstallationLocation] = useState("");
     const [locationsData, setLocationsData ] = useState([]);
-    const [selectedCity , setSelectedCity] = useState("")
+    // const [selectedCity , setSelectedCity] = useState("")
 
     const _filterInstallationCity = (city,location) => {
       console.log(location,"filter location"); 
@@ -158,14 +158,14 @@ const ExecutionDashboard = (props) => {
       getAllPublishedProperty({city: value, records:"4", pageNumber:"1"});
     }
 
-    const _filterServiceReqCity = (value) => { 
-      getServiceRequest({ "status":[],
-      "endDate":"",
-      "city":"",
-      "contactNumber":"",
-      "ticketNumber":"",
-      "startDate":"",records:"4", pageNumber:"1"});
-    }
+    // const _filterServiceReqCity = (value) => { 
+    //   getServiceRequest({ "status":[],
+    //   "endDate":"",
+    //   "city":"",
+    //   "contactNumber":"",
+    //   "ticketNumber":"",
+    //   "startDate":"",records:"4", pageNumber:"1"});
+    // }
 
     const _filterExecutionTeamCity = (value) => { 
       getAllExecutiveTeams({city: value});
@@ -173,22 +173,22 @@ const ExecutionDashboard = (props) => {
 
     function onChangePage (e){}
 
-    const TableTitle = () =>{
-        return  <div className="d-flex justify-content-between align-items-center tableHeading">
-                    <div>
-                        <Text size="regular" fontWeight="mediumbold" color="secondryColor" text="Societies on Smartdoor" />
-                    </div>
-                    <div className="locationSelect">
-                        <Form.Group controlId="exampleForm.SelectCustom">
-                            <Form.Label>Location:</Form.Label>
-                            <Form.Control as="select" >
-                              <option>Select</option>
-                              <option>Under development</option>
-                            </Form.Control>
-                        </Form.Group>
-                    </div>
-                </div>
-    }
+    // const TableTitle = () =>{
+    //     return  <div className="d-flex justify-content-between align-items-center tableHeading">
+    //                 <div>
+    //                     <Text size="regular" fontWeight="mediumbold" color="secondryColor" text="Societies on Smartdoor" />
+    //                 </div>
+    //                 <div className="locationSelect">
+    //                     <Form.Group controlId="exampleForm.SelectCustom">
+    //                         <Form.Label>Location:</Form.Label>
+    //                         <Form.Control as="select" >
+    //                           <option>Select</option>
+    //                           <option>Under development</option>
+    //                         </Form.Control>
+    //                     </Form.Group>
+    //                 </div>
+    //             </div>
+    // }
 
   const handleChangeAssignee = (requestId , userId, module_name) =>{
     changeInstallationAssignee({ userRequestId: requestId,

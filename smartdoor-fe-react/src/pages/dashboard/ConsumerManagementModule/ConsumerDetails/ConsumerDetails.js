@@ -43,15 +43,13 @@ import { useAudioCall, useSocket } from '../../../../common/helpers/SocketProvid
 import Loader from '../../../../common/helpers/Loader';
 import reviewIcon from '../../../../assets/svg/reviewIcon.svg'
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
-import { userAuthData } from '../../../../common/redux/reducers/dashboard.reducer';
 import { Badge, TextField } from '@mui/material';
-import { min } from 'date-fns';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import * as Actions from '../../../../common/redux/types';
 
 const ConsumerManagement = (props) => {
-  const {getAllConsumerUsersData, getAllConsumers} = props
-  const location = useLocation();
+  const {getAllConsumerUsersData} = props
+  // const location = useLocation();
   const dispatch = useDispatch();
   const { consumerId } = useParams();
   const { makeAudioCall } = useAudioCall();
@@ -100,10 +98,10 @@ const ConsumerManagement = (props) => {
     else return '/admin/property/property-details';
   }
 
-  const visitStatus = (visitVal) => {
-    const status = visitVal ? 'APPROVED' : 'PENDING';
-    return handleStatusElement(status);
-  };
+  // const visitStatus = (visitVal) => {
+  //   const status = visitVal ? 'APPROVED' : 'PENDING';
+  //   return handleStatusElement(status);
+  // };
 
   const columns = [
     {

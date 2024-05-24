@@ -9,7 +9,7 @@ import AgencyCustomers from "../AgencyCustomers/AgencyCustomers";
 import { TextField, MenuItem } from "@mui/material";
 import { getAgencyExecutiveById, getAllAgencyExecutives, transferCustomers } from "../../../../common/redux/actions";
 import { connect } from "react-redux";
-import { getLocalStorage, showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
+import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 
 const ExecutiveDetails = (props) => {
     const { getAllAgencyExecutives, AgencyExecutiveList } = props;
@@ -21,7 +21,7 @@ const ExecutiveDetails = (props) => {
     const [executiveDetails, setExecutiveDetails] = useState({});
     const [destAgencyExecutive, setDestAgencyExecutive] = useState(null);
     const history = useHistory();
-    const userData = getLocalStorage('authData');
+    // const userData = getLocalStorage('authData');
 
     const _getAgencyById = useCallback(async () => {
         await getAgencyExecutiveById({ agencyId: agencyId, executiveId: executiveId, pageNo: null, pageSize: null, searchStr: '' })

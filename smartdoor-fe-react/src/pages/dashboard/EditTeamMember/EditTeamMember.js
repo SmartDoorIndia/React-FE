@@ -11,7 +11,6 @@ import "../NewTeamMember/NewEntry.scss";
 import { editTeamMember, getAllRoles, getAllCity, getAllCityWithId, getLocationByCity, getUserLocationByCity } from "../../../common/redux/actions";
 import { showErrorToast } from "../../../common/helpers/Utils";
 import { validateNewTeamMember } from "../../../common/validations";
-import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 class EditTeamMemberPage extends Component {
@@ -112,8 +111,8 @@ class EditTeamMemberPage extends Component {
          alternatePhoneNumber,
          city,
          cityIdList,
-         latitude,
-         longitude,
+         // latitude,
+         // longitude,
       } = this.state;
 
       let position = this.props.allAdminRoles.data.filter(
@@ -155,24 +154,24 @@ class EditTeamMemberPage extends Component {
    render() {
       const {
          error,
-         excutiveRoles,
+         // excutiveRoles,
          dob,
          email,
          executiveName,
-         location,
+         // location,
          phoneNumber,
          post,
          alternatePhoneNumber,
-         allLocationsByCity,
-         cityLocations
+         // allLocationsByCity,
+         // cityLocations
       } = this.state;
       const {
          title: { formTitle, buttonText },
          allAdminRoles,
-         allCities,
+         // allCities,
          allCitiesWithId
       } = this.props;
-      const { userData } = this.props.location.state;
+      // const { userData } = this.props.location.state;
       console.log(this.state.city, "seleceted city")
       console.log(this.state.cityIdList, "seleceted city")
       console.log(this.state.location, "selected location")

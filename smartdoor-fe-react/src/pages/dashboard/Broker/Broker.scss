@@ -368,3 +368,35 @@ span.broker_details {
    color: #be1452;
    font-weight: 600;
 }
+.brokerTableWrapper {
+   .rdt_TableBody {
+      //  max-height: calc(51vh);
+      //  height: fit-content;
+       overflow-y: scroll;
+       overflow-x: hidden;
+   }
+   .rdt_TableRow {
+      //  min-height: auto;
+       .rdt_TableCell {
+           text-align: center;
+           &:nth-child(1) {
+               &:first-child {
+                   min-width: none;
+                  //  white-space: nowrap;
+                   overflow: visible;
+               }                
+           }
+           &:nth-child(4) {
+               .elipsis-text {
+                  //  white-space: nowrap;
+                   overflow: hidden;
+                   width: 180px;min-width: 180px;
+                   text-overflow: ellipsis;display: block;text-align: center;
+               }
+           }
+       }
+       // &:active {
+       //     background-color: aqua;
+       // }
+   }
+}

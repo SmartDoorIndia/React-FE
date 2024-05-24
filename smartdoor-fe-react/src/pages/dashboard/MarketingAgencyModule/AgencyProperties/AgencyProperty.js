@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { compose } from "redux"
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import './AgencyProperty.scss';
-import Text from "../../../../shared/Text/Text";
 import { ToolTip, formateDate, getLocalStorage, handleStatusElement, showErrorToast } from "../../../../common/helpers/Utils";
 import Image from "../../../../shared/Image";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
@@ -20,7 +19,7 @@ import * as Actions from '../../../../common/redux/types';
 const AgencyProperty = (props) => {
     const { getAgencyProperties } = props;
     const userData = getLocalStorage('authData');
-    const userRole = props?.userRole;
+    // const userRole = props?.userRole;
     const agencyId = props?.agencyId || userData.agencyId || 0;
     const executiveId = props?.executiveId || 0;
     const customerId = props?.customerId || 0;
@@ -68,7 +67,6 @@ const AgencyProperty = (props) => {
         {
             name: "Owner",
             // selector: "ownerName",
-            sortable: false,
             sortable: false,
             center: true,
             wrap: true,
@@ -374,7 +372,7 @@ const AgencyProperty = (props) => {
                                 value={fromDate}
                                 onChange={(e) => {
                                     console.log(e.target.value);
-                                    const selectedDate = new Date(e.target.value);
+                                    // const selectedDate = new Date(e.target.value);
                                     setFromDate(e.target.value)
                                 }}
                             />
@@ -387,7 +385,7 @@ const AgencyProperty = (props) => {
                                 value={toDate}
                                 onChange={(e) => {
                                     console.log(e.target.value);
-                                    const selectedDate = new Date(e.target.value);
+                                    // const selectedDate = new Date(e.target.value);
                                     setToDate(e.target.value)
                                 }}
                             />

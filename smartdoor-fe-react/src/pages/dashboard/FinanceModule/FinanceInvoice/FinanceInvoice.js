@@ -1,7 +1,5 @@
-import react, { useCallback, useEffect, useState } from 'react';
-import Image from '../../../../shared/Image/Image';
+import { useCallback, useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
-import lockIcon from '../../../../assets/svg/lock.svg';
 import "./FinanceInvoice.scss";
 import { emailInvoice, financeInvoice, getConsumerDetailsFinance } from '../../../../common/redux/actions';
 import Text from '../../../../shared/Text/Text';
@@ -79,9 +77,9 @@ const FinanceInvoice = props =>{
                             <Text size="large" className='pl-4' fontWeight="mediumbold" color="secondry-color" text={invoiceData?.userName} />
                             <Text size="Small" className='pl-4 fw500' color="secondry-color" text={invoiceData?.address} />
                         </div>
-                        {invoiceData.status=="FAILED" ? null :
+                        {invoiceData.status==="FAILED" ? null :
                             <div class="downloadBtn">
-                            <Buttons onClick={downloadInvoice} className="mediumbold" size="xSmall" type="submit" name={invoiceData.planName == "Security Deposit For Visit" ? "Send Deposit Receipt" : "Send Invoice"} alt="Download Invoice" />
+                            <Buttons onClick={downloadInvoice} className="mediumbold" size="xSmall" type="submit" name={invoiceData.planName === "Security Deposit For Visit" ? "Send Deposit Receipt" : "Send Invoice"} alt="Download Invoice" />
                         </div>}
                     </div>
                     <Row className="mt-3 pl-4">

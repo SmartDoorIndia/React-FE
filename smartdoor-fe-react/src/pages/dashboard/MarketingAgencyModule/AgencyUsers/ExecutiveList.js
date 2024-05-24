@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { ToolTip, getLocalStorage, showErrorToast } from "../../../../common/helpers/Utils";
+import { ToolTip, getLocalStorage } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import Pagination from "../../../../shared/DataTable/Pagination";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import './AgencyUsers.scss';
-import { Form, Tooltip } from "react-bootstrap";
 import DataTableComponent from '../../../../shared/DataTable/DataTable';
 import { getAllAgencyExecutives } from "../../../../common/redux/actions";
 import { connect, useDispatch, useSelector } from "react-redux";
@@ -19,8 +18,6 @@ const ExecutiveList = (props) => {
     const { getAllAgencyExecutives, AgencyExecutiveList } = props;
     const [filterText, setFilterText] = useState(AgencyExecutiveList.data.searchStr || '');
     const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
-    const [fromDate, setFromDate] = useState(null);
-    const [toDate, setToDate] = useState(null);
     const [defaultSort, setDefaultSort] = useState(AgencyExecutiveList.data.defaultSort || false);
     const [defaultSortId, setDefaultSortId] = useState(AgencyExecutiveList.data.defaultSortId || 'name');
     const [defaultSortFieldId, setDefaultSortFieldId] = useState(() => {
@@ -170,21 +167,6 @@ const ExecutiveList = (props) => {
         </div>
     );
 
-    const validateDates = () => {
-        if ((fromDate === null && toDate === null) || (fromDate === '' && toDate === '')) {
-            return true;
-        } else if (fromDate !== null && toDate !== null && fromDate !== '' && toDate !== '') {
-            if (new Date(fromDate) > new Date(toDate)) {
-                showErrorToast("Start date should be less than end date");
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            showErrorToast("Please enter start date and end date or set both empty");
-            return false;
-        }
-    }
     const ProgressComponent = <TableLoader />;
     const [currentPage, setCurrentPage] = useState(AgencyExecutiveList.data.currentPage || 1);
     const [rowsPerPage, setRowsPerPage] = useState(AgencyExecutiveList.data.rowsPerPage || 8);
@@ -427,6 +409,6 @@ const actions = {
     getAllAgencyExecutives
 };
 
-const withConnect = connect(mapStateToProps, actions);
+// const withConnect = connect(mapStateToProps, actions);
 
 export default connect(mapStateToProps, actions)(ExecutiveList);

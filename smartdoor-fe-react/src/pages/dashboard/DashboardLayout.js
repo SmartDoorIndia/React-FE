@@ -543,7 +543,7 @@ const DashboardLayout = (props) => {
                                         className="profileName">
                                         <span>{`${ 'Connected to:  ' }  ${
                                              outgoingCallingData.userName &&
-                                             outgoingCallingData.userName != 'null' ?
+                                             outgoingCallingData.userName !== 'null' ?
                                                 outgoingCallingData.userName.capitalizeWord() :
                                                 'Unknown'
                                         }`}</span>

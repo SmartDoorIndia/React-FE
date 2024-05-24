@@ -23,7 +23,7 @@ import "./Broker.scss";
 import {
    getBrokerDetails,
    getBrokerPostedProperty,
-   getPropertyDetails,getBrokerListing,
+   getPropertyDetails, getBrokerListing,
    addHoldRequestComments,
    getAllProperties,
 } from "../../../common/redux/actions";
@@ -52,21 +52,21 @@ const BrokerDetails = (props) => {
    const [holdStatus, setHoldStatus] = useState(false);
    const [postedProperty, setPostedProperty] = useState([]);
    const userData = getLocalStorage("authData");
-   console.log(userData,"userdata")
+   console.log(userData, "userdata")
 
-   console.log(postedProperty,"ffjgfhjg")
+   console.log(postedProperty, "ffjgfhjg")
    const toggleHoldStatus = () => {
       setHoldStatus(!holdStatus);
    };
 
-useEffect(()=>{
-   console.log("Broker_data?.resourceData?.status",Broker_data?.resourceData?.status);
-   if (Broker_data?.resourceData?.status === "Hold") {
-      setHoldStatus(true);
-    } else if (Broker_data?.resourceData?.status === "Approved") {
-      setHoldStatus(false);
-    }
-},[Broker_data?.resourceData?.status ])
+   useEffect(() => {
+      console.log("Broker_data?.resourceData?.status", Broker_data?.resourceData?.status);
+      if (Broker_data?.resourceData?.status === "Hold") {
+         setHoldStatus(true);
+      } else if (Broker_data?.resourceData?.status === "Approved") {
+         setHoldStatus(false);
+      }
+   }, [Broker_data?.resourceData?.status])
 
    const handleBlockConsumser = () => {
       if (blockData !== null) {
@@ -93,29 +93,29 @@ useEffect(()=>{
    }, [getBrokerDetails, brokerdetailId]);
 
    const _getPostedDetailProperty = useCallback(() => {
-      getBrokerPostedProperty({brokerId: brokerdetailId})
-      .then((response) => {
-     
-         setLoading(false);
-         if(response){
-            if( response) setPostedProperty(response.data);
-         }
-      })
-      .catch((error) =>{
-         setLoading(false);
-      })
-   },[getBrokerPostedProperty,brokerdetailId])
-   useEffect(() => {
-      _getBrokerDetails();
-      _getPostedDetailProperty();
+      getBrokerPostedProperty({ brokerId: brokerdetailId })
+         .then((response) => {
+
+            setLoading(false);
+            if (response) {
+               if (response) setPostedProperty(response.data);
+            }
+         })
+         .catch((error) => {
+            setLoading(false);
+         })
+   }, [getBrokerPostedProperty, brokerdetailId])
+   useEffect(async () => {
+      await _getBrokerDetails();
+      await _getPostedDetailProperty();
       setTimeout(() => {
          if (Broker_data?.resourceData?.status === "Hold") {
             setHoldStatus(false);
-          } else if (Broker_data?.resourceData?.status === "Approved") {
+         } else if (Broker_data?.resourceData?.status === "Approved") {
             setHoldStatus(true);
-          }
+         }
       }, 1000);
-    }, [_getBrokerDetails, _getPostedDetailProperty]);
+   }, [_getBrokerDetails, _getPostedDetailProperty]);
 
    const PaginationComponent = (props) => (
       <Pagination {...props} PaginationActionButton={PaginationActionButton} />
@@ -155,11 +155,11 @@ useEffect(()=>{
 
       filteredItems = allPlanDataBroker.data?.length
          ? allPlanDataBroker.data.filter((item) => {
-              return (
-                 item?.propertyId == filterText ||
-                 item?.postedFor?.toLowerCase().includes(filterText.toLowerCase())
-              );
-           })
+            return (
+               item?.propertyId == filterText ||
+               item?.postedFor?.toLowerCase().includes(filterText.toLowerCase())
+            );
+         })
          : [];
       if (status && filteredItems?.length) {
          filteredItems = filteredItems.filter((item) => {
@@ -194,7 +194,7 @@ useEffect(()=>{
    //    key: "selection",
    // };
 
-   
+
 
    const columns = [
       {
@@ -202,7 +202,7 @@ useEffect(()=>{
          selector: 'postedOn',
          sortable: true,
          center: true,
-         cell: ({ postedOn })=>(<span>{formateDate(postedOn)}</span>),
+         cell: ({ postedOn }) => (<span>{formateDate(postedOn)}</span>),
       },
       {
          name: "Posted for",
@@ -305,7 +305,7 @@ useEffect(()=>{
             history={{ goBack: closeModal }}
             toggleHoldStatus={toggleHoldStatus}
             holdStatus={holdStatus}
-            // getAllUsers={getAllUsers}
+         // getAllUsers={getAllUsers}
          />
          <div className="dashboard container-fluid12">
             <Row>
@@ -431,21 +431,21 @@ useEffect(()=>{
                                  className="hold-btn"
                                  name={!holdStatus ? "Hold" : "UnHold"}
                                  onClick={() => {
-                                    if(!holdStatus){
+                                    if (!holdStatus) {
 
                                        handleShow();
                                        setModalData(brokerdetailId);
 
-                                    }else{
-                                       
-                                    addHoldRequestComments({
-                                       brokerId: brokerdetailId,
-                                       status:"Approved",
-                                       // comments: comment
-                                    });
-                                    setHoldStatus(false)
+                                    } else {
+
+                                       addHoldRequestComments({
+                                          brokerId: brokerdetailId,
+                                          status: "Approved",
+                                          // comments: comment
+                                       });
+                                       setHoldStatus(false)
                                     }
-                                       // handleShow();
+                                    // handleShow();
                                  }}
                               />
                            </div>
@@ -466,15 +466,15 @@ useEffect(()=>{
                            <div>
                               <p className="detail-heading">Locations Assigned</p>
                               <div className="details-heading location-assigned">
-                                 { Broker_data?.resourceData?.brokerlocation &&
-                                 Broker_data?.resourceData?.brokerlocation.map(
-                                    (data, index) =>
-                                       data?.city !== null && (
-                                          <span key={index} className="details-value">
-                                             {data?.city}
-                                          </span>
-                                       )
-                                 )}
+                                 {Broker_data?.resourceData?.brokerlocation &&
+                                    Broker_data?.resourceData?.brokerlocation.map(
+                                       (data, index) =>
+                                          data?.city !== null && (
+                                             <span key={index} className="details-value">
+                                                {data?.city}
+                                             </span>
+                                          )
+                                    )}
                               </div>
                            </div>
                         </Col>
@@ -486,7 +486,7 @@ useEffect(()=>{
                                     Broker_data?.resourceData?.specializedIn.map(
                                        (data, index) =>
                                           index ===
-                                             Broker_data.resourceData.specializedIn.length - 1 && (
+                                          Broker_data.resourceData.specializedIn.length - 1 && (
                                              <span key={index} className="details-value">
                                                 {data?.specializedIn}
                                              </span>
@@ -505,9 +505,9 @@ useEffect(()=>{
                                           <span className="details-value">Rent</span>
                                        )}
                                        {(Broker_data?.resourceData?.sell || Broker_data?.resourceData?.buy) && (
-                                             <span className="details-value">Buy / Sell</span>
-                                          )}
-                                                                              
+                                          <span className="details-value">Buy / Sell</span>
+                                       )}
+
                                     </>
                                  )}
                               </div>
@@ -580,25 +580,25 @@ useEffect(()=>{
                         <p>Personal Details</p>
                      </div>
                      <div className="mt-1 row">
-                        <Col className="">
+                        <Col className="" lg='2'>
                            <div>
                               <p className="detail-heading">Phone Number</p>
                               <p className="details">{Broker_data?.resourceData?.phoneNumber}</p>
                            </div>
                         </Col>
-                        <Col className="">
+                        <Col className="" lg='2'>
                            <div>
                               <p className="detail-heading">Date of Birth</p>
                               <p className="details">{Broker_data?.resourceData?.dob}</p>
                            </div>
                         </Col>
-                        <Col className="">
+                        <Col className="" lg='3'>
                            <div>
                               <p className="detail-heading">Email</p>
                               <p className="details">{Broker_data?.resourceData?.email}</p>
                            </div>
                         </Col>
-                        <Col className="">
+                        <Col className="" lg='5'>
                            <div>
                               <p className="detail-heading">Company Details </p>
 
@@ -617,13 +617,15 @@ useEffect(()=>{
                </Col>
 
                <Col lg={12}>
-                  <div className="heading mt-4 text-decoration-underline">
-                     <h6>PROPERTIES</h6>
-                  </div>
+                  <Buttons
+                     color={'#BCBCBC'}
+                     name='Properties'
+                     style={{ color: '#252525', backgroundColor: 'unset', borderBottomColor: '#BE1452', borderBottomWidth: 'thick', fontWeight: 'bolder' }}
+                  ></Buttons>
                </Col>
 
                <Col lg={12}>
-                  <div className="tableBox mb-5">
+                  <div className="tableBox mb-5" style={{ marginTop: '5px' }}>
                      <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
                         <div className="text-nowrap mb-2">
                            <Text
@@ -639,10 +641,10 @@ useEffect(()=>{
                            <DateRangePicker
                               style={{
                                  width: "249px",
-                                 height: "30px",
-                                 color: "darkgray",
-                                 marginTop: "0px",
-                                 marginLeft: "15px",
+                                 // height: "10px",
+                                 // color: "darkgray",
+                                 padding: "0px",
+                                 // marginLeft: "15px",
                               }}
                               onChange={handleDateRangeChange}
                            />
@@ -658,10 +660,10 @@ useEffect(()=>{
                                     <option value="">Filter</option>
                                     {statusArr.length
                                        ? statusArr.map((_value, index) => (
-                                            <option key={index} value={_value}>
-                                               {_value}
-                                            </option>
-                                         ))
+                                          <option key={index} value={_value}>
+                                             {_value}
+                                          </option>
+                                       ))
                                        : null}
                                  </Form.Control>
                               </Form.Group>
@@ -671,7 +673,7 @@ useEffect(()=>{
                         </div>
                      </div>
 
-                     <Card>
+                     <div>
                         <DataTable
                            data={showValue()}
                            columns={columns}
@@ -685,7 +687,7 @@ useEffect(()=>{
                            persistTableHead="true"
                            filterComponent={subHeaderComponentMemo}
                         ></DataTable>
-                     </Card>
+                     </div>
                   </div>
                </Col>
             </Row>

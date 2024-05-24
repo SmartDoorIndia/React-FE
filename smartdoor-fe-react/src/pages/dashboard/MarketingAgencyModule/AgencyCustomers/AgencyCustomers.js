@@ -1,15 +1,14 @@
 import { compose } from "redux";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import Form from "react-bootstrap/Form";
-import Text from "../../../../shared/Text/Text";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import React, { useEffect, useState } from "react";
 import Pagination from "../../../../shared/DataTable/Pagination";
 import { TableLoader } from "../../../../common/helpers/Loader";
-import { ToolTip, formateDate, getLocalStorage, handleStatusElement, showErrorToast } from "../../../../common/helpers/Utils";
+import { ToolTip, formateDate, getLocalStorage, showErrorToast } from "../../../../common/helpers/Utils";
 import contentIcon from '../../../../assets/images/content-ico.svg';
 import Image from "../../../../shared/Image";
-import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import DataTableComponent from '../../../../shared/DataTable/DataTable';
 import "./AgencyCustomers.scss";
@@ -56,7 +55,7 @@ const AgencyCustomers = (props) => {
         }
     });
 
-    const propertyType = CONSTANTS_STATUS.propertyType;
+    // const propertyType = CONSTANTS_STATUS.propertyType;
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
     const columns = [
@@ -73,7 +72,6 @@ const AgencyCustomers = (props) => {
         {
             name: "Customer Name",
             // selector: "ownerName",
-            sortable: false,
             sortable: false,
             center: true,
             wrap: true,
@@ -146,7 +144,7 @@ const AgencyCustomers = (props) => {
                                     state: {
                                         customerDetails: {
                                             userId: userId, addedDate: addedDate, name: name, mobile: mobile,
-                                            giftedCoupens: giftedCoupens, propertyCount, propertyCount, monthlySpent: monthlySpent,
+                                            giftedCoupens: giftedCoupens, propertyCount, monthlySpent: monthlySpent,
                                             totalSpent: totalSpent, kycStatus: kycStatus, email: email, totalCoinBalance: totalCoinBalance
                                         }, agencyId: agencyId
                                     },
@@ -160,7 +158,7 @@ const AgencyCustomers = (props) => {
             ),
         },
     ];
-    const history = useHistory();
+    // const history = useHistory();
     const dispatch = useDispatch();
 
     const PaginationActionButton = () => (
@@ -380,7 +378,7 @@ const AgencyCustomers = (props) => {
                                 value={fromDate}
                                 onChange={(e) => {
                                     console.log(e.target.value);
-                                    const selectedDate = new Date(e.target.value);
+                                    // const selectedDate = new Date(e.target.value);
                                     setFromDate(e.target.value)
                                 }}
                             />
@@ -393,7 +391,7 @@ const AgencyCustomers = (props) => {
                                 value={toDate}
                                 onChange={(e) => {
                                     console.log(e.target.value);
-                                    const selectedDate = new Date(e.target.value);
+                                    // const selectedDate = new Date(e.target.value);
                                     setToDate(e.target.value)
                                 }}
                             />

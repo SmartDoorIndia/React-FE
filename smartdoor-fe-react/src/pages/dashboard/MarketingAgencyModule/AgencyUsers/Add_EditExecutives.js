@@ -1,12 +1,11 @@
 import { Col, Row } from "react-bootstrap";
 import { compose } from "redux";
 import Text from "../../../../shared/Text/Text";
-import AutoCompleteInput from "../../../../shared/Inputs/AutoComplete";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import { TextField } from "@mui/material";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useEffect, useState } from "react";
-import { validateAgencyDetails, validateExecutiveDetails } from "../../../../common/validations";
+import { validateExecutiveDetails } from "../../../../common/validations";
 import '../Add_EditAgency.scss';
 import { addEditExecutive } from '../../../../common/redux/actions';
 import { showSuccessToast } from "../../../../common/helpers/Utils";
@@ -14,7 +13,7 @@ import { showErrorToast } from "../../../../common/helpers/Utils";
 import AutoCompleteTextField from "../../../../shared/Inputs/AutoComplete/textField";
 
 const AgencyExecutives = (props) => {
-    const addNew = props.location.state.addNew;
+    // const addNew = props.location.state.addNew;
     const [executiveDetails, setExecutiveDetails] = useState({
         agencyId: props?.location?.state?.agencyId || null,
         executiveId: props?.location?.state?.executiveDetails?.executiveId || null,
@@ -28,9 +27,9 @@ const AgencyExecutives = (props) => {
     const history = useHistory();
 
     const validateExecutiveDetail = async () => {
-        if (executiveDetails.executiveNumber == null || executiveDetails.executiveNumber == "") {
+        if (executiveDetails.executiveNumber === null || executiveDetails.executiveNumber === "") {
             showErrorToast("Mobile Number is Mandatory...")
-        } else if (executiveDetails.executiveNumber != null && executiveDetails.executiveNumber.length != 10) {
+        } else if (executiveDetails.executiveNumber !== null && executiveDetails.executiveNumber.length !== 10) {
             showErrorToast("Mobile Number is not valid...")
         } else {
             const valid = await validateExecutiveDetails(executiveDetails);

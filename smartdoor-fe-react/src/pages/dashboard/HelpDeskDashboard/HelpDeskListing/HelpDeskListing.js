@@ -1,32 +1,26 @@
-import React, { useRef, useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import Image from '../../../../shared/Image/Image';
-import Buttons from '../../../../shared/Buttons/Buttons'
 import { getInstallationRequest,
     getServiceRequest,
     getAllPublishedProperty,
     getAllExecutiveTeams, 
     getExecutionDashboardCount, 
     getExcutionDashboardCity,
-    approveProperty ,
     getLocationByCity,
-    changeInstallationAssignee,
     //transaction module
    getAllCity,
 //    getLocationByCity,
    getHelpDeskPropertyLeads,
 } from '../../../../common/redux/actions';
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
-import { Link, Route } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Text from '../../../../shared/Text/Text';
-import ListingDataTable from '../../../../shared/DataTable/ListingDataTable';
 import Pagination from '../../../../shared/DataTable/Pagination';
-import { handleStatusElement, ToolTip, formateDate, showErrorToast, dateWithFormate } from '../../../../common/helpers/Utils';
+import { ToolTip, formateDate } from '../../../../common/helpers/Utils';
 import contentIcon from '../../../../assets/images/content-ico.svg';
 import Form from 'react-bootstrap/Form';
-import filterIcon from '../../../../assets/images/filter-icon.svg';
-import userImage from "../../../../assets/svg/avatar_sml.svg";
 import SearchInput from '../../../../shared/Inputs/SearchInput/SearchInput';
 import './HelpDeskListing.scss';
 
@@ -35,29 +29,29 @@ const HelpDeskListing = (props) => {
     getInstallationRequest,      
       getAllPublishedProperty,      
       getLocationByCity,
-      publishedProperyData, 
-      installationReqData,
+      // publishedProperyData, 
+      // installationReqData,
     //transcation module
     // getLocationByCity,
     getAllCity,
-    allTransactionCities,
+    // allTransactionCities,
     allCities,
     getHelpDeskPropertyLeads,
     helpdeskPropertyLeads
   } = props;
 
  
-  const [city, setCity] = useState("");
+  // const [city, setCity] = useState("");
  
 
-  const [locationsData, setLocationsData] = useState([]);
+  // const [locationsData, setLocationsData] = useState([]);
 
 
   //state: for managing the search filters 
   const [filterText, setFilterText] = React.useState('');
   const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
 
-  function onChangePage(e) {}
+  // function onChangePage(e) {}
 
   const [selectedCity, setSelectedCity] = useState('')
 
@@ -230,221 +224,221 @@ const PropertyLeadsColumns = [
     },
   ];
  
-const InstallationRequestsColumns = [
-    {
-      name: 'Id',
-      selector: 'id', 
-      sortable: true,
-      center:true,
-    },
+// const InstallationRequestsColumns = [
+//     {
+//       name: 'Id',
+//       selector: 'id', 
+//       sortable: true,
+//       center:true,
+//     },
   
-    {
-      name: 'Installation Time',
-      selector: 'dateTime',
-      sortable: true,
-      center:true,
-      cell: ({dateTime, slotTime})=>(<span>{`${formateDate(dateTime)} | ${slotTime || '-'}`}</span>),
+//     {
+//       name: 'Installation Time',
+//       selector: 'dateTime',
+//       sortable: true,
+//       center:true,
+//       cell: ({dateTime, slotTime})=>(<span>{`${formateDate(dateTime)} | ${slotTime || '-'}`}</span>),
   
-    },
-    // {
-    //   name: 'For'  ,
-    //   selector: 'requestFor',
-    //   center:true,
+//     },
+//     // {
+//     //   name: 'For'  ,
+//     //   selector: 'requestFor',
+//     //   center:true,
   
-    // },
-    {
-      name: 'Location'  ,
-      selector: 'location',
-      center:true,
-      maxWidth:"150px",
-      // cell: ({location}) => ( <span> {location !== null ? location : "-" || "-"} </span> )
-      //{row.dealInArea.substring(0, row.dealInArea.indexOf(',')!==-1 ? row.dealInArea.indexOf(',') : row.dealInArea.length)}
-      // cell: ({location}) => ( <span> {location.substring(0, location.indexOf(',')!==-1 ? location.indexOf(',') : location.length)} </span> )
-      cell: ({ location }) => (
-        <ToolTip position="top" style={{ width: "100%" }} name={location || ""}>
-           <span className="cursor-pointer elipsis-text">
-              {" "}
-              {location.substring(
-                 0,
-                 location.indexOf(",") !== -1 ? location.indexOf(",") : location.length
-              )}
-           </span>
-        </ToolTip>
-     ),
-    },
-    {
-      name: 'City'  ,
-      selector: 'city',
-      center:true,
-      maxWidth:"150px",
-      cell: ({city}) => ( <span> {city || "-"} </span> )
-    },
-    {
-      name: 'Property Type',
-      selector: 'propertySubType',
-      center:true,
-      maxWidth:"150px",
-      style:{"text-align": "center"},
-      cell: ({propertySubType}) => ( <span> {propertySubType || "-"} </span> )
+//     // },
+//     {
+//       name: 'Location'  ,
+//       selector: 'location',
+//       center:true,
+//       maxWidth:"150px",
+//       // cell: ({location}) => ( <span> {location !== null ? location : "-" || "-"} </span> )
+//       //{row.dealInArea.substring(0, row.dealInArea.indexOf(',')!==-1 ? row.dealInArea.indexOf(',') : row.dealInArea.length)}
+//       // cell: ({location}) => ( <span> {location.substring(0, location.indexOf(',')!==-1 ? location.indexOf(',') : location.length)} </span> )
+//       cell: ({ location }) => (
+//         <ToolTip position="top" style={{ width: "100%" }} name={location || ""}>
+//            <span className="cursor-pointer elipsis-text">
+//               {" "}
+//               {location.substring(
+//                  0,
+//                  location.indexOf(",") !== -1 ? location.indexOf(",") : location.length
+//               )}
+//            </span>
+//         </ToolTip>
+//      ),
+//     },
+//     {
+//       name: 'City'  ,
+//       selector: 'city',
+//       center:true,
+//       maxWidth:"150px",
+//       cell: ({city}) => ( <span> {city || "-"} </span> )
+//     },
+//     {
+//       name: 'Property Type',
+//       selector: 'propertySubType',
+//       center:true,
+//       maxWidth:"150px",
+//       style:{"text-align": "center"},
+//       cell: ({propertySubType}) => ( <span> {propertySubType || "-"} </span> )
   
-    }, 
-    {
-      name: 'Assigned to',
-      selector: 'assignedTo',
-      center:true,
-      // cell: ({assignedTo}) => ( <Text size="Small"  className="text-align-center" fontWeight="smbold" color="secondryColor" text={assignedTo ? assignedTo.capitalizeWord() : "-"} /> )
-      cell: ({ id, assignedTo, userList }) => (
-        // status === 'PENDING' ?
-           !assignedTo ?
-             <div className="w-100">
-               <div className="assignTo">
-                 <Form.Group controlId="exampleForm.SelectCustom" className="w-100 display-flex">
-                   <Form.Control as="select" className="w-100" 
-                   //onChange={ (e)=>handleChangeAssignee(id ,e.target.value) }
-                   >
-                     <option >Assign</option>
-                     {
-                       userList.map((data, index)=>
-                         <option key={ index } value={ data.id }>{data.name}</option>,
-                       )
-                     }
-                   </Form.Control>
-                 </Form.Group>
-               </div>
-             </div> :
+//     }, 
+//     {
+//       name: 'Assigned to',
+//       selector: 'assignedTo',
+//       center:true,
+//       // cell: ({assignedTo}) => ( <Text size="Small"  className="text-align-center" fontWeight="smbold" color="secondryColor" text={assignedTo ? assignedTo.capitalizeWord() : "-"} /> )
+//       cell: ({ id, assignedTo, userList }) => (
+//         // status === 'PENDING' ?
+//            !assignedTo ?
+//              <div className="w-100">
+//                <div className="assignTo">
+//                  <Form.Group controlId="exampleForm.SelectCustom" className="w-100 display-flex">
+//                    <Form.Control as="select" className="w-100" 
+//                    //onChange={ (e)=>handleChangeAssignee(id ,e.target.value) }
+//                    >
+//                      <option >Assign</option>
+//                      {
+//                        userList.map((data, index)=>
+//                          <option key={ index } value={ data.id }>{data.name}</option>,
+//                        )
+//                      }
+//                    </Form.Control>
+//                  </Form.Group>
+//                </div>
+//              </div> :
   
-             <Text size="Small" color="secondryColor" className="text-center" text={ assignedTo ? assignedTo.capitalizeWord() : '-' } /> 
-            // : <Text size="Small" fontWeight="smbold" color="secondryColor" className="text-center" text={ assignTo ? assignTo.capitalizeWord() : '-' } />
+//              <Text size="Small" color="secondryColor" className="text-center" text={ assignedTo ? assignedTo.capitalizeWord() : '-' } /> 
+//             // : <Text size="Small" fontWeight="smbold" color="secondryColor" className="text-center" text={ assignTo ? assignTo.capitalizeWord() : '-' } />
   
-  ),
-    }, 
-    {
-      name: 'Status',
-      selector: 'status',
-      center:true,
-      maxWidth:"150px",
-      cell: ({status})=>(handleStatusElement(status))
-    }, 
-    {
-      name: 'Action',
-      center:true,
-      maxWidth:"60px",
-      cell: ({id}) =>( 
-          <div className="action">
-            <ToolTip position="left" name="View Details">
-              <span>
-                  <Link  to={{ pathname: "/admin/execution/installation-detail",
-                              state: {taskId : id} }}> 
-                      <Image name="useraddIcon" src={contentIcon} />
-                  </Link>
-                </span>
-            </ToolTip> 
-          </div>
+//   ),
+//     }, 
+//     {
+//       name: 'Status',
+//       selector: 'status',
+//       center:true,
+//       maxWidth:"150px",
+//       cell: ({status})=>(handleStatusElement(status))
+//     }, 
+//     {
+//       name: 'Action',
+//       center:true,
+//       maxWidth:"60px",
+//       cell: ({id}) =>( 
+//           <div className="action">
+//             <ToolTip position="left" name="View Details">
+//               <span>
+//                   <Link  to={{ pathname: "/admin/execution/installation-detail",
+//                               state: {taskId : id} }}> 
+//                       <Image name="useraddIcon" src={contentIcon} />
+//                   </Link>
+//                 </span>
+//             </ToolTip> 
+//           </div>
   
-          )
-    }, 
+//           )
+//     }, 
   
-  ];
+//   ];
 
-  const PublishedPropertyColumns = [
-    {
-    name: 'Id',
-    selector: 'smartdoorPropertyId',
-    center:true,
-    sortable: true,
+  // const PublishedPropertyColumns = [
+  //   {
+  //   name: 'Id',
+  //   selector: 'smartdoorPropertyId',
+  //   center:true,
+  //   sortable: true,
     
-    },
+  //   },
     
-    {
-    name: 'Name',
-    selector: 'name',
-    center:true,
-    cell: ({propertyPostedBy, imageUrl}) => (  <div className="userName">
-                      {/* <div className="userImage">
-                        <Image name="userImage" src={imageUrl || userImage} /> 
-                          </div> */}
-                        <Text size="Small" color="secondryColor" text={propertyPostedBy || "-"} />
-                        </div>
-                    )
-    },
-    {
-    name: 'Phone No'  ,
-    selector: 'phoneNumber',
-    center:true,
-    },
-    {
-    name: 'City'  ,
-    selector: 'city',
-    center:true,
-    cell: ({city}) => ( <span> {city || "-"} </span> )
+  //   {
+  //   name: 'Name',
+  //   selector: 'name',
+  //   center:true,
+  //   cell: ({propertyPostedBy, imageUrl}) => (  <div className="userName">
+  //                     {/* <div className="userImage">
+  //                       <Image name="userImage" src={imageUrl || userImage} /> 
+  //                         </div> */}
+  //                       <Text size="Small" color="secondryColor" text={propertyPostedBy || "-"} />
+  //                       </div>
+  //                   )
+  //   },
+  //   {
+  //   name: 'Phone No'  ,
+  //   selector: 'phoneNumber',
+  //   center:true,
+  //   },
+  //   {
+  //   name: 'City'  ,
+  //   selector: 'city',
+  //   center:true,
+  //   cell: ({city}) => ( <span> {city || "-"} </span> )
     
-    },
-    {
-    name: 'Property Type',
-    selector: 'leadCompleted',
+  //   },
+  //   {
+  //   name: 'Property Type',
+  //   selector: 'leadCompleted',
     
-    center:true,
-    style:{"text-align": "center"},
-    cell: ({propertySubType}) => ( <Text size="Small" color="secondryColor" text={propertySubType||"-"} />)
+  //   center:true,
+  //   style:{"text-align": "center"},
+  //   cell: ({propertySubType}) => ( <Text size="Small" color="secondryColor" text={propertySubType||"-"} />)
     
-    }, 
-    {
-    name: 'Action',
-    center:true,
-    cell: ({smartdoorPropertyId,postedById}) =>( <div className="action">
-              <ToolTip position="left" name="View Details">
+  //   }, 
+  //   {
+  //   name: 'Action',
+  //   center:true,
+  //   cell: ({smartdoorPropertyId,postedById}) =>( <div className="action">
+  //             <ToolTip position="left" name="View Details">
     
-                  <span>
-                      <Link  to={{ pathname: "/admin/property/property-details",
-                                  state: {propertyId : smartdoorPropertyId, userId : postedById} }}> 
-                          <Image name="useraddIcon" src={contentIcon} />
-                      </Link>
-                    </span>
-              </ToolTip> 
-                  </div>
-                )
-    }, 
+  //                 <span>
+  //                     <Link  to={{ pathname: "/admin/property/property-details",
+  //                                 state: {propertyId : smartdoorPropertyId, userId : postedById} }}> 
+  //                         <Image name="useraddIcon" src={contentIcon} />
+  //                     </Link>
+  //                   </span>
+  //             </ToolTip> 
+  //                 </div>
+  //               )
+  //   }, 
     
-    ];
+  //   ];
 
  const _filterPropertyLeads = (city, zipcode) => {
-    setCity(city);
+    // setCity(city);
     getHelpDeskPropertyLeads({ city, records: '', pageNumber: '' , zipCode:zipcode});
  };
 
 
-const [ showModal, setShowModal ] = useState(false);
-  const [ datePickervalue, setDatePickervalue ] = useState('');
+// const [ showModal, setShowModal ] = useState(false);
+  // const [ datePickervalue, setDatePickervalue ] = useState('');
 
-  const handleClose = () => {
-    setShowModal(false);
-  }
-  const handleOpen = () => {
-    setShowModal(true);
-  }
+  // const handleClose = () => {
+  //   setShowModal(false);
+  // }
+  // const handleOpen = () => {
+  //   setShowModal(true);
+  // }
 
 
-  const FilterComponent = () => {
-    return (<div>
-      <Buttons
-        name="Filter"
-        varient="secondary"
-        type="submit"
-        size="Small"
-        color="black"
-        iconSrc={ filterIcon }
-        className= "mr-2 font-weight-bold filterButton"
-        onClick={ ()=>handleOpen() }
-      />
-    </div>)
-  }
+  // const FilterComponent = () => {
+  //   return (<div>
+  //     <Buttons
+  //       name="Filter"
+  //       varient="secondary"
+  //       type="submit"
+  //       size="Small"
+  //       color="black"
+  //       iconSrc={ filterIcon }
+  //       className= "mr-2 font-weight-bold filterButton"
+  //       onClick={ ()=>handleOpen() }
+  //     />
+  //   </div>)
+  // }
 
   const showData = () => {
       let filteredItems = [];
       if(props?.tabName === "Property Leads" ){   
           filteredItems =  helpdeskPropertyLeads.data.length ?
           helpdeskPropertyLeads.data.filter(item => { 
-          return  item?.leadId == filterText || 
+          return  item?.leadId === filterText || 
           (item?.assignTo?.toLowerCase().includes(filterText.toLowerCase())) ||
           (item?.contactPerson?.toLowerCase().includes(filterText.toLowerCase())) ||
           (item?.societyName?.toLowerCase().includes(filterText.toLowerCase())) ||
@@ -465,7 +459,7 @@ const [ showModal, setShowModal ] = useState(false);
         if(props?.tabName === "Property Leads" ){
             _filterPropertyLeads(city, '');
         }
-        setLocationsData([]);
+        // setLocationsData([]);
         setSelectedCity(city);
         if(city.length){
         getLocationByCity({ city })
@@ -479,19 +473,19 @@ const [ showModal, setShowModal ] = useState(false);
                         };
                     }
                 );
-                setLocationsData(locationsByCity);
+                // setLocationsData(locationsByCity);
                 }
             })
             .catch((err) => console.log("err:", err));
           }
     }
 
-    const  _filterLocationData = (city, zipcode) => {
-        if(props?.tabName === "Property Leads" ){
-            _filterPropertyLeads(city, zipcode);
+    // const  _filterLocationData = (city, zipcode) => {
+    //     if(props?.tabName === "Property Leads" ){
+    //         _filterPropertyLeads(city, zipcode);
                 
-        }
-    }
+    //     }
+    // }
 
     const subHeaderComponentMemo = React.useMemo(() => {
 		const handleClear = () => {
@@ -602,9 +596,7 @@ const mapStateToProps = ({ salesLeadsDataTable,
     excutiveDashboardCity,
     allLocationsByCity, 
     allTransactionCities,
-    allCities,
-    allLocationsByCity,
-   
+    allCities,   
     helpdeskPropertyLeads
 });
 

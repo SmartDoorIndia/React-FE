@@ -1,6 +1,6 @@
 /** @format */
 
-import { useState, Component, memo, createRef } from "react";
+import { Component, memo } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
@@ -21,10 +21,8 @@ import {
 } from "../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
 import { validateNewTeamMember } from "../../../common/validations";
-import AutoCompleteInput from "../../../shared/Inputs/AutoComplete";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 import DataTableComponent from '../../../shared/DataTable/DataTable';
-import { transactionMeetingRequestData } from "../../../common/redux/reducers/views/transaction.reducer";
 
 // import Image from "../../../shared/Image/Image";
 class NewTeamMemberPage extends Component {
@@ -109,18 +107,18 @@ class NewTeamMemberPage extends Component {
          dob,
          email,
          executiveName,
-         location,
+         // location,
          phoneNumber,
          post,
          alternatePhoneNumber,
          city,
          cityNameList,
-         businessLocality,
-         latitude,
-         longitude,
+         // businessLocality,
+         // latitude,
+         // longitude,
          cityLocations: [],
-         _gPlaceLocation,
-         cityLatLong,
+         // _gPlaceLocation,
+         // cityLatLong,
       } = this.state;
       let data = {
          city: cityNameList,
@@ -182,7 +180,7 @@ class NewTeamMemberPage extends Component {
    render() {
       const {
          error,
-         excutiveRoles,
+         // excutiveRoles,
          dob,
          email,
          executiveName,
@@ -190,17 +188,17 @@ class NewTeamMemberPage extends Component {
          phoneNumber,
          post,
          alternatePhoneNumber,
-         latitude,
-         longitude,
-         businessLocality,
-         _gPlaceLocation,
-         allLocationsByCity,
-         cityLocations,
+         // latitude,
+         // longitude,
+         // businessLocality,
+         // _gPlaceLocation,
+         // allLocationsByCity,
+         // cityLocations,
       } = this.state;
       const {
          title: { formTitle, buttonText },
          allAdminRoles,
-         allCities,
+         // allCities,
          allCitiesWithId,
          allExecutives
       } = this.props;

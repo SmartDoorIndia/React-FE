@@ -1,13 +1,12 @@
-import React, { useRef, useState, useEffect, useCallback, memo } from 'react';
+import React, { useState, useEffect, useCallback, memo } from 'react';
 import Form from 'react-bootstrap/Form'
 import Buttons from '../../../../shared/Buttons/Buttons';
 import Text from '../../../../shared/Text/Text';
 import { Col, Row, Modal } from 'react-bootstrap';
-import { changeInstallationAssignee, assignLeadToUser, getExecutionTaskDetail, approveProperty, getInstallationExecutiveList,getExecutiveList, getSmartLockData } from '../../../../common/redux/actions';
+import { changeInstallationAssignee, getExecutionTaskDetail, approveProperty, getInstallationExecutiveList,getSmartLockData } from '../../../../common/redux/actions';
 
 import './PropertyDetail.scss';
-import Header from '../../../../shared/Header/Header';
-import { formateDate, handleStatusElement, formateDateTime, formateDateTimeIST } from '../../../../common/helpers/Utils';
+import { formateDate, handleStatusElement, formateDateTime } from '../../../../common/helpers/Utils';
 import CheckBoxComponent from '../../../../shared/CheckBox/CheckBoxComponent';
 import { Link } from 'react-router-dom';
 import Dialer from '../../../../assets/svg/Dialer.svg'

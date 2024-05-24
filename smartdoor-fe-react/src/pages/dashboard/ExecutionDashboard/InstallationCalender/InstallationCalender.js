@@ -2,7 +2,7 @@
 
 import React, { Component, memo } from "react";
 import Calender from "../../../../shared/Calender/Calender";
-import { getExecutiveCalendar, changeInstallationAssignee, getAllInstallationCity,  getInstallationLocationByCity, getAllCityWithId } from "../../../../common/redux/actions";
+import { getExecutiveCalendar, changeInstallationAssignee, getAllCityWithId } from "../../../../common/redux/actions";
 import {
    getCurrentWeek,
    dateWithFormate,
@@ -15,7 +15,6 @@ import Form from 'react-bootstrap/Form';
 import './InstallationCalender.scss';
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { allCitiesWithId } from "../../../../common/redux/reducers/dashboard.reducer";
 
 class InstallationCalender extends Component {
    constructor() {
@@ -205,9 +204,9 @@ class InstallationCalender extends Component {
             item.executivePersonId === cellData.executivePersonId
       );
 
-      let filterExecutive = this.state.userArr.filter(
-         (item) => item.id === cellData.executivePersonId
-      );
+      // let filterExecutive = this.state.userArr.filter(
+      //    (item) => item.id === cellData.executivePersonId
+      // );
 
       // var todayDate = moment(moment(), "DD-MM-YYYY");
       // var futureDate = moment(cellData.startDate, "DD-MM-YYYY") //.format('DD-MM-YYYY');

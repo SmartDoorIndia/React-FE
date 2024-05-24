@@ -2,12 +2,11 @@
 
 // import react,{useEffect,useState} from 'react';
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import Form from "react-bootstrap/Form";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import Text from "../../../../shared/Text/Text";
 import { Col, Row } from "react-bootstrap";
-import { ToolTip, getLocalStorage, showLimitedChar } from "../../../../common/helpers/Utils";
+import { ToolTip, getLocalStorage } from "../../../../common/helpers/Utils";
 import {
    getAllFilters,
    getSocietyByCity,
@@ -17,10 +16,8 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import CheckBoxComponent from "../../../../shared/CheckBox/CheckBoxComponent";
 // import style from './EditProperty.scss';
-import style from "../NewConsumerProperty/NewProperty.scss";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 import AutoCompleteInput from "../../../../shared/Inputs/AutoComplete";
-import { ReactSearchAutocomplete } from "react-search-autocomplete";
 import { validateNewProperty } from "../../../../common/validations";
 import { Autocomplete } from "devextreme-react/autocomplete";
 import RadioButton from "../../../../shared/RadioButton/RadioButton";

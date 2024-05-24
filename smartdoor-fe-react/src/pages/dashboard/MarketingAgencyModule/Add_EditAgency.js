@@ -1,12 +1,10 @@
 import { TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Col, Row } from "react-bootstrap";
-import { connect } from "react-redux";
 import { compose } from "redux"
 import Buttons from "../../../shared/Buttons/Buttons";
 import { validateAgencyDetails } from "../../../common/validations";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import AutoCompleteInput from "../../../shared/Inputs/AutoComplete";
 import './Add_EditAgency.scss';
 import Text from "../../../shared/Text/Text";
 import { addEditAgency } from "../../../common/redux/actions";

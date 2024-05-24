@@ -7,10 +7,9 @@ import { Link } from 'react-router-dom';
 import contentIco from '../../../assets/images/content-ico.svg';
 import { getAllConsumers } from '../../../common/redux/actions';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { formateDate, ToolTip, handleStatusElement, getLocalStorage } from '../../../common/helpers/Utils';
+import { ToolTip, handleStatusElement, getLocalStorage } from '../../../common/helpers/Utils';
 import SearchInput from '../../../shared/Inputs/SearchInput/SearchInput';
 import Form from 'react-bootstrap/Form';
-import DataTableComponent from "../../../shared/DataTable/DataTable";
 import Pagination from '../../../shared/DataTable/Pagination';
 import CONSTANTS_STATUS from '../../../common/helpers/ConstantsStatus';
 import { Col, Modal } from 'react-bootstrap';
@@ -52,8 +51,8 @@ const ConsumerManagement = (props) => {
   const [currentPage, setCurrentPage] = useState(data.length !== 0 ? getAllConsumerUsersData?.data?.currentPage : 1);
   const [rowsPerPage, setRowsPerPage] = useState(data.length !== 0 ? getAllConsumerUsersData?.data?.rowsPerPage : 8);
   const recordSize = (getAllConsumerUsersData?.data?.records);
-  let recordsPerPage = 0
-  recordsPerPage = getAllConsumerUsersData?.data?.rowsPerPage;
+  // let recordsPerPage = 0
+  // recordsPerPage = getAllConsumerUsersData?.data?.rowsPerPage;
 
   const handlePageChange = (newPage) => {
     // Handle the page change in the parent component
@@ -526,7 +525,7 @@ const ConsumerManagement = (props) => {
             {selectedConsumer.kycDetail !== null ?
               <>
               <div className='d-flex justify-content-center'>
-                <img src={selectedConsumer.kycDetail}></img>
+                <img src={selectedConsumer.kycDetail} alt='' ></img>
               </div>
               </> :
               <Text

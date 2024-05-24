@@ -168,7 +168,7 @@ export const capitalize = (s) => {
  * @param {string} status
  */
 export function handleStatusElement(status) {
-  if (['COMPLETED', 'PUBLISHED', 'CONVERTED', 'APPROVED', 'VISITED', 'Yes, I’m interested', 'completed', 'Completed'].includes(status)) {
+  if (['COMPLETED', 'PUBLISHED', 'CONVERTED', 'APPROVED', 'Approved', 'VISITED', 'Yes, I’m interested', 'completed', 'Completed'].includes(status)) {
     return (
       <Text
         size="xSmall"
@@ -178,7 +178,7 @@ export function handleStatusElement(status) {
         className="tagSuccess defaultTag ml-2 "
       />
     );
-  } else if (['PENDING', 'ASSIGNED', 'UNDER REVIEW', 'Will decide later', 'Make an offer'].includes(status)) {
+  } else if (['PENDING', 'Pending', 'ASSIGNED', 'UNDER REVIEW', 'Will decide later', 'Make an offer'].includes(status)) {
     return (
       <Text
         size="xSmall"
@@ -277,6 +277,50 @@ export function handleStatusElement(status) {
         color="white"
         text="Pending form Customer"
         style={{ backgroundColor: '#FF6C1A' }}
+        className="tagAlert defaultTag ml-2 "
+      />
+    );
+  } else if (status === 'Hold') {
+    return (
+      <Text
+        size="xSmall"
+        fontWeight="mediumbold"
+        color="white"
+        text="ON HOLD"
+        style={{ backgroundColor: '#800000' }}
+        className="tagAlert defaultTag ml-2 "
+      />
+    );
+  } else if (status === 'Expired') {
+    return (
+      <Text
+        size="xSmall"
+        fontWeight="mediumbold"
+        color="white"
+        text="EXPIRED"
+        style={{ backgroundColor: '#808080' }}
+        className="tagAlert defaultTag ml-2 "
+      />
+    );
+  } else if (status === 'Rejected') {
+    return (
+      <Text
+        size="xSmall"
+        fontWeight="mediumbold"
+        color="white"
+        text="REJECTED"
+        style={{ backgroundColor: '#F90000' }}
+        className="tagAlert defaultTag ml-2 "
+      />
+    );
+  } else if (status === 'Query') {
+    return (
+      <Text
+        size="xSmall"
+        fontWeight="mediumbold"
+        color="white"
+        text="QUERY"
+        style={{ backgroundColor: '#B88608' }}
         className="tagAlert defaultTag ml-2 "
       />
     );

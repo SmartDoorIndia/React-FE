@@ -1,20 +1,15 @@
-import React, { useRef, useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import Text from '../../../shared/Text/Text';
 import Card from 'react-bootstrap/Card'
 import Image from '../../../shared/Image/Image';
-import Buttons from '../../../shared/Buttons/Buttons'
-import userImage from '../../../assets/svg/avatar_sml.svg';
-import useraddIcon from '../../../assets/images/useradd-icon.svg';
-import editIcon from '../../../assets/images/edit-icon.svg';
 import ModalModule from '../../../shared/Modal/ModalModule'
 import './FinanceDashboard.scss';
 import {
   getSocietyLeadsData,
   getSalesTeamData,
   getLeadsCount,
-  assignLeadToUser,
   getSocietyLeadsCity,
   getSalesTeamCity,
   getConsumerTransactionsData,
@@ -26,12 +21,7 @@ import {
   getBuybackRequests
 } from '../../../common/redux/actions';
 import { Link, Route } from 'react-router-dom';
-import Header from '../../../shared/Header/Header';
-import Loader, { TableLoader } from '../../../common/helpers/Loader';
-import DataTableComponent from '../../../shared/DataTable/DataTable';
-import Pagination from '../../../shared/DataTable/Pagination';
 import contentIcon from '../../../assets/images/content-ico.svg';
-import sortIocn from '../../../assets/svg/sort-icon.svg';
 import { formateDate, handleStatusElement, setPrice, ToolTip } from '../../../common/helpers/Utils';
 import ListingDataTable from '../../../shared/DataTable/ListingDataTable';
 import { useUserContext } from '../../../common/helpers/Auth';
@@ -215,102 +205,102 @@ const refundRequestListColumns = [
 
 ];
 
-const payablePartnerCommisionsColumns = [
-  {
-    name: 'Id',
-    selector: row => row.id,
-    center: true,
-    sortable: true,
-  },
-  {
-    name: 'Date',
-    selector: row => row.date,
-    sortable: true,
-    center: true,
-    cell: ({ date }) => (<span>{formateDate(date)}</span>),
-    maxWidth: '150px'
-  },
-  {
-    name: 'Society/Realtor',
-    selector: row => row.societyOrRealtor,
-    center: true,
-    sortable: false,
-    // maxWidth: '100px'
-  },
+// const payablePartnerCommisionsColumns = [
+//   {
+//     name: 'Id',
+//     selector: row => row.id,
+//     center: true,
+//     sortable: true,
+//   },
+//   {
+//     name: 'Date',
+//     selector: row => row.date,
+//     sortable: true,
+//     center: true,
+//     cell: ({ date }) => (<span>{formateDate(date)}</span>),
+//     maxWidth: '150px'
+//   },
+//   {
+//     name: 'Society/Realtor',
+//     selector: row => row.societyOrRealtor,
+//     center: true,
+//     sortable: false,
+//     // maxWidth: '100px'
+//   },
 
-  {
-    name: 'Name',
-    selector: row => row.name,
-    center: true,
-    // maxWidth: '300px',
-  },
-  {
-    name: 'Amount',
-    selector: row => row.amount,
-    center: true,
-    maxWidth: '100px',
-    cell: ({ amount }) => (<span>{setPrice(amount)}</span>),
-  },
-  {
-    name: 'Action',
-    center: true,
-    maxWidth: '200px',
-    cell: ({ leadId, status }) => (<div className="action">
-      <Buttons name="Mark Done" varient="primary" type="submit" size="Small" color="white" />
-    </div>
-    ),
-  },
+//   {
+//     name: 'Name',
+//     selector: row => row.name,
+//     center: true,
+//     // maxWidth: '300px',
+//   },
+//   {
+//     name: 'Amount',
+//     selector: row => row.amount,
+//     center: true,
+//     maxWidth: '100px',
+//     cell: ({ amount }) => (<span>{setPrice(amount)}</span>),
+//   },
+//   {
+//     name: 'Action',
+//     center: true,
+//     maxWidth: '200px',
+//     cell: ({ leadId, status }) => (<div className="action">
+//       <Buttons name="Mark Done" varient="primary" type="submit" size="Small" color="white" />
+//     </div>
+//     ),
+//   },
 
-];
+// ];
 
-const financeTeamColumns = [
-  {
-    name: 'Id',
-    selector: row => row.id,
-    center: true,
-    sortable: true,
-  },
-  {
-    name: 'Name',
-    selector: row => row.name,
-    sortable: true,
-    center: true,
-  },
-  {
-    name: 'Role',
-    selector: row => row.position,
-    center: true,
-    sortable: false,
-    // maxWidth: '100px'
-  },
+// const financeTeamColumns = [
+//   {
+//     name: 'Id',
+//     selector: row => row.id,
+//     center: true,
+//     sortable: true,
+//   },
+//   {
+//     name: 'Name',
+//     selector: row => row.name,
+//     sortable: true,
+//     center: true,
+//   },
+//   {
+//     name: 'Role',
+//     selector: row => row.position,
+//     center: true,
+//     sortable: false,
+//     // maxWidth: '100px'
+//   },
 
-  {
-    name: 'Tasks',
-    selector: row => row.userTask,
-    center: true,
-    // maxWidth: '300px',
-  },
-  {
-    name: 'Action',
-    center: true,
-    maxWidth: '60px',
-    cell: ({ leadId, status }) => (<div className="action">
-      <ToolTip position="left" name="View Details">
+//   {
+//     name: 'Tasks',
+//     selector: row => row.userTask,
+//     center: true,
+//     // maxWidth: '300px',
+//   },
+//   {
+//     name: 'Action',
+//     center: true,
+//     maxWidth: '60px',
+//     cell: ({ leadId, status }) => (<div className="action">
+//       <ToolTip position="left" name="View Details">
 
-        <span>
-          <Link to={{
-            pathname: '/admin/sales/lead-details',
-            state: { leadId: leadId },
-          }}>
-            <Image name="editIcon" src={contentIcon} />
-          </Link>
-        </span>
-      </ToolTip>
-    </div>
-    ),
-  },
+//         <span>
+//           <Link to={{
+//             pathname: '/admin/sales/lead-details',
+//             state: { leadId: leadId },
+//           }}>
+//             <Image name="editIcon" src={contentIcon} />
+//           </Link>
+//         </span>
+//       </ToolTip>
+//     </div>
+//     ),
+//   },
 
-];
+// ];
 
 const PaginationActionButton = () => (
   <>
@@ -328,26 +318,26 @@ const PaginationActionButton = () => (
   </>
 );
 
-const FinanceTeamPaginationActionButton = () => (
-  <>
-    <div className="d-flex justify-content-center tableBottom align-items-center finance-action-btn">
-      <Link to={{
-        pathname: "/admin/sales/new-entry",
-        state: { moduleName: 'Finance' }
-      }}>
-        <Buttons name="Manage Team" varient="primary" type="submit" size="Small" color="white" />
-      </Link>
-      { /* <Buttons name="View All" varient="link" type="submit" size="Small" color="primaryColor" /> */}
-    </div>
-    <div className="tableBottom ml-auto">
-      <Link to="/admin/finance/refundRequest" className="viewAll removeUnderline">
-        <ToolTip position="left" name="Under development">
-          <Text size="Small" fontWeight="mediumbold" color="primaryColor" text="View All" className="ml-2 d-flex" />
-        </ToolTip>
-      </Link>
-    </div>
-  </>
-);
+// const FinanceTeamPaginationActionButton = () => (
+//   <>
+//     <div className="d-flex justify-content-center tableBottom align-items-center finance-action-btn">
+//       <Link to={{
+//         pathname: "/admin/sales/new-entry",
+//         state: { moduleName: 'Finance' }
+//       }}>
+//         <Buttons name="Manage Team" varient="primary" type="submit" size="Small" color="white" />
+//       </Link>
+//       { /* <Buttons name="View All" varient="link" type="submit" size="Small" color="primaryColor" /> */}
+//     </div>
+//     <div className="tableBottom ml-auto">
+//       <Link to="/admin/finance/refundRequest" className="viewAll removeUnderline">
+//         <ToolTip position="left" name="Under development">
+//           <Text size="Small" fontWeight="mediumbold" color="primaryColor" text="View All" className="ml-2 d-flex" />
+//         </ToolTip>
+//       </Link>
+//     </div>
+//   </>
+// );
 
 //PaginationRefundRequestActionButton
 const PaginationRefundRequestActionButton = () => (
@@ -364,16 +354,16 @@ const PaginationRefundRequestActionButton = () => (
   </>
 );
 
-const TeamTablePaginationActionButton = () => (
-  <div className="d-flex justify-content-center tableBottom">
-    <Link to="/admin/user-management/add-new-member"><Buttons name="Add New Entry" varient="primary" type="submit" size="Small" color="white" /></Link>
-  </div>
-);
+// const TeamTablePaginationActionButton = () => (
+//   <div className="d-flex justify-content-center tableBottom">
+//     <Link to="/admin/user-management/add-new-member"><Buttons name="Add New Entry" varient="primary" type="submit" size="Small" color="white" /></Link>
+//   </div>
+// );
 
-const PaginationComponent = (props) => (<Pagination {...props} PaginationActionButton={PaginationActionButton} />);
-const FinanceTeamPaginationComponent = (props) => (<Pagination {...props} PaginationActionButton={FinanceTeamPaginationActionButton} />);
+// const PaginationComponent = (props) => (<Pagination {...props} PaginationActionButton={PaginationActionButton} />);
+// const FinanceTeamPaginationComponent = (props) => (<Pagination {...props} PaginationActionButton={FinanceTeamPaginationActionButton} />);
 
-const ProgressComponent = <TableLoader />
+// const ProgressComponent = <TableLoader />
 
 const FinanceDashboard = (props) => {
   const {
@@ -389,14 +379,14 @@ const FinanceDashboard = (props) => {
     getAllFinanceTeamsData,
     getAllFinanceTeamsCity,
   } = props;
-  const [sliceFrom, setSliceFrom] = useState(4)
-  const [societyLeads_city, setsocietyLeads_city] = useState('');
-  const [salesTeam_city, setsalesTeam_city] = useState('');
+  // const [sliceFrom, setSliceFrom] = useState(4)
+  // const [societyLeads_city, setsocietyLeads_city] = useState('');
+  // const [salesTeam_city, setsalesTeam_city] = useState('');
   const [financeTeam_city, setfinanceTeam_city] = useState('');
   const [loaderConstumerTransaction, setLoaderConstumerTransaction] = useState(true)
 
   const { auth: { userData } } = useUserContext();
-  function onChangePage(e) { }
+  // function onChangePage(e) { }
 
   useEffect(() => {
     getFinanceDashboardCount();

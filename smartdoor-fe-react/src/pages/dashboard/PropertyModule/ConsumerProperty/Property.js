@@ -37,18 +37,17 @@ import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import { useCallback } from "react";
 import { TableLoader } from "../../../../common/helpers/Loader";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const PropertyModule = (props) => {
    const {
       getAllProperties,
       allPropertyData,
       getPropertyCity,
-      getAllCity,
+      // getAllCity,
       getAllCityWithId,
       getAllStateWithId,
-      getPropertyCityData,
-      allCities,
+      // getPropertyCityData,
+      // allCities,
       allCitiesWithId,
       allStatesWithId,
       getLocationByCity,
@@ -61,7 +60,7 @@ const PropertyModule = (props) => {
    const [p_location, setp_Location] = useState(data.length !== 0 ? allPropertyData?.data?.location : "");
    const [locationsData, setLocationsData] = useState([]);
    const [zipCode, setzipCode] = useState("");
-   const history = useHistory();
+   // const history = useHistory();
    const statusArr = CONSTANTS_STATUS.propertyStatusArr;
    const [statusSelected, setStatusSelected] = useState(() => {
       if (allPropertyData?.data?.propertyStatus === 'PUBLISHED') {
@@ -118,32 +117,32 @@ const PropertyModule = (props) => {
             .catch((err) => console.log("err:", err));
       }
    )
-   function formateAddress(address, city) {
-      try {
-         if (address) {
-            const splitData = address.split(", ");
-            if (splitData.length) {
-               try {
-                  let addr;
-                  let sliceData = splitData.slice(0, 2);
-                  sliceData = sliceData.map((item) => item.toLowerCase());
-                  sliceData = sliceData.filter((item) => item !== city.toLowerCase());
-                  sliceData = sliceData.map((item) => item.capitalize());
-                  addr = sliceData.join(",");
-                  return addr + ", " + city || "";
-               } catch (e) {
-                  return address + ", " + city || "";
-               }
-            } else {
-               return address + ", " + city || "";
-            }
-         } else {
-            return city || "-";
-         }
-      } catch (e) {
-         return "-";
-      }
-   }
+   // function formateAddress(address, city) {
+   //    try {
+   //       if (address) {
+   //          const splitData = address.split(", ");
+   //          if (splitData.length) {
+   //             try {
+   //                let addr;
+   //                let sliceData = splitData.slice(0, 2);
+   //                sliceData = sliceData.map((item) => item.toLowerCase());
+   //                sliceData = sliceData.filter((item) => item !== city.toLowerCase());
+   //                sliceData = sliceData.map((item) => item.capitalize());
+   //                addr = sliceData.join(",");
+   //                return addr + ", " + city || "";
+   //             } catch (e) {
+   //                return address + ", " + city || "";
+   //             }
+   //          } else {
+   //             return address + ", " + city || "";
+   //          }
+   //       } else {
+   //          return city || "-";
+   //       }
+   //    } catch (e) {
+   //       return "-";
+   //    }
+   // }
 
    const columns = [
       {

@@ -19,7 +19,6 @@ import {
 import { Link, Route } from 'react-router-dom';
 import Text from '../../../shared/Text/Text';
 import ListingDataTable from '../../../shared/DataTable/ListingDataTable';
-import Pagination from '../../../shared/DataTable/Pagination';
 import {
   handleStatusElement,
   ToolTip,

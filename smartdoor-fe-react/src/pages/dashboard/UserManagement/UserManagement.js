@@ -70,8 +70,6 @@ const UserManagement = (props) => {
    const handleShow = () => setShow(true);
    const [datePickerblockvalue, setDatePickerblockvalue] = useState([]);
 
-   const [locationsData, setLocationsData] = useState([]);
-
    // MODAL DATA STATE
    const [modalData, setModalData] = useState();
 

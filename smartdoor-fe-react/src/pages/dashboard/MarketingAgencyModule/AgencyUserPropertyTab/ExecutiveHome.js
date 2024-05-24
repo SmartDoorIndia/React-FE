@@ -9,11 +9,10 @@ import AgencyCustomers from "../AgencyCustomers/AgencyCustomers";
 import AgencyProperty from "../AgencyProperties/AgencyProperty";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { getLocalStorage, showErrorToast } from "../../../../common/helpers/Utils";
-import { checkExistingCustomers, transferCustomers } from "../../../../common/redux/actions";
+import { checkExistingCustomers } from "../../../../common/redux/actions";
 import { useDispatch } from "react-redux";
 import * as Actions from '../../../../common/redux/types';
 import { Modal } from "react-bootstrap";
-import validateRegex from "../../../../common/helpers/ValidateRegex";
 
 const ExecutiveHome = (props) => {
 

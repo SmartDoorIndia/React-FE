@@ -6,7 +6,7 @@ import Pagination from "../../../shared/DataTable/Pagination";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { useState } from "react";
-import { Card, Row, Col } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
@@ -14,25 +14,21 @@ import { ToolTip } from "../../../common/helpers/Utils";
 import { getBrokerListing, getBrokerDetails } from "../../../common/redux/actions";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import "./Broker.scss";
-import { DateRangePicker, Stack } from "rsuite";
+import { DateRangePicker } from "rsuite";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
-import { set } from "date-fns";
 import moment  from "moment";
+import { TableLoader } from "../../../common/helpers/Loader";
 const getModalActionData = (row) => {
    return { userData: row };
 };
 const Broker = (props) => {
    const { allPlanDataBroker, getBrokerListing } = props;
-   const [planData, setPlanData] = useState();
    const statusArr = CONSTANTS_STATUS.brokerStatus;
    const [filterText, setFilterText] = useState("");
-   console.log(filterText,"filetereeeelisting ")
    const [statusSelected, setStatusSelected] = useState("");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [startDate, setStartDate] = useState(null);
-   const [endDate, setEndDate] = useState(null);
-   const [datata, setDatata] = useState([]);
-   
+   const [endDate, setEndDate] = useState(null);   
 
    useEffect(() => {
       getBrokerListing();
@@ -70,7 +66,7 @@ const Broker = (props) => {
       return filteredItems;
    };
    
-
+   const ProgressComponent = <TableLoader />;
    const PaginationComponent = (props) => (
       <Pagination {...props} PaginationActionButton={PaginationActionButton} />
    );
@@ -222,12 +218,6 @@ const Broker = (props) => {
          <div className="tableBox mb-5">
             <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
                <div className="text-nowrap mb-2">
-                  {/* <Text
-                        size="regular"
-                        fontWeight="mediumbold"
-                        color="secondryColor"
-                        text="Brokers"
-                    /> */}
                   <DateRangePicker
                      style={{
                         width: "249px",
@@ -267,11 +257,12 @@ const Broker = (props) => {
                </div>
             </div>
 
-            <Card>
+            <div className="">
                <DataTableComponent
                   data={showValue()}
                   columns={columns}
                   progressPending={allPlanDataBroker.isLoading}
+                  progressComponent={ProgressComponent}
                   paginationComponent={PaginationComponent}
                   paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                   paginationPerPage={8}
@@ -282,14 +273,13 @@ const Broker = (props) => {
                   filterComponent={subHeaderComponentMemo}
                   keyField="id"
                ></DataTableComponent>
-            </Card>
+            </div>
          </div>
       </>
    );
 };
 const mapStateToProps = ({ allPlanDataBroker }) => ({
-   allPlanDataBroker,
-   getBrokerDetails,
+   allPlanDataBroker
 });
 const actions = {
    getBrokerListing,

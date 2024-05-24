@@ -3,15 +3,9 @@
 import React, { Component } from 'react';
 import { Form, Image } from 'react-bootstrap';
 import Slider from 'react-slick';
-import banner from '../../../assets/images/sb.jpg';
-import banner1 from '../../../assets/images/sm1.jpg';
-import banner2 from '../../../assets/images/sm2.jpg';
-import banner3 from '../../../assets/images/sm3.jpg';
-import waterMarkImg from '../../../assets/images/waterMark-img.png';
 import watermarkimg from '../../../assets/images/building-image.svg';
 import crossIcon from '../../../assets/svg/crossIcon.svg'
 import './ImageSliderComponent.scss'
-import { deletePropertyImage } from '../../../common/redux/actions';
 import ConfirmationModal from '../../../shared/Modal/ConfirmationModal/ConfirmationModal';
 // import uploadIcons from "../../../assets/svg/user-uploads.png";
 import addIcons from "../../../assets/svg/add.svg";
@@ -132,6 +126,7 @@ export default class AsNavFor extends Component {
             <div className="item-img noImage">
               {' '}
               <img
+                alt=''
                 src={watermarkimg}
                 style={{ height: '100%', width: '100%', objectFit: 'fill' }}
               />{' '}
@@ -153,7 +148,7 @@ export default class AsNavFor extends Component {
                 <div className='main_box'>
 
                   <div className="item-img container">
-                    <img src={cVal.docURL} />
+                    <img src={cVal.docURL} alt='' />
                   </div>
 
                   <span><div onClick={() => this.props.deleteImageHandler(cVal?.docId)} className='crossIcon'><img src={crossIcon} /></div></span>
@@ -164,6 +159,7 @@ export default class AsNavFor extends Component {
               <div className="item-img noImage">
                 {' '}
                 <img
+                alt=''
                   src={watermarkimg}
                   style={{ height: '100%', width: '100%', objectFit: 'fill' }}
                 />{' '}

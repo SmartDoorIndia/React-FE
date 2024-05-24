@@ -1,7 +1,6 @@
 /** @format */
 
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import { connect, useDispatch, useSelector } from "react-redux";
 import Text from "../../../shared/Text/Text";
 import Form from "react-bootstrap/Form";
@@ -17,12 +16,11 @@ import contentIco from "../../../assets/images/content-ico.svg";
 import Image from "../../../shared/Image/Image";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import * as Actions from '../../../common/redux/types';
-import ListingDataTable from "../../../shared/DataTable/ListingDataTable";
 import Input from "../../../shared/Inputs/Input/Input";
 
 const NonSDProperties = (props) => {
    const userData = getLocalStorage("authData");
-   const { getNonSDProperties, allNonSDProperties, getAllCity, allCities, getAllCityWithId, getAllStateWithId, allCitiesWithId, getLocationByCity, allStatesWithId } = props;
+   const { getNonSDProperties, allNonSDProperties, getAllCityWithId, getAllStateWithId, allCitiesWithId, getLocationByCity, allStatesWithId } = props;
    const data = useSelector(state => state.allNonSDProperties.data);
 
    const dispatch = useDispatch();
@@ -428,30 +426,30 @@ const NonSDProperties = (props) => {
       return filterItems;
    }
 
-   const selectedCity = (city) => {
-      setPCity(city)
-      showData(city);
-      getLocationByCity({ city: city })
-         .then((res) => {
-            if (res.data && res.data.status === 200) {
-               const locationsByCity = res?.data?.resourceData?.locations?.map(
-                  (loc) => {
-                     return {
-                        ...loc,
-                        location: `${loc.id} ,${loc.location} ,${loc.pinCode}`,
-                     };
-                  }
-               );
-               setLocationsData(locationsByCity);
-            }
-         })
-         .catch((err) => console.log("err:", err));
-   }
+   // const selectedCity = (city) => {
+   //    setPCity(city)
+   //    showData(city);
+   //    getLocationByCity({ city: city })
+   //       .then((res) => {
+   //          if (res.data && res.data.status === 200) {
+   //             const locationsByCity = res?.data?.resourceData?.locations?.map(
+   //                (loc) => {
+   //                   return {
+   //                      ...loc,
+   //                      location: `${loc.id} ,${loc.location} ,${loc.pinCode}`,
+   //                   };
+   //                }
+   //             );
+   //             setLocationsData(locationsByCity);
+   //          }
+   //       })
+   //       .catch((err) => console.log("err:", err));
+   // }
 
-   const setSelectedLocation = (location) => {
-      setp_Location(location);
-      showData()
-   }
+   // const setSelectedLocation = (location) => {
+   //    setp_Location(location);
+   //    showData()
+   // }
 
    // const handleSortedData = (newSortedData) => {
    //    // Store sorted data
