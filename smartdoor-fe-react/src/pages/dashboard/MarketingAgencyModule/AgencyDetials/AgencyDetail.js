@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { compose } from "redux";
 import Text from "../../../../shared/Text/Text";
-import { Col, Modal, Row } from "react-bootstrap";
+import { Col, Form, Modal, Row } from "react-bootstrap";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import { Button, TextField, MenuItem } from "@mui/material";
 import rightArrow from "../../../../assets/images/arrow-right.svg";
@@ -10,6 +10,7 @@ import AgencyCustomers from "../AgencyCustomers/AgencyCustomers";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { getAgencyById, getAllAgencies, getAllAgencyExecutives, transferCustomers } from "../../../../common/redux/actions";
 import { connect } from "react-redux";
+import { showErrorToast } from "../../../../common/helpers/Utils";
 
 const AgencyDetail = (props) => {
     const { getAllAgencies, agencyList, getAllAgencyExecutives, AgencyExecutiveList } = props;
@@ -24,6 +25,8 @@ const AgencyDetail = (props) => {
     const [destAgencyName, setDestAgencyName] = useState('');
     const [destAgencyExecutive, setDestAgencyExecutive] = useState('');
     const [destAgencyCustomers, setDestAgencyCustomers] = useState(null);
+    const [fromDate, setFromDate] = useState('');
+    const [toDate, setToDate] = useState('');
     const history = useHistory();
 
     const _getAgencyById = useCallback(async () => {
@@ -81,7 +84,7 @@ const AgencyDetail = (props) => {
             existingAgencyId: agencyId,
             newAgencyId: agencyDetails.customerCount !== null ? destAgencyId : 0,
             existingExecutiveId: null,
-            newExecutiveId: agencyDetails.customerCount !== null ? destAgencyExecutive: 0,
+            newExecutiveId: agencyDetails.customerCount !== null ? destAgencyExecutive : 0,
             deactivateAgency: true,
             deleteExecutive: false,
             propertyTransfer: false,
@@ -117,6 +120,22 @@ const AgencyDetail = (props) => {
             setShowCustomersFlag(true);
             setShowPropertyFlag(false);
             setdeactivateAgencyModalShow(false);
+        }
+    };
+
+    const validateDates = (start, end) => {
+        if ((start === null && end === null) || (start === '' && end === '')) {
+            return true;
+        } else if (start !== null && end !== null && start !== '' && end !== '') {
+            if (new Date(start) > new Date(end)) {
+                showErrorToast("Start date should be less than end date");
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            showErrorToast("Please enter start date and end date or set both empty");
+            return false;
         }
     };
 
@@ -157,12 +176,12 @@ const AgencyDetail = (props) => {
                     <div>
                         <Button variant='outlined' className='mb-2 w-90 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452' }} onClick={() => { history.push('/admin/marketingAgency/agencyDetails/edit-agency', { agencyDetails: agencyDetails, addNew: false }) }}>Edit</Button>
                         {agencyDetails.status === false ?
-                        <>
-                            <Button variant='primary' className='mb-2 w-90 text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { setdeactivateAgencyModalShow(true) }}>Deactivate</Button>
-                        </>
+                            <>
+                                <Button variant='primary' className='mb-2 w-90 text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { setdeactivateAgencyModalShow(true) }}>Deactivate</Button>
+                            </>
                             :
                             <>
-                            <Button variant='primary' className='mb-2 w-90 text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { reactivateAgency() }}>Reactivate</Button>
+                                <Button variant='primary' className='mb-2 w-90 text-capitalize' style={{ color: 'white', backgroundColor: '#BE1452' }} onClick={() => { reactivateAgency() }}>Reactivate</Button>
                             </>
                         }
                         <Button variant='outlined' className='w-90 text-capitalize' style={{ color: '#BE1452', borderColor: '#BE1452', cursor: agencyDetails.customerCount === null || agencyDetails.customerCount === 0 ? 'not-allowed' : 'pointer' }} onClick={() => { if (agencyDetails.customerCount !== null) { setTransferCustModalShow(true) } }}>Transfer</Button>
@@ -176,8 +195,59 @@ const AgencyDetail = (props) => {
                 <Text text={'Total Postings: '} fontWeight={'bold'} style={{ fontSize: '14px' }} />
                 <Text text={(agencyDetails?.postingCount === null ? '0' : agencyDetails?.postingCount)} fontWeight={'bold'} style={{ fontSize: '14px' }} />
                 <div className="col-1"></div>
-                <Text text={'Total Customer Spend(Month): '} fontWeight={'bold'} style={{ fontSize: '14px' }} />
+                <Text text={'Total Customer Spend ' + '(' + (new Date().toLocaleString('default', { month: 'long' })) + '): ' + ' '} fontWeight={'bold'} style={{ fontSize: '14px' }} />
                 <Text text={'Rs' + (agencyDetails?.totalCustomerSpendCurrentMonth === null ? '0' : agencyDetails?.totalCustomerSpendCurrentMonth)} fontWeight={'bold'} style={{ fontSize: '14px' }} />
+            </div>
+            <div className="d-flex justify-content-end p-0">
+                <Form.Group controlId="exampleForm.SelectCustom">
+                    <Form.Control
+                        style={{
+                            background: '#F8F3F5',
+                            border: '1px solid #DED6D9',
+                            fontWeight: '$smbold',
+                            fontSize: '$xSmall !important',
+                            borderRadius: '4px !important',
+                            maxHeight: '30px',
+                            boxShadow: 'none',
+                            paddingTop: '4px'
+                        }}
+                        type="date"
+                        max={new Date().toISOString().split("T")[0]}
+                        placeholder="From Date"
+                        value={fromDate}
+                        onChange={(e) => {
+                            console.log(e.target.value);
+                            const selectedDate = new Date(e.target.value);
+                            setFromDate(e.target.value)
+                            validateDates(e.target.value, toDate);
+                        }}
+                    />
+                </Form.Group> &nbsp;&nbsp;&nbsp;&nbsp;
+                <Form.Group controlId="exampleForm.SelectCustom">
+                    <Form.Control
+                        style={{
+                            background: '#F8F3F5',
+                            border: '1px solid #DED6D9',
+                            fontWeight: '$smbold',
+                            fontSize: '$xSmall !important',
+                            borderRadius: '4px !important',
+                            maxHeight: '30px',
+                            boxShadow: 'none',
+                            paddingTop: '4px'
+                        }}
+                        type="date"
+                        max={new Date().toISOString().split("T")[0]}
+                        placeholder="To Date"
+                        value={toDate}
+                        onChange={(e) => {
+                            console.log(e.target.value);
+                            const selectedDate = new Date(e.target.value);
+                            setToDate(e.target.value);
+                            validateDates(fromDate, e.target.value);
+                        }}
+                    />
+                </Form.Group>
+                <Text className='col-2 mt-1' text={'Total Spend: '} fontWeight={'bold'} style={{ fontSize: '14px' }} />
             </div>
             <div className="d-flex">
                 <Buttons
@@ -244,10 +314,10 @@ const AgencyDetail = (props) => {
                             >
                                 <option value="" disabled> Select </option>
                                 {agencyList?.data?.agencylist?.map((option) => (
-                                    (agencyDetails.agencyId !== option.agencyId && option.status !== true  &&
+                                    (agencyDetails.agencyId !== option.agencyId && option.status !== true &&
                                         <MenuItem key={option.agencyId} value={option.agencyId}>
-                                        {option.agencyName}
-                                    </MenuItem>
+                                            {option.agencyName}
+                                        </MenuItem>
                                     )
                                 ))}
                             </TextField>
@@ -307,8 +377,8 @@ const AgencyDetail = (props) => {
                                         {agencyList?.data?.agencylist?.map((option) => (
                                             (agencyDetails.agencyId !== option.agencyId && option.status !== true &&
                                                 <MenuItem key={option.agencyId} value={option.agencyId}>
-                                                {option.agencyName}
-                                            </MenuItem>
+                                                    {option.agencyName}
+                                                </MenuItem>
                                             )
                                         ))}
                                     </TextField>

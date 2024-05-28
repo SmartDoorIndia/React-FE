@@ -74,25 +74,38 @@ const Pricing = (props) => {
             if ((Object.keys(pricingObj)).includes('Expected time')) {
                 if(pricingDetails?.expectedTimeToSellThePropertyWithin !== null) {
                     if (pricingDetails?.expectedTimeToSellThePropertyWithin?.toString()?.length !== 0) {
-                        // pricingDetails.expectedTimeToSellThePropertyWithin
                         const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
-    
-                        // Split the date string by '-'
                         const parts = dateString?.split('-');
-    
-                        // Create a new Date object using the parts (year, month, day)
                         const dateObject = new Date(parts[2], parts[1] - 1, parts[0]);
-    
-                        // Extract year, month, and day from the Date object
                         const year = dateObject.getFullYear();
                         const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
                         const day = String(dateObject.getDate()).padStart(2, '0');
-    
-                        // Format the date to 'YYYY-MM-DD' format
                         const formattedDate = `${year}-${month}-${day}`;
                         setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
                     }
                 }
+            }
+            if((Object.keys(pricingObj)).includes('Selling price')) {
+                const propRate = parseFloat(pricingDetails.propertyRate / 100000)
+                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, propertyRate: propRate }))
+            }
+            if((Object.keys(pricingObj)).includes('Rent')) {
+                const propRate = parseFloat(pricingDetails.propertyRate / 1000)
+                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, propertyRate: propRate }))
+            }
+            if((Object.keys(pricingObj)).includes('Maintenance')) {
+                const maintenance = parseFloat(pricingDetails.maintenanceCharge / 1000)
+                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, maintenanceCharge: maintenance }))
+            }
+            if((Object.keys(pricingObj)).includes('Security deposit')) {
+                const securityAmt = parseFloat(pricingDetails.securityAmount / 1000)
+                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, securityAmount: securityAmt }))
+            }
+            if((Object.keys(pricingObj)).includes('Add additional fields')) {
+                Array.of(pricingDetails.additionalFieldsForChargesDue).map((element) => {
+                    const dues = parseFloat(element.charge / 1000);
+                    element.charge = dues;
+                })
             }
         }
     }, []);
@@ -116,7 +129,6 @@ const Pricing = (props) => {
         let additionalList = [...pricingDetails.additionalFieldsForChargesDue];
         additionalList.splice(index, 1);
         setAdditionalFieldsList([...additionalList]);
-        // setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: [...additionalList] }))
         setPricingDetails(prevPricingDetials => {
             const updatedPricingDetails = { ...prevPricingDetials, additionalFieldsForChargesDue: additionalList };
             console.log(updatedPricingDetails); // Log the updated state
@@ -126,28 +138,33 @@ const Pricing = (props) => {
 
     const savePricingDetails = async () => {
         let valid = {}
-        valid = validatePricing(pricingDetails, pricingList);
+        let pricingDetail = {...pricingDetails};
+        if(pricingList.includes('Selling price')) {
+            const propRate = parseFloat(pricingDetails.propertyRate * 100000)
+            pricingDetail.propertyRate = propRate;
+        }
+        if(pricingList.includes('Rent')) {
+            const propRate = parseFloat(pricingDetails.propertyRate * 1000)
+            pricingDetail.propertyRate = propRate;
+        }
+        if(pricingList.includes('Maintenance')) {
+            const maintenance = parseFloat(pricingDetails.maintenanceCharge * 1000)
+            pricingDetail.maintenanceCharge = maintenance;
+        }
+        if(pricingList.includes('Security deposit')) {
+            const securityAmt = parseFloat(pricingDetails.securityAmount * 1000)
+            pricingDetail.securityAmount = securityAmt;
+        }        
+        if(pricingList.includes('Add additional fields')) {
+            (pricingDetail.additionalFieldsForChargesDue).map((element) => {
+                const dues = parseFloat(element.charge * 1000);
+                element.charge = dues;
+            })
+        }
+        valid = validatePricing(pricingDetail, pricingList);
         setError(valid.errors);
         console.log(valid)
-        let pricingDetail = pricingDetails;
         if (valid.isValid) {
-            if (pricingList.includes('Expected time')) {
-
-                // const dateString = pricingDetails.expectedTimeToSellThePropertyWithin ;
-
-                // // Create a new Date object using the date string
-                // const dateObject = new Date(dateString);
-
-                // // Extract day, month, and year from the Date object
-                // const day = String(dateObject.getDate()).padStart(2, '0');
-                // const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
-                // const year = dateObject.getFullYear();
-
-                // // Format the date to 'dd-mm-yyyy' format
-                // const formattedDate = `${day}-${month}-${year}`;
-                // pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
-                // setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
-            }
             dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetail })
             setSavePricingFlag(true);
             savePricingDetailsFields({ saveFlag: true })
@@ -159,27 +176,44 @@ const Pricing = (props) => {
 
     const notifyPricingDetails = async (loadNext) => {
         let valid = {}
-        valid = validatePricing(pricingDetails, pricingList);
+        let pricingDetail = {...pricingDetails};
+        if(pricingList.includes('Selling price')) {
+            const propRate = parseFloat(pricingDetails.propertyRate * 100000)
+            pricingDetail.propertyRate = propRate;
+        }
+        if(pricingList.includes('Rent')) {
+            const propRate = parseFloat(pricingDetails.propertyRate * 1000)
+            pricingDetail.propertyRate = propRate;
+        }
+        if(pricingList.includes('Maintenance')) {
+            const maintenance = parseFloat(pricingDetails.maintenanceCharge * 1000)
+            pricingDetail.maintenanceCharge = maintenance;
+        }
+        if(pricingList.includes('Security deposit')) {
+            const securityAmt = parseFloat(pricingDetails.securityAmount * 1000)
+            pricingDetail.securityAmount = securityAmt;
+        }
+        if(pricingList.includes('Add additional fields')) {
+            (pricingDetail.additionalFieldsForChargesDue).map((element) => {
+                const dues = parseFloat(element.charge * 1000);
+                element.charge = dues;
+            })
+        }
+        valid = validatePricing(pricingDetail, pricingList);
         setError(valid.errors);
         console.log(valid)
         if (valid.isValid) {
-            let pricingDetail = pricingDetails;
             if (pricingList.includes('Expected time') && pricingDetail.isQuickSale === true) {
                 const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
-
-                // Create a new Date object using the date string
                 const dateObject = new Date(dateString);
-
-                // Extract day, month, and year from the Date object
                 const day = String(dateObject.getDate()).padStart(2, '0');
                 const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed, so we add 1
                 const year = dateObject.getFullYear();
-
-                // Format the date to 'dd-mm-yyyy' format
                 const formattedDate = `${day}-${month}-${year}`;
                 pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
             }
+            
             let userId = getLocalStorage('authData');
             const data = {
                 ...(propertyId && { smartdoorPropertyId: propertyId }),
@@ -240,7 +274,19 @@ const Pricing = (props) => {
                                 className="w-100 mb-2"
                                 type="number"
                                 label={'Rent (Monthly)'}
-                                inputProps={{ min: 5000 }}
+                                inputProps={{ min: 5, max: 1000 }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <>
+                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                        </>
+                                    ),
+                                    endAdornment: (
+                                        <>
+                                            <Text text='Thousand' style={{fontSize: '14px'}} />
+                                        </>
+                                    )
+                                }}
                                 onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, propertyRate: Number(e.target.value) })) }}
                                 value={pricingDetails.propertyRate}
                             />
@@ -253,6 +299,18 @@ const Pricing = (props) => {
                                 type="number"
                                 label={'Maintenance Charges (Monthly)'}
                                 inputProps={{ min: 0 }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <>
+                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                        </>
+                                    ),
+                                    endAdornment: (
+                                        <>
+                                            <Text text='Thousand' style={{fontSize: '14px'}} />
+                                        </>
+                                    )
+                                }}
                                 onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, maintenanceCharge: Number(e.target.value) })) }}
                                 value={pricingDetails.maintenanceCharge}
                             />
@@ -266,6 +324,18 @@ const Pricing = (props) => {
                                 type="number"
                                 label={'Security Deposit'}
                                 inputProps={{ min: 0 }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <>
+                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                        </>
+                                    ),
+                                    endAdornment: (
+                                        <>
+                                            <Text text='Thousand' style={{fontSize: '14px'}} />
+                                        </>
+                                    )
+                                }}
                                 onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, securityAmount: Number(e.target.value) })) }}
                                 value={pricingDetails.securityAmount}
                             />
@@ -315,7 +385,19 @@ const Pricing = (props) => {
                                 type="number"
                                 error={error.propertyRate}
                                 label={'Selling Price'}
-                                inputProps={{ min: 1000000 }}
+                                inputProps={{ min: 10 }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <>
+                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                        </>
+                                    ),
+                                    endAdornment: (
+                                        <>
+                                            <Text text='Lacs' style={{fontSize: '14px'}} />
+                                        </>
+                                    )
+                                }}
                                 onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, propertyRate: Number(e.target.value) })) }}
                                 value={pricingDetails.propertyRate}
                             />
@@ -419,6 +501,18 @@ const Pricing = (props) => {
                                                 }}
                                                 value={fields.charge}
                                                 inputProps={{ min: 0 }}
+                                                InputProps={{
+                                                    startAdornment: (
+                                                        <>
+                                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                                        </>
+                                                    ),
+                                                    endAdornment: (
+                                                        <>
+                                                            <Text text='Thousand' style={{fontSize: '14px'}} />
+                                                        </>
+                                                    )
+                                                }}
                                             />
                                         </Col>
                                         <Col lg='3' className="mt-2">

@@ -240,6 +240,14 @@ const Uploads = (props) => {
                 const formattedDate = `${day}-${month}-${year}`;
                 pricingDetail = { ...pricingDetail, expectedTimeToSellThePropertyWithin: formattedDate }; // Update the copied object with formattedDate
             }
+            // if(basicDetailFields?.data.propertyCategory === 'Selling') {
+            //     const propRate = parseFloat(pricingDetail.propertyRate * 100000)
+            //     pricingDetail.propertyRate = propRate;
+            // }
+            // if(basicDetailFields?.data.propertyCategory === 'Renting') {
+            //     const propRate = parseFloat(pricingDetail.propertyRate * 1000)
+            //     pricingDetail.propertyRate = propRate;
+            // }
             let userId = getLocalStorage('authData');
             const data = {
                 ...(propertyId && { smartdoorPropertyId: propertyId }),
