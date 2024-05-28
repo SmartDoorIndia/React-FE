@@ -37,9 +37,9 @@ const CorporateHome = () => {
                <div style={{ marginTop: "10px" }}>
                   <Buttons
                      name="Add new Corporate"
-                     varient="primary"
+                     varient="secondary"
                      size="xSmall"
-                     color="white"
+                     color="#BE1452"
                      onClick={handleAddNewCorporateClick}
                   />
                </div>

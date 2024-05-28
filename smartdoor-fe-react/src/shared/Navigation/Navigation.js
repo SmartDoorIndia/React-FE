@@ -300,6 +300,19 @@ const Nav = () => {
                            />
                            Brokers
                         </Link>
+                        <>
+                           <Link
+                              to="/admin/corporate"
+                              className={`nav-link ${pathname.includes("/admin/corporate") ? "nav-active" : ""
+                                 }`}
+                           >
+                              <Image
+                                 name="borkerIcon"
+                                 src={pathname.includes("/admin/corporate") ? borkerIcon : dashboard}
+                              />
+                              Corporate
+                           </Link>
+                        </>
                         <Link
                            to="/admin/static-mobile-numbers"
                            className={`nav-link ${pathname.includes("static-mobile-numbers") ? "nav-active" : ""

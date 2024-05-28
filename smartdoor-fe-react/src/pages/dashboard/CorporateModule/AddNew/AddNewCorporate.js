@@ -1,6 +1,6 @@
 /** @format */
 
-import { TextField } from "@mui/material";
+import { Table, TableBody, TableCell, TableRow, TextField } from "@mui/material";
 import React, { useRef, useState } from "react";
 import { Button, Col, Image, Row } from "react-bootstrap";
 import Text from "../../../../shared/Text/Text";
@@ -13,73 +13,73 @@ const AddNewCorporate = () => {
 
    return (
       <>
-         <div className="bg-white border h-75">
+         <div className="bg-white border">
             <Text
                text={"Corporate Details"}
                fontWeight="bold"
                style={{ fontSize: "16px", marginLeft: "17px", marginTop: "10px" }}
             />
-            <div className="w-100" style={{ overflowX: "hidden", marginLeft: "12px"}}>
-               <Row>
-                  <Col lg="4" style={{ marginTop: "0%" , paddingRight: "5px" }}>
-                     <Button
-                        className="w-20 h-[80%] mt-4"
-                        style={{
-                           color: "#949494",
-                           borderStyle: "dotted",
-                           borderColor: "GrayText",
-                           borderWidth: "2px",
-                           backgroundColor: "unset",
-                        }}
-                        onClick={() => {
-                           fileInputRef.current?.click();
-                        }}
-                     >
-                        <div className="d-flex justify-content-center mt-1 mb-0  ">
-                           <Image src={cameraIcon}></Image>Upload logo
-                        </div>
-                     </Button>
-                     <input
-                        hidden
-                        type="file"
-                        ref={fileInputRef}
-                        accept=".png, .jpg, .jpeg"
-                        multiple={true}
-                     />
-                  </Col>
-                  <Col lg="4" style={{ marginTop: "0%" }}>
-                     <TextField
-                        className="w-100 mt-4 ml-0"
-                        type="text"
-                        label="Corporate Name"
-                        // onInput={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
-                        // defaultValue={agencyDetails.agencyName}
-                     />
-                     <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
-                  </Col>
-                  <Col lg="4" style={{ marginTop: "0%"}}>
-                     <TextField
-                        className="w-100 mt-4 "
-                        type="text"
-                        label="Branch"
-                        // onInput={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
-                        // defaultValue={agencyDetails.agencyName}
-                     />
-                     <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
-                  </Col>
-               </Row>
-               <Row>
-                  <Col lg="4" style={{ marginTop: "0%" }}>
-                     <TextField
-                        className="w-100 mt-4"
-                        type="text"
-                        label="Address"
-                        // onInput={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
-                        // defaultValue={agencyDetails.agencyName}
-                     />
-                     <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
-                  </Col>
-               </Row>
+            <div className="ml-3">
+               <Table>
+                  <TableBody>
+                     <TableRow style={{ borderStyle: 'hidden' }}>
+                        <TableCell rowSpan={2} style={{ paddingInline: '0%' }}>
+                           <Button
+                              className="w-100 h-auto py-5 mt-2"
+                              style={{
+                                 color: "#949494",
+                                 borderStyle: 'dashed',
+                                 borderColor: '#E5E5E5',
+                                 borderWidth: '2px',
+                                 backgroundColor: "#FBFBFB",
+                              }}
+                              onClick={() => {
+                                 fileInputRef.current?.click();
+                              }}
+                           >
+                              <Image src={cameraIcon}></Image>
+                              <Text className='mb-1 mt-1' text={'Upload logo'} style={{ color: '#949494', fontSize: '16px' }} ></Text>
+                           </Button>
+                           <input
+                              hidden
+                              type="file"
+                              ref={fileInputRef}
+                              accept=".png, .jpg, .jpeg"
+                              multiple={false}
+                           />
+                        </TableCell>
+                        <TableCell style={{ paddingTop: '0%' }}>
+                           <TextField
+                              className="w-90 mt-4 ml-0"
+                              type="text"
+                              label="Corporate Name"
+                           // onInput={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
+                           // defaultValue={agencyDetails.agencyName}
+                           />
+                        </TableCell>
+                        <TableCell style={{ paddingTop: '0%' }}>
+                           <TextField
+                              className="w-90 mt-4 "
+                              type="text"
+                              label="Branch"
+                           // onInput={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
+                           // defaultValue={agencyDetails.agencyName}
+                           />
+                        </TableCell>
+                     </TableRow>
+                     <TableRow style={{ borderStyle: 'hidden' }}>
+                        <TableCell colSpan={2} style={{ paddingTop: '0%' }} >
+                           <TextField
+                              style={{ width: '95%' }}
+                              type="text"
+                              label="Address"
+                           // onInput={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
+                           // defaultValue={agencyDetails.agencyName}
+                           />
+                        </TableCell>
+                     </TableRow>
+                  </TableBody>
+               </Table>
             </div>
 
             <hr></hr>
@@ -88,31 +88,46 @@ const AddNewCorporate = () => {
                fontWeight="bold"
                style={{ fontSize: "16px", marginLeft: "17px" }}
             />
-            <div className="w-100" style={{ overflowX: "hidden", marginLeft: "12px" }}>
-               <Row>
-                  <Col lg="4" style={{ marginTop: "0%" }}>
-                     <TextField
-                        className="w-100 mt-4"
-                        type="text"
-                        label="Admin Name"
-                        // onInput={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
-                        // defaultValue={agencyDetails.agencyName}
-                     />
-                     <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
-                  </Col>
-                  <Col lg="4" style={{ marginTop: "0%" }}>
-                     <TextField className="w-100 mt-4" type="text" label="Mobile Number" />
-                     <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
-                  </Col>
-               </Row>
-            </div>
-
+            <Row className="ml-1">
+               <Col lg="4" style={{ marginTop: "0%" }}>
+                  <TextField
+                     className="w-100 mt-4"
+                     type="text"
+                     label="Admin Name"
+                  // onInput={(e) => { setAgencyDetails({ ...agencyDetails, agencyName: e.target.value }) }}
+                  // defaultValue={agencyDetails.agencyName}
+                  />
+                  <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
+               </Col>
+               <Col lg="4" style={{ marginTop: "0%" }}>
+                  <TextField className="w-100 mt-4" type="text" label="Mobile Number" />
+                  <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
+               </Col>
+            </Row>
             <hr></hr>
-            <div className="bg-white border" style={{ padding: "10px" }}>
-               <div
-                  className=" d-flex align-content-lg-between"
-                  // style={{ padding: "10px", display: "flex", alignItems: "center" }}
-               >
+            <Text
+               text={"Plans"}
+               fontWeight="bold"
+               style={{ fontSize: "16px", marginLeft: "17px" }}
+            />
+            <Row className="ml-1 mb-4">
+               <Col lg='4'>
+                  <TextField
+                     className=" mt-4"
+                     type="text"
+                     label="Outstanding Budget Cap"
+                     InputProps={{
+                        startAdornment: (
+                           <>
+                              <Text text={'₹'} style={{ fontSize: '16px' }} ></Text>
+                           </>
+                        )
+                     }} />
+               </Col>
+            </Row>
+
+            {/* <div className="bg-white border">
+               <div className=" d-flex align-content-lg-between" >
                   <Text
                      text={"Users"}
                      fontWeight="bold"
@@ -142,6 +157,10 @@ const AddNewCorporate = () => {
                      style={{ fontSize: "16px", textAlign: "center" }}
                   />
                </div>
+            </div> */}
+            <div className="d-flex ml-3">
+               <Buttons name='Cancel' varient='secondary' className='col-2 py-2' ></Buttons> &nbsp; &nbsp;
+               <Buttons name='Submit' varient='primary' className='col-2 py-2' ></Buttons>
             </div>
          </div>
       </>

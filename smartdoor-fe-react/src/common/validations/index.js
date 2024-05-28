@@ -1045,6 +1045,14 @@ export const validatePricing = (data, pricingList) => {
       }
     }
   }
+  if (pricingList.includes('Maintenance')) {
+    if (!isBlank(data.maintenanceCharge)) {
+      if (Number(data.maintenanceCharge) < 0) {
+        errors.maintenanceCharge = true;
+        showErrorToast("Invalid deposit value")
+      }
+    }
+  }
   if (pricingList.includes('Preferred for')) {
     if (isBlank(data.preferredFor)) {
       errors.preferredFor = true;

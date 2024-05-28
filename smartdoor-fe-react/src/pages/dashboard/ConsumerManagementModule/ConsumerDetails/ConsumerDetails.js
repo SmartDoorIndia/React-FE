@@ -42,7 +42,6 @@ import ListingDataTable from '../../../../shared/DataTable/ListingDataTable';
 import { useAudioCall, useSocket } from '../../../../common/helpers/SocketProvider';
 import Loader from '../../../../common/helpers/Loader';
 import reviewIcon from '../../../../assets/svg/reviewIcon.svg'
-import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import { Badge, TextField } from '@mui/material';
 import { connect, useDispatch } from 'react-redux';
 import * as Actions from '../../../../common/redux/types';
@@ -58,7 +57,7 @@ const ConsumerManagement = (props) => {
   const [consumerPropertyData, setconsumerPropertyData] = useState([]);
   const [consumerTransactionsData, setConsumerTransactionsData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [taskloading, settaskLoading] = useState(true);
+  // const [taskloading, settaskLoading] = useState(true);
   const [ServiceRequestData, setServiceRequestData] = useState([]);
   const [coinTransactionData, setCoinTransactionData] = useState({})
   const [show, setShow] = useState(false);
@@ -543,13 +542,13 @@ const ConsumerManagement = (props) => {
         setLoading(false);
         console.log('error', error);
       });
-  }, [getConsumerDetails, consumerId]);
+  }, [consumerId]);
 
   const _getConsumerPropertyByUserId = useCallback(() => {
     getConsumerPropertyByUserId({
       userId: consumerId,
-      records: '',
-      pageNumber: '',
+      records: 1000,
+      pageNumber: 1,
     })
       .then((response) => {
         setLoading(false);
@@ -560,7 +559,7 @@ const ConsumerManagement = (props) => {
       .catch((error) => {
         setLoading(false);
       });
-  }, [getConsumerPropertyByUserId, consumerId]);
+  }, [consumerId]);
 
   const _getConsumerTransactionsByUserId = useCallback(() => {
     getConsumerTransactionsByUserId({
@@ -577,12 +576,12 @@ const ConsumerManagement = (props) => {
       .catch((error) => {
         setLoading(false);
       });
-  }, [getConsumerPropertyByUserId, consumerId]);
+  }, [consumerId]);
 
   const _getAllServiceRequest = useCallback(() => {
     getAllServiceRequest({ userId: consumerId })
       .then((response) => {
-        settaskLoading(false);
+        // settaskLoading(false);
         if (response.data) {
           if (response.data.resourceData) {
             const filterData = response.data.resourceData ?
@@ -597,7 +596,7 @@ const ConsumerManagement = (props) => {
       .catch((error) => {
         setLoading(false);
       });
-  }, [getAllServiceRequest, consumerId]);
+  }, [consumerId]);
 
   const _getAllCoinTransactions = useCallback(() => {
     getCoinTransactions({ userId: consumerId, pageNumber: 1, records: 1000 })
@@ -608,7 +607,7 @@ const ConsumerManagement = (props) => {
       }).catch((error) => {
         setLoading(false);
       });
-  });
+  },[consumerId]);
 
   const _getUpcomingVisits = useCallback(() => {
     getUpcomingVisits({ userId: consumerId })
@@ -655,7 +654,7 @@ const ConsumerManagement = (props) => {
         setRecentChatCount(response.data.resourceData.chatCount)
       }
     })
-  })
+  },[consumerId])
  
 
   const addCoins = () => {
@@ -731,7 +730,7 @@ const ConsumerManagement = (props) => {
     _getUpcomingVisits();
     _visitHistory();
     _getSystemVariables();
-  }, [_getConsumerDetails, _getConsumerPropertyByUserId, _getConsumerTransactionsByUserId, _getAllServiceRequest, _getUpcomingVisits, _visitHistory]);
+  }, [_getSystemVariables, _getAllCoinTransactions, _getConsumerDetails, _getConsumerPropertyByUserId, _getConsumerTransactionsByUserId, _getAllServiceRequest, _getUpcomingVisits, _visitHistory]);
 
   return (
     <>
@@ -1023,7 +1022,7 @@ const ConsumerManagement = (props) => {
                         text="Aadhar Image" />
                       {selectedConsumer.kycDetail !== null ?
                         <>
-                          <img src={selectedConsumer.kycDetail}></img>
+                          <img alt='' src={selectedConsumer.kycDetail}></img>
                         </> :
                         <Text
                           size="20px"

@@ -324,8 +324,8 @@ const Uploads = (props) => {
                                             marginInlineEnd: '10px'
                                         }} />
                                         {/* <img className="me-3 mt-3" src={image.docURL} style={{ width: '150px', height: '100px', borderRadius: 8, border: '1px #9BA5AD solid' }}></img> */}
-                                        <img className="mt-2" src={closeBtn} style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId, index); console.log(image.docId) }} />
                                         <TextField
+                                            style={{marginTop:'5%'}}
                                             label='Image Desc.'
                                             type="text"
                                             value={image.docDescription}
@@ -334,10 +334,11 @@ const Uploads = (props) => {
                                                 setImageArray(prevImageArr =>
                                                     prevImageArr.map((img, idx) =>
                                                         idx === index ? { ...img, docDescription: newDescription } : img
-                                                    )
-                                                );
-                                            }}
+                                            )
+                                        );
+                                    }}
                                         />
+                                    <img className="mt-2" src={closeBtn} style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId, index); console.log(image.docId) }} />
                                     </div> &nbsp; &nbsp; &nbsp; &nbsp;
                                 </>
                             ))}
@@ -360,7 +361,7 @@ const Uploads = (props) => {
                                 value={videoUrl1}
                             ></TextField>
                             {addNewVideoFlag === false ?
-                                <Buttons className='ml-3' name={'+'} style={{ fontSize: '12px' }} onClick={() => { setAddNewVideoFlag(true) }} />
+                                <Buttons className='ml-3' name={'+'} style={{ fontSize: '12px', cursor:'pointer' }} onClick={() => { setAddNewVideoFlag(true) }} />
                                 : null}
                         </div>
                         {addNewVideoFlag ?
@@ -370,7 +371,7 @@ const Uploads = (props) => {
                                     type="text"
                                     InputProps={{
                                         endAdornment: <>
-                                            <Image src={closeBtn} className='mt-3' style={{ scale: '1.5' }} onClick={() => { setVideoUrl2('') }} />
+                                            <Image src={closeBtn} className='mt-3' style={{ scale: '1.5', cursor:'pointer' }} onClick={() => { setVideoUrl2('') }} />
                                         </>
                                     }}
                                     onChange={(e) => { setVideoUrl2(e.target.value) }}

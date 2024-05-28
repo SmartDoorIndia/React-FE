@@ -221,23 +221,6 @@ const Specs = (props) => {
     }
 
     const handleCarpetAreaChange = (e) => {
-        if (e.target.checked) {
-            const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
-            // Round the updated number to avoid precision issues
-            const roundedRooms = Math.round(updatedRooms * 10) / 10;
-
-            setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
-            console.log(roundedRooms);
-            setAddRoomFlag(true);
-        }
-        else {
-            if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
-                const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
-                const roundedRooms = Math.round(updatedRooms * 10) / 10;
-                setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
-            }
-            setAddRoomFlag(false);
-        }
         const carpetArea = parseFloat(e.target.value);
         const loadingFactor = parseFloat(specDetails.loadingFactorInPercent);
         const builtUpArea = carpetArea / (1 - (loadingFactor * 0.01));
@@ -710,7 +693,6 @@ const Specs = (props) => {
                         <Col lg='4' className='mb-2'>
                             <TextField
                                 type='number'
-                                required
                                 error={error.openArea}
                                 className="w-100"
                                 inputProps={{ min: 0 }}
@@ -825,6 +807,7 @@ const Specs = (props) => {
                             <TextField
                                 type="number"
                                 required
+                                error={error.numberOfReservedCarParking}
                                 className="w-100"
                                 label={'Reserved Car Parkings'}
                                 inputProps={{ min: 0, max: 6 }}

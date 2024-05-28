@@ -14,7 +14,6 @@ import {
    getPropertyAnalyticsByPropertyId,
    deletePropertyImage,
    addImage,
-   getCameraDevice,
    getCameraUserToken,
    getContactSensor,
    getSmartLockData,
@@ -50,7 +49,6 @@ import DownArrow from "../../../assets/svg/DownArrow.svg";
 import UpArrow from "../../../assets/svg/UpArrow.svg";
 import Text from "../../../shared/Text/Text";
 import Image from "../../../shared/Image/Image";
-import S3 from "react-aws-s3";
 import Constants from "../../../common/helpers/Constants";
 import requestLockApi from "../../../common/services/lockServices";
 import cameraServicesApi from "../../../common/services/cameraServices";
@@ -62,7 +60,6 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Switch } from "@mui/material";
 import reviewIcon from "../../../assets/svg/reviewIcon.svg"
 import { getLocalStorage } from "../../../common/helpers/Utils";
-import { useSocket } from "../../../common/helpers/SocketProvider";
 import PostingFields from "../../../common/helpers/PostingFields";
 // const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 

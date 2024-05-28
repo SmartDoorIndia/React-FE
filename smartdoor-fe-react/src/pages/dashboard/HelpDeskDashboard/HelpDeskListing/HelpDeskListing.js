@@ -67,7 +67,7 @@ const HelpDeskListing = (props) => {
     getInstallationRequest,
     getAllPublishedProperty,
     getAllCity,
-    getHelpDeskPropertyLeads
+    getHelpDeskPropertyLeads, props
   ]);
 
   const PaginationComponent = (props) => (<Pagination { ...props } />);

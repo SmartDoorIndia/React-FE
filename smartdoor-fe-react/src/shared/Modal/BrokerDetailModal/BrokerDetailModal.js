@@ -4,7 +4,6 @@ import { getBrokerDetails,addHoldRequestComments } from '../../../common/redux/a
 import { useParams } from "react-router-dom";
 import TextArea from "../../Inputs/TextArea/TextArea";
 import Buttons from "../../Buttons/Buttons";
-import { useHistory } from "react-router-dom";
 const Hold = (props) => {
 
     // const modalData = props.modalData;
@@ -66,7 +65,7 @@ const Hold = (props) => {
                       size="Small"
                       color="white"
                       className="mt-3"
-                      disabled={commentValue.trim()=="" ? true : false}
+                      disabled={commentValue.trim()==="" ? true : false}
                       onClick={() => commentPosted(commentValue.trim())}
         
                     />

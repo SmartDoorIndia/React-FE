@@ -231,7 +231,7 @@ const ConsumerManagement = (props) => {
         kycStatus: null,
         defaultSort: true, defaultSortId: 'id', defaultSortFieldId: 1 });
     }
-  }, [getAllConsumers]);
+  }); 
 
   const subHeaderComponentMemo = React.useMemo(() => {
     const handleClear = () => {
@@ -247,7 +247,7 @@ const ConsumerManagement = (props) => {
   }, [filterText, resetPaginationToggle]);
 
   const showData = (status_value) => {
-    let status = status_value || statusSelected;
+    // let status = status_value || statusSelected;
     let filteredItems = [];
     filteredItems = getAllConsumerUsersData?.data?.consumersData?.length ?
       getAllConsumerUsersData.data.consumersData

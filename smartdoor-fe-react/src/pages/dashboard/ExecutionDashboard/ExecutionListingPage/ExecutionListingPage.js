@@ -13,7 +13,7 @@ import { getInstallationRequest,
     changeInstallationAssignee
 } from '../../../../common/redux/actions';
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Text from '../../../../shared/Text/Text';
 import Pagination from '../../../../shared/DataTable/Pagination';
 import { handleStatusElement, ToolTip, formateDate } from '../../../../common/helpers/Utils';

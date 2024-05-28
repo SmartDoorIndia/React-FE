@@ -1988,6 +1988,7 @@ export const setCallBackUrl = async (data) => {
 
 // BROKER 
 export const getBrokerListing  = (data) => async (dispatch) => {
+  dispatch({ type: Actions.BROKERS_MODULE_LOADING, data: [] });
   const response = await mainApiService('getBrokerListing', data);
   if (response) {
     if (response.data && response.status === 200) {

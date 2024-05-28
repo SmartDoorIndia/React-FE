@@ -1,6 +1,6 @@
 import { compose } from "redux"
 import Text from "../../../shared/Text/Text";
-import { connect } from "react-redux";
+// import { connect } from "react-redux";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSocket } from "../../../common/helpers/SocketProvider";
 import { Card, Divider, InputAdornment, TextField } from "@mui/material";
@@ -220,11 +220,11 @@ const ChatWithOwner = (props) => {
     )
 }
 
-const mapStateToProps = ({ }) => ({
-});
+// const mapStateToProps = ({ }) => ({
+// });
 
-const actions = {
-};
+// const actions = {
+// };
 
-const withConnect = connect(mapStateToProps, actions);
+// const withConnect = connect(mapStateToProps, actions);
 export default compose(ChatWithOwner);
