@@ -58,14 +58,10 @@ const Pricing = (props) => {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType]?.Pricing
                 } else {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Pricing
-                    console.log(PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Pricing)
                 }
             } else if (fields.propertyType === 'Commercial') {
                 pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]?.Pricing
             }
-            console.log(fields)
-            console.log(pricingObj)
-            console.log(pricingDetails)
             setPricingList(Object?.keys(pricingObj));
             setPricingObject(pricingObj);
             if ((Object.keys(pricingObj)).includes('Preferred for')) {
@@ -124,14 +120,11 @@ const Pricing = (props) => {
     }
 
     const removeDues = (index) => {
-        console.log(index)
-        console.log(pricingDetails.additionalFieldsForChargesDue[index])
         let additionalList = [...pricingDetails.additionalFieldsForChargesDue];
         additionalList.splice(index, 1);
         setAdditionalFieldsList([...additionalList]);
         setPricingDetails(prevPricingDetials => {
             const updatedPricingDetails = { ...prevPricingDetials, additionalFieldsForChargesDue: additionalList };
-            console.log(updatedPricingDetails); // Log the updated state
             return updatedPricingDetails;
         });
     }
@@ -163,7 +156,6 @@ const Pricing = (props) => {
         }
         valid = validatePricing(pricingDetail, pricingList);
         setError(valid.errors);
-        console.log(valid)
         if (valid.isValid) {
             dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetail })
             setSavePricingFlag(true);
@@ -201,7 +193,6 @@ const Pricing = (props) => {
         }
         valid = validatePricing(pricingDetail, pricingList);
         setError(valid.errors);
-        console.log(valid)
         if (valid.isValid) {
             if (pricingList.includes('Expected time') && pricingDetail.isQuickSale === true) {
                 const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
@@ -246,10 +237,8 @@ const Pricing = (props) => {
                 specs: specDetailFields?.data,
                 pricing: pricingDetail
             }
-            console.log(userId)
             // setLoading(true)
             const response = await addBasicDetails(data);
-            console.log(response?.data?.resourceData?.propertyId)
             if (response.status === 200) {
                 // setLoading(false)
                 dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
@@ -407,7 +396,7 @@ const Pricing = (props) => {
                     {pricingList.includes('Distress CheckBox') ?
                         <>
                             <Col lg='4' className="d-flex">
-                                <Checkbox onChange={(e) => { console.log(e); setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isQuickSale: (e.target.checked) })) }}
+                                <Checkbox onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isQuickSale: (e.target.checked) })) }}
                                     checked={pricingDetails.isQuickSale} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
                                 <Text text={'Do you want to additionally  publish in Distress property section '}
                                     fontWeight={'500'} style={{ fontSize: '13px' }} />
@@ -447,7 +436,7 @@ const Pricing = (props) => {
                         : null}
                     {pricingList.includes('Fractional Ownership checkbox') ?
                         <Col lg='4' className="d-flex">
-                            <Checkbox onChange={(e) => { console.log(e); setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isOpenToBuyersOnFractionalOwnershipBasis: (e.target.checked) })) }}
+                            <Checkbox onChange={(e) => { setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, isOpenToBuyersOnFractionalOwnershipBasis: (e.target.checked) })) }}
                                 checked={pricingDetails.isOpenToBuyersOnFractionalOwnershipBasis} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
                             <Text text={'Open to Buyers on Fractional Ownership basis? '}
                                 fontWeight={'500'} style={{ fontSize: '13px' }} />
@@ -480,7 +469,6 @@ const Pricing = (props) => {
                                                         setPricingDetails(prevPricingDetials => ({ ...prevPricingDetials, additionalFieldsForChargesDue: [...newList] }));
                                                         return [...newList];
                                                     });
-                                                    console.log(pricingDetails.additionalFieldsForChargesDue)
                                                 }}
                                                 value={fields.label}
                                             />

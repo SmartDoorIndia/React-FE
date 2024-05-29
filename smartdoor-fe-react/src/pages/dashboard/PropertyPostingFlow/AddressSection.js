@@ -53,13 +53,11 @@ const AddressSection = (props) => {
 
 	useEffect(() => {
 		getAllCityWithId({ smartdoorServiceStatus: true, stateId: null });
-		console.log(addressDetailFields)
 	}, [getAllCityWithId]);
 
 	const handleSelectLocalityOption = async (e) => {
 		// let matchFound = false;
 		// let localityArr = e.location?.split(', ')
-		console.log(e)
 		error.locality = ""
 		let newData = { ...addressDetails }; // Make a copy of the current state
 		let sublocality_level_1Flag = false;
@@ -70,26 +68,21 @@ const AddressSection = (props) => {
 		e?.data?.address_components?.forEach(element => {
 			if (element.types.includes('locality')) {
 				newData.city = element.long_name;
-				console.log(newData.city);
 				localityFlag = true
 			}
 			if (element.types.includes('sublocality_level_1')) {
 				newData.locality = element.long_name;
-				console.log(newData.locality);
 				sublocality_level_1Flag = true
 			}
 			if (element.types.includes('postal_code')) {
 				newData.zipCode = element.long_name;
-				console.log(newData.zipCode);
 			}
 			if (element.types.includes('administrative_area_level_1')) {
 				newData.state = element.long_name;
-				console.log(newData.state);
 				stateFlag = true
 			}
 			if (element.types.includes('country')) {
 				newData.country = element.long_name;
-				console.log(newData.country);
 			}
 		});
 		if (allCitiesWithId.data.find(city => city.cityName === newData.city)) {
@@ -103,8 +96,6 @@ const AddressSection = (props) => {
 		const eLat = latFunction();
 		const lngFunction = response[0].geometry.location.lng;
 		const eLng = lngFunction();
-		console.log(eLat);
-		console.log(eLng);
 		newData.cityLat = eLat;
 		newData.cityLong = eLng;
 		// Update latitude and longitude outside the loop
@@ -115,7 +106,6 @@ const AddressSection = (props) => {
 	}
 
 	const handleMarkerChanged = async (e) => {
-		console.log(e?.location?.address_components)
 		let newData = { ...addressDetails }; // Make a copy of the current state
 		let sublocality_level_1Flag = false;
 		let localityFlag = false;
@@ -140,13 +130,11 @@ const AddressSection = (props) => {
 			}
 			if (element.types.includes('country')) {
 				newData.country = element.long_name;
-				console.log(newData.country);
 			}
 		});
 		if (localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
 			showErrorToast("Please select pin point location")
 		}
-		console.log(allCitiesWithId.data)
 		if (allCitiesWithId.data.find(city => city.cityName === addressDetails.city)) {
 			setSDIconFlag(true)
 		}
@@ -171,8 +159,8 @@ const AddressSection = (props) => {
 	const selectSocietyName = async (e) => {
 		let value = e?.event?.target?.value
 		setAddressDetails({ ...addressDetails, buildingProjectSociety: value, otherSociety: value })
-		const response = await getSocietyByCity({ city: (addressDetails.city).split(', ')[0], society: value })
-		setSocietyArray(response)
+		const response = await getSocietyByCity({ city: (addressDetails.city).split(', ')[0], societyString: value })
+		setSocietyArray([...response])
 		// let matchFound = false
 		// societyArray.forEach(element => {
 		//     if (element.societyName === value) {
@@ -186,7 +174,6 @@ const AddressSection = (props) => {
 	}
 
 	const setSelectedSociety = async (value) => {
-		console.log(value)
 		let matchFound = false
 		societyArray.forEach(element => {
 			if (element.societyName === value?.societyName) {
@@ -194,6 +181,7 @@ const AddressSection = (props) => {
 					...addressDetails, societyId: value.societyId,
 					latitude: value.latitude, longitude: value.longitute,
 					locality: value.locality, zipCode: value.zipCode,
+					buildingProjectSociety: value.societyName, otherSociety: value.societyName
 				})
 				matchFound = true
 			}
@@ -236,7 +224,6 @@ const AddressSection = (props) => {
 			valid = validateAddressDetails(addressDetails, false);
 		}
 		setError(valid.errors);
-		console.log(valid)
 		if (valid.isValid) {
 			dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetail })
 			setSaveAddressFlag(true);
@@ -321,10 +308,8 @@ const AddressSection = (props) => {
 				basicDetails: basicDetailFields?.data,
 				address: addressDetail
 			}
-			console.log(userId)
 			// setLoading(true)
 			const response = await addBasicDetails(data);
-			console.log(response?.data?.resourceData?.propertyId)
 			if (response.status === 200) {
 				// setLoading(false)
 				dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetails })
@@ -428,7 +413,7 @@ const AddressSection = (props) => {
 							// value={data?.buildingProjectSociety}
 							defaultValue={addressDetails.buildingProjectSociety}
 							onInput={(e) => { selectSocietyName(e) }}
-							onSelectionChanged={(value) => { setSelectedSociety(value?.selectedItem); console.log(value) }}
+							onSelectionChanged={(value) => { setSelectedSociety(value?.selectedItem);}}
 							placeholder="Select Building/Project/Society"
 							valueExpr="societyName"
 							searchExpr="societyName"

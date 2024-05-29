@@ -262,7 +262,7 @@ const MarketingAgency = (props) => {
 
         return (
             <SearchInput
-                onFilter={(e) => { setFilterText(e.target.value); console.log(e) }}
+                onFilter={(e) => { setFilterText(e.target.value); }}
                 onChange={(e) => setFilterText(e.target.value)}
                 onClear={() => handleClear}
                 filterText={filterText}
@@ -273,7 +273,6 @@ const MarketingAgency = (props) => {
 
     let filteredItems = [];
     const showData = () => {
-        console.log(filterText)
         filteredItems = [];
         filteredItems = agencyList?.data?.agencylist;
         filteredItems = agencyList?.data?.agencylist?.filter((item) => {

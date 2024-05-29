@@ -9,6 +9,7 @@ import { Divider, MenuItem, TextField } from "@mui/material";
 import TextArea from "../../../../shared/Inputs/TextArea/TextArea";
 import { Modal } from "react-bootstrap";
 import { validateCameraData } from "../../../../common/validations";
+import Loader from "../../../../common/helpers/Loader";
 
 const PropertyDevice = (props) => {
 
@@ -34,6 +35,7 @@ const PropertyDevice = (props) => {
     const [changeUUIDFlag, setChangeUUIDFlag] = useState(false);
     const [cameraTypeList, setCameraTypeList] = useState([]);
     const endPointList = ['prod', 'uat'];
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState({});
 
     const _getSmartLockData = useCallback(async () => {
@@ -289,12 +291,14 @@ const PropertyDevice = (props) => {
 
     const editCameraDetails = async (addNewFlag) => {
         if (addNewFlag === false) {
-            await setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: selectedCameraData.cameraDeviceId  }))
+            await setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: selectedCameraData.cameraDeviceId }))
         }
+        setLoading(true)
         const valid = await validateCameraData(selectedCameraData, addNewFlag);
         console.log(valid)
         if (valid.isValid) {
             const response = await editCameraData(selectedCameraData);
+            setLoading(false);
             if (response.status === 200) {
                 showSuccessToast("CameraDevice Data updated successfully");
                 setShowEditCameraData(false);
@@ -694,14 +698,17 @@ const PropertyDevice = (props) => {
                                 color="white"
                                 className="mt-2 mb-2"
                                 onClick={() => { setShowEditCameraData(false); setChangeUUIDFlag(false); }} /> &nbsp;&nbsp;
-                            <Buttons
-                                name="Edit Data"
-                                varient="primary"
-                                // style={{float:'right'}}
-                                size="xSmall"
-                                color="white"
-                                className="mt-2 mb-2"
-                                onClick={() => { setShowEditCameraData(false); editCameraDetails(false); }} />
+                            {loading ? <Loader />
+                                :
+                                <Buttons
+                                    name="Save Data"
+                                    varient="primary"
+                                    // style={{float:'right'}}
+                                    size="xSmall"
+                                    color="white"
+                                    className="mt-2 mb-2"
+                                    onClick={() => { setShowEditCameraData(false); editCameraDetails(false); }} />
+                            }
                         </div>
                     </>
                 ) : (null)}
@@ -803,13 +810,16 @@ const PropertyDevice = (props) => {
                         />
                     </div>
                     <div className="d-flex justify-content-center">
-                        <Buttons
-                            name="Add Camera Data"
-                            varient="primary"
-                            size="xSmall"
-                            color="white"
-                            className="mt-2 mb-2 p-3"
-                            onClick={() => { editCameraDetails(true); }} />
+                        {loading ? <Loader />
+                            :
+                            <Buttons
+                                name="Add Camera Data"
+                                varient="primary"
+                                size="xSmall"
+                                color="white"
+                                className="mt-2 mb-2 p-3"
+                                onClick={() => { editCameraDetails(true); }} />
+                        }
                     </div>
                 </Modal.Body>
             </Modal>

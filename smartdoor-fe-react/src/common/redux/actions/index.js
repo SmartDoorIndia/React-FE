@@ -101,7 +101,6 @@ export const approveLead = async (data) => {
 
 // Action to  Add new User/TeamMember Counts
 export const addNewTeamMember = async (data) => {
-  console.log(data,"add user management data");
   const response = await mainApiService('addNewTeamMember', data);
   if (response.data.status) {
     if (response.data && response.data.status === 200) {
@@ -124,10 +123,8 @@ export const setworkCityRequest = async (data) => {
   return response;
 }
 export const addNewPlan = async (data) => {
-  console.log(data,"add new Plan");
   const response = await mainApiService('addNewPlan', data);
   if (response.data.status) {
-    console.log("add new Plan",response.data);
     if (response.data && response.data.status === 200) {
       showSuccessToast(response.data.customMessage);
     } else if (response.data && response.data.status === 409) showErrorToast(response.data.responseMessage);
@@ -155,7 +152,6 @@ export const getAllCity = (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        console.log(response.data.resourceData, "response.data.resourceData")
         dispatch({ type: Actions.ALL_CITIES, data: response.data.resourceData });
       } // return response.data.resourceData;
     }
@@ -168,7 +164,6 @@ export const getAllCityWithId = (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        console.log(response.data.resourceData, "response.data.resourceData")
         dispatch({ type: Actions.ALL_CITIES_ID, data: response.data.resourceData });
         return response
       } // return response.data.resourceData;
@@ -182,7 +177,6 @@ export const getAllStateWithId = (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        console.log(response.data.resourceData, "response.data.resourceData")
         dispatch({ type: Actions.ALL_STATES_ID, data: response.data.resourceData });
         return response
       } // return response.data.resourceData;
@@ -305,7 +299,6 @@ export const getAllConvertedLeadsByUser = async (data) => {
 
 // Action to Get society Leades data
 export const getInstallationRequest = (data) => async (dispatch) => {
-  console.log(data,"data for installation filter");
   dispatch({ type: Actions.EXCUTIVE_INSTALLATION_LOADING, data: [] });
   const response = await mainApiService('getInstallationRequest', data);
   if (response) {
@@ -871,11 +864,7 @@ export const getSocietyByCity = async (data) => {
   const response = await mainApiService('getSocietyByCity', data);
   if (response) {
     if (response.data && response.status === 200) {
-      if (response.data.resourceData) {
-        return response.data.resourceData;
-      } else {
-        return [];
-      }
+      return response.data.resourceData;
     } else {
       return [];
     }
@@ -1032,7 +1021,6 @@ export const changeInstallationAssignee = async (data) => {
 };
 
 export const republish = async (data) => {
-  console.log("republish", data);
   const response = await mainApiService('republish', data);
   if (response.data && response.data.status === 200) {
     showSuccessToast(response.data.customMessage);
@@ -1255,14 +1243,12 @@ export const getHelpDeskAssignedServiceRequest = async (data) => {
 };
 
 export const reOpenAndCloseRequest = async (data) => {
-  console.log(data,"hhhhhhhhhhhhhhhhhhhdata");
   const response = await mainApiService('reOpenAndCloseRequest', data);
   showToastMessage(response);
   return response;
 };
 
 export const closeRequestInstallation = async (data) => {
-  console.log(data,"iiiiiiiiiiiiiiiiiiiidata");
   const response = await mainApiService('closeRequestInstallation', data);
   showToastMessage(response);
   return response;
@@ -1530,7 +1516,6 @@ export const getAllPendingDealApproval = (data) => async (dispatch) => {
 };
 
 export const getDealApprovalDetail = async (data) => {
-  console.log(data,"api data");
   const response = await mainApiService('getDealApprovalDetail', data);
   return response;
 };
@@ -1698,7 +1683,6 @@ export const getContactSensorDeviceDetails = async (data) => {
 
 // Action to  Get smartlock data
 export const getSmartLockData = async (data) => {
-  console.log(data,"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
   const response = await mainApiService('getSmartLockData', data);
   if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
@@ -1706,7 +1690,6 @@ export const getSmartLockData = async (data) => {
 
 // Actio  for closing the door
 export const doorClosed = async (data) => {
-  console.log("door close api data",data);
   const response = await mainApiService('doorClosed', data);
   if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
@@ -1744,7 +1727,6 @@ export const addNewPost  = (data) => async (dispatch) => {
   const response = await mainApiService('addNewPost', data);
   if(response != null) {
     if(response?.status === 200) {
-      console.log(response)
       if(data.smartdoorPropertyId === undefined || data.smartdoorPropertyId === null) {
         data.smartdoorPropertyId = response?.data?.resourceData?.propertyId;
       }
@@ -1758,10 +1740,8 @@ export const addNewPost  = (data) => async (dispatch) => {
 };
 
 export const addNewPost2  = (data) => async (dispatch) => {
-  console.log("test ")
   dispatch({ type: Actions.ADD_NEW_POST_ADDRESS_LOADING, data: {} });
   const response = await mainApiService('addNewPost2', data);
-  console.log(response)
   if(response != null) {
     if(response?.status === 200) {
       showSuccessToast("Address updated successfully")
@@ -1859,7 +1839,6 @@ export const getAllAgencies = (data) => async(dispatch) => {
   dispatch({type: Actions.AGENCY_LIST_LOADING, data: []});
   const response = await mainApiService('getAllAgencies', data);
   if(response.status === 200) {
-    console.log(response)
     if(data.agencyId === 0) {
       return(dispatch({ type: Actions.AGENCY_LIST_SUCCESS, data: response.data.resourceData }))
     } else {return response}
@@ -1873,7 +1852,6 @@ export const getAllAgencies = (data) => async(dispatch) => {
 export const getAgencyById = async (data) => {
   const response = await mainApiService('getAllAgencies', data);
   if(response.status === 200) {
-    console.log(response)
     return response;
   }
   if ( response?.status !== 200) {
@@ -1885,7 +1863,6 @@ export const getAllAgencyExecutives = (data) => async(dispatch) => {
   dispatch({type: Actions.AGENCY_EXECUTIVE_LIST_LOADING, data: []});
   const response = await mainApiService('getAllAgencyExecutives', data);
   if(response.status === 200) {
-    console.log(response)
     return(dispatch({ type: Actions.AGENCY_EXECUTIVE_LIST_SUCCESS, data: {executives: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchStr} }))
   }
   if ( response?.status !== 200) {
@@ -1897,7 +1874,6 @@ export const getAllAgencyExecutives = (data) => async(dispatch) => {
 export const getAgencyExecutiveById = async (data) => {
   const response = await mainApiService('getAllAgencyExecutives', data);
   if(response.status === 200) {
-    console.log(response)
     return response
   }
   if ( response?.status !== 200) {
@@ -1916,7 +1892,6 @@ export const getAgencyCustomers = (data) => async (dispatch) => {
   dispatch({type: Actions.AGENCY_CUSTOMER_LIST_LOADING, data: []});
   const response = await mainApiService('getAgencyCustomers', data);
   if(response.status === 200) {
-    console.log(response)
     return(dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {customerData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, fromDate: data.fromDate, toDate: data.toDate, searchStr: data.searchStr, kycStatus: data.kycStatus} }))
   }
   if ( response?.status !== 200) {
@@ -1929,7 +1904,6 @@ export const getAgencyProperties = (data) => async (dispatch) => {
   dispatch({type: Actions.AGENCY_PROPERTY_LIST_LOADING, data: []});
   const response = await mainApiService('getAgencyProperty', data);
   if(response.status === 200) {
-    console.log(response)
     return(dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {propertyData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, fromDate: data.fromDate, toDate: data.toDate, searchStr: data.searchStr, propertyStatus: data.propertyStatus, propertyType: data.propertyType} }))
   }
   if ( response?.status !== 200) {
@@ -2001,7 +1975,6 @@ export const getBrokerListing  = (data) => async (dispatch) => {
 
 export const getBrokerPostedProperty = (data) => async (dispatch) => {
   const response = await mainApiService('getBrokerPostedProperty', data);
-  console.log(response,"response")
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {

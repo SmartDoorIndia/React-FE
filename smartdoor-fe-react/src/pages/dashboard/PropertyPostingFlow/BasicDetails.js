@@ -54,7 +54,6 @@ const BasicDetails = (props) => {
             yearlist.push((currentYear + i).toString());
         }
         setYearList(yearlist);
-        console.log(props)
     }, []);
 
     const setPropertyCategory = async (e) => {
@@ -64,7 +63,6 @@ const BasicDetails = (props) => {
         }));
 
         if (e.target.value === 'Renting') {
-            console.log(e.target.value)
             await setBasicDetails((prevBasicDetails) => ({
                 ...prevBasicDetails,
                 stageOfProperty: 'Ready',
@@ -102,7 +100,6 @@ const BasicDetails = (props) => {
         }
 
         const valid = await validateBasicDetails(basicDetails);
-        console.log("validate response", valid)
         setError(valid.errors);
         if (valid.isValid) {
             let userId = getLocalStorage('authData');
@@ -133,11 +130,9 @@ const BasicDetails = (props) => {
                 },
                 basicDetails: basicDetails
             }
-            console.log(userId)
             if(!editPropertyFlag) {
                 setLoading(true)
                 const response = await addBasicDetails(data);
-                console.log(response?.data?.resourceData?.propertyId)
                 if (response.status === 200) {
                     setLoading(false)
                     dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
@@ -162,7 +157,6 @@ const BasicDetails = (props) => {
         }
 
         const valid = await validateBasicDetails(basicDetails);
-        console.log("validate response", valid)
         setError(valid.errors);
         if (valid.isValid) {
             let userId = getLocalStorage('authData');
@@ -193,10 +187,8 @@ const BasicDetails = (props) => {
                 },
                 basicDetails: basicDetails
             }
-            console.log(userId)
             setLoading(true)
             const response = await addBasicDetails(data);
-            console.log(response?.data?.resourceData?.propertyId)
             if (response.status === 200) {
                 setLoading(false)
                 dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
@@ -387,7 +379,6 @@ const BasicDetails = (props) => {
                                     label='Year'
                                     className="w-100 mt-3"
                                     onChange={(e) => {
-                                        console.log(e)
                                         setSelectedYear(e.target.value)
                                         setBasicDetails((prevBasicDetails) => ({
                                             ...prevBasicDetails, expectedPossessionDate: selectedMonth + '-' + e.target.value
@@ -410,7 +401,6 @@ const BasicDetails = (props) => {
                                     label='Month'
                                     className="w-100 mt-3"
                                     onChange={(e) => {
-                                        console.log(e)
                                         setSelectedMonth(e.target.value)
                                         setBasicDetails((prevBasicDetails) => ({
                                             ...prevBasicDetails, expectedPossessionDate: e.target.value + '-' + selectedYear

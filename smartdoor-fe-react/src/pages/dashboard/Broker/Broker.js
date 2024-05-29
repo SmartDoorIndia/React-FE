@@ -117,7 +117,7 @@ const Broker = (props) => {
    const columns = [
       {
          name: "Reg On",
-         selector: 'joinedDate',
+         selector: ((row) => row.joinedDate),
          center: true,
          sortable: true,
          minWidth: "400px",
@@ -126,7 +126,7 @@ const Broker = (props) => {
        
       {
          name: "Name",
-         selector: "name",
+         selector: ((row) => row.name),
          center: false,
          minWidth: "150px",
          maxWidth:"150px",
@@ -140,7 +140,7 @@ const Broker = (props) => {
       },
       {
          name: "mobile",
-         selector: "mobile",
+         selector: ((row) => row.mobile),
          sortable: true,
          center: false,
          minWidth: "145px",
@@ -148,34 +148,35 @@ const Broker = (props) => {
       },
       {
          name: "Email",
-         selector: "email",
+         selector: ((row) => row.email),
          sortable: false,
          center: true,
          minWidth: "245px",
       },
       {
          name: "Plan",
-         selector: "plan",
+         selector: ((row) => row.plan),
          sortable: false,
          center: true,
          minWidth: "120px",
       },
       {
          name: "Posted Properties",
-         selector: "postedProperties",
+         selector: ((row) => row.postedProperties),
          sortable: false,
          center: true,
-         minWidth: "165px",
+         maxWidth: "160px",
       },
       {
          name: "Chats",
-         selector: "chat",
+         selector: ((row) => row.chat),
          sortable: false,
          center: true,
+         maxWidth: "100px",
       },
       {
          name: "Profile Status",
-         selector: "status",
+         selector: ((row) => row.status),
          sortable: false,
          center: true,
          minWidth: "10px",
@@ -183,7 +184,7 @@ const Broker = (props) => {
       },
       {
          name: "Action",
-         selector: (row) => row.action,
+         selector: ((row) => row.action),
          sortable: false,
          center: true,
          minWidth: "150px",

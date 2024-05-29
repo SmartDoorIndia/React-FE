@@ -76,7 +76,6 @@ const Specs = (props) => {
         if (Object.keys(basicDetailFields.data).length !== 0) {
             let speclist = [];
             let fields = basicDetailFields.data;
-            console.log(fields)
             let category = '';
             if (fields.propertyCategory === 'Lease') {
                 category = 'Renting'
@@ -88,7 +87,6 @@ const Specs = (props) => {
             if (fields.propertyType === 'Residential') {
                 if (fields.propertySubType === 'PG/Co-Living') {
                     speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
-                    console.log(PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType]?.Specs)
                 } else {
                     speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Specs
                 }
@@ -109,7 +107,6 @@ const Specs = (props) => {
             } else {
                 setRoomCompositionList(['BHK'])
             }
-            console.log(specDetails)
             setSpecList(speclist);
         }
         if (Object.keys(specDetailFields.data).length !== 0) {
@@ -178,7 +175,6 @@ const Specs = (props) => {
             }
 
             const response = await getChatGptDescription(requestBody);
-            console.log(response);
             if (response.status === 200) {
                 setDescLoader(false)
                 setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, propertyDescription: response?.data?.resourceData }))
@@ -209,7 +205,6 @@ const Specs = (props) => {
         }
         const valid = validateSpecs(specDetail, specList, true);
         setError(valid.errors);
-        console.log(valid)
         if (valid.isValid) {
             dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetail })
             setSaveSpecsFlag(true);
@@ -224,7 +219,6 @@ const Specs = (props) => {
         const carpetArea = parseFloat(e.target.value);
         const loadingFactor = parseFloat(specDetails.loadingFactorInPercent);
         const builtUpArea = carpetArea / (1 - (loadingFactor * 0.01));
-        console.log(builtUpArea)
         setSpecDetails(prevSpecDetails => ({
             ...prevSpecDetails,
             carpetArea: carpetArea,
@@ -363,10 +357,8 @@ const Specs = (props) => {
                 address: addressDetailFields?.data,
                 specs: specDetail
             }
-            console.log(userId)
             // setLoading(true)
             const response = await addBasicDetails(data);
-            console.log(response?.data?.resourceData?.propertyId)
             if (response.status === 200) {
                 // setLoading(false)
                 dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetail })
@@ -751,7 +743,7 @@ const Specs = (props) => {
                                 }}
                                 className="w-100"
                                 label={'Purpose'}
-                                onChange={(e) => { console.log(e); setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, purposes: e.target.value })) }}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, purposes: e.target.value })) }}
                                 value={specDetails.purposes}
                             >
                                 {POSTING_CONSTANTS.commercialPurpose.map((item) => (

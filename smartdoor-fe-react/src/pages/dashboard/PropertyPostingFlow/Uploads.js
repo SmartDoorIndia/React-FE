@@ -52,8 +52,6 @@ const Uploads = (props) => {
             // 	});
             let imageList = [];
             imageList = [...imageArr];
-            console.log(imageList)
-            console.log(index)
             imageList.splice(index, 1);
             setImageArray(imageList)
         },
@@ -90,18 +88,15 @@ const Uploads = (props) => {
                     return;
                 }
             })
-            console.log(event.target.files)
             let fileList = []
             for (let i = 0; i < event.target.files.length; i++) {
                 fileList.push(event.target.files[i])
                 formData.append('file', event.target.files[i]);
             }
-            console.log(fileList)
             formData.append('id', propertyId);
             formData.append('enumType', 'PROPERTY_IMAGES');
             uploadImage(formData)
                 .then((response) => {
-                    console.log(response)
                     if (response.data.status === 200) {
                         // const property_image = [];
                         const property_image = [...imageArr];
@@ -133,7 +128,6 @@ const Uploads = (props) => {
                             .catch((error) => {
                                 setImageLoader(false);
                                 setLoading(false);
-                                console.log("error", error);
                             });
                         showSuccessToast(response.data.customMessage)
                     }
@@ -141,7 +135,6 @@ const Uploads = (props) => {
                 .catch((error) => {
                     setImageLoader(false);
                     setLoading(false);
-                    console.log("error", error);
                 });
         }
     };
@@ -281,10 +274,8 @@ const Uploads = (props) => {
                 pricing: pricingDetail,
                 uploads: { propertyImages: imageArr, propertyVideos: videoUrlObj }
             }
-            console.log(userId)
             // setLoading(true)
             const response = await addBasicDetails(data);
-            console.log(response?.data?.resourceData?.propertyId)
             if (response.status === 200) {
                 // setLoading(false)
                 setSaveUploadFlag(true);
@@ -346,7 +337,7 @@ const Uploads = (props) => {
                                         );
                                     }}
                                         />
-                                    <img className="mt-2" src={closeBtn} style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId, index); console.log(image.docId) }} />
+                                    <img className="mt-2" src={closeBtn} style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId, index); }} />
                                     </div> &nbsp; &nbsp; &nbsp; &nbsp;
                                 </>
                             ))}

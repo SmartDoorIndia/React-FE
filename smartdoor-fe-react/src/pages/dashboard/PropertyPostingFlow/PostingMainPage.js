@@ -19,23 +19,18 @@ const PostingMainPage = (props) => {
     const [saveUploads, setSaveUploads] = useState({ propertyId: editPropertyDetails?.propertyId || null, saveFlag: false });
 
     const handleBasicDetails = (value) => {
-        console.log(value)
         setSaveBasicDetails(value)
     }
     const handleAddressDetails = (value) => {
-        console.log(value)
         setSaveAddressDetails(value)
     }
     const handleSpecDetails = (value) => {
-        console.log(value)
         setSaveSpecDetails(value)
     }
     const handlePricingDetails = (value) => {
-        console.log(value)
         setSavePricingDetails(value)
     }
     const handleUploads = (value) => {
-        console.log(value)
         setSaveUploads(value)
     }
 

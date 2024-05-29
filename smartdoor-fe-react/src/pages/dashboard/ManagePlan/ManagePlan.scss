@@ -165,10 +165,10 @@
                         text-align: center;
                         .elipsis-text {
                             white-space: nowrap;overflow: hidden;
-                            width: 120px;min-width: 120px;
+                            width: 150px;min-width: 150px;
                             text-overflow: ellipsis;display: block;text-align: center;
                             @media (max-width:1440px) {
-                             width: 90px;min-width: 90px;
+                             width: 120px;min-width: 120px;
                             }
                         }
                     }

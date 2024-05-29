@@ -840,6 +840,15 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.numberOfRooms)) {
       errors.numberOfRooms = true;
     }
+    if (isBlank(data.propertyRoomCompositionType)) {
+      errors.propertyRoomCompositionType = true;
+    }
+    if(data.propertyRoomCompositionType === 'RK' || data.propertyRoomCompositionType === 'R') {
+      if(Number(data.numberOfRooms) !== 1) {
+        errors.numberOfRooms = true;
+        showErrorToast('Invalid number of rooms for R and RK');
+      }
+    }
     if (Number(data.numberOfRooms) > 8) {
       errors.numberOfRooms = true;
       showErrorToast("Maximum no. of rooms should be 8")
@@ -847,9 +856,6 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (Number(data.numberOfRooms) < 0) {
       errors.numberOfRooms = true;
       showErrorToast("Minimum no. of rooms should be 1")
-    }
-    if (isBlank(data.propertyRoomCompositionType)) {
-      errors.propertyRoomCompositionType = true;
     }
   }
   if (specList?.includes('Attached')) {
