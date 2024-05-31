@@ -85,7 +85,7 @@ const Specs = (props) => {
                 category = fields.propertyCategory
             }
             if (fields.propertyType === 'Residential') {
-                if (fields.propertySubType === 'PG/Co-living') {
+                if (fields.propertySubType === 'PG/Co-living' || fields.propertySubType === 'PG/Co-Living') {
                     speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
                 } else {
                     speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Specs
@@ -102,7 +102,7 @@ const Specs = (props) => {
             if (fields.propertyType === 'Commercial') {
                 setInternalAmenitiesList(POSTING_CONSTANTS.CommercialAmeniteis)
             }
-            if (fields.propertySubType === 'PG/Co-living') {
+            if (fields.propertySubType === 'PG/Co-living' || fields.propertySubType === 'PG/Co-Living') {
                 setRoomCompositionList(POSTING_CONSTANTS.roomCompositionList)
             } else {
                 setRoomCompositionList(['BHK'])
@@ -132,26 +132,33 @@ const Specs = (props) => {
     }
 
     const generatePropertyDescription = async () => {
-        let specDetail = {...specDetails}
-        if(specList.includes('BHK')) {
-            if (addRoomFlag) {
-                const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
-                const roundedRooms = Math.round(updatedRooms * 10) / 10;
-                specDetail.numberOfRooms = roundedRooms;
-                setAddRoomFlag(true);
-            } 
-            else {
-                if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
-                    const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
-                    const roundedRooms = Math.round(updatedRooms * 10) / 10;
-                    specDetail.numberOfRooms = roundedRooms;
-                }
-                setAddRoomFlag(false);
+        if(basicDetailFields.data.propertySubType === 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living' ) {
+            if(specDetails.numberOfRooms > 6) {
+                showErrorToast('Maximum Number Of rooms should be 6...')
+                setError({numberOfRooms : true})
+                return null;
             }
         }
+        let specDetail = {...specDetails}
         const valid = validateSpecs(specDetail, specList, false);
         setError(valid.errors);
         if (valid.isValid) {
+            if(specList.includes('BHK')) {
+                if (addRoomFlag) {
+                    const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
+                    const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                    specDetail.numberOfRooms = roundedRooms;
+                    setAddRoomFlag(true);
+                } 
+                else {
+                    if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
+                        const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+                        const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                        specDetail.numberOfRooms = roundedRooms;
+                    }
+                    setAddRoomFlag(false);
+                }
+            }
             setDescLoader(true);
             const requestBody = {
                 "Type": basicDetailFields?.data?.propertyType,
@@ -184,7 +191,7 @@ const Specs = (props) => {
     }
 
     const saveSpecDetails = () => {
-        if(basicDetailFields.data.propertySubType === 'PG/Co-living') {
+        if(basicDetailFields.data.propertySubType === 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living' ) {
             if(specDetails.numberOfRooms > 6) {
                 showErrorToast('Maximum Number Of rooms should be 6...')
                 setError({numberOfRooms : true})
@@ -312,7 +319,7 @@ const Specs = (props) => {
     };
 
     const notifySpecDetails = async (loadNext) => {
-        if(basicDetailFields.data.propertySubType === 'PG/Co-living') {
+        if(basicDetailFields.data.propertySubType === 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living' ) {
             if(specDetails.numberOfRooms > 6) {
                 showErrorToast('Number Of rooms')
             }
@@ -400,7 +407,7 @@ const Specs = (props) => {
                                     label={'BHK'}
                                     onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: e.target.value })) }}
                                     value={specDetails.numberOfRooms}
-                                    inputProps={{ min: 1, max: basicDetailFields?.data?.propertySubType === 'PG/Co-living' ? 6 : 8 }}
+                                    inputProps={{ min: 1, max: basicDetailFields?.data?.propertySubType === 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? 6 : 8 }}
                                     InputProps={{
                                         endAdornment: <>
                                             <TextField
@@ -420,7 +427,7 @@ const Specs = (props) => {
                                     }}
                                 ></TextField>
                             </Col>
-                            {basicDetailFields.data.propertySubType !== 'PG/Co-living' ?
+                            {basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ?
                                 <Col className="d-flex p-0" lg='4'>
                                     <Checkbox ref={hasExtraRoom} checked={addRoomFlag} onChange={(e) => { setAddRoom(e) }} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
                                     <Text className='mt-3' text={'.5'} style={{ fontSize: '16px' }} ></Text> &nbsp;&nbsp;
@@ -437,6 +444,7 @@ const Specs = (props) => {
                             <TextField
                                 select
                                 required
+                                error={error.structure}
                                 className="w-100"
                                 label={'Structure'}
                                 onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, structure: e.target.value })) }}
@@ -489,7 +497,7 @@ const Specs = (props) => {
                             <Col lg='4' className='mb-2'>
                                 <TextField
                                     type="number"
-                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' ? true : false}
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? true : false}
                                     error={error.carpetArea}
                                     className="w-100"
                                     inputProps={{ min: 0 }}
@@ -536,7 +544,7 @@ const Specs = (props) => {
                             <Col lg='4' className='mb-2'>
                                 <TextField
                                     type="number"
-                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' ? true : false}
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? true : false}
                                     error={error.builtUpArea}
                                     className="w-100"
                                     placeholder={'Built-up area*'}
@@ -572,7 +580,7 @@ const Specs = (props) => {
                             <Col lg='4' className='mb-2'>
                                 <TextField
                                     type="number"
-                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' ? true : false}
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? true : false}
                                     error={error.carpetArea}
                                     className="w-100"
                                     placeholder={'Carpet area'}
@@ -623,7 +631,7 @@ const Specs = (props) => {
                             <Col lg='4' className='mb-2'>
                                 <TextField
                                     type="number"
-                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' ? true : false}
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? true : false}
                                     error={error.builtUpArea}
                                     className="w-100"
                                     placeholder={'Built-up area'}

@@ -278,7 +278,7 @@ const BasicDetails = (props) => {
                                         ...prevBasicDetails,
                                         propertySubType: e.target.value,
                                     }));
-                                    if (e.target.value !== 'PG/Co-living') {
+                                    if (e.target.value !== 'PG/Co-living' || e.target.value !== 'PG/Co-Living') {
                                         setBasicDetails((prevBasicDetails) => ({
                                             ...prevBasicDetails,
                                             guestHouseOrPgPropertyType: '', occupancySharing: ''
@@ -294,9 +294,9 @@ const BasicDetails = (props) => {
                                             return subType !== 'Plot'; // Exclude 'PG/Co-living' for Renting category
                                         } else if (basicDetails.propertyCategory === 'Selling') {
                                             if (basicDetails.stageOfProperty === 'Ready') {
-                                                return subType !== 'PG/Co-living'; // Exclude 'Plot' and 'PG/Co-living' for Selling category with stage 'Ready'
+                                                return subType !== 'PG/Co-living' || subType !== 'PG/Co-lLiving'; // Exclude 'Plot' and 'PG/Co-living' for Selling category with stage 'Ready'
                                             } else if (basicDetails.stageOfProperty === 'Under Construction') {
-                                                return subType !== 'PG/Co-living'; // Exclude 'Plot' for Selling category with stage 'Under Construction'
+                                                return subType !== 'PG/Co-living' || subType !== 'PG/Co-lLiving'; // Exclude 'Plot' for Selling category with stage 'Under Construction'
                                             }
                                         }
                                         return true; // Include all other property subtypes
@@ -309,7 +309,7 @@ const BasicDetails = (props) => {
                             </TextField>
                         </Col>
                         : null}
-                    {basicDetails.propertySubType === 'PG/Co-living' ?
+                    {basicDetails.propertySubType === 'PG/Co-living' || basicDetails.propertySubType === 'PG/Co-Living' ?
                         <>
 
                             <Col lg='4'>

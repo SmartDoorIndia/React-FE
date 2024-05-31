@@ -953,6 +953,11 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.purposes = true;
     }
   }
+  if(specList.includes('Structure')) {
+    if(isBlank(data.structure)) {
+      errors.structure = true;
+    }
+  }
   if (specList?.includes('Number of balconies')) {
     if (Number(data.numberOfBalconies) < 0) {
       errors.numberOfBalconies = true;

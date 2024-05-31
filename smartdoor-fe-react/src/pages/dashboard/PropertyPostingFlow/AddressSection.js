@@ -180,7 +180,7 @@ const AddressSection = (props) => {
 				setAddressDetails({
 					...addressDetails, societyId: value.societyId,
 					latitude: value.latitude, longitude: value.longitute,
-					locality: value.locality, zipCode: value.zipCode,
+					locality: value?.locality?.split(', ')[0], zipCode: value.zipCode,
 					buildingProjectSociety: value.societyName, otherSociety: value.societyName
 				})
 				matchFound = true

@@ -54,7 +54,7 @@ const Pricing = (props) => {
                 category = fields.propertyCategory
             }
             if (fields.propertyType === 'Residential') {
-                if (fields.propertySubType === 'PG/Co-living') {
+                if (fields.propertySubType === '' || fields.propertySubType === 'PG/Co-Living' ) {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType]?.Pricing
                 } else {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Pricing
@@ -268,7 +268,7 @@ const Pricing = (props) => {
             const response = await addBasicDetails(data);
             if (response.status === 200) {
                 // setLoading(false)
-                dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetails })
+                dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetail })
                 setSavePricingFlag(true)
                 savePricingDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
                 if(!loadNext) {

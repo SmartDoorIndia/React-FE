@@ -1,6 +1,6 @@
 /** @format */
 
-import React from "react";
+import React, { useState } from "react";
 import Text from "../../../shared/Text/Text";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useHistory } from 'react-router-dom';
@@ -8,59 +8,63 @@ import { ToolTip } from "../../../common/helpers/Utils";
 import Image from "../../../shared/Image/Image";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import contentIcon from "../../../assets/images/content-ico.svg";
+import './corporateHome.scss';
+import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
+import { Button } from "react-bootstrap";
+import addIcon from '../../../assets/svg/add.svg';
 
 const CorporateHome = () => {
    const history = useHistory();
 
    const corporateColumns = [
       {
-         name: "Corporate",
-         selector: ((row) => row.propertyId),
-         sortable: true,
+         name: "Logo",
+         selector: ((row) => row.logo),
+         sortable: false,
          center: false,
          maxWidth: "150px",
-         cell: ({ corporate }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={corporate}>
-               <Text size="Small" color="secondryColor elipsis-text" text={corporate} />
+         cell: ({ logo }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={logo}>
+               <Text size="Small" color="secondryColor elipsis-text" text={logo} />
             </ToolTip>
          ),
          id: 1
       },
       {
-         name: "Admin",
-         selector: ((row) => row.admin),
+         name: "Company",
+         selector: ((row) => row.propertyId),
          sortable: true,
          center: false,
          maxWidth: "150px",
-         cell: ({ admin }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={admin}>
-               <Text size="Small" color="secondryColor elipsis-text" text={admin} />
+         cell: ({ company }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={company}>
+               <Text size="Small" color="secondryColor elipsis-text" text={company} />
             </ToolTip>
          ),
          id: 2
       },
       {
-         name: "Mobile Number",
-         selector: ((row) => row.mobile),
-         sortable: true,
+         name: "Address",
+         selector: ((row) => row.address),
+         sortable: false,
          center: false,
          maxWidth: "150px",
-         cell: ({ mobile }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={mobile}>
-               <Text size="Small" color="secondryColor elipsis-text" text={mobile} />
+         cell: ({ address }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={address}>
+               <Text size="Small" color="secondryColor elipsis-text" text={address} />
             </ToolTip>
          ),
          id: 3
       },
       {
-         name: "Postings Cap (Rs)",
-         selector: ((row) => row.postingsCap),
+         name: "Total Postings",
+         selector: ((row) => row.totalPostings),
          sortable: true,
          center: false,
          maxWidth: "150px",
-         cell: ({ postingsCap }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={postingsCap}>
-               <Text size="Small" color="secondryColor elipsis-text" text={postingsCap} />
+         cell: ({ totalPostings }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={totalPostings}>
+               <Text size="Small" color="secondryColor elipsis-text" text={totalPostings} />
             </ToolTip>
          ),
          id: 4
@@ -92,19 +96,6 @@ const CorporateHome = () => {
          id: 6
       },
       {
-         name: "Status",
-         selector: ((row) => row.status),
-         sortable: true,
-         center: false,
-         maxWidth: "150px",
-         cell: ({ status }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={status}>
-               <Text size="Small" color="secondryColor elipsis-text" text={status} />
-            </ToolTip>
-         ),
-         id: 7
-      },
-      {
          name: "Action",
          sortable: false,
          center: true,
@@ -128,7 +119,27 @@ const CorporateHome = () => {
       }
    ]
 
+   const [filterText, setFilterText] = React.useState('');
+   const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
+   const [corporateList, setCorporateList] = useState([]);
 
+   const subHeaderComponentMemo = React.useMemo(() => {
+      const handleClear = () => {
+         if (filterText) {
+            setResetPaginationToggle(!resetPaginationToggle);
+            setFilterText("");
+         }
+      };
+
+      return (
+         <SearchInput
+            onFilter={(e) => setFilterText(e.target.value)}
+            onClear={() => handleClear}
+            filterText={filterText}
+            placeholder="Search name/mobile No."
+         />
+      );
+   }, [filterText, resetPaginationToggle]);
 
    const handleAddNewCorporateClick = () => {
       history.push('/admin/corporate/addNewCorporate');
@@ -136,34 +147,16 @@ const CorporateHome = () => {
 
    return (
       <>
-         <div className="d-flex justify-content">
-            <Text text={"Total Corporate : 0"} fontWeight="bold" style={{ fontSize: "14px" }} />
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <Text text={"Total Postings : 0"} fontWeight="bold" style={{ fontSize: "14px" }} />
-         </div>
-         <div className="bg-white h-75">
-            <div
-               style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "75vh",
-                  flexDirection: "column",
-               }}
-            >
-               <Text
-                  text={"You don’t have any Corporate in list."}
-                  fontWeight="bold"
-                  style={{ fontSize: "16px", textAlign: "center" }}
-               />
-               <div style={{ marginTop: "10px" }}>
-                  <Buttons
-                     name="Add new Corporate"
-                     varient="secondary"
-                     size="xSmall"
-                     color="#BE1452"
-                     onClick={handleAddNewCorporateClick}
-                  />
+         <div className="tableBox">
+            <div className="tableHeading">
+               <div className="locationSelect align-items-end">
+                  {subHeaderComponentMemo}
+                  <Button className="d-flex" style={{color:'#BE1452', backgroundColor:'#F8F3F5', borderColor:'#DED6D9'}} >
+                  <Image src={addIcon} style={{height:'20px', width:'20px'}} /> Add New Company
+                     </Button>
+               </div>
+               <div className="corporateTableWrapper">
+
                </div>
             </div>
          </div>
