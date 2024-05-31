@@ -77,6 +77,7 @@ const MarketingAgency = (props) => {
             selector: ((row) => row.contactName),
             sortable: false,
             center: true,
+            minWidth: "200px",
             cell: ({ contactName }) => (
                 <span>
                     <Text size="Small" color="secondryColor elipsis-text" text={contactName === null ? '-' : contactName} />
@@ -101,6 +102,7 @@ const MarketingAgency = (props) => {
             selector: ((row) => row.totalCustomerSpendCurrentMonth),
             sortable: true,
             center: true,
+            minWidth: '200px',
             cell: ({ totalCustomerSpendCurrentMonth, totalMonthlySpentPreviousMonth }) => (
                 totalCustomerSpendCurrentMonth !== null || totalMonthlySpentPreviousMonth !== null ? (
                     <span className="d-flex">
@@ -135,7 +137,7 @@ const MarketingAgency = (props) => {
             center: true,
             cell: ({ row, agencyId }) => (
                 <div className="action">
-                    <Tooltip position="left" name="View Details">
+                    <Tooltip position="right" name="View Details">
                         <span>
                             <Link
                                 to={{

@@ -775,7 +775,7 @@ export const validateBasicDetails = (data) => {
       errors.expectedPossessionDate = true;
     }
   }
-  if (data.propertySubType === 'PG/Co-Living') {
+  if (data.propertySubType === 'PG/Co-iving') {
     if (isBlank(data.guestHouseOrPgPropertyType)) {
       errors.guestHouseOrPgPropertyType = true;
     }
@@ -858,11 +858,11 @@ export const validateSpecs = (data, specList, testDesc) => {
       showErrorToast("Minimum no. of rooms should be 1")
     }
   }
-  if (specList?.includes('Attached')) {
-    if (isBlank(data.pgGuestHouseAttachedTo)) {
-      errors.pgGuestHouseAttachedTo = true;
-    }
-  }
+  // if (specList?.includes('Attached')) {
+  //   if (isBlank(data.pgGuestHouseAttachedTo)) {
+  //     errors.pgGuestHouseAttachedTo = true;
+  //   }
+  // }
   if (specList?.includes('Structure')) {
     if (isBlank(data.structure)) {
       errors.structure = true;
@@ -937,8 +937,10 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.openArea = true;
       showErrorToast("Invalid open area value")
     }
-    if (isBlank(data.openAreaMeasurementUnit)) {
-      errors.openAreaMeasurementUnit = true;
+    if(!isBlank(data.openArea)) {
+      if (isBlank(data.openAreaMeasurementUnit)) {
+        errors.openAreaMeasurementUnit = true;
+      }
     }
   }
   if (specList?.includes('Property type')) {

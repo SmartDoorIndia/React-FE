@@ -221,7 +221,7 @@ const PropertyDetails = (props) => {
                      let speclist = [];
                      let fields = response.data.resourceData.basicDetails;
                      if (fields?.propertyType === 'Residential') {
-                        if (fields?.propertySubType === 'PG/Co-Living') {
+                        if (fields?.propertySubType === 'PG/Co-iving') {
                            speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
                            console.log("specs=> ", PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs)
                         } else {

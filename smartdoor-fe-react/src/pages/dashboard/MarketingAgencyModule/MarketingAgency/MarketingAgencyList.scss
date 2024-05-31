@@ -274,33 +274,42 @@
         overflow-x: hidden;
     }
     .rdt_TableHeadRow {
-        .rdt_TableCol{
+        .rdt_TableCol {
             &:nth-child(1) {
-                width: 180px;min-width: 180px;
+                width: 180px;
+                min-width: 180px;
             }
+            white-space: normal; /* Allows headers to wrap */
+            word-wrap: break-word; /* Allows headers to break words */
+            text-align: center; /* Optional: Center align text */
         }
     }
     .rdt_TableRow {
         min-height: auto;
         .rdt_TableCell {
             text-align: center;
+            white-space: normal; /* Allows cells to wrap */
+            word-wrap: break-word; /* Allows cells to break words */
             &:nth-child(1) {
                 &:first-child {
                     min-width: 180px;
-                    white-space: nowrap;overflow: visible;
+                    white-space: normal; /* Allows first cell to wrap */
+                    overflow: visible;
                 }                
             }
             &:nth-child(2) {
                 .elipsis-text {
-                    white-space: nowrap;overflow: hidden;
-                    width: 180px;min-width: 180px;
-                    text-overflow: ellipsis;display: block;text-align: center;
+                    white-space: normal; /* Allows cells to wrap */
+                    overflow: hidden;
+                    width: 180px;
+                    min-width: 180px;
+                    text-overflow: ellipsis;
+                    display: block;
+                    text-align: center;
                 }
             }
         }
-        // &:active {
-        //     background-color: aqua;
-        // }
     }
 }
+
 /*******Css ends here************/

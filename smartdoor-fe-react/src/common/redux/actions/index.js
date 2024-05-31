@@ -1969,6 +1969,8 @@ export const getBrokerListing  = (data) => async (dispatch) => {
       if (response.data.resourceData) {
         dispatch({ type: Actions.BROKERS_MODULE_SUCCESS, data: response.data.resourceData });
       }
+    } else {
+      dispatch({ type: Actions.BROKERS_MODULE_ERROR, data: [] });
     }
   }
 };

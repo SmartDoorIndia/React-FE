@@ -54,7 +54,7 @@ const Pricing = (props) => {
                 category = fields.propertyCategory
             }
             if (fields.propertyType === 'Residential') {
-                if (fields.propertySubType === 'PG/Co-Living') {
+                if (fields.propertySubType === 'PG/Co-living') {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType]?.Pricing
                 } else {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Pricing
@@ -97,12 +97,23 @@ const Pricing = (props) => {
                 const securityAmt = parseFloat(pricingDetails.securityAmount / 1000)
                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, securityAmount: securityAmt }))
             }
-            if((Object.keys(pricingObj)).includes('Add additional fields')) {
-                Array.of(pricingDetails.additionalFieldsForChargesDue).map((element) => {
-                    const dues = parseFloat(element.charge / 1000);
-                    element.charge = dues;
-                })
+            if ((Object.keys(pricingObj)).includes('Add additional fields')) {
+                let pricingDetail = { ...pricingDetails };
+                if (pricingDetail?.additionalFieldsForChargesDue?.length > 0) {
+                    const updatedAdditionalFields = pricingDetail.additionalFieldsForChargesDue.map((element) => {
+                        return {
+                            ...element,
+                            charge: parseFloat(element.charge / 1000)
+                        };
+                    });
+                    setPricingDetails(prevPricingDetails => ({
+                        ...prevPricingDetails,
+                        additionalFieldsForChargesDue: updatedAdditionalFields
+                    }));
+                    setAdditionalFieldsList([...updatedAdditionalFields]);
+                }
             }
+            
         }
     }, []);
 
@@ -149,10 +160,18 @@ const Pricing = (props) => {
             pricingDetail.securityAmount = securityAmt;
         }        
         if(pricingList.includes('Add additional fields')) {
-            (pricingDetail.additionalFieldsForChargesDue).map((element) => {
-                const dues = parseFloat(element.charge * 1000);
-                element.charge = dues;
-            })
+            // (pricingDetail.additionalFieldsForChargesDue).map((element) => {
+            //     const dues = parseFloat(element.charge * 1000);
+            //     element.charge = dues;
+            // })
+            const updatedAdditionalFields = pricingDetail.additionalFieldsForChargesDue.map((element) => {
+                // Create a new object with the updated charge
+                return {
+                    ...element,
+                    charge: parseFloat(element.charge * 1000)
+                };
+            });
+            pricingDetail.additionalFieldsForChargesDue = [...updatedAdditionalFields]
         }
         valid = validatePricing(pricingDetail, pricingList);
         setError(valid.errors);
@@ -186,10 +205,18 @@ const Pricing = (props) => {
             pricingDetail.securityAmount = securityAmt;
         }
         if(pricingList.includes('Add additional fields')) {
-            (pricingDetail.additionalFieldsForChargesDue).map((element) => {
-                const dues = parseFloat(element.charge * 1000);
-                element.charge = dues;
-            })
+            // (pricingDetail.additionalFieldsForChargesDue).map((element) => {
+            //     const dues = parseFloat(element.charge * 1000);
+            //     element.charge = dues;
+            // })
+            const updatedAdditionalFields = pricingDetail.additionalFieldsForChargesDue.map((element) => {
+                // Create a new object with the updated charge
+                return {
+                    ...element,
+                    charge: parseFloat(element.charge * 1000)
+                };
+            });
+            pricingDetail.additionalFieldsForChargesDue = [...updatedAdditionalFields]
         }
         valid = validatePricing(pricingDetail, pricingList);
         setError(valid.errors);
@@ -459,6 +486,7 @@ const Pricing = (props) => {
                                             <TextField
                                                 className="w-100 mb-2"
                                                 type="text"
+                                                id={index}
                                                 error={error.additionalFieldsForChargesDue && error.additionalFieldsForChargesDue[index]?.label}
                                                 label={'Label'}
                                                 onChange={async(e) => {
@@ -475,6 +503,7 @@ const Pricing = (props) => {
                                         </Col>
                                         <Col lg='3' className="d-flex">
                                             <TextField
+                                                id={index}
                                                 className="w-100 mb-2"
                                                 type="number"
                                                 label={'Dues'}

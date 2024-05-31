@@ -47,46 +47,50 @@ const ManagePlan = (props) => {
    const columns = [
       {
          name: "Id",
-         selector: "planId",
+         selector: ((row) => row.planId),
          center: true,
       },
 
       {
          name: "Is Active",
-         selector: "joiningDate",
-         maxWidth: "120px",
+         selector: ((row) => row.joiningDate),
+         maxWidth: "100px",
          center: true,
          cell: ({ active }) => <span>{active ? "Yes" : "No"}</span>,
       },
       {
-         name: "Is SmartDoor Property ",
-         selector: "smartLockPlan",
+         name: "Is SmartDoor Plan",
+         selector: ((row) => row.smartLockPlan),
          center: true,
+         minWidth: "170px",
          cell: ({ smartLockPlan }) => <span>{smartLockPlan ? "Yes" : "No"}</span>,
       },
       {
          name: "Plan Name",
-         selector: "planName",
+         selector: ((row) => row.planName),
          center: true,
-         maxWidth: "150px",
+         minWidth: "200px",
+         cell: ({planName}) => <ToolTip position="top" style={{ width: '100%' }} name={planName || ''}>
+            <Text size="Small" color="secondryColor elipsis-text" text={planName.capitalizeWord()} />
+         </ToolTip>
       },
       {
          name: "Amount",
-         selector: "amount",
+         selector: ((row) => row.amount),
          center: true,
          maxWidth: "170px",
       },
       {
          name: "GST Value",
-         selector: "gstValue",
+         selector: ((row) => row.gstValue),
          center: true,
-         minWidth: "200px",
+         minWidth: "100px",
       },
 
       {
          name: "Total",
          center: true,
-         minWidth: "200px",
+         minWidth: "100px",
          cell: ({ amount, gstValue }) => <span>{amount + amount * (gstValue / 100)}</span>,
       },
 

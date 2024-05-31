@@ -54,6 +54,9 @@ const Nav = () => {
          setIsOpen(false);
          setIsPropertyActive(false);
          setisPropertyDDOpen(false);
+      } else {
+         setIsActive(false);
+         setIsOpen(false)
       }
    }, [pathname]);
 

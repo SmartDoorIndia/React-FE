@@ -14,7 +14,7 @@ const CONSTANTS_STATUS = {
     realtorStatusArr :  [ "SUBMITTED" , "ACCEPTED", "REJECTED" ],
     propertyPostType : [ "Renting", "Selling"],
     propertyStage : [ "Ready" , "Under Construction"],
-    propertySubType : [ "Apartment", "Independent house", "Builder Floor", "Plot", "PG/Co-Living"],
+    propertySubType : [ "Apartment", "Independent house", "Builder Floor", "Plot", "PG/Co-living"],
     monthList : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     brokerStatus: [ "Approved", "Rejected", "Hold", "Pending", "Expired", "Query" ],
     brokerPostedProperty: ["PUBLISHED", "UNDER REVIEW" , "PENDING" , "QUERY" , "UNINSTALLED/SOLD" , "REJECTED"]

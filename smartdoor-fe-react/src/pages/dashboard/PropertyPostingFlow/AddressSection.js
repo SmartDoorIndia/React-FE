@@ -214,7 +214,7 @@ const AddressSection = (props) => {
 		}
 		setAddressDetails(prevAddresDetails => ({ ...prevAddresDetails, address: mAddress }));
 		addressDetail.address = mAddress;
-		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot') {
+		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot' && basicDetailFields?.data?.guestHouseOrPgPropertyType !== 'Independent House / Bungalow') {
 			if (Number(addressDetails.floorNumber) > Number(addressDetails.totalFloors)) {
 				showErrorToast("In valid floor number...");
 				return null;
@@ -267,7 +267,7 @@ const AddressSection = (props) => {
 			address: mAddress
 		}));
 		addressDetail.address = mAddress;
-		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot') {
+		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot' && basicDetailFields?.data?.guestHouseOrPgPropertyType !== 'Independent House / Bungalow') {
 			if (addressDetails.floorNumber > addressDetails.totalFloors) {
 				showErrorToast("In valid floor number...");
 				return null;
@@ -431,7 +431,7 @@ const AddressSection = (props) => {
 						>
 						</TextField>
 					</Col>
-					{basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot' ?
+					{basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot' && basicDetailFields?.data?.guestHouseOrPgPropertyType !== 'Independent House / Bungalow' ?
 						<Col lg='4' >
 							<div className="d-flex">
 								<TextField
