@@ -1,37 +1,60 @@
 /** @format */
 // @ts-ignore
-import { React, useEffect, useMemo, memo } from "react";
+import React, { useEffect, memo } from "react";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import Pagination from "../../../shared/DataTable/Pagination";
 import { compose } from "redux";
-import { connect } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { Card } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
-import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
+import { handleStatusElement, formateDate, getLocalStorage } from "../../../common/helpers/Utils";
 import { ToolTip } from "../../../common/helpers/Utils";
 import { getBrokerListing, getBrokerDetails } from "../../../common/redux/actions";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import "./Broker.scss";
 import { DateRangePicker } from "rsuite";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
-import moment  from "moment";
+import moment from "moment";
 import { TableLoader } from "../../../common/helpers/Loader";
+import Text from "../../../shared/Text/Text";
+import * as Actions from '../../../common/redux/types';
+
 const getModalActionData = (row) => {
    return { userData: row };
 };
 const Broker = (props) => {
-   const { allPlanDataBroker, getBrokerListing } = props;
+   const { getBrokerListing, allPlanDataBroker } = props;
    const statusArr = CONSTANTS_STATUS.brokerStatus;
-   const [filterText, setFilterText] = useState("");
-   const [statusSelected, setStatusSelected] = useState("");
+   const data = useSelector(state => state.allPlanDataBroker.data)
+   const [filterText, setFilterText] = useState(data !== undefined ? allPlanDataBroker?.data?.searchString : "");
+   const [statusSelected, setStatusSelected] = useState(data !== undefined ? allPlanDataBroker?.data?.status : "");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-   const [startDate, setStartDate] = useState(null);
-   const [endDate, setEndDate] = useState(null);   
+   const [startDate, setStartDate] = useState(data !== undefined ? allPlanDataBroker?.data?.fromDate : null);
+   const [endDate, setEndDate] = useState(data !== undefined ? allPlanDataBroker?.data?.toDate : null);
+   const [currentPage, setCurrentPage] = useState(data !== undefined ? allPlanDataBroker?.data?.currentPage : 1);
+   const [rowsPerPage, setRowsPerPage] = useState(data !== undefined ? allPlanDataBroker?.data?.rowsPerPage : 8);
+   const recordSize = (allPlanDataBroker?.data?.records || 0);
+   const userData = getLocalStorage('authData');
+   const dispatch = useDispatch();
 
    useEffect(() => {
-      getBrokerListing();
+      console.log(data)
+      dispatch({type: Actions.BROKERS_PROPERTY_SUCCESS, data: []});
+      if (data === undefined) {
+         getBrokerListing(
+            {
+               userId: userData.userid,
+               currentLat: null,
+               currentLong: null,
+               pageNo: currentPage,
+               records: rowsPerPage,
+               adminLogin: true,
+               searchString: ''
+            });
+      }
+
    }, [getBrokerListing]);
 
    const showValue = (status_value, startDate_, endDate_) => {
@@ -39,36 +62,78 @@ const Broker = (props) => {
       let filteredItems = [];
       startDate_ = startDate_ || startDate;
       endDate_ = endDate_ || endDate;
-      filteredItems = allPlanDataBroker.data?.length
-         ? allPlanDataBroker.data.filter((item) => {
-              return (
-                 item?.id == filterText ||
-                 item?.mobile?.includes(filterText) ||
-                 item?.name?.toLowerCase().includes(filterText.toLowerCase())
-              );
-           })
+      filteredItems = allPlanDataBroker.data?.brokerList?.length
+         ? allPlanDataBroker?.data?.brokerList
+         // ?.filter((item) => {
+         //    return (
+         //       item?.id == filterText ||
+         //       item?.mobile?.includes(filterText) ||
+         //       item?.name?.toLowerCase().includes(filterText.toLowerCase())
+         //    );
+         // })
          : [];
-      if (status && filteredItems.length) {
-         filteredItems = filteredItems.filter((item) => {
-            return item?.status == status;
-         });
-      }
-      if (startDate_) {
-         filteredItems = filteredItems.filter((item) => {
-            let joinedDate =moment(item.joinedDate);
-            let mst = moment(startDate_).startOf('day')
-            let met = moment(endDate_).endOf('day')
+      // if (status && filteredItems.length) {
+      //    filteredItems = filteredItems.filter((item) => {
+      //       return item?.status == status;
+      //    });
+      // }
+      // if (startDate_) {
+      //    filteredItems = filteredItems.filter((item) => {
+      //       let joinedDate = moment(item.joinedDate);
+      //       let mst = moment(startDate_).startOf('day')
+      //       let met = moment(endDate_).endOf('day')
 
-            return joinedDate >= mst && joinedDate <= met;
-            return item?.status == status;
-         });
-      }
+      //       return joinedDate >= mst && joinedDate <= met;
+      //       return item?.status == status;
+      //    });
+      // }
       return filteredItems;
    };
-   
+
+   const handlePageChange = (newPage) => {
+      setCurrentPage(Number(newPage));
+      getBrokerListing(
+         {
+            userId: userData.userid,
+            currentLat: null,
+            currentLong: null,
+            pageNo: newPage,
+            records: rowsPerPage,
+            adminLogin: true,
+            status: statusSelected?.toUpperCase(),
+            searchString: filterText,
+            fromDate: startDate,
+            toDate: endDate
+         });
+   }
+
+   const handleRowsPerPageChange = (newRowsPerPage) => {
+      setRowsPerPage(newRowsPerPage)
+      getBrokerListing(
+         {
+            userId: userData.userid,
+            currentLat: null,
+            currentLong: null,
+            pageNo: currentPage,
+            records: newRowsPerPage,
+            adminLogin: true,
+            status: statusSelected?.toUpperCase(),
+            searchString: filterText,
+            fromDate: startDate,
+            toDate: endDate
+         });
+   }
+
    const ProgressComponent = <TableLoader />;
-   const PaginationComponent = (props) => (
-      <Pagination {...props} PaginationActionButton={PaginationActionButton} />
+   const PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
+      <Pagination {...props}
+         PaginationActionButton={PaginationActionButton}
+         currentPage={currentPage}
+         rowsPerPage={rowsPerPage}
+         rowCount={recordSize}
+         onChangePage={handlePageChange}
+         onChangeRowsPerPage={handleRowsPerPageChange}
+      />
    );
    const PaginationActionButton = () => (
       <div className="d-flex justify-content-center tableBottom"></div>
@@ -76,21 +141,43 @@ const Broker = (props) => {
 
    const handleDateRangeChange = (date) => {
       if (date && date[0] && date[1]) {
-         const startDate = date[0];
-         const endDate = date[1];
-         setStartDate(startDate);
-         setEndDate(endDate);
-         showValue(statusSelected, startDate, endDate);
+         const startDt = date[0];
+         const endDt = date[1];
+         setStartDate(startDt);
+         setEndDate(endDt);
+         // showValue(statusSelected, startDate, endDate);
          // setDatata(filteredItems);
+         getBrokerListing({
+            userId: userData.userid,
+            currentLat: null,
+            currentLong: null,
+            pageNo: currentPage,
+            records: rowsPerPage,
+            adminLogin: true,
+            status: statusSelected?.toUpperCase(),
+            searchString: filterText,
+            fromDate: startDt,
+            toDate: endDt
+         });
+      }
+      if (date.length === 0) {
+         getBrokerListing({
+            userId: userData.userid,
+            currentLat: null,
+            currentLong: null,
+            pageNo: currentPage,
+            records: rowsPerPage,
+            adminLogin: true,
+            status: statusSelected?.toUpperCase(),
+            searchString: filterText,
+            fromDate: '',
+            toDate: ''
+         });
+
       }
    };
-   const selectionRange = {
-      startDate: startDate,
-      endDate: endDate,
-      key: "selection",
-   };
 
-   const subHeaderComponentMemo = useMemo(() => {
+   const subHeaderComponentMemo = React.useMemo(() => {
       const handleClear = () => {
          if (filterText) {
             setResetPaginationToggle(!resetPaginationToggle);
@@ -100,51 +187,77 @@ const Broker = (props) => {
 
       return (
          <SearchInput
-            onFilter={(e) => setFilterText(e.target.value)}
+            onFilter={(e) => {setFilterText(e.target.value);
+               getBrokerListing({
+                  userId: userData.userid,
+                  currentLat: null,
+                  currentLong: null,
+                  pageNo: currentPage,
+                  records: rowsPerPage,
+                  adminLogin: true,
+                  status: statusSelected?.toUpperCase(),
+                  searchString: e.target.value,
+                  fromDate: startDate,
+                  toDate: endDate
+               });
+            }}
             onClear={handleClear}
             filterText={filterText}
             placeholder="Search"
-          
+
          />
       );
    }, [filterText, resetPaginationToggle]);
 
    const _filterStatus = (status_value) => {
       setStatusSelected(status_value);
-      showValue(status_value);
+      getBrokerListing(
+         {
+            userId: userData.userid,
+            currentLat: null,
+            currentLong: null,
+            pageNo: currentPage,
+            records: rowsPerPage,
+            adminLogin: true,
+            status: status_value?.toUpperCase(),
+            searchString: filterText,
+            fromDate: startDate,
+            toDate: endDate
+         });
+      // showValue(status_value);
    };
 
    const columns = [
       {
          name: "Reg On",
-         selector: ((row) => row.joinedDate),
-         center: true,
+         selector: ((row) => row.joinDate),
+         center: false,
          sortable: true,
-         minWidth: "400px",
-         cell: ({ joinedDate })=>(<span>{formateDate(joinedDate)}</span>),
+         maxWidth: "80px",
+         cell: ({ joinDate }) => (<span>{formateDate(joinDate)}</span>),
       },
-       
+
       {
          name: "Name",
          selector: ((row) => row.name),
-         center: false,
+         center: true,
          minWidth: "150px",
-         maxWidth:"150px",
+         maxWidth: "150px",
       },
       {
          name: "Location",
-         selector: (row) => row.latestLcation?.locationName,
+         selector: (row) => row.locationName,
          sortable: false,
-         center: false,
+         center: true,
          minWidth: "120px",
       },
       {
          name: "mobile",
-         selector: ((row) => row.mobile),
+         selector: ((row) => row.mobileforCustomer),
          sortable: true,
-         center: false,
+         center: true,
          minWidth: "145px",
-         maxWidth:"150px",
+         maxWidth: "150px",
       },
       {
          name: "Email",
@@ -152,6 +265,11 @@ const Broker = (props) => {
          sortable: false,
          center: true,
          minWidth: "245px",
+         cell: ({ email }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={email}>
+               <Text size="Small" color="secondryColor elipsis-text" text={email} />
+            </ToolTip>
+         )
       },
       {
          name: "Plan",
@@ -162,7 +280,7 @@ const Broker = (props) => {
       },
       {
          name: "Posted Properties",
-         selector: ((row) => row.postedProperties),
+         selector: ((row) => row.postingcount),
          sortable: false,
          center: true,
          maxWidth: "160px",
@@ -186,30 +304,28 @@ const Broker = (props) => {
          name: "Action",
          selector: ((row) => row.action),
          sortable: false,
-         center: true,
+         center: false,
          minWidth: "150px",
-         maxWidth:"150px",
+         maxWidth: "150px",
          cell: (row) => (
             <div className="action">
-         <ToolTip name="View Details">
-            <span>
-               {row.status === "Expired" ? (
-                  <span>Details</span>
-               ) : (
-                  <Link
-                     to={{
-                        pathname:
-                           row.status === "Approved" || row.status === "Hold"
-                              ? `/admin/BrokerDetails/${row.brokerId}`
-                              : `/admin/getBrokerDetailsForApprove/${row.brokerId}`,
-                     }}
-                  >
-                     Details
-                  </Link>
-               )}
-            </span>
-         </ToolTip>
-      </div>
+               <ToolTip name="View Details">
+                  <span>
+                     {row.status === "Expired" ? (
+                        <span>Details</span>
+                     ) : (
+                        <Link
+                           to={{
+                              pathname:
+                                 `/admin/BrokerDetails/${row.brokerId}`,
+                           }}
+                        >
+                           Details
+                        </Link>
+                     )}
+                  </span>
+               </ToolTip>
+            </div>
          ),
       },
    ];
@@ -226,7 +342,7 @@ const Broker = (props) => {
                         color: "darkgray",
                         marginTop: "10px",
                      }}
-                     // ranges={[selectionRange]}
+                     value={[startDate, endDate]}
                      onChange={handleDateRangeChange}
                   />
                </div>
@@ -244,10 +360,10 @@ const Broker = (props) => {
                            <option value="">Filter</option>
                            {statusArr.length
                               ? statusArr.map((_value, index) => (
-                                   <option key={index} value={_value}>
-                                      {_value}
-                                   </option>
-                                ))
+                                 <option key={index} value={_value}>
+                                    {_value}
+                                 </option>
+                              ))
                               : null}
                         </Form.Control>
                      </Form.Group>
@@ -258,7 +374,7 @@ const Broker = (props) => {
                </div>
             </div>
 
-            <div className="">
+            <div className="brokerTableWrapper">
                <DataTableComponent
                   data={showValue()}
                   columns={columns}
@@ -269,6 +385,10 @@ const Broker = (props) => {
                   paginationPerPage={8}
                   perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                   filterText={filterText}
+                  currentPage={currentPage}
+                  rowsPerPage={rowsPerPage}
+                  onChangePage={handlePageChange}
+                  onChangeRowsPerPage={handleRowsPerPageChange}
                   subHeaderComponent={subHeaderComponentMemo}
                   persistTableHead="true"
                   filterComponent={subHeaderComponentMemo}

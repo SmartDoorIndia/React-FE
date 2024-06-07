@@ -178,7 +178,7 @@ export function handleStatusElement(status) {
         className="tagSuccess defaultTag ml-2 "
       />
     );
-  } else if (['PENDING', 'Pending', 'ASSIGNED', 'UNDER REVIEW', 'Will decide later', 'Make an offer'].includes(status)) {
+  } else if (['PENDING', 'Pending', 'ASSIGNED', 'UNDER REVIEW', 'PENDING_APPROVAL', 'Will decide later', 'Make an offer'].includes(status)) {
     return (
       <Text
         size="xSmall"

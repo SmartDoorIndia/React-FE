@@ -2,7 +2,7 @@
 // @ts-ignore
 import { React, useMemo, useEffect, useState, useCallback, memo } from "react";
 import { compose } from "redux";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { Col, Row, Table, Card } from "react-bootstrap";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import Image from "../../../shared/Image/Image";
@@ -23,16 +23,20 @@ import "./Broker.scss";
 import {
    getBrokerDetails,
    getBrokerPostedProperty,
-   getPropertyDetails, getBrokerListing,
+   getPropertyDetails, 
    addHoldRequestComments,
    getAllProperties,
+   getBrokerDeclineStatusDetail,
+   getBrokerStatusDetail,
 } from "../../../common/redux/actions";
 import moment from "moment";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const BrokerDetails = (props) => {
    // MODAL DATA STATE
-   const { allPlanDataBroker, getBrokerPostedProperty } = props;
+   const { getBrokerPostedProperty, brokerProperty } = props;
+   const data = useSelector(state => state?.brokerProperty?.data)
    const [show, setShow] = useState(false);
    const handleShow = () => setShow(true);
    const [modalData, setModalData] = useState();
@@ -44,14 +48,19 @@ const BrokerDetails = (props) => {
    const [Broker_data, setBrokerData] = useState([]);
    const [loading, setLoading] = useState(true);
    const handleClose = () => setShow(false);
-   const [startDate, setStartDate] = useState(null);
-   const [endDate, setEndDate] = useState(null);
-   const [statusSelected, setStatusSelected] = useState("");
-   const [filterText, setFilterText] = useState("");
+   const [startDate, setStartDate] = useState(data !== undefined ? brokerProperty?.data?.fromDate : null);
+   const [endDate, setEndDate] = useState(data !== undefined ? brokerProperty?.data?.toDate : null);
+   const [statusSelected, setStatusSelected] = useState(data !== undefined ? brokerProperty?.data?.status : "");
+   const [filterText, setFilterText] = useState(data !== undefined ? brokerProperty?.data?.searchString : "");
+   const [currentPage, setCurrentPage] = useState(data !== undefined && data.length !== 0 ? brokerProperty?.data?.currentPage : 1);
+   const [rowsPerPage, setRowsPerPage] = useState(data !== undefined && data.length !== 0 ? brokerProperty?.data?.rowsPerPage : 8);
+   const recordSize = (brokerProperty?.data?.records || 0)
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [holdStatus, setHoldStatus] = useState(false);
    const [postedProperty, setPostedProperty] = useState([]);
    const userData = getLocalStorage("authData");
+   const history = useHistory();
+
    console.log(userData, "userdata")
 
    console.log(postedProperty, "ffjgfhjg")
@@ -60,13 +69,13 @@ const BrokerDetails = (props) => {
    };
 
    useEffect(() => {
-      console.log("Broker_data?.resourceData?.status", Broker_data?.resourceData?.status);
-      if (Broker_data?.resourceData?.status === "Hold") {
+      console.log("Broker_data?.resourceData?.status", Broker_data?.status);
+      if (Broker_data?.status === "ON_HOLD") {
          setHoldStatus(true);
-      } else if (Broker_data?.resourceData?.status === "Approved") {
+      } else if (Broker_data?.status === "APPROVED") {
          setHoldStatus(false);
       }
-   }, [Broker_data?.resourceData?.status])
+   }, [Broker_data?.status])
 
    const handleBlockConsumser = () => {
       if (blockData !== null) {
@@ -80,11 +89,11 @@ const BrokerDetails = (props) => {
       }
    };
    const _getBrokerDetails = useCallback(() => {
-      getBrokerDetails({ brokerId: brokerdetailId })
+      getBrokerDetails({ userId: brokerdetailId })
          .then((response) => {
             setLoading(false);
-            if (response) {
-               if (response) setBrokerData(response.data);
+            if (response.data.status) {
+               setBrokerData(response.data.resourceData);
             }
          })
          .catch((error) => {
@@ -92,12 +101,11 @@ const BrokerDetails = (props) => {
          });
    }, [getBrokerDetails, brokerdetailId]);
 
-   const _getPostedDetailProperty = useCallback(() => {
-      getBrokerPostedProperty({ brokerId: brokerdetailId })
+   const _getPostedDetailProperty = useCallback((data) => {
+      getBrokerPostedProperty(data)
          .then((response) => {
-
             setLoading(false);
-            if (response) {
+            if (response.data.status === 200) {
                if (response) setPostedProperty(response.data);
             }
          })
@@ -107,18 +115,53 @@ const BrokerDetails = (props) => {
    }, [getBrokerPostedProperty, brokerdetailId])
    useEffect(async () => {
       await _getBrokerDetails();
-      await _getPostedDetailProperty();
-      setTimeout(() => {
-         if (Broker_data?.resourceData?.status === "Hold") {
+      let brokerId = brokerdetailId
+      if(data === undefined || data.length === 0) {
+         await _getPostedDetailProperty({ brokerId: brokerId, pageNo: currentPage, records: rowsPerPage });
+      }
+      setTimeout(async () => {
+         if (Broker_data?.status === "ON_HOLD") {
             setHoldStatus(false);
-         } else if (Broker_data?.resourceData?.status === "Approved") {
+         } else if (Broker_data?.status === "APPROVED") {
             setHoldStatus(true);
          }
       }, 1000);
    }, [_getBrokerDetails, _getPostedDetailProperty]);
 
-   const PaginationComponent = (props) => (
-      <Pagination {...props} PaginationActionButton={PaginationActionButton} />
+   const handlePageChange = (newPage) => {
+      setCurrentPage(newPage);
+      _getPostedDetailProperty({
+         brokerId: brokerdetailId,
+         pageNo: newPage,
+         records: rowsPerPage,
+         status: statusSelected,
+         fromDate: startDate,
+         endDate: endDate,
+         searchString: filterText
+      })
+   }
+
+   const handleRowsPerPageChange = (newRowsPerPage) => {
+      setRowsPerPage(newRowsPerPage);
+      _getPostedDetailProperty({
+         brokerId: brokerdetailId,
+         pageNo: currentPage,
+         records: newRowsPerPage,
+         status: statusSelected,
+         fromDate: startDate,
+         endDate: endDate,
+         searchString: filterText
+      })
+   }
+
+   const PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
+      <Pagination {...props}
+         currentPage={currentPage}
+         rowsPerPage={rowsPerPage}
+         rowCount={recordSize}
+         handlePageChange={handlePageChange}
+         handleRowsPerPageChange={handleRowsPerPageChange}
+         PaginationActionButton={PaginationActionButton} />
    );
    const PaginationActionButton = () => (
       <div className="d-flex justify-content-center tableBottom"></div>
@@ -134,7 +177,17 @@ const BrokerDetails = (props) => {
 
       return (
          <SearchInput
-            onFilter={(e) => setFilterText(e.target.value)}
+            onFilter={(e) => {setFilterText(e.target.value);
+               _getPostedDetailProperty({
+                  brokerId: brokerdetailId,
+                  pageNo: currentPage,
+                  records: rowsPerPage,
+                  status: statusSelected,
+                  fromDate: startDate,
+                  endDate: endDate,
+                  searchString: e.target.value
+               })
+            }}
             onClear={handleClear}
             filterText={filterText}
             placeholder="Search"
@@ -144,7 +197,16 @@ const BrokerDetails = (props) => {
 
    const _filterStatus = (status_value) => {
       setStatusSelected(status_value);
-      showValue(status_value);
+      // showValue(status_value);
+      _getPostedDetailProperty({
+         brokerId: brokerdetailId,
+         pageNo: currentPage,
+         records: rowsPerPage,
+         status: status_value,
+         fromDate: startDate,
+         endDate: endDate,
+         searchString: filterText
+      })
    };
 
    const showValue = (status_value, startDate_, endDate_) => {
@@ -153,48 +215,62 @@ const BrokerDetails = (props) => {
       startDate_ = startDate_ || startDate;
       endDate_ = endDate_ || endDate;
 
-      filteredItems = allPlanDataBroker.data?.length
-         ? allPlanDataBroker.data.filter((item) => {
-            return (
-               item?.propertyId == filterText ||
-               item?.postedFor?.toLowerCase().includes(filterText.toLowerCase())
-            );
-         })
+      filteredItems = brokerProperty?.data?.brokerProperty?.length
+         ? brokerProperty?.data?.brokerProperty
+         // ?.filter((item) => {
+         //    return (
+         //       item?.propertyId == filterText ||
+         //       item?.postedFor?.toLowerCase().includes(filterText.toLowerCase())
+         //    );
+         // })
          : [];
-      if (status && filteredItems?.length) {
-         filteredItems = filteredItems.filter((item) => {
-            return item?.status == status;
-         });
-      }
-      if (startDate_) {
-         filteredItems = filteredItems.filter((item) => {
-            let postedOn = moment(item.postedOn);
-            let mst = moment(startDate_).startOf("day");
-            let met = moment(endDate_).endOf("day");
+      // if (status && filteredItems?.length) {
+      //    filteredItems = filteredItems.filter((item) => {
+      //       return item?.status == status;
+      //    });
+      // }
+      // if (startDate_) {
+      //    filteredItems = filteredItems.filter((item) => {
+      //       let postedOn = moment(item.postedOn);
+      //       let mst = moment(startDate_).startOf("day");
+      //       let met = moment(endDate_).endOf("day");
 
-            return postedOn >= mst && postedOn <= met;
-            return item?.status == status;
-         });
-      }
+      //       return postedOn >= mst && postedOn <= met;
+      //       return item?.status == status;
+      //    });
+      // }
       if (count != filteredItems.length) setCount(filteredItems.length);
       return filteredItems;
    };
    const handleDateRangeChange = (date) => {
       if (date && date[0] && date[1]) {
-         const startDate = date[0];
-         const endDate = date[1];
-         setStartDate(startDate);
-         setEndDate(endDate);
-         showValue(statusSelected, startDate, endDate);
+         const startDt = date[0];
+         const endDt = date[1];
+         setStartDate(startDt);
+         setEndDate(endDt);
+         // showValue(statusSelected, startDate, endDate);
+         _getPostedDetailProperty({
+            brokerId: brokerdetailId,
+            pageNo: currentPage,
+            records: rowsPerPage,
+            status: statusSelected,
+            fromDate: startDt,
+            endDate: endDt,
+            searchString: filterText
+         })
+      }
+      if(date.length === 0) {
+         _getPostedDetailProperty({
+            brokerId: brokerdetailId,
+            pageNo: currentPage,
+            records: rowsPerPage,
+            status: statusSelected,
+            fromDate: '',
+            endDate: '',
+            searchString: filterText
+         })
       }
    };
-   // const selectionRange = {
-   //    startDate: startDate,
-   //    endDate: endDate,
-   //    key: "selection",
-   // };
-
-
 
    const columns = [
       {
@@ -208,30 +284,30 @@ const BrokerDetails = (props) => {
          name: "Posted for",
          selector: "postedFor",
          sortable: true,
-         maxWidth: "120px",
-         center: false,
+         maxWidth: "150px",
+         center: true,
       },
       {
          name: "Location",
          selector: (row) => row.location?.localityName,
          sortable: false,
-         maxWidth: "100px",
-         minWidth: "100px",
-         center: false,
+         maxWidth: "150px",
+         minWidth: "150px",
+         center: true,
       },
       {
          name: "Plan",
          selector: "plan",
          sortable: true,
-         maxWidth: "100px",
+         maxWidth: "120px",
          center: false,
       },
       {
          name: "Config.",
          selector: "config",
          sortable: false,
-         maxWidth: "100px",
-         minWidth: "115px",
+         maxWidth: "120px",
+         minWidth: "120px",
          center: true,
       },
       {
@@ -242,42 +318,20 @@ const BrokerDetails = (props) => {
          center: true,
          cell: ({ status }) => handleStatusElement(status),
       },
-      // {
-      //    name: "Action",
-      //    sortable: false,
-      //    center: true,
-      //    minWidth: "120px",
-      //    maxWidth: "100px",
-      //    cell: ({row, propertyId, userId}) => (
-      //       <div className="action">
-      //          <ToolTip name="View Details">
-      //             <span>
-      //                <Link
-      //                   to={{
-      //                      pathname: "/admin/property/property-details",
-      //                      state: { propertyId: propertyId, userId: userId },
-      //                   }}
-      //                >
-      //                   Details
-      //                </Link>
-      //             </span>
-      //          </ToolTip>
-      //       </div>
-      //    ),
-      // },
       {
          name: "Action",
          sortable: false,
-         center: true,
-         maxWidth: "40px",
+         center: false,
+         maxWidth: "120px",
+         minWidth: "120px",
          cell: ({ row, propertyId, userId }) => (
             <div className="action">
-               <ToolTip position="left" name="View Details">
+               <ToolTip position="right" name="View Details">
                   <span>
                      <Link
                         to={{
                            pathname: "/admin/property/property-details",
-                           state: { propertyId: propertyId, userId: userId, menuName: 'Properties', isDeleted: false },
+                           state: { propertyId: propertyId, userId: brokerdetailId, menuName: '', isDeleted: false},
                         }}
                      >
                         Details
@@ -288,11 +342,36 @@ const BrokerDetails = (props) => {
          ),
       },
    ];
+
+   const HandleSubmit = () => {
+      addHoldRequestComments({
+         brokerId: Number(brokerdetailId),
+         brokerStatus: "APPROVED",
+         holdReason: null
+      });
+      setTimeout(() => {
+         // history.goBack();
+         // window.location.reload();
+      }, 1000);
+   };
+
+   const HandleRejected = () => {
+      addHoldRequestComments({
+         brokerId: Number(brokerdetailId),
+         brokerStatus: "REJECTED",
+         holdReason: null
+      });
+      setTimeout(() => {
+         // history.goBack();
+         // window.location.reload();
+      }, 1000);
+   };
+
    const closeModal = (data = { isReload: false }) => {
       // if(data?.isReload) getAllUsers({pageNumber:"", records:"",searchByCity:"", searchByzipCode:""});
       setModalData(brokerdetailId);
    };
-   const lengthOfResourceData = Broker_data?.resourceData ? Broker_data.resourceData.length : 0;
+   const lengthOfResourceData = Broker_data ? Broker_data?.length : 0;
    return (
       <>
          <Hold
@@ -313,24 +392,24 @@ const BrokerDetails = (props) => {
                   <div className="authorContact">
                      <div className="d-flex">
                         <div className="author-detail">
-                           <Image name="author" className="object-cover" src={userImage} />
+                           <Image name="author" className="object-cover" src={Broker_data?.profileImageURL || userImage} />
                         </div>
                         <div className="ml-3 mt-2">
                            <div className="broker-name" size="large" fontWeight="mediumbold">
                               <p>
-                                 {Broker_data?.resourceData?.name}
+                                 {Broker_data?.name}
                                  {/* <span>(4 Yrs)</span> */}
                               </p>
                            </div>
                            <div className="d-flex justify-content-between align-items-center">
                               <div className="d-flex align-items-start ">
                                  <div>
-                                    <StarRating rating={Broker_data?.resourceData?.rating} />
+                                    <StarRating rating={Broker_data?.rating} />
                                     {/* <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="(112 customers)" className="ml-1" /> */}
                                  </div>
                               </div>
                               <div className="customer_ratedby">
-                                 ( {Broker_data?.resourceData?.ratedBy} customers)
+                                 ( {Broker_data?.ratedBy} customers)
                               </div>
 
                               {/* <Text
@@ -343,111 +422,117 @@ const BrokerDetails = (props) => {
                            </div>
 
                            <p size="xSmall" fontWeight="smbold">
-                              {formateDate(Broker_data?.resourceData?.joinedDate) ?? ""}
+                              {formateDate(Broker_data?.joinedDate) ?? ""}
                            </p>
                         </div>
                      </div>
                      <div className="sell-rent-status">
                         <div className="sell-rent-box d-flex">
-                           <Table className="table_sell-rent">
-                              <tr>
-                                 <th>
-                                    <p>
-                                       Sell
-                                       <span>
-                                          {" "}
-                                          Last {Broker_data?.resourceData?.sellLastDays} days
-                                       </span>
-                                    </p>
-                                 </th>
-                                 <th>
-                                    <p>
-                                       rent
-                                       <span>
-                                          {" "}
-                                          Last {Broker_data?.resourceData?.rentLastDays} days
-                                       </span>
-                                    </p>
-                                 </th>
-                              </tr>
-                              <tr>
-                                 <td>
-                                    <div className="d-flex">
-                                       <div>
-                                          <p>Active Cust.</p>
-                                          <span>
-                                             {Broker_data?.resourceData?.sellActiveCustomers}
-                                          </span>
-                                       </div>
-                                       <div>
-                                          <p>Visits</p>
-                                          <span>{Broker_data?.resourceData?.sellVisits}</span>
-                                       </div>
-                                    </div>
-                                 </td>
-                                 <td>
-                                    <div className="d-flex">
-                                       <div>
-                                          <p>Active Cust.</p>
-                                          <span>
-                                             {Broker_data?.resourceData?.rentActiveCustomers}
-                                          </span>
-                                       </div>
-                                       <div>
-                                          <p>Visits</p>
-                                          <span>{Broker_data?.resourceData?.rentVisits}</span>
-                                       </div>
-                                    </div>
-                                 </td>
-                              </tr>
-                           </Table>
-                           <Table className="chat_date">
-                              <tr>
-                                 <th>
-                                    <p>
-                                       CHAT
-                                       <span>
-                                          {" "}
-                                          Last {Broker_data?.resourceData?.chatLastDays} days{" "}
-                                       </span>
-                                    </p>
-                                 </th>
-                              </tr>
-                              <tr>
-                                 <td>
-                                    <div className="d-flex">
-                                       <div>
-                                          <p>Active Cust.</p>
-                                          <span>
-                                             {Broker_data?.resourceData?.chatCustomerCount}
-                                          </span>
-                                       </div>
-                                    </div>
-                                 </td>
-                              </tr>
-                           </Table>
+                           {Broker_data?.status === 'APPROVED' || Broker_data?.status === 'ON_HOLD' ?
+                              <>
+                                 <Table className="table_sell-rent">
+                                    <tr>
+                                       <th>
+                                          <p>
+                                             Sell
+                                             <span>
+                                                {" "}
+                                                Last {Broker_data?.sellLastDays} days
+                                             </span>
+                                          </p>
+                                       </th>
+                                       <th>
+                                          <p>
+                                             rent
+                                             <span>
+                                                {" "}
+                                                Last {Broker_data?.rentLastDays} days
+                                             </span>
+                                          </p>
+                                       </th>
+                                    </tr>
+                                    <tr>
+                                       <td>
+                                          <div className="d-flex">
+                                             <div>
+                                                <p>Active Cust.</p>
+                                                <span>
+                                                   {Broker_data?.activeCustomersSale}
+                                                </span>
+                                             </div>
+                                             <div>
+                                                <p>Visits</p>
+                                                <span>{Broker_data?.saleVisits}</span>
+                                             </div>
+                                          </div>
+                                       </td>
+                                       <td>
+                                          <div className="d-flex">
+                                             <div>
+                                                <p>Active Cust.</p>
+                                                <span>
+                                                   {Broker_data?.activeCustomersRent}
+                                                </span>
+                                             </div>
+                                             <div>
+                                                <p>Visits</p>
+                                                <span>{Broker_data?.rentVisits}</span>
+                                             </div>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </Table>
+                                 <Table className="chat_date">
+                                    <tr>
+                                       <th>
+                                          <p>
+                                             CHAT
+                                             <span>
+                                                {" "}
+                                                Last {Broker_data?.chatLastDays} days{" "}
+                                             </span>
+                                          </p>
+                                       </th>
+                                    </tr>
+                                    <tr>
+                                       <td>
+                                          <div className="d-flex">
+                                             <div>
+                                                <p>Active Cust.</p>
+                                                <span>
+                                                   {Broker_data?.chatCustomerCount}
+                                                </span>
+                                             </div>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </Table>
+                              </>
+                              : null}
                            <div className="brokerdetail-hold">
-                              <Buttons
-                                 className="hold-btn"
-                                 name={!holdStatus ? "Hold" : "UnHold"}
-                                 onClick={() => {
-                                    if (!holdStatus) {
+                              {Broker_data?.status === 'APPROVED' || Broker_data?.status === 'ON_HOLD' ?
+                                 <Buttons
+                                    className="hold-btn"
+                                    name={!holdStatus ? "Hold" : "UnHold"}
+                                    onClick={() => {
+                                       if (!holdStatus) {
 
-                                       handleShow();
-                                       setModalData(brokerdetailId);
+                                          handleShow();
+                                          setModalData(brokerdetailId);
 
-                                    } else {
-
-                                       addHoldRequestComments({
-                                          brokerId: brokerdetailId,
-                                          status: "Approved",
-                                          // comments: comment
-                                       });
-                                       setHoldStatus(false)
-                                    }
-                                    // handleShow();
-                                 }}
-                              />
+                                       } else {
+                                          addHoldRequestComments({
+                                             brokerId: Number(brokerdetailId),
+                                             brokerStatus: "UN_HOLD",
+                                             holdReason: null
+                                             // comments: comment
+                                          });
+                                          setHoldStatus(false)
+                                       }
+                                       // handleShow();
+                                    }}
+                                 />
+                                 : null}
                            </div>
                         </div>
                      </div>
@@ -466,78 +551,66 @@ const BrokerDetails = (props) => {
                            <div>
                               <p className="detail-heading">Locations Assigned</p>
                               <div className="details-heading location-assigned">
-                                 {Broker_data?.resourceData?.brokerlocation &&
-                                    Broker_data?.resourceData?.brokerlocation.map(
+                                 {Broker_data?.locationsAssigned &&
+                                    Broker_data?.locationsAssigned.map(
                                        (data, index) =>
-                                          data?.city !== null && (
-                                             <span key={index} className="details-value">
-                                                {data?.city}
-                                             </span>
-                                          )
-                                    )}
-                              </div>
-                           </div>
-                        </Col>
-                        <Col className="">
-                           <div>
-                              <p className="detail-heading">Specialized In</p>
-                              <div className="details-heading">
-                                 {Broker_data?.resourceData?.specializedIn &&
-                                    Broker_data?.resourceData?.specializedIn.map(
-                                       (data, index) =>
-                                          index ===
-                                          Broker_data.resourceData.specializedIn.length - 1 && (
-                                             <span key={index} className="details-value">
-                                                {data?.specializedIn}
-                                             </span>
-                                          )
-                                    )}
-                              </div>
-                           </div>
-                        </Col>
-                        <Col className="">
-                           <div>
-                              <p className="detail-heading">Services Offered</p>
-                              <div className="details-heading d-flex">
-                                 {Broker_data && Broker_data.resourceData && (
-                                    <>
-                                       {Broker_data.resourceData?.rent && (
-                                          <span className="details-value">Rent</span>
-                                       )}
-                                       {(Broker_data?.resourceData?.sell || Broker_data?.resourceData?.buy) && (
-                                          <span className="details-value">Buy / Sell</span>
-                                       )}
-
-                                    </>
-                                 )}
-                              </div>
-                           </div>
-                        </Col>
-                        <Col className="">
-                           <div>
-                              <p className="detail-heading">Language Preferences</p>
-                              <div className="details-heading">
-                                 {Broker_data?.resourceData?.languagePreference &&
-                                    Broker_data?.resourceData?.languagePreference.map(
-                                       (data, index) => (
-                                          <span key={index} className="language-data details-value">
-                                             {data.languagePreference}
+                                       (
+                                          <span key={index} className="details-value">
+                                             {data}
                                           </span>
                                        )
                                     )}
                               </div>
                            </div>
                         </Col>
+                        <Col className="detail-col">
+                           <div>
+                              <p className="detail-heading">Specialized In</p>
+                              <div className="details-heading">
+                                 {Broker_data?.specializedIn && (
+                                    <span className="details-value">
+                                       {Broker_data?.specializedIn}
+                                    </span>
+                                 )}
+                              </div>
+                           </div>
+                        </Col>
+                        <Col className="detail-col">
+                           <div>
+                              <p className="detail-heading">Services Offered</p>
+                              <div className="details-heading d-flex">
+                                 {Broker_data?.servicesOffered?.map((element, index) => (
+                                    <span key={index} className="details-value">
+                                       {element}
+                                    </span>
+                                 ))
+                                 }
+                              </div>
+                           </div>
+                        </Col>
+                        <Col lg='2' className="detail-col">
+                           <p className="detail-heading">Language Preferences</p>
+                           <div className="details-heading">
+                              {Broker_data?.languagePreferenceList &&
+                                 Broker_data?.languagePreferenceList.map(
+                                    (data, index) => (
+                                       <span key={index} className="language-data details-value">
+                                          {data}
+                                       </span>
+                                    )
+                                 )}
+                           </div>
+                        </Col>
 
-                        <Col className="">
+                        <Col className="detail-col">
                            <div>
                               <p className="detail-heading">Rera Number</p>
                               <div className="details-heading">
-                                 {Broker_data && Broker_data.resourceData && (
+                                 {Broker_data && (
                                     <>
-                                       {Broker_data?.resourceData?.reraNumber && (
+                                       {Broker_data?.reraNumber && (
                                           <p className="details-value">
-                                             {Broker_data?.resourceData?.reraNumber}
+                                             {Broker_data?.reraNumber}
                                           </p>
                                        )}
                                     </>
@@ -545,30 +618,14 @@ const BrokerDetails = (props) => {
                               </div>
                            </div>
                         </Col>
-                        <Col className="">
+                        <Col className="detail-col">
                            <div>
                               <p className="detail-heading">Deals In</p>
                               <div className="details-heading deals-in">
-                                 {Broker_data && Broker_data.resourceData && (
-                                    <>
-                                       {Broker_data.resourceData?.dealsInNewProject && (
-                                          <span className="details-value">New Projects</span>
-                                       )}
-                                       {Broker_data.resourceData?.dealsInResaleProperties && (
-                                          <span className="details-value">Resale Properties</span>
-                                       )}
-                                    </>
-                                    // <span className="details-value">
-                                    //    {Broker_data?.resourceData?.dealsInNewProject == true
-                                    //       ? "New Projects"
-                                    //       : ""}
-                                    // </span>
-                                    // <span className="details-value">
-                                    //    {Broker_data?.resourceData?.dealsInResaleProperties == true
-                                    //       ? "Resale Properties"
-                                    //       : ""}
-                                    // </span>
-                                 )}
+                                 {Broker_data?.dealsInList && (
+                                    Broker_data?.dealsInList?.map(element => (
+                                       <span className="details-value">{element}</span>
+                                    )))}
                               </div>
                            </div>
                         </Col>
@@ -583,19 +640,19 @@ const BrokerDetails = (props) => {
                         <Col className="" lg='2'>
                            <div>
                               <p className="detail-heading">Phone Number</p>
-                              <p className="details">{Broker_data?.resourceData?.phoneNumber}</p>
+                              <p className="details">{Broker_data?.mobileForCustomers}</p>
                            </div>
                         </Col>
                         <Col className="" lg='2'>
                            <div>
                               <p className="detail-heading">Date of Birth</p>
-                              <p className="details">{Broker_data?.resourceData?.dob}</p>
+                              <p className="details">{Broker_data?.dob}</p>
                            </div>
                         </Col>
                         <Col className="" lg='3'>
                            <div>
                               <p className="detail-heading">Email</p>
-                              <p className="details">{Broker_data?.resourceData?.email}</p>
+                              <p className="details">{Broker_data?.email}</p>
                            </div>
                         </Col>
                         <Col className="" lg='5'>
@@ -603,11 +660,11 @@ const BrokerDetails = (props) => {
                               <p className="detail-heading">Company Details </p>
 
                               <p className="details">
-                                 {Broker_data?.resourceData?.companyName
-                                    ? Broker_data?.resourceData?.companyName + ","
+                                 {Broker_data?.companyName
+                                    ? Broker_data?.companyName + ","
                                     : ""}
-                                 {Broker_data?.resourceData?.companyAddress
-                                    ? Broker_data?.resourceData?.companyAddress
+                                 {Broker_data?.companyAddress
+                                    ? Broker_data?.companyAddress
                                     : ""}
                               </p>
                            </div>
@@ -616,97 +673,125 @@ const BrokerDetails = (props) => {
                   </div>
                </Col>
 
-               <Col lg={12}>
-                  <Buttons
-                     color={'#BCBCBC'}
-                     name='Properties'
-                     style={{ color: '#252525', backgroundColor: 'unset', borderBottomColor: '#BE1452', borderBottomWidth: 'thick', fontWeight: 'bolder' }}
-                  ></Buttons>
-               </Col>
-
-               <Col lg={12}>
-                  <div className="tableBox mb-5" style={{ marginTop: '5px' }}>
-                     <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
-                        <div className="text-nowrap mb-2">
-                           <Text
-                              size="regular"
-                              fontWeight="mediumbold"
-                              color="secondryColor"
-                              text=""
-                           />
-                           <p className="bold"> Properties Posted - {count}</p>
-                        </div>
-                        <div className="locationSelect d-flex align-items-xl-center align-items-left">
-                           {subHeaderComponentMemo}
-                           <DateRangePicker
-                              style={{
-                                 width: "249px",
-                                 // height: "10px",
-                                 // color: "darkgray",
-                                 padding: "0px",
-                                 // marginLeft: "15px",
-                              }}
-                              onChange={handleDateRangeChange}
-                           />
-                           {statusArr.length ? (
-                              <Form.Group controlId="exampleForm.SelectCustom">
-                                 <Form.Control
-                                    as="select"
-                                    value={statusSelected}
-                                    onChange={(e) => {
-                                       _filterStatus(e.target.value);
-                                    }}
-                                 >
-                                    <option value="">Filter</option>
-                                    {statusArr.length
-                                       ? statusArr.map((_value, index) => (
-                                          <option key={index} value={_value}>
-                                             {_value}
-                                          </option>
-                                       ))
-                                       : null}
-                                 </Form.Control>
-                              </Form.Group>
-                           ) : (
-                              ""
-                           )}
-                        </div>
+               {Broker_data.status === 'PENDING_APPROVAL' ?
+                  <div className=" mt-4  d-flex ">
+                     <div className="mr-2">
+                        <Buttons
+                           name="Decline"
+                           varient="lightBtn"
+                           size="Small"
+                           color="secondryColor"
+                           style={{ height: "40px !important" }}
+                           onClick={HandleRejected}
+                        >
+                           Decline
+                        </Buttons>
                      </div>
-
-                     <div>
-                        <DataTable
-                           data={showValue()}
-                           columns={columns}
-                           progressPending={allPlanDataBroker.isLoading}
-                           paginationComponent={PaginationComponent}
-                           paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                           paginationPerPage={8}
-                           perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                           filterText={filterText}
-                           subHeaderComponent={subHeaderComponentMemo}
-                           persistTableHead="true"
-                           filterComponent={subHeaderComponentMemo}
-                        ></DataTable>
+                     <div className="mr-2">
+                        <Buttons class="btn Small white  primary" name="Approve" onClick={HandleSubmit}>
+                           Approve
+                        </Buttons>
                      </div>
                   </div>
-               </Col>
+                  : null}
+
+               {Broker_data.status === 'APPROVED' || Broker_data.status === 'ON_HOLD' ?
+                  <>
+                     <Col lg={12}>
+                        <Buttons
+                           color={'#BCBCBC'}
+                           name='Properties'
+                           style={{ color: '#252525', backgroundColor: 'unset', borderBottomColor: '#BE1452', borderBottomWidth: 'thick', fontWeight: 'bolder' }}
+                        ></Buttons>
+                     </Col>
+                     <Col lg={12}>
+                        <div className="tableBox mb-5" style={{ marginTop: '5px' }}>
+                           <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
+                              <div className="text-nowrap mb-2">
+                                 <Text
+                                    size="regular"
+                                    fontWeight="mediumbold"
+                                    color="secondryColor"
+                                    text=""
+                                 />
+                                 <p className="bold"> Properties Posted - {count}</p>
+                              </div>
+                              <div className="locationSelect d-flex align-items-xl-center align-items-left">
+                                 {subHeaderComponentMemo}
+                                 <DateRangePicker
+                                    style={{
+                                       width: "249px",
+                                       // height: "10px",
+                                       // color: "darkgray",
+                                       padding: "0px",
+                                       // marginLeft: "15px",
+                                    }}
+                                    onChange={handleDateRangeChange}
+                                    value={[startDate, endDate]}
+                                 />
+                                 {statusArr.length ? (
+                                    <Form.Group controlId="exampleForm.SelectCustom">
+                                       <Form.Control
+                                          as="select"
+                                          value={statusSelected}
+                                          onChange={(e) => {
+                                             _filterStatus(e.target.value);
+                                          }}
+                                       >
+                                          <option value="">Filter</option>
+                                          {statusArr.length
+                                             ? statusArr.map((_value, index) => (
+                                                <option key={index} value={_value}>
+                                                   {_value}
+                                                </option>
+                                             ))
+                                             : null}
+                                       </Form.Control>
+                                    </Form.Group>
+                                 ) : (
+                                    ""
+                                 )}
+                              </div>
+                           </div>
+
+                           <div className="brokerTableWrapper">
+                              <DataTable
+                                 data={showValue()}
+                                 columns={columns}
+                                 progressPending={brokerProperty.isLoading}
+                                 paginationComponent={PaginationComponent}
+                                 paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                                 paginationPerPage={8}
+                                 perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                                 filterText={filterText}
+                                 subHeaderComponent={subHeaderComponentMemo}
+                                 handlePageChange={handlePageChange}
+                                 handleRowsPerPageChange={handleRowsPerPageChange}
+                                 currentPage={currentPage}
+                                 rowsPerPage={rowsPerPage}
+                                 persistTableHead="true"
+                                 filterComponent={subHeaderComponentMemo}
+                              ></DataTable>
+                           </div>
+                        </div>
+                     </Col>
+                  </>
+                  : null}
             </Row>
          </div>
       </>
    );
 };
 
-const mapStateToProps = ({ allPlanDataBroker }) => ({
-   allPlanDataBroker,
+const mapStateToProps = ({ brokerProperty }) => ({
+   brokerProperty,
    getBrokerPostedProperty,
    getPropertyDetails,
-   getBrokerListing,
    getAllProperties,
 });
 const actions = {
    getBrokerPostedProperty,
    getPropertyDetails,
-   getBrokerListing,
    getAllProperties,
 };
 const withConnect = connect(mapStateToProps, actions);

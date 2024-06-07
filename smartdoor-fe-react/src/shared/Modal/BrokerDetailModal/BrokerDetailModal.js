@@ -25,12 +25,12 @@ const Hold = (props) => {
             }
         }})();
       }, [brokerdetailId]);
-      const commentPosted = (comment) => {
+      const commentPosted = async (comment) => {
       
-          addHoldRequestComments({
-            brokerId: brokerdetailId,
-            status: !props.holdStatus ? "Hold" : "Approved",
-            comments: comment
+          await addHoldRequestComments({
+            brokerId: Number(brokerdetailId),
+            brokerStatus: !props.holdStatus ? "ON_HOLD" : "UN_HOLD",
+            holdReason: comment
          });
          setTimeout(() => {
           props.handleClose();

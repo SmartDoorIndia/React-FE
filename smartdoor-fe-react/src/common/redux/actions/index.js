@@ -8,6 +8,7 @@ import * as Actions from '../types';
 import { clearLocalStorage, setLocalStorage } from '../../../common/helpers/Utils';
 import { showSuccessToast, showErrorToast } from '../../../common/helpers/Utils';
 import { provideAuth } from '../../../common/helpers/Auth';
+import { toDate } from 'date-fns';
 
 export function showToastMessage(response) {
   if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);
@@ -1966,9 +1967,9 @@ export const getBrokerListing  = (data) => async (dispatch) => {
   const response = await mainApiService('getBrokerListing', data);
   if (response) {
     if (response.data && response.status === 200) {
-      if (response.data.resourceData) {
-        dispatch({ type: Actions.BROKERS_MODULE_SUCCESS, data: response.data.resourceData });
-      }
+      dispatch({ type: Actions.BROKERS_MODULE_SUCCESS, data: {brokerList: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.records, searchString: data.searchString, status: data.status, fromDate: data.fromDate, toDate: data.toDate} });
+      // if (response.data.resourceData) {
+      // }
     } else {
       dispatch({ type: Actions.BROKERS_MODULE_ERROR, data: [] });
     }
@@ -1976,12 +1977,13 @@ export const getBrokerListing  = (data) => async (dispatch) => {
 };
 
 export const getBrokerPostedProperty = (data) => async (dispatch) => {
+  dispatch({type: Actions.BROKERS_PROPERTY_LOADING, data: []});
   const response = await mainApiService('getBrokerPostedProperty', data);
-  if (response) {
+  if (response.status === 200) {
+    dispatch({ type: Actions.BROKERS_PROPERTY_SUCCESS, data: {brokerProperty: response.data.resourceData === null ? [] : response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.records, searchString: data.searchString, fromDate: data.fromDate, toDate: data.endDate, status: data.status} });
     if (response.data && response.status === 200) {
-      if (response.data.resourceData) {
-        dispatch({ type: Actions.BROKERS_MODULE_SUCCESS, data: response.data.resourceData });
-      }
+      // if (response.data.resourceData) {
+      // }
     }
   }
 };
@@ -2021,7 +2023,7 @@ export const getBrokerApproveStatus = async (data) => {
 };
 
 export const addHoldRequestComments = async (data) => {
-  const response = await mainApiService('addHoldRequestComments', data);
+  const response = await mainApiService('changeBrokerStatus', data);
   if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);
   else if (response.data && response.data.error) showErrorToast(response.data.error);
   else showErrorToast('Unexpected error. Please try again later');

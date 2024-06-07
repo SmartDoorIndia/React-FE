@@ -94,6 +94,7 @@ import { specDetailFields } from './views/specDetails.reducer';
 import { pricingDetailFields } from './views/pricingDetails.reducer';
 import { uploadImages } from './views/uploadImages.reducer';
 import { termsConditions } from './views/termsConditions.reducer';
+import { brokerProperty } from './views/BrokerProperty.reducer';
 
 import { USER_LOGOUT } from '../types';
 
@@ -174,7 +175,8 @@ const appReducer = combineReducers({
   pricingDetailFields,
   uploadImages,
   termsConditions,
-  allPlanDataBroker
+  allPlanDataBroker,
+  brokerProperty
 });
 
 const rootReducer = (state, action) => {

@@ -2708,9 +2708,11 @@ export const ApiJson = {
 
   //Broker API details
   getBrokerListing: {
-    url: "/consumer/broker/brokerlisting",
-    method: "GET",
-    data: {},
+    url: "consumer/broker/getBrokerList",
+    method: "POST",
+    data: {
+      userId: null
+    },
     headers: {
        Accept: "*/*",
        "content-Type": "application/json",
@@ -2720,7 +2722,7 @@ export const ApiJson = {
  },
 
  getBrokerDetails: {
-    url: "/consumer/broker/getBrokerDetails/:brokerId",
+    url: "/consumer/broker/getBrokerDetailsById/:userId",
     method: "GET",
     headers: {
        Accept: "*/*",
@@ -2742,8 +2744,17 @@ export const ApiJson = {
  },
 
  getBrokerPostedProperty:{
-    url:"/consumer/broker/postedProperty/:brokerId",
-    method:"GET",
+    url:"consumer/broker/getPropertyListBroker",
+    method:"POST",
+    data: {
+      brokerId: null,
+      pageNo: null,
+      records: null,
+      searchString: "",
+      fromDate: null,
+      toDate: null,
+      status: ""
+    },
     headers:{
        Accept :"*/*",
        "Content-Type": "application/json",
@@ -2801,6 +2812,23 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: false,
  },
+ 
+ changeBrokerStatus: {
+    url: "consumer/broker/changeBrokerStatus",
+    method: "POST",
+    data: {
+       brokerId: null,
+       brokerStatus: '',
+       holdReason: ''
+    },
+    headers: {
+       Accept: "*/*",
+       "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+ },
+
 
 };
 console.log(userData)

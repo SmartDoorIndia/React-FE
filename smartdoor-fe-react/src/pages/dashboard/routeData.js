@@ -53,6 +53,8 @@ const Uploads = React.lazy(() => import('./PropertyPostingFlow/Uploads'))
 const TermsConditions = React.lazy(() => import('./PropertyPostingFlow/TermsConditions'))
 const Corporate = React.lazy(() => import('./CorporateModule/CorporateHome'))
 const AddnewCorporate = React.lazy(() => import('./CorporateModule/AddNew/AddNewCorporate'))
+const CorporateDetails = React.lazy(() => import('./CorporateModule/CorporateDetails/corporateDetails'))
+const CorporateProperty = React.lazy(() => import('./CorporateModule/CorporateProperties/corporateProperty'))
 const Brokers = React.lazy(() => import('./Broker/Broker'));
 const BrokerApprovedDetail = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
 const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails') );
@@ -1143,6 +1145,24 @@ const routeData = [
     excat: false,
     // module:'Corporate',
     component: AddnewCorporate
+  },
+
+  {
+    path: '/admin/corporate/corporateProperties',
+    name: 'Add New corporate',
+    bradcrumb: ['Corporate', 'corporate properties'],
+    excat: false,
+    // module:'Corporate',
+    component: CorporateProperty
+  },
+  
+  {
+    path: '/admin/corporate/corporateDetails',
+    name: 'Corporate Companies',
+    bradcrumb: ['Corporate', 'Corporate Details'],
+    excat: false,
+    // module:'Corporate',
+    component: CorporateDetails
   },
   
   {

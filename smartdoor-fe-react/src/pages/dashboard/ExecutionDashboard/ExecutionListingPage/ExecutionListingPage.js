@@ -89,7 +89,7 @@ const ExecutionListing = (props) => {
     getAllCity();
     if(props?.tabName === "Installation/Un-installation Requests" ){  
       if(installationReqData?.data?.length === 0 || installationReqData?.data?.length === 4) {
-        getInstallationRequest({city: "", location: "", records:"", pageNumber:""});
+        getInstallationRequest({city: "", location: "", pageSize:"100", pageNo:"1"});
       }     
     }
     if(props?.tabName === "Published Property" ){        
@@ -192,7 +192,7 @@ const ExecutionListing = (props) => {
         <ToolTip position="top" style={{ width: "100%" }} name={propertySubType || ""}>
            <span className="cursor-pointer elipsis-text">
               {" "}
-              {propertySubType.substring(
+              {propertySubType?.substring(
                  0,
                  propertySubType.indexOf(",") !== -1 ? propertySubType.indexOf(",") : propertySubType.length
               )}

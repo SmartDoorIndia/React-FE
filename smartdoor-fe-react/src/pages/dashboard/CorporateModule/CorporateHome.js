@@ -11,7 +11,9 @@ import contentIcon from "../../../assets/images/content-ico.svg";
 import './corporateHome.scss';
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import { Button } from "react-bootstrap";
-import addIcon from '../../../assets/svg/add.svg';
+import addIcon from '../../../assets/svg/PlusCircle.svg';
+import logoIcon from '../../../assets/svg/logoIcon.svg';
+import DataTableComponent from "../../../shared/DataTable/DataTable";
 
 const CorporateHome = () => {
    const history = useHistory();
@@ -25,7 +27,7 @@ const CorporateHome = () => {
          maxWidth: "150px",
          cell: ({ logo }) => (
             <ToolTip position="top" style={{ width: '100%' }} name={logo}>
-               <Text size="Small" color="secondryColor elipsis-text" text={logo} />
+
             </ToolTip>
          ),
          id: 1
@@ -150,14 +152,49 @@ const CorporateHome = () => {
          <div className="tableBox">
             <div className="tableHeading">
                <div className="locationSelect align-items-end">
+                  <Button onClick={() => {history.push('/admin/corporate/corporateDetails');}} >Details</Button>
                   {subHeaderComponentMemo}
-                  <Button className="d-flex" style={{color:'#BE1452', backgroundColor:'#F8F3F5', borderColor:'#DED6D9'}} >
-                  <Image src={addIcon} style={{height:'20px', width:'20px'}} /> Add New Company
-                     </Button>
+                  <Button className="d-flex py-1" style={{ color: '#BE1452', backgroundColor: '#F8F3F5', borderColor: '#DED6D9' }}
+                     onClick={() => {history.push('/admin/corporate/addNewCorporate');}} >
+                     <div style={{
+                        width: '20px',
+                        height: '20px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginTop: '5%',
+                        marginBottom: '-5%',
+                     }}>
+                        <Image src={addIcon} style={{ width: '20px' }} />
+                     </div>
+                     <Text text={'Add New Company'} fontWeight='bold' style={{ fontSize: '12px', color: '#BE1452' }} />
+                  </Button>
                </div>
-               <div className="corporateTableWrapper">
-
-               </div>
+            </div>
+            <div className="corporateTableWrapper">
+               <DataTableComponent
+                  data={[]}
+                  columns={corporateColumns}
+                  // progressPending={allPropertyData.isLoading}
+                  // progressComponent={ProgressComponent}
+                  // paginationComponent={PaginationComponent}
+                  paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  // paginationPerPage={recordsPerPage}
+                  // currentPage={currentPage}
+                  // onChangePage={handlePageChange}
+                  // onChangeRowsPerPage={handleRowsPerPageChange}
+                  perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  filterText={filterText}
+                  paginationServer={true}
+                  subHeaderComponent={subHeaderComponentMemo}
+                  persistTableHead
+                  filterComponent={subHeaderComponentMemo}
+               // onRowClicked={onRowClicked}
+               // onSort={handleSortedData}
+               // defaultSort={defaultSort}
+               // defaultSortId={defaultSortId}
+               // defaultSortFieldId={defaultSortFieldId}
+               />
             </div>
          </div>
       </>

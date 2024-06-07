@@ -347,3 +347,7 @@ export const  TERMS_CONDITIONS_LOADING = 'TERMS_CONDITIONS_LOADING';
 export const BROKERS_MODULE_SUCCESS = 'src/pages/Dashboard/Broker/Success';
 export const BROKERS_MODULE_ERROR = 'src/pages/Dashboard/Broker/Error';
 export const BROKERS_MODULE_LOADING = 'src/pages/Dashboard/Broker/Loading';
+
+export const BROKERS_PROPERTY_SUCCESS = 'src/pages/Dashboard/Broker/Property/Success';
+export const BROKERS_PROPERTY_ERROR = 'src/pages/Dashboard/Broker/Property/Error';
+export const BROKERS_PROPERTY_LOADING = 'src/pages/Dashboard/Broker/Property/Loading';

@@ -1170,3 +1170,24 @@ export const validateCameraData = (data, addNewFlag) => {
     isValid: isEmpty(errors)
   }
 }
+
+export const validateCorpUser = (data) => {
+  const errors = {};
+  if(isBlank(data.name)) {
+    errors.name = true;
+  }
+  if(isBlank(data.mobile)) {
+    errors.mobile = true;
+    if(data.mobile?.length === 0) {
+      errors.mobile = true;
+      showErrorToast("Invalid mobile number")
+    }
+  }
+  if(isBlank(data.permission)) {
+    errors.permission = true;
+  }
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}

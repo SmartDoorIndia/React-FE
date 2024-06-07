@@ -4,21 +4,23 @@ import * as Actions from '../../types';
 import produce from 'immer';
 
 
-export const allPlanDataBroker = ( state = { date:[], isLoading: false},action) =>{
+export const brokerProperty = ( state = { date:[], isLoading: false},action) =>{
     return produce (state,(draft) =>{
       switch (action.type) {
        
-        case Actions.BROKERS_MODULE_SUCCESS:
+        case Actions.BROKERS_PROPERTY_SUCCESS:
           draft.data = action.data;
           draft.isLoading = false;
           return draft;
+        
   
-        case Actions.BROKERS_MODULE_ERROR:
+        case Actions.BROKERS_PROPERTY_ERROR:
           draft.error = action.data;
           draft.isLoading = false;
+          draft.data = [];
           return draft;
   
-        case Actions.BROKERS_MODULE_LOADING:
+        case Actions.BROKERS_PROPERTY_LOADING:
           draft.isLoading = true;
           return draft;
                    

@@ -120,12 +120,12 @@
    span {
       border-bottom: 1px solid $lightBorder;
       border-radius: 2px;
-      display: inline-block;
+      // display: inline-block;
       width: 70px !important;
       height: 26px;
       text-align: center;
       cursor: pointer;
-      margin-right: 10px;
+      margin-right: 20px;
       border: unset !important;
    }
    a {
@@ -229,7 +229,7 @@
          padding: 3px 20px !important;
          background: white !important;
          border-radius: 8px !important;
-         color: #BE1452 !important;
+         color: #be1452 !important;
          font-size: 14px !important;
          font-weight: 500;
          cursor: pointer;
@@ -295,6 +295,10 @@
       font-size: 14px;
       font-weight: 600;
       color: #757575;
+      padding: 0%;
+   }
+   .detail-col {
+      padding-inline: 0%;
    }
 }
 .details-value {
@@ -305,11 +309,10 @@
    border-radius: 30px;
    padding: 3px 8px;
 }
-.approved-loca{
+.approved-loca {
    font-size: 14px;
    font-weight: 600;
    color: #000000;
-
 }
 .details-heading {
    display: flex;
@@ -372,31 +375,45 @@ span.broker_details {
    .rdt_TableBody {
       //  max-height: calc(51vh);
       //  height: fit-content;
-       overflow-y: scroll;
-       overflow-x: hidden;
+      overflow-y: scroll;
+      overflow-x: hidden;
+   }
+   .rdt_TableHeadRow {
+      .rdt_TableCol {
+         &:nth-child(1) {
+            width: 100px;
+            min-width: 100px;
+         }
+         white-space: normal; /* Allows headers to wrap */
+         word-wrap: break-word; /* Allows headers to break words */
+         text-align: center; /* Optional: Center align text */
+      }
    }
    .rdt_TableRow {
-      //  min-height: auto;
-       .rdt_TableCell {
-           text-align: center;
-           &:nth-child(1) {
-               &:first-child {
-                   min-width: 100px;
-                  //  white-space: nowrap;
-                   overflow: visible;
-               }                
-           }
-           &:nth-child(4) {
-               .elipsis-text {
-                  //  white-space: nowrap;
-                   overflow: hidden;
-                   width: 180px;min-width: 180px;
-                   text-overflow: ellipsis;display: block;text-align: center;
-               }
-           }
-       }
-       // &:active {
-       //     background-color: aqua;
-       // }
+      min-height: auto;
+      .rdt_TableCell {
+         text-align: center;
+         &:nth-child(1) {
+            &:first-child {
+               min-width: 110px;
+               //  white-space: nowrap;
+               overflow: visible;
+            }
+         }
+         &:nth-child(4) {
+            .elipsis-text {
+               //  white-space: nowrap;
+               overflow: hidden;
+               width: 180px;
+               min-width: 180px;
+               text-overflow: ellipsis;
+               display: block;
+               text-align: center;
+            }
+         }
+      }
+      // &:active {
+      //     background-color: aqua;
+      // }
    }
 }

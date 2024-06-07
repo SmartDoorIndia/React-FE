@@ -1,5 +1,5 @@
 
-@import '../../../scss/modules/variables.scss';
+@import '../../../../scss/modules/variables.scss';
 .whiteBg{
     .scroll{
         overflow: hidden;
@@ -276,8 +276,8 @@
     .rdt_TableHeadRow {
         .rdt_TableCol {
             &:nth-child(1) {
-                width: 100px;
-                min-width: 100px;
+                width: 60px;
+                min-width: 60px;
             }
             white-space: normal; /* Allows headers to wrap */
             word-wrap: break-word; /* Allows headers to break words */
