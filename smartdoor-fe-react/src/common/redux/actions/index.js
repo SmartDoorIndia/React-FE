@@ -129,7 +129,7 @@ export const addNewPlan = async (data) => {
     if (response.data && response.data.status === 200) {
       showSuccessToast(response.data.customMessage);
     } else if (response.data && response.data.status === 409) showErrorToast(response.data.responseMessage);
-      else if (response.data && response.data.status === 500) showErrorToast("Please Try again...");
+    else if (response.data && response.data.status === 500) showErrorToast("Please Try again...");
     else showErrorToast(response.data.customMessage);
   }
   return response;
@@ -223,7 +223,7 @@ export const getAllUsers = (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        dispatch({ type: Actions.USER_MANAGEMENT_SUCCESS, data: {userData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, city: data?.searchByCity, location: data?.searchByzipCode, department: data.departmentName, defaultSort: data?.defaultSort, defaultSortId: data?.defaultSortId, defaultSortFieldId: data?.defaultSortFieldId}});
+        dispatch({ type: Actions.USER_MANAGEMENT_SUCCESS, data: { userData: response.data.resourceData, records: response.data.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchStr: data?.searchString, city: data?.searchByCity, location: data?.searchByzipCode, department: data.departmentName, defaultSort: data?.defaultSort, defaultSortId: data?.defaultSortId, defaultSortFieldId: data?.defaultSortFieldId } });
       }
     } else dispatch({ type: Actions.USER_MANAGEMENT_ERROR, data: response.data });
   }
@@ -252,8 +252,8 @@ export const createNewSociety = async (data) => {
   if (response.data.status) {
     if (response.data && response.data.status === 200) {
       showSuccessToast('Society created successfully');
-    // } else if (response.data && response.data.status === 409) showErrorToast('User already exist');
-  } else if (response.data && response.data.status === 409) showErrorToast(response.data.message);
+      // } else if (response.data && response.data.status === 409) showErrorToast('User already exist');
+    } else if (response.data && response.data.status === 409) showErrorToast(response.data.message);
     else showErrorToast(response.data.message);
   }
   return response;
@@ -437,8 +437,7 @@ export const blockTeamMember = async (data) => {
 // Action to Deactivate User/TeamMember Counts
 export const deactivateTeamMember = async (data) => {
   const response = await mainApiService('activateDeactivateUser', data);
-  if (response.data && response.data.status === 200)
-  {data.activateDeactivateuser ? showSuccessToast("User Activated Successfully") : showSuccessToast("User Deactivated Successfully")}
+  if (response.data && response.data.status === 200) { data.activateDeactivateuser ? showSuccessToast("User Activated Successfully") : showSuccessToast("User Deactivated Successfully") }
   //  showSuccessToast(response.data.customMessage);
   else if (response.data && response.data.error) showErrorToast(response.data.error);
   else showErrorToast('Unexpected error. Please try again later');
@@ -483,12 +482,12 @@ export const getPlansForAdmin = (data) => async (dispatch) => {
 };
 
 // Action to Get All Plans For Admin
-export const getNonSDProperties= (data) => async (dispatch) => {
+export const getNonSDProperties = (data) => async (dispatch) => {
   const response = await mainApiService('getNonSDProperties', data);
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        await dispatch({ type: Actions.NON_SD_PROPERTIES_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate:data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId} });
+        await dispatch({ type: Actions.NON_SD_PROPERTIES_SUCCESS, data: { propertyData: response.data.resourceData, records: response.data.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate: data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId } });
         return response;
       }
     }
@@ -501,7 +500,7 @@ export const getAllProperties = (data) => async (dispatch) => {
   const response = await mainApiService('getAllProperties', data);
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
-      await dispatch({ type: Actions.PROPERTY_MODULE_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate:data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId,} });
+      await dispatch({ type: Actions.PROPERTY_MODULE_SUCCESS, data: { propertyData: response.data.resourceData, records: response.data.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate: data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId, } });
       return response;
     } else dispatch({ type: Actions.PROPERTY_MODULE_ERROR, data: response.data });
   }
@@ -512,7 +511,7 @@ export const getAllDeletedProperties = (data) => async (dispatch) => {
   const response = await mainApiService('getAllDeletedProperties', data);
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
-      await dispatch({ type: Actions.DELETED_PROPERTY_DATA_SUCCESS, data: {propertyData : response.data.resourceData, records : response.data.records, currentPage : data?.pageNo, rowsPerPage : data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate:data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId} });
+      await dispatch({ type: Actions.DELETED_PROPERTY_DATA_SUCCESS, data: { propertyData: response.data.resourceData, records: response.data.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate: data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId } });
       return response;
     } else dispatch({ type: Actions.DELETED_PROPERTY_DATA_ERROR, data: response.data });
   }
@@ -524,13 +523,13 @@ export const getPropertyDetails = async (data) => {
   return response;
 };
 
-export const getPropertyPlanDetails = async(data) => {
-  const response = await mainApiService('getPropertyPlanDetails',data);
+export const getPropertyPlanDetails = async (data) => {
+  const response = await mainApiService('getPropertyPlanDetails', data);
   return response;
 }
 
 //Upload Image File to AWS
-export const uploadImage = async(formData) => {
+export const uploadImage = async (formData) => {
   const response = await mainApiService('uploadImage', formData)
   return response;
 }
@@ -742,7 +741,7 @@ export const getAllConsumers = (data) => async (dispatch) => {
   const response = await mainApiService('getAllConsumers', data);
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
-      dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: {consumersData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchString, kycStatus: data.kycStatus, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId} });
+      dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: { consumersData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchString, kycStatus: data.kycStatus, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId } });
     } else dispatch({ type: Actions.CONSUMSER_MANAGEMENT_ERROR, data: response.data.resourceData });
   }
 };
@@ -933,8 +932,8 @@ export const getExcutionDashboardCity = () => async (dispatch) => {
   if (responseInstallation) {
     if (
       responseInstallation.data &&
-         responseInstallation.status === 200 &&
-         responseInstallation.data.resourceData
+      responseInstallation.status === 200 &&
+      responseInstallation.data.resourceData
     ) {
       dispatch({
         type: Actions.EXECUTION_INSTALLATION_CITY_SUCCESS,
@@ -946,8 +945,8 @@ export const getExcutionDashboardCity = () => async (dispatch) => {
   if (responsePublishProperty) {
     if (
       responsePublishProperty.data &&
-         responsePublishProperty.status === 200 &&
-         responsePublishProperty.data.resourceData
+      responsePublishProperty.status === 200 &&
+      responsePublishProperty.data.resourceData
     ) {
       dispatch({
         type: Actions.EXCUTIVE_PUBLISHED_PROPERTY_CITY_SUCCESS,
@@ -968,8 +967,8 @@ export const getExcutionDashboardCity = () => async (dispatch) => {
   if (responseServiceReq) {
     if (
       responseServiceReq.data &&
-         responseServiceReq.status === 200 &&
-         responseServiceReq.data.resourceData
+      responseServiceReq.status === 200 &&
+      responseServiceReq.data.resourceData
     ) {
       dispatch({
         type: Actions.EXCUTIVE_SERVICE_REQ_CITY_SUCCESS,
@@ -1014,9 +1013,9 @@ export const changeInstallationAssignee = async (data) => {
     // notify(response.data.customMessage, 'success', 1000);
   }
   // showSuccessToast(response.data.customMessage)
-  else if (response.data && response.data.error) 
-  // notify(response.data.message, 'error', 1000);
-  showErrorToast(response.data.message)
+  else if (response.data && response.data.error)
+    // notify(response.data.message, 'error', 1000);
+    showErrorToast(response.data.message)
   // else notify('Unexpected error. Please try again later', 'error', 1000);
   return response;
 };
@@ -1026,8 +1025,8 @@ export const republish = async (data) => {
   if (response.data && response.data.status === 200) {
     showSuccessToast(response.data.customMessage);
   }
-  else if (response.data && response.data.error) 
-  showErrorToast(response.data.message)
+  else if (response.data && response.data.error)
+    showErrorToast(response.data.message)
   return response;
 };
 
@@ -1200,8 +1199,8 @@ export const getHelpDeskDashboardCity = () => async (dispatch) => {
   if (responsePropertyLeads) {
     if (
       responsePropertyLeads.data &&
-         responsePropertyLeads.status === 200 &&
-         responsePropertyLeads.data.resourceData
+      responsePropertyLeads.status === 200 &&
+      responsePropertyLeads.data.resourceData
     ) {
       dispatch({
         type: Actions.HELPDESK_LEADS_CITY_SUCCESS,
@@ -1222,8 +1221,8 @@ export const getHelpDeskDashboardCity = () => async (dispatch) => {
   if (responseServiceReq) {
     if (
       responseServiceReq.data &&
-         responseServiceReq.status === 200 &&
-         responseServiceReq.data.resourceData
+      responseServiceReq.status === 200 &&
+      responseServiceReq.data.resourceData
     ) {
       dispatch({
         type: Actions.HELPDESK_SERVICE_REQ_CITY_SUCCESS,
@@ -1549,26 +1548,26 @@ export const getTransactionViewVisitFeedback = async (data) => {
 // Action to get Transaction Leads By UserId
 export const getTransactionLeadsByUser = async (data) => {
   const response = await mainApiService('getTransactionLeadsByUser', data);
-  if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
 };
 
 export const getTransactionMeetingsByUserId = async (data) => {
   const response = await mainApiService('getTransactionMeetingsByUserId', data);
-  if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
 };
 
 export const getAllDealsByUserId = async (data) => {
   const response = await mainApiService('getAllDealsByUserId', data);
-  if ( response.data.status !== 200 &&  response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
 };
 
 export const reOpenTransactionLeadRequest = async (data) => {
   const response = await mainApiService('reOpenTransactionLeadRequest', data);
-  if ( response.data.status === 200) showSuccessToast(response.data.customMessage);
-  if ( response.data.status !== 200) showErrorToast(response.data.message);
+  if (response.data.status === 200) showSuccessToast(response.data.customMessage);
+  if (response.data.status !== 200) showErrorToast(response.data.message);
   return response;
 };
 
@@ -1597,7 +1596,7 @@ export const getExecutivesWrtRoleLocation = (data) => async (dispatch) => {
 //     // notify(response.data.customMessage, 'success', 1000);
 //     showSuccessToast(response.data.customMessage)
 //   }
-  
+
 //   else if (response.data && response.data.error) 
 //   // notify(response.data.error, 'error', 1000);
 //   showErrorToast(response.data.error)
@@ -1613,9 +1612,9 @@ export const changeUserAssignee = async (data) => {
     // notify(response.data.customMessage, 'success', 1000);
   }
   // showSuccessToast(response.data.customMessage)
-  else if (response.data && response.data.error) 
-  // notify(response.data.message, 'error', 1000);
-  showErrorToast(response.data.message)
+  else if (response.data && response.data.error)
+    // notify(response.data.message, 'error', 1000);
+    showErrorToast(response.data.message)
   // else notify('Unexpected error. Please try again later', 'error', 1000);
   return response;
 };
@@ -1623,7 +1622,7 @@ export const changeUserAssignee = async (data) => {
 // Action to get Transaction Leads By UserId
 export const getSalesTransactionByUser = async (data) => {
   const response = await mainApiService('getSalesTransactionByUser', data);
-  if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
 };
 
@@ -1657,21 +1656,21 @@ export const getSalesTransactionByUser = async (data) => {
 // Action to  Get All User Roles
 export const getCameraDevice = async (data) => {
   const response = await mainApiService('getCameraDevice', data);
-  if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
 };
 
 // Action to  Get contact sensor data
 export const getContactSensor = async (data) => {
   const response = await mainApiService('getContactSensor', data);
-  if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
 };
 
 // Action to  Get contact sensor data
 export const getContactSensorLogin = async (data) => {
   const response = await mainApiService('getContactSensorLogin', data);
-  if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
 };
 
@@ -1685,14 +1684,14 @@ export const getContactSensorDeviceDetails = async (data) => {
 // Action to  Get smartlock data
 export const getSmartLockData = async (data) => {
   const response = await mainApiService('getSmartLockData', data);
-  if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
 };
 
 // Actio  for closing the door
 export const doorClosed = async (data) => {
   const response = await mainApiService('doorClosed', data);
-  if ( response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
   return response;
 };
 
@@ -1717,167 +1716,167 @@ export const getInstallationCity = async () => {
 }
 
 //Get all properties by userId
-export const getPropertyByUserId = async(data) => {
+export const getPropertyByUserId = async (data) => {
   const response = await mainApiService('getPropertyByUserId', data);
   return response;
 }
 
 //Action for adding  new property
-export const addNewPost  = (data) => async (dispatch) => {
+export const addNewPost = (data) => async (dispatch) => {
   dispatch({ type: Actions.ADD_NEW_POST_LOADING, data: {} });
   const response = await mainApiService('addNewPost', data);
-  if(response != null) {
-    if(response?.status === 200) {
-      if(data.smartdoorPropertyId === undefined || data.smartdoorPropertyId === null) {
+  if (response != null) {
+    if (response?.status === 200) {
+      if (data.smartdoorPropertyId === undefined || data.smartdoorPropertyId === null) {
         data.smartdoorPropertyId = response?.data?.resourceData?.propertyId;
       }
       showSuccessToast("Data updated successfully")
       return (dispatch({ type: Actions.ADD_NEW_POST_SUCCESS, data: data }));
     }
-    if ( response?.status !== 200 && response?.status !== 404) {
+    if (response?.status !== 200 && response?.status !== 404) {
       showErrorToast('Unexpected error. Please try again later');
     }
   }
 };
 
-export const addNewPost2  = (data) => async (dispatch) => {
+export const addNewPost2 = (data) => async (dispatch) => {
   dispatch({ type: Actions.ADD_NEW_POST_ADDRESS_LOADING, data: {} });
   const response = await mainApiService('addNewPost2', data);
-  if(response != null) {
-    if(response?.status === 200) {
+  if (response != null) {
+    if (response?.status === 200) {
       showSuccessToast("Address updated successfully")
       return (dispatch({ type: Actions.ADD_NEW_POST_ADDRESS_SUCCESS, data: data }));
     }
-    if ( response?.status !== 200 && response?.status !== 404) {
+    if (response?.status !== 200 && response?.status !== 404) {
       showErrorToast('Unexpected error. Please try again later');
     }
   }
 };
 
-export const addNewPost4 = (data) => async(dispatch) => {
-  dispatch({type: Actions.ADD_NEW_POST_INFO_LOADING, data : {}})
+export const addNewPost4 = (data) => async (dispatch) => {
+  dispatch({ type: Actions.ADD_NEW_POST_INFO_LOADING, data: {} })
   const response = await mainApiService('addNewPost4', data);
-  if(response !== null) {
-    if(response?.status === 200) {
+  if (response !== null) {
+    if (response?.status === 200) {
       showSuccessToast("Information updated successfully")
       return (dispatch({ type: Actions.ADD_NEW_POST_INFO_SUCCESS, data: data }));
     }
-    if ( response?.status !== 200 && response?.status !== 404) {
+    if (response?.status !== 200 && response?.status !== 404) {
       showErrorToast('Unexpected error. Please try again later');
     }
   }
 }
 
-export const deletePropertyById = async(data) => {
-  const response = await mainApiService('deletePropertyById',data)
+export const deletePropertyById = async (data) => {
+  const response = await mainApiService('deletePropertyById', data)
   return response
 }
 
-export const restorePropertyById = async(data) => {
-  const response = await mainApiService('restorePropertyById',data)
+export const restorePropertyById = async (data) => {
+  const response = await mainApiService('restorePropertyById', data)
   return response
 }
 
 
 export const getStaticMobNumbers = async () => {
-  const response  = await mainApiService('getStaticMobNums');
+  const response = await mainApiService('getStaticMobNums');
   return response
 }
 export const setStaticMobNumbers = async (data) => {
-  const response  = await mainApiService('setStaticMobNums',data);
+  const response = await mainApiService('setStaticMobNums', data);
   return response
 }
 
 export const setCityServiceStatus = async (data) => {
-  const response  = await mainApiService('setServiceStatus',data);
+  const response = await mainApiService('setServiceStatus', data);
   return response
 }
 
 export const getFeaturedVideoList = (data) => async (dispatch) => {
-  dispatch({type: Actions.SAVE_FEATURED_VIDEOS_LOADING, data : {}})
+  dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_LOADING, data: {} })
   const response = await mainApiService('getFeaturedVideosList', data);
-  if(response.status === 200) {
+  if (response.status === 200) {
     let obj = JSON.parse(response.data.resourceData);
     let videoList = obj.values.toString().split(',')
-    return(dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_SUCCESS, data: videoList }))
+    return (dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_SUCCESS, data: videoList }))
   }
-  if ( response?.status !== 200) {
+  if (response?.status !== 200) {
     showErrorToast('Unexpected error. Please try again later');
-    return(dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_ERROR, data: response }))
+    return (dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_ERROR, data: response }))
   }
 };
 
 export const addFeaturedVideoList = (data) => async (dispatch) => {
-  dispatch({type: Actions.SAVE_FEATURED_VIDEOS_LOADING, data : {}})
+  dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_LOADING, data: {} })
   const response = await mainApiService('setFeaturedVideosList', data);
-  if(response.status === 200) {
+  if (response.status === 200) {
     let obj = JSON.parse(data.value);
     let videoList = obj?.values?.toString()?.split(',')
     showSuccessToast("Videos saved successfully...")
-    return(dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_SUCCESS, data: videoList }))
+    return (dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_SUCCESS, data: videoList }))
   }
-  if ( response?.status !== 200) {
+  if (response?.status !== 200) {
     showErrorToast('Unexpected error. Please try again later');
-    return(dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_ERROR, data: data }))
+    return (dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_ERROR, data: data }))
   }
 };
 
 export const getSystemVariables = async (data) => {
   const response = await mainApiService('getSystemVariables', data);
-  if(response.status === 200) {
+  if (response.status === 200) {
     return response;
   }
 }
 
 export const addEditAgency = async (data) => {
   const response = await mainApiService('addEditAgency', data);
-  if(response.status === 200) {
+  if (response.status === 200) {
     return response;
   }
 }
 
-export const getAllAgencies = (data) => async(dispatch) => {
-  dispatch({type: Actions.AGENCY_LIST_LOADING, data: []});
+export const getAllAgencies = (data) => async (dispatch) => {
+  dispatch({ type: Actions.AGENCY_LIST_LOADING, data: [] });
   const response = await mainApiService('getAllAgencies', data);
-  if(response.status === 200) {
-    if(data.agencyId === 0) {
-      return(dispatch({ type: Actions.AGENCY_LIST_SUCCESS, data: response.data.resourceData }))
-    } else {return response}
+  if (response.status === 200) {
+    if (data.agencyId === 0) {
+      return (dispatch({ type: Actions.AGENCY_LIST_SUCCESS, data: response.data.resourceData }))
+    } else { return response }
   }
-  if ( response?.status !== 200) {
+  if (response?.status !== 200) {
     showErrorToast('Unexpected error. Please try again later');
-    return(dispatch({ type: Actions.AGENCY_LIST_ERROR, data: response }))
+    return (dispatch({ type: Actions.AGENCY_LIST_ERROR, data: response }))
   }
 }
 
 export const getAgencyById = async (data) => {
   const response = await mainApiService('getAllAgencies', data);
-  if(response.status === 200) {
+  if (response.status === 200) {
     return response;
   }
-  if ( response?.status !== 200) {
+  if (response?.status !== 200) {
     showErrorToast('Unexpected error. Please try again later');
   }
 }
 
-export const getAllAgencyExecutives = (data) => async(dispatch) => {
-  dispatch({type: Actions.AGENCY_EXECUTIVE_LIST_LOADING, data: []});
+export const getAllAgencyExecutives = (data) => async (dispatch) => {
+  dispatch({ type: Actions.AGENCY_EXECUTIVE_LIST_LOADING, data: [] });
   const response = await mainApiService('getAllAgencyExecutives', data);
-  if(response.status === 200) {
-    return(dispatch({ type: Actions.AGENCY_EXECUTIVE_LIST_SUCCESS, data: {executives: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchStr} }))
+  if (response.status === 200) {
+    return (dispatch({ type: Actions.AGENCY_EXECUTIVE_LIST_SUCCESS, data: { executives: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchStr } }))
   }
-  if ( response?.status !== 200) {
+  if (response?.status !== 200) {
     showErrorToast('Unexpected error. Please try again later');
-    return(dispatch({ type: Actions.AGENCY_EXECUTIVE_LIST_ERROR, data: response }))
+    return (dispatch({ type: Actions.AGENCY_EXECUTIVE_LIST_ERROR, data: response }))
   }
 }
 
 export const getAgencyExecutiveById = async (data) => {
   const response = await mainApiService('getAllAgencyExecutives', data);
-  if(response.status === 200) {
+  if (response.status === 200) {
     return response
   }
-  if ( response?.status !== 200) {
+  if (response?.status !== 200) {
     showErrorToast('Unexpected error. Please try again later');
   }
 }
@@ -1890,38 +1889,38 @@ export const addEditExecutive = async (data) => {
 }
 
 export const getAgencyCustomers = (data) => async (dispatch) => {
-  dispatch({type: Actions.AGENCY_CUSTOMER_LIST_LOADING, data: []});
+  dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_LOADING, data: [] });
   const response = await mainApiService('getAgencyCustomers', data);
-  if(response.status === 200) {
-    return(dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {customerData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, fromDate: data.fromDate, toDate: data.toDate, searchStr: data.searchStr, kycStatus: data.kycStatus} }))
+  if (response.status === 200) {
+    return (dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: { customerData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, fromDate: data.fromDate, toDate: data.toDate, searchStr: data.searchStr, kycStatus: data.kycStatus } }))
   }
-  if ( response?.status !== 200) {
+  if (response?.status !== 200) {
     showErrorToast('Unexpected error. Please try again later');
-    return(dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_ERROR, data: response }))
+    return (dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_ERROR, data: response }))
   }
 }
 
 export const getAgencyProperties = (data) => async (dispatch) => {
-  dispatch({type: Actions.AGENCY_PROPERTY_LIST_LOADING, data: []});
+  dispatch({ type: Actions.AGENCY_PROPERTY_LIST_LOADING, data: [] });
   const response = await mainApiService('getAgencyProperty', data);
-  if(response.status === 200) {
-    return(dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {propertyData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, fromDate: data.fromDate, toDate: data.toDate, searchStr: data.searchStr, propertyStatus: data.propertyStatus, propertyType: data.propertyType} }))
+  if (response.status === 200) {
+    return (dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: { propertyData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, fromDate: data.fromDate, toDate: data.toDate, searchStr: data.searchStr, propertyStatus: data.propertyStatus, propertyType: data.propertyType } }))
   }
-  if ( response?.status !== 200) {
+  if (response?.status !== 200) {
     showErrorToast('Unexpected error. Please try again later');
-    return(dispatch({ type: Actions.AGENCY_PROPERTY_LIST_ERROR, data: response }))
+    return (dispatch({ type: Actions.AGENCY_PROPERTY_LIST_ERROR, data: response }))
   }
 }
 
 export const transferCustomers = async (data) => {
   const response = await mainApiService('transferAgencyCustomers', data);
   return response;
-} 
+}
 
 export const awardCoupons = async (data) => {
   const response = await mainApiService('awardCoupons', data);
   return response;
-} 
+}
 
 export const checkExistingCustomers = async (data) => {
   const response = await mainApiService('checkExistingCustomer', data);
@@ -1940,7 +1939,7 @@ export const getChatGptDescription = async (data) => {
 
 export const revokeToken = async (data) => {
   const response = await mainApiService('logoutUser', {});
-  if(response.status === 200) {
+  if (response.status === 200) {
     // clearLocalStorage();
   }
   return response;
@@ -1962,12 +1961,12 @@ export const setCallBackUrl = async (data) => {
 }
 
 // BROKER 
-export const getBrokerListing  = (data) => async (dispatch) => {
+export const getBrokerListing = (data) => async (dispatch) => {
   dispatch({ type: Actions.BROKERS_MODULE_LOADING, data: [] });
   const response = await mainApiService('getBrokerListing', data);
   if (response) {
     if (response.data && response.status === 200) {
-      dispatch({ type: Actions.BROKERS_MODULE_SUCCESS, data: {brokerList: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.records, searchString: data.searchString, status: data.status, fromDate: data.fromDate, toDate: data.toDate} });
+      dispatch({ type: Actions.BROKERS_MODULE_SUCCESS, data: { brokerList: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.records, searchString: data.searchString, status: data.status, fromDate: data.fromDate, toDate: data.toDate } });
       // if (response.data.resourceData) {
       // }
     } else {
@@ -1977,10 +1976,10 @@ export const getBrokerListing  = (data) => async (dispatch) => {
 };
 
 export const getBrokerPostedProperty = (data) => async (dispatch) => {
-  dispatch({type: Actions.BROKERS_PROPERTY_LOADING, data: []});
+  dispatch({ type: Actions.BROKERS_PROPERTY_LOADING, data: [] });
   const response = await mainApiService('getBrokerPostedProperty', data);
   if (response.status === 200) {
-    dispatch({ type: Actions.BROKERS_PROPERTY_SUCCESS, data: {brokerProperty: response.data.resourceData === null ? [] : response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.records, searchString: data.searchString, fromDate: data.fromDate, toDate: data.endDate, status: data.status} });
+    dispatch({ type: Actions.BROKERS_PROPERTY_SUCCESS, data: { brokerProperty: response.data.resourceData === null ? [] : response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.records, searchString: data.searchString, fromDate: data.fromDate, toDate: data.endDate, status: data.status } });
     if (response.data && response.status === 200) {
       // if (response.data.resourceData) {
       // }
@@ -1993,23 +1992,23 @@ export const getBrokerDetails = async (data) => {
   return response;
 };
 
-export const getBrokerDetailsForApprove = async(data) => {
+export const getBrokerDetailsForApprove = async (data) => {
   const response = await mainApiService('getBrokerDetailsForApprove', data);
   return response;
 }
-export const getBrokerStatusDetail = async(data) =>{
+export const getBrokerStatusDetail = async (data) => {
   const response = await mainApiService('getBrokerStatusDetail', data);
-    if(response.data && response.status === 200) showSuccessToast(response.data.customMessage); 
-    else if (response.data && response.data.error) showErrorToast(response.data.error);
-    else showErrorToast('Unexpected error. Please try again later');
-    return response;
+  if (response.data && response.status === 200) showSuccessToast(response.data.customMessage);
+  else if (response.data && response.data.error) showErrorToast(response.data.error);
+  else showErrorToast('Unexpected error. Please try again later');
+  return response;
 }
-export const getBrokerDeclineStatusDetail = async(data) =>{
+export const getBrokerDeclineStatusDetail = async (data) => {
   const response = await mainApiService('getBrokerDeclineStatusDetail', data);
-    if(response.data && response.status === 200) showSuccessToast(response.data.customMessage); 
-    else if (response.data && response.data.error) showErrorToast(response.data.error);
-    else showErrorToast('Unexpected error. Please try again later');
-    return response;
+  if (response.data && response.status === 200) showSuccessToast(response.data.customMessage);
+  else if (response.data && response.data.error) showErrorToast(response.data.error);
+  else showErrorToast('Unexpected error. Please try again later');
+  return response;
 }
 
 
@@ -2036,3 +2035,40 @@ export const addHoldRequestComments = async (data) => {
 //   else showErrorToast('Unexpected error. Please try again later');
 //   return response;
 // };
+
+//Corporate API
+
+export const getPlansForCorporate = async (data) => {
+  const response = await mainApiService('getPlanForCorporate', data);
+  return response;
+}
+
+export const getAllCorporates = (data) => async (dispatch) => {
+  dispatch({ type: Actions.CORPORATE_LIST_LOADING, data: {} });
+  const response = await mainApiService('getAllCoporate', data);
+  if (response.status === 200) {
+    dispatch({ type: Actions.CORPORATE_LIST_SUCCESS, data: { corporateList: response.data.resourceData, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchString: data.searchString } });
+  } else {
+    dispatch({ type: Actions.CORPORATE_LIST_ERROR, data: response.data });
+  }
+}
+
+export const getCorporateById = async (data) => {
+  const response = await mainApiService('getAllCoporate', data);
+  return response;
+}
+
+export const addEditCorporate = async (data) => {
+  const response = await mainApiService('addEditCorporate', data);
+  return response;
+}
+
+export const addEditCorporateUser = async (data) => {
+  const response = await mainApiService('addEditCorporateUser', data);
+  return response;
+}
+
+export const getAllCorporateUser = async (data) => {
+  const response = await mainApiService('getAllCorporateUsers', data);
+  return response;
+}

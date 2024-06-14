@@ -290,7 +290,8 @@
             text-align: center;
             &:nth-child(1) {
                 &:first-child {
-                    min-width: none;
+                    min-width: 100px;
+                    min-height: 100px;
                     white-space: nowrap;overflow: visible;
                 }                
             }

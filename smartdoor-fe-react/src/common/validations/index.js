@@ -131,6 +131,10 @@ export const validateNewPlan = (data) => {
     errors.imageLocation = "Image required"
   }
 
+  if (isBlank(data.planType)) {
+    errors.planType = ValidationMessages.fieldRequired.required;
+  }
+
   // if (isBlank(data.amount)) {
   //   errors.amount = ValidationMessages.fieldRequired.required;
   // } 
@@ -843,8 +847,8 @@ export const validateSpecs = (data, specList, testDesc) => {
     if (isBlank(data.propertyRoomCompositionType)) {
       errors.propertyRoomCompositionType = true;
     }
-    if(data.propertyRoomCompositionType === 'RK' || data.propertyRoomCompositionType === 'R') {
-      if(Number(data.numberOfRooms) !== 1) {
+    if (data.propertyRoomCompositionType === 'RK' || data.propertyRoomCompositionType === 'R') {
+      if (Number(data.numberOfRooms) !== 1) {
         errors.numberOfRooms = true;
         showErrorToast('Invalid number of rooms for R and RK');
       }
@@ -907,23 +911,23 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.carpetAreaMeasurementUnit = true;
     }
     // if (isBlank(data.builtUpArea)) {
-      //   errors.builtUpArea = true;
-      // }
-      if (Number(data.builtUpArea) < 0) {
-        errors.builtUpArea = true;
-        showErrorToast("Invalid built up area")
-      }
-      if (isBlank(data.builtUpAreaMeasurementUnit)) {
-        errors.builtUpAreaMeasurementUnit = true;
-      }
+    //   errors.builtUpArea = true;
+    // }
+    if (Number(data.builtUpArea) < 0) {
+      errors.builtUpArea = true;
+      showErrorToast("Invalid built up area")
     }
-    if (specList?.includes('Plot area')) {
-      if (isBlank(data.plotArea)) {
-        errors.plotArea = true;
-      }
-      if (Number(data.plotArea) < 0) {
-        errors.plotArea = true;
-        showErrorToast("Invalid plot area")
+    if (isBlank(data.builtUpAreaMeasurementUnit)) {
+      errors.builtUpAreaMeasurementUnit = true;
+    }
+  }
+  if (specList?.includes('Plot area')) {
+    if (isBlank(data.plotArea)) {
+      errors.plotArea = true;
+    }
+    if (Number(data.plotArea) < 0) {
+      errors.plotArea = true;
+      showErrorToast("Invalid plot area")
     }
     if (isBlank(data.plotAreaMeasurementUnit)) {
       errors.plotAreaMeasurementUnit = true;
@@ -937,7 +941,7 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.openArea = true;
       showErrorToast("Invalid open area value")
     }
-    if(!isBlank(data.openArea)) {
+    if (!isBlank(data.openArea)) {
       if (isBlank(data.openAreaMeasurementUnit)) {
         errors.openAreaMeasurementUnit = true;
       }
@@ -953,8 +957,8 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.purposes = true;
     }
   }
-  if(specList.includes('Structure')) {
-    if(isBlank(data.structure)) {
+  if (specList.includes('Structure')) {
+    if (isBlank(data.structure)) {
       errors.structure = true;
     }
   }
@@ -1084,7 +1088,7 @@ export const validatePricing = (data, pricingList) => {
     if ((data.isQuickSale) === null) {
       errors.isQuickSale = true;
     }
-    if(data.isQuickSale === true) {
+    if (data.isQuickSale === true) {
       if (pricingList.includes('Expected time')) {
         if (isBlank(data.expectedTimeToSellThePropertyWithin)) {
           errors.expectedTimeToSellThePropertyWithin = true;
@@ -1171,21 +1175,88 @@ export const validateCameraData = (data, addNewFlag) => {
   }
 }
 
-export const validateCorpUser = (data) => {
+export const validateCorporate = (data) => {
   const errors = {};
-  if(isBlank(data.name)) {
+
+  if (isBlank(data.logo)) {
+    errors.logo = true;
+  }
+  if (isBlank(data.companyName)) {
+    errors.companyName = true;
+  }
+  if (isBlank(data.companyAddress)) {
+    errors.companyAddress = true;
+  }
+  if (isBlank(data.smartDoorPlanId)) {
+    errors.smartDoorPlanId = true;
+  }
+  if (isBlank(data.nonSmartDoorPlanId)) {
+    errors.nonSmartDoorPlanId = true;
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateCorpUser = (data) => {
+
+  // let errors = []
+  let errors = {}
+  let hasError = false
+  let mobileFlag = false
+
+  // for (let i = 0; i < data.length; i++) {
+  //   errors.push({ name: false, mobile: false, sdPosting: false });
+  //   if (isBlank(data[i].name)) {
+  //     errors[errors.length - 1].name = true;
+  //     hasError = true;
+  //   }
+  //   if (isBlank(data[i].mobile) || data[i]?.mobile?.length != 10) {
+  //     errors[errors.length - 1].mobile = true;
+  //     showErrorToast("Invalid mobile number")
+  //     hasError = true;
+  //   }
+  //   if (isBlank(data[i].sdPosting)) {
+  //     errors[errors.length - 1].sdPosting = true;
+  //     hasError = true;
+  //   }
+  // }
+  // if (data.length > 1) {
+  //   if (errors.length === 0) {
+  //     errors.push({ name: false, mobile: false, sdPosting: false });
+  //   }
+  //   for (let i = 0; i < data.length; i++) {
+  //     let mobileNo = data[i].mobile;
+  //     for (let j = 0; j < data.length; j++) {
+  //       if (mobileNo === data[j].mobile && i !== j) {
+  //         mobileFlag = true;
+  //         errors[i].mobile = true
+  //       }
+  //     }
+  //   }
+
+  if (isBlank(data?.name)) {
     errors.name = true;
+    hasError = true;
   }
-  if(isBlank(data.mobile)) {
+  if (isBlank(data?.mobile) || data?.mobile?.length != 10) {
     errors.mobile = true;
-    if(data.mobile?.length === 0) {
-      errors.mobile = true;
-      showErrorToast("Invalid mobile number")
-    }
+    showErrorToast("Invalid mobile number")
+    hasError = true;
   }
-  if(isBlank(data.permission)) {
-    errors.permission = true;
+  if (isBlank(data?.sdPosting)) {
+    errors.sdPosting = true;
+    hasError = true;
   }
+  // if (mobileFlag) {
+  //   showErrorToast("All mobile numbers should be unique...")
+  // }
+  // if (!hasError && !mobileFlag) {
+  //   errors = [];
+  // }
+
   return {
     errors,
     isValid: isEmpty(errors)

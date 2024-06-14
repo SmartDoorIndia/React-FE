@@ -41,14 +41,17 @@ class InstallationCalender extends Component {
       let week = this.formateWeek(moment().format());
       this.setState({ firstDay: week.firstDay, lastDay: week.lastDay });
       //getAllInstallationCity
-      await this.props.getAllCityWithId({stateId: null, smartdoorServiceStatus: true})
-      .then((response) => {
-         console.log(response)
-         if(response.data.status === 200) {
-            this.setState({allCitiesWithId: (response.data.resourceData)})
-            console.log(this.state.allCitiesWithId)
-         }
-      });
+      await this.props.getAllCityWithId({ stateId: null, smartdoorServiceStatus: true })
+         .then((response) => {
+            console.log(response)
+            if (response.data.status === 200) {
+               this.setState({ allCitiesWithId: (response.data.resourceData) })
+               console.log(this.state.allCitiesWithId)
+               let cityName = this.props.location.state ? this.props.location.state.city || "" : "";
+               let cityId = this.state.allCitiesWithId?.filter(city => city.cityName === cityName);
+               this.setState({ city: cityId[0]?.cityId });
+            }
+         });
       this._getCalenderData(week);
       // console.log(allCitiesWithId)
       // getAllInstallationCity()//this.state.city
@@ -80,7 +83,7 @@ class InstallationCalender extends Component {
       let currentWeek = getCurrentWeek(date);
       let firstDay = dateWithFormate(currentWeek.firstday, "YYYY-MM-DD");
       let lastDay = dateWithFormate(currentWeek.lastday, "YYYY-MM-DD");
-      console.log("$$",firstDay,lastDay)
+      console.log("$$", firstDay, lastDay)
       return { firstDay, lastDay };
    }
 
@@ -89,10 +92,10 @@ class InstallationCalender extends Component {
       let cityName = this.props.location.state ? this.props.location.state.city || "" : "";
       let cityId = this.state.allCitiesWithId?.filter(city => city.cityName === cityName);
       console.log(cityId)
-      let city = cityId[0]?.cityId || null
+      let city = cityId[0]?.cityId || ''
 
       try {
-         getExecutiveCalendar({ weekStartDate: firstDay, weekEndDate: lastDay, city  })
+         getExecutiveCalendar({ weekStartDate: firstDay, weekEndDate: lastDay, city })
             .then((response) => {
                if (response && response.status === 200) {
                   if (response.data.resourceData) {
@@ -113,7 +116,7 @@ class InstallationCalender extends Component {
       }
    }
 
-   _getFilteredCalenderData( firstDay = '', lastDay='' , city ='') {
+   _getFilteredCalenderData(firstDay = '', lastDay = '', city = '') {
       this.setState({ loading: true });
       // let city = this.props.location.state ? this.props.location.state.city || "" : "";
 
@@ -401,19 +404,20 @@ class InstallationCalender extends Component {
                      // }}
                   /> */}
                   <div className="locationSelect d-flex1">
-                      <Form.Group controlId="exampleForm.SelectCustom" className="d-flex align-items-center mr-2">
-                          {/* <Form.Label className="mr-2">City:</Form.Label> */}
-                            <Form.Control className="form-installation" as="select" 
-                            onChange={(e)=> {
-                                  this._getFilteredCalenderData(this.state.firstDay,this.state.lastday, e.target.value, "")
-                              this.setState({ city: e.target.value , allLocationsByCity: []});
+                     <Form.Group controlId="exampleForm.SelectCustom" className="d-flex align-items-center mr-2">
+                        {/* <Form.Label className="mr-2">City:</Form.Label> */}
+                        <Form.Control className="form-installation" as="select"
+                           value={this.state.city}
+                           onChange={(e) => {
+                              this._getFilteredCalenderData(this.state.firstDay, this.state.lastday, e.target.value, "")
+                              this.setState({ city: e.target.value, allLocationsByCity: [] });
                               // getInstallationLocationByCity({ city: e.target.value })
                               // .then((res) => {
                               //    if (res.data && res.data.status === 200) {
                               //       const locationsByCity = res.data.resourceData.locations.map(loc=>{
                               //          return {...loc, location: `${loc.location} ,${loc.pinCode}` }
                               //       })
-                                    
+
                               //       this.setState({
                               //          // allLocationsByCity: res.data.resourceData.locations,
                               //          allLocationsByCity: locationsByCity,
@@ -421,22 +425,22 @@ class InstallationCalender extends Component {
                               //    }
                               // })
                               // .catch((err) => console.log("err:", err));
-                            }}
-                            >
-                                <option value="">Select City</option>
-                                {/* <option value="Pune">Pune</option>
+                           }}
+                        >
+                           <option value="">Select City</option>
+                           {/* <option value="Pune">Pune</option>
                                 <option value="Mumbai">Mumbai</option> */}
-                                {this.state.allCitiesWithId?.length
-                                    ? this.state.allCitiesWithId?.map((city) => (
-                                       <option key={city.cityId} value={city.cityId}>
-                                          {city.cityName}
-                                       </option>
-                                    ))
-                                    : null}
-                            </Form.Control>
-                      </Form.Group>
-               </div>
-                          {/* <Form.Label className="mr-2">Location:</Form.Label> */}
+                           {this.state.allCitiesWithId?.length
+                              ? this.state.allCitiesWithId?.map((city) => (
+                                 <option key={city.cityId} value={city.cityId}>
+                                    {city.cityName}
+                                 </option>
+                              ))
+                              : null}
+                        </Form.Control>
+                     </Form.Group>
+                  </div>
+                  {/* <Form.Label className="mr-2">Location:</Form.Label> */}
                   {/* <div className="locationSelect">
                       <Form.Group controlId="exampleForm.SelectCustom"  className="d-flex align-items-center">
                             <Form.Control as="select" 

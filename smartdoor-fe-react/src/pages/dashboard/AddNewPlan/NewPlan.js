@@ -31,7 +31,7 @@ class NewPlan extends Component {
       super(props);
       console.log(this?.props?.location?.state?.planData?.leadGeneration)
       console.log(this?.props?.location?.state?.planData?.marketingVideo)
-    
+
       this.state = {
          planId: this?.props?.location?.state?.planData?.id || "",
          error: {},
@@ -74,8 +74,8 @@ class NewPlan extends Component {
             this?.props?.location?.state?.planData?.deviceSensor,
          isDeviceSmartLock:
             this?.props?.location?.state?.planData?.deviceSmartLock,
-         isAutoDoorCloser: 
-         this?.props?.location?.state?.planData?.autoDoorCloser,
+         isAutoDoorCloser:
+            this?.props?.location?.state?.planData?.autoDoorCloser,
 
          isSmartDoorProperty:
             this?.props?.location?.state?.planData?.smartLockPlan ||
@@ -85,6 +85,7 @@ class NewPlan extends Component {
             this?.props?.location?.state?.planData?.gstEnable ||
             (this?.props?.location?.state?.planData?.gstEnable === undefined && true) ||
             "",
+         planType: this?.props?.location?.state?.planData?.planType || "",
          disableSubmit: false,
          allLocationLoader: false,
       };
@@ -102,57 +103,57 @@ class NewPlan extends Component {
    };
 
    fileUpload = (event) => {
-		if (event.target.files && event.target.files[0]) {
-			let reader = new FileReader();
-			reader.onload = (e) => {
-				console.log(e.target.result, "target.result");
-				// this.setState({ builderPropertyImg: e.target.result });
-			};
-			reader.readAsDataURL(event.target.files[0]);
-		}
-		console.log(event.target.files[0], "after upload files");
-		const imageData = {
-			propertyId: '',
-			propertyDocs: [],
-			propertyImage: [
-				{
-					docId: null,
-					docName: "",
-					docURL: "",
-				},
-			],
-		};
-		console.log(event.target.files, "before s3 files");
-		if (event.target.files.length > 0) {
-			this.ReactS3Client.uploadFile(event.target.files[0], event.target.files[0].name)
-				.then((data) => {
-					console.log("data", data);
-					const property_image = [];
-					property_image.push({
-						docId: null,
-						docName: "",
-						docURL: data.location,
-					});
-					// const image_data = {
-					// 	...imageData,
-					// 	propertyDocs: [],
-					// 	propertyImage: property_image,
-					// };
+      if (event.target.files && event.target.files[0]) {
+         let reader = new FileReader();
+         reader.onload = (e) => {
+            console.log(e.target.result, "target.result");
+            // this.setState({ builderPropertyImg: e.target.result });
+         };
+         reader.readAsDataURL(event.target.files[0]);
+      }
+      console.log(event.target.files[0], "after upload files");
+      const imageData = {
+         propertyId: '',
+         propertyDocs: [],
+         propertyImage: [
+            {
+               docId: null,
+               docName: "",
+               docURL: "",
+            },
+         ],
+      };
+      console.log(event.target.files, "before s3 files");
+      if (event.target.files.length > 0) {
+         this.ReactS3Client.uploadFile(event.target.files[0], event.target.files[0].name)
+            .then((data) => {
+               console.log("data", data);
+               const property_image = [];
+               property_image.push({
+                  docId: null,
+                  docName: "",
+                  docURL: data.location,
+               });
+               // const image_data = {
+               // 	...imageData,
+               // 	propertyDocs: [],
+               // 	propertyImage: property_image,
+               // };
                // const imageArray = Array.from(event.target.files[0])?.map((file) => URL.createObjectURL(file));
                // this.imageArray = (imageArray);
                this.imageArray = data.location
-               this.setState({imageLocation: data.location})
+               this.setState({ imageLocation: data.location })
                // this.state.imageLocation = data.location
                console.log(this.imageArray)
                console.log(this.state.imageLocation)
 
-				})
-				.catch((err) => {
-				});
-			console.log(event.target.files[0], "end file");
-		}
-	}; 
-   
+            })
+            .catch((err) => {
+            });
+         console.log(event.target.files[0], "end file");
+      }
+   };
+
    handleSubmit = () => {
       this.setState({ disableSubmit: true });
       let {
@@ -183,7 +184,8 @@ class NewPlan extends Component {
          isSmartDoorProperty,
          isGstEnabled,
          gstValue,
-         imageLocation
+         imageLocation,
+         planType
       } = this.state;
       let data = {
          id: planId,
@@ -214,6 +216,7 @@ class NewPlan extends Component {
          refundableAmount: refundableAmount,
          amount: 0,
          imageLocation: imageLocation,
+         planType: planType
       };
       addNewPlan(data)
          .then((response) => {
@@ -250,7 +253,7 @@ class NewPlan extends Component {
          _gPlaceLocation: event.location,
          businessLocality: event.location,
       });
-   }; 
+   };
 
    render() {
       const {
@@ -282,16 +285,18 @@ class NewPlan extends Component {
          isMarketingSupport,
          isSmartDoorProperty,
          isGstEnabled,
-         imageLocation
+         imageLocation,
+         planType
       } = this.state;
 
       const options = ['PURCHASED', 'RENTED', 'AVAILABLE', 'NOT_AVAILABLE'];
       const options1 = ['AVAILABLE', 'NOT_AVAILABLE'];
+      const planList = ['PROPERTY_PLAN', 'BROKER_PLAN', 'CORPORATE_PLAN'];
 
       return (
          <>
             {/* <div style={{ height: "5%" }}></div> */}
-            <div className="whiteBg" style={{height : '78vh', overflowY:'auto'}}>
+            <div className="whiteBg" style={{ height: '78vh', overflowY: 'auto' }}>
                <Text
                   size="medium"
                   fontWeight="mediumbold"
@@ -380,28 +385,33 @@ class NewPlan extends Component {
                               text={error.isSmartDoorProperty}
                            />
                         </Col>
-                        {/* <Col lg="4">
+                        <Col lg="4">
                            <Form.Group controlId="formBasicContact">
-                              <Form.Label>Amount</Form.Label>
+                              <Form.Label>Plan Type</Form.Label>
                               <Form.Control
-                                 type="number"
-                                 maxLength="35"
-                                 placeholder="Enter Amount"
-                                 value={amount}
-                                 onChange={(e) =>
+                                 as='select'
+                                 value={planType}
+                                 onChange={(e) => {
                                     this.setState({
-                                       amount: e.target.value.slice(0, 10),
+                                       planType: e.target.value,
                                     })
                                  }
-                              />
+                                 }>
+                                 <option value="">Please select</option>
+                                 {planList.map((option, index) => (
+                                    <option key={index} value={option}>
+                                       {option}
+                                    </option>
+                                 ))}
+                              </Form.Control>
                            </Form.Group>
                            <Text
                               color="dangerText"
                               size="xSmall"
                               className="pt-2"
-                              text={error.amount}
+                              text={error.planType}
                            />
-                        </Col> */}
+                        </Col>
                         <Col lg="4">
                            <Form.Group>
                               <Form.Label>GST Value</Form.Label>
@@ -1006,17 +1016,17 @@ class NewPlan extends Component {
                               text={error.imageLocation}
                            />
                         </Col>
-                        <Col lg="2">
+                        <Col lg="3">
                            <Buttons
                               name="Upload Plan Image"
                               varient="primary"
                               size="Small"
-                              onClick={() => {this.fileInputRef.current?.click()}}
+                              onClick={() => { this.fileInputRef.current?.click() }}
                               color="white"
                               className='button py-0'
-                              style={{width:'fit-content', padding:'0px'}}
+                              style={{ width: 'fit-content', padding: '0px' }}
                            />
-                              {/* <img className="" src={imageLocation} style={{width: '60px', height: '60px', borderRadius: 8, border: '1px #9BA5AD solid'}}></img>  */}
+                           {/* <img className="" src={imageLocation} style={{width: '60px', height: '60px', borderRadius: 8, border: '1px #9BA5AD solid'}}></img>  */}
                            <input
                               hidden
                               type="file"
@@ -1026,9 +1036,9 @@ class NewPlan extends Component {
                                  this.fileUpload(e);
                               }}
                            />
-                           
+
                         </Col>
-                        
+
                         <Col lg="12">
                            <Form.Group controlId="formBasicContact">
                               <Form.Label>Description</Form.Label>

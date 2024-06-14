@@ -156,7 +156,7 @@ const CorporateProperty = () => {
                 onFilter={(e) => setFilterText(e.target.value)}
                 onClear={() => handleClear}
                 filterText={filterText}
-                placeholder="Search name/mobile No."
+                placeholder="Search user/ id"
             />
         );
     }, [filterText, resetPaginationToggle]);

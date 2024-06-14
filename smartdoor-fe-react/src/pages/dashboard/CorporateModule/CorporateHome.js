@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Text from "../../../shared/Text/Text";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useHistory } from 'react-router-dom';
@@ -14,8 +14,16 @@ import { Button } from "react-bootstrap";
 import addIcon from '../../../assets/svg/PlusCircle.svg';
 import logoIcon from '../../../assets/svg/logoIcon.svg';
 import DataTableComponent from "../../../shared/DataTable/DataTable";
+import { compose } from "redux";
+import { connect, useSelector } from "react-redux";
+import { getAllCorporates } from "../../../common/redux/actions";
+import Pagination from "../../../shared/DataTable/Pagination";
+import { TableLoader } from "../../../common/helpers/Loader";
 
-const CorporateHome = () => {
+const CorporateHome = (props) => {
+
+   const { getAllCorporates, allCorporates } = props;
+   const data = useSelector(state => state.allCorporates.data);
    const history = useHistory();
 
    const corporateColumns = [
@@ -26,90 +34,89 @@ const CorporateHome = () => {
          center: false,
          maxWidth: "150px",
          cell: ({ logo }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={logo}>
-
-            </ToolTip>
+            <img src={logo} alt=""></img>
          ),
          id: 1
       },
       {
          name: "Company",
-         selector: ((row) => row.propertyId),
+         selector: ((row) => row.companyName),
          sortable: true,
-         center: false,
+         center: true,
          maxWidth: "150px",
-         cell: ({ company }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={company}>
-               <Text size="Small" color="secondryColor elipsis-text" text={company} />
+         cell: ({ companyName }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={companyName}>
+               <Text size="Small" color="secondryColor elipsis-text" text={companyName} />
             </ToolTip>
          ),
          id: 2
       },
       {
          name: "Address",
-         selector: ((row) => row.address),
+         selector: ((row) => row.companyAddress),
          sortable: false,
-         center: false,
+         center: true,
          maxWidth: "150px",
-         cell: ({ address }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={address}>
-               <Text size="Small" color="secondryColor elipsis-text" text={address} />
+         cell: ({ companyAddress }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={companyAddress}>
+               <Text size="Small" color="secondryColor elipsis-text" text={companyAddress} />
             </ToolTip>
          ),
          id: 3
       },
       {
          name: "Total Postings",
-         selector: ((row) => row.totalPostings),
+         selector: ((row) => row.totalPostingCount),
          sortable: true,
-         center: false,
+         center: true,
          maxWidth: "150px",
-         cell: ({ totalPostings }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={totalPostings}>
-               <Text size="Small" color="secondryColor elipsis-text" text={totalPostings} />
+         cell: ({ totalPostingCount }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={totalPostingCount}>
+               <Text size="Small" color="secondryColor elipsis-text" text={totalPostingCount} />
             </ToolTip>
          ),
          id: 4
       },
       {
          name: "Active Posting(s)",
-         selector: ((row) => row.postings),
+         selector: ((row) => row.totalPostingCount),
          sortable: true,
-         center: false,
+         center: true,
          maxWidth: "150px",
-         cell: ({ postings }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={postings}>
-               <Text size="Small" color="secondryColor elipsis-text" text={postings} />
+         cell: ({ totalPostingCount }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={totalPostingCount}>
+               <Text size="Small" color="secondryColor elipsis-text" text={totalPostingCount} />
             </ToolTip>
          ),
          id: 5
       },
       {
          name: "Users",
-         selector: ((row) => row.users),
+         selector: ((row) => row.countOfUsers),
          sortable: true,
-         center: false,
+         center: true,
          maxWidth: "150px",
-         cell: ({ userCpunt }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={userCpunt}>
-               <Text size="Small" color="secondryColor elipsis-text" text={userCpunt} />
+         cell: ({ countOfUsers }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={countOfUsers}>
+               <Text size="Small" color="secondryColor elipsis-text" text={countOfUsers} />
             </ToolTip>
          ),
          id: 6
       },
       {
          name: "Action",
+         selector: ((row) => row.corporateId),
          sortable: false,
          center: true,
          maxWidth: "40px",
-         cell: ({ row, postedById }) => (
+         cell: ({ corporateId }) => (
             <div className="action">
                <ToolTip position="left" name="View Details">
                   <span>
                      <Link
                         to={{
-                           pathname: "/admin/property/property-details",
-                           state: {},
+                           pathname: "/admin/corporate/corporateDetails",
+                           state: { corporateId: corporateId },
                         }}
                      >
                         <Image name="editIcon" src={contentIcon} />
@@ -121,9 +128,46 @@ const CorporateHome = () => {
       }
    ]
 
-   const [filterText, setFilterText] = React.useState('');
+   const [filterText, setFilterText] = React.useState(data?.length !== 0 ? allCorporates.searchString : '');
    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
+   const [currentPage, setCurrentPage] = useState(data?.length !== 0 ? allCorporates.currentPage : 1);
+   const [rowsPerPage, setRowsPerPage] = useState(data?.length !== 0 ? allCorporates.rowsPerPage : 8);
+   const recordSize = 0;
+   // const image = allCorporates?.data?.corporateList[2]?.logo;
    const [corporateList, setCorporateList] = useState([]);
+
+   const ProgressComponent = <TableLoader />;
+
+   const handlePageChange = (newPage) => {
+      setCurrentPage(newPage);
+      getAllCorporates({
+         corporateId: 0,
+         pageNo: newPage,
+         pageSize: rowsPerPage,
+         searchString: filterText
+      });
+   }
+
+   const handleRowsPerPageChange = (newRowsPerPage) => {
+      setRowsPerPage(newRowsPerPage);
+      getAllCorporates({
+         corporateId: 0,
+         pageNo: currentPage,
+         pageSize: newRowsPerPage,
+         searchString: filterText
+      });
+   }
+
+   let PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
+      <Pagination {...props}
+         rowCount={recordSize}
+         rowsPerPage={rowsPerPage}
+         onChangeRowsPerPage={handleRowsPerPageChange}
+         currentPage={currentPage}
+         onChangePage={handlePageChange}
+         paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+      />
+   );
 
    const subHeaderComponentMemo = React.useMemo(() => {
       const handleClear = () => {
@@ -135,27 +179,46 @@ const CorporateHome = () => {
 
       return (
          <SearchInput
-            onFilter={(e) => setFilterText(e.target.value)}
+            onFilter={(e) => {
+               setFilterText(e.target.value);
+               getAllCorporates({
+                  corporateId: 0,
+                  pageNo: currentPage,
+                  pageSize: rowsPerPage,
+                  searchString: e.target.value
+               });
+            }}
             onClear={() => handleClear}
             filterText={filterText}
-            placeholder="Search name/mobile No."
+            placeholder="Search company name"
          />
       );
    }, [filterText, resetPaginationToggle]);
 
-   const handleAddNewCorporateClick = () => {
-      history.push('/admin/corporate/addNewCorporate');
-   };
+   useEffect(() => {
+      console.log(data)
+      getAllCorporates({
+         corporateId: 0,
+         pageNo: currentPage,
+         pageSize: rowsPerPage,
+         searchString: filterText
+      });
+   }, [getAllCorporates]);
+
+   const showData = () => {
+      let filteredItems = [];
+      filteredItems = allCorporates?.data?.corporateList
+      return allCorporates?.data?.corporateList;
+   }
 
    return (
       <>
          <div className="tableBox">
             <div className="tableHeading">
                <div className="locationSelect align-items-end">
-                  <Button onClick={() => {history.push('/admin/corporate/corporateDetails');}} >Details</Button>
                   {subHeaderComponentMemo}
                   <Button className="d-flex py-1" style={{ color: '#BE1452', backgroundColor: '#F8F3F5', borderColor: '#DED6D9' }}
-                     onClick={() => {history.push('/admin/corporate/addNewCorporate');}} >
+                     onClick={() => { history.push('/admin/corporate/addNewCorporate'); }} >
                      <div style={{
                         width: '20px',
                         height: '20px',
@@ -173,16 +236,16 @@ const CorporateHome = () => {
             </div>
             <div className="corporateTableWrapper">
                <DataTableComponent
-                  data={[]}
+                  data={showData()}
                   columns={corporateColumns}
-                  // progressPending={allPropertyData.isLoading}
-                  // progressComponent={ProgressComponent}
-                  // paginationComponent={PaginationComponent}
+                  progressPending={allCorporates.isLoading}
+                  progressComponent={ProgressComponent}
+                  paginationComponent={PaginationComponent}
                   paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                  // paginationPerPage={recordsPerPage}
-                  // currentPage={currentPage}
-                  // onChangePage={handlePageChange}
-                  // onChangeRowsPerPage={handleRowsPerPageChange}
+                  paginationPerPage={rowsPerPage}
+                  currentPage={currentPage}
+                  onChangePage={handlePageChange}
+                  onChangeRowsPerPage={handleRowsPerPageChange}
                   perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                   filterText={filterText}
                   paginationServer={true}
@@ -201,4 +264,12 @@ const CorporateHome = () => {
    );
 };
 
-export default CorporateHome;
+const mapStateToProps = ({ allCorporates }) => ({
+   allCorporates
+})
+
+const actions = {
+   getAllCorporates
+}
+
+export default compose(connect(mapStateToProps, actions))(CorporateHome);

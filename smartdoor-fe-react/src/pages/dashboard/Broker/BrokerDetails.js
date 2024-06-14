@@ -23,7 +23,7 @@ import "./Broker.scss";
 import {
    getBrokerDetails,
    getBrokerPostedProperty,
-   getPropertyDetails, 
+   getPropertyDetails,
    addHoldRequestComments,
    getAllProperties,
    getBrokerDeclineStatusDetail,
@@ -116,7 +116,7 @@ const BrokerDetails = (props) => {
    useEffect(async () => {
       await _getBrokerDetails();
       let brokerId = brokerdetailId
-      if(data === undefined || data.length === 0) {
+      if ((data === undefined || data.length === 0) && Broker_data?.status !== 'PENDING_APPROVAL' && Broker_data?.status !== 'PAYMENT_PENDING') {
          await _getPostedDetailProperty({ brokerId: brokerId, pageNo: currentPage, records: rowsPerPage });
       }
       setTimeout(async () => {
@@ -177,7 +177,8 @@ const BrokerDetails = (props) => {
 
       return (
          <SearchInput
-            onFilter={(e) => {setFilterText(e.target.value);
+            onFilter={(e) => {
+               setFilterText(e.target.value);
                _getPostedDetailProperty({
                   brokerId: brokerdetailId,
                   pageNo: currentPage,
@@ -259,7 +260,7 @@ const BrokerDetails = (props) => {
             searchString: filterText
          })
       }
-      if(date.length === 0) {
+      if (date.length === 0) {
          _getPostedDetailProperty({
             brokerId: brokerdetailId,
             pageNo: currentPage,
@@ -331,7 +332,7 @@ const BrokerDetails = (props) => {
                      <Link
                         to={{
                            pathname: "/admin/property/property-details",
-                           state: { propertyId: propertyId, userId: brokerdetailId, menuName: '', isDeleted: false},
+                           state: { propertyId: propertyId, userId: brokerdetailId, menuName: '', isDeleted: false },
                         }}
                      >
                         Details
@@ -402,15 +403,19 @@ const BrokerDetails = (props) => {
                               </p>
                            </div>
                            <div className="d-flex justify-content-between align-items-center">
-                              <div className="d-flex align-items-start ">
-                                 <div>
-                                    <StarRating rating={Broker_data?.rating} />
-                                    {/* <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="(112 customers)" className="ml-1" /> */}
-                                 </div>
-                              </div>
-                              <div className="customer_ratedby">
-                                 ( {Broker_data?.ratedBy} customers)
-                              </div>
+                              {Broker_data?.status !== 'PENDING_APPROVAL' && Broker_data?.status !== 'PAYMENT_PENDING' ?
+                                 <>
+                                    <div className="d-flex align-items-start ">
+                                       <div>
+                                          <StarRating rating={Broker_data?.rating} />
+                                          {/* <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="(112 customers)" className="ml-1" /> */}
+                                       </div>
+                                    </div>
+                                    <div className="customer_ratedby">
+                                       ( {Broker_data?.ratedBy !== null ? Broker_data?.ratedBy : '0'} customers)
+                                    </div>
+                                 </>
+                                 : null}
 
                               {/* <Text
                                  size="xSmall"
@@ -422,7 +427,7 @@ const BrokerDetails = (props) => {
                            </div>
 
                            <p size="xSmall" fontWeight="smbold">
-                              {formateDate(Broker_data?.joinedDate) ?? ""}
+                              Joined On: {formateDate(Broker_data?.joinedDate) ?? ""}
                            </p>
                         </div>
                      </div>
@@ -547,10 +552,10 @@ const BrokerDetails = (props) => {
                         </div>
                      </div>
                      <div className="mt-1 row">
-                        <Col className="">
+                        <Col lg='3' className="">
                            <div>
                               <p className="detail-heading">Locations Assigned</p>
-                              <div className="details-heading location-assigned">
+                              <div className="details-heading location-assigned d-flex flex-wrap">
                                  {Broker_data?.locationsAssigned &&
                                     Broker_data?.locationsAssigned.map(
                                        (data, index) =>
@@ -563,10 +568,10 @@ const BrokerDetails = (props) => {
                               </div>
                            </div>
                         </Col>
-                        <Col className="detail-col">
+                        <Col lg='3' className="detail-col">
                            <div>
                               <p className="detail-heading">Specialized In</p>
-                              <div className="details-heading">
+                              <div className="details-heading d-flex">
                                  {Broker_data?.specializedIn && (
                                     <span className="details-value">
                                        {Broker_data?.specializedIn}
@@ -575,10 +580,10 @@ const BrokerDetails = (props) => {
                               </div>
                            </div>
                         </Col>
-                        <Col className="detail-col">
+                        <Col lg='3' className="detail-col">
                            <div>
                               <p className="detail-heading">Services Offered</p>
-                              <div className="details-heading d-flex">
+                              <div className="details-heading d-flex flex-wrap">
                                  {Broker_data?.servicesOffered?.map((element, index) => (
                                     <span key={index} className="details-value">
                                        {element}
@@ -588,9 +593,9 @@ const BrokerDetails = (props) => {
                               </div>
                            </div>
                         </Col>
-                        <Col lg='2' className="detail-col">
+                        <Col lg='3' className="detail-col">
                            <p className="detail-heading">Language Preferences</p>
-                           <div className="details-heading">
+                           <div className="details-heading d-flex flex-wrap">
                               {Broker_data?.languagePreferenceList &&
                                  Broker_data?.languagePreferenceList.map(
                                     (data, index) => (
@@ -602,7 +607,7 @@ const BrokerDetails = (props) => {
                            </div>
                         </Col>
 
-                        <Col className="detail-col">
+                        <Col lg='3' className="mt-1">
                            <div>
                               <p className="detail-heading">Rera Number</p>
                               <div className="details-heading">
@@ -618,12 +623,23 @@ const BrokerDetails = (props) => {
                               </div>
                            </div>
                         </Col>
-                        <Col className="detail-col">
+                        <Col lg='3' className="detail-col mt-1">
                            <div>
                               <p className="detail-heading">Deals In</p>
-                              <div className="details-heading deals-in">
+                              <div className="details-heading deals-in d-flex flex-wrap">
                                  {Broker_data?.dealsInList && (
                                     Broker_data?.dealsInList?.map(element => (
+                                       <span className="details-value">{element}</span>
+                                    )))}
+                              </div>
+                           </div>
+                        </Col>
+                        <Col lg='3' className="detail-col mt-1">
+                           <div>
+                              <p className="detail-heading">Builder Projects</p>
+                              <div className="details-heading deals-in d-flex flex-wrap">
+                                 {Broker_data?.builderProjects && (
+                                    Broker_data?.builderProjects?.map(element => (
                                        <span className="details-value">{element}</span>
                                     )))}
                               </div>

@@ -2514,11 +2514,11 @@ export const ApiJson = {
     url: '/admin/marketingAgency/getAgencyExecutive',
     method: 'POST',
     data: {
-      executiveId:null,
-      agencyId:null,
-      pageNo:null,
-      pageSize:null,
-      searchString:'',
+      executiveId: null,
+      agencyId: null,
+      pageNo: null,
+      pageSize: null,
+      searchString: '',
     },
     headers: {
       'Accept': '*/*',
@@ -2557,7 +2557,7 @@ export const ApiJson = {
       pageNo: null,
       pageSize: null,
       fromDate: "",
-      toDate : "",
+      toDate: "",
       kycStatus: null
     },
     headers: {
@@ -2622,7 +2622,7 @@ export const ApiJson = {
     url: '/consumer/property/addPropertyBasicDetails',
     method: 'POST',
     data: {
-      
+
     },
     showResultMessage: true,
     showErrorMessage: true
@@ -2632,7 +2632,7 @@ export const ApiJson = {
     url: '/consumer/property/getChatGptDescription',
     method: 'POST',
     data: {
-      
+
     },
     showResultMessage: true,
     showErrorMessage: true
@@ -2640,10 +2640,10 @@ export const ApiJson = {
 
   checkExistingCustomer: {
     url: '/admin/marketingAgency/getCustomersPostings',
-    method: 'POST', 
+    method: 'POST',
     data: {
-      mobile:''
-    }, 
+      mobile: ''
+    },
     showResultMessage: true,
     showErrorMessage: true
   },
@@ -2714,38 +2714,38 @@ export const ApiJson = {
       userId: null
     },
     headers: {
-       Accept: "*/*",
-       "content-Type": "application/json",
+      Accept: "*/*",
+      "content-Type": "application/json",
     },
     showResultMessage: false,
     showErrorMessage: false,
- },
+  },
 
- getBrokerDetails: {
+  getBrokerDetails: {
     url: "/consumer/broker/getBrokerDetailsById/:userId",
     method: "GET",
     headers: {
-       Accept: "*/*",
-       "Content-Type": "application/json",
+      Accept: "*/*",
+      "Content-Type": "application/json",
     },
     showResultMessage: false,
     showErrorMessage: false,
- },
+  },
 
- getBrokerPropertyById: {
+  getBrokerPropertyById: {
     url: "/consumer/property/getPropertyById/:propertyId/:brokerId",
     method: "GET",
     headers: {
-       Accept: "*/*",
-       "Content-Type": "application/json",
+      Accept: "*/*",
+      "Content-Type": "application/json",
     },
     showResultMessage: false,
     showErrorMessage: false,
- },
+  },
 
- getBrokerPostedProperty:{
-    url:"consumer/broker/getPropertyListBroker",
-    method:"POST",
+  getBrokerPostedProperty: {
+    url: "consumer/broker/getPropertyListBroker",
+    method: "POST",
     data: {
       brokerId: null,
       pageNo: null,
@@ -2755,80 +2755,159 @@ export const ApiJson = {
       toDate: null,
       status: ""
     },
-    headers:{
-       Accept :"*/*",
-       "Content-Type": "application/json",
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
     },
     showResultMessage: false,
     showErrorMessage: false,
- },
+  },
 
- getBrokerDetailsForApprove: {
+  getBrokerDetailsForApprove: {
     url: "/consumer/broker/getBrokerDetailsForApprove/:brokerId",
     method: "GET",
     data: {},
     headers: {
-       Accept: "*/*",
-       "Content-Type": "application/json",
+      Accept: "*/*",
+      "Content-Type": "application/json",
     },
     showResultMessage: false,
     showErrorMessage: false,
- },
- 
- getBrokerStatusDetail: {
+  },
+
+  getBrokerStatusDetail: {
     url: "/consumer/broker/updateStatus/:brokerId/:status",
     method: "PUT",
     data: {},
     headers: {
-       Accept: "*/*",
-       "Content-Type": "application/json",
+      Accept: "*/*",
+      "Content-Type": "application/json",
     },
     showResultMessage: false,
     showErrorMessage: false,
- },
- getBrokerDeclineStatusDetail: {
+  },
+  getBrokerDeclineStatusDetail: {
     url: "/consumer/broker/updateStatusAsRejected/:brokerId/:status",
     method: "PUT",
     data: {},
     headers: {
-       Accept: "*/*",
-       "Content-Type": "application/json",
+      Accept: "*/*",
+      "Content-Type": "application/json",
     },
     showResultMessage: false,
     showErrorMessage: false,
- },
- 
- addHoldRequestComments: {
+  },
+
+  addHoldRequestComments: {
     url: "/consumer/broker/updateStatus/:brokerId/:status",
     method: "PUT",
     data: {
-       comments: "string",
-       id: 0,
+      comments: "string",
+      id: 0,
     },
     headers: {
-       Accept: "*/*",
-       "Content-Type": "application/json",
+      Accept: "*/*",
+      "Content-Type": "application/json",
     },
     showResultMessage: false,
     showErrorMessage: false,
- },
- 
- changeBrokerStatus: {
+  },
+
+  changeBrokerStatus: {
     url: "consumer/broker/changeBrokerStatus",
     method: "POST",
     data: {
-       brokerId: null,
-       brokerStatus: '',
-       holdReason: ''
+      brokerId: null,
+      brokerStatus: '',
+      holdReason: ''
     },
     headers: {
-       Accept: "*/*",
-       "Content-Type": "application/json",
+      Accept: "*/*",
+      "Content-Type": "application/json",
     },
     showResultMessage: false,
     showErrorMessage: false,
- },
+  },
 
+  getPlanForCorporate: {
+    url: "consumer/property/getPlanDetail",
+    method: "POST",
+    data: {
+      plantType: null,
+      smartdoorPlan: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
+
+  getAllCoporate: {
+    url: "consumer/corporate/getAllCorporate",
+    method: "POST",
+    data: {
+      corporateId: null,
+      pageNo: null,
+      pageSize: null,
+      searchString: ''
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  addEditCorporate: {
+    url: "consumer/corporate/addEditCorporate",
+    method: "POST",
+    data: {
+      logo: '',
+      companyName: '',
+      companyAddress: '',
+      smartDoorPlanId: '',
+      nonSmartDoorPlanId: ''
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  addEditCorporateUser: {
+    url: "consumer/corporate/addEditUser",
+    method: "POST",
+    data: {
+      name: '',
+      mobile: '',
+      corporateId: null,
+      sdPosting: null,
+      nonSdPosting: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  getAllCorporateUsers: {
+    url: "consumer/corporate/getAllCorporateUser/:corporateId",
+    method: "GET",
+    data: { },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 
 };
 console.log(userData)
