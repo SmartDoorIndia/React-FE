@@ -162,7 +162,7 @@ const AddNewCorporate = (props) => {
                         style={{
                            color: "#949494",
                            borderStyle: 'dashed',
-                           borderColor: '#E5E5E5',
+                           borderColor: error?.logo ? 'red' : '#E5E5E5',
                            borderWidth: '2px',
                            backgroundColor: "#FBFBFB",
                            marginTop: '7%'
@@ -255,15 +255,15 @@ const AddNewCorporate = (props) => {
                            className="w-100 mt-4"
                            type="text"
                            id={index}
-                           contentEditable={false}
+                           disabled={true}
                            label="Admin Name"
-                           onInput={(e) => {
-                              setUserList((prevUserList) => {
-                                 let newList = [...prevUserList];
-                                 newList[index] = { ...newList[index], name: e.target.value };
-                                 return [...newList]
-                              })
-                           }}
+                           // onInput={(e) => {
+                           //    setUserList((prevUserList) => {
+                           //       let newList = [...prevUserList];
+                           //       newList[index] = { ...newList[index], name: e.target.value };
+                           //       return [...newList]
+                           //    })
+                           // }}
                            defaultValue={elememt.name}
                         />
                         <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
@@ -273,7 +273,7 @@ const AddNewCorporate = (props) => {
                            className="w-100 mt-4"
                            type="number"
                            id={index}
-                           contentEditable={false}
+                           disabled={true}
                            label="Mobile Number"
                            InputProps={{
                               startAdornment:
@@ -281,13 +281,13 @@ const AddNewCorporate = (props) => {
                                     <Text className='ml-2 mr-2' text={'+91'} style={{ fontSize: '16px' }} fontWeight={'500'} />
                                  </>
                            }}
-                           onInput={(e) => {
-                              setUserList((prevUserList) => {
-                                 let newList = [...prevUserList];
-                                 newList[index] = { ...newList[index], mobile: e.target.value };
-                                 return [...newList]
-                              })
-                           }}
+                           // onInput={(e) => {
+                           //    setUserList((prevUserList) => {
+                           //       let newList = [...prevUserList];
+                           //       newList[index] = { ...newList[index], mobile: e.target.value };
+                           //       return [...newList]
+                           //    })
+                           // }}
                            defaultValue={elememt.mobile}
                         />
                         <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
@@ -297,15 +297,15 @@ const AddNewCorporate = (props) => {
                            className="w-100 mt-4"
                            select
                            id={index}
-                           contentEditable={false}
+                           disabled={true}
                            label="Posting Permission"
-                           onChange={(e) => {
-                              setUserList((prevUserList) => {
-                                 let newList = [...prevUserList];
-                                 newList[index] = { ...newList[index], sdPosting: e.target.value };
-                                 return [...newList]
-                              })
-                           }}
+                           // onChange={(e) => {
+                           //    setUserList((prevUserList) => {
+                           //       let newList = [...prevUserList];
+                           //       newList[index] = { ...newList[index], sdPosting: e.target.value };
+                           //       return [...newList]
+                           //    })
+                           // }}
                            value={elememt.sdPosting} >
                            <MenuItem value='' disabled>select</MenuItem>
                            {permissionList.map(elememt => (
@@ -381,8 +381,8 @@ const AddNewCorporate = (props) => {
                               </Col>
                               : null} */}
                   </Row>
-                  <Button className="mr-1" style={{float:'right', backgroundColor:'#BE1452', color: 'white'}}
-                     onClick={() => {addNewUser();}}>Submit</Button> 
+                  <Button className="mr-1" style={{ float: 'right', backgroundColor: '#BE1452', color: 'white' }}
+                     onClick={() => { addNewUser(); }}>Submit</Button>
                </>
                : null}
             <hr className="mt-5" />
@@ -401,7 +401,7 @@ const AddNewCorporate = (props) => {
             </Button>
             <div className="d-flex ml-3 mb-2">
                <Buttons disabled={!addNewUserFlag && corporateId !== null ? false : true} name='Done' varient='primary' className='col-2 py-2'
-                  onClick={() => {history.goBack();}} ></Buttons>
+                  onClick={() => { history.goBack(); }} ></Buttons>
             </div>
          </div>
       </>

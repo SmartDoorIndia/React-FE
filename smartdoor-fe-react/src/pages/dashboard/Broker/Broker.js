@@ -297,7 +297,7 @@ const Broker = (props) => {
          selector: ((row) => row.status),
          sortable: false,
          center: true,
-         minWidth: "10px",
+         minWidth: "100px",
          cell: ({ status }) => handleStatusElement(status),
       },
       {
@@ -342,7 +342,7 @@ const Broker = (props) => {
                         color: "darkgray",
                         marginTop: "10px",
                      }}
-                     value={[startDate, endDate]}
+                     defaultCalendarValue={[startDate, endDate]}
                      onChange={handleDateRangeChange}
                   />
                </div>

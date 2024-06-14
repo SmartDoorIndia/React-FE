@@ -130,9 +130,9 @@ const CorporateHome = (props) => {
 
    const [filterText, setFilterText] = React.useState(data?.length !== 0 ? allCorporates.searchString : '');
    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
-   const [currentPage, setCurrentPage] = useState(data?.length !== 0 ? allCorporates.currentPage : 1);
-   const [rowsPerPage, setRowsPerPage] = useState(data?.length !== 0 ? allCorporates.rowsPerPage : 8);
-   const recordSize = 0;
+   const [currentPage, setCurrentPage] = useState(data?.length !== 0 ? allCorporates?.data?.currentPage : 1);
+   const [rowsPerPage, setRowsPerPage] = useState(data?.length !== 0 ? allCorporates?.data?.rowsPerPage : 8);
+   const recordSize = allCorporates?.data?.corporateList?.length || 0;
    // const image = allCorporates?.data?.corporateList[2]?.logo;
    const [corporateList, setCorporateList] = useState([]);
 

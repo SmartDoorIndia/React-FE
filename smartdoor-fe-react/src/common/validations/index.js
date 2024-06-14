@@ -1180,6 +1180,7 @@ export const validateCorporate = (data) => {
 
   if (isBlank(data.logo)) {
     errors.logo = true;
+    showErrorToast('Image is mandatory')
   }
   if (isBlank(data.companyName)) {
     errors.companyName = true;

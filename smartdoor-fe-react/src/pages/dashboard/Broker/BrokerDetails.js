@@ -442,7 +442,7 @@ const BrokerDetails = (props) => {
                                              Sell
                                              <span>
                                                 {" "}
-                                                Last {Broker_data?.sellLastDays} days
+                                                Last 90 days
                                              </span>
                                           </p>
                                        </th>
@@ -451,7 +451,7 @@ const BrokerDetails = (props) => {
                                              rent
                                              <span>
                                                 {" "}
-                                                Last {Broker_data?.rentLastDays} days
+                                                Last 90 days
                                              </span>
                                           </p>
                                        </th>
@@ -494,7 +494,7 @@ const BrokerDetails = (props) => {
                                              CHAT
                                              <span>
                                                 {" "}
-                                                Last {Broker_data?.chatLastDays} days{" "}
+                                                Last 90 days{" "}
                                              </span>
                                           </p>
                                        </th>
