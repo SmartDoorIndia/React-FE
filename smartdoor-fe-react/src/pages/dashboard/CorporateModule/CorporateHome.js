@@ -19,6 +19,7 @@ import { connect, useSelector } from "react-redux";
 import { getAllCorporates } from "../../../common/redux/actions";
 import Pagination from "../../../shared/DataTable/Pagination";
 import { TableLoader } from "../../../common/helpers/Loader";
+import { GoogleApiWrapper } from "google-maps-react";
 
 const CorporateHome = (props) => {
 
@@ -31,10 +32,10 @@ const CorporateHome = (props) => {
          name: "Logo",
          selector: ((row) => row.logo),
          sortable: false,
-         center: false,
+         center: true,
          maxWidth: "150px",
          cell: ({ logo }) => (
-            <img src={logo} alt=""></img>
+            <img src={logo} alt="" style={{ height: '40px', width: '40px' }} ></img>
          ),
          id: 1
       },
@@ -43,10 +44,12 @@ const CorporateHome = (props) => {
          selector: ((row) => row.companyName),
          sortable: true,
          center: true,
-         maxWidth: "150px",
+         wrap: true,
+         maxWidth: "250px",
          cell: ({ companyName }) => (
             <ToolTip position="top" style={{ width: '100%' }} name={companyName}>
-               <Text size="Small" color="secondryColor elipsis-text" text={companyName} />
+               {/* <Text size="Small" color="secondryColor elipsis-text" text={companyName} /> */}
+               <span>{companyName}</span>
             </ToolTip>
          ),
          id: 2
@@ -220,6 +223,7 @@ const CorporateHome = (props) => {
                   <Button className="d-flex py-1" style={{ color: '#BE1452', backgroundColor: '#F8F3F5', borderColor: '#DED6D9' }}
                      onClick={() => { history.push('/admin/corporate/addNewCorporate'); }} >
                      <div style={{
+                        position: 'relative',
                         width: '20px',
                         height: '20px',
                         display: 'flex',

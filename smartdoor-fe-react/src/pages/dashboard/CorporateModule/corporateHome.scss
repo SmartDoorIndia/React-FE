@@ -277,6 +277,7 @@
         .rdt_TableCol {
             &:nth-child(1) {
                 width: 100px;
+                text-align: center;
                 min-width: 100px;
             }
             white-space: normal; /* Allows headers to wrap */
@@ -291,13 +292,17 @@
             &:nth-child(1) {
                 &:first-child {
                     min-width: 100px;
-                    min-height: 100px;
-                    white-space: nowrap;overflow: visible;
+                    min-height: 80px;
+                    overflow: visible;
                 }                
+            }
+            &:nth-child(2) {
+                min-width: 200px;
             }
             &:nth-child(4) {
                 .elipsis-text {
-                    white-space: nowrap;overflow: hidden;
+                    // white-space: nowrap;
+                    overflow: hidden;
                     width: 180px;min-width: 180px;
                     text-overflow: ellipsis;display: block;text-align: center;
                 }

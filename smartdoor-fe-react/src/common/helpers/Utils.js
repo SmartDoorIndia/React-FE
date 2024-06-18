@@ -178,7 +178,7 @@ export function handleStatusElement(status) {
         className="tagSuccess defaultTag ml-2 "
       />
     );
-  } else if (['PENDING', 'Pending', 'ASSIGNED', 'UNDER REVIEW', 'PENDING_APPROVAL', 'Will decide later', 'Make an offer'].includes(status)) {
+  } else if (['PENDING', 'Pending', 'ASSIGNED', 'UNDER REVIEW', 'Will decide later', 'Make an offer'].includes(status)) {
     return (
       <Text
         size="xSmall"
@@ -266,6 +266,17 @@ export function handleStatusElement(status) {
         color="white"
         text="ON HOLD"
         className="tagDangerous defaultTag ml-1 labelFontSize"
+      />
+    );
+  }
+  else if (['PENDING_APPROVAL'].includes(status)) {
+    return (
+      <Text
+        size="xSmall"
+        fontWeight="mediumbold"
+        color="white"
+        text={status}
+        className="tagAlert defaultTag "
       />
     );
   }

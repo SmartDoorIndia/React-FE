@@ -280,7 +280,7 @@ const NonSDProperties = (props) => {
          name: "Added On",
          sortable: true,
          selector: "postedDate",
-         maxWidth: "120px",
+         minWidth: "120px",
          center: true,
          cell: ({ postedDate }) => <span>{`${formateDate(postedDate)}` || ""}</span>,
       },
@@ -312,7 +312,7 @@ const NonSDProperties = (props) => {
          style: { minHeight: 'fit-content' },
          cell: ({ houseNumber, societyName, societyAddress, city, state }) => (
             <span className="d-flex">
-               {houseNumber} {" , "}
+               {houseNumber} {houseNumber ? " , " : " "}
                {societyName} {" , "} {societyAddress}
                {city !== null ? <>{societyAddress.includes(city) ? null : <>{" , "}{city}</>}</> : null}
                {state !== null ? <>{societyAddress.includes(state) ? null : <>{" , "}{state}</>}</> : null}
@@ -334,7 +334,19 @@ const NonSDProperties = (props) => {
          center: true,
          minWidth: "150px",
       },
-
+      {
+         name: "Logo",
+         selector: ((row) => row.corporateLogo),
+         center: true,
+         minWidth: "150px",
+         cell: ({ corporateLogo }) => (
+            <span>
+               {corporateLogo ?
+                  <img className="mt-1 mb-1" src={corporateLogo} alt="" style={{ height: '40px', width: '40px' }} />
+                  : <Text text='-'></Text>}
+            </span>
+         )
+      },
       {
          name: "Status",
          selector: "status",
@@ -495,19 +507,19 @@ const NonSDProperties = (props) => {
       let defaultSortFlag = !defaultSort
       const sorted = [...filteredItems].sort((a, b) => {
          if (selectorVal === 'propertyId') {
-             setDefaultSortFieldId(1);
-             return (defaultSortFlag ? 1 : -1) * (a[selectorVal] - b[selectorVal]);
+            setDefaultSortFieldId(1);
+            return (defaultSortFlag ? 1 : -1) * (a[selectorVal] - b[selectorVal]);
          } else if (selectorVal === 'postedDate') {
-             setDefaultSortFieldId(2);
-             const dateA = new Date(a[selectorVal]);
-             const dateB = new Date(b[selectorVal]);
-             return (defaultSortFlag ? 1 : -1) * (dateA - dateB);
+            setDefaultSortFieldId(2);
+            const dateA = new Date(a[selectorVal]);
+            const dateB = new Date(b[selectorVal]);
+            return (defaultSortFlag ? 1 : -1) * (dateA - dateB);
          }
-     });
-      
+      });
+
       dispatch({
          type: Actions.NON_SD_PROPERTIES_SUCCESS,
-         data: { propertyData: [...sorted], records: recordSize, currentPage: currentPage, rowsPerPage: rowsPerPage, searchStr: filterText, propertyId: propertyIdText, city: p_city, location: p_location, fromDate: fromDate, toDate: toDate,  defaultSort: defaultSortFlag, defaultSortId: defaultSortId }
+         data: { propertyData: [...sorted], records: recordSize, currentPage: currentPage, rowsPerPage: rowsPerPage, searchStr: filterText, propertyId: propertyIdText, city: p_city, location: p_location, fromDate: fromDate, toDate: toDate, defaultSort: defaultSortFlag, defaultSortId: defaultSortId }
       });
       // showData();
    };

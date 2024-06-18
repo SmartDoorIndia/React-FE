@@ -395,8 +395,7 @@ span.broker_details {
          text-align: center;
          &:nth-child(1) {
             &:first-child {
-               min-width: 110px;
-               //  white-space: nowrap;
+               min-width: 120px;
                overflow: visible;
             }
          }

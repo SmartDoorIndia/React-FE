@@ -295,10 +295,10 @@ const PropertyDevice = (props) => {
         }
         setLoading(true)
         const valid = await validateCameraData(selectedCameraData, addNewFlag);
+        setLoading(false);
         console.log(valid)
         if (valid.isValid) {
             const response = await editCameraData(selectedCameraData);
-            setLoading(false);
             if (response.status === 200) {
                 showSuccessToast("CameraDevice Data updated successfully");
                 setShowEditCameraData(false);

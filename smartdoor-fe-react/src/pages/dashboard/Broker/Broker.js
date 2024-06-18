@@ -297,7 +297,7 @@ const Broker = (props) => {
          selector: ((row) => row.status),
          sortable: false,
          center: true,
-         minWidth: "100px",
+         minWidth: "120px",
          cell: ({ status }) => handleStatusElement(status),
       },
       {
@@ -388,6 +388,7 @@ const Broker = (props) => {
                   currentPage={currentPage}
                   rowsPerPage={rowsPerPage}
                   onChangePage={handlePageChange}
+                  paginationServer={true}
                   onChangeRowsPerPage={handleRowsPerPageChange}
                   subHeaderComponent={subHeaderComponentMemo}
                   persistTableHead="true"

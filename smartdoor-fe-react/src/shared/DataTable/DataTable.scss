@@ -16,7 +16,7 @@
     .rdt_TableCell{
         text-align: center;
         &:nth-child(2){
-            white-space: nowrap;
+            // white-space: nowrap;
         }
         &:last-child{
             justify-content: start;

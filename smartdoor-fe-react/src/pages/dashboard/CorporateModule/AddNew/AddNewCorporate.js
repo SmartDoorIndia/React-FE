@@ -9,7 +9,7 @@ import cameraIcon from "../../../../assets/images/camra-icon.svg";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import addIcon from '../../../../assets/svg/add.svg';
 import { validateCorpUser, validateCorporate } from "../../../../common/validations";
-import deleteIcon from '../../../../assets/images/delete-icon.svg';
+import pencilIcon from '../../../../assets/svg/icon-edit.svg';
 import { compose } from "redux";
 import { actionGetOtp, addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getPlansForCorporate } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
@@ -39,6 +39,7 @@ const AddNewCorporate = (props) => {
    const [smartDoorPlanList, setSmartDoorPlanList] = useState([]);
    const [nonSmartDoorPlanList, setNonSmartDoorPlanList] = useState([]);
    const [addNewUserFlag, setAddNewUserFlag] = useState(false);
+   const [addNewCorpFlag, setAddNewCorpFlag] = useState(true);
    const history = useHistory();
 
    const getPlans = async () => {
@@ -157,29 +158,54 @@ const AddNewCorporate = (props) => {
             <div className="ml-3 mb-5">
                <Row className="mt-2">
                   <Col lg='2'>
-                     <Button
-                        className="w-100 h-auto py-4"
-                        style={{
-                           color: "#949494",
-                           borderStyle: 'dashed',
-                           borderColor: error?.logo ? 'red' : '#E5E5E5',
-                           borderWidth: '2px',
-                           backgroundColor: "#FBFBFB",
-                           marginTop: '7%'
-                        }}
-                        onClick={() => {
-                           fileInputRef.current?.click();
-                        }}
-                     >
-                        {corporateDetails.logo ? (
-                           <img src={corporateDetails.logo} alt="Uploaded Logo" style={{ maxWidth: '100%', height: 'auto' }} />
-                        ) : (
-                           <>
-                              <img src={cameraIcon} alt="Camera Icon" />
-                              <Text className="mb-1 mt-1" text="Upload logo" style={{ color: '#949494', fontSize: '16px' }} />
-                           </>
-                        )}
-                     </Button>
+                     {corporateDetails.logo ?
+                        <>
+                           <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                              <img
+                                 src={corporateDetails.logo}
+                                 alt="Uploaded Logo"
+                                 style={{ width: '100%', height: '80%' }}
+                              />
+                              <img
+                                 src={pencilIcon}
+                                 alt="Edit Icon"
+                                 style={{
+                                    position: 'absolute',
+                                    top: '0px', // Adjust as necessary
+                                    right: '0px', // Adjust as necessary
+                                    width: '25px', // Adjust as necessary
+                                    height: '25px', // Adjust as necessary
+                                    cursor: 'pointer',
+                                    backgroundColor: '#BE1452',
+                                    borderRadius: '50%'
+                                 }}
+                                 onClick={(e) => {
+                                    fileInputRef.current?.click();
+                                 }}
+                              />
+                           </div>
+                        </>
+                        :
+                        <Button
+                           className="w-100 h-auto py-4"
+                           style={{
+                              color: "#949494",
+                              borderStyle: 'dashed',
+                              borderColor: error?.logo ? 'red' : '#E5E5E5',
+                              borderWidth: '2px',
+                              backgroundColor: "#FBFBFB",
+                              marginTop: '7%'
+                           }}
+                           onClick={() => {
+                              fileInputRef.current?.click();
+                           }}
+                        >
+
+                           <img src={cameraIcon} alt="Camera Icon" />
+                           <Text className="mb-1 mt-1" text="Upload logo" style={{ color: '#949494', fontSize: '16px' }} />
+
+                        </Button>
+                     }
                      <input
                         hidden
                         type="file"
@@ -238,7 +264,9 @@ const AddNewCorporate = (props) => {
                      </TextField>
                   </Col>
                </Row>
-               <Buttons className='mr-5 mt-2' name={corporateId !== null ? 'Save' : 'Add Coprorate'} style={{ float: 'right' }} onClick={() => { createNewCorporate() }} />
+               {addNewCorpFlag ?
+                  <Buttons className='mr-5 mt-2' name={corporateId !== null ? 'Save' : 'Add Coprorate'} style={{ float: 'right' }} onClick={() => { createNewCorporate() }} />
+                  : null}
             </div>
 
             <hr></hr>
