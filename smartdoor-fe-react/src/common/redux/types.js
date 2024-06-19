@@ -355,3 +355,7 @@ export const BROKERS_PROPERTY_LOADING = 'src/pages/Dashboard/Broker/Property/Loa
 export const CORPORATE_LIST_SUCCESS = 'src/pages/Dashboard/corporate/Success';
 export const CORPORATE_LIST_ERROR = 'src/pages/Dashboard/corporate/Error';
 export const CORPORATE_LIST_LOADING = 'src/pages/Dashboard/corporate/Loading';
+
+export const CORPORATE_PROPERTY_SUCCESS = 'src/pages/Dashboard/corporateProperty/Success';
+export const CORPORATE_PROPERTY_ERROR = 'src/pages/Dashboard/corporateProperty/Error';
+export const CORPORATE_PROPERTY_LOADING = 'src/pages/Dashboard/corporateProperty/Loading';

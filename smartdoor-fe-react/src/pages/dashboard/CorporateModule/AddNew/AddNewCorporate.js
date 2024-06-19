@@ -142,7 +142,7 @@ const AddNewCorporate = (props) => {
          if (response.status === 200) {
             setCorporateId(response?.data?.resourceData)
             showSuccessToast('Corporate added successfully');
-
+            setAddNewCorpFlag(false);
          }
       }
    }

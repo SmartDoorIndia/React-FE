@@ -2075,3 +2075,14 @@ export const getAllCorporateUser = async (data) => {
   const response = await mainApiService('getAllCorporateUsers', data);
   return response;
 }
+
+export const getAllCorporateProperties = (data) => async(dispatch) => {
+  dispatch({type: Actions.CORPORATE_PROPERTY_LOADING, data: {}});
+  const response = await mainApiService('getCorporateProperties', data);
+  if(response.status === 200 && response.data.resourceData) {
+    dispatch({type: Actions.CORPORATE_PROPERTY_SUCCESS, data: {corpPropertyList: response?.data?.resourceData, records: response?.data?.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchString: data?.searchString, sdType: data?.sdType, fromDate: data?.fromDate, toDate: data?.toDate, status: data?.status}});
+  } else {
+    dispatch({type: Actions.CORPORATE_PROPERTY_ERROR, data: response.data});
+  }
+  return response;
+}

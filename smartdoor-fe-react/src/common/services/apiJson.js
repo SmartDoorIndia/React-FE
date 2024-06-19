@@ -2909,6 +2909,17 @@ export const ApiJson = {
     showErrorMessage: true,
   },
 
+  getCorporateProperties: {
+    url: "consumer/corporate/getCorporateProperties",
+    method: "POST",
+    data: { },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  }
 };
 console.log(userData)
 

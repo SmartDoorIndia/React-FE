@@ -237,7 +237,7 @@ const PropertyDetails = (props) => {
                }
             }
             console.log("responseSocietyDetails", response);
-            console.log("owner id", response.data.resourceData.postedById);
+            // console.log("owner id", response.data.resourceData.postedById);
          })
          .catch((error) => {
             setLoading(false);

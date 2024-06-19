@@ -15,17 +15,18 @@ import addIcon from '../../../assets/svg/PlusCircle.svg';
 import logoIcon from '../../../assets/svg/logoIcon.svg';
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import { compose } from "redux";
-import { connect, useSelector } from "react-redux";
+import { connect, useDispatch, useSelector } from "react-redux";
 import { getAllCorporates } from "../../../common/redux/actions";
 import Pagination from "../../../shared/DataTable/Pagination";
 import { TableLoader } from "../../../common/helpers/Loader";
-import { GoogleApiWrapper } from "google-maps-react";
+import * as Actions from '../../../common/redux/types';
 
 const CorporateHome = (props) => {
 
    const { getAllCorporates, allCorporates } = props;
    const data = useSelector(state => state.allCorporates.data);
    const history = useHistory();
+   const dispatch = useDispatch();
 
    const corporateColumns = [
       {
@@ -199,6 +200,7 @@ const CorporateHome = (props) => {
    }, [filterText, resetPaginationToggle]);
 
    useEffect(() => {
+      dispatch({type: Actions.CORPORATE_PROPERTY_SUCCESS, data: []});
       console.log(data)
       getAllCorporates({
          corporateId: 0,
@@ -222,7 +224,7 @@ const CorporateHome = (props) => {
                   {subHeaderComponentMemo}
                   <Button className="d-flex py-1" style={{ color: '#BE1452', backgroundColor: '#F8F3F5', borderColor: '#DED6D9' }}
                      onClick={() => { history.push('/admin/corporate/addNewCorporate'); }} >
-                     <div style={{
+                     {/* <div style={{
                         position: 'relative',
                         width: '20px',
                         height: '20px',
@@ -233,8 +235,8 @@ const CorporateHome = (props) => {
                         marginBottom: '-5%',
                      }}>
                         <Image src={addIcon} style={{ width: '20px' }} />
-                     </div>
-                     <Text text={'Add New Company'} fontWeight='bold' style={{ fontSize: '12px', color: '#BE1452' }} />
+                     </div> */}
+                     <Text text={' + Add New Company'} fontWeight='bold' style={{ fontSize: '12px', color: '#BE1452' }} />
                   </Button>
                </div>
             </div>

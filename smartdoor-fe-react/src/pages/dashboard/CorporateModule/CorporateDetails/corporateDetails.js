@@ -57,7 +57,7 @@ const CorporateDetails = (props) => {
                     </Col>
                 </Row>
             </div>
-            <CorporateProperty></CorporateProperty>
+            <CorporateProperty corporateId={corporateId} ></CorporateProperty>
         </>
     )
 }
