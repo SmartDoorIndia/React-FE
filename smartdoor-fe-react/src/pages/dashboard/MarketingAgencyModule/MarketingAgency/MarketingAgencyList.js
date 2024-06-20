@@ -6,7 +6,7 @@ import './MarketingAgencyList.scss';
 import Buttons from "../../../../shared/Buttons/Buttons";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import Text from "../../../../shared/Text/Text";
-import { ToolTip, handleStatusElement } from "../../../../common/helpers/Utils";
+import { ToolTip, handleStatusElement, showErrorToast } from "../../../../common/helpers/Utils";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import { Link } from "react-router-dom";
@@ -40,6 +40,8 @@ const MarketingAgency = (props) => {
     });
     const [totalMonthSpent, setTotalMonthSpend] = useState(0);
     const [totalSpent, setTotalSpent] = useState(0);
+    const [fromDate, setFromDate] = useState(null);
+    const [toDate, setToDate] = useState(null);
     const history = useHistory();
     const dispatch = useDispatch();
 
@@ -193,11 +195,16 @@ const MarketingAgency = (props) => {
 
     useEffect(async () => {
         getAllCityWithId({ smartdoorServiceStatus: null, stateId: null });
-        await getAllAgencies({ agencyId: 0 });
+
+        await getAllAgencies({
+            agencyId: 0,
+            fromDate: null,
+            toDate: null
+        });
         await setDashBoardValues();
         dispatch({ type: Actions.AGENCY_PROPERTY_LIST_SUCCESS, data: {} })
         dispatch({ type: Actions.AGENCY_CUSTOMER_LIST_SUCCESS, data: {} })
-    }, [getAllAgencies, agencylist?.length]);
+    }, [getAllAgencies]);
 
     // const PaginationActionButton = () => (
     //     <div className="d-flex justify-content-center tableBottom">
@@ -285,6 +292,32 @@ const MarketingAgency = (props) => {
         // return agencyList?.data?.agencylist;
     };
 
+    const validateDates = (start, end) => {
+        if ((start === null && end === null) || (start === '' && end === '')) {
+            getAllAgencies({
+                agencyId: 0,
+                fromDate: start,
+                toDate: end
+            });
+            return true;
+        } else if (start !== null && end !== null && start !== '' && end !== '') {
+            if (new Date(start) > new Date(end)) {
+                showErrorToast("Start date should be less than end date");
+                return false;
+            } else {
+                getAllAgencies({
+                    agencyId: 0,
+                    fromDate: start,
+                    toDate: end
+                });
+                return true;
+            }
+        } else {
+            // showErrorToast("Please enter start date and end date or set both empty");
+            return false;
+        }
+    };
+
     return (
         <>
             <div className='d-flex mt-2'>
@@ -353,7 +386,7 @@ const MarketingAgency = (props) => {
                                     : null}
                             </Form.Control>
                         </Form.Group> &nbsp;&nbsp;
-                        <div className="d-flex col-8 justify-content-end">
+                        <div className="d-flex col-9 justify-content-end">
                             <Buttons
                                 name='Add New Agency'
                                 varient="primary"
@@ -361,12 +394,34 @@ const MarketingAgency = (props) => {
                                 color="white"
                                 onClick={() => { history.push('/admin/marketingAgency/addAgency', { addNew: true }) }} ></Buttons>
                             {subHeaderComponentMemo} &nbsp;&nbsp;
-                            {/* <Buttons
-                                name='Search'
-                                varient="primary"
-                                size="xSmall"
-                                color="white"
-                                onClick={() => { showData(); }} ></Buttons> */}
+                            <Form.Group controlId="exampleForm.SelectCustom">
+                                <Form.Control
+                                    type="date"
+                                    max={new Date().toISOString().split("T")[0]}
+                                    placeholder="From Date"
+                                    value={fromDate}
+                                    onChange={(e) => {
+                                        console.log(e.target.value);
+                                        const selectedDate = new Date(e.target.value);
+                                        setFromDate(e.target.value)
+                                        validateDates(e.target.value, toDate);
+                                    }}
+                                />
+                            </Form.Group> &nbsp;&nbsp;&nbsp;&nbsp;
+                            <Form.Group controlId="exampleForm.SelectCustom">
+                                <Form.Control
+                                    type="date"
+                                    max={new Date().toISOString().split("T")[0]}
+                                    placeholder="To Date"
+                                    value={toDate}
+                                    onChange={(e) => {
+                                        console.log(e.target.value);
+                                        const selectedDate = new Date(e.target.value);
+                                        setToDate(e.target.value);
+                                        validateDates(fromDate, e.target.value);
+                                    }}
+                                />
+                            </Form.Group>
                         </div>
                     </div>
 

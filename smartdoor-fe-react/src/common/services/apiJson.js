@@ -2497,8 +2497,8 @@ export const ApiJson = {
   },
 
   getAllAgencies: {
-    url: '/admin/marketingAgency/getAllAgency/:agencyId',
-    method: 'GET',
+    url: '/admin/marketingAgency/getAllAgency',
+    method: 'POST',
     data: {
 
     },

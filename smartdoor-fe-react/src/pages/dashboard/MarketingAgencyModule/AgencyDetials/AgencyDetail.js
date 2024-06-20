@@ -44,7 +44,11 @@ const AgencyDetail = (props) => {
 
     useEffect(() => {
         _getAgencyById();
-        getAllAgencies({ agencyId: 0 });
+        getAllAgencies({
+            agencyId: 0,
+            fromDate: null,
+            toDate: null
+        });
     }, [_getAgencyById]);
 
     const onAgencyChange = async (e) => {
@@ -125,16 +129,26 @@ const AgencyDetail = (props) => {
 
     const validateDates = (start, end) => {
         if ((start === null && end === null) || (start === '' && end === '')) {
+            getAllAgencies({
+                agencyId: agencyId,
+                fromDate: null,
+                toDate: null
+            });
             return true;
         } else if (start !== null && end !== null && start !== '' && end !== '') {
             if (new Date(start) > new Date(end)) {
                 showErrorToast("Start date should be less than end date");
                 return false;
             } else {
+                getAllAgencies({
+                    agencyId: agencyId,
+                    fromDate: start,
+                    toDate: end
+                });
                 return true;
             }
         } else {
-            showErrorToast("Please enter start date and end date or set both empty");
+            // showErrorToast("Please enter start date and end date or set both empty");
             return false;
         }
     };
@@ -247,7 +261,8 @@ const AgencyDetail = (props) => {
                         }}
                     />
                 </Form.Group>
-                <Text className='col-2 mt-1' text={'Total Spend: '} fontWeight={'bold'} style={{ fontSize: '14px' }} />
+                <Text className='px-2 mt-1 w-auto' text={'Total Spend: '} fontWeight={'bold'} style={{ fontSize: '14px' }} />
+                <Text className='mt-1' text={'Rs' + (agencyDetails?.totalSpentFromDateToDate === null ? '0' : agencyDetails?.totalSpentFromDateToDate)} fontWeight={'bold'} style={{ fontSize: '14px' }} />
             </div>
             <div className="d-flex">
                 <Buttons
