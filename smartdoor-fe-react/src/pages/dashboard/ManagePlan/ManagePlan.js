@@ -52,6 +52,20 @@ const ManagePlan = (props) => {
       },
 
       {
+         name: "Upgrade Hierarchy",
+         selector: ((row) => row.planHierarchy),
+         minWidth: "170px",
+         center: true,
+         cell: ({ planHierarchy }) => <span>{planHierarchy}</span>,
+      },
+      {
+         name: "Plan Hierarchy",
+         selector: ((row) => row.viewHierarchy),
+         minWidth: "150px",
+         center: true,
+         cell: ({ viewHierarchy }) => <span>{viewHierarchy}</span>,
+      },
+      {
          name: "Is Active",
          selector: ((row) => row.joiningDate),
          maxWidth: "100px",

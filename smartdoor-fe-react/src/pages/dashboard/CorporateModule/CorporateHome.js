@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Text from "../../../shared/Text/Text";
-import Buttons from "../../../shared/Buttons/Buttons";
 import { useHistory } from 'react-router-dom';
 import { ToolTip } from "../../../common/helpers/Utils";
 import Image from "../../../shared/Image/Image";
@@ -11,8 +10,6 @@ import contentIcon from "../../../assets/images/content-ico.svg";
 import './corporateHome.scss';
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import { Button } from "react-bootstrap";
-import addIcon from '../../../assets/svg/PlusCircle.svg';
-import logoIcon from '../../../assets/svg/logoIcon.svg';
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import { compose } from "redux";
 import { connect, useDispatch, useSelector } from "react-redux";

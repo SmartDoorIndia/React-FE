@@ -394,7 +394,7 @@ const MarketingAgency = (props) => {
                                 color="white"
                                 onClick={() => { history.push('/admin/marketingAgency/addAgency', { addNew: true }) }} ></Buttons>
                             {subHeaderComponentMemo} &nbsp;&nbsp;
-                            <Form.Group controlId="exampleForm.SelectCustom">
+                            {/* <Form.Group controlId="exampleForm.SelectCustom">
                                 <Form.Control
                                     type="date"
                                     max={new Date().toISOString().split("T")[0]}
@@ -421,7 +421,7 @@ const MarketingAgency = (props) => {
                                         validateDates(fromDate, e.target.value);
                                     }}
                                 />
-                            </Form.Group>
+                            </Form.Group> */}
                         </div>
                     </div>
 

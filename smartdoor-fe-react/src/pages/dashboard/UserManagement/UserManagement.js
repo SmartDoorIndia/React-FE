@@ -109,7 +109,7 @@ const UserManagement = (props) => {
       const regex = /([^,]+),\s*(\d{6})/;
       const matches = location.match(regex);
       if (matches) {
-         let zipcode = matches[2]
+         
          getAllUsers({
             searchByCity: city,
             // searchByzipCode: location,
@@ -121,8 +121,7 @@ const UserManagement = (props) => {
             defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
       } else {
-         let zipcode = ""
-         let location = ""
+        
          getAllUsers({
             searchByCity: city,
             // searchByzipCode: location,
@@ -144,7 +143,7 @@ const UserManagement = (props) => {
       recordsPerPage = Number(newRowsPerPage)
       console.log(`Rows per page changed to: ${recordsPerPage}`);
       if (matches) {
-         let zipcode = matches[2]
+         
          getAllUsers({
             searchByCity: city,
             // searchByzipCode: location,
@@ -155,8 +154,6 @@ const UserManagement = (props) => {
             departmentName: departments
          });
       } else {
-         let zipcode = ""
-         let location = ""
          getAllUsers({
             pageNo: currentPage,
             pageSize: Number(newRowsPerPage),
@@ -378,9 +375,9 @@ const UserManagement = (props) => {
       );
    }, [filterText, resetPaginationToggle]);
 
-   function searchingLocation(element, index, array) {
-      return element.location.toLowerCase().includes(filterText.toLowerCase());
-   }
+   // function searchingLocation(element, index, array) {
+   //    return element.location.toLowerCase().includes(filterText.toLowerCase());
+   // }
 
    let filteredItems = allUsersData?.data?.userData?.length ?
       allUsersData?.data?.userData

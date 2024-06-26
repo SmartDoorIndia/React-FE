@@ -5,10 +5,9 @@ import notify from 'devextreme/ui/notify';
 import mainApiService from '../../services/apiService';
 import * as Actions from '../types';
 
-import { clearLocalStorage, setLocalStorage } from '../../../common/helpers/Utils';
+import { setLocalStorage } from '../../../common/helpers/Utils';
 import { showSuccessToast, showErrorToast } from '../../../common/helpers/Utils';
 import { provideAuth } from '../../../common/helpers/Auth';
-import { toDate } from 'date-fns';
 
 export function showToastMessage(response) {
   if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);
@@ -471,6 +470,7 @@ export const getCityAndDept = (data) => async (dispatch) => {
 
 // Action to Get All Plans For Admin
 export const getPlansForAdmin = (data) => async (dispatch) => {
+  dispatch({ type: Actions.MANAGE_PLAN_LOADING, data: {} });
   const response = await mainApiService('getPlansForAdmin', data);
   if (response) {
     if (response.data && response.status === 200) {
@@ -1799,7 +1799,7 @@ export const getFeaturedVideoList = (data) => async (dispatch) => {
   dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_LOADING, data: {} })
   const response = await mainApiService('getFeaturedVideosList', data);
   if (response.status === 200) {
-    let obj = JSON.parse(response.data.resourceData);
+    let obj = JSON.parse(response.data.resourceData[0]?.value);
     let videoList = obj.values.toString().split(',')
     return (dispatch({ type: Actions.SAVE_FEATURED_VIDEOS_SUCCESS, data: videoList }))
   }
@@ -2027,7 +2027,7 @@ export const getBrokerApproveStatus = async (data) => {
 export const addHoldRequestComments = async (data) => {
   const response = await mainApiService('changeBrokerStatus', data);
   if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);
-  else if (response.data && response.data.error) showErrorToast(response.data.error);
+  else if (response.data && response.data.error) showErrorToast(response.data.message);
   else showErrorToast('Unexpected error. Please try again later');
   return response;
 };

@@ -276,7 +276,7 @@ export function handleStatusElement(status) {
         fontWeight="mediumbold"
         color="white"
         text={status}
-        className="tagAlert defaultTag "
+        className="tagAlert defaultTag ml-2"
       />
     );
   }

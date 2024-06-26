@@ -181,21 +181,17 @@ const ExecutionListing = (props) => {
       ),  
     }, 
     {
-      name: 'Property Type',
-      selector: 'propertySubType',
+      name: 'Company',
+      selector: 'corporateName',
       center:true,
       maxWidth:"150px",
       minWidth: '140px',
       style:{"text-align": "center"},
-      cell: ({propertySubType}) => ( 
+      cell: ({corporateName}) => ( 
         // <span> {propertySubType || "-"} </span>
-        <ToolTip position="top" style={{ width: "100%" }} name={propertySubType || ""}>
+        <ToolTip position="top" style={{ width: "100%" }} name={corporateName || "-"}>
            <span className="cursor-pointer elipsis-text">
-              {" "}
-              {propertySubType?.substring(
-                 0,
-                 propertySubType.indexOf(",") !== -1 ? propertySubType.indexOf(",") : propertySubType.length
-              )}
+              {corporateName || "-"}
            </span>
         </ToolTip> 
       ),  

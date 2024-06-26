@@ -45,6 +45,7 @@ class NewPlan extends Component {
          depositeAmount: this?.props?.location?.state?.planData?.depositeAmount || 0,
          installationCharges: this?.props?.location?.state?.planData?.installationCharges || 0,
          planHirarchy: this?.props?.location?.state?.planData?.planHirarchy || 0,
+         viewHierarchy: this?.props?.location?.state?.planData?.viewHierarchy || 0,
          renewalCoins: this?.props?.location?.state?.planData?.renewalCoins || 0,
          renewalInterval: this?.props?.location?.state?.planData?.renewalInterval || 0,
          imageLocation: this?.props?.location?.state?.planData?.imageLocation || "",
@@ -167,6 +168,7 @@ class NewPlan extends Component {
          depositeAmount,
          installationCharges,
          planHirarchy,
+         viewHierarchy,
          refundableAmount,
          renewalCoins,
          renewalInterval,
@@ -211,6 +213,7 @@ class NewPlan extends Component {
          depositeAmount: depositeAmount,
          installationCharges: installationCharges,
          planHirarchy: planHirarchy,
+         viewHierarchy: viewHierarchy,
          renewalCoins: renewalCoins,
          renewalInterval: renewalInterval,
          refundableAmount: refundableAmount,
@@ -270,6 +273,7 @@ class NewPlan extends Component {
          refundableAmount,
          installationCharges,
          planHirarchy,
+         viewHierarchy,
          renewalCoins,
          renewalInterval,
          isActive,
@@ -847,10 +851,10 @@ class NewPlan extends Component {
                         { /*<Col lg="4"></Col> */}
                         <Col lg="4">
                            <Form.Group>
-                              <Form.Label>Plan Hirarchy</Form.Label>
+                              <Form.Label>Upgrade Plan Hirarchy</Form.Label>
                               <Form.Control
                                  type="number"
-                                 placeholder="Enter Plan Hirarchy"
+                                 placeholder="Enter Upgrade Plan Hirarchy"
                                  value={planHirarchy}
                                  min='0'
                                  onChange={(e) =>
@@ -865,6 +869,28 @@ class NewPlan extends Component {
                               size="xSmall"
                               className="pt-2"
                               text={error.planHirarchy}
+                           />
+                        </Col>
+                        <Col lg="4">
+                           <Form.Group>
+                              <Form.Label>View Plan Hirarchy</Form.Label>
+                              <Form.Control
+                                 type="number"
+                                 placeholder="Enter View Plan Hirarchy"
+                                 value={viewHierarchy}
+                                 min='0'
+                                 onChange={(e) =>
+                                    this.setState({
+                                       viewHierarchy: e.target.value.slice(0, 10),
+                                    })
+                                 }
+                              />
+                           </Form.Group>
+                           <Text
+                              color="dangerText"
+                              size="xSmall"
+                              className="pt-2"
+                              text={error.viewHierarchy}
                            />
                         </Col>
                         <Col lg="4">

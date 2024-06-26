@@ -4,8 +4,6 @@
 import isEmpty from 'lodash/isEmpty';
 import ValidationMessages from '../helpers/ValidationMessages';
 import validateRegex from '../helpers/ValidateRegex';
-import { isValid } from 'date-fns';
-import { da } from 'date-fns/locale';
 import { showErrorToast } from '../helpers/Utils';
 
 function isBlank(str) {
@@ -95,6 +93,10 @@ export const validateNewPlan = (data) => {
 
   if (data.planHirarchy < 0) {
     errors.planHirarchy = ValidationMessages.negativeNumber.invalid;
+  }
+
+  if (data.viewHierarchy < 0) {
+    errors.viewHierarchy = ValidationMessages.negativeNumber.invalid;
   }
 
   if (data.depositeAmount < 0) {
@@ -1205,8 +1207,8 @@ export const validateCorpUser = (data) => {
 
   // let errors = []
   let errors = {}
-  let hasError = false
-  let mobileFlag = false
+  // let hasError = false
+  // let mobileFlag = false
 
   // for (let i = 0; i < data.length; i++) {
   //   errors.push({ name: false, mobile: false, sdPosting: false });
@@ -1240,16 +1242,16 @@ export const validateCorpUser = (data) => {
 
   if (isBlank(data?.name)) {
     errors.name = true;
-    hasError = true;
+    // hasError = true;
   }
   if (isBlank(data?.mobile) || data?.mobile?.length != 10) {
     errors.mobile = true;
     showErrorToast("Invalid mobile number")
-    hasError = true;
+    // hasError = true;
   }
   if (isBlank(data?.sdPosting)) {
     errors.sdPosting = true;
-    hasError = true;
+    // hasError = true;
   }
   // if (mobileFlag) {
   //   showErrorToast("All mobile numbers should be unique...")

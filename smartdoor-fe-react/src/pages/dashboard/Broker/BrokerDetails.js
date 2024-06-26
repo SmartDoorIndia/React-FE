@@ -26,6 +26,7 @@ import {
    getPropertyDetails,
    addHoldRequestComments,
    getAllProperties,
+   getBrokerListing,
    getBrokerDeclineStatusDetail,
    getBrokerStatusDetail,
 } from "../../../common/redux/actions";
@@ -35,8 +36,9 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const BrokerDetails = (props) => {
    // MODAL DATA STATE
-   const { getBrokerPostedProperty, brokerProperty } = props;
+   const { getBrokerPostedProperty, brokerProperty, getBrokerListing, allPlanDataBroker } = props;
    const data = useSelector(state => state?.brokerProperty?.data)
+   const data1 = useSelector(state => state.allPlanDataBroker.data)
    const [show, setShow] = useState(false);
    const handleShow = () => setShow(true);
    const [modalData, setModalData] = useState();
@@ -66,7 +68,19 @@ const BrokerDetails = (props) => {
    console.log(postedProperty, "ffjgfhjg")
    const toggleHoldStatus = () => {
       setHoldStatus(!holdStatus);
+      _getBrokerDetails();
+      getBrokerListing(
+         {
+            userId: userData.userid,
+            currentLat: null,
+            currentLong: null,
+            pageNo: data1?.currentPage,
+            records: data1?.rowsPerPage,
+            adminLogin: true,
+            searchString: data1?.searchString
+         });
    };
+
 
    useEffect(() => {
       console.log("Broker_data?.resourceData?.status", Broker_data?.status);
@@ -290,11 +304,12 @@ const BrokerDetails = (props) => {
       },
       {
          name: "Location",
-         selector: (row) => row.location?.localityName,
+         selector: (row) => row.location,
          sortable: false,
          maxWidth: "150px",
          minWidth: "150px",
          center: true,
+         cell: ({ location }) => (<span>{location || '-'}</span>)
       },
       {
          name: "Plan",
@@ -302,6 +317,7 @@ const BrokerDetails = (props) => {
          sortable: true,
          maxWidth: "120px",
          center: false,
+         cell: ({ plan }) => (<span>{plan || '-'}</span>)
       },
       {
          name: "Config.",
@@ -310,6 +326,7 @@ const BrokerDetails = (props) => {
          maxWidth: "120px",
          minWidth: "120px",
          center: true,
+         cell: ({ config }) => (<span>{config || '-'}</span>)
       },
       {
          name: "Status",
@@ -344,28 +361,46 @@ const BrokerDetails = (props) => {
       },
    ];
 
-   const HandleSubmit = () => {
-      addHoldRequestComments({
+   const HandleSubmit = async () => {
+      const response = await addHoldRequestComments({
          brokerId: Number(brokerdetailId),
          brokerStatus: "APPROVED",
          holdReason: null
       });
-      setTimeout(() => {
-         // history.goBack();
-         // window.location.reload();
-      }, 1000);
+      if (response.status === 200) {
+         _getBrokerDetails();
+         getBrokerListing(
+            {
+               userId: userData.userid,
+               currentLat: null,
+               currentLong: null,
+               pageNo: data1?.currentPage,
+               records: data1?.rowsPerPage,
+               adminLogin: true,
+               searchString: data1?.searchString
+            });
+      }
    };
 
-   const HandleRejected = () => {
-      addHoldRequestComments({
+   const HandleRejected = async () => {
+      const response = await addHoldRequestComments({
          brokerId: Number(brokerdetailId),
          brokerStatus: "REJECTED",
          holdReason: null
       });
-      setTimeout(() => {
-         // history.goBack();
-         // window.location.reload();
-      }, 1000);
+      if (response.status === 200) {
+         _getBrokerDetails();
+         getBrokerListing(
+            {
+               userId: userData.userid,
+               currentLat: null,
+               currentLong: null,
+               pageNo: data1?.currentPage,
+               records: data1?.rowsPerPage,
+               adminLogin: true,
+               searchString: data1?.searchString
+            });
+      }
    };
 
    const closeModal = (data = { isReload: false }) => {
@@ -505,7 +540,7 @@ const BrokerDetails = (props) => {
                                              <div>
                                                 <p>Active Cust.</p>
                                                 <span>
-                                                   {Broker_data?.chatCustomerCount}
+                                                   {Broker_data?.activeCustomersRent + Broker_data?.activeCustomersSale}
                                                 </span>
                                              </div>
                                           </div>
@@ -519,20 +554,33 @@ const BrokerDetails = (props) => {
                                  <Buttons
                                     className="hold-btn"
                                     name={!holdStatus ? "Hold" : "UnHold"}
-                                    onClick={() => {
+                                    onClick={async () => {
                                        if (!holdStatus) {
 
                                           handleShow();
                                           setModalData(brokerdetailId);
 
                                        } else {
-                                          addHoldRequestComments({
+                                          const response = await addHoldRequestComments({
                                              brokerId: Number(brokerdetailId),
                                              brokerStatus: "UN_HOLD",
                                              holdReason: null
                                              // comments: comment
                                           });
-                                          setHoldStatus(false)
+                                          if (response.status === 200) {
+                                             setHoldStatus(false);
+                                             _getBrokerDetails();
+                                             getBrokerListing(
+                                                {
+                                                   userId: userData.userid,
+                                                   currentLat: null,
+                                                   currentLong: null,
+                                                   pageNo: data1?.currentPage,
+                                                   records: data1?.rowsPerPage,
+                                                   adminLogin: true,
+                                                   searchString: data1?.searchString
+                                                });
+                                          }
                                        }
                                        // handleShow();
                                     }}
@@ -799,16 +847,18 @@ const BrokerDetails = (props) => {
    );
 };
 
-const mapStateToProps = ({ brokerProperty }) => ({
+const mapStateToProps = ({ brokerProperty, allPlanDataBroker }) => ({
    brokerProperty,
    getBrokerPostedProperty,
    getPropertyDetails,
    getAllProperties,
+   allPlanDataBroker
 });
 const actions = {
    getBrokerPostedProperty,
    getPropertyDetails,
    getAllProperties,
+   getBrokerListing
 };
 const withConnect = connect(mapStateToProps, actions);
 

@@ -310,7 +310,7 @@ const CorporateProperty = (props) => {
                                 value={fromDate}
                                 onChange={(e) => {
                                     console.log(e.target.value);
-                                    const selectedDate = new Date(e.target.value);
+                                    // const selectedDate = new Date(e.target.value);
                                     setFromDate(e.target.value)
                                 }}
                             />
@@ -324,7 +324,7 @@ const CorporateProperty = (props) => {
                                 value={toDate}
                                 onChange={(e) => {
                                     console.log(e.target.value);
-                                    const selectedDate = new Date(e.target.value);
+                                    // const selectedDate = new Date(e.target.value);
                                     setToDate(e.target.value)
                                 }}
                             />

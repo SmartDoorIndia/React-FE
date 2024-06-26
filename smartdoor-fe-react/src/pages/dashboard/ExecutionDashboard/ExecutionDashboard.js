@@ -513,13 +513,13 @@ const InstallationRequestsColumns = [
     cell: ({requestFor}) => ( <span className="elipsis-text"> {requestFor || "-"} </span> )
   }, 
   {
-    name: 'Property Type',
-    selector: row => row.propertySubType,
+    name: 'Company',
+    selector: row => row.corporateName,
     center:true,
     maxWidth:"200px",
     minWidth: '130px',
     style:{"text-align": "center"},
-    cell: ({propertySubType}) => ( <span className="elipsis-text"> {propertySubType || "-"} </span> )
+    cell: ({corporateName}) => ( <span className="elipsis-text"> {corporateName || "-"} </span> )
   }, 
   {
     name: 'Assigned To',

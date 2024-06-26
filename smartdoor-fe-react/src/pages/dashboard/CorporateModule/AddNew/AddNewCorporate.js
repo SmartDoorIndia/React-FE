@@ -11,7 +11,7 @@ import addIcon from '../../../../assets/svg/add.svg';
 import { validateCorpUser, validateCorporate } from "../../../../common/validations";
 import pencilIcon from '../../../../assets/svg/icon-edit.svg';
 import { compose } from "redux";
-import { actionGetOtp, addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getPlansForCorporate } from "../../../../common/redux/actions";
+import { addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getPlansForCorporate } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -29,7 +29,6 @@ const AddNewCorporate = (props) => {
       smartDoorPlanId: '',
       nonSmartDoorPlanId: ''
    });
-   const [logoImg, setLogoImg] = useState('');
    const [newUser, setNewUser] = useState({
       name: '',
       mobile: '',
@@ -115,11 +114,11 @@ const AddNewCorporate = (props) => {
       }
    }
 
-   const deleteUser = (index) => {
-      let userlist = [...userList];
-      userlist.splice(index, 1);
-      setUserList([...userlist]);
-   }
+   // const deleteUser = (index) => {
+   //    let userlist = [...userList];
+   //    userlist.splice(index, 1);
+   //    setUserList([...userlist]);
+   // }
 
    const imageUpload = (e) => {
       const file = (e.target.files[0])
