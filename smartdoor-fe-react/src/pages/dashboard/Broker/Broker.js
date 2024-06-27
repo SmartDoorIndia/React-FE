@@ -151,7 +151,7 @@ const Broker = (props) => {
             userId: userData.userid,
             currentLat: null,
             currentLong: null,
-            pageNo: currentPage,
+            pageNo: 1,
             records: rowsPerPage,
             adminLogin: true,
             status: statusSelected?.toUpperCase(),
@@ -165,7 +165,7 @@ const Broker = (props) => {
             userId: userData.userid,
             currentLat: null,
             currentLong: null,
-            pageNo: currentPage,
+            pageNo: 1,
             records: rowsPerPage,
             adminLogin: true,
             status: statusSelected?.toUpperCase(),
@@ -192,7 +192,7 @@ const Broker = (props) => {
                   userId: userData.userid,
                   currentLat: null,
                   currentLong: null,
-                  pageNo: currentPage,
+                  pageNo: 1,
                   records: rowsPerPage,
                   adminLogin: true,
                   status: statusSelected?.toUpperCase(),
@@ -216,7 +216,7 @@ const Broker = (props) => {
             userId: userData.userid,
             currentLat: null,
             currentLong: null,
-            pageNo: currentPage,
+            pageNo: 1,
             records: rowsPerPage,
             adminLogin: true,
             status: status_value?.toUpperCase(),
@@ -332,7 +332,7 @@ const Broker = (props) => {
 
    return (
       <>
-         <div className="tableBox mb-5">
+         <div className="tableBox">
             <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
                <div className="text-nowrap mb-2">
                   <DateRangePicker

@@ -270,7 +270,7 @@
     .rdt_TableBody {
         max-height: calc(51vh);
         height: fit-content;
-        overflow-y: scroll;
+        overflow-y: visible;
         overflow-x: hidden;
     }
     .rdt_TableHeadRow {

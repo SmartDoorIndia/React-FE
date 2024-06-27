@@ -155,7 +155,7 @@
      .planDetailTable {
         .rdt_TableBody {
             max-height: calc(55vh - 20px);
-            height: 55vh;
+            height: fit-content;
             overflow-y: visible;
             overflow-x: hidden;
             .rdt_TableRow {

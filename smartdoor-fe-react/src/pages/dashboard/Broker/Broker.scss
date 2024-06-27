@@ -373,9 +373,9 @@ span.broker_details {
 }
 .brokerTableWrapper {
    .rdt_TableBody {
-      //  max-height: calc(51vh);
-      //  height: fit-content;
-      overflow-y: scroll;
+      max-height: calc(51vh);
+      height: fit-content;
+      overflow-y: visible;
       overflow-x: hidden;
    }
    .rdt_TableHeadRow {

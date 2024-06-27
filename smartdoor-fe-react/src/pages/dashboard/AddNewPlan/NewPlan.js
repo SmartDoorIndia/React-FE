@@ -300,7 +300,7 @@ class NewPlan extends Component {
       return (
          <>
             {/* <div style={{ height: "5%" }}></div> */}
-            <div className="whiteBg" style={{ height: '78vh', overflowY: 'auto' }}>
+            <div className="whiteBg">
                <Text
                   size="medium"
                   fontWeight="mediumbold"

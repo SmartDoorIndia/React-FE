@@ -697,7 +697,7 @@ const Transaction = (props) => {
                />
             }}
          />
-         <div style={{height : '35rem', overflow:'auto'}}>
+         <div>
 
          <div className="cardBox cardTractions">
             <Card className="cardWidth">

@@ -168,7 +168,7 @@ const HelpDeskDashboard = (props) => {
           />
         ) }
       />
-      <div style={{height : '35rem', overflow:'auto'}}>
+      <div>
 
       <div className="cardBox">
         {/* <Card className="cardWidth">

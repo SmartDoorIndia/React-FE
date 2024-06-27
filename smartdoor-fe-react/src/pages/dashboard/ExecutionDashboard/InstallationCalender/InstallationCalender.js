@@ -376,7 +376,6 @@ class InstallationCalender extends Component {
          <div>
             {this.state.loading ? <FallBackLoader /> : null}
             <div className="button-top-section">
-               <div></div>
                <div className="d-flex installation-filter">
                   {/* <Buttons
                      name={  "Approve"}

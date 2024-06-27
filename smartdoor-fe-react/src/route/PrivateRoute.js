@@ -24,21 +24,23 @@ const PrivateRoute = ({
 
   return (
     <Route
-      { ...rest }
-      render={ (props) => {
+      {...rest}
+      render={(props) => {
         if (isAuth) {
           dispatch({
             type: CURRENT_DASHBOARD_NAME,
             data: { name, bradcrumb, headerButton, path, stepper },
           });
 
-          return <Component { ...props } title={ title } module={ module } tabName={ tabName } />;
+          return <div style={{minHeight: '90vh', height: '90vh', overflow:'auto'}}>
+            <Component {...props} title={title} module={module} tabName={tabName} />
+          </div>
         } else {
           // disconnectSocket(socket);
 
           return <Redirect to="/login" />;
         }
-      } }
+      }}
     />
   );
 };

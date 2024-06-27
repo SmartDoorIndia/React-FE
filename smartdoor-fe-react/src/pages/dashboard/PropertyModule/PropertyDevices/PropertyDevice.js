@@ -313,7 +313,7 @@ const PropertyDevice = (props) => {
 
     return (
         <>
-            <div className="whiteBg" style={{ height: '32rem', overflowY: 'auto' }}>
+            <div className="whiteBg" >
                 <Text
                     className="h5"
                     size="medium"
