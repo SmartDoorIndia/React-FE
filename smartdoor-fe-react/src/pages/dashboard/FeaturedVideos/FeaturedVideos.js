@@ -138,7 +138,7 @@ const FeaturedVideos = (props) => {
     return (
         <>
             <div className="whiteBg">
-                <div ref={vidoeRef} style={{ maxHeight: '25rem', height: 'fit-content', overflowY: 'auto', overflowX: 'hidden' }} >
+                <div ref={vidoeRef} style={{ overflowY: 'auto', overflowX: 'hidden' }} >
                     {featuredVideosList.map(item => (
                         <>
                             <Row
