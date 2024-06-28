@@ -1,0 +1,212 @@
+@import '../../../../scss/modules/variables.scss';
+
+.builderForm{
+    padding:12px;
+    @include border;
+    border-radius: 4px;
+    ::placeholder{
+        font-size: 12px;
+    }
+
+    .addresText {
+        line-height: 150%;
+        letter-spacing: -0.02em;
+        margin: 20px 0px;
+    }
+
+    .mt-4-5 {
+        margin-top: 2.5em !important;
+    }
+
+    .positionRelative{
+        position: relative;
+        min-height: 136px;
+        overflow: hidden;
+        width: 320px;
+    }
+
+    .colPad {
+        padding-left: 0px;
+        padding-right: 23px;
+    }
+    .companyLogo{
+        display: flex;
+        justify-content: center;
+        align-items: center;        
+        min-height:40px;
+        cursor: pointer !important;
+
+        width: 95%;
+        height: 40px;
+        background: #FBFBFB;
+        border: 1px dashed #E5E5E5;
+        box-sizing: border-box;
+        border-radius: 8px;
+        figure{
+            margin: 0px;
+            margin-bottom: 0.4em;
+        }
+
+        img{
+            opacity: 0.6;
+            width: 25px;
+        }
+        .custom.custom-file {
+            position: absolute;
+            cursor: pointer !important;
+        }
+        .fileSelect{
+            height: 40px;
+            width: 95%;
+            cursor: pointer !important;
+            input{
+                height: 100%;
+                cursor: pointer !important;
+            }
+        }
+        .fileSelectText{
+            line-height: 150%;
+            letter-spacing: -0.02em;
+        }
+    } 
+    .selectedImg {
+        .selectedImgList {
+            cursor: pointer;
+            &:hover {
+                opacity: 0.3;
+                color: black;
+            }
+        }
+
+        figure {
+            margin-left: 1em;
+        }
+        img{
+            width: 40px !important;
+            height: 40px !important;
+            border-radius: 8px;
+            transition: .5s ease;
+            backface-visibility: hidden;            
+        }
+        .crossIcon {
+            position: absolute;
+            top: 0;
+            right: 0;
+            color: #FFFFFF;
+            font-weight: 700;            
+        }
+    }
+
+    .amenitiesBox{
+        width: 95%;
+        .boxAmenities{
+            width: 102px;
+            height: 102px;
+            border: 1px solid #DEDEDE;
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            border-radius: 8px;
+            margin-top: 0.5em !important;
+            margin-right: 0.5em !important;
+            @media(max-width:1366px){
+                width:75px;
+                height: 75px;
+            }
+
+            figure{
+                margin-bottom:5px !important;
+            }
+        }
+    }
+
+    .lightBg{
+        background-color:$lightgray;
+        padding: 12px;
+
+        .residentialBox{
+            .form-label{
+                font-size: 9px;
+                left: 3px;
+                padding-left: 5px;
+                padding-right: 3px;
+                font-weight: bold !important;
+            }
+            .form-control {
+                font-weight: bold !important;
+                font-size: 12px !important;
+                line-height: 150%;
+                letter-spacing: -0.02em;
+            }
+
+            .formButton{
+                justify-content: center;
+                margin-top: 1em;
+                text-align: center;
+                width: 100%;
+            }
+            .check-row{
+                .checkBox.customChechbox {
+                    margin-right: 8px !important;
+                }
+
+            }
+            
+        }
+        .bhk-select {
+            max-width: 60px !important;
+        }
+    }
+
+    .submitBtn{
+        margin:0 auto;
+        width: 100%;         
+        button{
+            margin-top: 0;
+            width: 40%;
+            padding:12px !important
+        } 
+    }
+
+    @media(max-width:1600px){
+        .residentialBox{
+        .formButton{
+            button{
+                margin-top: 0;
+                /*width:25%;*/
+            }
+        }
+            .form-label{
+                font-size: 9px;
+            }
+            ::placeholder{
+                font-size: 10px;
+            }
+            .lableTitle{
+                .form-control{
+                    font-size:10px !important;                        
+                }
+            }
+        }
+        .customChechbox {                
+            input[type=checkbox] + label {font-size: 11px;}            
+            input[type=checkbox]:checked + label {font-size: 11px;}
+        }
+
+        .customChechbox {                
+            input[type=radio] + label {font-size: 11px;}            
+            input[type=radio]:checked + label {font-size: 11px;}
+        }
+
+        .boxSpace{
+            /*margin-right: 0 !important;*/
+            .col{
+                padding-right: 0;
+            }
+        }
+       
+    }
+
+}
+

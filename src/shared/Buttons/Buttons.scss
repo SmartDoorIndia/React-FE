@@ -1,0 +1,288 @@
+@import "../../scss/modules/variables.scss";
+
+.btn {
+  outline: none;
+  border-radius: 4px !important;
+  align-items: center;
+  padding: 4px 20px !important;
+
+  &.add-new-entry-btn {
+    padding: 4px 10px !important;
+  }
+
+  @include font-family;
+  position: relative;
+
+  &:focus,
+  &:hover {
+    box-shadow: none !important;
+  }
+}
+
+.primary {
+  background-color: $primary-color !important;
+  border-color: $primary-color;
+  color: $white !important;
+  background-image: none;
+
+  &.Resend-otp-btn {
+
+    &:hover,
+    &:focus,
+    &:active,
+    &:active:hover {
+      color: $white !important;
+      // background-color: $primary-color-hover !important;
+      // border-color: $primary-color-hover ;      
+    }
+  }
+
+  &.btnRecords {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    color: $primary-color !important;
+    padding-top: 0 !important;  
+    display: block;
+    width: 100%;
+    &:hover,
+    &:focus,
+    &:active,
+    &:active:hover {
+      background-color: transparent !important;
+      border-color: transparent !important;
+      color: $primary-color !important; 
+    }
+  }
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:active:hover {
+    background-color: $primary-color-hover !important;
+    border-color: $primary-color-hover ;
+  }
+
+  &:active {
+    &:focus {
+      background-color: $primary-color-hover !important;
+      box-shadow: none;
+    }
+  }
+}
+
+.secondary {
+  background-color: $secondryBtn !important;
+  border-color: $secondryBtn;
+  color: $secondry-color !important;
+  background-image: none;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:active:hover {
+    background-color: $secondry-color-hover !important;
+    border-color: $secondry-color-hover;
+  }
+
+  &:active {
+    &:focus {
+      background-color: $secondry-color-hover !important;
+
+    }
+  }
+}
+
+.info {
+  background-color: $info !important;
+  border-color: $info;
+  color: $secondry-color !important;
+  background-image: none;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:active:hover {
+    background-color: $info;
+    border-color: $info;
+  }
+
+  &:active {
+    &:focus {
+      background-color: $info;
+
+    }
+  }
+}
+
+.success {
+  background-color: $success !important;
+  border-color: $success;
+  color: $secondry-color !important;
+  background-image: none;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:active:hover {
+    background-color: $success-hover !important;
+    border-color: $success-hover;
+  }
+
+  &:active {
+    &:focus {
+      background-color: $success-hover !important;
+
+    }
+  }
+}
+
+.buttonGray {
+  background-color: $lightprime !important;
+  border-color: $primary-color !important;
+  color: $primary-color !important;
+  background-image: none;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:active:hover {
+    background-color: $lightprime !important;
+    border-color: $primary-color;
+  }
+
+  &:active {
+    &:focus {
+      background-color: $lightprime !important;
+
+    }
+  }
+}
+
+.link {
+  background-color: transparent;
+  border-color: transparent;
+  background-image: none;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:active:hover {
+    background-color: $primary-color;
+    border-color: $primary-color;
+    color: $white !important;
+  }
+
+  &:active {
+    &:focus {
+      background-color: $primary-color;
+      color: $white !important;
+
+    }
+  }
+}
+
+.lightBtn {
+  background-color: $lightgray !important;
+  border-color: $lightBorder !important;
+  background-image: none;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:active:hover {
+    background-color: $lightBorder !important;
+    border-color: $citrus !important;
+  }
+
+  &:active {
+    &:focus {
+      background-color: $lightgray ;
+    }
+  }
+}
+
+
+
+
+.disable {
+  background-color: $white !important;
+  border: 1px solid $gray !important;
+  color: $gray !important;
+  background-image: none;
+  border-radius: 8px;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:active:hover {
+    background-color: $white ;
+
+
+  }
+
+  &:active {
+    &:focus {
+      background-color: $white ;
+
+
+    }
+  }
+}
+
+button {}
+
+
+
+// Font Size
+.xSmall {
+  font-size: $xSmall !important;
+}
+
+.Small {
+  font-size: $body !important;
+}
+
+.regular {
+  font-size: $regular;
+}
+
+.medium {
+  font-size: $medium;
+}
+
+.large {
+  font-size: $large;
+}
+
+// Font Color 
+.primaryColor {
+  color: $primary-color;
+}
+
+.secondryColor {
+  color: $secondry-color;
+}
+
+.dangerText {
+  color: $dangerous;
+}
+
+.success {
+  color: $success;
+}
+
+.white {
+  color: $white !important;
+}
+
+.black {
+  color: $black;
+}
+
+.alertColor {
+  color: $alertColor
+}
+
+.gray {
+  color: $gray;
+}

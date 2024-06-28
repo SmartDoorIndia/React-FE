@@ -1,0 +1,155 @@
+import { Col, Row } from "react-bootstrap";
+import { compose } from "redux";
+import Text from "../../../../shared/Text/Text";
+import Buttons from "../../../../shared/Buttons/Buttons";
+import { TextField } from "@mui/material";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useEffect, useState } from "react";
+import { validateExecutiveDetails } from "../../../../common/validations";
+import '../Add_EditAgency.scss';
+import { addEditExecutive } from '../../../../common/redux/actions';
+import { showSuccessToast } from "../../../../common/helpers/Utils";
+import { showErrorToast } from "../../../../common/helpers/Utils";
+import AutoCompleteTextField from "../../../../shared/Inputs/AutoComplete/textField";
+
+const AgencyExecutives = (props) => {
+    // const addNew = props.location.state.addNew;
+    const [executiveDetails, setExecutiveDetails] = useState({
+        agencyId: props?.location?.state?.agencyId || null,
+        executiveId: props?.location?.state?.executiveDetails?.executiveId || null,
+        executiveName: props?.location?.state?.executiveDetails?.name || '',
+        location: props?.location?.state?.executiveDetails?.location || '',
+        executiveNumber: props?.location?.state?.executiveDetails?.mobile || null,
+        executiveEmail: props?.location?.state?.executiveDetails?.email || ''
+    });
+    const [error, setError] = useState({});
+    const [disableFlag, setDisableFlag] = useState(false);
+    const history = useHistory();
+
+    const validateExecutiveDetail = async () => {
+        if (executiveDetails.executiveNumber === null || executiveDetails.executiveNumber === "") {
+            showErrorToast("Mobile Number is Mandatory...")
+        } else if (executiveDetails.executiveNumber !== null && executiveDetails.executiveNumber.length !== 10) {
+            showErrorToast("Mobile Number is not valid...")
+        } else {
+            const valid = await validateExecutiveDetails(executiveDetails);
+            setError(valid.errors)
+            if (valid.isValid) {
+                setDisableFlag(true);
+                await addEditExecutive(executiveDetails).then((response) => {
+                    if (response?.status === 200) {
+                        showSuccessToast('Agency Executive added successfully...');
+                        setDisableFlag(true)
+                        history.goBack();
+                    } else {
+                        setDisableFlag(false)
+                        showErrorToast(response?.data?.message)
+                    }
+                })
+                    .catch(error => {
+                        showErrorToast("Number Already exist...")
+                        setDisableFlag(false)
+                        console.log(error);
+                    });
+            }
+        }
+
+    }
+
+    useEffect(() => {
+        // console.log(executiveDetails);
+    })
+
+    return (
+        <>
+            <div className="whiteBg">
+                <Row>
+                    <Col lg='4' style={{ marginTop: '0%' }}>
+                        <TextField
+                            className="w-100 mt-4"
+                            type="text"
+                            label="Name"
+                            onInput={(e) => { setExecutiveDetails({ ...executiveDetails, executiveName: e.target.value }) }}
+                            defaultValue={executiveDetails.executiveName}
+                        />
+                        <Text
+                            color="dangerText"
+                            size="xSmall"
+                            className="pt-2"
+                            text={error.executiveName}
+                        />
+                    </Col>
+                    <Col lg='8'>
+                        <AutoCompleteTextField
+                            className='locationSelect w-100 mt-4'
+                            label={'Location'}
+                            cityLatLng={null}
+                            placeholder="Enter City"
+                            id="AgencyCityAutoComplete"
+                            onSelectOption={(e) => { setExecutiveDetails({ ...executiveDetails, location: e.location }); console.log(e) }}
+                            onInputChange={(value) => { setExecutiveDetails({ ...executiveDetails, location: value }); }
+                            }
+                            predictionType="city"
+                            value={executiveDetails?.location}
+                        />
+                        <Text
+                            color="dangerText"
+                            size="xSmall"
+                            className="pt-2"
+                            text={error.location}
+                        />
+                    </Col>
+                </Row>
+                <Row className="mt-3">
+                    <Col lg='4'>
+                        <TextField
+                            className="w-100"
+                            type="number"
+                            label="Phone"
+                            // disabled={!addNew}
+                            inputProps={{ min: 0 }}
+                            onChange={(e) => {
+                                const result = e.target.value.replace(/\D/g, '');
+                                const mobileNum = (result.slice(0, 10));
+                                setExecutiveDetails({ ...executiveDetails, executiveNumber: mobileNum });
+                                if (e.target.value.length !== 10) {
+                                    setError({ ...error, executiveNumber: 'Contact Number must be 10 digits' })
+                                }
+                                else { setError({ ...error, executiveNumber: '' }) }
+                            }
+                            }
+                            value={executiveDetails.executiveNumber}
+                        />
+                        <Text
+                            color="dangerText"
+                            size="xSmall"
+                            className="pt-2"
+                            text={error.executiveNumber}
+                        />
+                    </Col>
+                    <Col lg='4'>
+                        <TextField
+                            className="w-100"
+                            type="email"
+                            label="Email"
+                            onInput={(e) => { setExecutiveDetails({ ...executiveDetails, executiveEmail: e.target.value }) }}
+                            defaultValue={executiveDetails.executiveEmail}
+                        />
+                        <Text
+                            color="dangerText"
+                            size="xSmall"
+                            className="pt-2"
+                            text={error.executiveEmail}
+                        />
+                    </Col>
+                </Row>
+                <div className="d-flex mt-3">
+                    <Buttons name='Cancel' size='medium' varient='secondary' onClick={() => { history.goBack(); }}></Buttons> &nbsp;&nbsp;&nbsp;&nbsp;
+                    <Buttons name='Submit' disabled={disableFlag} size='medium' varient='primary' onClick={() => { validateExecutiveDetail() }}></Buttons>
+                </div>
+            </div>
+        </>
+    );
+}
+
+export default compose(AgencyExecutives)

@@ -1,0 +1,42 @@
+@import "../../scss/modules/variables.scss";
+.loginForm{
+    min-height: 100vh;
+    height: 100%;    
+    align-items: center;    
+    background-image: url(../../assets/images/building-bg.png);
+    background-repeat:repeat-x;
+    background-position: center bottom;    
+    display: flex;
+    background-color: white;
+    .centerBox{ 
+        max-width: 100%;
+        margin: 0 auto;
+        display: block;
+        text-align: center;            
+    }
+    .form-label{        
+        position: relative;
+        top: 18px;
+        background:$white;
+        left:11px;
+        font-size:$xSmall;
+        padding-left: 5px;
+        padding-right: 5px;
+        color:$gray;
+    }
+    .form-group{
+        margin-bottom: 0;
+    }
+    button {
+          margin-top: 30px;
+          width: 100% ;          
+          padding: 12px !important;
+     }
+     .forgot{
+         margin-top: 20px;
+         text-align: right;
+         > span{
+             cursor: pointer;
+        }
+     }    
+}

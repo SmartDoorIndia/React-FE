@@ -1,0 +1,1038 @@
+import { useEffect, useRef, useState } from "react";
+import { connect, useDispatch } from "react-redux";
+import { compose } from "redux"
+import PostingFields from "../../../common/helpers/PostingFields";
+import { Button, Col, Row } from "react-bootstrap";
+import { Checkbox, FormControl, FormControlLabel, MenuItem, Radio, RadioGroup, Slider, TextField } from "@mui/material";
+import Text from '../../../shared/Text/Text';
+import POSTING_CONSTANTS from "../../../common/helpers/POSTING_CONSTANTS";
+import * as Actions from '../../../common/redux/types';
+import Buttons from "../../../shared/Buttons/Buttons";
+import { validateSpecs } from "../../../common/validations";
+import { addBasicDetails, getChatGptDescription } from "../../../common/redux/actions";
+import Loader from "../../../common/helpers/Loader";
+import './property.scss';
+import { getLocalStorage, showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+
+const Specs = (props) => {
+
+    const { basicDetailFields, addressDetailFields, specDetailFields, saveSpecDetailsFields, customerDetails, editPropertyFlag } = props;
+    const [specList, setSpecList] = useState([]);
+    const dispatch = useDispatch();
+    const propertyId = props?.propertyId;
+    const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
+    const [specDetails, setSpecDetails] = useState(Object.keys(specDetailFields.data).length !== 0 ?
+        specDetailFields.data : {
+            numberOfRooms: 0.0,
+            propertyRoomCompositionType: '',
+            hasExtraKitchen: false,
+            hasServantRoom: false,
+            builtUpArea: null,
+            builtUpAreaMeasurementUnit: 'Sq. Ft.',
+            carpetArea: null,
+            carpetAreaMeasurementUnit: 'Sq. Ft.',
+            openArea: null,
+            openAreaMeasurementUnit: 'Sq. Ft.',
+            plotArea: null,
+            plotAreaMeasurementUnit: 'Sq. Ft.',
+            loadingFactorInPercent: Number(30),
+            flatType: '',
+            isUnusedProperty: false,
+            furnishingDescription: '',
+            furnishing: '',
+            entranceFacing: '',
+            numberOfBaths: null,
+            numberOfCarParking: null,
+            numberOfTwoWheelerParking: null,
+            numberOfReservedCarParking: null,
+            numberOfReservedTwoWheelerParking: null,
+            numberOfBalconies: null,
+            unitFurnishing: '',
+            structure: '',
+            commercialPropertyType: '',
+            propertyDescription: '',
+            commercialPropertyPurposes: [],
+            purposes: [],
+            propertyOverlookings: [],
+            internalAmenities: [],
+            generalAmenities: [],
+            commercialGeneralAmenities: [],
+            pgGuestHouseFacilities: [],
+            pgGuestHouseAttachedTo: [],
+
+        });
+    const [internalAmenitiesList, setInternalAmenitiesList] = useState([]);
+    const [roomCompositionList, setRoomCompositionList] = useState([]);
+    const [saveSpecsFlag, setSaveSpecsFlag] = useState(false);
+    const [error, setError] = useState({});
+    const hasExtraRoom = useRef();
+    const [addRoomFlag, setAddRoomFlag] = useState(false);
+    const [descLoader, setDescLoader] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const history = useHistory();
+
+    useEffect(() => {
+        if (Object.keys(basicDetailFields.data).length !== 0) {
+            let speclist = [];
+            let fields = basicDetailFields.data;
+            let category = '';
+            if (fields.propertyCategory === 'Lease') {
+                category = 'Renting'
+            } else if (fields.propertyCategory === 'Sale') {
+                category = 'Selling'
+            } else {
+                category = fields.propertyCategory
+            }
+            if (fields.propertyType === 'Residential') {
+                if (fields.propertySubType === 'PG/Co-living' || fields.propertySubType === 'PG/Co-Living') {
+                    speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
+                } else {
+                    speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Specs
+                }
+            } else if (fields.propertyType === 'Commercial') {
+                speclist = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType].Specs
+            }
+            if (fields.propertySubType === 'Independent House / Bungalow' || fields.propertySubType === 'Builder Floor') {
+                setInternalAmenitiesList(POSTING_CONSTANTS.InternalAmeniteis)
+            }
+            if (fields.propertySubType === 'Apartment') {
+                setInternalAmenitiesList(['Personal lift', 'Gym', 'Bar', 'Entertainment Room'])
+            }
+            if (fields.propertyType === 'Commercial') {
+                setInternalAmenitiesList(POSTING_CONSTANTS.CommercialAmeniteis)
+            }
+            if (fields.propertySubType === 'PG/Co-living' || fields.propertySubType === 'PG/Co-Living') {
+                setRoomCompositionList(POSTING_CONSTANTS.roomCompositionList)
+            } else {
+                setRoomCompositionList(['BHK'])
+            }
+            setSpecList(speclist);
+        }
+        if (Object.keys(specDetailFields.data).length !== 0) {
+            if (specDetailFields?.data?.numberOfRooms !== null) {
+                const bedrooms = (specDetailFields?.data?.numberOfRooms?.toString())?.split('.')
+                if (bedrooms?.length === 2) {
+                    if (bedrooms[1] === '5') {
+                        setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: bedrooms[0] }));
+                        setAddRoomFlag(true);
+                    }
+                }
+            }
+        }
+    }, []);
+
+    const setAddRoom = (e) => {
+        if (e.target.checked) {
+            setAddRoomFlag(true);
+        }
+        else {
+            setAddRoomFlag(false);
+        }
+    }
+
+    const generatePropertyDescription = async () => {
+        if(basicDetailFields.data.propertySubType === 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living' ) {
+            if(specDetails.numberOfRooms > 6) {
+                showErrorToast('Maximum Number Of rooms should be 6...')
+                setError({numberOfRooms : true})
+                return null;
+            }
+        }
+        let specDetail = {...specDetails}
+        const valid = validateSpecs(specDetail, specList, false);
+        setError(valid.errors);
+        if (valid.isValid) {
+            if(specList.includes('BHK')) {
+                if (addRoomFlag) {
+                    const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
+                    const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                    specDetail.numberOfRooms = roundedRooms;
+                    setAddRoomFlag(true);
+                } 
+                else {
+                    if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
+                        const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+                        const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                        specDetail.numberOfRooms = roundedRooms;
+                    }
+                    setAddRoomFlag(false);
+                }
+            }
+            setDescLoader(true);
+            const requestBody = {
+                "Type": basicDetailFields?.data?.propertyType,
+                "Purpose": basicDetailFields?.data?.propertyCategory,
+                "Stage of property": basicDetailFields?.data?.stageOfProperty,
+                "Sub type": basicDetailFields?.data?.propertySubType,
+                "Location": addressDetailFields.data.city,
+                "BHK": (specDetail?.numberOfRooms)?.toString(),
+                "Attached": JSON.stringify(specDetails.pgGuestHouseAttachedTo) || '',
+                "Flat type": specDetails.flatType,
+                "Commercial purpose": JSON.stringify(specDetails.commercialPropertyPurposes),
+                "purposes": JSON.stringify(specDetails.purposes),
+                "Structure": specDetails.structure,
+                "Entrance facing": specDetails.entranceFacing,
+                "Overlooking": JSON.stringify(specDetails.propertyOverlookings),
+                "Unit furnishing": specDetails.unitFurnishing,
+                "Furnished": specDetails.furnishing,
+                "Furnishing details": specDetails.furnishingDescription,
+                "Internal amenities": JSON.stringify(specDetails.internalAmenities),
+                "General amenities": JSON.stringify(specDetails.generalAmenities)
+            }
+
+            const response = await getChatGptDescription(requestBody);
+            if (response.status === 200) {
+                setDescLoader(false)
+                setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, propertyDescription: response?.data?.resourceData }))
+            }
+            setDescLoader(false)
+        }
+    }
+
+    const saveSpecDetails = () => {
+        if(basicDetailFields.data.propertySubType === 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living' ) {
+            if(specDetails.numberOfRooms > 6) {
+                showErrorToast('Maximum Number Of rooms should be 6...')
+                setError({numberOfRooms : true})
+                return null;
+            }
+        }
+        let specDetail = {...specDetails}
+        const valid = validateSpecs(specDetail, specList, true);
+        setError(valid.errors);
+        if (valid.isValid) {
+            if(specList.includes('BHK')) {
+                if (addRoomFlag) {
+                    const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
+                    const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                    // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+                    specDetail.numberOfRooms = roundedRooms;
+                    setAddRoomFlag(true);
+                } 
+                else {
+                    if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
+                        const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+                        const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                        // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+                        specDetail.numberOfRooms = roundedRooms;
+                    }
+                    setAddRoomFlag(false);
+                }
+            }
+            dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetail })
+            setSaveSpecsFlag(true);
+            saveSpecDetailsFields({ saveFlag: true })
+            if(editPropertyFlag) {
+                notifySpecDetails(true)
+            }
+        }
+    }
+
+    const handleCarpetAreaChange = (e) => {
+        const carpetArea = parseFloat(e.target.value);
+        const loadingFactor = parseFloat(specDetails.loadingFactorInPercent);
+        const builtUpArea = carpetArea / (1 - (loadingFactor * 0.01));
+        setSpecDetails(prevSpecDetails => ({
+            ...prevSpecDetails,
+            carpetArea: carpetArea,
+            builtUpArea: builtUpArea.toFixed(2) // Adjust decimal places as needed
+        }));
+    };
+
+    const handleLoadingFactorChange = (e) => {
+        if (specDetails.carpetArea !== null) {
+            const carpetArea = parseFloat(specDetails.carpetArea)
+            const loadingFactor = parseFloat(e.target.value);
+            const builtUpArea = carpetArea / (1 - (loadingFactor * 0.01));
+            setSpecDetails(prevSpecDetails => ({
+                ...prevSpecDetails,
+                loadingFactorInPercent: loadingFactor,
+                carpetArea: carpetArea,
+                builtUpArea: builtUpArea.toFixed(2) // Adjust decimal places as needed
+            }));
+        }
+        else if (specDetails.builtUpArea !== null) {
+            const builtUpArea = parseFloat(specDetails.carpetArea)
+            const loadingFactor = parseFloat(e.target.value);
+            const carpetArea = parseFloat(builtUpArea * (1 - (loadingFactor * 0.01)));
+            setSpecDetails(prevSpecDetails => ({
+                ...prevSpecDetails,
+                loadingFactorInPercent: loadingFactor,
+                carpetArea: carpetArea.toFixed(2),
+                builtUpArea: builtUpArea // Adjust decimal places as needed
+            }));
+        }
+    };
+
+    const handleUnitChanged = (e) => {
+        const newUnit = e.target.value;
+    
+        const convertArea = (area, currentUnit) => {
+            if (currentUnit === 'Sq. Mt.' && newUnit === 'Sq. Ft.') {
+                return (parseFloat(area) * 10.7639).toFixed(2);
+            } else if (currentUnit === 'Sq. Ft.' && newUnit === 'Sq. Mt.') {
+                return (parseFloat(area) / 10.7639).toFixed(2);
+            }
+            return area;
+        };
+    
+        setSpecDetails(prevSpecDetails => ({
+            ...prevSpecDetails,
+            openArea: convertArea(prevSpecDetails.openArea, prevSpecDetails.openAreaMeasurementUnit),
+            builtUpArea: convertArea(prevSpecDetails.builtUpArea, prevSpecDetails.builtUpAreaMeasurementUnit),
+            carpetArea: convertArea(prevSpecDetails.carpetArea, prevSpecDetails.carpetAreaMeasurementUnit),
+            openAreaMeasurementUnit: newUnit,
+            builtUpAreaMeasurementUnit: newUnit,
+            carpetAreaMeasurementUnit: newUnit,
+        }));
+    };
+
+    const handlePlotAreaUnitChanged = (e) => {
+        const newUnit = e.target.value;
+    
+        const convertArea = (area, currentUnit) => {
+            if (currentUnit === 'Sq. Mt.' && newUnit === 'Sq. Ft.') {
+                return (parseFloat(area) * 10.7639).toFixed(2);
+            } else if (currentUnit === 'Sq. Ft.' && newUnit === 'Sq. Mt.') {
+                return (parseFloat(area) / 10.7639).toFixed(2);
+            }
+            return area;
+        };
+    
+        setSpecDetails(prevSpecDetails => ({
+            ...prevSpecDetails,
+            plotArea: convertArea(prevSpecDetails.plotArea, prevSpecDetails.plotAreaMeasurementUnit),
+            plotAreaMeasurementUnit: newUnit,
+        }));
+    };
+    
+
+    const handleBuiltupAreaChange = (e) => {
+        const builtUpArea = parseFloat(e.target.value);
+        const carpetArea = parseFloat(builtUpArea * (1 - (specDetails.loadingFactorInPercent * 0.01)));
+        setSpecDetails(prevSpecDetails => ({
+            ...prevSpecDetails,
+            carpetArea: carpetArea,
+            builtUpArea: builtUpArea.toFixed(2) // Adjust decimal places as needed
+        }));
+    };
+
+    const notifySpecDetails = async (loadNext) => {
+        if(basicDetailFields.data.propertySubType === 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living' ) {
+            if(specDetails.numberOfRooms > 6) {
+                showErrorToast('Number Of rooms')
+            }
+        }
+        let specDetail = {...specDetails}
+        const valid = validateSpecs(specDetail, specList, true);
+        setError(valid.errors);
+        if (valid.isValid) {
+            if(specList.includes('BHK')) {
+                if (addRoomFlag) {
+                    const updatedRooms = parseFloat(specDetails.numberOfRooms) + 0.5;
+                    const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                    // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+                    specDetail.numberOfRooms = roundedRooms;
+                    setAddRoomFlag(true);
+                } else {
+                    if(parseFloat(specDetails.numberOfRooms) % 1 !== 0) {
+                        const updatedRooms = parseFloat(specDetails.numberOfRooms) - 0.5;
+                        const roundedRooms = Math.round(updatedRooms * 10) / 10;
+                        // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: roundedRooms }))
+                        specDetail.numberOfRooms = roundedRooms;
+                    }
+                    setAddRoomFlag(false);
+                }
+            }
+            let userId = getLocalStorage('authData');
+            const data = {
+                ...(propertyId && { smartdoorPropertyId: propertyId }),
+                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails :{
+                    postedById: userId.userid,
+                    lastPageOfInfoFilled: 2,
+                    draft: true,
+                    partial: false,
+                    requestAlerts: false,
+                    favourite: false,
+                    smartLockProperty: false,
+                    autoRenew: null,
+                    autoApproval: null,
+                    cityProvidesSmartdoorSevice: null,
+                    planId: null,
+                    currentPlanName: null,
+                    expiryDate: null,
+                    numberOfDaysLeft: null,
+                    status: "",
+                    postedByName: userId.name,
+                    postedByMobile: userId.mobile,
+                    postedByProfileImageUrl: '',
+                    ownerName: customerDetails?.name,
+                    ownerMobileNumber: customerDetails?.mobile,
+                    isPostingForOthers: true,
+                    notifyCustomer: true
+                },
+                basicDetails: basicDetailFields?.data,
+                address: addressDetailFields?.data,
+                specs: specDetail
+            }
+            // setLoading(true)
+            const response = await addBasicDetails(data);
+            if (response.status === 200) {
+                // setLoading(false)
+                dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: specDetail })
+                setSaveSpecsFlag(true)
+                saveSpecDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
+                if(!loadNext) {
+                    showSuccessToast('Property Posted successfully');
+                    history.goBack();
+                }
+            }
+        }
+        // setLoading(false)
+    }
+
+    return (
+        <>
+            <div className="whiteBg mb-1">
+                <Row>
+                    {specList.includes('BHK') ?
+                        <>
+                            <Col lg='4' className='mb-2'>
+                                <TextField
+                                    error={error.numberOfRooms}
+                                    type="number"
+                                    required
+                                    className="w-100"
+                                    label={'BHK'}
+                                    onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfRooms: e.target.value })) }}
+                                    value={specDetails.numberOfRooms}
+                                    inputProps={{ min: 1, max: basicDetailFields?.data?.propertySubType === 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? 6 : 8 }}
+                                    InputProps={{
+                                        endAdornment: <>
+                                            <TextField
+                                                error={error.propertyRoomCompositionType}
+                                                style={{ borderStyle: 'unset' }}
+                                                className="w-50 p-0"
+                                                select
+                                                InputProps={{ style: { border: 'unset' } }}
+                                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, propertyRoomCompositionType: e.target.value })) }}
+                                                value={specDetails.propertyRoomCompositionType}
+                                            >
+                                                {roomCompositionList.map(item => (
+                                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                                ))}
+                                            </TextField>
+                                        </>
+                                    }}
+                                ></TextField>
+                            </Col>
+                            {basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ?
+                                <Col className="d-flex p-0" lg='4'>
+                                    <Checkbox ref={hasExtraRoom} checked={addRoomFlag} onChange={(e) => { setAddRoom(e) }} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                                    <Text className='mt-3' text={'.5'} style={{ fontSize: '16px' }} ></Text> &nbsp;&nbsp;
+                                    <Checkbox onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, hasServantRoom: e.target.checked })) }} defaultChecked={specDetails.hasServantRoom} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                                    <Text className='mt-3' text={'Servant Room'} style={{ fontSize: '16px' }} ></Text> &nbsp;&nbsp;
+                                    <Checkbox onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, hasExtraKitchen: e.target.checked })) }} defaultChecked={specDetails.hasExtraKitchen} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                                    <Text className='mt-3' text={'Extra Kitchen'} style={{ fontSize: '16px' }} ></Text>
+                                </Col>
+                                : null}
+                        </>
+                        : null}
+                    {specList.includes('Structure') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                required
+                                error={error.structure}
+                                className="w-100"
+                                label={'Structure'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, structure: e.target.value })) }}
+                                value={specDetails.structure}
+                            >
+                                {POSTING_CONSTANTS.structureList.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Attached') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                multiple
+                                SelectProps={{
+                                    multiple: true
+                                }}
+                                className="w-100"
+                                label={'Attached'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, pgGuestHouseAttachedTo: e.target.value })) }}
+                                value={specDetails.pgGuestHouseAttachedTo}
+                            >
+                                {POSTING_CONSTANTS.attachedList.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Flat type') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                error={error.flatType}
+                                required
+                                className="w-100"
+                                label={'Flat type'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, flatType: e.target.value })) }}
+                                value={specDetails.flatType}
+                            >
+                                {POSTING_CONSTANTS.flatTypeList.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Carpet area/built-up area') ?
+                        <>
+                            <Col lg='4' className='mb-2'>
+                                <TextField
+                                    type="number"
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? true : false}
+                                    error={error.carpetArea}
+                                    className="w-100"
+                                    inputProps={{ min: 0 }}
+                                    placeholder={'Carpet area*'}
+                                    onChange={async (e) => { await handleCarpetAreaChange(e) }}
+                                    value={specDetails.carpetArea}
+                                    InputProps={{
+                                        endAdornment: <>
+                                            <TextField
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
+                                                className="p-0"
+                                                select
+                                                error={error.carpetAreaMeasurementUnit}
+                                                InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
+                                                onChange={(e) => { 
+                                                    // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, carpetAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value, openAreaMeasurementUnit: e.target.value }));
+                                                                    handleUnitChanged(e); }}
+                                                value={specDetails.carpetAreaMeasurementUnit}
+                                            >
+                                                {POSTING_CONSTANTS.measurementUnits.map(item => (
+                                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                                ))}
+                                            </TextField>
+                                        </>
+                                    }}
+                                >
+                                </TextField>
+                            </Col>
+                            {specList.includes('Loading factor') ?
+                                <Col className="p-0" lg='4'>
+                                    <span className="d-flex">
+                                        <Text text={'Loading Factor: ' + specDetails.loadingFactorInPercent + '% '} fontWeight='bold' style={{ fontSize: '16px' }} />
+                                        <Text className='mt-1' text='Add carpet area/Built up area' fontWeight='500' style={{ fontSize: '12px' }} />
+                                    </span>
+                                    <Slider defaultValue={specDetails.loadingFactorInPercent}
+                                        valueLabelDisplay="auto"
+                                        min={10}
+                                        max={100}
+                                        onChange={(e) => { handleLoadingFactorChange(e) }}
+                                        style={{ color: "#BE142" }}
+                                    />
+                                </Col>
+                                : null}
+                            <Col lg='4' className='mb-2'>
+                                <TextField
+                                    type="number"
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? true : false}
+                                    error={error.builtUpArea}
+                                    className="w-100"
+                                    placeholder={'Built-up area*'}
+                                    inputProps={{ min: 0 }}
+                                    onChange={(e) => { handleBuiltupAreaChange(e) }}
+                                    value={specDetails.builtUpArea}
+                                    InputProps={{
+                                        endAdornment: <>
+                                            <TextField
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
+                                                className="p-0"
+                                                select
+                                                error={error.builtUpAreaMeasurementUnit}
+                                                InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
+                                                onChange={(e) => { 
+                                                    // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value, openAreaMeasurementUnit: e.target.value }));
+                                                                    handleUnitChanged(e); }}
+                                                value={specDetails.builtUpAreaMeasurementUnit}
+                                            >
+                                                {POSTING_CONSTANTS.measurementUnits.map(item => (
+                                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                                ))}
+                                            </TextField>
+                                        </>
+                                    }}
+                                >
+                                </TextField>
+                            </Col>
+                        </>
+                        : null}
+                    {specList.includes('Carpet area/built-up area of the room') ?
+                        <>
+                            <Col lg='4' className='mb-2'>
+                                <TextField
+                                    type="number"
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? true : false}
+                                    error={error.carpetArea}
+                                    className="w-100"
+                                    placeholder={'Carpet area'}
+                                    inputProps={{ min: 0 }}
+                                    onChange={(e) => { handleCarpetAreaChange(e) }}
+                                    value={specDetails.carpetArea}
+                                    InputProps={{
+                                        endAdornment: <>
+                                            <TextField
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
+                                                className="p-0"
+                                                select
+                                                error={error.carpetAreaMeasurementUnit}
+                                                InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
+                                                onChange={(e) => {
+                                                    // setSpecDetails(prevSpecDetails => ({
+                                                    //     ...prevSpecDetails, carpetAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value,
+                                                    //     openAreaMeasurementUnit: e.target.value,
+                                                    // }));
+                                                    handleUnitChanged(e);
+                                                }}
+                                                value={specDetails.carpetAreaMeasurementUnit}
+                                            >
+                                                {POSTING_CONSTANTS.measurementUnits.map(item => (
+                                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                                ))}
+                                            </TextField>
+                                        </>
+                                    }}
+                                >
+                                </TextField>
+                            </Col>
+                            {specList.includes('Loading factor') ?
+                                <Col className="p-0" lg='4'>
+                                    <span className="d-flex">
+                                        <Text text='Loading Factor' fontWeight='bold' style={{ fontSize: '16px' }} />
+                                        <Text className='mt-1' text='Add carpet area or Built up area only' fontWeight='500' style={{ fontSize: '12px' }} />
+                                    </span>
+                                    <Slider defaultValue={specDetails.loadingFactorInPercent}
+                                        valueLabelDisplay="auto"
+                                        min={10}
+                                        max={100}
+                                        onChange={(e) => { handleLoadingFactorChange(e) }}
+                                        style={{ color: "#BE142" }}
+                                    />
+                                </Col>
+                                : null}
+                            <Col lg='4' className='mb-2'>
+                                <TextField
+                                    type="number"
+                                    required={basicDetailFields.data.propertySubType !== 'PG/Co-living' || basicDetailFields.data.propertySubType === 'PG/Co-Living'  ? true : false}
+                                    error={error.builtUpArea}
+                                    className="w-100"
+                                    placeholder={'Built-up area'}
+                                    inputProps={{ min: 0 }}
+                                    onChange={(e) => { handleBuiltupAreaChange(e) }}
+                                    value={specDetails.builtUpArea}
+                                    InputProps={{
+                                        endAdornment: <>
+                                            <TextField
+                                                style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
+                                                className="p-0"
+                                                select
+                                                error={error.builtUpAreaMeasurementUnit}
+                                                InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
+                                                onChange={(e) => {
+                                                    // setSpecDetails(prevSpecDetails => ({
+                                                    //     ...prevSpecDetails, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value,
+                                                    //     openAreaMeasurementUnit: e.target.value,
+                                                    // }));
+                                                    handleUnitChanged(e);
+                                                }}
+                                                value={specDetails.builtUpAreaMeasurementUnit}
+                                            >
+                                                {POSTING_CONSTANTS.measurementUnits.map(item => (
+                                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                                ))}
+                                            </TextField>
+                                        </>
+                                    }}
+                                >
+                                </TextField>
+                            </Col>
+                        </>
+                        : null}
+
+                    {specList.includes('Plot area') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                type="number"
+                                required
+                                error={error.plotArea}
+                                className="w-100"
+                                inputProps={{ min: 0 }}
+                                label={'Plot area'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, plotArea: e.target.value })) }}
+                                value={specDetails.plotArea}
+                                InputProps={{
+                                    endAdornment: <>
+                                        <TextField
+                                            style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
+                                            className="p-0"
+                                            select
+                                            error={error.plotAreaMeasurementUnit}
+                                            InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
+                                            onChange={(e) => { 
+                                                // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, plotAreaMeasurementUnit: e.target.value })) 
+                                                handlePlotAreaUnitChanged(e);}}
+                                            value={specDetails.plotAreaMeasurementUnit}
+                                        >
+                                            {POSTING_CONSTANTS.measurementUnits.map(item => (
+                                                <MenuItem key={item} value={item}>{item}</MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </>
+                                }}
+                            >
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Open area') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                type='number'
+                                error={error.openArea}
+                                className="w-100"
+                                inputProps={{ min: 0 }}
+                                label={'Open/Garden/Terrace Area'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, openArea: e.target.value })) }}
+                                value={specDetails.openArea}
+                                InputProps={{
+                                    endAdornment: <>
+                                        <TextField
+                                            style={{ borderStyle: 'unset', paddingRight: '0%', width: '60%' }}
+                                            className=" p-0"
+                                            select
+                                            error={error.openAreaMeasurementUnit}
+                                            InputProps={{ style: { border: 'unset', paddingRight: '0%' } }}
+                                            onChange={(e) => { 
+                                                // setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, openAreaMeasurementUnit: e.target.value, builtUpAreaMeasurementUnit: e.target.value, carpetAreaMeasurementUnit: e.target.value }))
+                                                    handleUnitChanged(e) }}
+                                            value={specDetails.openAreaMeasurementUnit}
+                                        >
+                                            {POSTING_CONSTANTS.measurementUnits.map(item => (
+                                                <MenuItem key={item} value={item}>{item}</MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </>
+                                }}
+                            >
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Property type') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                required
+                                error={error.commercialPropertyType}
+                                select
+                                className="w-100"
+                                label={'Property Type'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, commercialPropertyType: e.target.value })) }}
+                                value={specDetails.commercialPropertyType}
+                            >
+                                {POSTING_CONSTANTS.commercialPropertyType.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Purpose') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                required
+                                error={error.purposes}
+                                select
+                                multiple
+                                SelectProps={{
+                                    multiple: true
+                                }}
+                                className="w-100"
+                                label={'Purpose'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, purposes: e.target.value })) }}
+                                value={specDetails.purposes}
+                            >
+                                {POSTING_CONSTANTS.commercialPurpose.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Number of balconies') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                type="number"
+                                className="w-100"
+                                inputProps={{ min: 0, max: 6 }}
+                                label={'Number of Balconies Including in Carpet Area'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfBalconies: e.target.value })) }}
+                                value={specDetails.numberOfBalconies}
+                            >
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Number of washrooms') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                type="number"
+                                required
+                                inputProps={{ min: 0, max: 6 }}
+                                error={error.numberOfBaths}
+                                className="w-100"
+                                label={'Number of Washrooms'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfBaths: e.target.value })) }}
+                                value={specDetails.numberOfBaths}
+                            >
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Car parkings') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                type="number"
+                                error={error.numberOfCarParking}
+                                className="w-100"
+                                label={'Car Parkings'}
+                                inputProps={{ min: 0, max: 6 }}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfCarParking: e.target.value })) }}
+                                value={specDetails.numberOfCarParking}
+                            >
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Reserved car parkings') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                type="number"
+                                required
+                                error={error.numberOfReservedCarParking}
+                                className="w-100"
+                                label={'Reserved Car Parkings'}
+                                inputProps={{ min: 0, max: 6 }}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfReservedCarParking: e.target.value })) }}
+                                value={specDetails.numberOfReservedCarParking}
+                            >
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Reserved two wheeler parkings') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                type="number"
+                                className="w-100"
+                                label={'Reserved Two Wheeler Parkings'}
+                                inputProps={{ min: 0 }}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, numberOfReservedTwoWheelerParking: e.target.value })) }}
+                                value={specDetails.numberOfReservedTwoWheelerParking}
+                            >
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Entrance facing') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                className="w-100"
+                                label={'Entrance Facing'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, entranceFacing: e.target.value })) }}
+                                value={specDetails.entranceFacing}
+                            >
+                                {POSTING_CONSTANTS.entranceFacingList.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Overlooking') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                multiple
+                                SelectProps={{
+                                    multiple: true
+                                }}
+                                className="w-100"
+                                label={'OverLooking'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, propertyOverlookings: e.target.value })) }}
+                                value={specDetails.propertyOverlookings}
+                            >
+                                {POSTING_CONSTANTS.overLookingList.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('UnUsed property') ?
+                        <Col lg='4'>
+                            <Text text={'Un Used Property ?'} fontWeight={'bold'} style={{ fontSize: '16px' }} />
+                            <FormControl>
+                                <RadioGroup
+                                    row
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="row-radio-buttons-group"
+                                    onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, isUnusedProperty: JSON.parse(e.target.value) })) }}
+                                    value={specDetails.isUnusedProperty}
+                                >
+                                    <FormControlLabel value={true} control={<Radio />} label="Yes" />
+                                    <FormControlLabel value={false} control={<Radio />} label="No" />
+                                </RadioGroup>
+                            </FormControl>
+                        </Col>
+                        : null}
+                    {specList.includes('Unit Furnishing') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                className="w-100"
+                                label={'Unit Furnishing'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, unitFurnishing: e.target.value })) }}
+                                value={specDetails.unitFurnishing}
+                            >
+                                {POSTING_CONSTANTS.UnitFurnishingList.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Furnishing type') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                className="w-100"
+                                label={'Furnishing Type'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, furnishing: e.target.value })) }}
+                                value={specDetails.furnishing}
+                            >
+                                {POSTING_CONSTANTS.FurnishingTypeList.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Furnishing description') ?
+                        <Col lg='8' className='mb-2'>
+                            <TextField
+                                type="text"
+                                className="w-100"
+                                label={'Furnishing Description'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, furnishingDescription: e.target.value })) }}
+                                value={specDetails.furnishingDescription}
+                            >
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Facility included') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                multiple
+                                SelectProps={{
+                                    multiple: true
+                                }}
+                                className="w-100"
+                                label={'Facility included'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, pgGuestHouseFacilities: e.target.value })) }}
+                                value={specDetails.pgGuestHouseFacilities}
+                            >
+                                {POSTING_CONSTANTS.FacilityIncluded.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Internal amenities') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                multiple
+                                SelectProps={{
+                                    multiple: true
+                                }}
+                                className="w-100"
+                                label={'Internal Amenities'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, internalAmenities: e.target.value })) }}
+                                value={specDetails.internalAmenities}
+                            >
+                                {internalAmenitiesList.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('General amenities') ?
+                        <Col lg='4' className='mb-2'>
+                            <TextField
+                                select
+                                multiple
+                                SelectProps={{
+                                    multiple: true
+                                }}
+                                className="w-100"
+                                label={'General Amenities'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, generalAmenities: e.target.value })) }}
+                                value={specDetails.generalAmenities}
+                            >
+                                {POSTING_CONSTANTS.GeneralAmenities.map((item) => (
+                                    <MenuItem key={item} value={item}>{item}</MenuItem>
+                                ))}
+                            </TextField>
+                        </Col>
+                        : null}
+                    {specList.includes('Property description') ?
+                        <Col lg='12' className='mb-2'>
+                            <Buttons className='mb-2' name={'Generate ChatGpt description'} onClick={() => { generatePropertyDescription() }} />
+                            {descLoader ? <Loader /> : null}
+                            <TextField
+                                required
+                                multiline
+                                error={error.propertyDescription}
+                                type="text"
+                                className="w-100"
+                                label={'property Description'}
+                                onChange={(e) => { setSpecDetails(prevSpecDetails => ({ ...prevSpecDetails, propertyDescription: e.target.value })) }}
+                                value={specDetails.propertyDescription}
+                            >
+                            </TextField>
+                        </Col>
+                        : null}
+                </Row>
+            </div>
+            {saveSpecsFlag === false ?
+                <div className="d-flex">
+                    {!editPropertyFlag ?
+                    <>
+                        <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifySpecDetails(false); }}></Buttons> &nbsp; &nbsp;
+                    </>
+                    :null}
+                    <Buttons className='p-2 px-4' name='Next' onClick={() => { saveSpecDetails(); }}></Buttons> &nbsp; &nbsp;
+                    {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
+                </div>
+                : null}
+
+        </>
+    );
+}
+
+const mapStateToProps = ({ basicDetailFields, addressDetailFields, specDetailFields }) => ({
+    basicDetailFields, addressDetailFields, specDetailFields
+})
+
+const actions = {
+
+}
+
+export default compose(connect(mapStateToProps, actions))(Specs);

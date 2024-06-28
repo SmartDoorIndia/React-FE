@@ -1,0 +1,45 @@
+@import "../../../../scss/modules/variables.scss";
+
+.newEntry{
+.form-label{        
+    position: relative;
+    top: 18px;
+    background:$white;
+    left:11px;
+    font-size:$xSmall;
+    padding-left: 5px;
+    padding-right: 5px;
+    color:$gray;
+}
+.form-group{
+    margin-bottom: 0;
+}
+button {
+      margin-top: 30px;
+      width: 100% ;          
+      padding: 12px !important;
+ }
+ .uploadFile{
+     text-align: center;
+     background:$lightgray;
+     border: 1px dotted $TaupeGrey;
+     padding: 12px;
+     border-radius: 8px;
+     .form-file-label{
+         color:$primary-color;
+         text-align: center;
+         cursor: pointer;
+         font-size: $body;
+         font-weight: $smbold;
+     }
+     input{
+         display: none;
+
+     }
+ }
+}
+.addCopLogo{
+    .companyLogo{
+        min-height:140px;
+    }
+}

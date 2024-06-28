@@ -1,0 +1,937 @@
+@import "./modules/variables.scss";
+@import "./modules/mixin.scss";
+@import "./slick.scss";
+@import "./slick-theme.min.scss";
+
+body {
+    @include font-family;
+    color: $secondry-color;
+    background-color: $lightgray !important;
+}
+
+.form-control {
+    background: $white;
+    border: 1px solid $tataritory-color;
+    border-radius: 8px !important;
+    height: 50px !important;
+    color: $secondry-color !important;
+    font-size: $body !important;
+    font-weight: 500 !important;
+    padding-left: 15px !important;
+}
+
+body select.form-control {
+    padding-left: 10px !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+img {
+    max-width: 100%;
+}
+
+.whiteBg {
+    background-color: $white;
+    @include border;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.defaultTag {
+    border-radius: 24px;
+    display: inline-block;
+    padding: 2px 7px 3px;
+    text-transform: uppercase;
+    min-width: 110px;
+    text-align: center;
+}
+
+.tagInfo {
+    background-color: $info;
+}
+
+.tagAlert {
+    background-color: $alertColor;
+}
+
+.tagDangerous {
+    background-color: $dangerous;
+}
+
+.tagSuccess {
+    background-color: $success;
+}
+
+.separator {
+    border-top: 1px solid $lightBorder;
+}
+
+.tableBox {
+
+    .sc-crrsfI.iiIynX.rdt_TableCol_Sortable,
+    .ejkDvS {
+        div {
+            // font-size: $body;        
+            color: $secondry-color ;
+            // font-weight: 700;
+        }
+
+        .cgfywR {
+            opacity: 1;
+        }
+    }
+}
+
+
+.scroll::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    background-color: #E4E4E4;
+}
+
+.scroll::-webkit-scrollbar {
+    width: 8px;
+    background-color: #E4E4E4;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+    border-radius: 12px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #8B8B8B;
+}
+
+.imageViewer {
+    .bigSlider {
+        border-radius: 8px;
+
+        .item-img {
+            height: 100%;
+            min-height: 371px;
+            overflow: hidden;
+            background-color: #f4eef0;
+
+            &>img {
+                width: 100% !important;
+            }
+        }
+
+        img {
+            margin: auto;
+           // aspect-ratio: 16/9;
+          //  object-fit: cover;
+          object-fit: contain;
+            height: 370px !important;
+            width: auto !important;
+        }
+    }
+
+    .thumbSlider {
+        .item-img {
+            padding: 5px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid transparent;
+
+            img {
+                max-width: 100%;
+                border-radius: 6px;
+            }
+        }
+
+        .slick-current {
+            .item-img {
+                border-color: #BE1452;
+            }
+        }
+
+    }
+}
+
+.fs-14 {
+    font-size: 0.8750rem !important;
+}
+
+.fs-13 {
+    font-size: 0.8125rem !important;
+}
+
+.fs-12 {
+    font-size: 0.750rem !important;
+}
+
+.fs-11 {
+    font-size: 11px !important;
+}
+
+.btn {
+    img {
+        margin-right: 5px;
+    }
+}
+
+.vid_modal {
+    .modal-header {
+        padding: 0;
+        border: 0;
+    }
+
+    .close {
+        background-color: #fff;
+        padding: 0 !important;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        opacity: 1;
+        font-weight: 300;
+        font-size: 1.8rem;
+        z-index: 9;
+    }
+
+    .modal-body {
+        padding: 0;
+    }
+}
+
+.confirm_modal {
+    .modal-header {
+        padding: 0;
+        border: 0;
+    }
+
+    .modal-content {
+        width: 400px;
+        background: #FFFFFF;
+        border: 1px solid #DED6D9;
+        box-sizing: border-box;
+        border-radius: 4px;
+    }
+
+    .modal-body {
+        padding-right: 23px;
+        padding-left: 23px;
+        padding-top: 59px;
+
+    }
+}
+
+
+.parentDisable {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #666;
+    opacity: 0.8;
+    z-index: 9999999999;
+    height: 100%;
+    width: 100%;
+}
+
+
+.overlay-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    background: #666666;
+    opacity: .8;
+    z-index: 1000;
+}
+
+/*
+@media screen and (max-width: 600px) {
+    .labelFontSize{
+        font-size: 8px;
+    }
+}
+*/
+.labelFontSize {
+    /*width: 100%;*/
+    margin: 0px;
+    /* padding: 0px; */
+    font-size: x-small !important;
+    justify-content: center;
+    display: flex !important;
+    padding-right: 10px;
+    padding-left: 10px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.pt_15 {
+    padding-top: 15px;
+}
+
+.doc_container {
+    border: 1px solid #DED6D9;
+
+    .doc_strip {
+        .docImg {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+        }
+
+        &:nth-child(even) {
+            background-color: #F8F3F5;
+        }
+    }
+
+}
+
+.text-align-center {
+    text-align: center !important;
+}
+
+.disabledButtons {
+    position: relative;
+    float: right;
+    top: -42px;
+    left: -6px;
+    background-color: #fff;
+    border: 2px solid darkgray !important;
+    color: darkgray !important;
+    padding: 4px;
+    width: 94px;
+    border-radius: 8px;
+}
+
+.mapLocation {
+    position: relative;
+}
+
+.dx-scheduler-appointment {
+    background-color: #FFF2DE;
+    color: $secondry-color;
+}
+
+.dx-scheduler-navigator {
+    max-width: 100%;
+    min-width: 82%;
+    text-align: center;
+    background: $white;
+    border-bottom: 1px solid $secondryBtn;
+}
+
+.dx-scheduler-navigator .dx-button {
+    background: transparent;
+    border: 0;
+}
+
+.imageViewer .thumbSlider .item-img img {
+    max-height: 89px;
+    height: 100%;
+    min-height: 89px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.slick-slider {
+    max-height: 370px;
+    height: 100%;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.object-cover {
+    object-fit: cover;
+}
+
+.elipsis-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.colorPrimary {
+    color: $primary-color !important;
+}
+
+.cc_style {
+    .dx-scheduler-header {
+        .dx-scheduler-view-switcher {
+            display: none;
+        }
+
+        .dx-scheduler-navigator {
+            min-width: 100%;
+
+            .dx-button-content {
+                color: $primary-color;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .dx-scheduler-navigator-previous,
+    .dx-scheduler-navigator-next {
+        position: absolute;
+    }
+
+    .dx-scheduler-navigator-previous {
+        right: 25px;
+    }
+
+    .dx-scheduler-navigator-next {
+        right: 0;
+    }
+}
+
+.c-user {
+    img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+}
+
+.fs12 {
+    font-size: 0.75rem;
+}
+
+// Calander Heading 
+.dx-scheduler-header-panel {
+    margin-top: 0;
+}
+
+.dx-scheduler-group-row {
+    background-color: $lightgray;
+
+    .dx-scheduler-group-header-content {
+        div {
+            color: $primary-color;
+            font-size: $body;
+            font-weight: $smbold;
+
+        }
+    }
+}
+
+.dx-scheduler-group-header {
+    height: 40px;
+}
+
+.dx-scheduler-scrollable-appointments {
+    left: 15px;
+    margin-right: 5px;
+
+}
+
+.dx-item.dx-scheduler-appointment.dx-scheduler-appointment-vertical.dx-resizable {
+    border-left: 4px solid $cardLeftBorder;
+    border-radius: 4px;
+    height: 152px !important;
+    margin-top: 5px;
+}
+
+
+.dx-scheduler-date-table-cell,
+.dx-scheduler-time-panel-cell {
+    height: 81px;
+}
+
+.dx-item.dx-scheduler-appointment.dx-scheduler-appointment-vertical.dx-resizable {
+    .c-user.d-flex.align-items-center {
+        figure {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.dx-scheduler-appointment-tooltip-wrapper .dx-overlay-content .dx-popup-content .dx-list-item {
+    .movie-tooltip {
+        padding-top: 10px;
+
+        button {
+            &.Small.secondaryColor {
+                background-color: $lightgray !important;
+            }
+        }
+
+        .c-user.d-flex.align-items-center {
+            figure {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+.dx-scheduler-appointment-tooltip-wrapper .dx-overlay-content .dx-popup-content .dx-list-item {
+    background-color: white !important;
+}
+
+.instaFormFields {
+    .dx-field-item-label-content {
+        .dx-field-item-label-text {
+            font-size: $body;
+            font-family: Manrope;
+            font-style: normal;
+            font-weight: bold;
+            letter-spacing: -0.02em;
+            color: #252525;
+        }
+    }
+}
+
+.instaFormTitle {
+    .dx-field-item-label-content {
+        .dx-field-item-label-text {
+            font-size: $large;
+            font-family: Manrope;
+            font-style: normal;
+            font-weight: bold;
+            letter-spacing: -0.02em;
+            color: #252525;
+        }
+    }
+}
+
+.dx-scheduler-group-header.dx-scheduler-last-group-cell.dx-scheduler-first-group-cell {
+    width: 230px !important;
+    max-width: 250px !important;
+    min-width: 250px !important;
+
+}
+
+
+.dx-scheduler-date-table-cell.dx-scheduler-cell-sizes-horizontal.dx-scheduler-cell-sizes-vertical.dx-scheduler-last-group-cell.dx-scheduler-first-group-cell {
+    width: 250px !important;
+    max-width: 250px !important;
+    min-width: 250px !important;
+}
+
+
+
+.css-yk16xz-control {
+    -webkit-align-items: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background-color: hsl(0, 0%, 100%);
+    border-color: hsl(0, 0%, 80%);
+    border-style: solid;
+    border-width: 1px;
+    cursor: default;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    min-height: 38px;
+    outline: 0 !important;
+    position: relative;
+    -webkit-transition: all 100ms;
+    transition: all 100ms;
+    box-sizing: border-box;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+
+.dx-button-mode-contained.dx-state-active {
+    background-color: #BE1452 !important;
+    border-color: #ddd;
+    color: #333;
+
+    .dx-button-content {
+        i {
+            color: white !important;
+        }
+
+        span {
+            color: white !important;
+
+        }
+    }
+}
+
+//  Change width as per the requirement for 2 columns
+.dx-scheduler-header-panel,
+.dx-scheduler-date-table {
+    width: auto !important;
+}
+
+
+.dx-overlay-content.dx-popup-draggable.dx-resizable.dx-popup-normal.dx-popup-flex-height {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    margin-right: -50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+
+.dx-overlay-wrapper.dx-scheduler-appointment-popup.dx-popup-wrapper.dx-popup-cancel-visible.dx-popup-done-visible.dx-overlay-modal.dx-overlay-shader {
+    background-color: rgba(102, 102, 102, 0.7) !important;
+
+}
+
+.statusSection {
+    .custom-control-label {
+        box-shadow: none;
+        outline: none;
+    }
+
+    .custom-control-input:checked~.custom-control-label::before {
+        color: $white;
+        border-color: $primary-color;
+        background-color: $primary-color;
+        box-shadow: none;
+    }
+
+    .custom-control-label::before {
+        background-color: #7E8186;
+        box-shadow: none;
+    }
+
+    .custom-switch .custom-control-label::after {
+        background-color: $white;
+        box-shadow: none;
+    }
+}
+
+
+
+.textArea {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 14px;
+    padding-left: 15px;
+    padding-top: 15px;
+    padding-bottom: 3em;
+}
+
+.textArea:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+}
+
+.w-90 {
+    width: 90% !important;
+}
+
+.d-grid {
+    display: grid !important;
+}
+
+.moreInformation {
+    .marginSpace {
+        >figure {
+            margin: 0 !important;
+        }
+    }
+}
+
+.rotatable {
+    transition-duration: 0.8s;
+    transition-property: transform
+}
+
+.rotatable.done {
+    transform: rotate(-180deg) !important;
+}
+
+.rotatable.done::before {
+    transform: rotate(45deg);
+}
+
+.background-transparent {
+    background: transparent !important;
+}
+
+.text-decoration-underline {
+    text-decoration: underline;
+}
+
+/************OTP scss starts here**************/
+.otpWrap {
+    position: relative;
+
+    .otpInput {
+        background: #FFFFFF;
+        border: 1px solid #D0CACD;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 20px;
+        line-height: inherit;
+        letter-spacing: -0.02em;
+        color: #252525;
+        padding: 14px;
+        width: 60px;
+        height: 50px;
+        text-align: center;
+
+        &:focus {
+            border-color: #BE1452;
+            box-shadow: none;
+
+            +.dashBottom {
+                background-color: #BE1452;
+            }
+        }
+    }
+
+    .dashBottom {
+        height: 3px;
+        width: 16px;
+        border-radius: 3px;
+        background-color: #D0CACD;
+        position: absolute;
+        left: 50%;
+        bottom: 5px;
+        transform: translate(-50%, 0);
+    }
+
+    //     &:focus {
+    //         border-color: #BE1452;
+    //         box-shadow: none;
+    //         + dashBottom {background-color: #BE1452;}
+    //    }
+
+}
+
+// }
+.fw500 {
+    font-weight: 500;
+}
+
+/************OTP scss ends here**************/
+
+
+// Input cancle icon
+.searchCrossButon {
+    position: relative;
+
+    .crossInputButton {
+        border: 0;
+        position: absolute;
+        right: 25px;
+        background: $lightgray;
+        top: 1px;
+    }
+}
+
+// table head 
+.rdt_TableCol {
+    &>div {
+        &>div {
+            line-height: 26px;
+        }
+    }
+}
+
+.loginForm {
+
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+}
+
+.dashboard {
+    .tableBox {
+        .locationSelect {
+            .form-group {
+                .form-control {
+                    &.locationWidth {
+                        // min-width: 200px;
+                        @media (max-width: 1290px) {
+                            // min-width: 150px;  
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.dashboard {
+    .tableBox {
+        div.d-flex {
+            div {
+                span.regular.secondryColor.mediumbold.text {
+                    @media (max-width: 1290px) {
+                        font-size: 15px; 
+                        white-space: nowrap;  
+                    }
+                }
+            }
+        }
+        .locationSelect {
+            .form-group {
+                // select.form-control { 
+                //     @media (max-width: 1250px) {
+                //         margin-right: 15px !important;    
+                //     }
+                // }
+                &.userGrp {
+                    margin-right: 0px; 
+                    // margin-left: 24px;
+                    @media (max-width: 1250px) {  
+                        margin-left: 15px;   
+                    }
+                    select.form-control {
+                        // margin-right: 24px;   
+                        @media (max-width: 1250px) {
+                            // margin-right: 15px;   
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+.removeUnderline{
+    text-decoration: none !important;
+}
+// 24 Nov 22 start code css 
+.uploadImg {
+    display: flex; 
+    .thumbSlider {
+        width: 100%;
+        max-width: 90%;
+        .slick-list {
+            overflow-x: auto;
+        }
+    }
+    .uploadIcon {
+        label{
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+        width: 100%;
+        max-width: 10%;
+        // background-color: $TaupeGrey; 
+        margin-top: 5px;
+        margin-left: 5px;
+        border-radius: 8px;
+        text-align: center;
+        min-height: 89px;
+        max-height: 89px;
+        display: flex; 
+        justify-content: center; 
+        align-items: center;
+        overflow: hidden;
+        .inputFields {
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            position: relative;
+            .form-group {
+                margin-bottom: 0;
+            }
+            input.form-control-file {  
+                cursor: pointer; 
+                width: 48px;
+                min-height: 48px;
+                opacity: 0;
+                position: relative;
+                z-index: -1;
+            }
+            img {
+                width: 45px;
+                position: absolute; 
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                // cursor: not-allowed;
+            }
+        }
+    }
+}
+
+/*******Css start here************/
+.borderrad25 {border-radius: 25px !important;}
+.commentSection {
+    &.verticalScroll {
+        height: 96px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
+/********edit calendar calendar.js******/
+.customRadioTime {
+    .dx-widget {
+        display: flex;
+        flex-wrap: wrap;
+        .dx-item.dx-radiobutton {
+            margin-bottom: 10px;
+            width: 175px;
+        }
+    }
+}
+    .dx-overlay-content.dx-popup-normal.dx-popup-flex-height.dx-resizable {
+        max-width: 650px !important;
+    }
+/********Css ends here***********/
+
+/********Table right side filter data*********/
+// .salesSocietyLeadsTableWrapper {
+    .tableBox {
+        .tableHeading {
+            .locationSelect {
+                .sdInputFields {
+                    .form-group {
+                        input.form-control {
+                            margin-right:0;margin-left:0.25rem;
+                            // min-width:200px;
+                            @media (max-width:1250px) {
+                                // min-width:150px;
+                            }
+                        }
+                    }
+                }
+                .form-group {
+                    select.form-control {
+                        margin-right:0;margin-left:1rem;
+                        // min-width:200px;
+                        @media (max-width:1250px) {
+                            // min-width:150px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+// }
+/********Table right side filter data*********/
+
+.cursor-remove{
+    label{
+        cursor: auto !important;
+    }
+}
+
+/************Custom css for width height************/
+.wh-32 {width: 2rem;height: 2rem;}
+a.dociconSpace img {
+    height: 25px;
+    width: 25px;
+}
+.invoiceHeading {
+    background-color: $primary-color;
+    span.text {color: #fff;}
+}

@@ -1,0 +1,36 @@
+.profileImg{
+    width:100px;
+    height:100px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.onVisit {	
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-right: 20px;
+}
+.kycTag{
+    margin-right: 75px;
+}
+
+/*******Transactions Table***********/
+.consumer-detailsTransactionsTableWrapper {
+    .rdt_TableRow {
+        .rdt_TableCell {
+            text-align: center;
+            &:nth-child(4) {
+                white-space: nowrap;overflow: hidden;
+                width: 150px;min-width: 150px;
+                text-overflow: ellipsis;display: flex;text-align: center;
+                @media (max-width:1440px) {
+                width: 120px;min-width: 120px;
+                }
+            }
+        }
+    }
+}

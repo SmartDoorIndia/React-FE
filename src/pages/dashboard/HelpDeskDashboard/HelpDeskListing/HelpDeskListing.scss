@@ -1,0 +1,27 @@
+/*******Css start here************/
+.property-leadsTableWrapper {
+    .rdt_TableRow {
+        .rdt_TableCell {
+            text-align: center;
+            &:nth-child(7) {
+                .elipsis-text {
+                    white-space: nowrap;overflow: hidden;
+                    width: 180px;min-width: 180px;
+                    text-overflow: ellipsis;display: block;text-align: center;
+                    @media (max-width:1600px) {
+                        width: 150px;min-width: 150px;
+                    }
+                }
+            }
+            &:nth-child(4) {
+                white-space: nowrap;overflow: hidden;
+                width: 140px;min-width: 140px;padding-top: 1rem;
+                text-overflow: ellipsis;display: block;text-align: center;
+                @media (max-width:1600px) {
+                    width: 120px;min-width: 120px;
+                }
+            }
+        }
+    }
+}
+/*******Css ends here************/

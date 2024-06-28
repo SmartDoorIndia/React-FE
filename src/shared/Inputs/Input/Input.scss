@@ -1,0 +1,85 @@
+@import '../../../scss/modules/variables.scss';
+
+.sdInputFields {
+    .form-label{        
+        position: relative;
+        top: 18px;
+        background:$white;
+        left:11px;
+        font-size:$xSmall;
+        padding-left: 5px;
+        padding-right: 5px;
+        color:$gray;
+        user-select: none;
+    }
+    .form-group{
+        margin-bottom: 0;
+    }
+
+    .form-control {
+        width: 95% !important;
+    }
+    .textArea {
+        width: 95% !important;
+        &.textareaWidth100 {
+            width: 100% !important;
+        }       
+    }
+
+    .primaryColor{
+        color: $primary-color !important;
+    }
+    .seondaryColor{
+        color: $secondry-color !important;
+    }
+    
+
+    .checkBox{
+        margin-right:10px;
+        .form-check{
+            background: #FFFFFF;
+            border: 1px solid #DEDEDE;
+            box-sizing: border-box;
+            border-radius: 4px;
+        }
+    }
+
+    .customChechbox {
+        .form-check-input {visibility: hidden;}
+        input[type=checkbox] + label {border:2px solid #ced4da;padding:5px 7px; font-size: 14px; border-radius:4px;}            
+        input[type=checkbox]:checked + label {border: 2px solid $primary-color; font-size: 14px;border-radius:4px;}
+        input[type=radio] + label {border:2px solid #ced4da;padding:5px 7px; font-size: 14px; border-radius:4px;}            
+        input[type=radio]:checked + label {border: 2px solid $primary-color; font-size: 14px;border-radius:4px;}
+    }
+    
+    .leadingIcon {
+        bottom: 13px;
+        left: 20px;
+    }
+    .component {
+        bottom: 13px;
+        width: 100%;
+    }
+
+}
+
+.positionLimit{
+    position: relative;
+    /*display: inline-block;*/
+
+    .limitChar {
+        position: absolute;
+        right: 20px;
+        bottom: 15px;
+        color: #9BA4B4;
+
+        font-family: Manrope;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 10px;
+        line-height: 150%;
+        user-select: none;
+    }
+
+}
+

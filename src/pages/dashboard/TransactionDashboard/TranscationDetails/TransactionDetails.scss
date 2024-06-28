@@ -1,0 +1,150 @@
+@import "../../../../scss/modules/variables.scss";
+
+.e_select{
+    select{
+      border: 0;
+      background-color: transparent;
+      padding-left: 0 !important;
+      border-bottom: 1px solid #ddd;
+      border-radius: 0 !important;
+      height: 35px !important;
+      outline: 0 !important;
+      box-shadow: none !important;
+    }
+  }
+  
+  .leadTitle {
+      width: 50%;
+  }
+
+  // .prev-req-btn{
+  //   width: 100%;
+  //   /* color: black; */
+  //   color: black !important;
+  //   height: 40px;
+  //   background-color: $lightprime !important;
+  //   text-align: left;
+  //   font-size: 18px !important;
+  // }
+.accordian-style
+  {
+    .card-header 
+    {
+      background-color: #FFF8F8;
+      border: 1px solid #DED6D9;
+      padding: 1rem 1.25rem;
+      img{
+        height: 10px;
+      }
+      // font-size: 16px;
+    }
+    .card{
+      border: 0;
+    }
+    .card-body{
+      padding: 0px !important;
+      border: 1px solid #DED6D9;
+    }
+  }
+
+.feedback-txt{
+  font-size: 12px;
+  font-weight: 700;
+  color: $primary-color;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.badge-two {
+  border-radius: 15px;
+  color: #fff;
+  padding: 3px 10px;
+  font-size: 12px;
+  background-color: #55b844;
+  img{
+    vertical-align: middle;
+  }
+}
+
+.visited{
+  background-color: #55b844;
+}
+
+.not-visited{
+  background-color: #FA3A3A;
+}
+
+.ph-icon{
+  object-fit: contain
+}
+
+button.feedback-btn{
+  background: transparent !important;
+  color: $primary-color !important;
+  padding: 0 0 !important;
+  font-weight: 700 !important;
+  outline: none !important;
+  border-color: transparent !important;
+  border: none !important; 
+  &:hover,&:focus, &:active{
+    background: transparent !important;
+    color: $primary-color !important;
+    padding: 0 0 !important;
+    font-weight: 700 !important;
+    border: none !important;
+    outline: none !important;
+  }
+  &.primary:active:focus {
+    background-color: transparent !important;
+    border: none !important; 
+    outline: none !important;
+  }
+  &.primary:active:hover {
+    background-color: transparent !important;
+    border: none !important; 
+    outline: none !important;
+  }
+}
+
+/*******Css start here************/
+.smallImagesize {
+  figure {
+    img {
+      width:40px;height:40px;
+      border-radius: 50%;
+    }
+  }
+}
+.transactionlLeaddetailTableWrapper {
+  &.card {
+    .card-body {
+      .rdt_Table {
+        .rdt_TableBody {
+          .rdt_TableRow {
+            .rdt_TableCell {
+                text-align: center;
+                &:nth-child(5) {
+                  .elipsis-text {
+                    white-space: nowrap;overflow: hidden;
+                    width: 180px;min-width: 180px;
+                    text-overflow: ellipsis;display: block;
+                    text-align: left;padding-left:1.25rem;
+                    @media (max-width:1440px) {
+                     width: 150px;min-width: 150px;
+                    }
+                  }
+                }
+            }
+          }
+        }
+      
+      }
+    }
+  } 
+}
+
+.linkFor:hover, .linkFor {
+  color: $primary-color;
+}
+
+/*******Css ends here************/
