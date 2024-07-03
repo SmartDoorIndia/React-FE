@@ -163,28 +163,28 @@ const DeletedProperties = (props) => {
          style: { padding: "0 !important" },
          cell: ({ status }) => <span>{handleStatusElement(status)}</span>,
       },
-      {
-         name: "Assets",
-         selector: (row) => row.propertyId,
-         sortable: false,
-         center: true,
-         maxWidth: "30px",
-         cell: ({ row, propertyId, propertyDocsResp }) => (
-            <Link
-               className="dociconSpace"
-               to={{
-                  pathname: "/admin/property/property-documents",
-                  state: {
-                     propertyId: propertyId,
-                     propertyDocsResp: propertyDocsResp,
-                     userId: userData.userid,
-                  },
-               }}
-            >
-               <Image name="docIcon" alt="doc icon" src={docIcon} />
-            </Link>
-         ),
-      },
+      // {
+      //    name: "Assets",
+      //    selector: (row) => row.propertyId,
+      //    sortable: false,
+      //    center: true,
+      //    maxWidth: "30px",
+      //    cell: ({ row, propertyId, propertyDocsResp }) => (
+      //       <Link
+      //          className="dociconSpace"
+      //          to={{
+      //             pathname: "/admin/property/property-documents",
+      //             state: {
+      //                propertyId: propertyId,
+      //                propertyDocsResp: propertyDocsResp,
+      //                userId: userData.userid,
+      //             },
+      //          }}
+      //       >
+      //          <Image name="docIcon" alt="doc icon" src={docIcon} />
+      //       </Link>
+      //    ),
+      // },
       {
          name: "Action",
          sortable: false,

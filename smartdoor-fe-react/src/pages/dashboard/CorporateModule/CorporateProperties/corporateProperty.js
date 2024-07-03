@@ -114,7 +114,7 @@ const CorporateProperty = (props) => {
             name: "City",
             selector: ((row) => row.city),
             sortable: true,
-            center: false,
+            center: true,
             minWidth: "250px",
             cell: ({ city }) => (
                 <ToolTip position="top" style={{ width: '50%' }} name={city}>
@@ -159,7 +159,7 @@ const CorporateProperty = (props) => {
                         <span>
                             <Link
                                 to={{
-                                    pathname: "/admin/property/property-details",
+                                    pathname: "/admin/corporate/corporateProperties/propertyDetails",
                                     state: {propertyId: propertyId, userId: postedById, menuName: '', isDeleted: false},
                                 }}
                             >

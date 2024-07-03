@@ -377,6 +377,15 @@ class NewPlan extends Component {
                                     } else {
                                        this.setState({
                                           isSmartDoorProperty: false,
+                                          isDeviceCamera: 'NOT_AVAILABLE',
+                                          isDeviceDongle: 'NOT_AVAILABLE',
+                                          isDeviceHub: 'NOT_AVAILABLE',
+                                          isDeviceSensor: 'NOT_AVAILABLE',
+                                          isAutoDoorCloser: 'NOT_AVAILABLE',
+                                          isDeviceSmartLock: 'NOT_AVAILABLE',
+                                          isMarketingSupport: 'NOT_AVAILABLE',
+                                          isMarketingVideo: 'NOT_AVAILABLE',
+                                          isLeadGeneration: 'NOT_AVAILABLE'
                                        });
                                     }
                                  }}

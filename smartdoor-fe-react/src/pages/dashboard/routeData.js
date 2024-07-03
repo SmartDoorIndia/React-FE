@@ -1148,6 +1148,15 @@ const routeData = [
   },
 
   {
+    path: '/admin/corporate/corporateProperties/propertyDetails',
+    name: 'Property Details',
+    bradcrumb: ['Corporate', 'corporate properties'],
+    excat: false,
+    // module:'Corporate',
+    component: PropertyDetailsModule
+  },
+
+  {
     path: '/admin/corporate/corporateProperties',
     name: 'Add New corporate',
     bradcrumb: ['Corporate', 'corporate properties'],

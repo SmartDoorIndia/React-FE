@@ -38,7 +38,7 @@ const CorporateDetails = (props) => {
             <div className="whiteBg">
                 <Row>
                     <Col lg='3' className="text-center" style={{ borderInlineEnd: '2px dashed #DED6D9' }}>
-                        <img src={corporateDetails.logo || logoIcon} alt='' style={{ height: '85px', width: '85px' }} />
+                        <img src={corporateDetails.logo} alt='' style={{ height: '85px', width: '85px' }} />
                         <Text text={corporateDetails?.companyName} fontWeight='bold' style={{ fontSize: '16px', }} />
                         <Text text={'( ' + corporateDetails.totalPostingCount + ' Postings ) '} fontWeight='600' style={{ fontSize: '12px', color: '#8E878A' }} />
                         <Text text={'Joined on: ' + formateDate(corporateDetails?.joiningDate)} fontWeight='600' style={{ fontSize: '12px' }} />

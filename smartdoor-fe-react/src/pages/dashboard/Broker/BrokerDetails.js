@@ -422,7 +422,7 @@ const BrokerDetails = (props) => {
             holdStatus={holdStatus}
          // getAllUsers={getAllUsers}
          />
-         <div className="dashboard container-fluid12">
+         <div className="dashboard container-fluid12" style={{overflowX: 'hidden'}}>
             <Row>
                <Col lg={12}>
                   <div className="authorContact">
