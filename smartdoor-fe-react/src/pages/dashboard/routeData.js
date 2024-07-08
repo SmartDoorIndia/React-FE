@@ -336,6 +336,14 @@ const routeData = [
     component: ConsumerManagementDetails,
   },
   {
+    path: '/admin/execution/installation-detail/property-detail',
+    name: 'Property Details',
+    bradcrumb: [  'Installation Requests','Task Details', 'Property Details' ],
+    excat: true,
+    module: 'EXECUTION',
+    component: PropertyDetailsModule,
+  },
+  {
     path: '/admin/execution/installation-detail',
     name: 'Installation Team Dashboard',
     bradcrumb: [  'Installation Requests','Task Details' ],

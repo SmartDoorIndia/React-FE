@@ -59,7 +59,7 @@ const ManagePlan = (props) => {
          cell: ({ planHierarchy }) => <span>{planHierarchy}</span>,
       },
       {
-         name: "Plan Hierarchy",
+         name: "View Hierarchy",
          selector: ((row) => row.viewHierarchy),
          minWidth: "150px",
          center: true,

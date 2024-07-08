@@ -77,7 +77,7 @@ const Nav = () => {
             <ReactBoostrap.Navbar.Toggle aria-controls="basic-navbar-nav" />
             <ReactBoostrap.Navbar.Collapse id="basic-navbar-nav">
                <ReactBoostrap.Nav className="mr-auto">
-                  {userData.roleName === 'SUPER ADMIN' ?
+                  {userData.roleName !== 'MARKETING EXECUTIVE' || userData.roleName !== 'MARKETING ADMIN' ?
                      <ReactBoostrap.NavDropdown
                         show={isOpen}
                         onClick={() => {
@@ -129,23 +129,7 @@ const Nav = () => {
                         </>
                      </ReactBoostrap.NavDropdown>
                      : null}
-
-                  {/* <ReactBoostrap.NavDropdown
-              show={ isPropertyDDOpen }
-              onClick={ ()=> {
-                checkPropertyNavActive()
-              } }
-              title="Properties" id="basic-nav-dropdown"
-              name="basic-nav-dropdown"
-              className={ (isPropertyActive) ? 'propertyActive': 'houseIcon' }>
-
-              <Link to='/admin/property' className={ `dropdown-item  ${ pathname.includes('/admin/property') ? 'active':'' }` }
-              >Consumer Property</Link>
-              <Link to='/admin/builder-project' className={ `dropdown-item  ${ pathname.includes('/admin/builder-project') ? 'active':'' }` }
-              >Builder Project</Link>
-
-            </ReactBoostrap.NavDropdown> */}
-                  {userData.roleName === 'SUPER ADMIN' ?
+                  {userData.roleName !== 'MARKETING EXECUTIVE' || userData.roleName !== 'MARKETING ADMIN' ?
                      <>
                         <Link
                            to="/admin/property"
@@ -242,21 +226,6 @@ const Nav = () => {
                            />
                            Non SmartDoor Properties
                         </Link>
-                        {/* <Link
-                           to="/admin/addCity"
-                           className={`nav-link ${pathname.includes("addCity") ? "nav-active" : ""
-                              }`}
-                        >
-                           <Image
-                              name="teamGroup"
-                              src={
-                                 pathname.includes("addCity")
-                                    ? propertyAdvisorActive
-                                    : propertyAdvisorIcon
-                              }
-                           />
-                           Add New City
-                        </Link> */}
                         <Link
                            to="/admin/addPlans"
                            className={`nav-link ${pathname.includes("addPlans") ? "nav-active" : ""
@@ -272,26 +241,6 @@ const Nav = () => {
                            />
                            Manage Plans
                         </Link>
-                     </>
-                  )}
-                  {/* <Link
-                        to="/admin/advisors"
-                        className={`nav-link ${
-                           pathname.includes("advisors") ? "nav-active" : ""
-                        }`}
-                     >
-                        <Image
-                           name="teamGroup"
-                           src={
-                              pathname.includes("advisors")
-                                 ? borkerIcon
-                                 : borkerIcon
-                           }
-                        />
-                        Advisors
-                     </Link> */}
-                  {userData.roleName === "SUPER ADMIN" && (
-                     <>
                         <Link
                            to="/admin/broker"
                            className={`nav-link ${pathname.includes("broker") ? "nav-active" : ""
@@ -374,6 +323,7 @@ const Nav = () => {
                         </Link>
                      </>
                   )}
+
                   {userData.roleName === 'MARKETING ADMIN' ?
                      <>
                         <Link
