@@ -77,7 +77,7 @@ const Nav = () => {
             <ReactBoostrap.Navbar.Toggle aria-controls="basic-navbar-nav" />
             <ReactBoostrap.Navbar.Collapse id="basic-navbar-nav">
                <ReactBoostrap.Nav className="mr-auto">
-                  {userData.roleName !== 'MARKETING EXECUTIVE' || userData.roleName !== 'MARKETING ADMIN' ?
+                  {userData.roleName !== 'MARKETING EXECUTIVE' && userData.roleName !== 'MARKETING ADMIN' ?
                      <ReactBoostrap.NavDropdown
                         show={isOpen}
                         onClick={() => {
@@ -129,7 +129,7 @@ const Nav = () => {
                         </>
                      </ReactBoostrap.NavDropdown>
                      : null}
-                  {userData.roleName !== 'MARKETING EXECUTIVE' || userData.roleName !== 'MARKETING ADMIN' ?
+                  {userData.roleName !== 'MARKETING EXECUTIVE' && userData.roleName !== 'MARKETING ADMIN' ?
                      <>
                         <Link
                            to="/admin/property"
@@ -191,7 +191,7 @@ const Nav = () => {
                            User Management
                         </Link>
 
-                        <Link
+                        {/* <Link
                            to="/admin/realtor-advisor-management"
                            className={`nav-link ${pathname.includes("realtor-advisor-management") ? "nav-active" : ""
                               }`}
@@ -205,7 +205,7 @@ const Nav = () => {
                               }
                            />
                            Realtor Advisor Management
-                        </Link>
+                        </Link> */}
                      </>
                      : null}
 

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
-import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes } from "../../../../common/redux/actions";
+import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes, setCallBackUrl } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import Buttons from "../../../../shared/Buttons/Buttons";
@@ -248,11 +248,34 @@ const PropertyDevice = (props) => {
             )
         },
         {
+            name: 'Set callBack URL',
+            sortable: false,
+            center: true,
+            cell: ({ uuId, propertyId }) => (
+                <div>
+                    <Buttons name='Set Alarm' varient='primary' size='xSmall' onClick={async () => {
+                        const response = await setCallBackUrl(
+                            {
+                                type: 'prod',
+                                sns: uuId,
+                                propertyId: propertyId
+                            }
+                        )
+                        if(response.status === 200) {
+                            showSuccessToast(response?.data?.customMessage);
+                        } else {
+                            showErrorToast(response?.data?.customMessage);
+                        }
+                    }}></Buttons>
+                </div>
+            )
+        },
+        {
             name: "Action",
             sortable: false,
             center: true,
             maxWidth: '180px',
-            cell: ({ uuId, deleted }) => (
+            cell: ({ uuId }) => (
                 <div className="action">
                     <Buttons
                         name="View Data"

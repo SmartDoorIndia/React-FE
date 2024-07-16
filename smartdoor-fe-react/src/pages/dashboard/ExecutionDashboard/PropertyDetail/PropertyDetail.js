@@ -287,8 +287,6 @@ const PropertyDetail = (props) => {
                     }
                     {showPrintBtn ?
                       <Buttons
-                        // disabled={
-                        //     data.status === 'ASSIGNED' || handleStatus(data.reviews, data.status,"edit") ? true : false}
                         name={'Print QR'}
                         varient="primary"
                         size="xSmall"

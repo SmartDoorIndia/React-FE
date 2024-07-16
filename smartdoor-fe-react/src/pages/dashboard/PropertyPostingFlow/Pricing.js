@@ -290,7 +290,7 @@ const Pricing = (props) => {
                                 className="w-100 mb-2"
                                 type="number"
                                 label={'Rent (Monthly)'}
-                                inputProps={{ min: 5, max: 1000 }}
+                                inputProps={{ max: 1000 }}
                                 InputProps={{
                                     startAdornment: (
                                         <>
@@ -314,7 +314,7 @@ const Pricing = (props) => {
                                 className="w-100 mb-2"
                                 type="number"
                                 label={'Maintenance Charges (Monthly)'}
-                                inputProps={{ min: 0 }}
+                                inputProps={{ }}
                                 InputProps={{
                                     startAdornment: (
                                         <>
@@ -339,7 +339,7 @@ const Pricing = (props) => {
                                 className="w-100 mb-2"
                                 type="number"
                                 label={'Security Deposit'}
-                                inputProps={{ min: 0 }}
+                                inputProps={{ }}
                                 InputProps={{
                                     startAdornment: (
                                         <>
@@ -401,7 +401,7 @@ const Pricing = (props) => {
                                 type="number"
                                 error={error.propertyRate}
                                 label={'Selling Price'}
-                                inputProps={{ min: 10 }}
+                                inputProps={{ }}
                                 InputProps={{
                                     startAdornment: (
                                         <>

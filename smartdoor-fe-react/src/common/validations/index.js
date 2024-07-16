@@ -1068,7 +1068,7 @@ export const validatePricing = (data, pricingList) => {
     if (!isBlank(data.maintenanceCharge)) {
       if (Number(data.maintenanceCharge) < 0) {
         errors.maintenanceCharge = true;
-        showErrorToast("Invalid deposit value")
+        showErrorToast("Invalid maintenance value")
       }
     }
   }
