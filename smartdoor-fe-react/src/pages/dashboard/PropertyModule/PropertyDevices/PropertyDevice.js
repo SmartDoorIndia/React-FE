@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { connect } from "react-redux";
-import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes, setCallBackUrl } from "../../../../common/redux/actions";
+import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes, setCallBackUrl, getDeviceToken, deleteCamera } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import Buttons from "../../../../shared/Buttons/Buttons";
@@ -10,6 +10,7 @@ import TextArea from "../../../../shared/Inputs/TextArea/TextArea";
 import { Modal } from "react-bootstrap";
 import { validateCameraData } from "../../../../common/validations";
 import Loader from "../../../../common/helpers/Loader";
+import cameraServicesApi from "../../../../common/services/cameraServices";
 
 const PropertyDevice = (props) => {
 
@@ -251,6 +252,7 @@ const PropertyDevice = (props) => {
             name: 'Set callBack URL',
             sortable: false,
             center: true,
+            minWidth: '150px',
             cell: ({ uuId, propertyId }) => (
                 <div>
                     <Buttons name='Set Alarm' varient='primary' size='xSmall' onClick={async () => {
@@ -261,8 +263,80 @@ const PropertyDevice = (props) => {
                                 propertyId: propertyId
                             }
                         )
-                        if(response.status === 200) {
+                        if (response.status === 200) {
                             showSuccessToast(response?.data?.customMessage);
+                        } else {
+                            showErrorToast(response?.data?.customMessage);
+                        }
+                    }}></Buttons>
+                </div>
+            )
+        },
+        {
+            name: 'View Live Stream',
+            sortable: false,
+            center: true,
+            minWidth: '170px',
+            cell: ({ uuId }) => (
+                <div>
+                    <Buttons name='View LiveStream' varient='primary' size='xSmall' onClick={async () => {
+                        const response = await getDeviceToken(
+                            {
+                                sns: uuId,
+                            }
+                        )
+                        if (response.status === 200) {
+                            let deviceToken = response.data.resourceData.deviceToken
+                            let data = {
+                                mediaType: 'hls',
+                                channel: '0',
+                                stream: '0',
+                                protocol: 'ts',
+                                username: response.data.resourceData.encryptedString,
+                                password: response.data.resourceData.encryptedPassword,
+                                // userToken: response.data.resourceData.userToken
+                            }
+                            await cameraServicesApi(
+                                'POST',
+                                data,
+                                'https://api.jftechws.com/gwp/v3/rtc/device/livestream/' + deviceToken,
+                                {
+                                    "Content-type": "application/json",
+                                    "Access-Control-Allow-Origin": '*',
+                                    "Access-Control-Allow-Headers": 'Origin, X-Requested-With, Content-Type, Accept ',
+                                    "uuId": response.data.resourceData.uuid,
+                                    "appKey": response.data.resourceData.appkey,
+                                    "signature": response.data.resourceData.signature,
+                                    "timeMillis": response.data.resourceData.timeMillis,
+                                }
+                            )
+                            .then((liveURL) => {
+                                console.log(liveURL)
+                            })
+                            .catch((error) => {
+                                console.log(error)
+                            })
+                        } else {
+                            showErrorToast(response?.data?.customMessage);
+                        }
+                    }}></Buttons>
+                </div>
+            )
+        },
+        {
+            name: 'Delete Camera',
+            sortable: false,
+            center: true,
+            cell: ({ cameraDeviceId }) => (
+                <div>
+                    <Buttons name='Delete' varient='primary' size='xSmall' onClick={async () => {
+                        const response = await deleteCamera(
+                            {
+                                cameraId: cameraDeviceId
+                            }
+                        )
+                        if (response.status === 200) {
+                            await _getCameraDevice();
                         } else {
                             showErrorToast(response?.data?.customMessage);
                         }
@@ -274,7 +348,7 @@ const PropertyDevice = (props) => {
             name: "Action",
             sortable: false,
             center: true,
-            maxWidth: '180px',
+            minWidth: '140px',
             cell: ({ uuId }) => (
                 <div className="action">
                     <Buttons

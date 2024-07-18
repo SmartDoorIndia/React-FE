@@ -1963,6 +1963,16 @@ export const setCallBackUrl = async (data) => {
   return response;
 }
 
+export const deleteCamera  = async (data) => {
+  const response = await mainApiService('deleteCamera', data);
+  return response;
+}
+
+export const getDeviceToken = async (data) => {
+  const response = await mainApiService('getDeviceToken', data);
+  return response;
+}
+
 // BROKER 
 export const getBrokerListing = (data) => async (dispatch) => {
   dispatch({ type: Actions.BROKERS_MODULE_LOADING, data: [] });

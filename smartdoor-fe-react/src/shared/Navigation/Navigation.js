@@ -155,7 +155,7 @@ const Nav = () => {
                            Deleted/ Unlisted Properties
                         </Link>
 
-                        <Link
+                        {/* <Link
                            to="/admin/societies"
                            className={`nav-link ${pathname.includes("/admin/societies") ? "nav-active" : ""
                               }`}
@@ -165,7 +165,7 @@ const Nav = () => {
                               src={pathname.includes("/admin/societies") ? societyActive : buildingIcon}
                            />
                            Societies
-                        </Link>
+                        </Link> */}
 
                         <Link
                            to="/admin/consumer-management"

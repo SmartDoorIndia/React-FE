@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { connect, useDispatch } from "react-redux";
 import { Row, Col, Modal } from "react-bootstrap";
 import ImageSliderComponent from "./ImageSliderComponent";
@@ -61,6 +61,11 @@ import { Switch } from "@mui/material";
 import reviewIcon from "../../../assets/svg/reviewIcon.svg"
 import { getLocalStorage } from "../../../common/helpers/Utils";
 import PostingFields from "../../../common/helpers/PostingFields";
+// import videojs from 'video.js';
+// import 'video.js/dist/video-js.css';
+// import 'videojs-flash';
+import { ReactFlvPlayer } from 'react-flv-player';
+
 // const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
 const PropertyDetails = (props) => {
@@ -588,14 +593,11 @@ const PropertyDetails = (props) => {
       setShowQrModal(false)
    }
 
-   const [chatHistory, setChatHistory] = useState([]);
-
    useEffect(() => {
       _getPropertyDetails();
       getPropertyAnalyticsByPropertyId({ propertyId: propertyId });
       _getPropertyPlanDetailsById();
 
-      // _handleCallEvents();
    }, [propertyId, _getPropertyDetails, getPropertyAnalyticsByPropertyId]);
 
    const handleClose = () => setShow(false);
@@ -1316,15 +1318,46 @@ const PropertyDetails = (props) => {
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2"
-                                          onClick={() => { 
+                                          onClick={() => {
                                              let miscellaneousDetailsDto = propertyData.miscellaneousDetails;
-                                             if(propertyData.miscellaneousDetails.status !== null) {
+                                             if (propertyData.miscellaneousDetails.status !== null) {
                                                 miscellaneousDetailsDto.draft = false;
                                              }
-                                             history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: miscellaneousDetailsDto }) }} /> &nbsp; &nbsp;
+                                             history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: miscellaneousDetailsDto })
+                                          }} /> &nbsp; &nbsp;
 
                                     </>
                                     : null}
+                                 {userData.roleName === 'MARKETING EXECUTIVE' && propertyData.miscellaneousDetails.status !== 'APPROVED' ?
+                                    <>
+                                       <Buttons
+                                          style={{ float: 'left' }}
+                                          name="Edit Property"
+                                          varient="primary"
+                                          size="xSmall"
+                                          color="white"
+                                          className=" mb-2"
+                                          onClick={() => {
+                                             let miscellaneousDetailsDto = propertyData.miscellaneousDetails;
+                                             if (propertyData.miscellaneousDetails.status !== null) {
+                                                miscellaneousDetailsDto.draft = false;
+                                             }
+                                             history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: miscellaneousDetailsDto })
+                                          }} /> &nbsp; &nbsp;
+
+                                    </>
+                                    : null}
+                                 {isDeleted === false && userData.roleName === 'MARKETING EXECUTIVE' && propertyData.miscellaneousDetails.status !== 'APPROVED' ?
+                                    <>
+                                       <Buttons
+                                          style={{ float: 'left' }}
+                                          name="Delete"
+                                          varient="primary"
+                                          size="xSmall"
+                                          color="white"
+                                          className=" mb-2 bg-danger"
+                                          onClick={() => { handleDelete() }} /> &nbsp; &nbsp;
+                                    </> : <></>}
                                  {isDeleted === false && userData.roleName === 'SUPER ADMIN' ?
                                     <>
                                        <Buttons
@@ -1509,88 +1542,88 @@ const PropertyDetails = (props) => {
                                  />
                                  {/* {propertyData.miscellaneousDetails.ownerName === null ? null : (
                                  )} */}
-                                    <div className="d-flex justify-content-between mb-2 propertyOwnerInfoWrap align-items-baseline">
-                                       <div className="d-flex userName propertyOwnerInfoWrapFirst mb-3 align-items-end">
-                                          <div className="uName">
-                                             <img
-                                                src={propertyData.ownerImageUrl || userImg}
-                                                className="rounded-circle object-cover"
-                                                width="50px"
-                                                height="50px"
-                                                alt=""
-                                             />
-                                          </div>
-                                          <div className="flex-1 align-items-center ml-2 ownerdetail">
-
-                                             <ToolTip
-                                                position="top"
-                                                name={propertyData.miscellaneousDetails.ownerName || propertyData.miscellaneousDetails.postedByName}
-                                             >
-                                                <Text
-                                                   size="Small"
-                                                   fontWeight="mediumbold"
-                                                   className="userName"
-                                                   color="secondry-color"
-                                                   text={propertyData.miscellaneousDetails.ownerName || propertyData.miscellaneousDetails.postedByName}
-                                                />
-                                             </ToolTip>
-                                             <Text
-                                                className="fw500 wordWrap"
-                                                size="xSmall"
-                                                color="secondry-color"
-                                                text={propertyData.miscellaneousDetails.ownerMobileNumber || propertyData.miscellaneousDetails.postedByMobile}
-                                             />
-                                          </div>
+                                 <div className="d-flex justify-content-between mb-2 propertyOwnerInfoWrap align-items-baseline">
+                                    <div className="d-flex userName propertyOwnerInfoWrapFirst mb-3 align-items-end">
+                                       <div className="uName">
+                                          <img
+                                             src={propertyData.ownerImageUrl || userImg}
+                                             className="rounded-circle object-cover"
+                                             width="50px"
+                                             height="50px"
+                                             alt=""
+                                          />
                                        </div>
-                                       <div className="msgtoowner propertyOwnerInfoWrapLast">
-                                          {/* <ToolTip position="left" name="Under development"> */}
-                                          <span className="btnNew">
-                                             <Buttons
-                                                onClick={() => setShowMsgModal(true)}
-                                                disabled={
-                                                   propertyData.miscellaneousDetails.ownerAvailable ? true : false
-                                                }
-                                                name="Owner"
-                                                varient="primary"
-                                                type="submit"
-                                                size="Small"
-                                                color="white"
-                                                iconSrc={mailIcon}
-                                             />
-                                             {/* <img color='red' src={mailIcon} /> */}
-                                          </span>
-                                          {/* </ToolTip> */}
+                                       <div className="flex-1 align-items-center ml-2 ownerdetail">
 
-                                          <ToolTip position="top" name="Property Document">
-                                             {propertyData?.miscellaneousDetails.ownerAvailable ? (
-                                                <img
-                                                   className={
-                                                      "doc docOwner" + propertyData?.miscellaneousDetails.ownerAvailable
-                                                         ? "doc docOwner disabled-icon"
-                                                         : ""
-                                                   }
-                                                   src={doc}
-                                                   alt=""
-                                                />
-                                             ) : (
-                                                <Link
-                                                   to={{
-                                                      pathname: "/admin/property/property-documents",
-                                                      state: {
-                                                         propertyId: propertyData.smartdoorPropertyId,
-                                                         propertyDocsResp:
-                                                            propertyData.uploads,
-                                                         userId: userId
-                                                      },
-                                                   }}
-                                                >
-                                                   {/* <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " /> */}
-                                                   <img className="doc docOwner" src={doc} alt="" />
-                                                </Link>
-                                             )}
+                                          <ToolTip
+                                             position="top"
+                                             name={propertyData.miscellaneousDetails.ownerName || propertyData.miscellaneousDetails.postedByName}
+                                          >
+                                             <Text
+                                                size="Small"
+                                                fontWeight="mediumbold"
+                                                className="userName"
+                                                color="secondry-color"
+                                                text={propertyData.miscellaneousDetails.ownerName || propertyData.miscellaneousDetails.postedByName}
+                                             />
                                           </ToolTip>
+                                          <Text
+                                             className="fw500 wordWrap"
+                                             size="xSmall"
+                                             color="secondry-color"
+                                             text={propertyData.miscellaneousDetails.ownerMobileNumber || propertyData.miscellaneousDetails.postedByMobile}
+                                          />
                                        </div>
                                     </div>
+                                    <div className="msgtoowner propertyOwnerInfoWrapLast">
+                                       {/* <ToolTip position="left" name="Under development"> */}
+                                       <span className="btnNew">
+                                          <Buttons
+                                             onClick={() => setShowMsgModal(true)}
+                                             disabled={
+                                                propertyData.miscellaneousDetails.ownerAvailable ? true : false
+                                             }
+                                             name="Owner"
+                                             varient="primary"
+                                             type="submit"
+                                             size="Small"
+                                             color="white"
+                                             iconSrc={mailIcon}
+                                          />
+                                          {/* <img color='red' src={mailIcon} /> */}
+                                       </span>
+                                       {/* </ToolTip> */}
+
+                                       <ToolTip position="top" name="Property Document">
+                                          {propertyData?.miscellaneousDetails.ownerAvailable ? (
+                                             <img
+                                                className={
+                                                   "doc docOwner" + propertyData?.miscellaneousDetails.ownerAvailable
+                                                      ? "doc docOwner disabled-icon"
+                                                      : ""
+                                                }
+                                                src={doc}
+                                                alt=""
+                                             />
+                                          ) : (
+                                             <Link
+                                                to={{
+                                                   pathname: "/admin/property/property-documents",
+                                                   state: {
+                                                      propertyId: propertyData.smartdoorPropertyId,
+                                                      propertyDocsResp:
+                                                         propertyData.uploads,
+                                                      userId: userId
+                                                   },
+                                                }}
+                                             >
+                                                {/* <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " /> */}
+                                                <img className="doc docOwner" src={doc} alt="" />
+                                             </Link>
+                                          )}
+                                       </ToolTip>
+                                    </div>
+                                 </div>
                               </div>
                               {/* <div className="ownerInfoWrap">
                                  <div className="d-flex justify-content-between mb-2 propertyOwnerInfoWrap align-items-baseline">
@@ -2625,7 +2658,28 @@ const PropertyDetails = (props) => {
         handleShow = { handleShow }
         handlePerformAction = { ()=> handleRealtorStatus(blockData.id, blockData.status ? "UNBLOCKED" : "BLOCKED" ) }
       /> */}
-
+                  <ReactFlvPlayer
+                     url="https://gwm-000-cn-0316.bcloud365.net:9015/live/6541c7620f8161fb/Mnx8NTg0NGFlOTg2Y2U0MDIzYTM2YWY4OTM5MDQwZGFiYjB8fDY1NDFjNzYyMGY4MTYxZmJ8fDhlNTk5NzI2MDAyNDg3Nzc0ZjcxYzAwYW7M5Y2RiZDk3NmMyYmUwNDM0ZTI5YzRkMmEzNWJkNTczMmRkZGYzNTB8fGZsdnx8MTcyMTExODczMDMzNXx8MTcyMjg3NTg0ODk5M3x8R1dN.fb2f4d152c14d42f2ac7752e39c65bac.flv"
+                     height="200px"
+                     width="200px"
+                     isMuted={false}
+                     isLive={true}
+                     hasVideo={true}
+                     handleError={(err) => {
+                        switch (err) {
+                          case 'NetworkError':
+                            // todo
+                            console.log('network error');
+                          break;
+                          case 'MediaError':
+                            console.log('network error');
+                          break;
+                          default:
+                            console.log('other error');
+                        }
+                      }}
+                  />
+                  
                   <MessageModal
                      show={showMsgModal}
                      handleShow={handleshowMsgModal}

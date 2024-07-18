@@ -115,11 +115,13 @@ const CorporateProperty = (props) => {
             selector: ((row) => row.city),
             sortable: true,
             center: true,
+            wrap: true,
             minWidth: "250px",
             cell: ({ city }) => (
-                <ToolTip position="top" style={{ width: '50%' }} name={city}>
-                    <Text size="Small" color="secondryColor elipsis-text" text={city} />
-                </ToolTip>
+                // <ToolTip position="top" style={{ width: '50%' }} name={city}>
+                //     <Text size="Small" color="secondryColor elipsis-text" text={city} />
+                // </ToolTip>
+                <span>{city}</span>
             ),
             id: 6
         },

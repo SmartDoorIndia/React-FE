@@ -2706,6 +2706,32 @@ export const ApiJson = {
     showErrorMessage: true
   },
 
+  deleteCamera: {
+    url: '/smartlock/smartlock/deleteCameraDeviceById/:cameraId',
+    method: 'DELETE',
+    data: {
+    },
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json'
+    },
+    showResultMessage: true,
+    showErrorMessage: true
+  },
+
+  getDeviceToken: {
+    url: '/consumer/notification/notifyy/:sns',
+    method: 'GET',
+    data: {
+    },
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json'
+    },
+    showResultMessage: true,
+    showErrorMessage: true
+  },
+
   //Broker API details
   getBrokerListing: {
     url: "consumer/broker/getBrokerList",

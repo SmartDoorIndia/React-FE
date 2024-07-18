@@ -243,15 +243,15 @@ const CorporateHome = (props) => {
                   columns={corporateColumns}
                   progressPending={allCorporates.isLoading}
                   progressComponent={ProgressComponent}
-                  paginationComponent={PaginationComponent}
-                  paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                  paginationPerPage={rowsPerPage}
-                  currentPage={currentPage}
-                  onChangePage={handlePageChange}
-                  onChangeRowsPerPage={handleRowsPerPageChange}
-                  perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  // paginationComponent={PaginationComponent}
+                  // paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  // paginationPerPage={rowsPerPage}
+                  // currentPage={currentPage}
+                  // onChangePage={handlePageChange}
+                  // onChangeRowsPerPage={handleRowsPerPageChange}
+                  // perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                   filterText={filterText}
-                  paginationServer={true}
+                  // paginationServer={true}
                   subHeaderComponent={subHeaderComponentMemo}
                   persistTableHead
                   filterComponent={subHeaderComponentMemo}
