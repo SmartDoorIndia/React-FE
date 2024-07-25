@@ -2658,27 +2658,6 @@ const PropertyDetails = (props) => {
         handleShow = { handleShow }
         handlePerformAction = { ()=> handleRealtorStatus(blockData.id, blockData.status ? "UNBLOCKED" : "BLOCKED" ) }
       /> */}
-                  <ReactFlvPlayer
-                     url="https://gwm-000-cn-0316.bcloud365.net:9015/live/6541c7620f8161fb/Mnx8NTg0NGFlOTg2Y2U0MDIzYTM2YWY4OTM5MDQwZGFiYjB8fDY1NDFjNzYyMGY4MTYxZmJ8fDhlNTk5NzI2MDAyNDg3Nzc0ZjcxYzAwYW7M5Y2RiZDk3NmMyYmUwNDM0ZTI5YzRkMmEzNWJkNTczMmRkZGYzNTB8fGZsdnx8MTcyMTExODczMDMzNXx8MTcyMjg3NTg0ODk5M3x8R1dN.fb2f4d152c14d42f2ac7752e39c65bac.flv"
-                     height="200px"
-                     width="200px"
-                     isMuted={false}
-                     isLive={true}
-                     hasVideo={true}
-                     handleError={(err) => {
-                        switch (err) {
-                          case 'NetworkError':
-                            // todo
-                            console.log('network error');
-                          break;
-                          case 'MediaError':
-                            console.log('network error');
-                          break;
-                          default:
-                            console.log('other error');
-                        }
-                      }}
-                  />
                   
                   <MessageModal
                      show={showMsgModal}

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { connect } from "react-redux";
 import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes, setCallBackUrl, getDeviceToken, deleteCamera } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
@@ -11,6 +11,16 @@ import { Modal } from "react-bootstrap";
 import { validateCameraData } from "../../../../common/validations";
 import Loader from "../../../../common/helpers/Loader";
 import cameraServicesApi from "../../../../common/services/cameraServices";
+import { ReactFlvPlayer } from "react-flv-player";
+import ReactPlayer from "react-player";
+// import Hls from "hls.js";
+// import ReactHlsPlayer from 'react-hls-player';
+// import videojs from "video.js";
+// import 'video.js/dist/video-js.css';
+// import 'videojs-contrib-hls';
+// import flvjs from 'flv.js';
+
+// import 'videojs-http-streaming'; 
 
 const PropertyDevice = (props) => {
 
@@ -41,6 +51,10 @@ const PropertyDevice = (props) => {
     const [cameraloading, setCameraLoading] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState({});
+    const [showLiveStream, setShowLiveStream] = useState(false);
+    const [livestreamURL, setLivestreamURL] = useState('');
+    const [currentUUID, setCurrentUUID] = useState(null);
+    let liveStremUrl = ''
 
     const _getSmartLockData = useCallback(async () => {
         try {
@@ -215,6 +229,10 @@ const PropertyDevice = (props) => {
         },
     ]
 
+    const videoRef = useRef(null);
+    const playerRef = useRef(null);
+    let hls;
+
     const cameraDeviceColumns = [
         {
             name: 'Property Id',
@@ -280,44 +298,21 @@ const PropertyDevice = (props) => {
             cell: ({ uuId }) => (
                 <div>
                     <Buttons name='View LiveStream' varient='primary' size='xSmall' onClick={async () => {
+                        // setShowLiveStream(true);
+                        setCurrentUUID(uuId);
                         const response = await getDeviceToken(
                             {
                                 sns: uuId,
+                                status: 'open'
                             }
                         )
                         if (response.status === 200) {
-                            let deviceToken = response.data.resourceData.deviceToken
-                            let data = {
-                                mediaType: 'hls',
-                                channel: '0',
-                                stream: '0',
-                                protocol: 'ts',
-                                username: response.data.resourceData.encryptedString,
-                                password: response.data.resourceData.encryptedPassword,
-                                // userToken: response.data.resourceData.userToken
-                            }
-                            await cameraServicesApi(
-                                'POST',
-                                data,
-                                'https://api.jftechws.com/gwp/v3/rtc/device/livestream/' + deviceToken,
-                                {
-                                    "Content-type": "application/json",
-                                    "Access-Control-Allow-Origin": '*',
-                                    "Access-Control-Allow-Headers": 'Origin, X-Requested-With, Content-Type, Accept ',
-                                    "uuId": response.data.resourceData.uuid,
-                                    "appKey": response.data.resourceData.appkey,
-                                    "signature": response.data.resourceData.signature,
-                                    "timeMillis": response.data.resourceData.timeMillis,
-                                }
-                            )
-                            .then((liveURL) => {
-                                console.log(liveURL)
-                            })
-                            .catch((error) => {
-                                console.log(error)
-                            })
+                            console.log(response.data)
+                            liveStremUrl = response.data.resourceData.liveStreamUrl;
+                            setLivestreamURL(response.data.resourceData.liveStreamUrl);
+                            setShowLiveStream(true);
                         } else {
-                            showErrorToast(response?.data?.customMessage);
+                            showErrorToast("Camera is offline");
                         }
                     }}></Buttons>
                 </div>
@@ -439,155 +434,6 @@ const PropertyDevice = (props) => {
                 >
                 </ListingDataTable>
 
-                <div>
-                    {/* {showEditSmartLockData ? (
-                        <>
-                            <Text
-                                className="m-2 h5"
-                                size="medium"
-                                text="Edit SmartLock Data"
-                            />
-                            <div className="d-flex mt-3 row col-12">
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="id"
-                                    contentEditable='false'
-                                    label="id"
-                                    value={selectedSmartLockData?.id}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="propertyId"
-                                    contentEditable='false'
-                                    label="propertyId"
-                                    value={selectedSmartLockData?.propertyId}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="uid"
-                                    contentEditable='false'
-                                    label="uid"
-                                    value={selectedSmartLockData?.uid}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="lockmac"
-                                    multiline
-                                    contentEditable='false'
-                                    label="lockmac"
-                                    value={selectedSmartLockData?.lockmac}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="lockPowerPercentage"
-                                    contentEditable='false'
-                                    label="lockPowerPercentage"
-                                    value={selectedSmartLockData?.lockPowerPercentage}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="expiresIn"
-                                    contentEditable='false'
-                                    label="expiresIn"
-                                    value={selectedSmartLockData?.expiresIn}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="tokenType"
-                                    contentEditable='false'
-                                    label="tokenType"
-                                    value={selectedSmartLockData?.tokenType}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="scope"
-                                    contentEditable='false'
-                                    label="scope"
-                                    value={selectedSmartLockData?.scope}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="smartlockAdminPasscode"
-                                    contentEditable='false'
-                                    label="smartlockAdminPasscode"
-                                    value={selectedSmartLockData?.smartlockAdminPasscode}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="smartlockInstalled"
-                                    contentEditable='false'
-                                    label="smartlockInstalled"
-                                    value={selectedSmartLockData?.smartlockInstalled ? 'Yes' : 'No'}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="gatewayInstalled"
-                                    contentEditable='false'
-                                    label="gatewayInstalled"
-                                    value={selectedSmartLockData?.gatewayInstalled ? 'Yes' : 'No'}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="doorOpen"
-                                    contentEditable='false'
-                                    label="doorOpen"
-                                    value={selectedSmartLockData?.doorOpen ? 'Yes' : 'No'}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="accessToken"
-                                    multiline
-                                    contentEditable='false'
-                                    label="accessToken"
-                                    value={selectedSmartLockData?.accessToken}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="refreshToken"
-                                    multiline
-                                    contentEditable='false'
-                                    label="refreshToken"
-                                    value={selectedSmartLockData?.refreshToken}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="username"
-                                    multiline
-                                    contentEditable='false'
-                                    label="username"
-                                    value={selectedSmartLockData?.username}
-                                />
-                                <TextField
-                                    className='col-4 px-1 mt-3'
-                                    id="password"
-                                    multiline
-                                    contentEditable='false'
-                                    label="password"
-                                    value={selectedSmartLockData?.password}
-                                />
-                                <div className='col-12 px-1'>
-                                    <TextArea
-                                        id="lockData"
-                                        contentEditable='false'
-                                        label="lockData"
-                                        value={selectedSmartLockData?.lockData}
-                                    />
-                                </div>
-                            </div>
-                            <div className="mb-5">
-                                <Buttons
-                                    name="Hide Data"
-                                    varient="primary"
-                                    style={{ float: 'right', marginInlineEnd: '4%' }}
-                                    size="xSmall"
-                                    color="white"
-                                    className="mt-2 mb-2"
-                                    onClick={() => { setShowEditSmartLockData(false) }} />
-                            </div>
-                            <Divider />
-                        </>
-                    ) : (<></>)} */}
-                </div>
                 <Text
                     className="mt-3 h5"
                     size="medium"
@@ -603,64 +449,6 @@ const PropertyDevice = (props) => {
                     persistTableHead="true"
                 >
                 </ListingDataTable>
-
-                {/* {showEditCensorData ? (
-                    <>
-                        <Text
-                            className="m-2 h5"
-                            size="medium"
-                            text="View Contact Sensor Data"
-                        />
-                        <div className="d-flex mt-3 row col-12">
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="id"
-                                contentEditable='false'
-                                label="id"
-                                value={selectedCensorData?.id}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="serialNumber"
-                                contentEditable='false'
-                                label="serial No."
-                                value={selectedCensorData?.serialNumber}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="email"
-                                contentEditable='false'
-                                label="Email Id"
-                                value={selectedCensorData?.email}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="id"
-                                contentEditable='false'
-                                label="Password"
-                                value={selectedCensorData?.password}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="deleted"
-                                contentEditable='false'
-                                label="Is deleted"
-                                value={selectedCensorData?.deleted ? 'Yes' : 'No'}
-                            />
-                        </div>
-                        <div className="mb-5">
-                            <Buttons
-                                name="Hide Data"
-                                varient="primary"
-                                style={{ float: 'right', marginInlineEnd: '4%' }}
-                                size="xSmall"
-                                color="white"
-                                className="mt-2 mb-2"
-                                onClick={() => { setShowEditCensorData(false) }} />
-                        </div>
-                        <Divider />
-                    </>
-                ) : (null)} */}
 
                 <Text
                     className="mt-3 mb-0 h5"
@@ -701,129 +489,8 @@ const PropertyDevice = (props) => {
                             propertyId: propertyId
                         }))
                     }} /> &nbsp;&nbsp;
-
-                {/* {showEditCameraData ? (
-                    <>
-                        <Text
-                            className="m-2 h5"
-                            size="medium"
-                            text="View Camera Device Data"
-                        />
-                        <div className="d-flex mt-3 row col-12">
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="uuId"
-                                contentEditable={true}
-                                error={error.uuId}
-                                label="UUID"
-                                onChange={(e) => {
-                                    setselectedCameraData(prevCameraData => ({ ...prevCameraData, uuId: e.target.value }));
-                                    setChangeUUIDFlag(true);
-                                }}
-                                value={selectedCameraData?.uuId}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="propertyId"
-                                contentEditable={false}
-                                label="Property Id"
-                                value={selectedCameraData?.propertyId}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="propertyId"
-                                contentEditable={false}
-                                label="Camera DeviceId"
-                                value={selectedCameraData?.cameraDeviceId}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="userName"
-                                contentEditable={true}
-                                error={error.userName}
-                                type="text"
-                                label="userName"
-                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, userName: e.target.value })) }}
-                                value={selectedCameraData?.userName}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="password"
-                                contentEditable={true}
-                                error={error.password}
-                                type="text"
-                                label="Password"
-                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, password: e.target.value })) }}
-                                value={selectedCameraData?.password}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="cameraType"
-                                select
-                                error={error.cameraType}
-                                label="Camera Type"
-                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraType: e.target.value, type: e.target.value })) }}
-                                value={selectedCameraData?.type}
-                            >
-                                {cameraTypeList.map(item => (
-                                    <MenuItem key={item} value={item}>{item}</MenuItem>
-                                ))}
-                            </TextField>
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="nickName"
-                                contentEditable={true}
-                                error={error.nickName}
-                                type="text"
-                                label="Nick Name"
-                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, nickName: e.target.value })) }}
-                                value={selectedCameraData?.nickName}
-                            />
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="endPointType"
-                                select
-                                error={error.endpointType}
-                                label="EndPoint Type"
-                                onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, endpointType: e.target.value })) }}
-                                value={selectedCameraData?.endpointType}
-                            >
-                                {endPointList.map(item => (
-                                    <MenuItem key={item} value={item}>{item}</MenuItem>
-                                ))}
-                            </TextField>
-                            <TextField
-                                className='col-4 px-1 mt-3'
-                                id="deleted"
-                                contentEditable={false}
-                                label="Is deleted"
-                                value={selectedCameraData?.deleted ? 'Yes' : 'No'}
-                            />
-                        </div>
-                        <div className="d-flex justify-content-end">
-                            <Buttons
-                                name="Hide Data"
-                                varient="primary"
-                                // style={{float:'right'}}
-                                size="xSmall"
-                                color="white"
-                                className="mt-2 mb-2"
-                                onClick={() => { setShowEditCameraData(false); setChangeUUIDFlag(false); }} /> &nbsp;&nbsp;
-                            {loading ? <Loader />
-                                :
-                                <Buttons
-                                    name="Save Data"
-                                    varient="primary"
-                                    // style={{float:'right'}}
-                                    size="xSmall"
-                                    color="white"
-                                    className="mt-2 mb-2"
-                                    onClick={() => { setShowEditCameraData(false); editCameraDetails(false); }} />
-                            }
-                        </div>
-                    </>
-                ) : (null)} */}
             </div>
+
             <Modal size="lg" show={showEditSmartLockData} onHide={() => { setShowEditSmartLockData(false); }} centered={true} >
                 <Modal.Body>
                     <Text
@@ -1134,6 +801,29 @@ const PropertyDevice = (props) => {
                                 onClick={() => { editCameraDetails(showEditCameraData ? false : true); }} />
                         }
                     </div>
+                </Modal.Body>
+            </Modal>
+            <Modal size="lg" show={showLiveStream} onHide={() => { setShowLiveStream(false) }} centered backdrop='static' >
+                <Modal.Header>
+                    <Buttons style={{ float: 'right' }} name='X' varient='secondary' onClick={async () => {
+                        setShowLiveStream(false)
+                        const response = await getDeviceToken(
+                            {
+                                sns: currentUUID,
+                                status: 'close'
+                            }
+                        )
+                    }}></Buttons>
+                </Modal.Header>
+                <Modal.Body>
+                    
+                    <ReactPlayer 
+                        type=''
+                        url={livestreamURL}
+                        controls={true}
+                        muted={false}
+                    />
+                    
                 </Modal.Body>
             </Modal>
         </>

@@ -2720,7 +2720,7 @@ export const ApiJson = {
   },
 
   getDeviceToken: {
-    url: '/consumer/notification/notifyy/:sns',
+    url: '/consumer/notification/notifyy/:sns/:status',
     method: 'GET',
     data: {
     },
