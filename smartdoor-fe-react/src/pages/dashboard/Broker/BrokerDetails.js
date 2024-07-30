@@ -15,7 +15,7 @@ import DataTable from "../../../shared/DataTable/DataTable";
 import Buttons from "../../../shared/Buttons/Buttons";
 import { useParams } from "react-router-dom";
 import { DateRangePicker, Stack } from "rsuite";
-import { ToolTip, getLocalStorage } from "../../../common/helpers/Utils";
+import { ToolTip, getLocalStorage, showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
 import { handleStatusElement, formateDate } from "../../../common/helpers/Utils";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import Hold from "../../../shared/Modal/BrokerDetailModal/BrokerDetailModal";
@@ -29,6 +29,7 @@ import {
    getBrokerListing,
    getBrokerDeclineStatusDetail,
    getBrokerStatusDetail,
+   setBokerMobileStatic,
 } from "../../../common/redux/actions";
 import moment from "moment";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
@@ -61,11 +62,9 @@ const BrokerDetails = (props) => {
    const [holdStatus, setHoldStatus] = useState(false);
    const [postedProperty, setPostedProperty] = useState([]);
    const userData = getLocalStorage("authData");
+   const loginMobile = props?.location?.state?.loginMobile;
    const history = useHistory();
 
-   console.log(userData, "userdata")
-
-   console.log(postedProperty, "ffjgfhjg")
    const toggleHoldStatus = () => {
       setHoldStatus(!holdStatus);
       _getBrokerDetails();
@@ -131,7 +130,7 @@ const BrokerDetails = (props) => {
       await _getBrokerDetails();
       let brokerId = brokerdetailId
       if ((data === undefined || data.length === 0) && Broker_data?.status !== 'PENDING_APPROVAL' && Broker_data?.status !== 'PAYMENT_PENDING') {
-         await _getPostedDetailProperty({ brokerId: brokerId, pageNo: currentPage, records: rowsPerPage });
+         await _getPostedDetailProperty({ brokerId: Number(brokerId), pageNo: currentPage, records: rowsPerPage });
       }
       setTimeout(async () => {
          if (Broker_data?.status === "ON_HOLD") {
@@ -145,7 +144,7 @@ const BrokerDetails = (props) => {
    const handlePageChange = (newPage) => {
       setCurrentPage(newPage);
       _getPostedDetailProperty({
-         brokerId: brokerdetailId,
+         brokerId: Number(brokerdetailId),
          pageNo: newPage,
          records: rowsPerPage,
          status: statusSelected,
@@ -158,7 +157,7 @@ const BrokerDetails = (props) => {
    const handleRowsPerPageChange = (newRowsPerPage) => {
       setRowsPerPage(newRowsPerPage);
       _getPostedDetailProperty({
-         brokerId: brokerdetailId,
+         brokerId: Number(brokerdetailId),
          pageNo: currentPage,
          records: newRowsPerPage,
          status: statusSelected,
@@ -194,7 +193,7 @@ const BrokerDetails = (props) => {
             onFilter={(e) => {
                setFilterText(e.target.value);
                _getPostedDetailProperty({
-                  brokerId: brokerdetailId,
+                  brokerId: Number(brokerdetailId),
                   pageNo: currentPage,
                   records: rowsPerPage,
                   status: statusSelected,
@@ -214,7 +213,7 @@ const BrokerDetails = (props) => {
       setStatusSelected(status_value);
       // showValue(status_value);
       _getPostedDetailProperty({
-         brokerId: brokerdetailId,
+         brokerId: Number(brokerdetailId),
          pageNo: currentPage,
          records: rowsPerPage,
          status: status_value,
@@ -265,7 +264,7 @@ const BrokerDetails = (props) => {
          setEndDate(endDt);
          // showValue(statusSelected, startDate, endDate);
          _getPostedDetailProperty({
-            brokerId: brokerdetailId,
+            brokerId: Number(brokerdetailId),
             pageNo: currentPage,
             records: rowsPerPage,
             status: statusSelected,
@@ -276,7 +275,7 @@ const BrokerDetails = (props) => {
       }
       if (date.length === 0) {
          _getPostedDetailProperty({
-            brokerId: brokerdetailId,
+            brokerId: Number(brokerdetailId),
             pageNo: currentPage,
             records: rowsPerPage,
             status: statusSelected,
@@ -422,7 +421,7 @@ const BrokerDetails = (props) => {
             holdStatus={holdStatus}
          // getAllUsers={getAllUsers}
          />
-         <div className="dashboard container-fluid12" style={{overflowX: 'hidden'}}>
+         <div className="dashboard container-fluid12" style={{ overflowX: 'hidden' }}>
             <Row>
                <Col lg={12}>
                   <div className="authorContact">
@@ -451,14 +450,6 @@ const BrokerDetails = (props) => {
                                     </div>
                                  </>
                                  : null}
-
-                              {/* <Text
-                                 size="xSmall"
-                                 fontWeight="smbold"
-                                 color="TaupeGrey"
-                                 text="(0) customers"
-                                 className="ml-3"
-                              /> */}
                            </div>
 
                            <p size="xSmall" fontWeight="smbold">
@@ -582,7 +573,6 @@ const BrokerDetails = (props) => {
                                                 });
                                           }
                                        }
-                                       // handleShow();
                                     }}
                                  />
                                  : null}
@@ -704,6 +694,21 @@ const BrokerDetails = (props) => {
                         <Col className="" lg='2'>
                            <div>
                               <p className="detail-heading">Phone Number</p>
+                              <p className="details">{loginMobile}</p>
+                              <Buttons name='Set Static Mobile' varient='primary' size='xSmall'
+                                 onClick={async () => {
+                                    const response = await setBokerMobileStatic({mobile: loginMobile});
+                                    if(response.status === 200) {
+                                       showSuccessToast("Broker mobile saved as static");
+                                    } else {
+                                       showErrorToast("Please try again later...");
+                                    }
+                                 }} />
+                           </div>
+                        </Col>
+                        <Col className="" lg='3'>
+                           <div>
+                              <p className="detail-heading">Phone No. for Customers</p>
                               <p className="details">{Broker_data?.mobileForCustomers}</p>
                            </div>
                         </Col>
@@ -719,7 +724,7 @@ const BrokerDetails = (props) => {
                               <p className="details">{Broker_data?.email}</p>
                            </div>
                         </Col>
-                        <Col className="" lg='5'>
+                        <Col className="mt-2" lg='5'>
                            <div>
                               <p className="detail-heading">Company Details </p>
 
@@ -785,10 +790,7 @@ const BrokerDetails = (props) => {
                                  <DateRangePicker
                                     style={{
                                        width: "249px",
-                                       // height: "10px",
-                                       // color: "darkgray",
                                        padding: "0px",
-                                       // marginLeft: "15px",
                                     }}
                                     onChange={handleDateRangeChange}
                                     value={[startDate, endDate]}

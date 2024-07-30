@@ -171,6 +171,11 @@ export const getAllCityWithId = (data) => async (dispatch) => {
   }
 };
 
+export const addCity = async (data) => {
+  const response = await mainApiService('addNewCity', data);
+  return response;
+}
+
 // Action to  Get All States with Id
 export const getAllStateWithId = (data) => async (dispatch) => {
   const response = await mainApiService('getAllStateWithId', data);
@@ -1780,6 +1785,10 @@ export const restorePropertyById = async (data) => {
   return response
 }
 
+export const getSmartDoorServiceStatus = async (data) => {
+  const response = await mainApiService('getSmartDoorServiceStatus', data);
+  return response;
+}
 
 export const getStaticMobNumbers = async () => {
   const response = await mainApiService('getStaticMobNums');
@@ -2041,6 +2050,11 @@ export const addHoldRequestComments = async (data) => {
   else showErrorToast('Unexpected error. Please try again later');
   return response;
 };
+
+export const setBokerMobileStatic = async (data) => {
+  const response = await mainApiService('setBrokerMbileStatic', data);
+  return response;
+}
 // export const postComment = async (data) => {
 //   const response = await mainApiService('postComment', data);
 //   if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);

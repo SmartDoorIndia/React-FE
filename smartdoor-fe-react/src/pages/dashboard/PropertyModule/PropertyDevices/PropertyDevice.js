@@ -392,7 +392,6 @@ const PropertyDevice = (props) => {
     }
 
     const editCameraDetails = async (addNewFlag) => {
-        setLoading(true)
         if (addNewFlag === false) {
             await setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: selectedCameraData.cameraDeviceId }))
         }
@@ -400,15 +399,13 @@ const PropertyDevice = (props) => {
         setError(valid.errors);
         console.log(valid)
         if (valid.isValid) {
+            setLoading(true)
             const response = await editCameraData(selectedCameraData);
             setLoading(false);
             if (response.status === 200) {
                 showSuccessToast("CameraDevice Data updated successfully");
                 setShowEditCameraData(false);
                 setAddCameraFlag(false);
-                // if (changeUUIDFlag) {
-                //     setCallBackUrl({ type: 'prod', sns: selectedCameraData.uuId, propertyId: propertyId });
-                // }
                 _getCameraDevice(propertyId);
             }
         }

@@ -2306,6 +2306,31 @@ export const ApiJson = {
     showResultMessage: true,
     showErrorMessage: true
   },
+
+  addNewCity: {
+    url: '/admin/property/addEditCity',
+    method: 'POST',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: true,
+    showErrorMessage: true
+  },
+  
+  getSmartDoorServiceStatus: {
+    url: 'consumer/property/getSmartDoorServiceStatus',
+    method: 'POST',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: true,
+    showErrorMessage: true
+  },
+
   getSocietyName: {
     url: 'consumer/property/getSocietyByCity?city=:city&society=:society',
     method: 'GET',
@@ -2855,6 +2880,20 @@ export const ApiJson = {
     showErrorMessage: false,
   },
 
+  setBrokerMbileStatic: {
+    url: "/consumer/broker/setBrokerStatic/:mobile",
+    method: "PUT",
+    data: {
+
+    },
+    header: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
+
   getPlanForCorporate: {
     url: "consumer/property/getPlanDetail",
     method: "POST",
@@ -2926,7 +2965,7 @@ export const ApiJson = {
   getAllCorporateUsers: {
     url: "consumer/corporate/getAllCorporateUser/:corporateId",
     method: "GET",
-    data: { },
+    data: {},
     headers: {
       Accept: "*/*",
       "Content-Type": "application/json",
@@ -2938,7 +2977,7 @@ export const ApiJson = {
   getCorporateProperties: {
     url: "consumer/corporate/getCorporateProperties",
     method: "POST",
-    data: { },
+    data: {},
     headers: {
       Accept: "*/*",
       "Content-Type": "application/json",

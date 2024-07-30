@@ -13,7 +13,7 @@ import Buttons from '../../../shared/Buttons/Buttons';
 import * as Actions from '../../../common/redux/types';
 import { geocodeByAddress } from 'react-google-places-autocomplete';
 import { getLocalStorage, showErrorToast, showSuccessToast } from '../../../common/helpers/Utils';
-import { addBasicDetails, getAllCityWithId, getSocietyByCity } from '../../../common/redux/actions';
+import { addBasicDetails, getAllCityWithId, getSmartDoorServiceStatus, getSocietyByCity } from '../../../common/redux/actions';
 import { Autocomplete } from 'devextreme-react';
 import './property.scss'
 import { validateAddressDetails } from '../../../common/validations';
@@ -64,33 +64,101 @@ const AddressSection = (props) => {
 		let localityFlag = false;
 		let administrative_area_level_3Flag = false
 		let stateFlag = false
+		console.log(e)
+		// e?.data?.address_components?.forEach(element => {
+		// 	if (element.types.includes('locality')) {
+		// 		newData.city = element.long_name;
+		// 		localityFlag = true
+		// 	}
+		// 	if (element.types.includes('sublocality_level_1')) {
+		// 		newData.locality = element.long_name;
+		// 		sublocality_level_1Flag = true
+		// 	}
+		// 	if (element.types.includes('postal_code')) {
+		// 		newData.zipCode = element.long_name;
+		// 	}
+		// 	if (element.types.includes('administrative_area_level_1')) {
+		// 		newData.state = element.long_name;
+		// 		stateFlag = true
+		// 	}
+		// 	if (element.types.includes('country')) {
+		// 		newData.country = element.long_name;
+		// 	}
+		// });
+		// if (allCitiesWithId.data.find(city => city.cityName === newData.city)) {
+		// 	setSDIconFlag(true)
+		// }
 
+		let m_address = {
+			sublocality_level_1: '',
+			sublocality_level_2: '',
+			postal_code: '',
+			locality: '',
+			administrative_area_level_3: '',
+			state: '',
+			country: ''
+		}
 		e?.data?.address_components?.forEach(element => {
-			if (element.types.includes('locality')) {
-				newData.city = element.long_name;
-				localityFlag = true
-			}
 			if (element.types.includes('sublocality_level_1')) {
-				newData.locality = element.long_name;
-				sublocality_level_1Flag = true
+				m_address.sublocality_level_1 = element.long_name;
+			}
+			if (element.types.includes('sublocality_level_2')) {
+				m_address.sublocality_level_2 = element.long_name;
 			}
 			if (element.types.includes('postal_code')) {
-				newData.zipCode = element.long_name;
+				m_address.postal_code = element.long_name;
+			}
+			if (element.types.includes('locality')) {
+				m_address.locality = element.long_name;
 			}
 			if (element.types.includes('administrative_area_level_1')) {
-				newData.state = element.long_name;
-				stateFlag = true
+				m_address.state = element.long_name;
+			}
+			if (element.types.includes('administrative_area_level_3')) {
+				m_address.administrative_area_level_3 = element.long_name;
 			}
 			if (element.types.includes('country')) {
-				newData.country = element.long_name;
+				m_address.country = element.long_name;
 			}
-		});
-		if (allCitiesWithId.data.find(city => city.cityName === newData.city)) {
-			setSDIconFlag(true)
+			if (m_address.locality.length !== 0 || m_address.sublocality_level_1.length !== 0) {
+				return null;
+			}
+		})
+		if (m_address.sublocality_level_1 === null && m_address.postal_code !== null) {
+			m_address.sublocality_level_1 = m_address.postal_code;
 		}
-		if (localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
-			showErrorToast("Please select pin point location")
+		if (m_address.locality.length === 0) {
+			m_address.locality = m_address.administrative_area_level_3;
 		}
+		if (m_address.sublocality_level_1 === m_address.administrative_area_level_3) {
+			showErrorToast("Please enter precise location...");
+			return null;
+		}
+		// if (localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
+		// 	showErrorToast("Please select pin point location")
+		// }
+		if (m_address.sublocality_level_1.length !== 0 && m_address.locality.length !== 0 && m_address.administrative_area_level_3.length !== 0 && m_address.state.length !== 0) {
+			newData.city = m_address.locality;
+			newData.locality = m_address.sublocality_level_1;
+			newData.zipCode = m_address.postal_code;
+			newData.state = m_address.state;
+			newData.country = m_address.country;
+		}
+		let reqData = {
+			sublocality_level_1: m_address.sublocality_level_1,
+			cityName: m_address.locality,
+			state: m_address.state,
+			latitude: e.latlng.lat,
+			longitude: e.latlng.lng,
+		}
+		const responseData = await getSmartDoorServiceStatus(reqData);
+		if (responseData.status === 200) {
+			console.log(responseData)
+			setSDIconFlag(responseData.data.resourceData)
+		}
+		// if (localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
+		// 	showErrorToast("Please select pin point location")
+		// }
 		const response = await geocodeByAddress(newData.city);
 		const latFunction = response[0].geometry.location.lat;
 		const eLat = latFunction();
@@ -111,32 +179,95 @@ const AddressSection = (props) => {
 		let localityFlag = false;
 		let administrative_area_level_3Flag = false
 		let stateFlag = false
-
+		console.log(e)
+		// e?.location?.address_components?.forEach(element => {
+		// 	if (element.types.includes('locality')) {
+		// 		newData.city = element.long_name;
+		// 		localityFlag = true
+		// 	}
+		// 	if (element.types.includes('sublocality_level_1')) {
+		// 		newData.locality = element.long_name;
+		// 		sublocality_level_1Flag = true
+		// 	}
+		// 	if (element.types.includes('postal_code')) {
+		// 		newData.zipCode = element.long_name;
+		// 	}
+		// 	if (element.types.includes('administrative_area_level_1')) {
+		// 		newData.state = element.long_name;
+		// 		stateFlag = true
+		// 	}
+		// 	if (element.types.includes('country')) {
+		// 		newData.country = element.long_name;
+		// 	}
+		// });
+		let m_address = {
+			sublocality_level_1: '',
+			sublocality_level_2: '',
+			postal_code: '',
+			locality: '',
+			administrative_area_level_3: '',
+			state: '',
+			country: ''
+		}
 		e?.location?.address_components?.forEach(element => {
-			if (element.types.includes('locality')) {
-				newData.city = element.long_name;
-				localityFlag = true
-			}
 			if (element.types.includes('sublocality_level_1')) {
-				newData.locality = element.long_name;
-				sublocality_level_1Flag = true
+				m_address.sublocality_level_1 = element.long_name;
+			}
+			if (element.types.includes('sublocality_level_2')) {
+				m_address.sublocality_level_2 = element.long_name;
 			}
 			if (element.types.includes('postal_code')) {
-				newData.zipCode = element.long_name;
+				m_address.postal_code = element.long_name;
+			}
+			if (element.types.includes('locality')) {
+				m_address.locality = element.long_name;
 			}
 			if (element.types.includes('administrative_area_level_1')) {
-				newData.state = element.long_name;
-				stateFlag = true
+				m_address.state = element.long_name;
+			}
+			if (element.types.includes('administrative_area_level_3')) {
+				m_address.administrative_area_level_3 = element.long_name;
 			}
 			if (element.types.includes('country')) {
-				newData.country = element.long_name;
+				m_address.country = element.long_name;
 			}
-		});
-		if (localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
-			showErrorToast("Please select pin point location")
+			if (m_address.locality.length !== 0 || m_address.sublocality_level_1.length !== 0) {
+				return null;
+			}
+		})
+		if (m_address.sublocality_level_1 === null && m_address.postal_code !== null) {
+			m_address.sublocality_level_1 = m_address.postal_code;
+		}
+		if (m_address.locality.length === 0) {
+			m_address.locality = m_address.administrative_area_level_3;
+		}
+		if (m_address.sublocality_level_1 === m_address.administrative_area_level_3) {
+			showErrorToast("Please enter precise location...");
+			return null;
+		}
+		// if (localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
+		// 	showErrorToast("Please select pin point location")
+		// }
+		if (m_address.sublocality_level_1.length !== 0 && m_address.locality.length !== 0 && m_address.administrative_area_level_3.length !== 0 && m_address.state.length !== 0) {
+			newData.city = m_address.locality;
+			newData.locality = m_address.sublocality_level_1;
+			newData.zipCode = m_address.postal_code;
+			newData.state = m_address.state;
+			newData.country = m_address.country;
+		}
+		let reqData = {
+			sublocality_level_1: m_address.sublocality_level_1,
+			cityName: m_address.locality,
+			state: m_address.state,
+			latitude: e.lat,
+			longitude: e.lng,
+		}
+		const responseData = await getSmartDoorServiceStatus(reqData);
+		if (responseData.status === 200) {
+			console.log(responseData)
+			setSDIconFlag(responseData.data.resourceData)
 		}
 		if (allCitiesWithId.data.find(city => city.cityName === addressDetails.city)) {
-			setSDIconFlag(true)
 		}
 		const response = await geocodeByAddress(newData.city);
 		const latFunction = response[0].geometry.location.lat;
@@ -145,9 +276,6 @@ const AddressSection = (props) => {
 		const eLng = lngFunction();
 		newData.cityLat = eLat;
 		newData.cityLong = eLng;
-		// Update latitude and longitude outside the loop
-		newData.latitude = e?.latlng?.lat;
-		newData.longitude = e?.latlng?.lng;
 		// Update latitude and longitude outside the loop
 		newData.latitude = e?.lat;
 		newData.longitude = e?.lng;
@@ -191,7 +319,7 @@ const AddressSection = (props) => {
 	const saveAddressDetails = () => {
 		let valid = {}
 		let mAddress = "";
-		let addressDetail = {...addressDetails};
+		let addressDetail = { ...addressDetails };
 		if (addressDetails?.houseNumber != null) {
 			mAddress = mAddress + " " + addressDetails.houseNumber;
 		}
@@ -228,7 +356,7 @@ const AddressSection = (props) => {
 			dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetail })
 			setSaveAddressFlag(true);
 			saveAddressDetailsFields({ saveFlag: true })
-			if(editPropertyFlag) {
+			if (editPropertyFlag) {
 				notifyAddressDetails(true);
 			}
 		}
@@ -237,7 +365,7 @@ const AddressSection = (props) => {
 	const notifyAddressDetails = async (loadNext) => {
 		let valid = {}
 		let mAddress = "";
-		let addressDetail = {...addressDetails};
+		let addressDetail = { ...addressDetails };
 		if (addressDetails?.houseNumber != null) {
 			mAddress += addressDetails.houseNumber;
 		}
@@ -281,7 +409,7 @@ const AddressSection = (props) => {
 		if (valid.isValid) {
 			const data = {
 				...(propertyId && { smartdoorPropertyId: propertyId }),
-                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
+				miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
 					postedById: userId.userid,
 					lastPageOfInfoFilled: 1,
 					draft: true,
@@ -315,7 +443,7 @@ const AddressSection = (props) => {
 				dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetails })
 				setSaveAddressFlag(true)
 				saveAddressDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
-				if(!loadNext) {
+				if (!loadNext) {
 					showSuccessToast('Property Posted successfully');
 					history.goBack();
 				}
@@ -366,17 +494,38 @@ const AddressSection = (props) => {
 							value={addressDetails.city}
 						>
 						</TextField>
-					</Col>
+					</Col>					
 					<Col>
 						<div className="mapLocation my-3">
-							<div style={{ height: "10", overflow: "hidden" }}>
+							<div style={{ height: "15", overflow: "hidden" }}>
 								<MapComponent
+									height='190px'
 									p_lat={addressDetails?.latitude !== 0 ? addressDetails.latitude : addressDetails.cityLat}
 									p_lng={addressDetails?.longitude !== 0 ? addressDetails.longitude : addressDetails.cityLong}
 									draggable={true}
 									onMarkerDragEnd={handleMarkerChanged} />
 							</div>
 						</div>
+					</Col>
+				</Row>
+				<Row className='mt-4'>
+				<Col lg={4}>
+						<TextField
+							label="Latitude"
+							type='number'
+							className='w-100'
+							onChange={(e) => { setAddressDetails({ ...addressDetails, latitude: Number(e.target.value)})}}
+							value={addressDetails.latitude}
+						/>
+					</Col>
+					<Col lg={4}>
+						<TextField
+							label="Longitude"
+							type='number'
+							className='w-100'
+							onChange={(e) => { setAddressDetails({ ...addressDetails, longitude: Number(e.target.value)})}}
+							value={addressDetails.longitude}
+						/>
 					</Col>
 				</Row>
 				<Row>
@@ -413,7 +562,7 @@ const AddressSection = (props) => {
 							// value={data?.buildingProjectSociety}
 							defaultValue={addressDetails.buildingProjectSociety}
 							onInput={(e) => { selectSocietyName(e) }}
-							onSelectionChanged={(value) => { setSelectedSociety(value?.selectedItem);}}
+							onSelectionChanged={(value) => { setSelectedSociety(value?.selectedItem); }}
 							placeholder="Select Building/Project/Society"
 							valueExpr="societyName"
 							searchExpr="societyName"
@@ -466,7 +615,7 @@ const AddressSection = (props) => {
 						<>
 							<Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyAddressDetails(false); }}></Buttons> &nbsp; &nbsp;
 						</>
-					:null}
+						: null}
 					<Buttons className='p-2 px-4' name='Next' onClick={() => { saveAddressDetails(); }}></Buttons> &nbsp; &nbsp;
 					{/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
 				</div>

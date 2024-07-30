@@ -5,6 +5,8 @@ import isEmpty from 'lodash/isEmpty';
 import ValidationMessages from '../helpers/ValidationMessages';
 import validateRegex from '../helpers/ValidateRegex';
 import { showErrorToast } from '../helpers/Utils';
+import { isVAT } from 'validator';
+import { isValid } from 'date-fns';
 
 function isBlank(str) {
   return !str || /^\s*$/.test(str);
@@ -1259,6 +1261,30 @@ export const validateCorpUser = (data) => {
   // if (!hasError && !mobileFlag) {
   //   errors = [];
   // }
+
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateNewCity = (data) => {
+  let errors = {};
+
+  if(isBlank(data.cityName)) {
+    errors.cityName = true;
+  }
+  if(isBlank(data.cityLat)) {
+    errors.cityLat = true;
+  }
+  if(isBlank(data.cityLong)) {
+    errors.cityLong = true;
+  }
+  if(data.cityId === null) {
+    if(isBlank(data.stateId)) {
+      errors.stateId = true;
+    }
+  }
 
   return {
     errors,

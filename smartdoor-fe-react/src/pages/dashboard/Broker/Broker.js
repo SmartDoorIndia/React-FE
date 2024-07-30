@@ -318,6 +318,7 @@ const Broker = (props) => {
                            to={{
                               pathname:
                                  `/admin/BrokerDetails/${row.brokerId}`,
+                                 state: { loginMobile: row.loginMobile}
                            }}
                         >
                            Details

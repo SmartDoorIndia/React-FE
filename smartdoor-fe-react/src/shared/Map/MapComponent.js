@@ -12,7 +12,7 @@ import MarkerIcon from "../../assets/images/mapMarker-icon.png";
 
 const mapStyles = {
    width: "100%",
-   height: "120px",
+   height: "190px",
    display: "inline",
    borderRadius: "5px",
 };

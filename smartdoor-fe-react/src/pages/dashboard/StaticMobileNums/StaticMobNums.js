@@ -10,7 +10,7 @@ import Loader from "../../../common/helpers/Loader"
 const StaticMobNums = () => {
 
     const [staticMobile, setStaticMobile] = useState('')
-    const [staticOTP, setStaticOTP] = useState(null)
+    const [staticOTP, setStaticOTP] = useState('')
     const [loading, setLoading] = useState(false);
 
     useEffect(async () => {
@@ -27,6 +27,10 @@ const StaticMobNums = () => {
     }
 
     const setMobileNumbers = async () => {
+        if(Number(staticOTP) < 1000) {
+            showErrorToast("Please enter OTP between 1000 - 9999");
+            return null;
+        }
         setLoading(true)
         const response = await setStaticMobNumbers({ mobile: staticMobile, otp: staticOTP })
         console.log(response)
@@ -67,19 +71,25 @@ const StaticMobNums = () => {
                         style={{ fontSize: '16px', marginTop: '2%' }} />
                     <TextField
                         id="outlined-multiline-flexible"
-                        type="number"
+                        type="text"
                         className="w-100 mt-3 col-2"
-                        inputProps={{ min: 0, max: 9999, maxLength: 4 }}
+                        inputProps={{ min: 1000, max: 9999, maxLength: 4, pattern: "[0-9]{4}" }}
                         value={staticOTP}
                         onChange={(e) => {
                             console.log(e.target.value)
                             const inputValue = e.target.value;
-                            const result = inputValue.replace(/\D/g, '');
-                            const otp = (result.slice(0, 4));
-                            if (otp.length === 4) {
-                                setStaticOTP(otp)
+                            const digitPattern = /^[0-9]*$/;
+                            if (digitPattern.test(inputValue)) {
+                                const result = inputValue.replace(/\D/g, '');
+                                const otp = (result.slice(0, 4));
+                                if (otp.length === 4) {
+                                    setStaticOTP(otp)
+                                } else {
+                                    setStaticOTP(null)
+                                }
                             } else {
-                                setStaticOTP(null)
+                                showErrorToast("Enter valid otp...");
+                                return;
                             }
                         }}
                         maxRows={1}
