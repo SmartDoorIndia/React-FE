@@ -472,6 +472,13 @@ const InstallationRequestsColumns = [
     center:true,
   },
   {
+    name: 'Property Id',
+    selector: row => row.propertyId, 
+    sortable: true,
+    center:true,
+    minWidth: '180px',
+  },
+  {
     name: 'Installation Time',
     selector: row => row.dateTime,
     sortable: true,

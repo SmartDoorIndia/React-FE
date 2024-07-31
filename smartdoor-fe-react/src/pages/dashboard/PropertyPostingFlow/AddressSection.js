@@ -108,14 +108,15 @@ const AddressSection = (props) => {
 			if (element.types.includes('postal_code')) {
 				m_address.postal_code = element.long_name;
 			}
-			if (element.types.includes('locality')) {
-				m_address.locality = element.long_name;
-			}
+			// if (element.types.includes('locality')) {
+			// 	m_address.locality = element.long_name;
+			// }
 			if (element.types.includes('administrative_area_level_1')) {
 				m_address.state = element.long_name;
 			}
 			if (element.types.includes('administrative_area_level_3')) {
 				m_address.administrative_area_level_3 = element.long_name;
+				m_address.locality = element.long_name;
 			}
 			if (element.types.includes('country')) {
 				m_address.country = element.long_name;
@@ -154,12 +155,13 @@ const AddressSection = (props) => {
 		const responseData = await getSmartDoorServiceStatus(reqData);
 		if (responseData.status === 200) {
 			console.log(responseData)
-			setSDIconFlag(responseData.data.resourceData)
+			setSDIconFlag(responseData.data.resourceData.serviceStatus)
+			newData.city = responseData.data.resourceData.cityName;
 		}
 		// if (localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
 		// 	showErrorToast("Please select pin point location")
 		// }
-		const response = await geocodeByAddress(newData.city);
+		const response = await geocodeByAddress(newData.city, m_address.state);
 		const latFunction = response[0].geometry.location.lat;
 		const eLat = latFunction();
 		const lngFunction = response[0].geometry.location.lng;
@@ -265,7 +267,8 @@ const AddressSection = (props) => {
 		const responseData = await getSmartDoorServiceStatus(reqData);
 		if (responseData.status === 200) {
 			console.log(responseData)
-			setSDIconFlag(responseData.data.resourceData)
+			setSDIconFlag(responseData.data.resourceData.serviceStatus)
+			newData.city = responseData.data.resourceData.cityName;
 		}
 		if (allCitiesWithId.data.find(city => city.cityName === addressDetails.city)) {
 		}

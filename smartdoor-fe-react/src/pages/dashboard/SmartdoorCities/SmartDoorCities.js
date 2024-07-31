@@ -30,7 +30,8 @@ const SmartDoorCities = (props) => {
         serviceStatus: null,
         alternateCityName: '',
         cityLat: 0.00,
-        cityLong: 0.00
+        cityLong: 0.00,
+        radius: 10.00
     });
     const [error, setError] = useState({});
 
@@ -169,135 +170,147 @@ const SmartDoorCities = (props) => {
                         />
                     </div>
                 </div>
-            </div>
-            <Modal size="lg" show={showAddCityModal} onHide={() => {
-                setShowAddCityModal(false); setNewCity({
-                    cityId: null,
-                    cityName: '',
-                    stateId: null,
-                    serviceStatus: null,
-                    alternateCityName: '',
-                    cityLat: 0.00,
-                    cityLong: 0.00
-                })
-            }} centered >
-                <Modal.Body className="" style={{}}>
-                    <div className="row col-12">
-                        <div className="col-6">
-                            <AutoCompleteTextField
-                                className='w-100 mt-3'
-                                style={{ zIndex: '1050' }}
-                                error={error.cityName}
-                                currentLocFlag={false}
-                                label="Select City * "
-                                cityLatLng={null}
-                                placeholder="Enter location"
-                                id="PropertyCityAutoComplete"
-                                onSelectOption={(e) => {
-                                    console.log(e);
-                                    e.data.address_components.forEach(element => {
-                                        if (element.types.includes('locality')) {
-                                            let city = e.data.address_components[0].long_name;
-                                            setNewCity({ ...newCity, cityName: city, cityLat: e.latlng.lat, cityLong: e.latlng.lng })
-                                        }
-                                    })
-                                }}
-                                onInputChange={(value) =>
-                                    setNewCity({ ...newCity, cityName: value })
-                                }
-                                predictionType="city"
-                                customValue={newCity.cityName}
-                            />
-                            <TextField
-                                className="mt-3 w-100"
-                                type="text"
-                                label={'Alternate Name'}
-                                value={newCity.alternateCityName}
-                                onChange={(e) => { setNewCity({ ...newCity, alternateCityName: e.target.value }) }}
-                            />
-                            <TextField
-                                required
-                                error={error.cityLat}
-                                className="mt-3 w-100"
-                                type="number"
-                                label={'Latitude'}
-                                onInput={(e) => { setNewCity({ ...newCity, cityLat: e.target.value }) }}
-                                value={newCity.cityLat}
-                            />
-                            <TextField
-                                required
-                                error={error.cityLong}
-                                className="mt-3 w-100"
-                                type="number"
-                                label={'Longitude'}
-                                onInput={(e) => { setNewCity({ ...newCity, cityLong: e.target.value }) }}
-                                value={newCity.cityLong}
-                            />
-                            {newCity.cityId === null ?
+                <Modal size="lg" show={showAddCityModal} onHide={() => {
+                    setShowAddCityModal(false); setNewCity({
+                        cityId: null,
+                        cityName: '',
+                        stateId: null,
+                        serviceStatus: null,
+                        alternateCityName: '',
+                        cityLat: 0.00,
+                        cityLong: 0.00,
+                        radius: 0.00
+                    })
+                }} centered style={{zIndex:'1000'}}>
+                    <Modal.Body className="" >
+                        <div className="row col-12">
+                            <div className="col-6">
+                                <AutoCompleteTextField
+                                    className='w-100 mt-3'
+                                    // style={{ zIndex: '1060' }} 
+                                    error={error.cityName}
+                                    currentLocFlag={false}
+                                    label="Select City * "
+                                    cityLatLng={null}
+                                    placeholder="Enter location"
+                                    id="PropertyCityAutoComplete"
+                                    onSelectOption={(e) => {
+                                        console.log(e);
+                                        e.data.address_components.forEach(element => {
+                                            if (element.types.includes('locality')) {
+                                                let city = e.data.address_components[0].long_name;
+                                                setNewCity({ ...newCity, cityName: city, cityLat: e.latlng.lat, cityLong: e.latlng.lng })
+                                            }
+                                        })
+                                    }}
+                                    onInputChange={(value) =>
+                                        setNewCity({ ...newCity, cityName: value })
+                                    }
+                                    predictionType="city"
+                                    customValue={newCity.cityName}
+                                />
+                                <TextField
+                                    className="mt-3 w-100"
+                                    type="text"
+                                    label={'Alternate Name'}
+                                    value={newCity.alternateCityName}
+                                    onChange={(e) => { setNewCity({ ...newCity, alternateCityName: e.target.value }) }}
+                                />
                                 <TextField
                                     required
-                                    error={error.stateId}
+                                    error={error.cityLat}
                                     className="mt-3 w-100"
-                                    select
-                                    label={'State'}
-                                    onChange={(e) => { setNewCity({ ...newCity, stateId: e.target.value }) }}
-                                    value={newCity.stateId}
-                                >
-                                    <MenuItem value={null}>Select State</MenuItem>
-                                    {allStatesWithId?.data?.length > 0
-                                        ? allStatesWithId?.data?.map((state) => (
-                                            <MenuItem key={state.id} value={state.id}>
-                                                {state.stateName}
-                                            </MenuItem>
-                                        ))
-                                        : null}
-                                </TextField>
-                                : null}
-                        </div>
-                        <div className="mapLocation my-3 col-6">
-                            <div style={{ height: "200px", overflow: "hidden" }}>
-                                <MapComponent
-                                    zoom={8}
-                                    p_lat={newCity.cityLat}
-                                    p_lng={newCity.cityLong}
-                                    draggable={false}
-                                // onMarkerDragEnd={handleMarkerChanged} 
+                                    type="number"
+                                    label={'Latitude'}
+                                    onInput={(e) => { setNewCity({ ...newCity, cityLat: e.target.value }) }}
+                                    value={newCity.cityLat}
                                 />
+                                <TextField
+                                    required
+                                    error={error.cityLong}
+                                    className="mt-3 w-100"
+                                    type="number"
+                                    label={'Longitude'}
+                                    onInput={(e) => { setNewCity({ ...newCity, cityLong: e.target.value }) }}
+                                    value={newCity.cityLong}
+                                />
+                                <TextField
+                                    required
+                                    error={error.radius}
+                                    className="mt-3 w-100"
+                                    type="number"
+                                    label={'City Radius in km'}
+                                    onInput={(e) => { setNewCity({ ...newCity, radius: e.target.value }) }}
+                                    value={newCity.radius}
+                                />
+                                {newCity.cityId === null ?
+                                    <TextField
+                                        required
+                                        error={error.stateId}
+                                        className="mt-3 w-100"
+                                        select
+                                        label={'State'}
+                                        onChange={(e) => { setNewCity({ ...newCity, stateId: e.target.value }) }}
+                                        value={newCity.stateId}
+                                    >
+                                        <MenuItem value={null}>Select State</MenuItem>
+                                        {allStatesWithId?.data?.length > 0
+                                            ? allStatesWithId?.data?.map((state) => (
+                                                <MenuItem key={state.id} value={state.id}>
+                                                    {state.stateName}
+                                                </MenuItem>
+                                            ))
+                                            : null}
+                                    </TextField>
+                                    : null}
+                            </div>
+                            <div className="mapLocation my-3 col-6">
+                                <div style={{ height: "200px", overflow: "hidden" }}>
+                                    <MapComponent
+                                        zoom={8}
+                                        p_lat={newCity.cityLat}
+                                        p_lng={newCity.cityLong}
+                                        draggable={false}
+                                    // onMarkerDragEnd={handleMarkerChanged} 
+                                    />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="text-center mt-3">
-                        <Buttons name={newCity.cityId !== null ? "Save" : "Add New City"} size='medium' onClick={async () => {
-                            let valid = await validateNewCity(newCity);
-                            setError(valid.errors);
-                            if (valid.isValid) {
-                                const response = await addCity(newCity);
-                                if (response.status === 200) {
-                                    if (newCity.cityId !== null) {
-                                        showSuccessToast("City updated successfully");
-                                    } else {
-                                        showSuccessToast("City addded successfully");
+                        <div className="text-center mt-3">
+                            <Buttons name={newCity.cityId !== null ? "Save" : "Add New City"} size='medium' onClick={async () => {
+                                let valid = await validateNewCity(newCity);
+                                setError(valid.errors);
+                                if (valid.isValid) {
+                                    const response = await addCity(newCity);
+                                    if (response.status === 200) {
+                                        if (newCity.cityId !== null) {
+                                            showSuccessToast("City updated successfully");
+                                        } else {
+                                            showSuccessToast("City addded successfully");
+                                        }
+                                        getAllCitiesWithTrue();
+                                        setNewCity({
+                                            cityId: null,
+                                            cityName: '',
+                                            stateId: null,
+                                            serviceStatus: null,
+                                            alternateCityName: '',
+                                            cityLat: 0.00,
+                                            cityLong: 0.00,
+                                            radius: 0.00
+                                        })
+                                        setShowAddCityModal(false);
                                     }
-                                    setNewCity({
-                                        cityId: null,
-                                        cityName: '',
-                                        stateId: null,
-                                        serviceStatus: null,
-                                        alternateCityName: '',
-                                        cityLat: 0.00,
-                                        cityLong: 0.00
-                                    })
-                                    setShowAddCityModal(false);
+                                    else {
+                                        showErrorToast("Please try again...")
+                                        setShowAddCityModal(false);
+                                    }
                                 }
-                                else {
-                                    showErrorToast("Please try again...")
-                                    setShowAddCityModal(false);
-                                }
-                            }
-                        }} />
-                    </div>
-                </Modal.Body>
-            </Modal>
+                            }} />
+                        </div>
+                    </Modal.Body>
+                </Modal>
+            </div>
         </>
     )
 }
