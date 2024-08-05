@@ -40,7 +40,7 @@ const BatteryLvlChk = (props) => {
             selector: ((row) => row.lastBatteryCheckDate),
             center: true,
             sortable: false,
-            cell: (({ lastBatteryCheckDate }) => (<><span>{formateDate(lastBatteryCheckDate)}</span></>))
+            cell: (({ lastBatteryCheckDate }) => (<><span>{formateDate(lastBatteryCheckDate, 'DD-MM-yyyy hh:mm:ss A')}</span></>))
         },
         {
             name: 'View Property',
