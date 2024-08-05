@@ -2110,3 +2110,14 @@ export const getAllCorporateProperties = (data) => async(dispatch) => {
   }
   return response;
 }
+
+export const getBatteryLevel = (data) => async(dispatch) => {
+  dispatch({type: Actions.BATTERY_LEVEL_LOADING, data: {}});
+  const response = await mainApiService('getBatteryLvlChk', data);
+  if(response.status === 200 && response.data.resourceData) {
+    dispatch({type: Actions.BATTERY_LEVEL_SUCCESS, data: {batteryLevelList: response?.data?.resourceData, records: response?.data?.resourceData?.length, currentPage: data?.pageNo, rowsPerPage: data?.pageSize}});
+  } else {
+    dispatch({type: Actions.BATTERY_LEVEL_ERROR, data: response.data});
+  }
+  return response;
+}

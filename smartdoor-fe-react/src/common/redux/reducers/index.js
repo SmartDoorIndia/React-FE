@@ -99,6 +99,7 @@ import { allCorporates } from './views/corporateList.reducer';
 import { corporateProperty } from './views/corporateProperty.reducer';
 
 import { USER_LOGOUT } from '../types';
+import { batteryLevel } from './views/batteryLevel.reducer';
 
 const appReducer = combineReducers({
   dashboardTitle,
@@ -180,7 +181,8 @@ const appReducer = combineReducers({
   allPlanDataBroker,
   brokerProperty,
   allCorporates,
-  corporateProperty
+  corporateProperty,
+  batteryLevel
 });
 
 const rootReducer = (state, action) => {

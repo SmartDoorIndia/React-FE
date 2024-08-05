@@ -11,7 +11,7 @@ import Image from '../../../shared/Image';
 import sdIcon from '../../../assets/svg/sdIcon.svg';
 import Buttons from '../../../shared/Buttons/Buttons';
 import * as Actions from '../../../common/redux/types';
-import { geocodeByAddress } from 'react-google-places-autocomplete';
+import { geocodeByAddress, geocodeByLatLng } from 'react-google-places-autocomplete';
 import { getLocalStorage, showErrorToast, showSuccessToast } from '../../../common/helpers/Utils';
 import { addBasicDetails, getAllCityWithId, getSmartDoorServiceStatus, getSocietyByCity } from '../../../common/redux/actions';
 import { Autocomplete } from 'devextreme-react';
@@ -287,6 +287,96 @@ const AddressSection = (props) => {
 		setAddressDetails(newData);
 	}
 
+	const mapAddressComponents = async (address_components) => {
+		console.log(address_components)
+		let m_address = {
+			sublocality_level_1: '',
+			sublocality_level_2: '',
+			postal_code: '',
+			locality: '',
+			administrative_area_level_3: '',
+			state: '',
+			country: ''
+		}
+		address_components?.forEach(element => {
+			if (element.types.includes('sublocality_level_1')) {
+				m_address.sublocality_level_1 = element.long_name;
+			}
+			if (element.types.includes('sublocality_level_2')) {
+				m_address.sublocality_level_2 = element.long_name;
+			}
+			if (element.types.includes('postal_code')) {
+				m_address.postal_code = element.long_name;
+			}
+			if (element.types.includes('locality')) {
+				m_address.locality = element.long_name;
+			}
+			if (element.types.includes('administrative_area_level_1')) {
+				m_address.state = element.long_name;
+			}
+			if (element.types.includes('administrative_area_level_3')) {
+				m_address.administrative_area_level_3 = element.long_name;
+			}
+			if (element.types.includes('country')) {
+				m_address.country = element.long_name;
+			}
+			if (m_address.locality.length !== 0 || m_address.sublocality_level_1.length !== 0) {
+				return null;
+			}
+		})
+		if (m_address.sublocality_level_1 === null && m_address.postal_code !== null) {
+			m_address.sublocality_level_1 = m_address.postal_code;
+		}
+		if (m_address.locality.length === 0) {
+			m_address.locality = m_address.administrative_area_level_3;
+		}
+		if (m_address.sublocality_level_1 === m_address.administrative_area_level_3) {
+			showErrorToast("Please enter precise location...");
+			return null;
+		}
+		return m_address;
+	}
+	const handleLatLngChanged = async () => {
+		let newData = { ...addressDetails };
+		const location = { lat: addressDetails.latitude, lng: addressDetails.longitude };
+		const res = await geocodeByLatLng(location);
+		// console.log(response)
+		const m_address = await mapAddressComponents(res[0].address_components);
+		if (m_address?.sublocality_level_1.length !== 0 && m_address?.locality.length !== 0 && m_address?.administrative_area_level_3.length !== 0 && m_address?.state.length !== 0) {
+			newData.city = m_address?.locality;
+			newData.locality = m_address?.sublocality_level_1;
+			newData.zipCode = m_address?.postal_code;
+			newData.state = m_address?.state;
+			newData.country = m_address?.country;
+		}
+		let reqData = {
+			sublocality_level_1: m_address?.sublocality_level_1,
+			cityName: m_address?.locality,
+			state: m_address?.state,
+			latitude: addressDetails.latitude,
+			longitude: addressDetails.longitude,
+		}
+		const responseData = await getSmartDoorServiceStatus(reqData);
+		if (responseData.status === 200) {
+			console.log(responseData)
+			setSDIconFlag(responseData.data.resourceData.serviceStatus)
+			newData.city = responseData.data.resourceData.cityName;
+		}
+		const response = await geocodeByAddress(newData.city);
+		const latFunction = response[0].geometry.location.lat;
+		const eLat = latFunction();
+		const lngFunction = response[0].geometry.location.lng;
+		const eLng = lngFunction();
+		newData.cityLat = eLat;
+		newData.cityLong = eLng;
+		// Update latitude and longitude outside the loop
+		newData.latitude = addressDetails.latitude;
+		newData.longitude = addressDetails.longitude;
+
+		// Update the state once
+		setAddressDetails(newData);
+	}
+
 	const selectSocietyName = async (e) => {
 		let value = e?.event?.target?.value
 		setAddressDetails({ ...addressDetails, buildingProjectSociety: value, otherSociety: value })
@@ -497,7 +587,7 @@ const AddressSection = (props) => {
 							value={addressDetails.city}
 						>
 						</TextField>
-					</Col>					
+					</Col>
 					<Col>
 						<div className="mapLocation my-3">
 							<div style={{ height: "15", overflow: "hidden" }}>
@@ -512,23 +602,34 @@ const AddressSection = (props) => {
 					</Col>
 				</Row>
 				<Row className='mt-4'>
-				<Col lg={4}>
+					<Col lg={3}>
 						<TextField
 							label="Latitude"
 							type='number'
 							className='w-100'
-							onChange={(e) => { setAddressDetails({ ...addressDetails, latitude: Number(e.target.value)})}}
+							onChange={(e) => {
+								setAddressDetails({ ...addressDetails, latitude: Number(e.target.value) });
+							}}
 							value={addressDetails.latitude}
 						/>
 					</Col>
-					<Col lg={4}>
+					<Col lg={3}>
 						<TextField
 							label="Longitude"
 							type='number'
 							className='w-100'
-							onChange={(e) => { setAddressDetails({ ...addressDetails, longitude: Number(e.target.value)})}}
+							onChange={(e) => {
+								setAddressDetails({ ...addressDetails, longitude: Number(e.target.value) });
+							}}
 							value={addressDetails.longitude}
 						/>
+					</Col>
+					<Col lg={2}>
+						<Buttons className='mt-1' name='Update location' varient='primary' onClick={() => {
+							if (addressDetails.latitude !== 0 && addressDetails.longitude !== 0) {
+								handleLatLngChanged();
+							}
+						}} />
 					</Col>
 				</Row>
 				<Row>

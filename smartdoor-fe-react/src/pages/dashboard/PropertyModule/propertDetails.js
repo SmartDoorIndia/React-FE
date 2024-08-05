@@ -1246,7 +1246,7 @@ const PropertyDetails = (props) => {
                                     : null}
                               </div>
                               <div className="d-flex mt-2">
-                                 {showQr ?
+                                 {propertyData.miscellaneousDetails?.smartLockProperty === true ?
                                     <>
                                        <Buttons
                                           onClick={() => qrGenerator(smartLockData)}

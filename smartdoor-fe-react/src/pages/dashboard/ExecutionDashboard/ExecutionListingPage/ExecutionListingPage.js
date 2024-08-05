@@ -121,6 +121,13 @@ const ExecutionListing = (props) => {
       center:true,
     }, 
     {
+      name: 'Property Id',
+      selector: row => row.propertyId, 
+      sortable: true,
+      center:true,
+      minWidth: '180px',
+    },
+    {
       name: 'Installation Time',
       selector: 'dateTime',
       sortable: true,

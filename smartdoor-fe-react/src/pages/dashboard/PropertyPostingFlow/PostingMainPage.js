@@ -12,7 +12,7 @@ const PostingMainPage = (props) => {
     const customerDetails = props.location.state.customerDetails;
     const miscellaneousDetails = props.location.state.miscellaneousDetails;
     const [editPropertyDetails, setEditPropertyDetails] = useState(props?.location?.state?.existingDetails)
-    const [saveBasicDetails, setSaveBasicDetails] = useState({ propertyId: editPropertyDetails?.propertyId || null, saveFlag: editPropertyDetails?.saveFlag || false });
+    const [saveBasicDetails, setSaveBasicDetails] = useState({ propertyId: editPropertyDetails?.propertyId || null, saveFlag: false });
     const [saveAddressDetails, setSaveAddressDetails] = useState({ saveFlag: false });
     const [saveSpecDetails, setSaveSpecDetails] = useState({ saveFlag: false });
     const [savePricingDetails, setSavePricingDetails] = useState({ saveFlag: false });
@@ -37,7 +37,7 @@ const PostingMainPage = (props) => {
     return (
         <>
             <Text text={'Basic Details'} fontWeight='bold' style={{ fontSize: '18px' }} />
-            <BasicDetails saveBasicDetailsFields={handleBasicDetails} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails} miscellaneousDetails={miscellaneousDetails}></BasicDetails>
+            <BasicDetails saveBasicDetailsFields={handleBasicDetails} propertyId={editPropertyDetails?.propertyId} editPropertyFlag={editPropertyDetails?.saveFlag || false} customerDetails={customerDetails} miscellaneousDetails={miscellaneousDetails}></BasicDetails>
             {saveBasicDetails.saveFlag ?
                 <>
                     <Text text={'Address'} fontWeight='bold' style={{ fontSize: '18px' }} />

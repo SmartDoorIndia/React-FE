@@ -359,3 +359,7 @@ export const CORPORATE_LIST_LOADING = 'src/pages/Dashboard/corporate/Loading';
 export const CORPORATE_PROPERTY_SUCCESS = 'src/pages/Dashboard/corporateProperty/Success';
 export const CORPORATE_PROPERTY_ERROR = 'src/pages/Dashboard/corporateProperty/Error';
 export const CORPORATE_PROPERTY_LOADING = 'src/pages/Dashboard/corporateProperty/Loading';
+
+export const BATTERY_LEVEL_SUCCESS = 'src/pages/Dashboard/BatteryLevelCheck/Success';
+export const BATTERY_LEVEL_ERROR = 'src/pages/Dashboard/BatteryLevelCheck/Error';
+export const BATTERY_LEVEL_LOADING = 'src/pages/Dashboar/BatteryLevelCheck/Loading';

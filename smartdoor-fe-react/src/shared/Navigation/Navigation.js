@@ -321,6 +321,17 @@ const Nav = () => {
                            />
                            Marketing Agency
                         </Link>
+                        <Link
+                           to="/admin/batteryLevelCheck"
+                           className={`nav-link ${pathname.includes("/admin/batteryLevelCheck") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/batteryLevelCheck") ? borkerIcon : dashboard}
+                           />
+                           Battery Level Check
+                        </Link>
                      </>
                   )}
 

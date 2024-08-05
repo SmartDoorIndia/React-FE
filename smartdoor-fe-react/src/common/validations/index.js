@@ -1283,10 +1283,8 @@ export const validateNewCity = (data) => {
   if(isBlank(data.radius)) {
     errors.radius = true;
   }
-  if(data.cityId === null) {
-    if(isBlank(data.stateId)) {
-      errors.stateId = true;
-    }
+  if(isBlank(data.stateId)) {
+    errors.stateId = true;
   }
 
   return {

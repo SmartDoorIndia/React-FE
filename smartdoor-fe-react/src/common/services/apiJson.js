@@ -2984,6 +2984,18 @@ export const ApiJson = {
     },
     showResultMessage: false,
     showErrorMessage: true,
+  },
+
+  getBatteryLvlChk: {
+    url: "/admin/admin/getCameraDevices",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
   }
 };
 console.log(userData)

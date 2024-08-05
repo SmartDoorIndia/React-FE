@@ -58,6 +58,7 @@ const CorporateProperty = React.lazy(() => import('./CorporateModule/CorporatePr
 const Brokers = React.lazy(() => import('./Broker/Broker'));
 const BrokerApprovedDetail = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
 const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails') );
+const BatteryLvlChk = React.lazy(() => import('./BatteryLevelCheck/BatteryLvlChk'));
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -1212,6 +1213,22 @@ const routeData = [
     breadcrumb: false,
     excat: true,
     component: BrokerDetail,
+  },
+
+  {
+    path:'/admin/batteryLevelCheck/viewProperty',
+    name:'Property Details',
+    bradcrumb: ['Battery Level Check', 'Property Details'],
+    excat: true,
+    component: PropertyDetailsModule,
+  },
+  
+  {
+    path:'/admin/batteryLevelCheck',
+    name:'Battery Level Check',
+    bradcrumb: false,
+    excat: true,
+    component: BatteryLvlChk,
   },
   // {
   //   path: '/admin/execution/installation-detail/property-details',

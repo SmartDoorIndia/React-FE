@@ -83,28 +83,45 @@ const SmartDoorCities = (props) => {
             })
     }
     const columns = [
-        {
-            name: "Id",
-            selector: "cityId",
-            sortable: true,
-            center: true,
-            minWidth: "120px",
-        },
+        // {
+        //     name: "Id",
+        //     selector: "cityId",
+        //     sortable: true,
+        //     center: true,
+        //     minWidth: "120px",
+        // },
         {
             name: "Name",
             selector: "cityName",
             sortable: true,
             center: true,
-            minWidth: "120px",
+            minWidth: "200px",
+            wrap: true
         },
         {
-            name: "Status",
-            selector: "status",
+            name: "Alternate Name",
+            selector: "cityName",
             sortable: false,
             center: true,
-            minWidth: "120px",
-            cell: ({ cityId, serviceStatus }) => (<><Switch checked={serviceStatus ? true : false} color="warning" onChange={(e) => handleCheck(e, cityId, serviceStatus)} /></>)
+            minWidth: "200px",
+            wrap: true
         },
+        {
+            name: "City Radius",
+            selector: "radius",
+            sortable: false,
+            center: true,
+            minWidth: "100px",
+            wrap: true
+        },
+        // {
+        //     name: "Status",
+        //     selector: "status",
+        //     sortable: false,
+        //     center: true,
+        //     minWidth: "120px",
+        //     cell: ({ cityId, serviceStatus }) => (<><Switch checked={serviceStatus ? true : false} color="warning" onChange={(e) => handleCheck(e, cityId, serviceStatus)} /></>)
+        // },
         {
             name: "Edit",
             selector: ((row) => row.action),
@@ -157,7 +174,7 @@ const SmartDoorCities = (props) => {
                         />
                     </div>
                 </div>
-                <div className="whiteBg mt-0">
+                {/* <div className="whiteBg mt-0">
                     <div>
                         <Text size="regular" fontWeight="mediumbold" color="secondryColor" text="Smartdoor Inactive Cities" />
                     </div>
@@ -169,7 +186,7 @@ const SmartDoorCities = (props) => {
                             progressComponent={ProgressComponent}
                         />
                     </div>
-                </div>
+                </div> */}
                 <Modal size="lg" show={showAddCityModal} onHide={() => {
                     setShowAddCityModal(false); setNewCity({
                         cityId: null,
@@ -181,7 +198,7 @@ const SmartDoorCities = (props) => {
                         cityLong: 0.00,
                         radius: 0.00
                     })
-                }} centered style={{zIndex:'1000'}}>
+                }} centered style={{ zIndex: '1000' }}>
                     <Modal.Body className="" >
                         <div className="row col-12">
                             <div className="col-6">
@@ -243,26 +260,24 @@ const SmartDoorCities = (props) => {
                                     onInput={(e) => { setNewCity({ ...newCity, radius: e.target.value }) }}
                                     value={newCity.radius}
                                 />
-                                {newCity.cityId === null ?
-                                    <TextField
-                                        required
-                                        error={error.stateId}
-                                        className="mt-3 w-100"
-                                        select
-                                        label={'State'}
-                                        onChange={(e) => { setNewCity({ ...newCity, stateId: e.target.value }) }}
-                                        value={newCity.stateId}
-                                    >
-                                        <MenuItem value={null}>Select State</MenuItem>
-                                        {allStatesWithId?.data?.length > 0
-                                            ? allStatesWithId?.data?.map((state) => (
-                                                <MenuItem key={state.id} value={state.id}>
-                                                    {state.stateName}
-                                                </MenuItem>
-                                            ))
-                                            : null}
-                                    </TextField>
-                                    : null}
+                                <TextField
+                                    required
+                                    error={error.stateId}
+                                    className="mt-3 w-100"
+                                    select
+                                    label={'State'}
+                                    onChange={(e) => { setNewCity({ ...newCity, stateId: e.target.value }) }}
+                                    value={newCity.stateId}
+                                >
+                                    <MenuItem value={null}>Select State</MenuItem>
+                                    {allStatesWithId?.data?.length > 0
+                                        ? allStatesWithId?.data?.map((state) => (
+                                            <MenuItem key={state.id} value={state.id}>
+                                                {state.stateName}
+                                            </MenuItem>
+                                        ))
+                                        : null}
+                                </TextField>
                             </div>
                             <div className="mapLocation my-3 col-6">
                                 <div style={{ height: "200px", overflow: "hidden" }}>
@@ -302,7 +317,7 @@ const SmartDoorCities = (props) => {
                                         setShowAddCityModal(false);
                                     }
                                     else {
-                                        showErrorToast("Please try again...")
+                                        showErrorToast(response.data.customMessage)
                                         setShowAddCityModal(false);
                                     }
                                 }

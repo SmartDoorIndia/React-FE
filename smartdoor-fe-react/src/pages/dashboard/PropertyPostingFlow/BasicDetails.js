@@ -35,11 +35,12 @@ const BasicDetails = (props) => {
         ageOfProperty: 0,
         guestHouseOrPgPropertyType: "",
         expectedPossessionDate: "",
-        occupancySharing: 0
+        occupancySharing: 0,
+        loanAccountNumber: ''
     });
     const [selectedYear, setSelectedYear] = useState(basicDetails.expectedPossessionDate?.split('-')[1] || '');
     const [selectedMonth, setSelectedMonth] = useState(Number(basicDetails.expectedPossessionDate?.split('-')[0]) || '');
-    const [saveBasicDetailsFlag, setSaveBasicDetailsFlag] = useState(editPropertyFlag || false);
+    const [saveBasicDetailsFlag, setSaveBasicDetailsFlag] = useState(false);
     const [error, setError] = useState({});
     const [imageLoader, setImageLoader] = useState(false)
     const [loading, setLoading] = useState(false);
@@ -47,6 +48,7 @@ const BasicDetails = (props) => {
     const history = useHistory();
 
     useEffect(() => {
+        console.log(editPropertyFlag)
         let currentYear = new Date().getFullYear();
         let yearlist = []
         yearlist.push((currentYear.toString()));
@@ -68,7 +70,7 @@ const BasicDetails = (props) => {
                 stageOfProperty: 'Ready',
             }));
         }
-        
+
     };
 
     const setPropertyStage = (e) => {
@@ -84,15 +86,15 @@ const BasicDetails = (props) => {
             ...prevBasicDetails,
             propertyType: e.target.value,
         }));
-        
+
     }
 
     const saveBasicDetails = async () => {
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
         const currentYear = currentDate.getFullYear();
-        if(selectedYear === currentYear.toString()) {
-            if(selectedMonth < currentMonth.toString()) {
+        if (selectedYear === currentYear.toString()) {
+            if (selectedMonth < currentMonth.toString()) {
                 showErrorToast('Please select appropriate possession date...');
                 setError({})
                 return null;
@@ -105,7 +107,7 @@ const BasicDetails = (props) => {
             let userId = getLocalStorage('authData');
             const data = {
                 ...(propertyId && { smartdoorPropertyId: propertyId }),
-                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails :{
+                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
                     postedById: userId.userid,
                     lastPageOfInfoFilled: 0,
                     draft: true,
@@ -130,17 +132,17 @@ const BasicDetails = (props) => {
                 },
                 basicDetails: basicDetails
             }
-            if(!editPropertyFlag) {
-                setLoading(true)
-                const response = await addBasicDetails(data);
-                if (response.status === 200) {
-                    setLoading(false)
-                    dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
-                    setSaveBasicDetailsFlag(true)
-                    saveBasicDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
-                }
+            setLoading(true)
+            const response = await addBasicDetails(data);
+            if (response.status === 200) {
                 setLoading(false)
+                dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: basicDetails })
+                setSaveBasicDetailsFlag(true)
+                saveBasicDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
             }
+            setLoading(false)
+            // if (!editPropertyFlag) {
+            // }
         }
     }
 
@@ -148,8 +150,8 @@ const BasicDetails = (props) => {
         const currentDate = new Date();
         const currentMonth = currentDate.getMonth() + 1;
         const currentYear = currentDate.getFullYear();
-        if(selectedYear === currentYear.toString()) {
-            if(selectedMonth < currentMonth.toString()) {
+        if (selectedYear === currentYear.toString()) {
+            if (selectedMonth < currentMonth.toString()) {
                 showErrorToast('Please select appropriate possession date...');
                 setError({})
                 return null;
@@ -209,7 +211,7 @@ const BasicDetails = (props) => {
                         <TextField
                             select
                             error={error.propertyCategory}
-                            disabled={saveBasicDetailsFlag === true ? true : false}
+                            disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
                             label='I Want To Post My Property For'
                             className=" w-100"
                             onChange={(e) => { setPropertyCategory(e); }}
@@ -249,7 +251,7 @@ const BasicDetails = (props) => {
                         <TextField
                             select
                             error={error.propertyType}
-                            disabled={saveBasicDetailsFlag === true ? true : false}
+                            disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
                             label='Property Type'
                             className=" w-100"
                             onChange={(e) => setPropertyType(e)}
@@ -270,7 +272,7 @@ const BasicDetails = (props) => {
                             <TextField
                                 select
                                 error={error.propertySubType}
-                                disabled={saveBasicDetailsFlag === true ? true : false}
+                                disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
                                 label='Type of your Residential Property'
                                 className=" w-100 mt-3"
                                 onChange={(e) => {
@@ -317,7 +319,7 @@ const BasicDetails = (props) => {
                                     select
                                     error={error.guestHouseOrPgPropertyType}
                                     label='PG In'
-                                    disabled={saveBasicDetailsFlag === true ? true : false}
+                                    disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
                                     className=" w-100 mt-3"
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => {
@@ -343,7 +345,7 @@ const BasicDetails = (props) => {
                                     select
                                     error={error.occupancySharing}
                                     label='Occupancy Sharing'
-                                    disabled={saveBasicDetailsFlag === true ? true : false}
+                                    disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
                                     className=" w-100 mt-3"
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => {
@@ -375,7 +377,7 @@ const BasicDetails = (props) => {
                                 <TextField
                                     select
                                     error={error.expectedPossessionDate && selectedYear === ''}
-                                    disabled={saveBasicDetailsFlag === true ? true : false}
+                                    disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
                                     label='Year'
                                     className="w-100 mt-3"
                                     onChange={(e) => {
@@ -397,7 +399,7 @@ const BasicDetails = (props) => {
                                 <TextField
                                     select
                                     error={error.expectedPossessionDate && selectedMonth === ''}
-                                    disabled={saveBasicDetailsFlag === true ? true : false}
+                                    disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
                                     label='Month'
                                     className="w-100 mt-3"
                                     onChange={(e) => {
@@ -424,7 +426,7 @@ const BasicDetails = (props) => {
                         <Col lg='4'>
                             <TextField
                                 error={error.ageOfProperty}
-                                disabled={saveBasicDetailsFlag === true ? true : false}
+                                disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
                                 label='Age of Property'
                                 className=" w-100 mt-3"
                                 type="number"
@@ -440,6 +442,23 @@ const BasicDetails = (props) => {
                             </TextField>
                         </Col>
                         : null}
+                    <Col lg='4'>
+                        <TextField
+                            // error={error.ageOfProperty}
+                            label='Loan Acc. Number'
+                            disabled={saveBasicDetailsFlag === true? true : false}
+                            className=" w-100 mt-3"
+                            type="text"
+                            onInput={(e) => {
+                                setBasicDetails((prevBasicDetails) => ({
+                                    ...basicDetails,
+                                    loanAccountNumber: e.target.value,
+                                }));
+                            }}
+                            defaultValue={basicDetails.loanAccountNumber}
+                        >
+                        </TextField>
+                    </Col>
                 </Row>
             </div>
             {saveBasicDetailsFlag === false ?
@@ -447,7 +466,11 @@ const BasicDetails = (props) => {
                     {loading ? <Loader />
                         :
                         <div className="d-flex">
-                            <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'}  onClick={() => { notifyBasicDetails(); }}></Buttons> &nbsp; &nbsp;
+                            {!editPropertyFlag ?
+                                <>
+                                    <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyBasicDetails(); }}></Buttons> &nbsp; &nbsp;
+                                </>
+                                : null}
                             <Buttons className='p-2 px-4' name='Next' onClick={() => { saveBasicDetails(); }}></Buttons> &nbsp; &nbsp;
                             {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                         </div>

@@ -819,6 +819,7 @@ const PropertyDevice = (props) => {
                         url={livestreamURL}
                         controls={true}
                         muted={false}
+                        playing={true}
                     />
                     
                 </Modal.Body>
