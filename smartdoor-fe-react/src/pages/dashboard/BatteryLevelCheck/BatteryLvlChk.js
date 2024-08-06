@@ -47,7 +47,7 @@ const BatteryLvlChk = (props) => {
             selector: ((row) => row.propertyId),
             center: true,
             sortable: false,
-            cell: (({ propertyId, postedById }) => (<><div className="action">
+            cell: (({ propertyId, postedById }) => (<><div className="">
                 <span>
                     <Link
                         to={{

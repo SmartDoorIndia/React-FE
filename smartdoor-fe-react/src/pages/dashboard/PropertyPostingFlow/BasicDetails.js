@@ -231,7 +231,7 @@ const BasicDetails = (props) => {
                         <TextField
                             select
                             error={error.stageOfProperty}
-                            disabled={basicDetails.propertyCategory === 'Renting' || saveBasicDetailsFlag === true}
+                            disabled={basicDetails.propertyCategory === 'Renting' || saveBasicDetailsFlag === true || editPropertyFlag === true}
                             label='Stage Of Property'
                             className=" w-100"
                             onChange={(e) => { setPropertyStage(e); }}

@@ -1007,15 +1007,6 @@ const PropertyDetails = (props) => {
                   <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => { handleBackButton() }}></Buttons>
                   : null}
                <div className="container" style={{ height: '84vh', overflowY: 'auto' }}>
-                  {/* {menuName === 'Properties' ?
-                  <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => { history.push('/admin/property') }}></Buttons>
-                  : <></>}
-               {menuName === 'NonSDProperties' ?
-                  <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => { history.push('/admin/nonsdproperty') }}></Buttons>
-                  : <></>}
-               {menuName === 'DeletedProperties' ?
-                  <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => { history.push('/admin/deleted-unlisted-property') }}></Buttons>
-                  : <></>} */}
                   <Row>
                      <Col md={8}>
                         {propertyData.uploads?.propertyImages?.length > 0 ? (
@@ -1319,6 +1310,7 @@ const PropertyDetails = (props) => {
                                           color="white"
                                           className=" mb-2"
                                           onClick={() => {
+                                             localStorage.setItem('autoRefresh', 'Yes')
                                              let miscellaneousDetailsDto = propertyData.miscellaneousDetails;
                                              if (propertyData.miscellaneousDetails.status !== null) {
                                                 miscellaneousDetailsDto.draft = false;
@@ -1338,6 +1330,7 @@ const PropertyDetails = (props) => {
                                           color="white"
                                           className=" mb-2"
                                           onClick={() => {
+                                             localStorage.setItem('autoRefresh', 'Yes')
                                              let miscellaneousDetailsDto = propertyData.miscellaneousDetails;
                                              if (propertyData.miscellaneousDetails.status !== null) {
                                                 miscellaneousDetailsDto.draft = false;

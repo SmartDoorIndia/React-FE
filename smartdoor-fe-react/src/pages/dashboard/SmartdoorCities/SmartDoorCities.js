@@ -67,11 +67,11 @@ const SmartDoorCities = (props) => {
         getAllCitiesWithTrue();
     }, [getAllCityWithId, getAllStateWithId]);
 
-    const handleCheck = (e, cityId, serviceStatus) => {
+    const handleCheck = async (e, cityId, serviceStatus) => {
         console.log(e)
         console.log(cityId)
         console.log(serviceStatus)
-        setCityServiceStatus({ cityId: cityId, status: !serviceStatus })
+        await setCityServiceStatus({ cityId: cityId, status: !serviceStatus })
             .then((response) => {
                 if (response.status === 200) {
                     getAllCitiesWithTrue();
@@ -114,14 +114,14 @@ const SmartDoorCities = (props) => {
             minWidth: "100px",
             wrap: true
         },
-        // {
-        //     name: "Status",
-        //     selector: "status",
-        //     sortable: false,
-        //     center: true,
-        //     minWidth: "120px",
-        //     cell: ({ cityId, serviceStatus }) => (<><Switch checked={serviceStatus ? true : false} color="warning" onChange={(e) => handleCheck(e, cityId, serviceStatus)} /></>)
-        // },
+        {
+            name: "Status",
+            selector: "status",
+            sortable: false,
+            center: true,
+            minWidth: "120px",
+            cell: ({ cityId, serviceStatus }) => (<><Switch checked={serviceStatus ? true : false} color="warning" onChange={(e) => handleCheck(e, cityId, serviceStatus)} /></>)
+        },
         {
             name: "Edit",
             selector: ((row) => row.action),
@@ -137,6 +137,7 @@ const SmartDoorCities = (props) => {
     return (
         <>
             <div style={{ maxHeight: '90vh', overflowY: 'auto' }}>
+                <Text text={'This data will be updated everyday at 7:30 AM'} fontWeight={'700'} style={{fontSize:'16px'}} />
                 <div className="d-flex">
                     <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control

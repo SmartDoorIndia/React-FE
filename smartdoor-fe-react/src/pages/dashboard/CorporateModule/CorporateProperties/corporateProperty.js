@@ -248,7 +248,7 @@ const CorporateProperty = (props) => {
         getAllCorporateProperties({
             corporateId: corporateId,
             pageNo: newPage,
-            rowsPerPage: rowsPerPage,
+            pageSize: rowsPerPage,
             status: statusSelected,
             sdType: type,
             searchString: filterText,
