@@ -16,6 +16,7 @@ import {
    getUserByCityAndDept,
    blockTeamMember,
    getLocationByCity,
+   giftCoinsToConsumer,
 } from "../../../common/redux/actions";
 import { Link } from "react-router-dom";
 import ConfirmationModal from "../../../shared/Modal/ConfirmationModal/ConfirmationModal";
@@ -26,12 +27,16 @@ import {
    formateDate,
    dateWithFormate,
    ToolTip,
+   showErrorToast,
+   showSuccessToast,
 } from "../../../common/helpers/Utils";
 import { TableLoader } from "../../../common/helpers/Loader";
 import blockIconActive from "../../../assets/svg/dismiss-icon-active.svg";
 import { provideAuth } from "../../../common/helpers/Auth";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import * as Actions from '../../../common/redux/types';
+import { Modal } from "react-bootstrap";
+import { TextField } from "@mui/material";
 
 const ProgressComponent = <TableLoader />;
 const POSITION_MODULE_VAL = {
@@ -74,7 +79,7 @@ const UserManagement = (props) => {
    const [modalData, setModalData] = useState();
 
    // state to manage the search filter component
-   const [filterText, setFilterText] = React.useState(data.length !== 0 ? allUsersData.data?.searchStr :'');
+   const [filterText, setFilterText] = React.useState(data.length !== 0 ? allUsersData.data?.searchStr : '');
    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
    const [defaultSort, setDefaultSort] = useState(data.length !== 0 ? allUsersData?.data?.defaultSort : true);
    const [defaultSortId, setDefaultSortId] = useState(data.length !== 0 ? allUsersData?.data?.defaultSortId : 'id');
@@ -96,6 +101,9 @@ const UserManagement = (props) => {
       </div>
    );
 
+   const [showModal, setShowModal] = useState(false);
+   const [newCoinValue, setNewCoinValue] = useState(null);
+   const [currentUserId, setCurrentUserId] = useState(null);
    const [currentPage, setCurrentPage] = useState(data.length !== 0 ? allUsersData?.data?.currentPage : 1);
    const [rowsPerPage, setRowsPerPage] = useState(data.length !== 0 ? allUsersData?.data?.rowsPerPage : 8);
    let recordsPerPage = (data.length !== 0 ? allUsersData?.data?.rowsPerPage : 8);
@@ -109,7 +117,7 @@ const UserManagement = (props) => {
       const regex = /([^,]+),\s*(\d{6})/;
       const matches = location.match(regex);
       if (matches) {
-         
+
          getAllUsers({
             searchByCity: city,
             // searchByzipCode: location,
@@ -121,7 +129,7 @@ const UserManagement = (props) => {
             defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
       } else {
-        
+
          getAllUsers({
             searchByCity: city,
             // searchByzipCode: location,
@@ -136,14 +144,14 @@ const UserManagement = (props) => {
    };
 
    const handleRowsPerPageChange = async (newRowsPerPage) => {
-      
+
       const regex = /([^,]+),\s*(\d{6})/;
       const matches = location.match(regex);
       setRowsPerPage(Number(newRowsPerPage))
       recordsPerPage = Number(newRowsPerPage)
       console.log(`Rows per page changed to: ${recordsPerPage}`);
       if (matches) {
-         
+
          getAllUsers({
             searchByCity: city,
             // searchByzipCode: location,
@@ -200,12 +208,12 @@ const UserManagement = (props) => {
    //    if(data?.length === 0) {
    //    }
    // }, [getCityAndDept]);
-   
+
    useEffect(() => {
       // if (city === "" && departments === "") {
-         if(data?.length === 0 || props?.location?.state?.autoRefresh === 'Yes') {
+      if (data?.length === 0 || props?.location?.state?.autoRefresh === 'Yes') {
          getCityAndDept();
-         getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: "", departmentName: departments,defaultSort: true, defaultSortId: 'id', defaultSortFieldId: 1 });
+         getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: "", departmentName: departments, defaultSort: true, defaultSortId: 'id', defaultSortFieldId: 1 });
       }
    }
       // else {
@@ -287,9 +295,9 @@ const UserManagement = (props) => {
          style: { padding: '0px !important' },
          wrap: true,
          cell: ({ city }) =>
-            (<span className="cursor-pointer elipsis-text" title={city}>
-               {city.map((element) => <span>{element} {' '}</span>) || "-"}
-            </span>)
+         (<span className="cursor-pointer elipsis-text" title={city}>
+            {city.map((element) => <span>{element} {' '}</span>) || "-"}
+         </span>)
          // <ToolTip
          //       position="top"
          //       style={{ width: "100%" }}
@@ -350,11 +358,28 @@ const UserManagement = (props) => {
             </div>
          ),
       },
+      {
+         name: 'Gift Coins',
+         selector: "user",
+         center: true,
+         cell: ((user) =>
+            <div>
+               <Buttons
+                  name="Add Coins"
+                  varient="primary"
+                  type="submit"
+                  size="xSmall"
+                  color="white"
+                  onClick={() => { setCurrentUserId(user.id); setShowModal(true) }}
+               />
+            </div>
+         )
+      }
    ];
 
    const closeModal = (data = { isReload: false }) => {
       if (data?.isReload) {
-         getAllUsers({ pageNo: "", pageSize: "", searchString: filterText, searchByCity: city, departmentName: departments,defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
+         getAllUsers({ pageNo: "", pageSize: "", searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
       }
       // getAllUsers({pageNumber:"", records:"",searchByCity:"", searchByzipCode:""});
       setModalData();
@@ -401,7 +426,7 @@ const UserManagement = (props) => {
    }
    console.log(allUsersData, "aaaaaaaaaaaaaaaaaaaaaaaaaa")
 
-   
+
    const handleSortedData = (newSortedData) => {
       // Store sorted data
       const { selector, direction } = newSortedData;
@@ -432,10 +457,35 @@ const UserManagement = (props) => {
       // Update sorted data state
       console.log(sorted);
       filteredItems = [...sorted]
-      dispatch({ 
-         type: Actions.USER_MANAGEMENT_SUCCESS, 
-         data: {userData : [...sorted], records : recordSize, currentPage : currentPage, rowsPerPage : rowsPerPage, searchStr: filterText, city: city, location: location, department: departments, defaultSort: !defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId}});
+      dispatch({
+         type: Actions.USER_MANAGEMENT_SUCCESS,
+         data: { userData: [...sorted], records: recordSize, currentPage: currentPage, rowsPerPage: rowsPerPage, searchStr: filterText, city: city, location: location, department: departments, defaultSort: !defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId }
+      });
    };
+
+   const addCoins = () => {
+      if (newCoinValue < 0) {
+         showErrorToast('Enter positive value...')
+         setNewCoinValue(0)
+      }
+      else if (!newCoinValue) {
+         showErrorToast('Enter SD coins...')
+      }
+      else {
+         setShowModal(false)
+         giftCoinsToConsumer({ consumerId: currentUserId, coins: newCoinValue })
+            .then((response) => {
+               if (response.status === 200) {
+                  showSuccessToast(newCoinValue + " Coins gifted successfully")
+                  setNewCoinValue(null)
+               }
+            }).catch(error => {
+               console.log(error)
+               showErrorToast("Please try again...")
+            })
+      }
+   }
+
    return (
       <>
          <div className="tableBox ">
@@ -580,7 +630,7 @@ const UserManagement = (props) => {
                               setCurrentPage(1)
                               const regex = /([^,]+),\s*(\d{6})/;
                               const matches = location.match(regex);
-                              getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText,  searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
+                              getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
                            }}
                         />
                      </div>
@@ -600,8 +650,8 @@ const UserManagement = (props) => {
                   perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                   paginationPerPage={recordsPerPage}
                   currentPage={currentPage}
-                  onChangePage={ handlePageChange }
-                  onChangeRowsPerPage={ handleRowsPerPageChange }
+                  onChangePage={handlePageChange}
+                  onChangeRowsPerPage={handleRowsPerPageChange}
                   paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                   progressComponent={ProgressComponent}
                   paginationServer={true}
@@ -618,6 +668,42 @@ const UserManagement = (props) => {
                </div>
             )}
          </div>
+         <Modal show={showModal} onHide={() => { setShowModal(false) }} centered style={{ backgroundImage: 'unset' }}>
+            <Modal.Header className='justify-content-center'>
+               <Text
+                  size="medium"
+                  fontWeight="mediumbold"
+                  color="primaryColor"
+                  text={'Add coins to ' + ''}
+               />
+            </Modal.Header>
+            <Modal.Body className='text-align-center'>
+               <TextField
+                  label={'Enter SD coins'}
+                  type='number'
+                  inputProps={{ min: 0 }}
+                  value={newCoinValue}
+                  onChange={(e) => { setNewCoinValue(e.target.value); }}
+               />
+               <div className='mt-3'>
+                  <Buttons
+                     name="Gift Coins"
+                     varient="primary"
+                     type="submit"
+                     size="Small"
+                     color="white"
+                     onClick={() => { addCoins() }}
+                  /> &nbsp;&nbsp;
+                  <Buttons
+                     name="Cancel"
+                     varient="primary"
+                     size="Small"
+                     color="white"
+                     onClick={() => { setShowModal(false) }}
+                  />
+               </div>
+            </Modal.Body>
+         </Modal>
       </>
    );
 };

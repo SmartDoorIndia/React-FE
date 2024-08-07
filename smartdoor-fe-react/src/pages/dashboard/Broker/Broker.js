@@ -6,12 +6,12 @@ import Pagination from "../../../shared/DataTable/Pagination";
 import { compose } from "redux";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { Card } from "react-bootstrap";
+import { Card, Modal } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
-import { handleStatusElement, formateDate, getLocalStorage } from "../../../common/helpers/Utils";
+import { handleStatusElement, formateDate, getLocalStorage, showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
 import { ToolTip } from "../../../common/helpers/Utils";
-import { getBrokerListing, getBrokerDetails } from "../../../common/redux/actions";
+import { getBrokerListing, getBrokerDetails, giftCoinsToConsumer } from "../../../common/redux/actions";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import "./Broker.scss";
 import { DateRangePicker } from "rsuite";
@@ -20,6 +20,8 @@ import moment from "moment";
 import { TableLoader } from "../../../common/helpers/Loader";
 import Text from "../../../shared/Text/Text";
 import * as Actions from '../../../common/redux/types';
+import Buttons from "../../../shared/Buttons/Buttons";
+import { TextField } from "@mui/material";
 
 const getModalActionData = (row) => {
    return { userData: row };
@@ -39,9 +41,13 @@ const Broker = (props) => {
    const userData = getLocalStorage('authData');
    const dispatch = useDispatch();
 
+   const [showModal, setShowModal] = useState(false);
+   const [newCoinValue, setNewCoinValue] = useState(null);
+   const [currentBrokerId, setCurrentBrokerId] = useState(null);
+
    useEffect(() => {
       console.log(data)
-      dispatch({type: Actions.BROKERS_PROPERTY_SUCCESS, data: []});
+      dispatch({ type: Actions.BROKERS_PROPERTY_SUCCESS, data: [] });
       if (data === undefined) {
          getBrokerListing(
             {
@@ -187,7 +193,8 @@ const Broker = (props) => {
 
       return (
          <SearchInput
-            onFilter={(e) => {setFilterText(e.target.value);
+            onFilter={(e) => {
+               setFilterText(e.target.value);
                getBrokerListing({
                   userId: userData.userid,
                   currentLat: null,
@@ -318,7 +325,7 @@ const Broker = (props) => {
                            to={{
                               pathname:
                                  `/admin/BrokerDetails/${row.brokerId}`,
-                                 state: { loginMobile: row.loginMobile}
+                              state: { loginMobile: row.loginMobile }
                            }}
                         >
                            Details
@@ -329,7 +336,47 @@ const Broker = (props) => {
             </div>
          ),
       },
+      {
+         name: 'Gift Coins',
+         selector: "broker",
+         center: true,
+         cell: ((broker) =>
+            <div className="py-1">
+               <Buttons
+                  name="Add Coins"
+                  varient="primary"
+                  type="submit"
+                  size="xSmall"
+                  color="white"
+                  onClick={() => { setCurrentBrokerId(broker.brokerId); setShowModal(true) }}
+               />
+            </div>
+         )
+      }
    ];
+
+   const addCoins = () => {
+      if (newCoinValue < 0) {
+         showErrorToast('Enter positive value...')
+         setNewCoinValue(0)
+      }
+      else if (!newCoinValue) {
+         showErrorToast('Enter SD coins...')
+      }
+      else {
+         setShowModal(false)
+         giftCoinsToConsumer({ consumerId: currentBrokerId, coins: newCoinValue })
+            .then((response) => {
+               if (response.status === 200) {
+                  showSuccessToast(newCoinValue + " Coins gifted successfully")
+                  setNewCoinValue(null)
+               }
+            }).catch(error => {
+               console.log(error)
+               showErrorToast("Please try again...")
+            })
+      }
+   }
 
    return (
       <>
@@ -398,6 +445,42 @@ const Broker = (props) => {
                ></DataTableComponent>
             </div>
          </div>
+         <Modal show={showModal} onHide={() => { setShowModal(false) }} centered style={{ backgroundImage: 'unset' }}>
+            <Modal.Header className='justify-content-center'>
+               <Text
+                  size="medium"
+                  fontWeight="mediumbold"
+                  color="primaryColor"
+                  text={'Add coins to ' + ''}
+               />
+            </Modal.Header>
+            <Modal.Body className='text-align-center'>
+               <TextField
+                  label={'Enter SD coins'}
+                  type='number'
+                  inputProps={{ min: 0 }}
+                  value={newCoinValue}
+                  onChange={(e) => { setNewCoinValue(e.target.value); }}
+               />
+               <div className='mt-3'>
+                  <Buttons
+                     name="Gift Coins"
+                     varient="primary"
+                     type="submit"
+                     size="Small"
+                     color="white"
+                     onClick={() => { addCoins() }}
+                  /> &nbsp;&nbsp;
+                  <Buttons
+                     name="Cancel"
+                     varient="primary"
+                     size="Small"
+                     color="white"
+                     onClick={() => { setShowModal(false) }}
+                  />
+               </div>
+            </Modal.Body>
+         </Modal>
       </>
    );
 };

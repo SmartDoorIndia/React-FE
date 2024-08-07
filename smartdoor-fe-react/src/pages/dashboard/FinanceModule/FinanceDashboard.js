@@ -88,7 +88,7 @@ const consumerTransactionsColumns = [
     selector: row => row.status,
     center: true,
     maxWidth: '200px',
-    cell: ({ status }) => (handleStatusElement(status.toUpperCase())),
+    cell: ({ status }) => (handleStatusElement(status?.toUpperCase())),
   },
   {
     name: 'Amount',
@@ -396,7 +396,7 @@ const FinanceDashboard = (props) => {
       "userId": Number(userData.userid)
     })
       .then((response) => {
-        if (response.data) {
+        if (response.status === 200) {
           if (response.data.resourceData) setLoaderConstumerTransaction(false);
         }
       })

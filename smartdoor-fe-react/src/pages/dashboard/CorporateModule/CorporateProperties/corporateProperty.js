@@ -410,7 +410,7 @@ const CorporateProperty = (props) => {
                         </div>
                     </div>
                 </div>
-                <div className="corporateTableWrapper">
+                <div className="corporatePropTableWrapper">
                     <DataTableComponent
                         data={showData()}
                         columns={propertyColumns}
@@ -428,11 +428,6 @@ const CorporateProperty = (props) => {
                         subHeaderComponent={subHeaderComponentMemo}
                         persistTableHead
                         filterComponent={subHeaderComponentMemo}
-                    // onRowClicked={onRowClicked}
-                    // onSort={handleSortedData}
-                    // defaultSort={defaultSort}
-                    // defaultSortId={defaultSortId}
-                    // defaultSortFieldId={defaultSortFieldId}
                     />
                 </div>
             </div>

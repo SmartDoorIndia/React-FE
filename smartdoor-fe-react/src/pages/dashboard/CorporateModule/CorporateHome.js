@@ -255,11 +255,6 @@ const CorporateHome = (props) => {
                   subHeaderComponent={subHeaderComponentMemo}
                   persistTableHead
                   filterComponent={subHeaderComponentMemo}
-               // onRowClicked={onRowClicked}
-               // onSort={handleSortedData}
-               // defaultSort={defaultSort}
-               // defaultSortId={defaultSortId}
-               // defaultSortFieldId={defaultSortFieldId}
                />
             </div>
          </div>

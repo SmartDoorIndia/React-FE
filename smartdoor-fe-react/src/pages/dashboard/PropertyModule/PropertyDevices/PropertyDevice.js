@@ -297,24 +297,28 @@ const PropertyDevice = (props) => {
             minWidth: '170px',
             cell: ({ uuId }) => (
                 <div>
-                    <Buttons name='View LiveStream' varient='primary' size='xSmall' onClick={async () => {
-                        // setShowLiveStream(true);
-                        setCurrentUUID(uuId);
-                        const response = await getDeviceToken(
-                            {
-                                sns: uuId,
-                                status: 'open'
+                    {loading ? <Loader />
+                        :
+                        <Buttons name='View LiveStream' varient='primary' size='xSmall' onClick={async () => {
+                            // setShowLiveStream(true);
+                            setCurrentUUID(uuId);
+                            setLoading(true);
+                            const response = await getDeviceToken(
+                                {
+                                    sns: uuId,
+                                    status: 'open'
+                                }
+                            )
+                            setLoading(false);
+                            if (response.status === 200) {
+                                console.log(response.data)
+                                liveStremUrl = response.data.resourceData.liveStreamUrl;
+                                setLivestreamURL(response.data.resourceData.liveStreamUrl);
+                                setShowLiveStream(true);
+                            } else {
+                                showErrorToast("Camera is offline");
                             }
-                        )
-                        if (response.status === 200) {
-                            console.log(response.data)
-                            liveStremUrl = response.data.resourceData.liveStreamUrl;
-                            setLivestreamURL(response.data.resourceData.liveStreamUrl);
-                            setShowLiveStream(true);
-                        } else {
-                            showErrorToast("Camera is offline");
-                        }
-                    }}></Buttons>
+                        }}></Buttons>}
                 </div>
             )
         },
@@ -813,15 +817,15 @@ const PropertyDevice = (props) => {
                     }}></Buttons>
                 </Modal.Header>
                 <Modal.Body>
-                    
-                    <ReactPlayer 
+
+                    <ReactPlayer
                         type=''
                         url={livestreamURL}
                         controls={true}
                         muted={false}
                         playing={true}
                     />
-                    
+
                 </Modal.Body>
             </Modal>
         </>

@@ -114,7 +114,7 @@ const FinanceListingPage = (props) => {
       selector: 'status',
       center: true,
       maxWidth: '200px',
-      cell: ({ status })=>(handleStatusElement(status.toUpperCase() )),
+      cell: ({ status })=>(handleStatusElement(status?.toUpperCase() )),
     },
     {
       name: 'Amount', 
@@ -234,7 +234,7 @@ const FinanceListingPage = (props) => {
             }):[]
           if(status && filteredItems.length){
             filteredItems = filteredItems.filter(item => { 
-              return  item?.status.toUpperCase() === status.toUpperCase();
+              return  item?.status?.toUpperCase() === status?.toUpperCase();
             })
           } 
          return filteredItems;
@@ -252,7 +252,7 @@ const FinanceListingPage = (props) => {
             }):[]
         if(status && filteredItems.length){
           filteredItems = filteredItems.filter(item => { 
-            return  item?.status.toUpperCase() === status.toUpperCase();
+            return  item?.status?.toUpperCase() === status?.toUpperCase();
           })
         } 
          return filteredItems;

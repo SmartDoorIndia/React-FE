@@ -137,7 +137,6 @@ const SmartDoorCities = (props) => {
     return (
         <>
             <div style={{ maxHeight: '90vh', overflowY: 'auto' }}>
-                <Text text={'This data will be updated everyday at 7:30 AM'} fontWeight={'700'} style={{fontSize:'16px'}} />
                 <div className="d-flex">
                     <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
