@@ -158,7 +158,7 @@ const SmartDoorCities = (props) => {
                         </Form.Control>
                     </Form.Group>
                     <div className="ml-3">
-                        <Buttons className='mt-2' name="Add New City" varient='primary' size='medium' onClick={() => { setShowAddCityModal(true); }} />
+                        <Buttons className='mt-2' name="Add New City" varient='primary' size='small' onClick={() => { setShowAddCityModal(true); }} />
                     </div>
                 </div>
                 <div className="whiteBg mt-0">

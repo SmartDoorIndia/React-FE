@@ -4,13 +4,11 @@ import React, { useState, useEffect } from "react";
 import * as ReactBoostrap from "react-bootstrap";
 import Image from "../Image/Image";
 import sideLogo from "../../assets/images/sidebar-logo.svg";
-import buildingIcon from "../../assets/images/building-icon.svg";
 import dashboard from "../../assets/images/dashboard-ico.svg";
 import user from "../../assets/svg/user.svg";
 import "./Navigation.scss";
 import { Link, useLocation } from "react-router-dom";
 import brokerActive from "../../assets/svg/broker-active.svg";
-import societyActive from "../../assets/svg/society-active.svg";
 import userActive from "../../assets/svg/user-Active.svg";
 import propertyAdvisorIcon from "../../assets/svg/propertyAdvisor.svg";
 import propertyAdvisorActive from "../../assets/svg/property-advisor-active.svg";
@@ -23,8 +21,8 @@ const Nav = () => {
    const { pathname } = useLocation();
    const [isOpen, setIsOpen] = useState(true);
    const [isActive, setIsActive] = useState(false);
-   const [isPropertyDDOpen, setisPropertyDDOpen] = useState(true);
-   const [isPropertyActive, setIsPropertyActive] = useState(false);
+   // const [isPropertyDDOpen, setisPropertyDDOpen] = useState(true);
+   // const [isPropertyActive, setIsPropertyActive] = useState(false);
 
    const userData = getLocalStorage("authData");
 
@@ -38,11 +36,11 @@ const Nav = () => {
       ) {
          setIsOpen(true);
          setIsActive(true);
-         setIsPropertyActive(false);
-         setisPropertyDDOpen(false);
+         // setIsPropertyActive(false);
+         // setisPropertyDDOpen(false);
       } else if (pathname.includes("/admin/property") || pathname.includes("builder-property")) {
-         setisPropertyDDOpen(true);
-         setIsPropertyActive(true);
+         // setisPropertyDDOpen(true);
+         // setIsPropertyActive(true);
          setIsOpen(false);
          setIsActive(false);
       } else if (
@@ -52,8 +50,8 @@ const Nav = () => {
       ) {
          setIsActive(false);
          setIsOpen(false);
-         setIsPropertyActive(false);
-         setisPropertyDDOpen(false);
+         // setIsPropertyActive(false);
+         // setisPropertyDDOpen(false);
       } else {
          setIsActive(false);
          setIsOpen(false)
@@ -403,20 +401,6 @@ const Nav = () => {
                         </Link>
                      </>
                      : null}
-
-                  {/* <>
-                        <Link
-                           to="/admin/corporate"
-                           className={`nav-link ${pathname.includes("/admin/corporate") ? "nav-active" : ""
-                              }`}
-                        >
-                           <Image
-                              name="borkerIcon"
-                              src={pathname.includes("/admin/corporate") ? borkerIcon : dashboard}
-                           />
-                           Corporate
-                        </Link>
-                     </> */}
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>

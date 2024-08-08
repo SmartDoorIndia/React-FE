@@ -328,23 +328,12 @@ const UserManagement = (props) => {
                      }}
                   >
                      <Image name="editIcon" src={actionIcon} />
-                     {/* {showModalDataWrtPosition(row.position, row)} */}
-                     {/* <Link to={ { pathname: '/admin/user-management/user-details',
-              state: { userData: row, module: 'USER' },
-            } }>
-              <Image name="editIcon" src={ actionIcon } />
-            </Link> */}
                   </span>
                </ToolTip>
                <ToolTip position="right" name={row.blocked ? "Unblock" : "Block"}>
-                  {/* <span onClick={()=>handleBlockUser(row.id)}>
-                                <Image name="contentIcon" className="p-1" src={row.blocked ? blockIconActive : blockIcon} />
-                            </span> */}
                   <span
                      onClick={() => {
                         handleShow();
-                        // userBlock_id = row.id}
-                        // setBlock_id(row.id)}
                         setBlockData({ id: row.id, isBlocked: row.blocked });
                      }}
                   >

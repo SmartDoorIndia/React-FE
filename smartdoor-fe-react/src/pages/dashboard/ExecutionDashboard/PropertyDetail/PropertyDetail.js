@@ -27,7 +27,7 @@ const PropertyDetail = (props) => {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const { auth: { userData } } = useUserContext();
-  const [smartLockData, setSmartLockData] = useState('')
+  // const [smartLockData, setSmartLockData] = useState('')
   const [showPrintBtn, setShowPrintBtn] = useState(false)
   const [qrData, setQrData] = useState({
     accessToken: '',
@@ -58,7 +58,7 @@ const PropertyDetail = (props) => {
         setShowPrintBtn(true)
         console.log("result_data.data.resourceData:", result_data.data.resourceData);
         // setSmartdoorBattery(result_data?.data?.resourceData?.lockPowerPercentage);
-        setSmartLockData(result_data?.data?.resourceData);
+        // setSmartLockData(result_data?.data?.resourceData);
         const data = {
           accessToken: result_data?.data?.resourceData.accessToken,
           lockId: result_data?.data?.resourceData.lockId,
