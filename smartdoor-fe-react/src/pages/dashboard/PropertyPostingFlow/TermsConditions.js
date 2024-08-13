@@ -96,7 +96,11 @@ const TermsConditions = (props) => {
             const response = await addBasicDetails(postProperty);
             setLoading(false);
             if (response.status === 200) {
-                showSuccessToast('Property Posted successfully');
+                if(editPropertyFlag === true) {
+                    showSuccessToast('Property edited successfully');
+                } else {
+                    showSuccessToast('Property Posted successfully');
+                }
                 setPropertySuccessFlag(true);
                 history.goBack();
             }

@@ -95,8 +95,8 @@ const BatteryLvlChk = (props) => {
     }
     return (
         <>
-            <div className="tableBox">
                 <Text text={'This data will be updated everyday at 7:30 AM'} fontWeight={'700'} style={{ fontSize: '16px' }} />
+            <div className="tableBox">
                 <div className="batteryTableWrapper">
                     <DataTableComponent
                         progressPending={batteryLevel.isLoading}

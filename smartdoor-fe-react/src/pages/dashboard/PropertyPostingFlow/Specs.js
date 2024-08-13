@@ -42,7 +42,7 @@ const Specs = (props) => {
             furnishingDescription: '',
             furnishing: '',
             entranceFacing: '',
-            numberOfBaths: null,
+            numberOfBaths: 0,
             numberOfCarParking: null,
             numberOfTwoWheelerParking: null,
             numberOfReservedCarParking: null,

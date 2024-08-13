@@ -56,8 +56,6 @@ const AddressSection = (props) => {
 	}, [getAllCityWithId]);
 
 	const handleSelectLocalityOption = async (e) => {
-		// let matchFound = false;
-		// let localityArr = e.location?.split(', ')
 		error.locality = ""
 		let newData = { ...addressDetails }; // Make a copy of the current state
 		let sublocality_level_1Flag = false;
@@ -158,9 +156,7 @@ const AddressSection = (props) => {
 			setSDIconFlag(responseData.data.resourceData.serviceStatus)
 			newData.city = responseData.data.resourceData.cityName;
 		}
-		// if (localityFlag === false || sublocality_level_1Flag === false || stateFlag === false) {
-		// 	showErrorToast("Please select pin point location")
-		// }
+
 		const response = await geocodeByAddress(newData.city, m_address.state);
 		const latFunction = response[0].geometry.location.lat;
 		const eLat = latFunction();
@@ -382,16 +378,6 @@ const AddressSection = (props) => {
 		setAddressDetails({ ...addressDetails, buildingProjectSociety: value, otherSociety: value })
 		const response = await getSocietyByCity({ city: (addressDetails.city).split(', ')[0], societyString: value })
 		setSocietyArray([...response])
-		// let matchFound = false
-		// societyArray.forEach(element => {
-		//     if (element.societyName === value) {
-		//         matchFound = true
-		//     }
-		// });
-		// if(matchFound === false) {
-		//     setData({
-		//         ...data, societyId: null })
-		// }
 	}
 
 	const setSelectedSociety = async (value) => {
@@ -433,8 +419,8 @@ const AddressSection = (props) => {
 		if (addressDetails?.zipCode != null) {
 			mAddress = mAddress + ", " + addressDetails.zipCode;
 		}
-		setAddressDetails(prevAddresDetails => ({ ...prevAddresDetails, address: mAddress }));
 		addressDetail.address = mAddress;
+		setAddressDetails(prevAddresDetails => ({ ...prevAddresDetails, address: mAddress }));
 		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot' && basicDetailFields?.data?.guestHouseOrPgPropertyType !== 'Independent House / Bungalow') {
 			if (Number(addressDetails.floorNumber) > Number(addressDetails.totalFloors)) {
 				showErrorToast("In valid floor number...");
@@ -483,11 +469,11 @@ const AddressSection = (props) => {
 		// Remove any leading or trailing commas and spaces
 		mAddress = mAddress.replace(/^,|,$/g, '').trim();
 
+		addressDetail.address = mAddress;
 		setAddressDetails(prevAddressDetails => ({
 			...prevAddressDetails,
 			address: mAddress
 		}));
-		addressDetail.address = mAddress;
 		if (basicDetailFields.data.propertySubType !== 'Independent House / Bungalow' && basicDetailFields.data.propertySubType !== 'Plot' && basicDetailFields?.data?.guestHouseOrPgPropertyType !== 'Independent House / Bungalow') {
 			if (addressDetails.floorNumber > addressDetails.totalFloors) {
 				showErrorToast("In valid floor number...");
@@ -533,7 +519,7 @@ const AddressSection = (props) => {
 			const response = await addBasicDetails(data);
 			if (response.status === 200) {
 				// setLoading(false)
-				dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetails })
+				dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: addressDetail })
 				setSaveAddressFlag(true)
 				saveAddressDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
 				if (!loadNext) {

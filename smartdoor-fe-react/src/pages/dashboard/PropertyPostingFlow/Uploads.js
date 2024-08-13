@@ -21,8 +21,8 @@ const Uploads = (props) => {
     const [miscellaneousDetails, setmiscellaneousDetails] = useState(props.miscellaneousDetails);
     const [imageArr, setImageArray] = useState(uploadImages.data.propertyImages || []);
     const [addNewVideoFlag, setAddNewVideoFlag] = useState(uploadImages?.data?.propertyVideos?.length > 1 ? true : false);
-    const [videoUrl1, setVideoUrl1] = useState(uploadImages?.data?.propertyVideos !== undefined ? uploadImages?.data?.propertyVideos[0]?.docURL : '');
-    const [videoUrl2, setVideoUrl2] = useState(uploadImages?.data?.propertyVideos !== undefined ? uploadImages?.data?.propertyVideos[0]?.docURL : '');
+    const [videoUrl1, setVideoUrl1] = useState(uploadImages?.data?.propertyVideos !== undefined && uploadImages?.data?.propertyVideos !== null ? uploadImages?.data?.propertyVideos[0]?.docURL : '');
+    const [videoUrl2, setVideoUrl2] = useState(uploadImages?.data?.propertyVideos !== undefined && uploadImages?.data?.propertyVideos !== null ? uploadImages?.data?.propertyVideos[1]?.docURL : '');
     const [saveUploadFlag, setSaveUploadFlag] = useState(false);
     const [imageLoader, setImageLoader] = useState(false)
     const [loading, setLoading] = useState(true);
@@ -142,19 +142,6 @@ const Uploads = (props) => {
 
     const saveUploads = () => {
         let isValid = true;
-        // if((videoUrl1.trim()).length === 0 && (videoUrl2.trim()).length === 0 && addNewVideoFlag === true) {
-        //     setError({videoUrl1: true, videoUrl2: true})
-        //     isValid = false;
-        //     showErrorToast("Please upload atleast one video url");
-        // }
-        // if((videoUrl1.trim()).length === 0 && addNewVideoFlag === false) {
-        //     setError({videoUrl1: true})
-        //     isValid = false;
-        // }
-        // if((videoUrl2.trim()).length === 0 && addNewVideoFlag === true) {
-        //     setError({videoUrl2: true})
-        //     isValid = false;
-        // }
         if (imageArr.length < 3) {
             showErrorToast("Please upload minimum 3 images");
             isValid = false;
@@ -233,14 +220,6 @@ const Uploads = (props) => {
                 const formattedDate = `${day}-${month}-${year}`;
                 pricingDetail = { ...pricingDetail, expectedTimeToSellThePropertyWithin: formattedDate }; // Update the copied object with formattedDate
             }
-            // if(basicDetailFields?.data.propertyCategory === 'Selling') {
-            //     const propRate = parseFloat(pricingDetail.propertyRate * 100000)
-            //     pricingDetail.propertyRate = propRate;
-            // }
-            // if(basicDetailFields?.data.propertyCategory === 'Renting') {
-            //     const propRate = parseFloat(pricingDetail.propertyRate * 1000)
-            //     pricingDetail.propertyRate = propRate;
-            // }
             let userId = getLocalStorage('authData');
             const data = {
                 ...(propertyId && { smartdoorPropertyId: propertyId }),
@@ -318,7 +297,7 @@ const Uploads = (props) => {
                             {imageArr.map((image, index) => (
                                 <>
                                     <div key={editPropertyFlag ? image.docId : index} className="d-flex">
-                                        <img src={image?.docURL} style={{
+                                        <img src={image?.docURL} alt="" style={{
                                             border: '1px #DEDEDE solid', borderRadius: 8, height: '100px', width: '200px',
                                             marginInlineEnd: '10px'
                                         }} />
@@ -337,7 +316,7 @@ const Uploads = (props) => {
                                         );
                                     }}
                                         />
-                                    <img className="mt-2" src={closeBtn} style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId, index); }} />
+                                    <img className="mt-2" src={closeBtn} alt="" style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId, index); }} />
                                     </div> &nbsp; &nbsp; &nbsp; &nbsp;
                                 </>
                             ))}

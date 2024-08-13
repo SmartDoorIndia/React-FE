@@ -426,7 +426,7 @@ const BasicDetails = (props) => {
                         <Col lg='4'>
                             <TextField
                                 error={error.ageOfProperty}
-                                disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
+                                disabled={saveBasicDetailsFlag === true ? true : false}
                                 label='Age of Property'
                                 className=" w-100 mt-3"
                                 type="number"
