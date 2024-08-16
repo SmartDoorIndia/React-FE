@@ -324,14 +324,14 @@ export function handleStatusElement(status) {
         className="tagAlert defaultTag ml-2 "
       />
     );
-  } else if (status === 'Query') {
+  } else if (status === 'FAILED TRAN') {
     return (
       <Text
         size="xSmall"
         fontWeight="mediumbold"
         color="white"
-        text="QUERY"
-        style={{ backgroundColor: '#B88608' }}
+        text="FAILED"
+        style={{ backgroundColor: 'purple' }}
         className="tagAlert defaultTag ml-2 "
       />
     );

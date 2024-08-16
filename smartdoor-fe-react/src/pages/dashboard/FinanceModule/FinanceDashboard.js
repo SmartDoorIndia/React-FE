@@ -88,7 +88,7 @@ const consumerTransactionsColumns = [
     selector: row => row.status,
     center: true,
     maxWidth: '200px',
-    cell: ({ status }) => (handleStatusElement(status?.toUpperCase())),
+    cell: ({ status }) => (handleStatusElement(status !== null ? status?.toUpperCase() : 'FAILED TRAN')),
   },
   {
     name: 'Amount',
