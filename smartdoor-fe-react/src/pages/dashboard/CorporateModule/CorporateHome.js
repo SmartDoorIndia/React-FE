@@ -58,6 +58,7 @@ const CorporateHome = (props) => {
          sortable: false,
          center: true,
          maxWidth: "150px",
+         wrap: true,
          cell: ({ companyAddress }) => (
             <ToolTip position="top" style={{ width: '100%' }} name={companyAddress}>
                <Text size="Small" color="secondryColor elipsis-text" text={companyAddress} />

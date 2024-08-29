@@ -688,7 +688,7 @@ export const validateAgencyDetails = (data) => {
   } else {
     errors.agencyName = ValidationMessages.fieldRequired.required;
   }
-  if (!isBlank(data.location)) {
+  if (!isBlank(data.location) || !isBlank(data?.agencyLocation)) {
     if (data.location?.trim() === '' || data.location === null) {
       errors.location = ValidationMessages.fieldRequired.required;
     }
@@ -783,7 +783,7 @@ export const validateBasicDetails = (data) => {
       errors.expectedPossessionDate = true;
     }
   }
-  if (data.propertySubType === 'PG/Co-iving') {
+  if (data.propertySubType === 'PG/Co-living') {
     if (isBlank(data.guestHouseOrPgPropertyType)) {
       errors.guestHouseOrPgPropertyType = true;
     }

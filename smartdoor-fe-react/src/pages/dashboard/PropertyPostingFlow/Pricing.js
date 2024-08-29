@@ -54,7 +54,7 @@ const Pricing = (props) => {
                 category = fields.propertyCategory
             }
             if (fields.propertyType === 'Residential') {
-                if (fields.propertySubType === '' || fields.propertySubType === 'PG/Co-Living' ) {
+                if (fields.propertySubType === '' || fields.propertySubType === 'PG/Co-living' ) {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType]?.Pricing
                 } else {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Pricing

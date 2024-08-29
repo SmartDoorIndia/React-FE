@@ -102,11 +102,11 @@ const Add_EditAgency = (props) => {
                                         cityLatLng={null}
                                         placeholder="Enter City"
                                         id="AgencyCityAutoComplete"
-                                        onSelectOption={(e) => { setAgencyDetails({ ...agencyDetails, agencyLocation: e.location, location: e.location }); console.log(e) }}
-                                        onInputChange={(value) => { setAgencyDetails({ ...agencyDetails, agencyLocation: value, location: value }); }
+                                        onSelectOption={(e) => { setAgencyDetails({ ...agencyDetails, location: e.location, agencyLocation: e.location }); console.log(e) }}
+                                        onInputChange={(value) => { setAgencyDetails({ ...agencyDetails, location: value, agencyLocation: value }); }
                                         }
                                         predictionType="city"
-                                        customValue={agencyDetails?.agencyLocation}
+                                        customValue={agencyDetails?.location}
                                     />
                                     <Text
                                         color="dangerText"

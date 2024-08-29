@@ -319,7 +319,7 @@ const BasicDetails = (props) => {
                                     select
                                     error={error.guestHouseOrPgPropertyType}
                                     label='PG In'
-                                    disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
+                                    disabled={saveBasicDetailsFlag === true ? true : false}
                                     className=" w-100 mt-3"
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => {
@@ -345,7 +345,7 @@ const BasicDetails = (props) => {
                                     select
                                     error={error.occupancySharing}
                                     label='Occupancy Sharing'
-                                    disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
+                                    disabled={saveBasicDetailsFlag === true ? true : false}
                                     className=" w-100 mt-3"
                                     inputProps={{ min: 0 }}
                                     onChange={(e) => {
@@ -377,7 +377,7 @@ const BasicDetails = (props) => {
                                 <TextField
                                     select
                                     error={error.expectedPossessionDate && selectedYear === ''}
-                                    disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
+                                    disabled={saveBasicDetailsFlag === true ? true : false}
                                     label='Year'
                                     className="w-100 mt-3"
                                     onChange={(e) => {
@@ -399,7 +399,7 @@ const BasicDetails = (props) => {
                                 <TextField
                                     select
                                     error={error.expectedPossessionDate && selectedMonth === ''}
-                                    disabled={saveBasicDetailsFlag === true || editPropertyFlag ? true : false}
+                                    disabled={saveBasicDetailsFlag === true ? true : false}
                                     label='Month'
                                     className="w-100 mt-3"
                                     onChange={(e) => {

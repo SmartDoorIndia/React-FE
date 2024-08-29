@@ -173,31 +173,7 @@ const AddressSection = (props) => {
 
 	const handleMarkerChanged = async (e) => {
 		let newData = { ...addressDetails }; // Make a copy of the current state
-		let sublocality_level_1Flag = false;
-		let localityFlag = false;
-		let administrative_area_level_3Flag = false
-		let stateFlag = false
 		console.log(e)
-		// e?.location?.address_components?.forEach(element => {
-		// 	if (element.types.includes('locality')) {
-		// 		newData.city = element.long_name;
-		// 		localityFlag = true
-		// 	}
-		// 	if (element.types.includes('sublocality_level_1')) {
-		// 		newData.locality = element.long_name;
-		// 		sublocality_level_1Flag = true
-		// 	}
-		// 	if (element.types.includes('postal_code')) {
-		// 		newData.zipCode = element.long_name;
-		// 	}
-		// 	if (element.types.includes('administrative_area_level_1')) {
-		// 		newData.state = element.long_name;
-		// 		stateFlag = true
-		// 	}
-		// 	if (element.types.includes('country')) {
-		// 		newData.country = element.long_name;
-		// 	}
-		// });
 		let m_address = {
 			sublocality_level_1: '',
 			sublocality_level_2: '',
