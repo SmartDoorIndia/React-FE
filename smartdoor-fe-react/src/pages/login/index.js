@@ -1,7 +1,8 @@
 /** @format */
 
-import React from 'react';
+import React from "react";
 
-const Login = React.lazy(() => import('./Login'));
+const Login = React.lazy(() => import("./Login"));
+const BuilderLogin = React.lazy(() => import("./BuilderLogin"));
 
-export default Login;
+export { Login, BuilderLogin };

@@ -35,7 +35,7 @@ switch (REACT_APP_ENV) {
       SOCKET_URL = REACT_APP_PROD_SOCKET_URL;
 }
 
-const CONSTANTS = {
+export const CONSTANTS = {
    baseUrl: API_BASE_URL,
    IV_LENGTH: 16,
    ENCRYPTION_KEY: "sd5b75nb7577#^%$%*&G#CGF*&%@#%*&",
@@ -78,13 +78,11 @@ const CONSTANTS = {
       s3Url: "https://smartdoor-uat.s3.ap-south-1.amazonaws.com" /* optional */,
    },
 
-
-
-   CAMERA_UUID : "6360eabe28d6ae7c7ae27b9b",
-   CAMERA_APP_KEY : "fde345f424b0b32b00502a8e96c1d006",
-   CAMERA_APP_SECRET : "fc59834d4c8a4389857d583d3817e9f3",
-   CAMERA_MOVE_CARD : 1,
-   FEATURED_VIDEO_KEY : 'YOUTUBE_VIDEO'
+   CAMERA_UUID: "6360eabe28d6ae7c7ae27b9b",
+   CAMERA_APP_KEY: "fde345f424b0b32b00502a8e96c1d006",
+   CAMERA_APP_SECRET: "fc59834d4c8a4389857d583d3817e9f3",
+   CAMERA_MOVE_CARD: 1,
+   FEATURED_VIDEO_KEY: "YOUTUBE_VIDEO",
 };
 
 export default CONSTANTS;

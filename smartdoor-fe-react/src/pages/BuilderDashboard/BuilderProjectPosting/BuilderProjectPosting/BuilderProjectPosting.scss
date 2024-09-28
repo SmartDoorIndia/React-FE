@@ -1,0 +1,29 @@
+/** @format */
+
+.form-section {
+   background-color: #ffffff;
+   height: 50vh;
+   border-radius: 5px;
+   gap: 15px;
+   h4 {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 19.12px;
+      letter-spacing: -0.02em;
+      text-align: center;
+   }
+   .new-posting-btn {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid #ded6d9;
+      border-radius: 4px;
+      background-color: #f8f3f5;
+      color: #be1452;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      height: 30px;
+   }
+}

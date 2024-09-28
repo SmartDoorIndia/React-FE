@@ -1,42 +1,45 @@
 /** @format */
-// @ts-ignore
+
 import React, { useEffect, memo } from "react";
-import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
-import Pagination from "../../../shared/DataTable/Pagination";
+import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
+import Pagination from "../../../../shared/DataTable/Pagination";
 import { compose } from "redux";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { Card, Modal } from "react-bootstrap";
+import { Card, Modal, Button, Image } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import DataTableComponent from "../../../shared/DataTable/DataTable";
+import DataTableComponent from "../../../../shared/DataTable/DataTable";
+import { IoFilterOutline } from "react-icons/io5";
 import {
    handleStatusElement,
    formateDate,
    getLocalStorage,
    showErrorToast,
    showSuccessToast,
-} from "../../../common/helpers/Utils";
-import { ToolTip } from "../../../common/helpers/Utils";
+} from "../../../../common/helpers/Utils";
+import { ToolTip } from "../../../../common/helpers/Utils";
 import {
    getBrokerListing,
    getBrokerDetails,
    giftCoinsToConsumer,
-} from "../../../common/redux/actions";
+} from "../../../../common/redux/actions";
+import addIcon from "../../../../assets/svg/add.svg";
 import { Link } from "react-router-dom/cjs/react-router-dom";
-import "./Broker.scss";
+import "./ProjectsPostings.scss";
 import { DateRangePicker } from "rsuite";
-import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
+import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import moment from "moment";
-import { TableLoader } from "../../../common/helpers/Loader";
-import Text from "../../../shared/Text/Text";
-import * as Actions from "../../../common/redux/types";
-import Buttons from "../../../shared/Buttons/Buttons";
+import { TableLoader } from "../../../../common/helpers/Loader";
+import Text from "../../../../shared/Text/Text";
+import * as Actions from "../../../../common/redux/types";
+import Buttons from "../../../../shared/Buttons/Buttons";
 import { TextField } from "@mui/material";
+import { BiSortAlt2 } from "react-icons/bi";
 
 const getModalActionData = (row) => {
    return { userData: row };
 };
-const Broker = (props) => {
+const ProjectsPostings = (props) => {
    const { getBrokerListing, allPlanDataBroker } = props;
    const statusArr = CONSTANTS_STATUS.brokerStatus;
    const data = useSelector((state) => state.allPlanDataBroker.data);
@@ -252,71 +255,37 @@ const Broker = (props) => {
 
    const columns = [
       {
-         name: "Reg On",
-         selector: (row) => row.joinDate,
-         center: false,
-         sortable: true,
-         maxWidth: "80px",
-         cell: ({ joinDate }) => <span>{formateDate(joinDate)}</span>,
-      },
-
-      {
-         name: "Name",
+         name: "Project Name",
          selector: (row) => row.name,
          center: true,
          minWidth: "150px",
          maxWidth: "150px",
       },
       {
-         name: "Location",
+         name: "Address",
          selector: (row) => row.locationName,
          sortable: false,
          center: true,
          minWidth: "120px",
       },
+
       {
-         name: "mobile",
-         selector: (row) => row.mobileforCustomer,
-         sortable: true,
-         center: true,
-         minWidth: "145px",
-         maxWidth: "150px",
-      },
-      {
-         name: "Email",
-         selector: (row) => row.email,
-         sortable: false,
-         center: true,
-         minWidth: "245px",
-         cell: ({ email }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={email}>
-               <Text size="Small" color="secondryColor elipsis-text" text={email} />
-            </ToolTip>
-         ),
-      },
-      {
-         name: "Plan",
-         selector: (row) => row.plan,
-         sortable: false,
-         center: true,
-         minWidth: "120px",
-      },
-      {
-         name: "Posted Properties",
+         name: "# of Towers",
          selector: (row) => row.postingcount,
          sortable: false,
          center: true,
          maxWidth: "160px",
       },
       {
-         name: "Chats",
-         selector: (row) => row.chat,
+         name: "# of units",
+         selector: (row) => row.postingcount,
          sortable: false,
          center: true,
-         maxWidth: "100px",
+         maxWidth: "160px",
       },
+
       {
-         name: "Profile Status",
+         name: "Status",
          selector: (row) => row.status,
          sortable: false,
          center: true,
@@ -332,42 +301,37 @@ const Broker = (props) => {
          maxWidth: "150px",
          cell: (row) => (
             <div className="action">
-               <ToolTip name="View Details">
+               <ToolTip name="View">
                   <span>
                      {row.status === "Expired" ? (
-                        <span>Details</span>
+                        <span>View </span>
+                     ) : (
+                        <Link
+                           to={{
+                              pathname: `/builder/Project-Posting-Details`,
+                              state: { loginMobile: row.loginMobile },
+                           }}
+                           className="action-link"
+                        >
+                           View&nbsp;
+                        </Link>
+                     )}
+                     {" | "}
+                     {row.status === "Expired" ? (
+                        <span>Update</span>
                      ) : (
                         <Link
                            to={{
                               pathname: `/admin/BrokerDetails/${row.brokerId}`,
                               state: { loginMobile: row.loginMobile },
                            }}
+                           className="action-link"
                         >
-                           Details
+                           &nbsp;Update
                         </Link>
                      )}
                   </span>
                </ToolTip>
-            </div>
-         ),
-      },
-      {
-         name: "Gift Coins",
-         selector: "broker",
-         center: true,
-         cell: (broker) => (
-            <div className="py-1">
-               <Buttons
-                  name="Add Coins"
-                  varient="primary"
-                  type="submit"
-                  size="xSmall"
-                  color="white"
-                  onClick={() => {
-                     setCurrentBrokerId(broker.brokerId);
-                     setShowModal(true);
-                  }}
-               />
             </div>
          ),
       },
@@ -398,48 +362,95 @@ const Broker = (props) => {
    return (
       <>
          <div className="tableBox">
-            <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
-               <div className="text-nowrap mb-2">
-                  <DateRangePicker
-                     style={{
-                        width: "249px",
-                        height: "39px",
-                        color: "darkgray",
-                        marginTop: "10px",
-                     }}
-                     defaultCalendarValue={[startDate, endDate]}
-                     onChange={handleDateRangeChange}
-                  />
-               </div>
-               <div className="locationSelect d-flex align-items-xl-center align-items-left">
+            <div className="d-flex flex-md-column flex-xl-row justify-content-xl-end align-items-center tableHeading">
+               <div className="locationSelect d-flex justify-content-end align-items-center w-100">
                   {subHeaderComponentMemo}
                   {statusArr.length ? (
-                     <Form.Group controlId="exampleForm.SelectCustom">
-                        <Form.Control
-                           as="select"
-                           value={statusSelected}
-                           onChange={(e) => {
-                              _filterStatus(e.target.value);
-                           }}
+                     <div className="d-flex align-items-center justify-content-between ProjectFilterButton">
+                        <Form.Group
+                           controlId="sortControl"
+                           className="d-flex align-items-center"
+                           style={{ marginRight: "15px" }}
                         >
-                           <option value="">Filter</option>
-                           {statusArr.length
-                              ? statusArr.map((_value, index) => (
-                                   <option key={index} value={_value}>
-                                      {_value}
-                                   </option>
-                                ))
-                              : null}
-                        </Form.Control>
-                     </Form.Group>
+                           <Form.Control
+                              as="text"
+                              value={statusSelected}
+                              className="FilterControl"
+                              onChange={(e) => {
+                                 _filterStatus(e.target.value);
+                              }}
+                              style={{ display: "flex", alignItems: "center" }} // Ensure icon and label align properly
+                           >
+                              <BiSortAlt2
+                                 className="filter-icon"
+                                 style={{ marginRight: "10px", fontSize: "1rem" }}
+                              />
+                              <span
+                                 className="filter-label"
+                                 style={{ marginRight: "8px", fontSize: "12px", color: "#000" }}
+                              >
+                                 Sort
+                              </span>
+                           </Form.Control>
+                        </Form.Group>
+
+                        <Form.Group controlId="filterControl" className="d-flex align-items-center">
+                           <Form.Control
+                              as="text"
+                              value={statusSelected}
+                              className="FilterControl"
+                              onChange={(e) => {
+                                 _filterStatus(e.target.value);
+                              }}
+                              style={{ display: "flex", alignItems: "center" }} // Ensure icon and label align properly
+                           >
+                              <IoFilterOutline
+                                 className="filter-icon"
+                                 style={{ marginRight: "10px", fontSize: "1rem" }}
+                              />
+                              <span
+                                 className="filter-label"
+                                 style={{ marginRight: "8px", fontSize: "12px", color: "#000" }}
+                              >
+                                 Filter
+                              </span>
+                           </Form.Control>
+                        </Form.Group>
+                     </div>
                   ) : (
                      ""
                   )}
                   <Form.Group controlId="example" className="w-40 userGrp ml-0"></Form.Group>
+
+                  <Button
+                     className="d-flex py-1 ml-3"
+                     style={{
+                        color: "#BE1452",
+                        backgroundColor: "#F8F3F5",
+                        borderColor: "#DED6D9",
+                     }}
+                  >
+                     <div
+                        style={{
+                           width: "20px",
+                           height: "20px",
+                           display: "flex",
+                           alignItems: "center",
+                           justifyContent: "center",
+                        }}
+                     >
+                        <Image src={addIcon} style={{ width: "10px" }} />
+                     </div>
+                     <Text
+                        text={"Add New Posting"}
+                        fontWeight="bold"
+                        style={{ fontSize: "12px", color: "#BE1452" }}
+                     />
+                  </Button>
                </div>
             </div>
 
-            <div className="brokerTableWrapper">
+            <div className="ProjectPostingTableWrapper">
                <DataTableComponent
                   data={showValue()}
                   columns={columns}
@@ -524,4 +535,4 @@ const actions = {
 };
 const withConnect = connect(mapStateToProps, actions);
 
-export default compose(withConnect, memo)(Broker);
+export default compose(withConnect, memo)(ProjectsPostings);

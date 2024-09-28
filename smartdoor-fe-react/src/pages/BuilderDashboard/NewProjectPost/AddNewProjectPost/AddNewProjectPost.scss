@@ -1,0 +1,493 @@
+/** @format */
+
+.add-new-project-post {
+   .page-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+   }
+
+   .text-end {
+      font-size: 0.875rem;
+      color: #6c757d;
+      text-align: end;
+   }
+
+   .form-actions {
+      width: 50%;
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 20px;
+      gap: 10px;
+
+      .btn-small {
+         width: 100%;
+         border: none;
+         padding: 12px !important;
+         border-radius: 4px;
+         cursor: pointer;
+         color: #ffffff;
+         margin-top: 20px;
+         font-weight: 700;
+         letter-spacing: -0.02em;
+      }
+      .submit-btn {
+         background-color: #be1452;
+      }
+      .cancel-btn {
+         background-color: #eaeaea;
+         color: #252525;
+         border: 1px solid #dedede;
+      }
+   }
+}
+
+.detail-form {
+   background-color: #e9ecef;
+}
+
+.form-col {
+   background: #fff;
+   border-radius: 5px;
+   border: 1px solid #ded6d9;
+}
+.formProjectImages,
+.formProjectLayout,
+.formProjectVideo {
+   span {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 21.86px;
+      letter-spacing: -0.02em;
+      text-align: left;
+   }
+   small {
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 16.39px;
+      letter-spacing: -0.02em;
+      text-align: left;
+      color: #a11447;
+   }
+   .Plus-icon {
+      background-color: #be1452;
+      color: #ffffff;
+      border-radius: 8px;
+      padding: 10px;
+      height: 20%;
+      cursor: pointer;
+      font-size: 10px;
+      width: 20%;
+   }
+   // .input-plus-icon {
+   //    gap: 6px;
+   // }
+}
+.input-plus-icon {
+   position: relative;
+   display: inline-block;
+}
+
+.input-plus-icon .form-control {
+   padding-right: 2.5rem; /* Add space for the icon */
+}
+.input-plus-icon .crossicon {
+   position: absolute;
+   right: 63px !important;
+   top: 50%;
+   transform: translateY(-50%);
+   cursor: pointer;
+   color: #aaa;
+}
+.formProjectImages,
+.formProjectLayout {
+   .image-upload {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      label {
+         margin-bottom: 0;
+      }
+      .upload-label {
+         display: flex;
+         background-color: #fff;
+         flex-direction: row;
+         justify-content: center;
+         align-items: center;
+         cursor: pointer;
+         border: 1px dashed #9ba5ad;
+         color: #666;
+         width: 100%;
+         position: relative; // Make sure to position the preview correctly
+         padding: 9px;
+         gap: 10px;
+         border-radius: 8px;
+
+         .camera-icon {
+            font-size: 24px;
+         }
+
+         span {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 21px;
+            letter-spacing: -0.02em;
+            text-align: center; // Center align text
+         }
+
+         .upload-input {
+            display: none; // Hide the actual file input
+         }
+
+         .project-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; // Hide overflow
+            border: 2px dashed #ddd; // Optional dashed border for preview
+            border-radius: 8px; // Ensure rounded corners match
+
+            .preview-img {
+               max-width: 100%;
+               max-height: 100%;
+               object-fit: cover; // Ensures the image fits within the container
+            }
+         }
+      }
+   }
+}
+
+.formSalesManagerContact {
+   width: 70%;
+}
+//map
+// YourComponent.scss
+.map-container {
+   .map-placeholder {
+      width: 100%;
+      height: 232px;
+      border: 1px solid #ddd;
+      background: #e9ecef;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #6c757d;
+      font-size: 1rem;
+   }
+}
+.map-container {
+   position: relative;
+   border: 1px solid #e5e5e5;
+   border-radius: 12px;
+   height: 100%;
+   overflow: hidden;
+   background-color: #f7f7f7;
+
+   .map-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #fff;
+      border-bottom: 1px solid #e5e5e5;
+
+      .map-search {
+         flex-grow: 1;
+         border: none;
+         outline: none;
+         padding: 8px;
+         font-size: 14px;
+         border-radius: 6px;
+      }
+
+      .map-icons {
+         display: flex;
+         gap: 8px;
+         margin-left: 8px;
+         color: #a11447;
+
+         i {
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            background-color: #f1f1f1;
+         }
+      }
+      .icon-location {
+         background-color: #ffecf3;
+         padding: 10px;
+      }
+   }
+
+   .map-placeholder {
+      height: 320px; /* Adjust as needed */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #888;
+      font-size: 16px;
+      background-color: #e0e0e0; /* Placeholder background */
+   }
+
+   .map-footer {
+      padding: 8px 16px;
+      //   text-align: center;
+      background-color: #fff;
+      border-top: 1px solid #e5e5e5;
+      font-weight: bold;
+   }
+}
+
+//terms and deatils
+.terms-details {
+   background-color: #fff;
+   border-bottom: 1px solid #e5e5e5;
+   border-radius: 5px;
+   .terms-header {
+      width: 100%;
+      padding: 10px;
+      background-color: #e9e9e9;
+      display: flex;
+      align-items: center;
+   }
+}
+.formTermsAndConditions {
+   h6 {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 21.86px;
+      letter-spacing: -0.02em;
+      text-align: left;
+      margin-bottom: 10px;
+   }
+   p {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 19.12px;
+      letter-spacing: -0.02em;
+      text-align: left;
+   }
+   .form-check-label {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 21px;
+      letter-spacing: -0.02em;
+      text-align: left;
+   }
+   .terms-text {
+      color: #be1452;
+      text-decoration: underline;
+      cursor: pointer;
+   }
+}
+@import "../../../../scss/modules/variables.scss";
+
+.newEntry {
+   .form-label {
+      position: relative;
+      top: 18px;
+      background: $white;
+      left: 11px;
+      font-size: $xSmall;
+      padding-left: 5px;
+      padding-right: 5px;
+      color: $gray;
+   }
+   .form-group {
+      margin-bottom: 0;
+      padding: 0px;
+   }
+   button {
+      margin-top: 30px;
+      width: 100%;
+      padding: 12px !important;
+   }
+}
+
+//image upload
+.image-upload {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+
+   .upload-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      .camera-icon {
+         font-size: 24px;
+         margin-right: 8px;
+      }
+
+      .upload-input {
+         display: none; // Hide the default file input
+      }
+   }
+
+   .project-images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+
+      .image-preview-container {
+         position: relative;
+         display: inline-block;
+
+         img {
+            max-width: 100%;
+            height: 70px;
+            border-radius: 4px;
+            padding: 4px;
+            width: 118px;
+            border-radius: 12px;
+         }
+
+         .delete-icon {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            background-color: white;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            padding: 2px;
+            color: #ff1919;
+         }
+      }
+   }
+
+   .text-danger {
+      color: #dc3545;
+   }
+}
+
+//video
+.video-upload-container {
+   .input-plus-icon {
+      //   position: relative;
+      //   width: 100%;
+      //   margin-bottom: 15px;
+      //   border-radius: 8px;
+      //   cursor: pointer;
+      //   transition: background-color 0.3s ease;
+      //   padding: 5px;
+
+      .crossicon {
+         font-size: 18px;
+         cursor: pointer;
+         color: #aaa;
+         position: absolute;
+         right: 50px;
+         top: 50%;
+         transform: translateY(-50%);
+      }
+
+      .Plus-icon {
+         cursor: pointer;
+         margin-left: 10px;
+         color: #fff;
+         background-color: #ff0055;
+         padding: 5px;
+      }
+   }
+   .video-list {
+      display: flex;
+      gap: 10px; /* Spacing between items */
+      margin-top: 10px; /* Top margin */
+      max-width: 100%; /* Ensures the list doesn't overflow its container */
+   }
+
+   .video-preview {
+      position: relative;
+      display: inline-block;
+      margin: 10px; /* Consistent spacing */
+      width: 120px; /* Set a fixed width */
+      height: 70px; /* Set a fixed height */
+      border-radius: 8px;
+      border: 1px solid #ddd;
+   }
+
+   .video-preview img {
+      width: 100%; /* Use 100% width to fit the container */
+      height: 100%; /* Use 100% height to fit the container */
+      object-fit: cover;
+      border-radius: 8px;
+   }
+
+   .video-preview .delete-icon {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      cursor: pointer;
+      color: #fff;
+      background: #ff0000;
+      border-radius: 50%;
+      padding: 2px;
+   }
+
+   .video-preview .fa-play {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 24px;
+   }
+}
+// sq.ft input design
+.custom-input-group {
+   border: 1px solid #ccc; /* Light gray border */
+   border-radius: 10px; /* Rounded corners */
+   display: flex;
+   overflow: hidden; /* Hide overflow for rounded corners */
+}
+
+.custom-form-control {
+   border: none; /* Remove default border from Form.Control */
+   box-shadow: none; /* Remove box shadow */
+   border-top-left-radius: 10px;
+   border-bottom-left-radius: 10px;
+   flex-grow: 1; /* Make sure the input expands to fill available space */
+}
+
+.custom-text {
+   background-color: white; /* Ensure background is white */
+   border-left: 1px solid #ccc; /* Border between input and Sq. Mt. */
+   border-top-right-radius: 10px;
+   border-bottom-right-radius: 10px;
+   padding-left: 10px;
+   padding-right: 10px;
+   font-size: 12px;
+}
+.custom-input-group-append {
+   margin-left: 0;
+}
+.project-details {
+   .form-control {
+      height: 44px !important;
+   }
+   ::placeholder {
+      font-size: 12px;
+   }
+}
+
+.date-container {
+   span {
+      position: absolute;
+      font-size: 12px;
+      margin-left: 5px;
+      font-weight: 700;
+      line-height: 21px;
+      letter-spacing: -0.02em;
+      text-align: justified;
+   }
+}

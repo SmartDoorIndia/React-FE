@@ -1,42 +1,51 @@
 /** @format */
-// @ts-ignore
 import React, { useEffect, memo } from "react";
-import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
-import Pagination from "../../../shared/DataTable/Pagination";
+
+import { Col, Row, Button, Container, Form, Image } from "react-bootstrap";
+import { BsPencil } from "react-icons/bs";
+import "./ProjectPostingDetails.scss";
+import pencilIcon from "../../../../assets/svg/edit-01.svg";
+/** @format */
+// @ts-ignore
+import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
+import Pagination from "../../../../shared/DataTable/Pagination";
 import { compose } from "redux";
 import { connect, useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { Card, Modal } from "react-bootstrap";
-import Form from "react-bootstrap/Form";
-import DataTableComponent from "../../../shared/DataTable/DataTable";
+// import Form from "react-bootstrap/Form";
+import DataTableComponent from "../../../../shared/DataTable/DataTable";
+import addIcon from "../../../../assets/svg/add.svg";
+import { BiSortAlt2 } from "react-icons/bi";
+import { IoFilterOutline } from "react-icons/io5";
+
 import {
    handleStatusElement,
    formateDate,
    getLocalStorage,
    showErrorToast,
    showSuccessToast,
-} from "../../../common/helpers/Utils";
-import { ToolTip } from "../../../common/helpers/Utils";
+   ToolTip,
+} from "../../../../common/helpers/Utils";
 import {
    getBrokerListing,
    getBrokerDetails,
    giftCoinsToConsumer,
-} from "../../../common/redux/actions";
+} from "../../../../common/redux/actions";
 import { Link } from "react-router-dom/cjs/react-router-dom";
-import "./Broker.scss";
 import { DateRangePicker } from "rsuite";
-import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
+import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import moment from "moment";
-import { TableLoader } from "../../../common/helpers/Loader";
-import Text from "../../../shared/Text/Text";
-import * as Actions from "../../../common/redux/types";
-import Buttons from "../../../shared/Buttons/Buttons";
+import { TableLoader } from "../../../../common/helpers/Loader";
+import Text from "../../../../shared/Text/Text";
+import * as Actions from "../../../../common/redux/types";
+import Buttons from "../../../../shared/Buttons/Buttons";
 import { TextField } from "@mui/material";
 
 const getModalActionData = (row) => {
    return { userData: row };
 };
-const Broker = (props) => {
+const ProjectPostingDetails = (props) => {
    const { getBrokerListing, allPlanDataBroker } = props;
    const statusArr = CONSTANTS_STATUS.brokerStatus;
    const data = useSelector((state) => state.allPlanDataBroker.data);
@@ -98,21 +107,7 @@ const Broker = (props) => {
            //    );
            // })
            [];
-      // if (status && filteredItems.length) {
-      //    filteredItems = filteredItems.filter((item) => {
-      //       return item?.status == status;
-      //    });
-      // }
-      // if (startDate_) {
-      //    filteredItems = filteredItems.filter((item) => {
-      //       let joinedDate = moment(item.joinedDate);
-      //       let mst = moment(startDate_).startOf('day')
-      //       let met = moment(endDate_).endOf('day')
 
-      //       return joinedDate >= mst && joinedDate <= met;
-      //       return item?.status == status;
-      //    });
-      // }
       return filteredItems;
    };
 
@@ -252,71 +247,45 @@ const Broker = (props) => {
 
    const columns = [
       {
-         name: "Reg On",
-         selector: (row) => row.joinDate,
-         center: false,
-         sortable: true,
-         maxWidth: "80px",
-         cell: ({ joinDate }) => <span>{formateDate(joinDate)}</span>,
-      },
-
-      {
-         name: "Name",
+         name: "Towers / Plotted",
          selector: (row) => row.name,
          center: true,
-         minWidth: "150px",
-         maxWidth: "150px",
+         minWidth: "200px",
+         maxWidth: "200px",
       },
       {
-         name: "Location",
+         name: "Unit Types ",
          selector: (row) => row.locationName,
          sortable: false,
          center: true,
          minWidth: "120px",
       },
+
       {
-         name: "mobile",
-         selector: (row) => row.mobileforCustomer,
-         sortable: true,
-         center: true,
-         minWidth: "145px",
-         maxWidth: "150px",
-      },
-      {
-         name: "Email",
-         selector: (row) => row.email,
-         sortable: false,
-         center: true,
-         minWidth: "245px",
-         cell: ({ email }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={email}>
-               <Text size="Small" color="secondryColor elipsis-text" text={email} />
-            </ToolTip>
-         ),
-      },
-      {
-         name: "Plan",
-         selector: (row) => row.plan,
-         sortable: false,
-         center: true,
-         minWidth: "120px",
-      },
-      {
-         name: "Posted Properties",
+         name: "Total Units",
          selector: (row) => row.postingcount,
          sortable: false,
          center: true,
          maxWidth: "160px",
       },
       {
-         name: "Chats",
-         selector: (row) => row.chat,
-         sortable: false,
+         name: "Contact Person",
+         selector: (row) => row.name,
          center: true,
-         maxWidth: "100px",
+         minWidth: "150px",
+         maxWidth: "150px",
       },
       {
-         name: "Profile Status",
+         name: "Mobile",
+         selector: (row) => row.mobileforCustomer,
+         //  sortable: true,
+         center: true,
+         minWidth: "145px",
+         maxWidth: "150px",
+      },
+
+      {
+         name: "Status",
          selector: (row) => row.status,
          sortable: false,
          center: true,
@@ -332,42 +301,23 @@ const Broker = (props) => {
          maxWidth: "150px",
          cell: (row) => (
             <div className="action">
-               <ToolTip name="View Details">
+               <ToolTip name="View">
                   <span>
                      {row.status === "Expired" ? (
-                        <span>Details</span>
+                        <span>View </span>
                      ) : (
                         <Link
                            to={{
-                              pathname: `/admin/BrokerDetails/${row.brokerId}`,
+                              pathname: `/builder/Project-Posting-Details`,
                               state: { loginMobile: row.loginMobile },
                            }}
+                           className="action-link"
                         >
-                           Details
+                           Download Leads
                         </Link>
                      )}
                   </span>
                </ToolTip>
-            </div>
-         ),
-      },
-      {
-         name: "Gift Coins",
-         selector: "broker",
-         center: true,
-         cell: (broker) => (
-            <div className="py-1">
-               <Buttons
-                  name="Add Coins"
-                  varient="primary"
-                  type="submit"
-                  size="xSmall"
-                  color="white"
-                  onClick={() => {
-                     setCurrentBrokerId(broker.brokerId);
-                     setShowModal(true);
-                  }}
-               />
             </div>
          ),
       },
@@ -394,52 +344,220 @@ const Broker = (props) => {
             });
       }
    };
-
    return (
       <>
-         <div className="tableBox">
-            <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
-               <div className="text-nowrap mb-2">
-                  <DateRangePicker
-                     style={{
-                        width: "249px",
-                        height: "39px",
-                        color: "darkgray",
-                        marginTop: "10px",
-                     }}
-                     defaultCalendarValue={[startDate, endDate]}
-                     onChange={handleDateRangeChange}
-                  />
-               </div>
-               <div className="locationSelect d-flex align-items-xl-center align-items-left">
-                  {subHeaderComponentMemo}
-                  {statusArr.length ? (
-                     <Form.Group controlId="exampleForm.SelectCustom">
-                        <Form.Control
-                           as="select"
-                           value={statusSelected}
-                           onChange={(e) => {
-                              _filterStatus(e.target.value);
+         <Container
+            className=" main-details-section bg-white "
+            style={{
+               backgroundColor: "#F8F3F5",
+               borderRadius: "5px",
+               border: "1px solid rgb(189 186 206)",
+            }}
+         >
+            <Row>
+               {/* Left Section */}
+               <Col md={11} className="p-3">
+                  <Row className="mb-2">
+                     <Col xs={4}>
+                        <p className="mb-1">Location: DP Road, Vishal Nagar, Pune</p>
+                     </Col>
+                     <Col xs={4}>
+                        <p className="mb-1">Land Area: 25 Acres</p>
+                     </Col>
+                     <Col xs={4}>
+                        <p className="mb-1">Possession from: Jan 2025 - Mar 2026</p>
+                     </Col>
+                  </Row>
+                  <Row className="mb-2">
+                     <Col xs={4}>
+                        <p className="mb-1">General Amenities: Gym, Swimming Pool</p>
+                     </Col>
+                     <Col xs={4}>
+                        <p className="mb-1">Total Area to Develop: 50,000 Sq. Ft</p>
+                     </Col>
+                  </Row>
+                  <Row className="mb-2">
+                     <Col xs={4}>
+                        <p className="mb-1">Total Towers Planned: 20</p>
+                     </Col>
+                     <Col xs={4}>
+                        <p className="mb-1">Open Area: 15%</p>
+                     </Col>
+                  </Row>
+                  <Row className="mb-2">
+                     <Col xs={12}>
+                        <p className="mb-1">
+                           Project Description: Lorem ipsum dolor sit amet consectetur. Nam
+                           imperdiet fermentum commodo viverra orci. Sed turpis cras suspendisse
+                           cras natoque viverra cras.
+                        </p>
+                     </Col>
+                  </Row>
+                  <Row className="mb-2">
+                     <Col xs={4}>
+                        <p>
+                           Project Images:{" "}
+                           <a
+                              href="#"
+                              style={{
+                                 color: "#BE1452",
+                                 fontWeight: "bold",
+                                 textDecoration: "underline",
+                              }}
+                           >
+                              {" "}
+                              2 Image(s)
+                           </a>
+                        </p>
+                     </Col>
+                     <Col xs={4}>
+                        <p>
+                           Plan Layout:{" "}
+                           <a
+                              href="#"
+                              style={{
+                                 color: "#BE1452",
+                                 fontWeight: "bold",
+                                 textDecoration: "underline",
+                              }}
+                           >
+                              1 Image(s)
+                           </a>
+                        </p>
+                     </Col>
+                     <Col xs="4">
+                        <Button
+                           variant="link"
+                           style={{
+                              color: "#BE1452",
+                              fontWeight: "bold",
+                              fontSize: "14px",
+                              textDecoration: "none",
                            }}
                         >
-                           <option value="">Filter</option>
-                           {statusArr.length
-                              ? statusArr.map((_value, index) => (
-                                   <option key={index} value={_value}>
-                                      {_value}
-                                   </option>
-                                ))
-                              : null}
-                        </Form.Control>
-                     </Form.Group>
+                           Download Leads
+                        </Button>
+                     </Col>
+                  </Row>
+               </Col>
+
+               {/* Right Section */}
+               <Col
+                  md={1}
+                  className="p-0 d-flex justify-content-end align-items-center"
+                  style={{
+                     minHeight: "30vh",
+                     backgroundColor: "#F8F3F5",
+                     borderLeft: "1px solid rgb(189 186 206)",
+                  }}
+               >
+                  <div className="d-flex flex-column align-items-center">
+                     <Button
+                        variant="light"
+                        className="mb-3"
+                        style={{
+                           color: "#BE1452",
+                           backgroundColor: "#F8F3F5",
+                           borderRadius: "20px",
+                        }}
+                     >
+                        <img src={pencilIcon} style={{ marginRight: "5px" }} />
+                     </Button>
+                  </div>
+               </Col>
+            </Row>
+         </Container>
+
+         <div className="tableBox">
+            <div className="d-flex flex-md-column flex-xl-row justify-content-xl-end align-items-center tableHeading">
+               <div className="locationSelect d-flex justify-content-end align-items-center w-100">
+                  {subHeaderComponentMemo}
+                  {statusArr.length ? (
+                     <div className="d-flex align-items-center justify-content-between ProjectFilterButton">
+                        <Form.Group
+                           controlId="sortControl"
+                           className="d-flex align-items-center"
+                           style={{ marginRight: "15px" }}
+                        >
+                           <Form.Control
+                              as="text"
+                              value={statusSelected}
+                              className="FilterControl"
+                              onChange={(e) => {
+                                 _filterStatus(e.target.value);
+                              }}
+                              style={{ display: "flex", alignItems: "center" }} // Ensure icon and label align properly
+                           >
+                              <BiSortAlt2
+                                 className="filter-icon"
+                                 style={{ marginRight: "10px", fontSize: "1rem" }}
+                              />
+                              <span
+                                 className="filter-label"
+                                 style={{ marginRight: "8px", fontSize: "12px", color: "#000" }}
+                              >
+                                 Sort
+                              </span>
+                           </Form.Control>
+                        </Form.Group>
+
+                        <Form.Group controlId="filterControl" className="d-flex align-items-center">
+                           <Form.Control
+                              as="text"
+                              value={statusSelected}
+                              className="FilterControl"
+                              onChange={(e) => {
+                                 _filterStatus(e.target.value);
+                              }}
+                              style={{ display: "flex", alignItems: "center" }} // Ensure icon and label align properly
+                           >
+                              <IoFilterOutline
+                                 className="filter-icon"
+                                 style={{ marginRight: "10px", fontSize: "1rem" }}
+                              />
+                              <span
+                                 className="filter-label"
+                                 style={{ marginRight: "8px", fontSize: "12px", color: "#000" }}
+                              >
+                                 Filter
+                              </span>
+                           </Form.Control>
+                        </Form.Group>
+                     </div>
                   ) : (
                      ""
                   )}
                   <Form.Group controlId="example" className="w-40 userGrp ml-0"></Form.Group>
+
+                  <Button
+                     className="d-flex py-1 ml-3"
+                     style={{
+                        color: "#BE1452",
+                        backgroundColor: "#F8F3F5",
+                        borderColor: "#DED6D9",
+                     }}
+                  >
+                     <div
+                        style={{
+                           width: "20px",
+                           height: "20px",
+                           display: "flex",
+                           alignItems: "center",
+                           justifyContent: "center",
+                        }}
+                     >
+                        <Image src={addIcon} style={{ width: "10px" }} />
+                     </div>
+                     <Text
+                        text={"Add New Tower"}
+                        fontWeight="bold"
+                        style={{ fontSize: "12px", color: "#BE1452" }}
+                     />
+                  </Button>
                </div>
             </div>
 
-            <div className="brokerTableWrapper">
+            <div className="ProjectPostingTableWrapper">
                <DataTableComponent
                   data={showValue()}
                   columns={columns}
@@ -453,6 +571,7 @@ const Broker = (props) => {
                   currentPage={currentPage}
                   rowsPerPage={rowsPerPage}
                   onChangePage={handlePageChange}
+                  expanded
                   paginationServer={true}
                   onChangeRowsPerPage={handleRowsPerPageChange}
                   subHeaderComponent={subHeaderComponentMemo}
@@ -462,56 +581,6 @@ const Broker = (props) => {
                ></DataTableComponent>
             </div>
          </div>
-         <Modal
-            show={showModal}
-            onHide={() => {
-               setShowModal(false);
-            }}
-            centered
-            style={{ backgroundImage: "unset" }}
-         >
-            <Modal.Header className="justify-content-center">
-               <Text
-                  size="medium"
-                  fontWeight="mediumbold"
-                  color="primaryColor"
-                  text={"Add coins to " + ""}
-               />
-            </Modal.Header>
-            <Modal.Body className="text-align-center">
-               <TextField
-                  label={"Enter SD coins"}
-                  type="number"
-                  inputProps={{ min: 0 }}
-                  value={newCoinValue}
-                  onChange={(e) => {
-                     setNewCoinValue(e.target.value);
-                  }}
-               />
-               <div className="mt-3">
-                  <Buttons
-                     name="Gift Coins"
-                     varient="primary"
-                     type="submit"
-                     size="Small"
-                     color="white"
-                     onClick={() => {
-                        addCoins();
-                     }}
-                  />{" "}
-                  &nbsp;&nbsp;
-                  <Buttons
-                     name="Cancel"
-                     varient="primary"
-                     size="Small"
-                     color="white"
-                     onClick={() => {
-                        setShowModal(false);
-                     }}
-                  />
-               </div>
-            </Modal.Body>
-         </Modal>
       </>
    );
 };
@@ -524,4 +593,4 @@ const actions = {
 };
 const withConnect = connect(mapStateToProps, actions);
 
-export default compose(withConnect, memo)(Broker);
+export default compose(withConnect, memo)(ProjectPostingDetails);
