@@ -3057,17 +3057,17 @@ export const ApiJson = {
       url: "/consumer/builder/getBuilderProjects/",
       method: "POST",
       data: {
-         builderId: null,
-         searchString: null,
-         userId: null,
-         records: null,
-         pageNumber: null
+         builderId: "",
+         searchString: "",
+         userId: "",
+         records: "",
+         pageNumber: "",
       },
       headers: {
          "Content-Type": "application/json",
       },
       showResultMessage: false,
-      showErrorMessage: true
+      showErrorMessage: true,
    },
    getBuilderProjectStats: {
       url: "/consumer/builder/getBuilderProjectStats/",
@@ -3077,29 +3077,29 @@ export const ApiJson = {
          searchString: null,
          userId: null,
          records: null,
-         pageNumber: null
+         pageNumber: null,
       },
       headers: {
          "Content-Type": "application/json",
       },
       showResultMessage: false,
-      showErrorMessage: true
+      showErrorMessage: true,
    },
    getBuilderProjectSubPosts: {
       url: "/consumer/builder/getBuilderProjectSubPosts/",
       method: "POST",
       data: {
-         builderProjectId:14,
-         searchString:"Rohit",
+         builderProjectId: 14,
+         searchString: "Rohit",
          userId: 2179,
          records: 10,
-         pageNumber: 1
+         pageNumber: 1,
       },
       headers: {
          "Content-Type": "application/json",
       },
       showResultMessage: false,
-      showErrorMessage: true
+      showErrorMessage: true,
    },
    getBuilderProjectById: {
       url: "/consumer/builder/getBuilderProjectById/:builderProjectId/:userId/",

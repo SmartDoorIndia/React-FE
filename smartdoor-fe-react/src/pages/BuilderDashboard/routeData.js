@@ -44,7 +44,7 @@ const routeData = [
    {
       path: "/builder/project/Posting",
       name: "Projects Postings",
-      // bradcrumb: [ 'Profile Details' ],
+      breadcrumb: ["Total Projects", "Total Property"],
       excat: true,
       module: "BUILDER",
       component: ProjectsPostings,

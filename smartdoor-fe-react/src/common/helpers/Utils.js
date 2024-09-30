@@ -6,17 +6,17 @@
 
 /* global google */
 
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
-import moment from 'moment';
-import Tooltip from 'react-bootstrap/Tooltip';
-import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import actionIcon from '../../assets/images/action-icon.svg';
-import Text from '../../shared/Text/Text';
-import Image from '../../shared/Image/Image';
-let toastId = '';
+import moment from "moment";
+import Tooltip from "react-bootstrap/Tooltip";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import actionIcon from "../../assets/images/action-icon.svg";
+import Text from "../../shared/Text/Text";
+import Image from "../../shared/Image/Image";
+let toastId = "";
 
 // const ENCRYPTION_KEY = "sd5b75nb7577#^%$%*&G#CGF*&%@#%*&";
 // var cryptlib = require("cryptlib"),
@@ -48,118 +48,118 @@ let toastId = '';
 
 // Used to convert string into Base64
 export const stringToBase64 = (data) => {
-  if (data) {
-    const encrypData = new Buffer(data).toString('base64');
-    return encrypData;
-  }
+   if (data) {
+      const encrypData = new Buffer(data).toString("base64");
+      return encrypData;
+   }
 };
 
 // Used to convert Base64 string into string
 export const base64toString = (data) => {
-  if (data) {
-    const dcryptData = new Buffer(data, 'base64').toString('ascii');
-    return dcryptData;
-  }
+   if (data) {
+      const dcryptData = new Buffer(data, "base64").toString("ascii");
+      return dcryptData;
+   }
 };
 
 // Toaster messages for error
 export const showErrorToast = (errorMessage, event) => {
-  if (errorMessage) {
-    if (!toast.isActive(toastId)) {
-      toastId = toast.error(errorMessage, {
-        position: toast.POSITION.TOP_RIGHT,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        autoClose: 4000,
-      });
-    }
-  }
+   if (errorMessage) {
+      if (!toast.isActive(toastId)) {
+         toastId = toast.error(errorMessage, {
+            position: toast.POSITION.TOP_RIGHT,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            autoClose: 4000,
+         });
+      }
+   }
 };
 
 // Toaster messages for success
 export const showSuccessToast = (message) => {
-  if (!toast.isActive(toastId)) {
-    toastId = toast.success(message, {
-      position: toast.POSITION.TOP_RIGHT,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      autoClose: 4000,
-    });
-  }
+   if (!toast.isActive(toastId)) {
+      toastId = toast.success(message, {
+         position: toast.POSITION.TOP_RIGHT,
+         hideProgressBar: true,
+         closeOnClick: true,
+         pauseOnHover: true,
+         autoClose: 4000,
+      });
+   }
 };
 
 // used to set localstorage item
 export const setLocalStorage = (key, value) => {
-  value = stringToBase64(JSON.stringify(value));
-  // const encodedData = encryptedData(value);
-  localStorage.setItem(key, value);
+   value = stringToBase64(JSON.stringify(value));
+   // const encodedData = encryptedData(value);
+   localStorage.setItem(key, value);
 };
 
 // used to get localstorage item
 export const getLocalStorage = (key) => {
-  try {
-    if (key) {
-      let data = localStorage.getItem(key);
-      if (data) {
-        // data = JSON.parse(decryptedData(data));
-        const data64 = base64toString(data);
-        data = JSON.parse(data64);
-        return data;
+   try {
+      if (key) {
+         let data = localStorage.getItem(key);
+         if (data) {
+            // data = JSON.parse(decryptedData(data));
+            const data64 = base64toString(data);
+            data = JSON.parse(data64);
+            return data;
+         }
       }
-    }
-    return null;
-  } catch (e) {
-    clearLocalStorage();
-    window.location.reload();
-  }
+      return null;
+   } catch (e) {
+      clearLocalStorage();
+      window.location.reload();
+   }
 };
 
 // used to remove localstorage item
 export const removeLocalStorage = (key) => {
-  localStorage.removeItem(key);
+   localStorage.removeItem(key);
 };
 
 // used to clear localstorage
 export const clearLocalStorage = () => {
-  localStorage.clear();
+   localStorage.clear();
 };
 
 export const generateRandomString = (strLength = 8) => {
-  let text = '';
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789=@#$%&=';
+   let text = "";
+   const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789=@#$%&=";
 
-  for (let i = 0; i < strLength; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
+   for (let i = 0; i < strLength; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+   }
 
-  return text;
+   return text;
 };
 
 // Use to generate UUID - Unique ID
 export const generateUUID = () => {
-  let d = new Date().getTime(); // Timestamp
-  let d2 = (performance && performance.now && performance.now() * 1000) || 0; // Time in microseconds since page-load or 0 if unsupported
+   let d = new Date().getTime(); // Timestamp
+   let d2 = (performance && performance.now && performance.now() * 1000) || 0; // Time in microseconds since page-load or 0 if unsupported
 
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    let r = Math.random() * 16; // random number between 0 and 16
-    if (d > 0) {
-      // Use timestamp until depleted
-      r = (d + r) % 16 | 0;
-      d = Math.floor(d / 16);
-    } else {
-      // Use microseconds since page-load if supported
-      r = (d2 + r) % 16 | 0;
-      d2 = Math.floor(d2 / 16);
-    }
-    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-  });
+   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      let r = Math.random() * 16; // random number between 0 and 16
+      if (d > 0) {
+         // Use timestamp until depleted
+         r = (d + r) % 16 | 0;
+         d = Math.floor(d / 16);
+      } else {
+         // Use microseconds since page-load if supported
+         r = (d2 + r) % 16 | 0;
+         d2 = Math.floor(d2 / 16);
+      }
+      return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+   });
 };
 
 export const capitalize = (s) => {
-  if (typeof s !== 'string') return '';
-  return s.charAt(0).toUpperCase() + s.slice(1);
+   if (typeof s !== "string") return "";
+   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
 /**
@@ -168,184 +168,225 @@ export const capitalize = (s) => {
  * @param {string} status
  */
 export function handleStatusElement(status) {
-  if (['COMPLETED', 'PUBLISHED', 'CONVERTED', 'APPROVED', 'Approved', 'VISITED', 'Yes, I’m interested', 'completed', 'Completed'].includes(status)) {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text={status}
-        className="tagSuccess defaultTag ml-2 "
-      />
-    );
-  } else if (['PENDING', 'Pending', 'ASSIGNED', 'UNDER REVIEW', 'Will decide later', 'Make an offer'].includes(status)) {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text={status}
-        className="tagAlert defaultTag ml-2 "
-      />
-    );
-  } else if (
-    ['CANCELLED', 'PROBLEM', 'NOT INTERESTED', 'ON HOLD', 'REJECTED', 'CLOSED', 'FAILED', 'NOT_ACCEPTED', 'DISCARDED', 'NOT VISITED', 'No, does not look interesting', 'Closed', 'Rejected'].includes(status)
-  ) {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text={status}
-        className="tagDangerous defaultTag ml-2"
-      />
-    );
-  } else if (status === 'IN_PROGRESS' || status === 'IN PROGRESS' || status === 'In progress') {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text="IN PROGRESS"
-        className="tagInfo defaultTag ml-2 labelFontSize 11"
-      />
-    );
-  } else if (status === 'NOT_INTERESTED') {
-    return (
-      <Text
-        fontWeight="mediumbold"
-        color="white"
-        text="NOT INTERESTED"
-        className="tagDangerous defaultTag ml-1 labelFontSize fs-11"
-      />
-    );
-  } else if (status === 'UNDER_REVIEW') {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text={status}
-        className="tagAlert defaultTag ml-2 "
-      />
-    );
-  } else if (status === 'KYC_COMPLETED') {
-    return (
-      <Text
-        fontWeight="mediumbold"
-        color="white"
-        text="KYC COMPLETED"
-        className="tagSuccess defaultTag ml-2 fs-11"
-      />
-    );
-  }
-  else if (status === 'INACTIVE') {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text={status}
-        className="tagAlert defaultTag ml-2 "
-      />
-    );
-  } else if (status === 'ACTIVE') {
-    return (
-      <Text
-        fontWeight="mediumbold"
-        color="white"
-        text="ACTIVE"
-        className="tagSuccess defaultTag ml-2 fs-11"
-      />
-    );
-  } else if (status === 'ON_HOLD') {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text="ON HOLD"
-        className="tagDangerous defaultTag ml-1 labelFontSize"
-      />
-    );
-  }
-  else if (['PENDING_APPROVAL'].includes(status)) {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text={status}
-        className="tagAlert defaultTag ml-2"
-      />
-    );
-  }
-  else if (status === 'Pending from Customer') {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text="Pending form Customer"
-        style={{ backgroundColor: '#FF6C1A' }}
-        className="tagAlert defaultTag ml-2 "
-      />
-    );
-  } else if (status === 'Hold') {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text="ON HOLD"
-        style={{ backgroundColor: '#800000' }}
-        className="tagAlert defaultTag ml-2 "
-      />
-    );
-  } else if (status === 'Expired') {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text="EXPIRED"
-        style={{ backgroundColor: '#808080' }}
-        className="tagAlert defaultTag ml-2 "
-      />
-    );
-  } else if (status === 'Rejected') {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text="REJECTED"
-        style={{ backgroundColor: '#F90000' }}
-        className="tagAlert defaultTag ml-2 "
-      />
-    );
-  } else if (status === 'FAILED TRAN') {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text="FAILED"
-        style={{ backgroundColor: 'purple' }}
-        className="tagAlert defaultTag ml-2 "
-      />
-    );
-  } else {
-    return (
-      <Text
-        size="xSmall"
-        fontWeight="mediumbold"
-        color="white"
-        text={status}
-        className="tagAlert defaultTag ml-2 "
-      />
-    );
-  }
+   if (
+      [
+         "COMPLETED",
+         "PUBLISHED",
+         "CONVERTED",
+         "APPROVED",
+         "Approved",
+         "VISITED",
+         "Yes, I’m interested",
+         "completed",
+         "Completed",
+      ].includes(status)
+   ) {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text={status}
+            className="tagSuccess defaultTag ml-2 "
+         />
+      );
+   } else if (
+      [
+         "PENDING",
+         "Pending",
+         "ASSIGNED",
+         "UNDER REVIEW",
+         "Will decide later",
+         "Make an offer",
+      ].includes(status)
+   ) {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text={status}
+            className="tagAlert defaultTag ml-2 "
+         />
+      );
+   } else if (
+      [
+         "CANCELLED",
+         "PROBLEM",
+         "NOT INTERESTED",
+         "ON HOLD",
+         "REJECTED",
+         "CLOSED",
+         "FAILED",
+         "NOT_ACCEPTED",
+         "DISCARDED",
+         "NOT VISITED",
+         "No, does not look interesting",
+         "Closed",
+         "Rejected",
+      ].includes(status)
+   ) {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text={status}
+            className="tagDangerous defaultTag ml-2"
+         />
+      );
+   } else if (status === "IN_PROGRESS" || status === "IN PROGRESS" || status === "In progress") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text="IN PROGRESS"
+            className="tagInfo defaultTag ml-2 labelFontSize 11"
+         />
+      );
+   } else if (status === "NOT_INTERESTED") {
+      return (
+         <Text
+            fontWeight="mediumbold"
+            color="white"
+            text="NOT INTERESTED"
+            className="tagDangerous defaultTag ml-1 labelFontSize fs-11"
+         />
+      );
+   } else if (status === "UNDER_REVIEW") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text={status}
+            className="tagAlert defaultTag ml-2 "
+         />
+      );
+   } else if (status === "KYC_COMPLETED") {
+      return (
+         <Text
+            fontWeight="mediumbold"
+            color="white"
+            text="KYC COMPLETED"
+            className="tagSuccess defaultTag ml-2 fs-11"
+         />
+      );
+   } else if (status === "INACTIVE") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text={status}
+            className="primaryDisable defaultTag ml-2 "
+         />
+      );
+   } else if (status === "ACTIVE") {
+      return (
+         <Text
+            fontWeight="mediumbold"
+            color="white"
+            text="ACTIVE"
+            className="tagSuccess defaultTag ml-2 fs-11"
+         />
+      );
+   } else if (status === "DRAFT") {
+      return (
+         <Text
+            fontWeight="mediumbold"
+            color="white"
+            text={status}
+            className="tagDraft defaultTag ml-2 fs-11"
+         />
+      );
+   } else if (status === "ON_HOLD") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text="ON HOLD"
+            className="tagDangerous defaultTag ml-1 labelFontSize"
+         />
+      );
+   } else if (["PENDING_APPROVAL"].includes(status)) {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text={status}
+            className="tagAlert defaultTag ml-2"
+         />
+      );
+   } else if (status === "Pending from Customer") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text="Pending form Customer"
+            style={{ backgroundColor: "#FF6C1A" }}
+            className="tagAlert defaultTag ml-2 "
+         />
+      );
+   } else if (status === "Hold") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text="ON HOLD"
+            style={{ backgroundColor: "#800000" }}
+            className="tagAlert defaultTag ml-2 "
+         />
+      );
+   } else if (status === "Expired") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text="EXPIRED"
+            style={{ backgroundColor: "#808080" }}
+            className="tagAlert defaultTag ml-2 "
+         />
+      );
+   } else if (status === "Rejected") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text="REJECTED"
+            style={{ backgroundColor: "#F90000" }}
+            className="tagAlert defaultTag ml-2 "
+         />
+      );
+   } else if (status === "FAILED TRAN") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text="FAILED"
+            style={{ backgroundColor: "purple" }}
+            className="tagAlert defaultTag ml-2 "
+         />
+      );
+   } else {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text={status}
+            className="tagAlert defaultTag ml-2 "
+         />
+      );
+   }
 }
 
 /**
@@ -356,20 +397,19 @@ export function handleStatusElement(status) {
  * @param {Component} children
  */
 export function ToolTip({ position, name, children, disable, ...rest }) {
-
-  return (
-    <span className="cursor-pointer">
-      <OverlayTrigger
-        placement={position}
-        delay={{ show: 250, hide: 400 }}
-        overlay={!disable ? <Tooltip id="button-tooltip">{name}</Tooltip> : <span></span>}
-        {...rest}>
-        {children}
-      </OverlayTrigger>
-    </span>
-  );
+   return (
+      <span className="cursor-pointer">
+         <OverlayTrigger
+            placement={position}
+            delay={{ show: 250, hide: 400 }}
+            overlay={!disable ? <Tooltip id="button-tooltip">{name}</Tooltip> : <span></span>}
+            {...rest}
+         >
+            {children}
+         </OverlayTrigger>
+      </span>
+   );
 }
-
 
 // export function showModalDataWrtPosition( position, rowData ) {
 //   switch(position) {
@@ -396,53 +436,73 @@ export function ToolTip({ position, name, children, disable, ...rest }) {
 // }
 
 export function showModalDataWrtPosition(position, rowData) {
-  if (position === "Sales Admin" || position === "Sales Executive") {
-    return <Link to={{
-      pathname: '/admin/sales/user-details',
-      state: { userData: rowData, module: 'SALES' },
-    }}>
-      <Image name="editIcon" src={actionIcon} />
-    </Link>
-  }
-  else if (position === "Transaction Admin" || position === "Transaction Executive") {
-    return <Link to={{
-      pathname: '/admin/user-management/user-details',///admin/transaction/user-detail
-      state: { userData: rowData, module: 'TRANSACTION' },
-    }}>
-      <Image name="editIcon" src={actionIcon} />
-    </Link>
-  }
-  else if (position === "Help Desk Executive" || position === "Help Desk Admin") {
-    return <Link to={{
-      pathname: '/admin/helpdesk/user-detail',
-      state: { userData: rowData, module: 'HELPDESK' },
-    }}>
-      <Image name="editIcon" src={actionIcon} />
-    </Link>
-  }
-  else if (position === "Installation Executive" || position === "Installation Admin") {
-    return <Link to={{
-      pathname: '/admin/execution/user-detail',
-      state: { userData: rowData, module: 'EXECUTION' },
-    }}>
-      <Image name="editIcon" src={actionIcon} />
-    </Link>
-  }
-  else if (position === "Installation Executive" || position === "Installation Admin") {
-    return <Link to={{
-      pathname: '/admin/execution/user-detail',
-      state: { userData: rowData, module: 'EXECUTION' },
-    }}>
-      <Image name="editIcon" src={actionIcon} />
-    </Link>
-  } else {
-    return <Link to={{
-      pathname: '/admin/user-management/user-details',
-      state: { userData: rowData, module: 'USER' },
-    }}>
-      <Image name="editIcon" src={actionIcon} />
-    </Link>
-  }
+   if (position === "Sales Admin" || position === "Sales Executive") {
+      return (
+         <Link
+            to={{
+               pathname: "/admin/sales/user-details",
+               state: { userData: rowData, module: "SALES" },
+            }}
+         >
+            <Image name="editIcon" src={actionIcon} />
+         </Link>
+      );
+   } else if (position === "Transaction Admin" || position === "Transaction Executive") {
+      return (
+         <Link
+            to={{
+               pathname: "/admin/user-management/user-details", ///admin/transaction/user-detail
+               state: { userData: rowData, module: "TRANSACTION" },
+            }}
+         >
+            <Image name="editIcon" src={actionIcon} />
+         </Link>
+      );
+   } else if (position === "Help Desk Executive" || position === "Help Desk Admin") {
+      return (
+         <Link
+            to={{
+               pathname: "/admin/helpdesk/user-detail",
+               state: { userData: rowData, module: "HELPDESK" },
+            }}
+         >
+            <Image name="editIcon" src={actionIcon} />
+         </Link>
+      );
+   } else if (position === "Installation Executive" || position === "Installation Admin") {
+      return (
+         <Link
+            to={{
+               pathname: "/admin/execution/user-detail",
+               state: { userData: rowData, module: "EXECUTION" },
+            }}
+         >
+            <Image name="editIcon" src={actionIcon} />
+         </Link>
+      );
+   } else if (position === "Installation Executive" || position === "Installation Admin") {
+      return (
+         <Link
+            to={{
+               pathname: "/admin/execution/user-detail",
+               state: { userData: rowData, module: "EXECUTION" },
+            }}
+         >
+            <Image name="editIcon" src={actionIcon} />
+         </Link>
+      );
+   } else {
+      return (
+         <Link
+            to={{
+               pathname: "/admin/user-management/user-details",
+               state: { userData: rowData, module: "USER" },
+            }}
+         >
+            <Image name="editIcon" src={actionIcon} />
+         </Link>
+      );
+   }
 }
 
 /**
@@ -465,23 +525,21 @@ export function showModalDataWrtPosition(position, rowData) {
 // }
 
 export function setPrice(price) {
-  if (price !== null) {
-    let x = price;
-    let parts = parseFloat(x).toFixed(2).toString().split('.'); // Convert to a float with 2 decimal places and split into parts
-    let integerPart = parts[0];
-    let decimalPart = parts[1];
+   if (price !== null) {
+      let x = price;
+      let parts = parseFloat(x).toFixed(2).toString().split("."); // Convert to a float with 2 decimal places and split into parts
+      let integerPart = parts[0];
+      let decimalPart = parts[1];
 
-    let lastThree = integerPart.substring(integerPart.length - 3);
-    const otherNumbers = integerPart.substring(0, integerPart.length - 3);
-    if (otherNumbers !== '') lastThree = ',' + lastThree;
-    const res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + lastThree;
-    return '₹' + res + (decimalPart !== '00' ? '.' + decimalPart : '');
-  } else {
-    return '-';
-  }
+      let lastThree = integerPart.substring(integerPart.length - 3);
+      const otherNumbers = integerPart.substring(0, integerPart.length - 3);
+      if (otherNumbers !== "") lastThree = "," + lastThree;
+      const res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+      return "₹" + res + (decimalPart !== "00" ? "." + decimalPart : "");
+   } else {
+      return "-";
+   }
 }
-
-
 
 /**
  * Name: showLimitedChar
@@ -490,17 +548,17 @@ export function setPrice(price) {
  */
 
 export function showLimitedChar(val) {
-  if (val) {
-    const len = val.length;
-    if (len >= 500) {
-      val = val.substring(0, 500);
-      return val;
-    } else {
-      return val;
-    }
-  } else {
-    return '';
-  }
+   if (val) {
+      const len = val.length;
+      if (len >= 500) {
+         val = val.substring(0, 500);
+         return val;
+      } else {
+         return val;
+      }
+   } else {
+      return "";
+   }
 }
 
 /**
@@ -508,14 +566,13 @@ export function showLimitedChar(val) {
  * Desc: Return Date { Jan, 1 2021 }
  * @param {date} _date_
  */
-export function formateDate(_date_, _formate_ = 'll') {
-
-  try {
-    if (_date_) return moment(_date_).format(_formate_);
-    else return '-';
-  } catch (e) {
-    return '';
-  }
+export function formateDate(_date_, _formate_ = "ll") {
+   try {
+      if (_date_) return moment(_date_).format(_formate_);
+      else return "-";
+   } catch (e) {
+      return "";
+   }
 }
 
 /**
@@ -525,13 +582,13 @@ export function formateDate(_date_, _formate_ = 'll') {
  * @param {string} minutes
  */
 export function getTimeInPeriod(hours, minutes) {
-  if (hours && minutes) {
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    return hours + ':' + minutes + ' ' + ampm;
-  } else return '';
+   if (hours && minutes) {
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      return hours + ":" + minutes + " " + ampm;
+   } else return "";
 }
 
 /**
@@ -541,22 +598,21 @@ export function getTimeInPeriod(hours, minutes) {
  */
 
 export function formateDateTime(_datetime_) {
-  try {
-    if (_datetime_) {
-      let dateTime = moment(_datetime_).format('lll');
+   try {
+      if (_datetime_) {
+         let dateTime = moment(_datetime_).format("lll");
 
-      if (dateTime !== 'Invalid date') return dateTime;
-      else {
-        dateTime = _datetime_.replace(' IST', '');
-        dateTime = moment(dateTime, 'ddd MMM DD HH:mm:ss YYYY');
-        return moment(dateTime).format('lll');
-      }
-    } else return '';
-  } catch (e) {
-    return '';
-  }
+         if (dateTime !== "Invalid date") return dateTime;
+         else {
+            dateTime = _datetime_.replace(" IST", "");
+            dateTime = moment(dateTime, "ddd MMM DD HH:mm:ss YYYY");
+            return moment(dateTime).format("lll");
+         }
+      } else return "";
+   } catch (e) {
+      return "";
+   }
 }
-
 
 /**
  * Name: dateWithFormate
@@ -564,13 +620,13 @@ export function formateDateTime(_datetime_) {
  * @param {date} _date_
  * @param {string} _formate_
  */
-export function dateWithFormate(_date_, _formate_ = 'YYYY-MM-DD') {
-  try {
-    if (_date_) return moment(_date_).format(_formate_);
-    else return '';
-  } catch (e) {
-    return '';
-  }
+export function dateWithFormate(_date_, _formate_ = "YYYY-MM-DD") {
+   try {
+      if (_date_) return moment(_date_).format(_formate_);
+      else return "";
+   } catch (e) {
+      return "";
+   }
 }
 
 /**
@@ -579,16 +635,16 @@ export function dateWithFormate(_date_, _formate_ = 'YYYY-MM-DD') {
  * @param {date} _date_
  */
 export function getCurrentWeek(_date_ = new Date()) {
-  try {
-    if (_date_) {
-      const currentDate = moment(_date_);
-      const firstday = moment(currentDate).startOf('week');
-      const lastday = moment(currentDate).endOf('week');
-      return { firstday, lastday };
-    }
-  } catch (e) {
-    return '';
-  }
+   try {
+      if (_date_) {
+         const currentDate = moment(_date_);
+         const firstday = moment(currentDate).startOf("week");
+         const lastday = moment(currentDate).endOf("week");
+         return { firstday, lastday };
+      }
+   } catch (e) {
+      return "";
+   }
 }
 
 /**
@@ -599,37 +655,38 @@ export function getCurrentWeek(_date_ = new Date()) {
  * @param {boolean} isEnd
  */
 export function createDate(date, time, isEnd) {
-  try {
-    date = formateDate(date);
-    time = moment(time, 'h:mm A');
-    if (isEnd) {
-      time = moment(time, 'h:mm A').add(2, 'hour');
-      return moment(`${date} ${time.format('HH:mm')}`).format();
-    } else {
-      return moment(`${date} ${time.format('HH:mm')}`).format();
-    }
-  } catch (e) {
-    return '';
-  }
+   try {
+      date = formateDate(date);
+      time = moment(time, "h:mm A");
+      if (isEnd) {
+         time = moment(time, "h:mm A").add(2, "hour");
+         return moment(`${date} ${time.format("HH:mm")}`).format();
+      } else {
+         return moment(`${date} ${time.format("HH:mm")}`).format();
+      }
+   } catch (e) {
+      return "";
+   }
 }
 
 // eslint-disable-next-line no-extend-native
 // Used to capatilize the String
 String.prototype.capitalize = function () {
-  return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
+   return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
 };
 
 // eslint-disable-next-line no-extend-native
 // Used to capatilize the Words in String
 String.prototype.capitalizeWord = function () {
-  return this.replace(/\w\S*/g, function (txt) {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-  });
+   return this.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+   });
 };
 
 export function getLocationStr(locationArr) {
-  const locations = locationArr && locationArr.length ? locationArr.map(val => val.location) : [];
-  return locations.toString().split(',').join(' , ');
+   const locations =
+      locationArr && locationArr.length ? locationArr.map((val) => val.location) : [];
+   return locations.toString().split(",").join(" , ");
 }
 
 /**
@@ -640,27 +697,27 @@ export function getLocationStr(locationArr) {
  *
  */
 export function fileExtension(_urlStr_) {
-  try {
-    // const doctypefileExtnsnsArr = [
-    //   'doc',
-    //   'docx',
-    //   'odt',
-    //   'pdf',
-    //   'xls',
-    //   'xlsx',
-    //   'ods',
-    //   'ppt',
-    //   'pptx',
-    //   'txt',
-    // ];
-    if (_urlStr_) {
-      const f_extnsn =
-        ('img file type:', /[.]/.exec(_urlStr_) ? /[^.]+$/.exec(_urlStr_) : undefined);
-      return f_extnsn;
-    } else return '';
-  } catch (e) {
-    return '';
-  }
+   try {
+      // const doctypefileExtnsnsArr = [
+      //   'doc',
+      //   'docx',
+      //   'odt',
+      //   'pdf',
+      //   'xls',
+      //   'xlsx',
+      //   'ods',
+      //   'ppt',
+      //   'pptx',
+      //   'txt',
+      // ];
+      if (_urlStr_) {
+         const f_extnsn =
+            ("img file type:", /[.]/.exec(_urlStr_) ? /[^.]+$/.exec(_urlStr_) : undefined);
+         return f_extnsn;
+      } else return "";
+   } catch (e) {
+      return "";
+   }
 }
 
 /**
@@ -672,8 +729,8 @@ export function fileExtension(_urlStr_) {
  *
  */
 export function rotateTableIcon(id) {
-  const element = document.getElementById(id);
-  if (element) element.classList.toggle('done');
+   const element = document.getElementById(id);
+   if (element) element.classList.toggle("done");
 }
 
 /**
@@ -687,115 +744,113 @@ export function rotateTableIcon(id) {
  *
  */
 export const getLocationByGeoCode = async (options) => {
-  if (google) {
-    const geocoder = new google.maps.Geocoder();
-    const { results } = await geocoder.geocode(options);
-    if (results && results[0]) {
-      const lat = await results[0].geometry.location.lat();
-      const lng = await results[0].geometry.location.lng();
-      const location = results[0];
+   if (google) {
+      const geocoder = new google.maps.Geocoder();
+      const { results } = await geocoder.geocode(options);
+      if (results && results[0]) {
+         const lat = await results[0].geometry.location.lat();
+         const lng = await results[0].geometry.location.lng();
+         const location = results[0];
 
-      return { lat, lng, location, status: true };
-    }
+         return { lat, lng, location, status: true };
+      }
 
-    // return geocoder.geocode(
-    //   options,
-    //   function(responses, status) {
-    //     if (status == 'OK') {
-    //       if (responses[0]) {
-    //         const lat      = responses[0].geometry.location.lat();
-    //         const lng      = responses[0].geometry.location.lng();
-    //         const location = responses[0];
-    //         return { lat, lng, location}
-    //       }
-    //     }
-    // });
-  }
+      // return geocoder.geocode(
+      //   options,
+      //   function(responses, status) {
+      //     if (status == 'OK') {
+      //       if (responses[0]) {
+      //         const lat      = responses[0].geometry.location.lat();
+      //         const lng      = responses[0].geometry.location.lng();
+      //         const location = responses[0];
+      //         return { lat, lng, location}
+      //       }
+      //     }
+      // });
+   }
 
-  return { status: false };
+   return { status: false };
 };
 
 export const getLocationByCityName = async (cityName) => {
-  if (google) {
-    const geocoder = new google.maps.Geocoder();
-    const { results } = await geocoder.geocode({ address: cityName });
-    if (results && results[0]) {
-      const lat = await results[0].geometry.location.lat();
-      const lng = await results[0].geometry.location.lng();
-      const location = results[0];
-      return { lat, lng, location, status: true };
-    }
-  }
-  return { status: false };
+   if (google) {
+      const geocoder = new google.maps.Geocoder();
+      const { results } = await geocoder.geocode({ address: cityName });
+      if (results && results[0]) {
+         const lat = await results[0].geometry.location.lat();
+         const lng = await results[0].geometry.location.lng();
+         const location = results[0];
+         return { lat, lng, location, status: true };
+      }
+   }
+   return { status: false };
 };
 
 export const getReverseGeocodingDataai = async (lat, lng) => {
-  const latlng = new google.maps.LatLng(lat, lng);
-  const geocoder = new google.maps.Geocoder();
+   const latlng = new google.maps.LatLng(lat, lng);
+   const geocoder = new google.maps.Geocoder();
 
-  // Convert the callback function to a promise
-  const geocodePromise = (latlng) => {
-    return new Promise((resolve, reject) => {
-      geocoder.geocode({ 'latLng': latlng }, (results, status) => {
-        if (status !== google.maps.GeocoderStatus.OK) {
-          reject(status);
-        }
-        resolve(results);
+   // Convert the callback function to a promise
+   const geocodePromise = (latlng) => {
+      return new Promise((resolve, reject) => {
+         geocoder.geocode({ latLng: latlng }, (results, status) => {
+            if (status !== google.maps.GeocoderStatus.OK) {
+               reject(status);
+            }
+            resolve(results);
+         });
       });
-    });
-  };
+   };
 
-  try {
-    const results = await geocodePromise(latlng);
-    let zipcode = '';
+   try {
+      const results = await geocodePromise(latlng);
+      let zipcode = "";
 
-    for (let i = 0; i < results.length; i++) {
-      for (let j = 0; j < results[i]?.address_components?.length; j++) {
-        if (results[i]?.address_components[j]?.types[0] === 'postal_code') {
-          zipcode = results[i]?.address_components[j]?.long_name;
-          break;
-        }
+      for (let i = 0; i < results.length; i++) {
+         for (let j = 0; j < results[i]?.address_components?.length; j++) {
+            if (results[i]?.address_components[j]?.types[0] === "postal_code") {
+               zipcode = results[i]?.address_components[j]?.long_name;
+               break;
+            }
+         }
+         if (zipcode.length) break;
       }
-      if (zipcode.length) break;
-    }
 
-    return zipcode;
-  } catch (error) {
-    console.log('Error getting reverse geocoding data:', error);
-    return '';
-  }
+      return zipcode;
+   } catch (error) {
+      console.log("Error getting reverse geocoding data:", error);
+      return "";
+   }
 };
 
-
-
 export const getReverseGeocodingData = async (lat, lng) => {
-  // export const getReverseGeocodingData = (latlng) => {
-  let zipcode = ''
-  var latlng = new google.maps.LatLng(lat, lng);
-  // This is making the Geocode request
-  var geocoder = new google.maps.Geocoder();
-  await geocoder.geocode({ 'latLng': latlng }, (results, status) => {
-    if (status !== google.maps.GeocoderStatus.OK) {
-      // alert(status);
-      console.log(status, "status from getReverseGeocodingData")
-    }
-    // This is checking to see if the Geoeode Status is OK before proceeding
-    if (status === google.maps.GeocoderStatus.OK) {
-      console.log(results);
-      for (let i = 0; i < results.length; i++) {
-        for (let j = 0; j < results[i]?.address_components?.length; j++) {
-          if (results[i]?.address_components[j]?.types[0] === 'postal_code') {
-            console.log("postal code:", results[i]?.address_components[j]?.long_name);
-            zipcode = results[i]?.address_components[j]?.long_name
-          }
-          if (zipcode.length) break;
-        }
-        if (zipcode.length) break;
+   // export const getReverseGeocodingData = (latlng) => {
+   let zipcode = "";
+   var latlng = new google.maps.LatLng(lat, lng);
+   // This is making the Geocode request
+   var geocoder = new google.maps.Geocoder();
+   await geocoder.geocode({ latLng: latlng }, (results, status) => {
+      if (status !== google.maps.GeocoderStatus.OK) {
+         // alert(status);
+         console.log(status, "status from getReverseGeocodingData");
       }
-    }
-  });
-  return zipcode;
-}
+      // This is checking to see if the Geoeode Status is OK before proceeding
+      if (status === google.maps.GeocoderStatus.OK) {
+         console.log(results);
+         for (let i = 0; i < results.length; i++) {
+            for (let j = 0; j < results[i]?.address_components?.length; j++) {
+               if (results[i]?.address_components[j]?.types[0] === "postal_code") {
+                  console.log("postal code:", results[i]?.address_components[j]?.long_name);
+                  zipcode = results[i]?.address_components[j]?.long_name;
+               }
+               if (zipcode.length) break;
+            }
+            if (zipcode.length) break;
+         }
+      }
+   });
+   return zipcode;
+};
 
 /**
  *
@@ -806,27 +861,27 @@ export const getReverseGeocodingData = async (lat, lng) => {
  * @param {string} type (optional)
  *
  */
-export const getPredictionByName = async (name, type = '(cities)') => {
-  if (google) {
-    const options = { input: name, types: [type], componentRestrictions: { country: 'IN' } };
-    const service = new google.maps.places.AutocompleteService();
-    const { predictions } = await service.getPlacePredictions(options);
+export const getPredictionByName = async (name, type = "(cities)") => {
+   if (google) {
+      const options = { input: name, types: [type], componentRestrictions: { country: "IN" } };
+      const service = new google.maps.places.AutocompleteService();
+      const { predictions } = await service.getPlacePredictions(options);
 
-    if (predictions.length) {
-      const result = await getLocationByGeoCode({ placeId: predictions[0].place_id });
+      if (predictions.length) {
+         const result = await getLocationByGeoCode({ placeId: predictions[0].place_id });
 
-      return await result;
-    }
+         return await result;
+      }
 
-    // return service.getPlacePredictions(options, async function (predictions, status) {
-    //     if(status=='OK'){
-    //       let result = await getLocationByGeoCode({placeId:predictions[0].place_id});
-    //       return result;
-    //     }
-    // });
-  }
+      // return service.getPlacePredictions(options, async function (predictions, status) {
+      //     if(status=='OK'){
+      //       let result = await getLocationByGeoCode({placeId:predictions[0].place_id});
+      //       return result;
+      //     }
+      // });
+   }
 
-  return { status: false };
+   return { status: false };
 };
 
 /**
@@ -840,59 +895,55 @@ export const getPredictionByName = async (name, type = '(cities)') => {
  */
 
 export function showHideEditIcon(loginuserRole, position) {
-  if (loginuserRole === "SUPER ADMIN") {
-    return true
-  }
-  if (loginuserRole === "ADMIN") {
-    return true
-  }
-  if (loginuserRole === "HELP DESK ADMIN" && position === "Help Desk Executive") {
-    return true
-  }
-  if (loginuserRole === "TRANSACTION ADMIN" && position === "TRANSACTION EXECUTIVE") {
-    return true
-  }
-  if (loginuserRole === "FINANCE ADMIN" && position === "Finance Executive") {
-    return true
-  }
-  if (loginuserRole === "SALES ADMIN" && position === "Sales Executive") {
-    return true
-  }
-  if (loginuserRole === "INSTALLATION ADMIN" && position === "Installation Executive") {
-    return true
-  }
-  else {
-    return false
-  }
-  // if(loginuserRole)//HELP DESK EXECUTIVE
+   if (loginuserRole === "SUPER ADMIN") {
+      return true;
+   }
+   if (loginuserRole === "ADMIN") {
+      return true;
+   }
+   if (loginuserRole === "HELP DESK ADMIN" && position === "Help Desk Executive") {
+      return true;
+   }
+   if (loginuserRole === "TRANSACTION ADMIN" && position === "TRANSACTION EXECUTIVE") {
+      return true;
+   }
+   if (loginuserRole === "FINANCE ADMIN" && position === "Finance Executive") {
+      return true;
+   }
+   if (loginuserRole === "SALES ADMIN" && position === "Sales Executive") {
+      return true;
+   }
+   if (loginuserRole === "INSTALLATION ADMIN" && position === "Installation Executive") {
+      return true;
+   } else {
+      return false;
+   }
+   // if(loginuserRole)//HELP DESK EXECUTIVE
 }
-
 
 export function sensorBatteryStatus(loginuserRole, position) {
-  if (loginuserRole === "SUPER ADMIN") {
-    return true
-  }
-  if (loginuserRole === "HELP DESK ADMIN" && position === "Help Desk Executive") {
-    return true
-  }
-  if (loginuserRole === "TRANSACTION ADMIN" && position === "TRANSACTION EXECUTIVE") {
-    return true
-  }
-  if (loginuserRole === "FINANCE ADMIN" && position === "Finance Executive") {
-    return true
-  }
-  if (loginuserRole === "SALES ADMIN" && position === "Sales Executive") {
-    return true
-  }
-  if (loginuserRole === "INSTALLATION ADMIN" && position === "Installation Executive") {
-    return true
-  }
-  else {
-    return false
-  }
-  // if(loginuserRole)//HELP DESK EXECUTIVE
+   if (loginuserRole === "SUPER ADMIN") {
+      return true;
+   }
+   if (loginuserRole === "HELP DESK ADMIN" && position === "Help Desk Executive") {
+      return true;
+   }
+   if (loginuserRole === "TRANSACTION ADMIN" && position === "TRANSACTION EXECUTIVE") {
+      return true;
+   }
+   if (loginuserRole === "FINANCE ADMIN" && position === "Finance Executive") {
+      return true;
+   }
+   if (loginuserRole === "SALES ADMIN" && position === "Sales Executive") {
+      return true;
+   }
+   if (loginuserRole === "INSTALLATION ADMIN" && position === "Installation Executive") {
+      return true;
+   } else {
+      return false;
+   }
+   // if(loginuserRole)//HELP DESK EXECUTIVE
 }
-
 
 /* -------------------------------DATE FORMATW--------------------------------------*/
 
