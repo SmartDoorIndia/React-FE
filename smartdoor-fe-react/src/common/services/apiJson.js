@@ -3220,6 +3220,28 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: false,
    },
+   deleteBuilderProjectById: {
+      url: "/consumer/builder/deleteBuilderProjectById/:builderProjectId/:userId/",
+      method: "DELETE",
+      data: {},
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
+   deleteBuilderProjectSubPostById: {
+      url: "/consumer/builder/deleteBuilderProjectSubPostById/:builderProjectSubPostId/:userId/",
+      method: "DELETE",
+      data: {},
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
 };
 
 

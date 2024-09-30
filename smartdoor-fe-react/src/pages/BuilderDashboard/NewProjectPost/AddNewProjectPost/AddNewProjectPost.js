@@ -15,7 +15,8 @@ import { PiPlayCircleLight } from "react-icons/pi";
 import {
    getBuilderProjectById,
    createBuilderProject,
-   approveBuilderProject
+   approveBuilderProject,
+   deleteBuilderProjectById
 } from "../../../../common/redux/actions";
 import { showSuccessToast, showErrorToast } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import { MenuItem, TextField } from "@mui/material";
@@ -280,6 +281,19 @@ const AddNewProjectPost = () => {
       } finally {
          setLoading(false);
       }
+   }
+
+   const deleteBuilderProject = async (e) => {
+      e.preventDefault();
+
+      try {
+         const response = await deleteBuilderProjectById({builderProjectId: builderProjectId, userId: userId});
+         } catch (error) {
+         showErrorToast("Error deleting builder project");
+         console.log("Error deleting builder project: ", error);
+         } finally {
+            setLoading(false);
+         }
    }
 
    return (

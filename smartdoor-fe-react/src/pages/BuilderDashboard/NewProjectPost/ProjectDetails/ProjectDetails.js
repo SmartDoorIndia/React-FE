@@ -18,7 +18,8 @@ import { PiPlayCircleLight } from "react-icons/pi";
 import addIcon from "../../../../assets/svg/add.svg";
 import {
    getBuilderProjectSubPostById,
-   addBuilderProjectSubPost
+   addBuilderProjectSubPost,
+   deleteBuilderProjectSubPostById
 } from "../../../../common/redux/actions";
 // import Buttons from "../../../shared/Buttons/Buttons";
 const ProjectDetails = () => {
@@ -279,27 +280,35 @@ const ProjectDetails = () => {
    const max = 200;
 
    useEffect(async () => {
-      await getBuilderProjectSubPostById({builderProjectSubPostId: builderProjectSubPostId, userId: userId})
-      .then((response) => {
-         if (response?.data) {
-            const { resourceData, error: responseError } = response.data;
-            if (resourceData) {
-               // Ensure no null values in resourceData
-               // const sanitizedData = Object.fromEntries(
-               //    Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
-               // );
-               console.log(resourceData);
-               setData(resourceData);
-            }
-            if (responseError) setError(responseError);
+      try {
+         const response = await deleteBuilderProjectSubPostById({builderProjectSubPostId: builderProjectSubPostId, userId: userId});
+         } catch (error) {
+         showErrorToast("Error deleting builder project sub post");
+         console.log("Error deleting builder project sub post: ", error);
+         } finally {
+            // setLoading(false);
          }
-         // setLoading(false);
-      })
-      .catch((error) => {
-         // setLoading(false);
-         setError(error);
-         console.log("Error fetching builder data:", error);
-      });
+      // await getBuilderProjectSubPostById({builderProjectSubPostId: builderProjectSubPostId, userId: userId})
+      // .then((response) => {
+      //    if (response?.data) {
+      //       const { resourceData, error: responseError } = response.data;
+      //       if (resourceData) {
+      //          // Ensure no null values in resourceData
+      //          // const sanitizedData = Object.fromEntries(
+      //          //    Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
+      //          // );
+      //          console.log(resourceData);
+      //          setData(resourceData);
+      //       }
+      //       if (responseError) setError(responseError);
+      //    }
+      //    // setLoading(false);
+      // })
+      // .catch((error) => {
+      //    // setLoading(false);
+      //    setError(error);
+      //    console.log("Error fetching builder data:", error);
+      // });
    }, [userId, builderProjectSubPostId])
 
    const handleSubmit =async () => {
@@ -308,6 +317,19 @@ const ProjectDetails = () => {
       } catch (error) {
          console.log("Error submitting builder profile:", error);
       }
+   }
+
+   const deleteBuilderProjectSubPost = async (e) => {
+      e.preventDefault();
+
+      try {
+         const response = await deleteBuilderProjectSubPostById({builderProjectSubPostId: builderProjectSubPostId, userId: userId});
+         } catch (error) {
+         showErrorToast("Error deleting builder project sub post");
+         console.log("Error deleting builder project sub post: ", error);
+         } finally {
+            // setLoading(false);
+         }
    }
 
    const handlePriceRangeChange = (values) => {
