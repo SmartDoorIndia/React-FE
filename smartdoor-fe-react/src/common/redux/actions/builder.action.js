@@ -64,4 +64,46 @@ export const getAdminBuilderProjectDetailById = async (data) => {
 
 }
 
+export const getBuilderProjects = async (data) => {
+  const response = await mainApiService('getBuilderProjects', data);
 
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}
+
+export const getBuilderProjectStats = async (data) => {
+  const response = await mainApiService('getBuilderProjectStats', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}
+
+export const getBuilderProjectSubPosts = async (data) => {
+  const response = await mainApiService('getBuilderProjectSubPosts', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}
+
+export const getBuilderProjectById = async (data) => {
+  const response = await mainApiService('getBuilderProjectById', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}

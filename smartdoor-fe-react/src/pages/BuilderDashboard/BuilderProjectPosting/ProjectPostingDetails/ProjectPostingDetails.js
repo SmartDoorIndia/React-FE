@@ -1,4 +1,6 @@
 /** @format */
+// Line 90 has the API integration
+
 import React, { useEffect, memo } from "react";
 
 import { Col, Row, Button, Container, Form, Image } from "react-bootstrap";
@@ -31,6 +33,8 @@ import {
    getBrokerListing,
    getBrokerDetails,
    giftCoinsToConsumer,
+   getBuilderProjectSubPosts,
+   getBuilderProjectById
 } from "../../../../common/redux/actions";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import { DateRangePicker } from "rsuite";
@@ -75,6 +79,32 @@ const ProjectPostingDetails = (props) => {
    const [showModal, setShowModal] = useState(false);
    const [newCoinValue, setNewCoinValue] = useState(null);
    const [currentBrokerId, setCurrentBrokerId] = useState(null);
+   const [builderProjectSubPosts, setBuilderProjectSubPosts] = useState(null);
+   const [projectSubPostsFilter, setprojectSubPostsFilter] = useState({
+      builderProjectId: 11,
+      searchString: "4",
+      userId: 398,
+      records: 10,
+      pageNumber: 1
+   });
+
+   const [builderProjectId, setBuilderProjectId] = useState(11);
+   const [userId, setUserId] = useState(398);
+   const [builderProjectDetails, setBuilderProjectDetails] = useState(null);
+
+   useEffect(() => {
+      getBuilderProjectSubPosts(projectSubPostsFilter)
+      .then((response)=>{
+         setBuilderProjectSubPosts(response.data.resourceData)
+         console.log(response.data.resourceData);
+      })
+
+      getBuilderProjectById({builderProjectId: builderProjectId, userId: userId})
+      .then((response)=>{
+         setBuilderProjectDetails(response.data.resourceData)
+         console.log(response.data.resourceData);
+      })
+   }, [projectSubPostsFilter])
 
    useEffect(() => {
       console.log(data);
@@ -590,6 +620,8 @@ const mapStateToProps = ({ allPlanDataBroker }) => ({
 const actions = {
    getBrokerListing,
    getBrokerDetails,
+   getBuilderProjectSubPosts,
+   getBuilderProjectById
 };
 const withConnect = connect(mapStateToProps, actions);
 
