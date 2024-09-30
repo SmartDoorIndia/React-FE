@@ -64,7 +64,7 @@ const ProjectPostingDetails = (props) => {
       pageNumber: 1,
    });
 
-   const [builderProjectId, setBuilderProjectId] = useState(13);
+   const [builderProjectId, setBuilderProjectId] = useState(11);
    const [userId, setUserId] = useState(398);
    const [builderProjectDetails, setBuilderProjectDetails] = useState(null);
 
@@ -268,7 +268,42 @@ const ProjectPostingDetails = (props) => {
       //      ),
       //   },
    ];
+   const ExpandedRowComponent = ({ data }) => {
+      // Check if data exists before mapping
+      if (!data || !data.builderProjectSubPostPropertyResponseList) {
+         return <p>No additional details available</p>;
+      }
 
+      return (
+         <div style={{ padding: "10px" }}>
+            {/* <h5>Property Details</h5> */}
+            <table className="table">
+               {/* <thead>
+                  <tr>
+                     <th>Property ID</th>
+                     <th>Number of Rooms</th>
+                     <th>Property Type</th>
+                     <th>Sub Type</th>
+                     <th>Total Units</th>
+                  </tr>
+               </thead> */}
+               <tbody>
+                  {data.builderProjectSubPostPropertyResponseList.map((property, index) => (
+                     <tr key={index}>
+                        <td>
+                           {property.numberOfRooms},{property.propertyRoomCompositionType},
+                           {property.propertySubType}
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td>{property.totalProjectUnits}</td>
+                     </tr>
+                  ))}
+               </tbody>
+            </table>
+         </div>
+      );
+   };
    return (
       <>
          <Container
@@ -516,18 +551,8 @@ const ProjectPostingDetails = (props) => {
                   paginationPerPage={rowsPerPage}
                   paginationRowsPerPageOptions={[8, 16, 24, 32]}
                   onChangePage={handlePageChange}
-                  expandableRows // Enable expandable rows
-                  expandableRowComponent={({ data }) => (
-                     <div style={{ padding: "10px" }}>
-                        <p>Additional Details:</p>
-                        <p>
-                           <strong>Details:</strong> {data.additionalDetails}
-                        </p>
-                        {/* You can add more fields here from your data */}
-                     </div>
-                  )}
-                  onRowExpand={handleRowExpand} // Handle row expand
-                  onRowExpanded={expandedRow}
+                  expandableRows={true}
+                  expandableRowsComponent={ExpandedRowComponent}
                   onChangeRowsPerPage={handleRowsPerPageChange}
                   subHeaderComponent={subHeaderComponentMemo}
                   persistTableHead="true"
