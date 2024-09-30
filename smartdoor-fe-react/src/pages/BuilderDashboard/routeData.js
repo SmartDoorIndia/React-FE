@@ -22,6 +22,9 @@ const ProjectDetails = React.lazy(() => import("./NewProjectPost/ProjectDetails/
 const ProjectPostingDetails = React.lazy(() =>
    import("./BuilderProjectPosting/ProjectPostingDetails/ProjectPostingDetails")
 );
+const BuilderList = React.lazy(() =>
+   import("./BuilderList/BuilderList")
+);
 
 // Route data for builder project
 const routeData = [
@@ -32,6 +35,14 @@ const routeData = [
       excat: true,
       module: "BUILDER",
       component: BuilderProjectView,
+   },
+   {
+      path: "/builder/builderList",
+      name: "Builder List",
+      bradcrumb: ["Project Posting", "Add New Post"],
+      excat: true,
+      module: "BUILDER",
+      component: BuilderList,
    },
    {
       path: "/builder/detail",

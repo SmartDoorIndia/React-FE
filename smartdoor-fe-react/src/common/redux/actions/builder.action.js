@@ -195,3 +195,25 @@ export const deleteBuilderProjectSubPostById = async (data) => {
   return response.data.resourceData;
   
 }
+
+export const getBuilderList = async (data) => {
+  const response = await mainApiService('getBuilderList', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}
+
+export const getBuilderStats = async (data) => {
+  const response = await mainApiService('getBuilderStats', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}

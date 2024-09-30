@@ -2464,3 +2464,13 @@ export const deleteBuilderProjectSubPostById = async (data) => {
    const response = await mainApiService("deleteBuilderProjectSubPostById", data);
    return response;
 };
+
+export const getBuilderList = async (data) => {
+   const response = await mainApiService("getBuilderList", data);
+   return response;
+};
+
+export const getBuilderStats = async (data) => {
+   const response = await mainApiService("getBuilderStats", data);
+   return response;
+};
