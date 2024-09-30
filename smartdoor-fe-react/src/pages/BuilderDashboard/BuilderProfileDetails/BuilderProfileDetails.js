@@ -1,12 +1,12 @@
 /** @format */
-// API integration on line 66 and 123
+// API integration on line 66, 123 and 137
 import React, { useCallback, useEffect, useState } from "react";
 import "./BuilderProfileDetails.scss";
 import Text from "../../../shared/Text/Text";
 import { TiCameraOutline } from "react-icons/ti";
 import { Row, Col, Form, Button } from "react-bootstrap"; // Ensure you have react-bootstrap installed
 import { useUserContext } from "../../../common/helpers/Auth";
-import { getBuilderById, createBuilderProfileDetail } from "../../../common/redux/actions"; // Ensure correct imports
+import { getBuilderById, createBuilderProfileDetail, approveBuilderProfile } from "../../../common/redux/actions"; // Ensure correct imports
 import { showSuccessToast, showErrorToast } from "../../../common/helpers/Utils"; // Utility for displaying toast messages
 import { CONSTANTS } from "../../../common/helpers/Constants";
 
@@ -133,6 +133,20 @@ const BuilderProfileDetails = () => {
          setLoading(false);
       }
    };
+
+   const approveBuilderProfile = async () => {
+      e.preventDefault();
+      setLoading(true);
+      
+      try {
+         const response = await approveBuilderProfile({builderId: builderId, userId: userId});
+      } catch (error) {
+         showErrorToast("Error approving profile. Please try again");
+         console.log("Error submitting builder profile:", error);
+      } finally {
+         setLoading(false);
+      }
+   }
 
    // if (loading) return <div>Loading...</div>; // Show loading indicator
    if (error) return <div>Error: {error.message || "Failed to load builder details"}</div>; // Show error message
