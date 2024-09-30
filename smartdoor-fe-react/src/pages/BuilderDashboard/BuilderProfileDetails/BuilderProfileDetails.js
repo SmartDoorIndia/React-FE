@@ -6,7 +6,11 @@ import Text from "../../../shared/Text/Text";
 import { TiCameraOutline } from "react-icons/ti";
 import { Row, Col, Form, Button } from "react-bootstrap"; // Ensure you have react-bootstrap installed
 import { useUserContext } from "../../../common/helpers/Auth";
-import { getBuilderById, createBuilderProfileDetail, approveBuilderProfile } from "../../../common/redux/actions"; // Ensure correct imports
+import {
+   getBuilderById,
+   createBuilderProfileDetail,
+   approveBuilderProfile,
+} from "../../../common/redux/actions"; // Ensure correct imports
 import { showSuccessToast, showErrorToast } from "../../../common/helpers/Utils"; // Utility for displaying toast messages
 import { CONSTANTS } from "../../../common/helpers/Constants";
 
@@ -28,18 +32,16 @@ const BuilderProfileDetails = () => {
       companyEmail: "Rohit Builder Email",
       companyGst: "Rohit Builder Gst",
       builderLogoS3ImageUrl: "",
-      builderLogoImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg==",
+      builderLogoImageAsBase64:
+         "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg==",
       builderCoinbalance: 0.0,
-      directors: [
-         "directorA",
-         "directorB"
-      ],
+      directors: ["directorA", "directorB"],
       companyFacebookUrl: "Rohit Builder Facebook Url",
       companyInstagramUrl: "Rohit Builder Instagram Url",
       whatsappNumber: "Rohit Builder Whatsapp Number",
       callNumber: "Rohit Builder Call Number",
       contactPersonName: "Rohit Builder Contact Person Name",
-      builderProfileComplete: true
+      builderProfileComplete: true,
    });
    const validateForm = () => {
       const {
@@ -134,19 +136,19 @@ const BuilderProfileDetails = () => {
       }
    };
 
-   const approveBuilderProfile = async () => {
+   const approveBuilderProfile = async (e) => {
       e.preventDefault();
       setLoading(true);
-      
+
       try {
-         const response = await approveBuilderProfile({builderId: builderId, userId: userId});
+         const response = await approveBuilderProfile({ builderId: builderId, userId: userId });
       } catch (error) {
          showErrorToast("Error approving profile. Please try again");
          console.log("Error submitting builder profile:", error);
       } finally {
          setLoading(false);
       }
-   }
+   };
 
    // if (loading) return <div>Loading...</div>; // Show loading indicator
    if (error) return <div>Error: {error.message || "Failed to load builder details"}</div>; // Show error message

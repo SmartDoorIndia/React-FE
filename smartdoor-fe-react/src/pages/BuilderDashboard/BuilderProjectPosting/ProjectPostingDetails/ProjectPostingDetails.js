@@ -294,8 +294,7 @@ const ProjectPostingDetails = (props) => {
                            {property.numberOfRooms},{property.propertyRoomCompositionType},
                            {property.propertySubType}
                         </td>
-                        <td></td>
-                        <td></td>
+
                         <td>{property.totalProjectUnits}</td>
                      </tr>
                   ))}
