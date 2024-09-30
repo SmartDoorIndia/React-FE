@@ -1,5 +1,5 @@
 /** @format */
-
+// Line 84 has the API integration
 import React, { useEffect, memo } from "react";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import Pagination from "../../../../shared/DataTable/Pagination";
@@ -19,9 +19,11 @@ import {
 } from "../../../../common/helpers/Utils";
 import { ToolTip } from "../../../../common/helpers/Utils";
 import {
-   getBrokerListing,
-   getBrokerDetails,
-   giftCoinsToConsumer,
+   // getBrokerListing,
+   // getBrokerDetails,
+   // giftCoinsToConsumer,
+   getBuilderProjects,
+   getBuilderProjectStats
 } from "../../../../common/redux/actions";
 import addIcon from "../../../../assets/svg/add.svg";
 import { Link } from "react-router-dom/cjs/react-router-dom";
@@ -69,22 +71,29 @@ const ProjectsPostings = (props) => {
    const [showModal, setShowModal] = useState(false);
    const [newCoinValue, setNewCoinValue] = useState(null);
    const [currentBrokerId, setCurrentBrokerId] = useState(null);
+   const [projectPostingFilter, setProjectPostingFilter] = useState({
+      builderId: 6,
+      searchString: "Rohit",
+      userId: 398,
+      records: 10,
+      pageNumber: 1
+   });
+   const [builderProjects, setBuilderProjects] = useState(null);
+   const [builderProjectStats, setBuilderProjectStats] = useState(null);
 
    useEffect(() => {
-      console.log(data);
-      dispatch({ type: Actions.BROKERS_PROPERTY_SUCCESS, data: [] });
-      if (data === undefined) {
-         getBrokerListing({
-            userId: userData.userid,
-            currentLat: null,
-            currentLong: null,
-            pageNo: currentPage,
-            records: rowsPerPage,
-            adminLogin: true,
-            searchString: "",
-         });
-      }
-   }, [getBrokerListing]);
+      getBuilderProjects(projectPostingFilter)
+      .then((response)=>{
+         setBuilderProjects(response.data.resourceData)
+         console.log(response.data.resourceData);
+      })
+
+      getBuilderProjectStats(projectPostingFilter)
+      .then((response)=>{
+         setBuilderProjectStats(response.data.resourceData)
+         console.log(response.data.resourceData);
+      })
+   }, [projectPostingFilter]);
 
    const showValue = (status_value, startDate_, endDate_) => {
       let status = status_value || statusSelected;
@@ -338,25 +347,25 @@ const ProjectsPostings = (props) => {
    ];
 
    const addCoins = () => {
-      if (newCoinValue < 0) {
-         showErrorToast("Enter positive value...");
-         setNewCoinValue(0);
-      } else if (!newCoinValue) {
-         showErrorToast("Enter SD coins...");
-      } else {
-         setShowModal(false);
-         giftCoinsToConsumer({ consumerId: currentBrokerId, coins: newCoinValue })
-            .then((response) => {
-               if (response.status === 200) {
-                  showSuccessToast(newCoinValue + " Coins gifted successfully");
-                  setNewCoinValue(null);
-               }
-            })
-            .catch((error) => {
-               console.log(error);
-               showErrorToast("Please try again...");
-            });
-      }
+      // if (newCoinValue < 0) {
+      //    showErrorToast("Enter positive value...");
+      //    setNewCoinValue(0);
+      // } else if (!newCoinValue) {
+      //    showErrorToast("Enter SD coins...");
+      // } else {
+      //    setShowModal(false);
+      //    giftCoinsToConsumer({ consumerId: currentBrokerId, coins: newCoinValue })
+      //       .then((response) => {
+      //          if (response.status === 200) {
+      //             showSuccessToast(newCoinValue + " Coins gifted successfully");
+      //             setNewCoinValue(null);
+      //          }
+      //       })
+      //       .catch((error) => {
+      //          console.log(error);
+      //          showErrorToast("Please try again...");
+      //       });
+      // }
    };
 
    return (
@@ -530,8 +539,10 @@ const mapStateToProps = ({ allPlanDataBroker }) => ({
    allPlanDataBroker,
 });
 const actions = {
-   getBrokerListing,
-   getBrokerDetails,
+   // getBrokerListing,
+   // getBrokerDetails,
+   getBuilderProjects,
+   getBuilderProjectStats
 };
 const withConnect = connect(mapStateToProps, actions);
 

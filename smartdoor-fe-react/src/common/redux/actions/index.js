@@ -2383,3 +2383,27 @@ export const createBuilderProfileDetail = async (data) => {
    } else showErrorToast("Unexpected error. Please try again later");
    return response;
 };
+
+// To get a list of builder projects by filter
+export const getBuilderProjects = async (data) => {
+   const response = await mainApiService("getBuilderProjects", data);
+   return response;
+};
+
+// To get number of builder projects and properties by filter
+export const getBuilderProjectStats = async (data) => {
+   const response = await mainApiService("getBuilderProjectStats", data);
+   return response;
+};
+
+// To get a list of builder project sub posts by builder project id and filter
+export const getBuilderProjectSubPosts = async (data) => {
+   const response = await mainApiService("getBuilderProjectSubPosts", data);
+   return response;
+};
+
+// To get the details of a builder project by builder project id
+export const getBuilderProjectById = async (data) => {
+   const response = await mainApiService("getBuilderProjectById", data);
+   return response;
+};
