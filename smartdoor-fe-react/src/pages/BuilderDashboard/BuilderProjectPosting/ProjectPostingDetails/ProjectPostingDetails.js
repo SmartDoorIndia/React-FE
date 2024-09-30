@@ -88,7 +88,7 @@ const ProjectPostingDetails = (props) => {
       pageNumber: 1
    });
 
-   const [builderProjectId, setBuilderProjectId] = useState(11);
+   const [builderProjectId, setBuilderProjectId] = useState(13);
    const [userId, setUserId] = useState(398);
    const [builderProjectDetails, setBuilderProjectDetails] = useState(null);
 

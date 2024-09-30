@@ -1,5 +1,5 @@
 /** @format */
-
+// API integration on line 66 and 123
 import React, { useCallback, useEffect, useState } from "react";
 import "./BuilderProfileDetails.scss";
 import Text from "../../../shared/Text/Text";
@@ -15,29 +15,31 @@ const BuilderProfileDetails = () => {
       auth: { userData },
    } = useUserContext();
 
-   const builderId = userData.builderId;
+   const builderId = 6;
+   const userId = 398;
    const [isChecked, setIsChecked] = useState(true); // Set to checked by default
    const [isFormValid, setIsFormValid] = useState(false);
    const [loading, setLoading] = useState(true);
    const [data, setData] = useState({
-      brandName: "",
-      builderCoinbalance: "",
-      builderLogoImageAsBase64: "",
+      mobile: "7767811353",
+      companyName: "Rohit Builder Company",
+      brandName: "Rohit Builder Brand",
+      companyAddress: "Rohit Builder Address",
+      companyEmail: "Rohit Builder Email",
+      companyGst: "Rohit Builder Gst",
       builderLogoS3ImageUrl: "",
-      builderProfileComplete: true,
-      companyAddress: "",
-      companyEmail: "",
-      companyGst: "",
-      companyName: "",
-      companyPan: "",
-      mobile: "",
-      userKycName: "",
-      usersKycAddress: "",
-      usersKycDob: "",
-      usersKycGender: "",
-      usersKycProfileImageUrl: "",
-      usersKycVerified: "",
-      usersName: "",
+      builderLogoImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg==",
+      builderCoinbalance: 0.0,
+      directors: [
+         "directorA",
+         "directorB"
+      ],
+      companyFacebookUrl: "Rohit Builder Facebook Url",
+      companyInstagramUrl: "Rohit Builder Instagram Url",
+      whatsappNumber: "Rohit Builder Whatsapp Number",
+      callNumber: "Rohit Builder Call Number",
+      contactPersonName: "Rohit Builder Contact Person Name",
+      builderProfileComplete: true
    });
    const validateForm = () => {
       const {
@@ -63,7 +65,7 @@ const BuilderProfileDetails = () => {
    // Fetch builder data if editing an existing profile
    const _getBuilderById = useCallback(() => {
       if (!builderId) return; // Skip if no builderId
-      getBuilderById({ builderId })
+      getBuilderById({ builderId: builderId, userId: userId })
          .then((response) => {
             if (response?.data) {
                const { resourceData, error: responseError } = response.data;

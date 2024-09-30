@@ -3013,7 +3013,7 @@ export const ApiJson = {
       showErrorMessage: true,
    },
    getBuilderById: {
-      url: "/consumer/builder/getBuilderById/:builderId",
+      url: "/consumer/builder/getBuilderById/:builderId/:userId/",
       method: "GET",
       data: {
          builderLogoS3ImageUrl: "",
@@ -3028,24 +3028,23 @@ export const ApiJson = {
       url: "/consumer/builder/createBuilderProfile/",
       method: "PUT",
       data: {
+         mobile: "",
+         companyName: "",
          brandName: "",
-         builderCoinbalance: "",
-         builderLogoImageAsBase64: "",
-         builderLogoS3ImageUrl: "",
-         builderProfileComplete: true,
          companyAddress: "",
          companyEmail: "",
          companyGst: "",
-         companyName: "",
-         companyPan: "",
-         mobile: "",
-         userKycName: "",
-         usersKycAddress: "",
-         usersKycDob: "",
-         usersKycGender: "",
-         usersKycProfileImageUrl: "",
-         usersKycVerified: "",
-         usersName: "",
+         builderLogoS3ImageUrl: "",
+         builderLogoImageAsBase64: "",
+         builderCoinbalance: 0.0,
+         directors: [
+         ],
+         companyFacebookUrl: "",
+         companyInstagramUrl: "",
+         whatsappNumber: "",
+         callNumber: "",
+         contactPersonName: "",
+         builderProfileComplete: false
       },
       headers: {
          "Content-Type": "application/json",
@@ -3111,6 +3110,91 @@ export const ApiJson = {
       },
       showResultMessage: false,
       showErrorMessage: false,
+   },
+   createBuilderProject: {
+      url: "/consumer/builder/addBuilderProject/",
+      method: "PUT",
+      data: {
+         builderProjectId: null,
+         userId: null,
+         builderId: null,
+         builderProjectName: "",
+         totalTowersPlanned: null,
+         landArea: null,
+         landAreaMeasurementUnitEnteredByUser: "",
+         areaToDevelop: null,
+         areaToDevelopMeasurementUnitEnteredByUser: "",
+         openAreaPercent: null,
+         possessionFrom: "",
+         possessionTo: "",
+         projectDescription: "",
+         latitude: 0,
+         longitude: 0,
+         builderProjectGeneralAmenities: [
+         ],
+         city: "",
+         state: "",
+         locality: "",
+         country: null,
+         cityLat: 0,
+         cityLong: 0,
+         builderProjectImages: [
+         ],
+         builderProjectVideos: [
+         ]
+      },
+      headers: {
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: true,
+   },
+   addBuilderProjectSubPost: {
+      url: "/consumer/builder/addBuilderProjectSubPost/",
+      method: "PUT",
+      data: {
+         builderProjectSubPostId: null,
+         builderProjectId: null,
+         subPostType: "",
+         userId: null,
+         builderProjectSubPostName: "",
+         reraNumber: "",
+         areaToDevelop: null,
+         areaToDevelopMeasurementUnitEnteredByUser: "",
+         highlightsOrUsp: "",
+         contactPersonName: "",
+         contactPersonNumber: "",
+         possessionFrom: "",
+         possessionTo: "",
+         totalFloors: null,
+         unitsPerFloor: null,
+         builderProjectSubPostInfo: [
+
+         ],
+         builderProjectSubPostProperties: [
+         ],
+         builderProjectSubPostVideos: [
+         ],
+     
+         builderProjectSubPostImages: [
+         ]
+      },
+      headers: {
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: true,
+   },
+   getBuilderProjectSubPostById: {
+      url: "/consumer/builder/getBuilderProjectSubPostById/:builderProjectSubPostId/:userId/",
+      method: "GET",
+      data: {
+      },
+      headers: {
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: true,
    },
 };
 console.log(userData);

@@ -1,8 +1,9 @@
 /** @format */
-
-import React, { useRef, useState } from "react";
+// API integration on line 281 and 305
+import React, { useRef, useEffect, useState } from "react";
 import "./ProjectDetails.scss";
 import { Modal, Button, Col, Form, Image, InputGroup, Row } from "react-bootstrap";
+import { showSuccessToast, showErrorToast } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import Text from "../../../../shared/Text/Text";
 import { TiCameraOutline } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
@@ -15,6 +16,10 @@ import { FaTimes } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { PiPlayCircleLight } from "react-icons/pi";
 import addIcon from "../../../../assets/svg/add.svg";
+import {
+   getBuilderProjectSubPostById,
+   addBuilderProjectSubPost
+} from "../../../../common/redux/actions";
 // import Buttons from "../../../shared/Buttons/Buttons";
 const ProjectDetails = () => {
    const [formData, setFormData] = useState({
@@ -41,9 +46,270 @@ const ProjectDetails = () => {
    const [videoLinks, setVideoLinks] = useState([]);
    const [file, setFile] = useState(null);
    const [priceRange, setPriceRange] = useState([50, 200]); // Default: 50L to 2Cr
+   const [builderProjectSubPostId, setBuilderProjectSubPostId] = useState(40);
+   const [userId, setUserId] = useState(398);
+   const [error, setError] = useState(null);
+   const [data, setData] = useState({
+      builderProjectSubPostId: 40,
+      builderProjectId: 12,
+      subPostType: "Tower",
+      userId: 398,
+      builderProjectSubPostName: "4BHK",
+      reraNumber: "tower rera number",
+      areaToDevelop: 76.3,
+      areaToDevelopMeasurementUnitEnteredByUser: "Sq. Mt.",
+      highlightsOrUsp: "highlighs and usp",
+      contactPersonName: "tower contact person name",
+      contactPersonNumber: "contact person name",
+      possessionFrom: "01-2025",
+      possessionTo: "05-2025",
+      totalFloors: 9,
+      unitsPerFloor: 5,
+      builderProjectSubPostInfo: ["kekjj", "hwjh"],
+      builderProjectSubPostProperties: [
+          {
+              propertyId: null,
+              numberOfRooms: 2,
+              propertyRoomCompositionType: "BHK",
+              propertySubType: "Apartment",
+              totalProjectUnits: 107,
+              minPlotArea: 102,
+              maxPlotArea: 140,
+              plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+              minCarpetArea: 102,
+              maxCarpetArea: 140,
+              carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+              minBuiltUpArea: 102,
+              maxBuiltUpArea: 140,
+              builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+              comments: "property comments",
+              minPrice: 1282.5,
+              maxPrice: 8322.5,
+  
+              propertyVideos: [
+                  {
+                      docId: null,
+                      docName: "ffff",
+                      docURL: "urlwsnwjh",
+                      docOrderInFrontendView: 2,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: null
+                  },
+                  {
+                      docId: null,
+                      docName: "klklaslk",
+                      docURL: "oowql;",
+                      docOrderInFrontendView: 2,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: null
+                  }
+              ],
+              propertyImages: [
+                  {
+                      docId: null,
+                      docName: "ffff",
+                      docURL: "urlwsnwjh",
+                      docOrderInFrontendView: 2,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="        
+                  },
+                  {
+                      docId: null,
+                      docName: "kkkkk",
+                      docURL: "urlwsnwjh",
+                      docOrderInFrontendView: 4,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="       
+                  }
+              ]
+          },
+          {
+              propertyId: null,
+              numberOfRooms: 2,
+              propertyRoomCompositionType: "BHK",
+              propertySubType: "Apartment",
+              totalProjectUnits: 107,
+              minPlotArea: 102,
+              maxPlotArea: 140,
+              plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+              minCarpetArea: 102,
+              maxCarpetArea: 140,
+              carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+              minBuiltUpArea: 102,
+              maxBuiltUpArea: 140,
+              builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+              comments: "property comments",
+              minPrice: 1282.5,
+              maxPrice: 8322.5,
+  
+              propertyVideos: [
+                  {
+                      docId: null,
+                      docName: "ffff",
+                      docURL: "urlwsnwjh",
+                      docOrderInFrontendView: 2,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: null
+                  },
+                  {
+                      docId: null,
+                      docName: "klklaslk",
+                      docURL: "oowql;",
+                      docOrderInFrontendView: 2,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: null
+                  }
+              ],
+              propertyImages: [
+                  {
+                      docId: null,
+                      docName: "ffff",
+                      docURL: "urlwsnwjh",
+                      docOrderInFrontendView: 2,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="        
+                  },
+                  {
+                      docId: null,
+                      docName: "kkkkk",
+                      docURL: "urlwsnwjh",
+                      docOrderInFrontendView: 4,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="        
+                  }
+              ]
+   
+          },
+          {
+              propertyId: null,
+              numberOfRooms: 3,
+              propertyRoomCompositionType: "BHK",
+              propertySubType: "Apartment",
+              totalProjectUnits: 122,
+              minPlotArea: 102,
+              maxPlotArea: 140,
+              plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+              minCarpetArea: 102,
+              maxCarpetArea: 140,
+              carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+              minBuiltUpArea: 102,
+              maxBuiltUpArea: 140,
+              builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+              comments: "property comments",
+              minPrice: 1282.5,
+              maxPrice: 8322.5,
+  
+              propertyVideos: [
+                  {
+                      docId: null,
+                      docName: "ffff",
+                      docURL: "urlwsnwjh",
+                      docOrderInFrontendView: 2,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: null
+                  },
+                  {
+                      docId: null,
+                      docName: "klklaslk",
+                      docURL: "oowql;",
+                      docOrderInFrontendView: 2,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: null
+                  }
+              ],
+              propertyImages: [
+                  {
+                      docId: null,
+                      docName: "ffff",
+                      docURL: "urlwsnwjh",
+                      docOrderInFrontendView: 2,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="        
+                  },
+                  {
+                      docId: null,
+                      docName: "kkkkk",
+                      docURL: "urlwsnwjh",
+                      docOrderInFrontendView: 4,
+                      docDescription: "jerj",
+                      builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="        }
+              ]
+   
+          }
+      ],
+      builderProjectSubPostVideos: [
+          {
+              docId: null,
+              docName: "ffff",
+              docURL: "urlwsnwjh",
+              docOrderInFrontendView: 2,
+              docDescription: "jerj",
+              builderProjectImageAsBase64: null
+          },
+          {
+              docId: null,
+              docName: "klklaslk",
+              docURL: "oowql;",
+              docOrderInFrontendView: 2,
+              docDescription: "jerj",
+              builderProjectImageAsBase64: null
+          }
+      ],
+  
+      builderProjectSubPostImages: [
+          {
+              docId: null,
+              docName: "ffff",
+              docURL: "urlwsnwjh",
+              docOrderInFrontendView: 2,
+              docDescription: "Plan layout",
+              builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="        
+          },
+          {
+              docId: null,
+              docName: "kkkkk",
+              docURL: "urlwsnwjh",
+              docOrderInFrontendView: 4,
+              docDescription: "jerj",
+              builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="        }
+      ]
+   }); // Default: 50L to 2Cr
    const step = 10; // Step size of 10L
    const min = 50; // Minimum value in Lakhs (₹50L)
    const max = 200;
+
+   useEffect(async () => {
+      await getBuilderProjectSubPostById({builderProjectSubPostId: builderProjectSubPostId, userId: userId})
+      .then((response) => {
+         if (response?.data) {
+            const { resourceData, error: responseError } = response.data;
+            if (resourceData) {
+               // Ensure no null values in resourceData
+               // const sanitizedData = Object.fromEntries(
+               //    Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
+               // );
+               console.log(resourceData);
+               setData(resourceData);
+            }
+            if (responseError) setError(responseError);
+         }
+         // setLoading(false);
+      })
+      .catch((error) => {
+         // setLoading(false);
+         setError(error);
+         console.log("Error fetching builder data:", error);
+      });
+   }, [userId, builderProjectSubPostId])
+
+   const handleSubmit =async () => {
+      try {
+         const response = await addBuilderProjectSubPost(data);
+      } catch (error) {
+         console.log("Error submitting builder profile:", error);
+      }
+   }
+
    const handlePriceRangeChange = (values) => {
       setPriceRange(values);
    };

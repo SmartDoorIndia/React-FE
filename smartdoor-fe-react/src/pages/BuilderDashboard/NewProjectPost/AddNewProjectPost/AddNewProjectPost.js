@@ -1,6 +1,6 @@
 /** @format */
-
-import React, { useRef, useState } from "react";
+// API integration on line 115 and 259
+import React, { useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { Col, FormControl, InputGroup, Row } from "react-bootstrap";
 import "./AddNewProjectPost.scss"; // Make sure to import the SCSS file
@@ -12,6 +12,11 @@ import { FaMapMarkerAlt } from "react-icons/fa"; // Import the icon from react-i
 import Container from "react-bootstrap/Container";
 import { RxCross2 } from "react-icons/rx";
 import { PiPlayCircleLight } from "react-icons/pi";
+import {
+   getBuilderProjectById,
+   createBuilderProject
+} from "../../../../common/redux/actions";
+import { showSuccessToast, showErrorToast } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import { MenuItem, TextField } from "@mui/material";
 import POSTING_CONSTANTS from "../../../../common/helpers/POSTING_CONSTANTS";
 import Text from "../../../../shared/Text/Text";
@@ -36,7 +41,100 @@ const AddNewProjectPost = () => {
    const [projectLayout, setProjectLayout] = useState([]); // Project Layout Images
    const [validationError, setValidationError] = useState();
    const [videoLinks, setVideoLinks] = useState([]);
+   const [error, setError] = useState(null);
+   const [data, setData] = useState({
+      builderProjectId: 13,
+      userId: 398,
+      builderId: 6,
+      builderProjectName: "Rohit Builder Project",
+      totalTowersPlanned: 10,
+      landArea: 100.30000000000001,
+      landAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+      areaToDevelop: 200.5,
+      areaToDevelopMeasurementUnitEnteredByUser: "Sq. Mt.",
+      openAreaPercent: 31.0,
+      possessionFrom: "01-2025",
+      possessionTo: "05-2025",
+      projectDescription: "Rohit Builder Project Description",
+      latitude: 18.56988525390625,
+      longitude: 73.77430725097656,
+      builderProjectGeneralAmenities: [
+         "dw",
+         "jqkqk",
+         "aaaaaa",
+         "jjadsjk"
+      ],
+      city: "Pimpri-Chinchwad",
+      state: "Maharashtra",
+      locality: "Baner",
+      country: null,
+      cityLat: 18.6297811,
+      cityLong: 73.7997094,
+      builderProjectImages: [
+         {
+            docId: 123,
+            docName: "ffff",
+            docDescription: "jerj",
+            docOrderInFrontendView: 2,
+            docURL: "app-images/builder-project-image/smartDoor45545_1727681068589.png",
+            builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="
+         },
+         {
+            docId: null,
+            docName: "kkkkk",
+            docDescription: "jerj",
+            docOrderInFrontendView: 4,
+            docURL: "app-images/builder-project-image/smartDoor91754_1727681068632.png",
+            builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="
+         }
+      ],
+      builderProjectVideos: [
+         {
+            docId: null,
+            docName: "ffff",
+            docDescription: "jerj",
+            docOrderInFrontendView: 2,
+            docURL: "lkllk",
+            builderProjectImageAsBase64: null
+         },
+         {
+            docId: null,
+            docName: "klklaslk",
+            docDescription: "jerj",
+            docOrderInFrontendView: 2,
+            docURL: "kllk",
+            builderProjectImageAsBase64: null
+         }
+      ]
+   })
+   const [userId, setUserId] = useState(398);
+   const [builderProjectId, setBuilderProjectId] = useState(13);
+
    const fileInputRef = useRef();
+
+   useEffect(async() => {
+      await getBuilderProjectById({builderProjectId: builderProjectId, userId: userId})
+      .then((response) => {
+         if (response?.data) {
+            const { resourceData, error: responseError } = response.data;
+            if (resourceData) {
+               // Ensure no null values in resourceData
+               // const sanitizedData = Object.fromEntries(
+               //    Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
+               // );
+               console.log(resourceData);
+               setData(resourceData);
+            }
+            if (responseError) setError(responseError);
+         }
+         // setLoading(false);
+      })
+      .catch((error) => {
+         // setLoading(false);
+         setError(error);
+         console.log("Error fetching builder data:", error);
+      });
+   }, [userId, builderProjectId])
 
    const allowedExtensions = [".jpg", ".png"];
    const handleProjectImagesChange = (event) => {
@@ -158,8 +256,15 @@ const AddNewProjectPost = () => {
       const { name, checked } = e.target;
       setFormData({ ...formData, [name]: checked });
    };
-   const handleSubmit = (e) => {
+   const handleSubmit = async (e) => {
       e.preventDefault();
+
+      try {
+         const response = await createBuilderProject(data);
+      } catch (error) {
+         showErrorToast("Error submitting form. Please try again.");
+         console.log("Error submitting builder profile:", error);
+      }
    };
    return (
       <div className="add-new-project-post mb-3">

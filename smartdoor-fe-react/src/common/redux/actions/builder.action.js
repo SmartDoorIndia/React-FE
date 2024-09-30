@@ -107,3 +107,47 @@ export const getBuilderProjectById = async (data) => {
   return response.data.resourceData;
 
 }
+
+export const createBuilderProfileDetail = async (data) => {
+  const response = await mainApiService('createBuilderProfileDetail', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}
+
+export const createBuilderProject = async (data) => {
+  const response = await mainApiService('createBuilderProject', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}
+
+export const addBuilderProjectSubPost = async (data) => {
+  const response = await mainApiService('addBuilderProjectSubPost', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}
+
+export const getBuilderProjectSubPostById = async (data) => {
+  const response = await mainApiService('getBuilderProjectSubPostById', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}

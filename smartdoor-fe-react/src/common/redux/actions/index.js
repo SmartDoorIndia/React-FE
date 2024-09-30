@@ -2407,3 +2407,34 @@ export const getBuilderProjectById = async (data) => {
    const response = await mainApiService("getBuilderProjectById", data);
    return response;
 };
+
+// Add builder project
+export const createBuilderProject = async (data) => {
+   const response = await mainApiService("createBuilderProject", data);
+   if (response.data && response.data.status === 200) {
+      showSuccessToast("Profile created successfully.");
+   } else if (response.data && response.data.status === 409)
+      showErrorToast("Builder already exist.");
+   else if (response.data && response.data.status !== 409 && response.data.error) {
+      showErrorToast(response.data.error);
+   } else showErrorToast("Unexpected error. Please try again later");
+   return response;
+};
+
+// Add builder project sub post
+export const addBuilderProjectSubPost = async (data) => {
+   const response = await mainApiService("addBuilderProjectSubPost", data);
+   if (response.data && response.data.status === 200) {
+      showSuccessToast("Successfully submitted form data");
+   } else if (response.data && response.data.status === 409)
+      showErrorToast("Error submitting form. Please try again.");
+   else if (response.data && response.data.status !== 409 && response.data.error) {
+      showErrorToast(response.data.error);
+   } else showErrorToast("Unexpected error. Please try again later");
+   return response;
+};
+
+export const getBuilderProjectSubPostById = async (data) => {
+   const response = await mainApiService("getBuilderProjectSubPostById", data);
+   return response;
+};
