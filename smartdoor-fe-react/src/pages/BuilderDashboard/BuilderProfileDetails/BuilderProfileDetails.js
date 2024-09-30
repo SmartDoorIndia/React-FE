@@ -134,10 +134,10 @@ const BuilderProfileDetails = () => {
       }
    };
 
-   const approveBuilderProfile = async () => {
+   const approveBuilderProfile = async (e) => {
       e.preventDefault();
       setLoading(true);
-      
+
       try {
          const response = await approveBuilderProfile({builderId: builderId, userId: userId});
       } catch (error) {

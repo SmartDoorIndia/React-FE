@@ -43,6 +43,7 @@ const AddNewProjectPost = () => {
    const [validationError, setValidationError] = useState();
    const [videoLinks, setVideoLinks] = useState([]);
    const [error, setError] = useState(null);
+   const [loading, setLoading] = useState(true);
    const [data, setData] = useState({
       builderProjectId: 13,
       userId: 398,
@@ -268,7 +269,9 @@ const AddNewProjectPost = () => {
       }
    };
 
-   const approveBuilderProject = async () => {
+   const approveBuilderProject = async (e) => {
+      e.preventDefault();
+      
       try {
       const response = await approveBuilderProject({builderProjectId: builderProjectId, userId: userId});
       } catch (error) {
