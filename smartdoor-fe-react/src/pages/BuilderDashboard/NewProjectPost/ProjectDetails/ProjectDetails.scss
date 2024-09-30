@@ -385,6 +385,9 @@
          line-height: 15px;
          text-align: left;
       }
+      svg:focus {
+         outline: none;
+      }
    }
 }
 .UnitformContainer {

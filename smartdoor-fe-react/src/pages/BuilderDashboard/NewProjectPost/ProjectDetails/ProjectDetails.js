@@ -819,6 +819,8 @@ const ProjectDetails = () => {
                                                          color: "white",
                                                          fontSize: "14px",
                                                          cursor: "pointer",
+                                                         position: "absolute",
+                                                         top: "0px",
                                                       }}
                                                    >
                                                       {index === 0 ? (
@@ -1118,6 +1120,8 @@ const ProjectDetails = () => {
                                                          color: "white",
                                                          fontSize: "14px",
                                                          cursor: "pointer",
+                                                         position: "absolute",
+                                                         top: "0px",
                                                       }}
                                                    >
                                                       {index === 0 ? (
@@ -1371,6 +1375,8 @@ const ProjectDetails = () => {
                                                          color: "white",
                                                          fontSize: "14px",
                                                          cursor: "pointer",
+                                                         position: "absolute",
+                                                         top: "0px",
                                                       }}
                                                    >
                                                       {index === 0 ? (

@@ -1,8 +1,9 @@
 /** @format */
+
 import React, { useEffect, memo } from "react";
 
 import { Col, Row, Button, Container, Form, Image } from "react-bootstrap";
-import { BsPencil } from "react-icons/bs";
+import { BsPencil, BsChevronDown, BsChevronUp } from "react-icons/bs"; // Import Up and Down arrows
 import "./ProjectPostingDetails.scss";
 import pencilIcon from "../../../../assets/svg/edit-01.svg";
 /** @format */
@@ -18,6 +19,7 @@ import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import addIcon from "../../../../assets/svg/add.svg";
 import { BiSortAlt2 } from "react-icons/bi";
 import { IoFilterOutline } from "react-icons/io5";
+import { MdOutlineKeyboardDoubleArrowUp, MdOutlineKeyboardDoubleArrowDown } from "react-icons/md";
 
 import {
    handleStatusElement,
@@ -41,6 +43,8 @@ import Text from "../../../../shared/Text/Text";
 import * as Actions from "../../../../common/redux/types";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import { TextField } from "@mui/material";
+import ExpandableDataTable from "../../../../shared/DataTable/ExpandableDataTable";
+import ListingDataTable from "../../../../shared/DataTable/ListingDataTable";
 
 const getModalActionData = (row) => {
    return { userData: row };
@@ -75,7 +79,7 @@ const ProjectPostingDetails = (props) => {
    const [showModal, setShowModal] = useState(false);
    const [newCoinValue, setNewCoinValue] = useState(null);
    const [currentBrokerId, setCurrentBrokerId] = useState(null);
-
+   const [expandedRowId, setExpandedRowId] = useState(null);
    useEffect(() => {
       console.log(data);
       dispatch({ type: Actions.BROKERS_PROPERTY_SUCCESS, data: [] });
@@ -159,42 +163,42 @@ const ProjectPostingDetails = (props) => {
       <div className="d-flex justify-content-center tableBottom"></div>
    );
 
-   const handleDateRangeChange = (date) => {
-      if (date && date[0] && date[1]) {
-         const startDt = date[0];
-         const endDt = date[1];
-         setStartDate(startDt);
-         setEndDate(endDt);
-         // showValue(statusSelected, startDate, endDate);
-         // setDatata(filteredItems);
-         getBrokerListing({
-            userId: userData.userid,
-            currentLat: null,
-            currentLong: null,
-            pageNo: 1,
-            records: rowsPerPage,
-            adminLogin: true,
-            status: statusSelected?.toUpperCase(),
-            searchString: filterText,
-            fromDate: startDt,
-            toDate: endDt,
-         });
-      }
-      if (date.length === 0) {
-         getBrokerListing({
-            userId: userData.userid,
-            currentLat: null,
-            currentLong: null,
-            pageNo: 1,
-            records: rowsPerPage,
-            adminLogin: true,
-            status: statusSelected?.toUpperCase(),
-            searchString: filterText,
-            fromDate: "",
-            toDate: "",
-         });
-      }
-   };
+   //    const handleDateRangeChange = (date) => {
+   //       if (date && date[0] && date[1]) {
+   //          const startDt = date[0];
+   //          const endDt = date[1];
+   //          setStartDate(startDt);
+   //          setEndDate(endDt);
+   //          // showValue(statusSelected, startDate, endDate);
+   //          // setDatata(filteredItems);
+   //          getBrokerListing({
+   //             userId: userData.userid,
+   //             currentLat: null,
+   //             currentLong: null,
+   //             pageNo: 1,
+   //             records: rowsPerPage,
+   //             adminLogin: true,
+   //             status: statusSelected?.toUpperCase(),
+   //             searchString: filterText,
+   //             fromDate: startDt,
+   //             toDate: endDt,
+   //          });
+   //       }
+   //       if (date.length === 0) {
+   //          getBrokerListing({
+   //             userId: userData.userid,
+   //             currentLat: null,
+   //             currentLong: null,
+   //             pageNo: 1,
+   //             records: rowsPerPage,
+   //             adminLogin: true,
+   //             status: statusSelected?.toUpperCase(),
+   //             searchString: filterText,
+   //             fromDate: "",
+   //             toDate: "",
+   //          });
+   //       }
+   //    };
 
    const subHeaderComponentMemo = React.useMemo(() => {
       const handleClear = () => {
@@ -244,14 +248,26 @@ const ProjectPostingDetails = (props) => {
       });
       // showValue(status_value);
    };
-
+   const toggleRowExpansion = (id) => {
+      // Toggle logic: if clicked row is expanded, collapse it; otherwise, expand it.
+      setExpandedRowId(expandedRowId === id ? null : id);
+   };
    const columns = [
       {
          name: "Towers / Plotted",
          selector: (row) => row.name,
-         center: true,
-         minWidth: "200px",
-         maxWidth: "200px",
+         cell: (row) => (
+            <div className="d-flex align-items-center">
+               <span onClick={() => toggleRowExpansion(row.id)} style={{ cursor: "pointer" }}>
+                  {expandedRowId === row.id ? (
+                     <MdOutlineKeyboardDoubleArrowUp style={{ color: "#BE1452" }} />
+                  ) : (
+                     <MdOutlineKeyboardDoubleArrowDown style={{ color: "#BE1452" }} />
+                  )}
+               </span>
+               <span className="ml-2">{row.name}</span>
+            </div>
+         ),
       },
       {
          name: "Unit Types ",
@@ -308,7 +324,7 @@ const ProjectPostingDetails = (props) => {
                      ) : (
                         <Link
                            to={{
-                              pathname: `/builder/Project-Posting-Details`,
+                              pathname: "/builder/Project-Posting-Details",
                               state: { loginMobile: row.loginMobile },
                            }}
                            className="action-link"
@@ -322,28 +338,46 @@ const ProjectPostingDetails = (props) => {
          ),
       },
    ];
-
-   const addCoins = () => {
-      if (newCoinValue < 0) {
-         showErrorToast("Enter positive value...");
-         setNewCoinValue(0);
-      } else if (!newCoinValue) {
-         showErrorToast("Enter SD coins...");
-      } else {
-         setShowModal(false);
-         giftCoinsToConsumer({ consumerId: currentBrokerId, coins: newCoinValue })
-            .then((response) => {
-               if (response.status === 200) {
-                  showSuccessToast(newCoinValue + " Coins gifted successfully");
-                  setNewCoinValue(null);
-               }
-            })
-            .catch((error) => {
-               console.log(error);
-               showErrorToast("Please try again...");
-            });
-      }
+   const Columndata = [
+      {
+         location: "Texas",
+         population: "29 million",
+         party: "Republican",
+         child: [
+            {
+               location: "Houston",
+               population: "2 million",
+               party: "Democrat",
+            },
+            {
+               location: "Austin",
+               population: "1 million",
+               party: "Democrat",
+            },
+         ],
+      },
+      {
+         location: "California",
+         population: "39 million",
+         party: "Democrat",
+         child: [
+            {
+               location: "Los Angeles",
+               population: "4 million",
+               party: "Democrat",
+            },
+            {
+               location: "San Jose",
+               population: "1 million",
+               party: "Democrat",
+            },
+         ],
+      },
+   ];
+   const expandedRow = (row) => {
+      return <ListingDataTable columns={Columndata} data={Columndata}></ListingDataTable>;
    };
+
    return (
       <>
          <Container
@@ -561,6 +595,10 @@ const ProjectPostingDetails = (props) => {
                <DataTableComponent
                   data={showValue()}
                   columns={columns}
+                  expandableRows={true}
+                  expandableRowsComponent={({ data }) => expandedRow(data)}
+                  expandableRowExpanded={(row) => expandedRowId === row.id} // This ensures only the clicked row is expanded
+                  onRowClicked={(row) => toggleRowExpansion(row.id)}
                   progressPending={allPlanDataBroker.isLoading}
                   progressComponent={ProgressComponent}
                   paginationComponent={PaginationComponent}
