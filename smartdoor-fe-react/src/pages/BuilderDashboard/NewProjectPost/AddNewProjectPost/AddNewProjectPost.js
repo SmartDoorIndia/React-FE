@@ -1,5 +1,5 @@
 /** @format */
-// API integration on line 115 and 259
+// API integration on line 115, 259 and 271
 import React, { useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { Col, FormControl, InputGroup, Row } from "react-bootstrap";
@@ -14,7 +14,8 @@ import { RxCross2 } from "react-icons/rx";
 import { PiPlayCircleLight } from "react-icons/pi";
 import {
    getBuilderProjectById,
-   createBuilderProject
+   createBuilderProject,
+   approveBuilderProject
 } from "../../../../common/redux/actions";
 import { showSuccessToast, showErrorToast } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import { MenuItem, TextField } from "@mui/material";
@@ -266,6 +267,18 @@ const AddNewProjectPost = () => {
          console.log("Error submitting builder profile:", error);
       }
    };
+
+   const approveBuilderProject = async () => {
+      try {
+      const response = await approveBuilderProject({builderProjectId: builderProjectId, userId: userId});
+      } catch (error) {
+      showErrorToast("Error approving profile. Please try again");
+      console.log("Error submitting builder profile:", error);
+      } finally {
+         setLoading(false);
+      }
+   }
+
    return (
       <div className="add-new-project-post mb-3">
          <Container fluid>

@@ -3196,5 +3196,31 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: true,
    },
+   approveBuilderProfile: {
+      url: "/consumer/builder/approveBuilderProfile/:builderId/:userId/",
+      method: "POST",
+      data: {
+      },
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
+   approveBuilderProject: {
+      url: "/consumer/builder/approveBuilderProject/:builderProjectId/:userId/",
+      method: "POST",
+      data: {
+      },
+      headers: {
+         Accept: "*/*",
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: false,
+   },
 };
+
+
 console.log(userData);

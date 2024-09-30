@@ -151,3 +151,25 @@ export const getBuilderProjectSubPostById = async (data) => {
   return response.data.resourceData;
 
 }
+
+export const approveBuilderProfile = async (data) => {
+  const response = await mainApiService('approveBuilderProfile', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}
+
+export const approveBuilderProject = async (data) => {
+  const response = await mainApiService('approveBuilderProject', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+  
+}
