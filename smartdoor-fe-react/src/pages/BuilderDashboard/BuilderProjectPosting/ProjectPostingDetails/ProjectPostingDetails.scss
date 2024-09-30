@@ -131,6 +131,9 @@
             .tagSuccess {
                background-color: $success;
             }
+            .tagPrimary {
+               background-color: $primary-color;
+            }
          }
       }
       .tableBottom {
@@ -417,7 +420,7 @@ span.broker_details {
       }
    }
    .rdt_TableRow {
-      min-height: 60px;
+      min-height: 50px;
       background-color: #e4e4e4 !important;
       margin-bottom: 5px;
       .rdt_TableCell {
@@ -495,5 +498,16 @@ span.broker_details {
             border-bottom: 1px solid #ddd;
          }
       }
+   }
+}
+.expanded-row {
+   background-color: #f8f3f5;
+   padding: 10px;
+   border-top: 1px solid #ddd;
+   border-bottom: 1px solid #ddd;
+
+   strong {
+      display: inline-block;
+      width: 100px;
    }
 }

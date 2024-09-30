@@ -33,6 +33,7 @@
       "react-data-table-component": "^7.0.0-alpha-5",
       "react-date-range": "^1.4.0",
       "react-dom": "^17.0.1",
+      "react-exp-table": "^2.0.5",
       "react-file-viewer": "^0.5.0",
       "react-flv-player": "^1.0.9",
       "react-google-places-autocomplete": "^3.2.1",
