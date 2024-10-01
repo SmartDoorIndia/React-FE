@@ -688,7 +688,7 @@ export const validateAgencyDetails = (data) => {
   } else {
     errors.agencyName = ValidationMessages.fieldRequired.required;
   }
-  if (!isBlank(data.location) || !isBlank(data?.agencyLocation)) {
+  if (!isBlank(data.location)) {
     if (data.location?.trim() === '' || data.location === null) {
       errors.location = ValidationMessages.fieldRequired.required;
     }

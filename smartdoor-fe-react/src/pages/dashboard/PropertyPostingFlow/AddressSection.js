@@ -123,7 +123,7 @@ const AddressSection = (props) => {
 				return null;
 			}
 		})
-		if (m_address.sublocality_level_1 === null && m_address.postal_code !== null) {
+		if ((m_address.sublocality_level_1 === null || m_address.sublocality_level_1.length === 0) && m_address.postal_code !== null) {
 			m_address.sublocality_level_1 = m_address.postal_code;
 		}
 		if (m_address.locality.length === 0) {
@@ -209,7 +209,7 @@ const AddressSection = (props) => {
 				return null;
 			}
 		})
-		if (m_address.sublocality_level_1 === null && m_address.postal_code !== null) {
+		if ((m_address.sublocality_level_1 === null || m_address.sublocality_level_1.length === 0) && m_address.postal_code !== null) {
 			m_address.sublocality_level_1 = m_address.postal_code;
 		}
 		if (m_address.locality.length === 0) {
@@ -296,7 +296,7 @@ const AddressSection = (props) => {
 				return null;
 			}
 		})
-		if (m_address.sublocality_level_1 === null && m_address.postal_code !== null) {
+		if ((m_address.sublocality_level_1 === null || m_address.sublocality_level_1.length === 0) && m_address.postal_code !== null) {
 			m_address.sublocality_level_1 = m_address.postal_code;
 		}
 		if (m_address.locality.length === 0) {

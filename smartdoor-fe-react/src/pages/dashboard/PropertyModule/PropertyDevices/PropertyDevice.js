@@ -335,7 +335,7 @@ const PropertyDevice = (props) => {
                             }
                         )
                         if (response.status === 200) {
-                            await _getCameraDevice();
+                            await _getCameraDevice(propertyId);
                         } else {
                             showErrorToast(response?.data?.customMessage);
                         }

@@ -203,7 +203,7 @@ const TransactionDetails = (props) => {
             <ToolTip position="top" style={{ width: "100%" }} name={visitAddress || ""}>
                <span className="">
                   {" "}
-                  {visitAddress.substring(
+                  {visitAddress?.substring(
                      0,
                      visitAddress.indexOf(",") !== -1 ? visitAddress.indexOf(",") : visitAddress.length
                   )}

@@ -144,7 +144,7 @@ const ExecutionListing = (props) => {
         <ToolTip position="top" style={{ width: "100%" }} name={location || ""}>
            <span className="cursor-pointer elipsis-text">
               {" "}
-              {location.substring(
+              {location?.substring(
                  0,
                  location.indexOf(",") !== -1 ? location.indexOf(",") : location.length
               )}
@@ -162,7 +162,7 @@ const ExecutionListing = (props) => {
         <ToolTip position="top" style={{ width: "100%" }} name={city || ""}>
            <span className="cursor-pointer elipsis-text">
               {" "}
-              {city.substring(
+              {city?.substring(
                  0,
                  city.indexOf(",") !== -1 ? city.indexOf(",") : city.length
               )}

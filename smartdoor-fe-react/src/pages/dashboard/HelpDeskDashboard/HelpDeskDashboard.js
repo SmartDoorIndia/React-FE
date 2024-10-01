@@ -468,7 +468,7 @@ const PropertyLeadsColumns = [
     cell: ({ address }) => (
       <ToolTip position="top" style={{ width: "100%" }} name={address || ""}>
          <span className="cursor-pointer elipsis-text">
-            {address.substring(
+            {address?.substring(
                0,
                address.indexOf(",") !== -1 ? address.indexOf(",") : address.length
             )}

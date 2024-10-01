@@ -67,9 +67,9 @@ const MarketingAgency = (props) => {
             style: { padding: "0 !important" },
             minWidth: "300px",
             center: true,
-            cell: ({ agencyLocation }) => (
+            cell: ({ location }) => (
                 <span>
-                    {agencyLocation}
+                    {location}
                 </span>
             ),
             id: 2
@@ -285,7 +285,7 @@ const MarketingAgency = (props) => {
         filteredItems = [];
         filteredItems = agencyList?.data?.agencylist;
         filteredItems = agencyList?.data?.agencylist?.filter((item) => {
-            return item?.agencyLocation?.toString().includes(p_city) &&
+            return item?.location?.toString().includes(p_city) &&
                 item?.agencyName?.toLowerCase().includes(filterText.toLowerCase());
         });
         return filteredItems;
