@@ -15,26 +15,26 @@ import { PiPlayCircleLight } from "react-icons/pi";
 import {
    getBuilderProjectById,
    createBuilderProject,
-   approveBuilderProject
+   approveBuilderProject,
 } from "../../../../common/redux/actions";
 import { showSuccessToast, showErrorToast } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import { MenuItem, TextField } from "@mui/material";
 import POSTING_CONSTANTS from "../../../../common/helpers/POSTING_CONSTANTS";
 import Text from "../../../../shared/Text/Text";
 const AddNewProjectPost = () => {
-   const [formData, setFormData] = useState({
-      projectName: "",
-      customerAddress: "",
-      reraNumber: "",
-      generalAmenities: "",
-      projectDescription: "",
-      projectLocation: "",
-      projectImages: [],
-      projectVideo: "",
-      guidance: "",
-      salesManagerContact: "",
-      termsAccepted: false,
-   });
+   // const [data, setFormData] = useState({
+   //    projectName: "",
+   //    customerAddress: "",
+   //    reraNumber: "",
+   //    generalAmenities: "",
+   //    projectDescription: "",
+   //    projectLocation: "",
+   //    projectImages: [],
+   //    projectVideo: "",
+   //    guidance: "",
+   //    salesManagerContact: "",
+   //    termsAccepted: false,
+   // });
    const currentYear = new Date().getFullYear();
 
    const [selectedFiles, setSelectedFiles] = useState([]);
@@ -60,12 +60,7 @@ const AddNewProjectPost = () => {
       projectDescription: "Rohit Builder Project Description",
       latitude: 18.56988525390625,
       longitude: 73.77430725097656,
-      builderProjectGeneralAmenities: [
-         "dw",
-         "jqkqk",
-         "aaaaaa",
-         "jjadsjk"
-      ],
+      builderProjectGeneralAmenities: ["dw", "jqkqk", "aaaaaa", "jjadsjk"],
       city: "Pimpri-Chinchwad",
       state: "Maharashtra",
       locality: "Baner",
@@ -79,7 +74,8 @@ const AddNewProjectPost = () => {
             docDescription: "jerj",
             docOrderInFrontendView: 2,
             docURL: "app-images/builder-project-image/smartDoor45545_1727681068589.png",
-            builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="
+            builderProjectImageAsBase64:
+               "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg==",
          },
          {
             docId: null,
@@ -87,8 +83,9 @@ const AddNewProjectPost = () => {
             docDescription: "jerj",
             docOrderInFrontendView: 4,
             docURL: "app-images/builder-project-image/smartDoor91754_1727681068632.png",
-            builderProjectImageAsBase64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg=="
-         }
+            builderProjectImageAsBase64:
+               "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg==",
+         },
       ],
       builderProjectVideos: [
          {
@@ -97,7 +94,7 @@ const AddNewProjectPost = () => {
             docDescription: "jerj",
             docOrderInFrontendView: 2,
             docURL: "lkllk",
-            builderProjectImageAsBase64: null
+            builderProjectImageAsBase64: null,
          },
          {
             docId: null,
@@ -105,38 +102,40 @@ const AddNewProjectPost = () => {
             docDescription: "jerj",
             docOrderInFrontendView: 2,
             docURL: "kllk",
-            builderProjectImageAsBase64: null
-         }
-      ]
-   })
+            builderProjectImageAsBase64: null,
+         },
+      ],
+   });
    const [userId, setUserId] = useState(398);
    const [builderProjectId, setBuilderProjectId] = useState(13);
 
    const fileInputRef = useRef();
 
-   useEffect(async() => {
-      await getBuilderProjectById({builderProjectId: builderProjectId, userId: userId})
-      .then((response) => {
-         if (response?.data) {
-            const { resourceData, error: responseError } = response.data;
-            if (resourceData) {
-               // Ensure no null values in resourceData
-               // const sanitizedData = Object.fromEntries(
-               //    Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
-               // );
-               console.log(resourceData);
-               setData(resourceData);
+   useEffect(() => {
+      const fetchBuilderProject = async () => {
+         try {
+            const response = await getBuilderProjectById({ builderProjectId, userId });
+            if (response?.data) {
+               const { resourceData, error: responseError } = response.data;
+
+               if (resourceData) {
+                  console.log(resourceData);
+                  setData(resourceData);
+               } else if (responseError) {
+                  setError(responseError);
+               }
             }
-            if (responseError) setError(responseError);
+         } catch (error) {
+            setError(error);
+            console.error("Error fetching builder data:", error);
+         } finally {
+            // Optionally set loading to false here
+            // setLoading(false);
          }
-         // setLoading(false);
-      })
-      .catch((error) => {
-         // setLoading(false);
-         setError(error);
-         console.log("Error fetching builder data:", error);
-      });
-   }, [userId, builderProjectId])
+      };
+
+      fetchBuilderProject();
+   }, [userId, builderProjectId]);
 
    const allowedExtensions = [".jpg", ".png"];
    const handleProjectImagesChange = (event) => {
@@ -204,16 +203,16 @@ const AddNewProjectPost = () => {
    const [videoLink, setVideoLink] = useState(""); // State to store the added video link
 
    const handleInputChange = (event) => {
-      setFormData({ ...formData, [event.target.name]: event.target.value });
+      setData({ ...data, [event.target.name]: event.target.value });
    };
 
    const clearInput = () => {
-      setFormData({ ...formData, projectVideo: "" });
+      setData({ ...data, projectVideo: "" });
    };
 
    const handleAddVideo = () => {
-      if (formData.projectVideo && videoLinks.length < 5) {
-         setVideoLinks([...videoLinks, formData.projectVideo]);
+      if (data.projectVideo && videoLinks.length < 5) {
+         setVideoLinks([...videoLinks, data.projectVideo]);
          clearInput();
       } else if (videoLinks.length >= 5) {
          alert("You can only upload up to 5 videos.");
@@ -245,7 +244,7 @@ const AddNewProjectPost = () => {
       const file = e.target.files[0];
       const reader = new FileReader();
       reader.onloadend = () => {
-         setFormData((prevData) => ({
+         setData((prevData) => ({
             ...prevData,
             projectImages: reader.result, // Base64 encoding of image
          }));
@@ -256,31 +255,38 @@ const AddNewProjectPost = () => {
    };
    const handleCheckboxChange = (e) => {
       const { name, checked } = e.target;
-      setFormData({ ...formData, [name]: checked });
+      setData({ ...data, [name]: checked });
    };
    const handleSubmit = async (e) => {
       e.preventDefault();
 
       try {
          const response = await createBuilderProject(data);
+         if (response?.data) {
+            // Handle successful project creation here
+            console.log("Project created successfully:", response.data);
+         }
       } catch (error) {
          showErrorToast("Error submitting form. Please try again.");
-         console.log("Error submitting builder profile:", error);
+         console.error("Error submitting builder profile:", error);
       }
    };
 
    const approveBuilderProject = async (e) => {
       e.preventDefault();
-      
+
       try {
-      const response = await approveBuilderProject({builderProjectId: builderProjectId, userId: userId});
+         const response = await approveBuilderProject({
+            builderProjectId: builderProjectId,
+            userId: userId,
+         });
       } catch (error) {
-      showErrorToast("Error approving profile. Please try again");
-      console.log("Error submitting builder profile:", error);
+         showErrorToast("Error approving profile. Please try again");
+         console.log("Error submitting builder profile:", error);
       } finally {
          setLoading(false);
       }
-   }
+   };
 
    return (
       <div className="add-new-project-post mb-3">
@@ -337,7 +343,7 @@ const AddNewProjectPost = () => {
                                     type="text"
                                     placeholder="Enter project name"
                                     name="projectName"
-                                    value={formData.projectName}
+                                    value={data.builderProjectName}
                                     onChange={handleInputChange}
                                  />
                               </Form.Group>
@@ -348,7 +354,7 @@ const AddNewProjectPost = () => {
                                  <Form.Control
                                     as="select"
                                     name="generalAmenities"
-                                    value={formData.generalAmenities}
+                                    value={data.builderProjectGeneralAmenities}
                                     onChange={handleInputChange}
                                  >
                                     <option value="">Select</option>
@@ -366,7 +372,7 @@ const AddNewProjectPost = () => {
                                     type="text"
                                     placeholder="Enter Total Tower / Plotted Planned"
                                     name="towerPlottedPlanner"
-                                    value={formData.towerPlottedPlanner}
+                                    value={data.totalTowersPlanned}
                                     onChange={handleInputChange}
                                  />
                               </Form.Group>
@@ -378,6 +384,7 @@ const AddNewProjectPost = () => {
                                        type="text"
                                        placeholder="Land Area"
                                        className="custom-form-control"
+                                       value={data.landArea}
                                     />
                                     <InputGroup.Append className="custom-input-group-append">
                                        <InputGroup.Text className="custom-text">
@@ -396,6 +403,7 @@ const AddNewProjectPost = () => {
                                        type="text"
                                        placeholder="Total Area to Develop"
                                        className="custom-form-control"
+                                       value={data.areaToDevelop}
                                     />
                                     <InputGroup.Append className="custom-input-group-append">
                                        <InputGroup.Text className="custom-text">
@@ -495,7 +503,7 @@ const AddNewProjectPost = () => {
                               type="text"
                               placeholder="project description"
                               name="projectName"
-                              value={formData.projectDescription}
+                              value={data.projectDescription}
                               onChange={handleInputChange}
                            />
                         </Form.Group>
@@ -638,11 +646,11 @@ const AddNewProjectPost = () => {
                                     type="text"
                                     placeholder="Upload Videos"
                                     name="projectVideo"
-                                    value={formData.projectVideo}
+                                    value={data.projectVideo}
                                     onChange={handleInputChange}
                                     style={{ paddingRight: "2.5rem" }}
                                  />
-                                 {formData.projectVideo && (
+                                 {data.projectVideo && (
                                     <TiTimes
                                        className="crossicon"
                                        onClick={clearInput}

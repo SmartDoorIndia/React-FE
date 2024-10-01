@@ -18,8 +18,6 @@ import { Card, Modal } from "react-bootstrap";
 // import Form from "react-bootstrap/Form";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import addIcon from "../../../../assets/svg/add.svg";
-import { BiSortAlt2 } from "react-icons/bi";
-import { IoFilterOutline } from "react-icons/io5";
 
 import {
    handleStatusElement,
@@ -30,7 +28,7 @@ import {
    ToolTip,
 } from "../../../../common/helpers/Utils";
 import { getBuilderProjectSubPosts, getBuilderProjectById } from "../../../../common/redux/actions";
-import { Link } from "react-router-dom/cjs/react-router-dom";
+import { Link, navigate } from "react-router-dom/cjs/react-router-dom";
 import { DateRangePicker } from "rsuite";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import moment from "moment";
@@ -39,6 +37,7 @@ import Text from "../../../../shared/Text/Text";
 import * as Actions from "../../../../common/redux/types";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import { TextField } from "@mui/material";
+import { MdOutlineKeyboardDoubleArrowUp, MdOutlineKeyboardDoubleArrowDown } from "react-icons/md"; // Import the icons
 
 const getModalActionData = (row) => {
    return { userData: row };
@@ -197,6 +196,25 @@ const ProjectPostingDetails = (props) => {
 
    const columns = [
       {
+         name: "Expand",
+         cell: (row) => (
+            <button
+               className="expand-button"
+               onClick={() => handleRowExpand(row.id)}
+               style={{ background: "none", border: "none", cursor: "pointer" }}
+            >
+               {expandedRow === row.id ? (
+                  <MdOutlineKeyboardDoubleArrowUp />
+               ) : (
+                  <MdOutlineKeyboardDoubleArrowDown />
+               )}
+            </button>
+         ),
+         center: true,
+         minWidth: "50px",
+         maxWidth: "50px",
+      },
+      {
          name: "Towers / Plotted",
          selector: (row) => row.builderProjectSubPostName,
          center: true,
@@ -205,12 +223,7 @@ const ProjectPostingDetails = (props) => {
       },
       {
          name: "Unit Types ",
-         selector: (row) =>
-            row.builderProjectSubPostPropertyResponseList
-               .map(
-                  (subPost) => `${subPost.propertyRoomCompositionType} ${subPost.propertySubType}`
-               )
-               .join(", "),
+         selector: (row) => row.unitType,
          center: true,
          minWidth: "120px",
       },
@@ -269,32 +282,20 @@ const ProjectPostingDetails = (props) => {
       //   },
    ];
    const ExpandedRowComponent = ({ data }) => {
-      // Check if data exists before mapping
       if (!data || !data.builderProjectSubPostPropertyResponseList) {
          return <p>No additional details available</p>;
       }
 
       return (
          <div style={{ padding: "10px" }}>
-            {/* <h5>Property Details</h5> */}
             <table className="table">
-               {/* <thead>
-                  <tr>
-                     <th>Property ID</th>
-                     <th>Number of Rooms</th>
-                     <th>Property Type</th>
-                     <th>Sub Type</th>
-                     <th>Total Units</th>
-                  </tr>
-               </thead> */}
                <tbody>
                   {data.builderProjectSubPostPropertyResponseList.map((property, index) => (
                      <tr key={index}>
                         <td>
-                           {property.numberOfRooms},{property.propertyRoomCompositionType},
-                           {property.propertySubType}
+                           {property.numberOfRooms}&nbsp;
+                           {property.propertyRoomCompositionType}&nbsp; {property.propertySubType}
                         </td>
-
                         <td>{property.totalProjectUnits}</td>
                      </tr>
                   ))}
@@ -302,6 +303,36 @@ const ProjectPostingDetails = (props) => {
             </table>
          </div>
       );
+   };
+   const handleClick = () => {
+      navigate("/builder/Posting-Property", {
+         //  state: {
+         //     areaToDevelop: "",
+         //     areaToDevelopMeasurementUnitEnteredByUser: "Sq. Mt.",
+         //     builderId: 6,
+         //     builderProjectGeneralAmenities: (4)[("dw", "jqkqk", "aaaaaa", "jjadsjk")],
+         //     builderProjectId: 11,
+         //     builderProjectImages: [{}, {}],
+         //     builderProjectName: "Rohit Builder Project",
+         //     builderProjectVideos: [{}, {}],
+         //     city: "Pimpri-Chinchwad",
+         //     cityLat: 18.6297811,
+         //     cityLong: 73.7997094,
+         //     country: null,
+         //     landArea: 100.30000000000001,
+         //     landAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+         //     latitude: 18.56988525390625,
+         //     locality: "Baner",
+         //     longitude: 73.77430725097656,
+         //     openAreaPercent: 31,
+         //     possessionFrom: "01-2025",
+         //     possessionTo: "05-2025",
+         //     projectDescription: "Rohit Builder Project Description",
+         //     state: "Maharashtra",
+         //     totalTowersPlanned: 10,
+         //     userId: null,
+         //  },
+      });
    };
    return (
       <>
@@ -433,6 +464,7 @@ const ProjectPostingDetails = (props) => {
                   >
                      <div className="d-flex flex-column align-items-center">
                         <Button
+                           onClick={handleClick}
                            variant="light"
                            className="mb-3"
                            style={{
