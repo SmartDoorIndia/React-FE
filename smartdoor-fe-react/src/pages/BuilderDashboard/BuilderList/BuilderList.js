@@ -1,17 +1,13 @@
 /** @format */
 // API integration on line 66, 123 and 137
 import React, { useCallback, useEffect, useState } from "react";
-import "./BuilderProfileDetails.scss";
+import "./BuilderList.scss";
 import Text from "../../../shared/Text/Text";
 import { TiCameraOutline } from "react-icons/ti";
-import { Row, Col, Form, Button, Modal } from "react-bootstrap"; // Ensure you have react-bootstrap installed
+import { Row, Col, Form, Button } from "react-bootstrap"; // Ensure you have react-bootstrap installed
 import { useUserContext } from "../../../common/helpers/Auth";
-import {
-   getBuilderById,
-   createBuilderProfileDetail,
-   approveBuilderProfile,
-} from "../../../common/redux/actions"; // Ensure correct imports
-import { showSuccessToast, showErrorToast, getLocalStorage } from "../../../common/helpers/Utils"; // Utility for displaying toast messages
+import { getBuilderList, getBuilderStats } from "../../../common/redux/actions"; // Ensure correct imports
+import { showSuccessToast, showErrorToast } from "../../../common/helpers/Utils"; // Utility for displaying toast messages
 import { CONSTANTS } from "../../../common/helpers/Constants";
 
 const BuilderProfileDetails = () => {
@@ -19,32 +15,21 @@ const BuilderProfileDetails = () => {
       auth: { userData },
    } = useUserContext();
 
-   const builderId = getLocalStorage("authData").builderId;
-   const userId = getLocalStorage("authData").userid;
+   const userId = 398;
    const [isChecked, setIsChecked] = useState(true); // Set to checked by default
    const [isFormValid, setIsFormValid] = useState(false);
-   const [showModal, setShowModal] = useState(false);
    const [loading, setLoading] = useState(true);
-   const [isApproved, setIsApproved] = useState(false);
-
-   const [data, setData] = useState({
-      mobile: "",
-      companyName: "",
-      brandName: "",
-      companyAddress: "",
-      companyEmail: "",
-      companyGst: "",
-      builderLogoS3ImageUrl: "",
-      builderLogoImageAsBase64: "",
-      builderCoinbalance: 0.0,
-      directors: [],
-      companyFacebookUrl: "",
-      companyInstagramUrl: "",
-      whatsappNumber: "",
-      callNumber: "",
-      contactPersonName: "",
-      builderProfileComplete: true,
+   const [builderFilter, setBuilderFilter] = useState({
+        userId: 398,
+        builderName: "",
+        records: 10,
+        pageNumber: 1
    });
+   const [data, setData] = useState([]);
+   const [builderStats, setBuilderStats] = useState({
+    builderCount: 0,
+    builderProjectCount: 0,
+});
    const validateForm = () => {
       const {
          brandName,
@@ -67,55 +52,68 @@ const BuilderProfileDetails = () => {
    };
    const [error, setError] = useState(null);
    // Fetch builder data if editing an existing profile
-   const _getBuilderById = useCallback(() => {
-      if (!builderId) return; // Skip if no builderId
-      getBuilderById({ builderId: builderId, userId: userId })
-         .then((response) => {
-            if (response?.data) {
-               const { resourceData, error: responseError } = response.data;
-               if (resourceData) {
-                  // Ensure no null values in resourceData
-                  const sanitizedData = Object.fromEntries(
-                     Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
-                  );
-                  setData(sanitizedData);
-               }
-               if (responseError) setError(responseError);
-            }
-            setLoading(false);
-         })
-         .catch((error) => {
-            setLoading(false);
-            setError(error);
-            console.log("Error fetching builder data:", error);
-         });
-   }, [builderId]);
+   const _getBuilderListAndStats = useCallback(() => {
+    getBuilderList(builderFilter)
+       .then((response) => {
+          if (response?.data) {
+             const { resourceData, error: responseError } = response.data;
+             if (resourceData) {
+                // Ensure no null values in resourceData
+                const sanitizedData = Object.fromEntries(
+                   Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
+                );
+                setData(sanitizedData);
+                console.log("sanitizedData:- ", sanitizedData);
+             }
+             if (responseError) setError(responseError);
+          }
+          setLoading(false);
+       })
+       .catch((error) => {
+          setLoading(false);
+          setError(error);
+          console.log("Error fetching builder data:", error);
+       });
+
+
+
+       getBuilderStats(builderFilter)
+       .then((response) => {
+          if (response?.data) {
+             const { resourceData, error: responseError } = response.data;
+             if (resourceData) {
+                // Ensure no null values in resourceData
+                const sanitizedData = Object.fromEntries(
+                   Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
+                );
+                setBuilderStats(sanitizedData);
+                console.log("sanitizedData:- ", sanitizedData);
+             }
+             if (responseError) setError(responseError);
+          }
+          setLoading(false);
+       })
+       .catch((error) => {
+          setLoading(false);
+          setError(error);
+          console.log("Error fetching builder data:", error);
+       });
+   }, []);
 
    // Fetch builder profile on component mount or when builderId changes
    useEffect(() => {
-      _getBuilderById();
-   }, [_getBuilderById]);
+    _getBuilderListAndStats();
+   }, []);
 
-   const handleChange = (event) => {
-      const { name, value } = event.target;
-
-      if (name.startsWith("directorName")) {
-         const directorIndex = parseInt(name.replace("directorName", "")) - 1;
-
-         setData((prevData) => {
-            const newDirectors = [...prevData.directors];
-            newDirectors[directorIndex] = value; // Update the specific director field
-
-            return {
-               ...prevData,
-               directors: newDirectors, // Set the updated directors array back into data
-            };
-         });
-         validateForm();
-      } else {
-         // Update other fields in data (not directors array)
-         setData((prevData) => ({ ...prevData, [name]: value }));
-      }
+   // Handle form input changes
+   const handleChange = (e) => {
+      const { name, value } = e.target;
+      console.log("mobile:- ", name, "   :- ", value);
+      setData((prevData) => ({
+         ...prevData,
+         [name]: value, // Ensure value is never null
+      }));
+      validateForm();
    };
 
    // Handle logo upload
@@ -134,69 +132,13 @@ const BuilderProfileDetails = () => {
       }
    };
 
+   // Handle form submission for both create and edit scenarios
    const handleSubmit = async (e) => {
       e.preventDefault();
       setLoading(true);
 
-      try {
-         // Submit the builder profile details
-         await createBuilderProfileDetail(data);
 
-         // Call to approve the builder profile after successful creation
-         await callApproveBuilderProfile(); // Approve the profile
-
-         // Clear form data fields after submission
-         setData({
-            brandName: "",
-            companyName: "",
-            companyEmail: "",
-            companyGst: "",
-            companyAddress: "",
-            usersName: "",
-            mobile: "",
-            directors: ["", "", "", ""],
-         });
-
-         // Invalidate the form state to disable the submit button
-         setIsFormValid(false);
-      } catch (error) {
-         // Show error toast on failure
-         showErrorToast("Error submitting form. Please try again.");
-         console.error("Error submitting builder profile:", error);
-      } finally {
-         setLoading(false);
-      }
    };
-
-   const callApproveBuilderProfile = async () => {
-      try {
-         // Log the builderId and userId to verify they are being passed correctly
-         console.log("Approving profile for builderId:", builderId, "userId:", userId);
-
-         const response = await approveBuilderProfile({ builderId, userId });
-
-         // Log the response to check the status and data
-         console.log("Approve API response:", response);
-
-         if (response.status === 200) {
-            showSuccessToast(
-               "Your request for Builder profile has been sent to the SmartDoor Admin. We will send you the updates to your registered email address."
-            );
-
-            setShowModal(true); // Show modal on successful approval
-         } else {
-            // Log the error message from the response
-            console.log("Unexpected response:", response.data);
-            showErrorToast("Unexpected response from the server.");
-         }
-      } catch (error) {
-         // Log the full error object for debugging
-         console.error("Error approving builder profile:", error);
-         showErrorToast("Error approving profile. Please try again.");
-      }
-   };
-
-   const handleCloseModal = () => setShowModal(false);
 
    // if (loading) return <div>Loading...</div>; // Show loading indicator
    if (error) return <div>Error: {error.message || "Failed to load builder details"}</div>; // Show error message
@@ -204,25 +146,25 @@ const BuilderProfileDetails = () => {
       return typeof base64 === "string" && base64.startsWith("data:image/png;base64,");
    };
 
-   // // Determine the correct src for the image
-   // const getImageSrc = () => {
-   //    if (data.builderLogoS3ImageUrl && data.builderLogoS3ImageUrl.trim() !== "") {
-   //       // Construct the full S3 URL
-   //       const s3Url = `${CONSTANTS.CONFIG_PROPERTY.s3Url.replace(
-   //          /\/+$/,
-   //          ""
-   //       )}/${data.builderLogoS3ImageUrl.replace(/^\/+/, "")}`;
-   //       console.log("S3 URL:", s3Url); // Log the S3 URL for debugging
-   //       return s3Url;
-   //    } else if (isBase64Image(data.builderLogoImageAsBase64)) {
-   //       console.log("Base64 Image:", data.builderLogoImageAsBase64); // Log the Base64 data for debugging
-   //       return data.builderLogoImageAsBase64;
-   //    }
-   //    console.error("Invalid image data");
-   //    return null;
-   // };
+   // Determine the correct src for the image
+   const getImageSrc = () => {
+      if (data.builderLogoS3ImageUrl && data.builderLogoS3ImageUrl.trim() !== "") {
+         // Construct the full S3 URL
+         const s3Url = `${CONSTANTS.CONFIG_PROPERTY.s3Url.replace(
+            /\/+$/,
+            ""
+         )}/${data.builderLogoS3ImageUrl.replace(/^\/+/, "")}`;
+         console.log("S3 URL:", s3Url); // Log the S3 URL for debugging
+         return s3Url;
+      } else if (isBase64Image(data.builderLogoImageAsBase64)) {
+         console.log("Base64 Image:", data.builderLogoImageAsBase64); // Log the Base64 data for debugging
+         return data.builderLogoImageAsBase64;
+      }
+      console.error("Invalid image data");
+      return null;
+   };
 
-   // const imageSrc = getImageSrc();
+   const imageSrc = getImageSrc();
 
    const handleCheckboxChange = (event) => {
       setIsChecked(event.target.checked);
@@ -370,50 +312,43 @@ const BuilderProfileDetails = () => {
                            </Col>
                         </Row>
                         {/* Row 3 */}
-                        <Row className="align-items-center mt-3">
-                           {Array(4)
-                              .fill()
-                              .map((_, index) => (
-                                 <Col key={index} lg="4">
-                                    <Form.Group controlId={`directorName${index + 1}`}>
-                                       <Form.Control
-                                          className="builderFormControl"
-                                          type="text"
-                                          placeholder={`Director Name ${index + 1}${
-                                             index > 1 ? " (Optional)" : ""
-                                          }`}
-                                          name={`directorName${index + 1}`}
-                                          value={data.directors[index] || ""} // Access directors from data
-                                          onChange={handleChange}
-                                          onWheel={() => document.activeElement.blur()}
-                                       />
-                                       <Text color="dangerText" size="xSmall" className="pt-2" />
-                                    </Form.Group>
-                                 </Col>
-                              ))}
-
-                           <Col lg="4" className="mt-3">
-                              <Form.Group controlId="facebook">
+                        <Row className="align-items-center mb-3">
+                           <Col lg="4">
+                              <Form.Group controlId="directorName1">
                                  <Form.Control
                                     className="builderFormControl"
                                     type="text"
-                                    placeholder="www.facebook.com/accountname"
-                                    name="companyFacebookUrl"
-                                    value={data.companyFacebookUrl || ""}
+                                    placeholder="Director Name 1"
+                                    name="directorName1"
+                                    value={data.directorName1 || ""}
                                     onChange={handleChange}
                                     onWheel={() => document.activeElement.blur()}
                                  />
                                  <Text color="dangerText" size="xSmall" className="pt-2" />
                               </Form.Group>
                            </Col>
-                           <Col lg="4" className="mt-3">
-                              <Form.Group controlId="instagram">
+                           <Col lg="4">
+                              <Form.Group controlId="directorName2">
                                  <Form.Control
                                     className="builderFormControl"
                                     type="text"
-                                    placeholder="www.instagram.com/@accountname"
-                                    name="companyInstagramUrl"
-                                    value={data.companyInstagramUrl || ""}
+                                    placeholder="Director Name 2"
+                                    name="directorName2"
+                                    value={data.directorName2 || ""}
+                                    onChange={handleChange}
+                                    onWheel={() => document.activeElement.blur()}
+                                 />
+                                 <Text color="dangerText" size="xSmall" className="pt-2" />
+                              </Form.Group>
+                           </Col>
+                           <Col lg="4">
+                              <Form.Group controlId="directorName3">
+                                 <Form.Control
+                                    className="builderFormControl"
+                                    type="text"
+                                    placeholder="Director Name 3(Optional)"
+                                    name="directorName3"
+                                    value={data.directorName3 || ""}
                                     onChange={handleChange}
                                     onWheel={() => document.activeElement.blur()}
                                  />
@@ -421,7 +356,50 @@ const BuilderProfileDetails = () => {
                               </Form.Group>
                            </Col>
                         </Row>
-
+                        <Row className="align-items-center">
+                           <Col lg="4">
+                              <Form.Group controlId="directorName4">
+                                 <Form.Control
+                                    className="builderFormControl"
+                                    type="text"
+                                    placeholder="Director Name 4(Optional)"
+                                    name="directorName4"
+                                    value={data.directorName4 || ""}
+                                    onChange={handleChange}
+                                    onWheel={() => document.activeElement.blur()}
+                                 />
+                                 <Text color="dangerText" size="xSmall" className="pt-2" />
+                              </Form.Group>
+                           </Col>
+                           <Col lg="4">
+                              <Form.Group controlId="facebook">
+                                 <Form.Control
+                                    className="builderFormControl"
+                                    type="text"
+                                    placeholder="www.facebook.com/accountname"
+                                    name="facebook"
+                                    value={data.facebook || ""}
+                                    onChange={handleChange}
+                                    onWheel={() => document.activeElement.blur()}
+                                 />
+                                 <Text color="dangerText" size="xSmall" className="pt-2" />
+                              </Form.Group>
+                           </Col>
+                           <Col lg="4">
+                              <Form.Group controlId="instagram">
+                                 <Form.Control
+                                    className="builderFormControl"
+                                    type="text"
+                                    placeholder="www.instagram.com/@accountname"
+                                    name="instagram"
+                                    value={data.instagram || ""}
+                                    onChange={handleChange}
+                                    onWheel={() => document.activeElement.blur()}
+                                 />
+                                 <Text color="dangerText" size="xSmall" className="pt-2" />
+                              </Form.Group>
+                           </Col>
+                        </Row>
                         <Row className="align-items-center">
                            <Col lg="4" style={{ height: "104px" }}>
                               <Form.Group controlId="whatsappNumber">
@@ -499,12 +477,11 @@ const BuilderProfileDetails = () => {
                         <Col lg="3">
                            <button
                               type="submit"
-                              className="btn-small submit-btn"
                               id="submit-team-member-button"
-                              // className={`btn-small submit-btn ${
-                              //    isFormValid ? "active-btn" : "disabled-btn"
-                              // }`}
-                              // disabled={!isFormValid} // Button disabled until all fields are filled
+                              className={`btn-small submit-btn ${
+                                 isFormValid ? "active-btn" : "disabled-btn"
+                              }`}
+                              disabled={!isFormValid} // Button disabled until all fields are filled
                            >
                               Submit
                            </button>
@@ -574,35 +551,6 @@ const BuilderProfileDetails = () => {
                            </Row>
                         </div> */}
                </form>
-               <Modal show={showModal} onHide={handleCloseModal}>
-                  <Modal.Title
-                     style={{
-                        fontSize: " 20px",
-                        fontWeight: 700,
-                        lineHeight: "27.32px",
-                        letterSpacing: "-0.02em",
-                        textAlign: "left",
-                        padding: "20px 3px 1px 16px",
-                     }}
-                  >
-                     Account Approval
-                  </Modal.Title>
-                  <Modal.Body>
-                     Your request for Builder profile has been sent to the SmartDoor Admin. We will
-                     sent you the updates to your registered email address.
-                     <Row className="ModalActions">
-                        <Col lg="6">
-                           <button
-                              type="button"
-                              className="btn-small cancel-btn"
-                              onClick={handleCloseModal}
-                           >
-                              Close
-                           </button>
-                        </Col>
-                     </Row>
-                  </Modal.Body>
-               </Modal>
             </div>
 
             {/* <div className="col-md-3">

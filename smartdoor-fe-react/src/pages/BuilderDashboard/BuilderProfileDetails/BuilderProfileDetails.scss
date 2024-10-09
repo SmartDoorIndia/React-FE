@@ -475,7 +475,32 @@
       }
    }
 }
+.ModalActions {
+   display: flex;
+   flex-wrap: nowrap;
+   //    justify-content: flex-end;
+   gap: 10px;
 
+   .btn-small {
+      width: 74%;
+      border: none;
+      padding: 12px !important;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #ffffff;
+      margin-top: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+   }
+   .submit-btn {
+      background-color: #be1452;
+   }
+   .cancel-btn {
+      background-color: #eaeaea;
+      color: #252525;
+      border: 1px solid #dedede;
+   }
+}
 .action {
    display: contents;
    span {

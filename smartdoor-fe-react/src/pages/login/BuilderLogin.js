@@ -107,6 +107,7 @@ const BuilderLogin = (props) => {
                            <label htmlFor="phone-number">Phone Number</label>
                            <FontAwesomeIcon
                               icon={faArrowRight}
+                              onClick={handleArrowClick}
                               className={`input-icon ${
                                  userNumber.length === 10 ? "clickable" : "disabled"
                               }`}

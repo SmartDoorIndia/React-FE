@@ -73,6 +73,7 @@ const BuilderOtp = (props) => {
          );
          if (response.status === 200) {
             showSuccessToast("Login successful");
+            console.log("auth response:- ", response);
             setLocalStorage("authData", response.data);
             history.push("/builder/detail"); // Redirect to login page or intended page
          } else {

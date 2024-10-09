@@ -59,18 +59,33 @@
    border-bottom-left-radius: 10px;
    flex-grow: 1; /* Make sure the input expands to fill available space */
 }
-
-.custom-text {
-   background-color: white; /* Ensure background is white */
-   border-left: 1px solid #ccc; /* Border between input and Sq. Mt. */
-   border-top-right-radius: 10px;
-   border-bottom-right-radius: 10px;
-   padding-left: 10px;
-   padding-right: 10px;
-   font-size: 12px;
+.TotalAreaDevelopCon {
+   .custom-text {
+      border-radius: 0px !important;
+   }
 }
 .custom-input-group-append {
    margin-left: 0;
+}
+.UnitformContainer {
+   padding: 6px 15px;
+}
+.UnitformContainer1 {
+   width: 100%;
+   display: flex;
+   .flex-container1 {
+      display: flex;
+      flex-wrap: wrap;
+      width: 94%;
+      justify-content: space-between;
+      .flex-item {
+         width: 15%;
+         margin: 1px 14px;
+      }
+   }
+   .flex-container2 {
+      width: 6%;
+   }
 }
 
 .date-container {
@@ -134,18 +149,28 @@
    cursor: pointer;
    color: #aaa;
 }
+.imageUploadRow {
+   small {
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 16.39px;
+      letter-spacing: -0.02em;
+      text-align: left;
+   }
+}
 .formProjectImages,
 .formProjectLayout {
    .image-upload {
       display: flex;
       align-items: center;
-      margin-bottom: 15px;
+      // margin-bottom: 15px;
       border-radius: 8px;
       cursor: pointer;
       transition: background-color 0.3s ease;
       label {
          margin-bottom: 0;
       }
+
       .upload-label {
          display: flex;
          background-color: #fff;
@@ -335,9 +360,9 @@
    }
 }
 .projectDetailForm {
-   background-color: #fff;
    .form-control {
       height: 44px !important;
+      border-radius: 8px !important;
    }
 }
 // Units Form
@@ -390,20 +415,10 @@
       }
    }
 }
-.UnitformContainer {
-   display: flex;
-   border: 1px solid #ccc;
-   background-color: #f1f3f5;
-   position: relative;
-}
-
-.UnitformContainer1 {
-   padding: 6px 15px;
-}
 
 .close-col {
    background-color: #f8f3f5;
-   height: 100%;
+   // height: 100%;
    width: 40px;
    min-height: 37vh; /* Ensure it takes full height */
    display: flex;

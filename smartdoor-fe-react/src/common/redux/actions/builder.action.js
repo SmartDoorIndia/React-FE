@@ -173,3 +173,47 @@ export const approveBuilderProject = async (data) => {
   return response.data.resourceData;
   
 }
+
+export const deleteBuilderProjectById = async (data) => {
+  const response = await mainApiService('deleteBuilderProjectById', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+  
+}
+
+export const deleteBuilderProjectSubPostById = async (data) => {
+  const response = await mainApiService('deleteBuilderProjectSubPostById', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+  
+}
+
+export const getBuilderList = async (data) => {
+  const response = await mainApiService('getBuilderList', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}
+
+export const getBuilderStats = async (data) => {
+  const response = await mainApiService('getBuilderStats', data);
+
+  if (response.data.status !== 200) {
+    return null;
+  }
+
+  return response.data.resourceData;
+
+}

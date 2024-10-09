@@ -10,13 +10,6 @@ import { getLocationByGeoCode } from "../../common/helpers/Utils";
 
 import MarkerIcon from "../../assets/images/mapMarker-icon.png";
 
-const mapStyles = {
-   width: "100%",
-   height: "190px",
-   display: "inline",
-   borderRadius: "5px",
-};
-
 const LAT_LNG = {
    lat: 20.5937,
    lng: 78.9629,
@@ -40,10 +33,9 @@ const LAT_LNG = {
 // }
 
 export class MapComponent extends Component {
-
    state = {
-      showMap: false
-   }
+      showMap: false,
+   };
 
    onMarkerDragEnd = async (coord, t, map) => {
       const { latLng } = coord;
@@ -56,32 +48,38 @@ export class MapComponent extends Component {
    };
 
    componentDidMount() {
-
-      if( window.google && window ) {
-         this.setState(prevState => ({
-            showMap: true
-         }));         
+      if (window.google && window) {
+         this.setState((prevState) => ({
+            showMap: true,
+         }));
       }
    }
 
    render() {
-
       const LatLng =
          this.props.p_lat && this.props.p_lng
             ? { lat: this.props.p_lat, lng: this.props.p_lng }
             : LAT_LNG;
+      const containerStyles = this.props.style || {
+         width: "100%",
+         height: "190px", // Default height
+         display: "inline",
+         borderRadius: "5px",
+      };
 
       return (
          <>
-            { this.state.showMap && window && window.google ? (
+            <div style={containerStyles}>
+               {this.state.showMap && window && window.google ? (
                   <Map
                      google={google}
                      zoom={this.props.p_lat && this.props.p_lng ? 16 : 4}
-                     style={mapStyles}
+                     // style={mapStyles}
                      initialCenter={LatLng}
                      defaultCenter={LatLng}
                      defaultZoom={16}
-                     center={LatLng}>
+                     center={LatLng}
+                  >
                      {LatLng ? (
                         <Marker
                            icon={MarkerIcon}
@@ -93,11 +91,10 @@ export class MapComponent extends Component {
                         />
                      ) : null}
                   </Map>
-               ): (
+               ) : (
                   <div className="Small TaupeGrey smbold"> Map Loading... </div>
-               )
-            }
-
+               )}
+            </div>
          </>
       );
    }

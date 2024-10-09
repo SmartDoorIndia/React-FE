@@ -19,15 +19,18 @@ import { TableLoader } from "../../../../common/helpers/Loader";
 import Text from "../../../../shared/Text/Text";
 
 const ProjectsPostings = (props) => {
-   const { builderReducer } = props;
-   const data = useSelector((state) => state.builderReducer.data);
-   const [filterText, setFilterText] = useState(
-      data !== undefined ? builderReducer?.data?.searchString : ""
-   );
+   const { ProjectsPostings } = props;
+
+   const data = useSelector((state) => state.builderReducer?.data); // Safely access builderReducer data
+
+   // Set initial filter text based on `searchString` in `data`, or default to an empty string
+   const [filterText, setFilterText] = useState(data?.searchString || "");
+
+   // Other states
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [currentPage, setCurrentPage] = useState(1); // Default to 1
    const [rowsPerPage, setRowsPerPage] = useState(8); // Default to 8
-   const [totalRecords, setTotalRecords] = useState(0); // To track total records count
+   const [totalRecords, setTotalRecords] = useState(0); // Track total records count
    const [projectPostingFilter, setProjectPostingFilter] = useState({
       builderId: 6,
       searchString: "",
@@ -35,20 +38,30 @@ const ProjectsPostings = (props) => {
       records: rowsPerPage,
       pageNumber: currentPage,
    });
+
+   // States for builder projects and statistics
    const [builderProjects, setBuilderProjects] = useState(null);
    const [builderProjectStats, setBuilderProjectStats] = useState(null);
 
+   // Fetch builder projects and stats whenever filters, page, or rows per page change
    useEffect(() => {
-      getBuilderProjects(projectPostingFilter).then((response) => {
+      // Update filter before sending it to the API call
+      const updatedFilter = {
+         ...projectPostingFilter,
+         records: rowsPerPage,
+         pageNumber: currentPage,
+      };
+
+      getBuilderProjects(updatedFilter).then((response) => {
          setBuilderProjects(response.data.resourceData);
          console.log(response.data.resourceData);
       });
 
-      getBuilderProjectStats(projectPostingFilter).then((response) => {
+      getBuilderProjectStats(updatedFilter).then((response) => {
          setBuilderProjectStats(response.data.resourceData);
          console.log(response.data.resourceData);
       });
-   }, [projectPostingFilter, rowsPerPage, currentPage]);
+   }, [projectPostingFilter, rowsPerPage, currentPage]); // Runs the effect when these dependencies change
 
    const showValue = () => {
       let filteredItems =
@@ -363,7 +376,7 @@ const ProjectsPostings = (props) => {
                <DataTableComponent
                   data={showValue()}
                   columns={columns}
-                  progressPending={builderReducer.isLoading}
+                  progressPending={ProjectsPostings.isLoading}
                   progressComponent={ProgressComponent}
                   pagination
                   paginationServer
@@ -383,8 +396,8 @@ const ProjectsPostings = (props) => {
       </>
    );
 };
-const mapStateToProps = ({ builderReducer }) => ({
-   builderReducer,
+const mapStateToProps = ({ ProjectsPostings }) => ({
+   ProjectsPostings,
 });
 const actions = {
    getBuilderProjects,

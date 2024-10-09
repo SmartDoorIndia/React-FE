@@ -2454,3 +2454,23 @@ export const approveBuilderProject = async (data) => {
    else showErrorToast("Unexpected error. Please try again later");
    return response;
 };
+
+export const deleteBuilderProjectById = async (data) => {
+   const response = await mainApiService("deleteBuilderProjectById", data);
+   return response;
+};
+
+export const deleteBuilderProjectSubPostById = async (data) => {
+   const response = await mainApiService("deleteBuilderProjectSubPostById", data);
+   return response;
+};
+
+export const getBuilderList = async (data) => {
+   const response = await mainApiService("getBuilderList", data);
+   return response;
+};
+
+export const getBuilderStats = async (data) => {
+   const response = await mainApiService("getBuilderStats", data);
+   return response;
+};

@@ -16,7 +16,7 @@ const initialState = {
    error: null,
 };
 
-const builderReducer = (state = initialState, action) => {
+const ProjectsPostings = (state = initialState, action) => {
    switch (action.type) {
       case GET_BUILDER_PROJECTS_REQUEST:
          return {
@@ -59,4 +59,4 @@ const builderReducer = (state = initialState, action) => {
    }
 };
 
-export default builderReducer;
+export default ProjectsPostings;
