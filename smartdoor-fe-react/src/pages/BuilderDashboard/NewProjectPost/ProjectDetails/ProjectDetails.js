@@ -547,7 +547,56 @@ const ProjectDetails = () => {
    };
    const handleAddMoreUnit = () => {
       if (data.subPostType === "Tower") {
-         setPlottedRows([...towerRows, {}]);
+         let tow = towerRows;
+         tow.push(
+            {
+               propertyId: null,
+               numberOfRooms: null,
+               propertyRoomCompositionType: "",
+               propertySubType: "",
+               totalProjectUnits: null,
+               minPlotArea: null,
+               maxPlotArea: null,
+               plotAreaMeasurementUnitEnteredByUser: "Sq. Mt",
+               minCarpetArea: null,
+               maxCarpetArea: null,
+               carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt",
+               minBuiltUpArea: null,
+               maxBuiltUpArea: null,
+               builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt",
+               comments: "",
+               minPrice: null,
+               maxPrice: null,
+   
+               propertyVideos: [
+                  {
+                     docId: null,
+                     docName: "",
+                     docURL: "",
+                     docOrderInFrontendView: null,
+                     docDescription: "",
+                     builderProjectImageAsBase64: null,
+                  },
+               ],
+               propertyImages: [
+                  {
+                     docId: null,
+                     docName: "",
+                     docURL: "",
+                     docOrderInFrontendView: 2,
+                     docDescription: "",
+                     builderProjectImageAsBase64: "",
+                  },
+               ],
+            }     
+         )
+         setTowerRows(tow);
+         setData((prevState) => ({
+            ...prevState,
+            builderProjectSubPostProperties: tow,
+         }));
+
+         console.log("data.builderProjectSubPostProperties", data.builderProjectSubPostProperties)
       } else if (data.subPostType === "Plotted") {
          setPlottedRows([...plottedRows, {}]);
       }
