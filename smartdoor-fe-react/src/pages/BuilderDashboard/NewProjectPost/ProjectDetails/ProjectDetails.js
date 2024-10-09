@@ -58,9 +58,10 @@ const ProjectDetails = () => {
    const [files, setFiles] = useState({}); // To keep track of uploaded files
 
    const [isEditing, setIsEditing] = useState(false);
-   const [showModal, setShowModal] = useState(false);
    const [videoUrl, setVideoUrl] = useState("");
    const [configuration, setConfiguration] = useState("Villas");
+   const [showModal, setShowModal] = useState(false);
+   const [currentVideoUrl, setCurrentVideoUrl] = useState("");
 
    const [towerRows, setTowerRows] = useState([]);
    const [plottedRows, setPlottedRows] = useState([]);
@@ -407,22 +408,42 @@ const ProjectDetails = () => {
       return url.replace("watch?v=", "embed/"); // Example conversion
    };
 
-   const handleFileChange = (e, propertyIndex, index) => {
+   const handleFileChange = (e, propertyIndex, imageIndex) => {
       const file = e.target.files[0];
+      const fieldName = e.target.name; // Get the name from the input field
+
       if (file) {
-         const newImage = {
-            docName: file.name,
-            file: file,
+         const reader = new FileReader();
+
+         reader.onloadend = () => {
+            const newImage = {
+               builderProjectImageAsBase64: reader.result, // Base64 representation of the file
+               docDescription: fieldName, // You can initialize this with an empty string
+               docId: null, // Initialize with null, unless you have an actual ID to assign
+               docName: file.name, // Name of the file
+               docOrderInFrontendView: imageIndex + 1, // The order of the image
+               docURL: "", // Assuming this will remain empty unless there's a specific URL
+            };
+
+            setData((prevData) => {
+               const updatedProperties = [...prevData.builderProjectSubPostProperties];
+
+               // Ensure propertyImages is initialized
+               if (!updatedProperties[propertyIndex].propertyImages) {
+                  updatedProperties[propertyIndex].propertyImages = [];
+               }
+
+               // Update the specific image at the provided imageIndex
+               updatedProperties[propertyIndex].propertyImages[imageIndex] = newImage;
+
+               return {
+                  ...prevData,
+                  builderProjectSubPostProperties: updatedProperties,
+               };
+            });
          };
 
-         setData((prevData) => {
-            const updatedProperties = [...prevData.builderProjectSubPostProperties];
-            if (!updatedProperties[propertyIndex].propertyImages) {
-               updatedProperties[propertyIndex].propertyImages = []; // Ensure propertyImages is initialized
-            }
-            updatedProperties[propertyIndex].propertyImages[index] = newImage;
-            return { ...prevData, builderProjectSubPostProperties: updatedProperties };
-         });
+         reader.readAsDataURL(file); // Convert file to Base64
       }
    };
 
@@ -504,16 +525,11 @@ const ProjectDetails = () => {
          }));
       }
    };
-
-   const handleShowVideo = (url) => {
-      setVideoUrl(url);
-      setShowModal(true);
+   const handlePlayVideo = (videoUrl) => {
+      setCurrentVideoUrl(videoUrl); // Set the video URL to be displayed
+      setShowModal(true); // Open the modal
    };
 
-   const handleCloseVideo = () => {
-      setShowModal(false);
-      setVideoUrl("");
-   };
    const handleRemoveProperty = (index) => {
       const updatedProperties = data.builderProjectSubPostProperties.filter((_, i) => i !== index);
 
@@ -531,7 +547,7 @@ const ProjectDetails = () => {
    };
    const handleAddMoreUnit = () => {
       if (data.subPostType === "Tower") {
-         setTowerRows([...towerRows, {}]);
+         setPlottedRows([...towerRows, {}]);
       } else if (data.subPostType === "Plotted") {
          setPlottedRows([...plottedRows, {}]);
       }
@@ -1201,6 +1217,9 @@ const ProjectDetails = () => {
                                                                         fontSize: "47px",
                                                                         cursor: "pointer",
                                                                      }}
+                                                                     onClick={() =>
+                                                                        handlePlayVideo(embedUrl)
+                                                                     }
                                                                   />
                                                                   <RxCross2
                                                                      className="delete-icon"
@@ -1234,6 +1253,59 @@ const ProjectDetails = () => {
                                        </div>
                                     </Form.Group>
                                  </Col>
+                                 <Modal
+                                    show={showModal}
+                                    onHide={() => setShowModal(false)}
+                                    centered
+                                 >
+                                    <Modal.Body style={{ position: "relative" }}>
+                                       <div>
+                                          <Text
+                                             text="Project Videos"
+                                             style={{
+                                                fontSize: "24px",
+                                                fontWeight: 700,
+                                                lineHeight: "21.86px",
+                                                letterSpacing: "-0.02em",
+                                                textAlign: "left",
+                                                marginBottom: "20px",
+                                             }}
+                                          />
+                                       </div>
+                                       {/* Close Button */}
+                                       <RxCross2
+                                          className="delete-icon"
+                                          onClick={() => setShowModal(false)}
+                                          style={{
+                                             position: "absolute",
+                                             top: "-11px",
+                                             right: "-11px",
+                                             cursor: "pointer",
+                                             color: "#fff ",
+                                             background: "#ff1919",
+                                             fontSize: "24px",
+                                             borderRadius: "50%",
+                                             zIndex: 1,
+                                          }}
+                                       />
+
+                                       {/* Video Iframe */}
+                                       {currentVideoUrl && (
+                                          <iframe
+                                             width="100%"
+                                             height="400px"
+                                             src={currentVideoUrl}
+                                             title="Video player"
+                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                             allowFullScreen
+                                             style={{
+                                                borderRadius: "8px",
+                                                border: "1px solid #ddd",
+                                             }}
+                                          ></iframe>
+                                       )}
+                                    </Modal.Body>
+                                 </Modal>
                               </Row>
                               <hr className="p-0" />
                               {/* Tower */}
@@ -1253,10 +1325,7 @@ const ProjectDetails = () => {
                               {data.subPostType === "Tower" &&
                                  showMoreUnits &&
                                  towerRows.map((row, index) => (
-                                    <Row
-                                       key={index}
-                                       className="align-items-center m-1 border rounded UnitsForm"
-                                    >
+                                    <Row className="align-items-center m-1 border rounded UnitsForm">
                                        {data.builderProjectSubPostProperties.map(
                                           (property, propertyIndex) => (
                                              <Col
@@ -1326,7 +1395,7 @@ const ProjectDetails = () => {
                                                             placeholder="Enter"
                                                             name={`totalProjectUnits_${propertyIndex}`}
                                                             onChange={handleInputChange}
-                                                            value={property.totalProjectUnits}
+                                                            value={property.totalProjectUnits || ""}
                                                          />
                                                       </Form.Group>
                                                    </Col>
@@ -1339,7 +1408,7 @@ const ProjectDetails = () => {
                                                                type="number"
                                                                placeholder="Enter"
                                                                name={`minCarpetArea_${propertyIndex}`}
-                                                               value={property.minCarpetArea}
+                                                               value={property.minCarpetArea || ""}
                                                                onChange={handleInputChange}
                                                             />
                                                             <InputGroup.Append className="custom-input-group-append">
@@ -1422,7 +1491,7 @@ const ProjectDetails = () => {
                                                                type="number"
                                                                placeholder="Enter"
                                                                name={`maxCarpetArea_${propertyIndex}`}
-                                                               value={property.maxCarpetArea}
+                                                               value={property.maxCarpetArea || ""}
                                                                onChange={handleInputChange}
                                                             />
 
@@ -1567,7 +1636,7 @@ const ProjectDetails = () => {
                                                                type="text"
                                                                placeholder="Enter"
                                                                name={`minPrice_${propertyIndex}`}
-                                                               value={property.minPrice}
+                                                               value={property.minPrice || ""}
                                                                onChange={handleInputChange}
                                                             />
                                                             {/* <Form.Control
@@ -1591,7 +1660,7 @@ const ProjectDetails = () => {
                                                                type="text"
                                                                placeholder="Enter"
                                                                name={`maxPrice_${propertyIndex}`}
-                                                               value={property.maxPrice}
+                                                               value={property.maxPrice || ""}
                                                                onChange={handleInputChange}
                                                             />
                                                             {/* <Form.Control
@@ -1684,7 +1753,7 @@ const ProjectDetails = () => {
                                                             type="text"
                                                             placeholder="Comments"
                                                             name={`comments_${propertyIndex}`}
-                                                            value={property.comments}
+                                                            value={property.comments || ""}
                                                             onChange={handleInputChange}
                                                          />
                                                       </Form.Group>
@@ -1763,7 +1832,8 @@ const ProjectDetails = () => {
                                                                      placeholder="Enter"
                                                                      name={`totalProjectUnits_${propertyIndex}`}
                                                                      value={
-                                                                        property.totalProjectUnits
+                                                                        property.totalProjectUnits ||
+                                                                        ""
                                                                      }
                                                                      onChange={handleInputChange}
                                                                   />
@@ -1779,7 +1849,8 @@ const ProjectDetails = () => {
                                                                         placeholder="Enter"
                                                                         name={`minBuiltUpArea${propertyIndex}`}
                                                                         value={
-                                                                           property.minBuiltUpArea
+                                                                           property.minBuiltUpArea ||
+                                                                           ""
                                                                         }
                                                                         onChange={handleInputChange}
                                                                      />
@@ -1842,7 +1913,8 @@ const ProjectDetails = () => {
                                                                         placeholder="Enter"
                                                                         name={`maxBuiltUpArea${propertyIndex}`}
                                                                         value={
-                                                                           property.maxBuiltUpArea
+                                                                           property.maxBuiltUpArea ||
+                                                                           ""
                                                                         }
                                                                         onChange={handleInputChange}
                                                                      />
@@ -1894,7 +1966,10 @@ const ProjectDetails = () => {
                                                                         type="number"
                                                                         placeholder="Enter"
                                                                         name={`minPlotArea${propertyIndex}`}
-                                                                        value={property.minPlotArea}
+                                                                        value={
+                                                                           property.minPlotArea ||
+                                                                           ""
+                                                                        }
                                                                         onChange={handleInputChange}
                                                                      />
                                                                      <InputGroup.Append className="custom-input-group-append">
@@ -1945,7 +2020,10 @@ const ProjectDetails = () => {
                                                                         type="number"
                                                                         placeholder="Enter"
                                                                         name={`maxPlotArea${propertyIndex}`}
-                                                                        value={property.maxPlotArea}
+                                                                        value={
+                                                                           property.maxPlotArea ||
+                                                                           ""
+                                                                        }
                                                                         onChange={handleInputChange}
                                                                      />
                                                                      <InputGroup.Append className="custom-input-group-append">
@@ -2083,7 +2161,8 @@ const ProjectDetails = () => {
                                                                      name={`totalProjectUnits_${propertyIndex}`}
                                                                      onChange={handleInputChange}
                                                                      value={
-                                                                        property.totalProjectUnits
+                                                                        property.totalProjectUnits ||
+                                                                        ""
                                                                      }
                                                                   />
                                                                </Form.Group>
@@ -2098,7 +2177,10 @@ const ProjectDetails = () => {
                                                                         type="number"
                                                                         placeholder="Enter"
                                                                         name={`minPlotArea${propertyIndex}`}
-                                                                        value={property.minPlotArea}
+                                                                        value={
+                                                                           property.minPlotArea ||
+                                                                           ""
+                                                                        }
                                                                         onChange={handleInputChange}
                                                                      />
                                                                      <InputGroup.Append className="custom-input-group-append">
@@ -2159,7 +2241,10 @@ const ProjectDetails = () => {
                                                                         type="number"
                                                                         placeholder="Enter"
                                                                         name={`maxPlotArea${propertyIndex}`}
-                                                                        value={property.maxPlotArea}
+                                                                        value={
+                                                                           property.maxPlotArea ||
+                                                                           ""
+                                                                        }
                                                                         onChange={handleInputChange}
                                                                      />
                                                                      <InputGroup.Append className="custom-input-group-append">
