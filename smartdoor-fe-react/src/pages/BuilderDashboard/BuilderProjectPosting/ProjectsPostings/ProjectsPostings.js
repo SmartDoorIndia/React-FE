@@ -1,11 +1,10 @@
 /** @format */
 // Line 84 has the API integration
-import React, { useEffect, memo } from "react";
+import React, { useState, useEffect, memo } from "react";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import Pagination from "../../../../shared/DataTable/Pagination";
+import { connect, useSelector } from "react-redux";
 import { compose } from "redux";
-import { connect, useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
 import { Button, Image } from "react-bootstrap";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import { handleStatusElement, getLocalStorage } from "../../../../common/helpers/Utils";
@@ -14,55 +13,105 @@ import { getBuilderProjects, getBuilderProjectStats } from "../../../../common/r
 import addIcon from "../../../../assets/svg/add.svg";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import "./ProjectsPostings.scss";
-import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import Text from "../../../../shared/Text/Text";
 
 const ProjectsPostings = (props) => {
    const { ProjectsPostings } = props;
-
    const data = useSelector((state) => state.builderReducer?.data); // Safely access builderReducer data
-
-   // Set initial filter text based on `searchString` in `data`, or default to an empty string
-   const [filterText, setFilterText] = useState(data?.searchString || "");
-
+   console.log("data", data);
+   const [filterText, setFilterText] = useState(
+      ProjectsPostings?.data?.searchString || "" // Use empty string if searchString is undefined
+   );
    // Other states
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-   const [currentPage, setCurrentPage] = useState(1); // Default to 1
-   const [rowsPerPage, setRowsPerPage] = useState(8); // Default to 8
+   const [currentPage, setCurrentPage] = useState(
+      data !== undefined ? ProjectsPostings?.data?.currentPage : 1
+   ); // Default to 1
+   const [rowsPerPage, setRowsPerPage] = useState(
+      data !== undefined ? ProjectsPostings?.data?.rowsPerPage : 8
+   ); // Default to 8
    const [totalRecords, setTotalRecords] = useState(0); // Track total records count
+   const auth = getLocalStorage("authData");
+
    const [projectPostingFilter, setProjectPostingFilter] = useState({
-      builderId: 6,
+      builderId: auth.builderId,
       searchString: "",
-      userId: 398,
+      userId: auth.userid,
       records: rowsPerPage,
       pageNumber: currentPage,
    });
-
-   // States for builder projects and statistics
    const [builderProjects, setBuilderProjects] = useState(null);
    const [builderProjectStats, setBuilderProjectStats] = useState(null);
 
-   // Fetch builder projects and stats whenever filters, page, or rows per page change
+   //    getBuilderProjects(updatedFilter).then((response) => {
+   //       setBuilderProjects(response.data.resourceData);
+   //       const resourceData = response.data.resourceData;
+   //       console.log(response.data.resourceData);
+   //       resourceData.forEach((project) => {
+   //          localStorage.setItem("builderProjectId", project.builderProjectId);
+   //       });
+   //    });
+
+   //    getBuilderProjectStats(updatedFilter).then((response) => {
+   //       setBuilderProjectStats(response.data.resourceData);
+   //       console.log(response.data.resourceData);
+   //    });
+   // }, [projectPostingFilter, rowsPerPage, currentPage]); // Runs the effect when these dependencies change
+
    useEffect(() => {
-      // Update filter before sending it to the API call
       const updatedFilter = {
          ...projectPostingFilter,
          records: rowsPerPage,
          pageNumber: currentPage,
       };
 
-      getBuilderProjects(updatedFilter).then((response) => {
-         setBuilderProjects(response.data.resourceData);
-         console.log(response.data.resourceData);
-      });
+      const handleGetBuilderProjects = async () => {
+         // try {
+         //    const response = await getBuilderProjects(updatedFilter);
+         //    console.log("API Response:", response); // Log the entire response
+         //    const resourceData = response && response.data && response.data.resourceData;
 
-      getBuilderProjectStats(updatedFilter).then((response) => {
-         setBuilderProjectStats(response.data.resourceData);
-         console.log(response.data.resourceData);
-      });
-   }, [projectPostingFilter, rowsPerPage, currentPage]); // Runs the effect when these dependencies change
+         //    // Check if resourceData is defined and is an array
+         //    if (resourceData && Array.isArray(resourceData)) {
+         //       setBuilderProjects(resourceData);
+         //       resourceData.forEach((project) => {
+         //          localStorage.setItem("builderProjectId", project.builderProjectId);
+         //       });
+         //    } else {
+         //       console.error("resourceData is not an array or is undefined:", resourceData);
+         //       setBuilderProjects([]); // Set to an empty array or handle as needed
+         //    }
+         // } catch (error) {
+         //    console.error("Error fetching builder projects:", error);
+         // }
+         try {
+            const response = await getBuilderProjects(updatedFilter);
+            setBuilderProjects(response.data.resourceData);
+            console.log("getBuilderProjectSubPosts", response.data.resourceData);
+         } catch (error) {
+            console.error(error);
+         }
+      };
 
+      const handleGetBuilderProjectStats = async () => {
+         try {
+            const statsFilter = {
+               ...projectPostingFilter,
+               records: rowsPerPage,
+               pageNumber: currentPage,
+            };
+            const response = await getBuilderProjectStats(statsFilter);
+            setBuilderProjectStats(response.data.resourceData);
+            console.log(response.data.resourceData);
+         } catch (error) {
+            console.error(error);
+         }
+      };
+
+      handleGetBuilderProjects();
+      handleGetBuilderProjectStats();
+   }, [projectPostingFilter, rowsPerPage, currentPage]);
    const showValue = () => {
       let filteredItems =
          Array.isArray(builderProjects) && builderProjects.length > 0 ? builderProjects : [];
@@ -82,6 +131,7 @@ const ProjectsPostings = (props) => {
          numberOfTowers: "",
          totalProjectUnits: "",
          pageNumber: newPage,
+         searchString: filterText,
       });
    };
 
@@ -97,7 +147,8 @@ const ProjectsPostings = (props) => {
          numberOfTowers: "",
          totalProjectUnits: "",
          records: newRowsPerPage,
-         pageNumber: 1,
+         pageNumber: currentPage,
+         searchString: filterText,
       });
    };
 
@@ -174,14 +225,34 @@ const ProjectsPostings = (props) => {
          />
       );
    }, [filterText, resetPaginationToggle]);
+   // Function to handle the click event on the "View" button
+   const handleClickViewAndRedirect = async (row) => {
+      const builderProjectId = row.builderProjectId; // Access the builderProjectId from the row
+      console.log("builderProjectId", builderProjectId);
+
+      if (!builderProjectId) {
+         console.error("No builderProjectId found in the row data.");
+         return;
+      }
+
+      localStorage.setItem("builderProjectId", builderProjectId); // Set the builderProjectId in local storage
+      window.location.href = `/builder/Project-Posting-Details/${builderProjectId}`; // Navigate to the next page
+   };
 
    const columns = [
+      {
+         name: "",
+         // selector: (row) => row.builderProjectName,
+         center: true,
+         minWidth: "150px",
+         maxWidth: "160px",
+      },
       {
          name: "Project Name",
          selector: (row) => row.builderProjectName,
          center: true,
          minWidth: "150px",
-         maxWidth: "150px",
+         maxWidth: "160px",
       },
       {
          name: "Address",
@@ -225,35 +296,23 @@ const ProjectsPostings = (props) => {
          cell: (row) => (
             <div className="action">
                <ToolTip name="View">
-                  <span>
-                     {row.status === "Expired" ? (
-                        <span>View </span>
-                     ) : (
-                        <Link
-                           to={{
-                              pathname: `/builder/Project-Posting-Details`,
-                              state: { loginMobile: row.loginMobile },
-                           }}
-                           className="action-link"
-                        >
-                           View&nbsp;
-                        </Link>
-                     )}
-                     {" | "}
-                     {row.status === "Expired" ? (
-                        <span>Update</span>
-                     ) : (
-                        <Link
-                           to={{
-                              pathname: "",
-                              state: { loginMobile: row.loginMobile },
-                           }}
-                           className="action-link"
-                        >
-                           &nbsp;Update
-                        </Link>
-                     )}
-                  </span>
+                  {row.status === "Expired" ? (
+                     <span>View</span>
+                  ) : (
+                     <button
+                        style={{
+                           color: "#BE1452",
+                           fontSize: "14px",
+                           fontWeight: 700,
+                           lineHeight: "18px",
+                           textAlign: "left",
+                        }}
+                        onClick={() => handleClickViewAndRedirect(row)}
+                        className="action-link btn"
+                     >
+                        View
+                     </button>
+                  )}
                </ToolTip>
             </div>
          ),
@@ -262,8 +321,8 @@ const ProjectsPostings = (props) => {
 
    return (
       <>
-         <div className="d-flex  align-items-center mb-4">
-            <div className="">
+         <div className="d-flex align-items-center mb-4">
+            <div>
                <Text
                   text={`Total Projects: ${builderProjectStats?.BuilderProjectCount || 0}`}
                   fontSize="16px"
@@ -285,124 +344,66 @@ const ProjectsPostings = (props) => {
             <div className="d-flex flex-md-column flex-xl-row justify-content-xl-end align-items-center tableHeading">
                <div className="locationSelect d-flex justify-content-end align-items-center w-100">
                   {subHeaderComponentMemo}
-                  {/* {statusArr.length ? (
-                     <div className="d-flex align-items-center justify-content-between ProjectFilterButton">
-                        <Form.Group
-                           controlId="sortControl"
-                           className="d-flex align-items-center"
-                           style={{ marginRight: "15px" }}
-                        >
-                           <Form.Control
-                              as="text"
-                              value={statusSelected}
-                              className="FilterControl"
-                              onChange={(e) => {
-                                 _filterStatus(e.target.value);
-                              }}
-                              style={{ display: "flex", alignItems: "center" }} // Ensure icon and label align properly
-                           >
-                              <BiSortAlt2
-                                 className="filter-icon"
-                                 style={{ marginRight: "10px", fontSize: "1rem" }}
-                              />
-                              <span
-                                 className="filter-label"
-                                 style={{ marginRight: "8px", fontSize: "12px", color: "#000" }}
-                              >
-                                 Sort
-                              </span>
-                           </Form.Control>
-                        </Form.Group>
 
-                        <Form.Group controlId="filterControl" className="d-flex align-items-center">
-                           <Form.Control
-                              as="text"
-                              value={statusSelected}
-                              className="FilterControl"
-                              onChange={(e) => {
-                                 _filterStatus(e.target.value);
-                              }}
-                              style={{ display: "flex", alignItems: "center" }} // Ensure icon and label align properly
-                           >
-                              <IoFilterOutline
-                                 className="filter-icon"
-                                 style={{ marginRight: "10px", fontSize: "1rem" }}
-                              />
-                              <span
-                                 className="filter-label"
-                                 style={{ marginRight: "8px", fontSize: "12px", color: "#000" }}
-                              >
-                                 Filter
-                              </span>
-                           </Form.Control>
-                        </Form.Group>
-                     </div>
-                  ) : (
-                     ""
-                  )}
-                  <Form.Group controlId="example" className="w-40 userGrp ml-0"></Form.Group> */}
-
-                  <a href="/builder/Posting-Property" style={{ textDecoration: "none" }}>
-                     <Button
-                        className="d-flex py-1 ml-3"
+                  <Button
+                     className="d-flex py-1 ml-3"
+                     style={{
+                        color: "#BE1452",
+                        backgroundColor: "#F8F3F5",
+                        borderColor: "#DED6D9",
+                        zIndex: 2, // Ensures button stays on top
+                     }}
+                     onClick={() => {
+                        localStorage.removeItem("builderProjectId");
+                        window.location.href = "/builder/Posting-Property";
+                     }}
+                  >
+                     <div
                         style={{
-                           color: "#BE1452",
-                           backgroundColor: "#F8F3F5",
-                           borderColor: "#DED6D9",
+                           width: "20px",
+                           height: "20px",
+                           display: "flex",
+                           alignItems: "center",
+                           justifyContent: "center",
                         }}
                      >
-                        <div
-                           style={{
-                              width: "20px",
-                              height: "20px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                           }}
-                        >
-                           <Image src={addIcon} style={{ width: "10px" }} />
-                        </div>
-                        <Text
-                           text={"Add New Posting"}
-                           fontWeight="bold"
-                           style={{ fontSize: "12px", color: "#BE1452" }}
-                        />
-                     </Button>
-                  </a>
+                        <Image src={addIcon} style={{ width: "10px" }} />
+                     </div>
+                     <Text
+                        text={"Add New Posting"}
+                        fontWeight="bold"
+                        style={{ fontSize: "12px", color: "#BE1452" }}
+                     />
+                  </Button>
                </div>
             </div>
 
-            <div className="ProjectPostingTableWrapper">
+            <div className="ProjectPostingTableWrapper" style={{ zIndex: 1 }}>
                <DataTableComponent
                   data={showValue()}
                   columns={columns}
                   progressPending={ProjectsPostings.isLoading}
                   progressComponent={ProgressComponent}
                   pagination
-                  paginationServer
                   paginationTotalRows={totalRecords}
                   paginationPerPage={rowsPerPage}
                   paginationRowsPerPageOptions={[8, 16, 24, 32]}
                   onChangePage={handlePageChange}
-                  // paginationServer={true}
+                  paginationServer={true}
                   onChangeRowsPerPage={handleRowsPerPageChange}
                   subHeaderComponent={subHeaderComponentMemo}
-                  persistTableHead="true"
+                  persistTableHead={true} // Note the change from "string" to boolean
                   filterComponent={subHeaderComponentMemo}
                   keyField="id"
-               ></DataTableComponent>
+                  className="data-table" // Add a custom class if needed for further styling
+               />
             </div>
          </div>
       </>
    );
 };
-const mapStateToProps = ({ ProjectsPostings }) => ({
-   ProjectsPostings,
-});
-const actions = {
-   getBuilderProjects,
-   getBuilderProjectStats,
-};
+const mapStateToProps = ({ ProjectsPostings }) => ({ ProjectsPostings });
+const actions = { getBuilderProjects, getBuilderProjectStats };
 const withConnect = connect(mapStateToProps, actions);
 
 export default compose(withConnect, memo)(ProjectsPostings);

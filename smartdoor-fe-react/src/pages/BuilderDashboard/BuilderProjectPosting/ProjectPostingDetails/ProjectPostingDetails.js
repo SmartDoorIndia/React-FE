@@ -1,47 +1,22 @@
 /** @format */
 // Line 90 has the API integration
-
 import React, { useEffect, memo } from "react";
-
 import { Col, Row, Button, Container, Form, Image } from "react-bootstrap";
-import { BsPencil } from "react-icons/bs";
 import "./ProjectPostingDetails.scss";
 import pencilIcon from "../../../../assets/svg/edit-01.svg";
-/** @format */
-// @ts-ignore
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import Pagination from "../../../../shared/DataTable/Pagination";
 import { compose } from "redux";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { useState } from "react";
-import { Card, Modal } from "react-bootstrap";
-// import Form from "react-bootstrap/Form";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import addIcon from "../../../../assets/svg/add.svg";
-
-import {
-   handleStatusElement,
-   formateDate,
-   getLocalStorage,
-   showErrorToast,
-   showSuccessToast,
-   ToolTip,
-} from "../../../../common/helpers/Utils";
+import { getLocalStorage, ToolTip } from "../../../../common/helpers/Utils";
 import { getBuilderProjectSubPosts, getBuilderProjectById } from "../../../../common/redux/actions";
-import { Link, navigate } from "react-router-dom/cjs/react-router-dom";
-import { DateRangePicker } from "rsuite";
-import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
-import moment from "moment";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import Text from "../../../../shared/Text/Text";
-import * as Actions from "../../../../common/redux/types";
-import Buttons from "../../../../shared/Buttons/Buttons";
-import { TextField } from "@mui/material";
-import { MdOutlineKeyboardDoubleArrowUp, MdOutlineKeyboardDoubleArrowDown } from "react-icons/md"; // Import the icons
+import { MdOutlineKeyboardDoubleArrowUp, MdOutlineKeyboardDoubleArrowDown } from "react-icons/md"; // Import the icons"; // Import the expanded row component
 
-const getModalActionData = (row) => {
-   return { userData: row };
-};
 const ProjectPostingDetails = (props) => {
    const { ProjectPostingDetails } = props;
    const data = useSelector((state) => state.ProjectPostingDetails.data);
@@ -53,52 +28,99 @@ const ProjectPostingDetails = (props) => {
    const [rowsPerPage, setRowsPerPage] = useState(8); // Default to 8
    const [totalRecords, setTotalRecords] = useState(0); // To track total records count
    const [expandedRow, setExpandedRow] = useState(null); // State to track expanded row
-
+   const [selectedType, setSelectedType] = useState(""); // Initial state for selectedType
    const [builderProjectSubPosts, setBuilderProjectSubPosts] = useState(null);
-   const [projectSubPostsFilter, setprojectSubPostsFilter] = useState({
-      builderProjectId: 11,
-      searchString: "4",
-      userId: 398,
+   const auth = getLocalStorage("authData");
+   const StorebuilderProjectId = localStorage.getItem("builderProjectId");
+   const storebuilderProjectSubPostId = localStorage.getItem("builderProjectSubPostId");
+   const [builderProjectId, setBuilderProjectId] = useState(StorebuilderProjectId);
+   const [userId, setUserId] = useState(auth?.userid || null); // Initialize userId from auth
+   const [builderProjectDetails, setBuilderProjectDetails] = useState(null); // Start with null
+   const [projectSubPostsFilter, setProjectSubPostsFilter] = useState({
+      builderProjectId: StorebuilderProjectId, // Set from localStorage
+      searchString: "",
+      userId: auth?.userid || null,
       records: 10,
       pageNumber: 1,
    });
 
-   const [builderProjectId, setBuilderProjectId] = useState(11);
-   const [userId, setUserId] = useState(398);
-   const [builderProjectDetails, setBuilderProjectDetails] = useState(null);
-
    useEffect(() => {
-      getBuilderProjectSubPosts(projectSubPostsFilter).then((response) => {
-         setBuilderProjectSubPosts(response.data.resourceData);
-         console.log(response.data.resourceData);
-      });
+      localStorage.removeItem("builderProjectId");
 
-      getBuilderProjectById({ builderProjectId: builderProjectId, userId: userId }).then(
-         (response) => {
-            setBuilderProjectDetails(response.data.resourceData);
-            console.log(response.data.resourceData);
+      // Set the new builderProjectId in local storage
+      localStorage.setItem("builderProjectId", builderProjectId);
+      const StorebuilderProjectId = localStorage.getItem("builderProjectId");
+      //    getBuilderProjectSubPosts(projectSubPostsFilter).then((response) => {
+      //       setBuilderProjectSubPosts(response.data.resourceData);
+      //       console.log("getBuilderProjectSubPosts", response.data.resourceData);
+      //    });
+
+      //    getBuilderProjectById({
+      //       builderProjectId: StorebuilderProjectId, // Use the state value for builderProjectId
+      //       userId: userId,
+      //    }).then((response) => {
+      //       setBuilderProjectDetails(response.data.resourceData);
+      //       console.log("Builder Project Details:", response.data.resourceData);
+      //    });
+      // }, [builderProjectId, userId, projectSubPostsFilter]);
+      const handleGetBuilderProjectSubPosts = async () => {
+         try {
+            const response = await getBuilderProjectSubPosts(projectSubPostsFilter);
+
+            // Check if the response contains the resource data
+            if (response?.data?.resourceData) {
+               const resourceData = response.data.resourceData;
+
+               // Map through the sub-posts and ensure selectedPropertyType is set
+               const updatedSubPosts = resourceData.map((subPost) => ({
+                  ...subPost,
+                  builderProjectSubPostProperties: subPost.builderProjectSubPostProperties
+                     ? subPost.builderProjectSubPostProperties.map((property) => ({
+                          ...property,
+                          selectedPropertyType: property.selectedPropertyType || "", // Ensure selectedPropertyType is returned or defaulted to ""
+                       }))
+                     : [], // If builderProjectSubPostProperties is undefined, default to an empty array
+               }));
+
+               console.log("Updated SubPosts:", updatedSubPosts);
+
+               // Set the updated posts in the state
+               setBuilderProjectSubPosts(updatedSubPosts);
+               return updatedSubPosts;
+            } else {
+               console.log("No resource data found in the response.");
+               return [];
+            }
+         } catch (error) {
+            console.error("Error fetching builder project sub-posts:", error);
          }
-      );
-   }, [projectSubPostsFilter]);
+      };
+
+      const handleGetBuilderProjectById = async () => {
+         try {
+            localStorage.removeItem("builderProjectId");
+
+            // Set the new ID
+            const newBuilderProjectId = StorebuilderProjectId; // Replace with the actual new ID
+            localStorage.setItem("builderProjectId", newBuilderProjectId);
+
+            const response = await getBuilderProjectById({
+               builderProjectId: newBuilderProjectId, // Use the state value for builderProjectId
+               userId: userId,
+            });
+            setBuilderProjectDetails(response.data.resourceData);
+            console.log("Builder Project Details:", response.data.resourceData);
+         } catch (error) {
+            console.error(error);
+         }
+      };
+
+      handleGetBuilderProjectSubPosts();
+      handleGetBuilderProjectById();
+   }, [builderProjectId, userId, projectSubPostsFilter]);
    const handleRowExpand = (rowId) => {
       setExpandedRow(expandedRow === rowId ? null : rowId); // Toggle expanded row
    };
-
-   //    useEffect(() => {
-   //       console.log(data);
-   //       dispatch({ type: Actions.BROKERS_PROPERTY_SUCCESS, data: [] });
-   //       if (data === undefined) {
-   //          getBrokerListing({
-   //             userId: userData.userid,
-   //             currentLat: null,
-   //             currentLong: null,
-   //             pageNo: currentPage,
-   //             records: rowsPerPage,
-   //             adminLogin: true,
-   //             searchString: "",
-   //          });
-   //       }
-   //    }, [getBrokerListing]);
 
    const showValue = () => {
       let filteredItems =
@@ -116,12 +138,14 @@ const ProjectPostingDetails = (props) => {
          builderProjectSubPostName: "",
          builderProjectSubPostPropertyResponseList: [
             {
-               builderProjectSubPostId: 35,
-               numberOfRooms: 2,
-               propertyId: 3367,
-               propertyRoomCompositionType: "BHK",
-               propertySubType: "Apartments",
-               totalProjectUnits: 107,
+               builderProjectSubPostId: null,
+               numberOfRooms: null,
+               propertyId: null,
+               propertyRoomCompositionType: "",
+               propertySubType: "",
+               totalProjectUnits: null,
+               unitType: "",
+               selectedPropertyType: "",
             },
          ],
       });
@@ -134,12 +158,14 @@ const ProjectPostingDetails = (props) => {
          builderProjectSubPostName: "",
          builderProjectSubPostPropertyResponseList: [
             {
-               builderProjectSubPostId: 35,
-               numberOfRooms: 2,
-               propertyId: 3367,
-               propertyRoomCompositionType: "BHK",
-               propertySubType: "Apartments",
-               totalProjectUnits: 107,
+               builderProjectSubPostId: null,
+               numberOfRooms: null,
+               propertyId: null,
+               propertyRoomCompositionType: "",
+               propertySubType: "",
+               totalProjectUnits: null,
+               unitType: "",
+               selectedPropertyType: "",
             },
          ],
       });
@@ -167,7 +193,7 @@ const ProjectPostingDetails = (props) => {
             setResetPaginationToggle(!resetPaginationToggle);
             setFilterText("");
 
-            setprojectSubPostsFilter((prev) => ({
+            setProjectSubPostsFilter((prev) => ({
                ...prev,
                searchString: "",
                pageNumber: 1,
@@ -181,7 +207,7 @@ const ProjectPostingDetails = (props) => {
                const searchValue = e.target.value; // Get the search value
                setFilterText(searchValue); // Update the filter text
 
-               setprojectSubPostsFilter((prev) => ({
+               setProjectSubPostsFilter((prev) => ({
                   ...prev,
                   searchString: searchValue, // Update searchString
                   pageNumber: 1, // Reset page number for new search
@@ -194,40 +220,95 @@ const ProjectPostingDetails = (props) => {
       );
    }, [filterText, resetPaginationToggle]);
 
+   const handleClickview = (row) => {
+      const storebuilderProjectSubPostId = row.builderProjectSubPostId; // Access the builderProjectSubPostId from the row
+      console.log("storebuilderProjectSubPostId", storebuilderProjectSubPostId);
+
+      if (!storebuilderProjectSubPostId) {
+         console.error("No project ID found in the row data.");
+         return;
+      }
+
+      const requestData = {
+         builderProjectSubPostId: storebuilderProjectSubPostId,
+         builderProjectId: StorebuilderProjectId,
+         userId: auth.userid,
+      };
+      console.log("Request Data:", requestData);
+
+      getBuilderProjectSubPosts(requestData)
+         .then((response) => {
+            if (response.data && response.data.resourceData) {
+               console.log(response.data.resourceData);
+               const resourceData = response.data.resourceData;
+
+               // Format possession dates safely
+               const formattedPossessionFrom = formatDate(resourceData.possessionFrom);
+               const formattedPossessionTo = formatDate(resourceData.possessionTo);
+
+               setBuilderProjectDetails({
+                  ...resourceData,
+                  possessionFrom: formattedPossessionFrom,
+                  possessionTo: formattedPossessionTo,
+               });
+
+               const builderProjectSubPostId = requestData.builderProjectSubPostId;
+               console.log("builderProjectSubPostId--", builderProjectSubPostId);
+               localStorage.setItem("builderProjectSubPostId", builderProjectSubPostId);
+               window.location.href = `/builder/Project-details/${builderProjectSubPostId}`;
+            } else {
+               console.error("Invalid project data received:", response.data);
+            }
+         })
+         .catch((error) => {
+            console.error("Error fetching project details:", error);
+         });
+   };
+
    const columns = [
-      {
-         name: "Expand",
-         cell: (row) => (
-            <button
-               className="expand-button"
-               onClick={() => handleRowExpand(row.id)}
-               style={{ background: "none", border: "none", cursor: "pointer" }}
-            >
-               {expandedRow === row.id ? (
-                  <MdOutlineKeyboardDoubleArrowUp />
-               ) : (
-                  <MdOutlineKeyboardDoubleArrowDown />
-               )}
-            </button>
-         ),
-         center: true,
-         minWidth: "50px",
-         maxWidth: "50px",
-      },
+      // {
+      //    name: "Expand",
+      //    cell: (row) => (
+      //       <button
+      //          className="expand-button"
+      //          onClick={() => handleRowExpand(row.id)}
+      //          style={{ background: "none", border: "none", cursor: "pointer" }}
+      //       >
+      //          {expandedRow === row.id ? (
+      //             <MdOutlineKeyboardDoubleArrowUp />
+      //          ) : (
+      //             <MdOutlineKeyboardDoubleArrowDown />
+      //          )}
+      //       </button>
+      //    ),
+      //    center: true,
+      //    minWidth: "50px",
+      //    maxWidth: "50px",
+      // },
       {
          name: "Towers / Plotted",
          selector: (row) => row.builderProjectSubPostName,
          center: true,
+         sortable: true,
          minWidth: "200px",
          maxWidth: "200px",
       },
       {
-         name: "Unit Types ",
-         selector: (row) => row.unitType,
+         name: "Unit Types",
+         selector: (row) => {
+            // Check if the array exists and loop through all units
+            const units = row.builderProjectSubPostPropertyResponseList || [];
+
+            // Map through the array and format each unit's details
+            return (
+               units
+                  .map((unit) => `${unit.numberOfRooms} ${unit.propertyRoomCompositionType}`)
+                  .join(", ") || "N/A"
+            ); // Join the details with a comma separator, fallback to 'N/A' if empty
+         },
          center: true,
          minWidth: "120px",
       },
-
       {
          name: "Total Units",
          selector: (row) => row.totalProjectUnits,
@@ -251,52 +332,54 @@ const ProjectPostingDetails = (props) => {
          maxWidth: "150px",
       },
 
-      //   {
-      //      name: "Action",
-      //      selector: (row) => row.action,
-      //      sortable: false,
-      //      center: false,
-      //      minWidth: "150px",
-      //      maxWidth: "150px",
-      //      cell: (row) => (
-      //         <div className="action">
-      //            <ToolTip name="View">
-      //               <span>
-      //                  {row.status === "Expired" ? (
-      //                     <span>View </span>
-      //                  ) : (
-      //                     <Link
-      //                        to={{
-      //                           pathname: `/builder/Project-Posting-Details`,
-      //                           state: { loginMobile: row.loginMobile },
-      //                        }}
-      //                        className="action-link"
-      //                     >
-      //                        Download Leads
-      //                     </Link>
-      //                  )}
-      //               </span>
-      //            </ToolTip>
-      //         </div>
-      //      ),
-      //   },
+      {
+         name: "Action",
+         selector: (row) => row.action,
+         sortable: false,
+         center: true, // Center the content of the cell
+         minWidth: "150px",
+         maxWidth: "150px",
+         cell: (row) => (
+            <div className="action">
+               <ToolTip name="View">
+                  {row.status === "Expired" ? (
+                     <span>View</span>
+                  ) : (
+                     <button
+                        style={{
+                           color: "#BE1452",
+                           fontSize: "14px",
+                           fontWeight: 700,
+                           lineHeight: "18px",
+                           textAlign: "left",
+                        }}
+                        onClick={() => handleClickview(row)}
+                        className="action-link btn"
+                     >
+                        View
+                     </button>
+                  )}
+               </ToolTip>
+            </div>
+         ),
+      },
    ];
    const ExpandedRowComponent = ({ data }) => {
-      if (!data || !data.builderProjectSubPostPropertyResponseList) {
-         return <p>No additional details available</p>;
-      }
-
       return (
-         <div style={{ padding: "10px" }}>
+         <div>
             <table className="table">
                <tbody>
                   {data.builderProjectSubPostPropertyResponseList.map((property, index) => (
-                     <tr key={index}>
-                        <td>
+                     <tr key={index} style={{ borderBottom: "1px solid #DED6D9" }}>
+                        <td></td>
+                        <td style={{ width: "5%" }}></td>
+                        <td style={{ width: "17%" }}>
                            {property.numberOfRooms}&nbsp;
                            {property.propertyRoomCompositionType}&nbsp; {property.propertySubType}
                         </td>
-                        <td>{property.totalProjectUnits}</td>
+                        <td style={{ width: "10%" }}>{property.totalProjectUnits}</td>
+                        <td>{property.status}</td>
+                        <td>{property.action}</td>
                      </tr>
                   ))}
                </tbody>
@@ -304,36 +387,50 @@ const ProjectPostingDetails = (props) => {
          </div>
       );
    };
-   const handleClick = () => {
-      navigate("/builder/Posting-Property", {
-         //  state: {
-         //     areaToDevelop: "",
-         //     areaToDevelopMeasurementUnitEnteredByUser: "Sq. Mt.",
-         //     builderId: 6,
-         //     builderProjectGeneralAmenities: (4)[("dw", "jqkqk", "aaaaaa", "jjadsjk")],
-         //     builderProjectId: 11,
-         //     builderProjectImages: [{}, {}],
-         //     builderProjectName: "Rohit Builder Project",
-         //     builderProjectVideos: [{}, {}],
-         //     city: "Pimpri-Chinchwad",
-         //     cityLat: 18.6297811,
-         //     cityLong: 73.7997094,
-         //     country: null,
-         //     landArea: 100.30000000000001,
-         //     landAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-         //     latitude: 18.56988525390625,
-         //     locality: "Baner",
-         //     longitude: 73.77430725097656,
-         //     openAreaPercent: 31,
-         //     possessionFrom: "01-2025",
-         //     possessionTo: "05-2025",
-         //     projectDescription: "Rohit Builder Project Description",
-         //     state: "Maharashtra",
-         //     totalTowersPlanned: 10,
-         //     userId: null,
-         //  },
+   const formatDate = (dateString) => {
+      if (!dateString) return "";
+      const [month, year] = dateString.split("-");
+      const monthName = new Date(0, parseInt(month) - 1).toLocaleString("default", {
+         month: "long",
       });
+      return `${monthName} ${year}`;
    };
+   console.log("builderProjectId", builderProjectId);
+
+   const handleClick = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const builderProjectId =
+         urlParams.get("builderProjectId") || localStorage.getItem("builderProjectId");
+      if (builderProjectId) {
+         getBuilderProjectById({
+            builderProjectId: builderProjectId,
+            userId: auth.userid,
+         })
+            .then((response) => {
+               if (response.data && response.data.resourceData) {
+                  const resourceData = response.data.resourceData;
+                  const formattedPossessionFrom = formatDate(resourceData.possessionFrom);
+                  const formattedPossessionTo = formatDate(resourceData.possessionTo);
+                  setBuilderProjectDetails({
+                     ...resourceData,
+                     possessionFrom: formattedPossessionFrom,
+                     possessionTo: formattedPossessionTo,
+                  });
+                  console.log(response.data.resourceData); // Log the project details for debugging
+                  window.location.href = `/builder/Posting-Property/${builderProjectId}`;
+               } else {
+                  console.error("Invalid project data received:", response.data);
+               }
+            })
+            .catch((error) => {
+               window.location.href = `/builder/Posting-Property/`; // Navigate to the page with a blank ID field
+            });
+      } else {
+         console.error("No project ID found in local storage."); // Log if no project ID is found
+      }
+   };
+   localStorage.setItem("projectName", builderProjectDetails?.builderProjectName);
+
    return (
       <>
          <Container
@@ -371,7 +468,13 @@ const ProjectPostingDetails = (props) => {
                      <Col xs={4}>
                         <p className="mb-1">
                            General Amenities:{" "}
-                           {builderProjectDetails?.builderProjectGeneralAmenities.join(", ")}
+                           {builderProjectDetails?.builderProjectGeneralAmenities
+                              ? Array.isArray(builderProjectDetails.builderProjectGeneralAmenities)
+                                 ? builderProjectDetails.builderProjectGeneralAmenities.join(", ")
+                                 : "Not an array"
+                              : builderProjectDetails
+                              ? "No amenities available"
+                              : "Loading..."}
                         </p>
                      </Col>
                      <Col xs={4}>
@@ -409,8 +512,14 @@ const ProjectPostingDetails = (props) => {
                                  textDecoration: "none",
                               }}
                            >
-                              {" "}
-                              {builderProjectDetails?.builderProjectImages.length} Image(s)
+                              {builderProjectDetails?.builderProjectImages
+                                 ? Array.isArray(builderProjectDetails.builderProjectImages)
+                                    ? builderProjectDetails.builderProjectImages.length +
+                                      " Image(s)"
+                                    : "Not an array"
+                                 : builderProjectDetails
+                                 ? "No images available"
+                                 : "Loading..."}
                            </span>
                         </p>
                      </Col>
@@ -424,7 +533,11 @@ const ProjectPostingDetails = (props) => {
                                  textDecoration: "none",
                               }}
                            >
-                              {builderProjectDetails?.builderProjectVideos.length} Video(s)
+                              {builderProjectDetails?.builderProjectVideos?.length > 0
+                                 ? builderProjectDetails.builderProjectVideos.length + " Video(s)"
+                                 : builderProjectDetails
+                                 ? "No videos available"
+                                 : "Loading..."}
                            </span>
                         </p>
                      </Col>
@@ -454,29 +567,20 @@ const ProjectPostingDetails = (props) => {
                      borderLeft: "1px solid rgb(189 186 206)",
                   }}
                >
-                  <a
-                     href="/builder/Posting-Property"
-                     style={{
-                        color: "#000",
-                        fontWeight: "bold",
-                        textDecoration: "none",
-                     }}
-                  >
-                     <div className="d-flex flex-column align-items-center">
-                        <Button
-                           onClick={handleClick}
-                           variant="light"
-                           className="mb-3"
-                           style={{
-                              color: "#BE1452",
-                              backgroundColor: "#F8F3F5",
-                              borderRadius: "20px",
-                           }}
-                        >
-                           <img src={pencilIcon} style={{ marginRight: "5px" }} alt="Edit" />
-                        </Button>
-                     </div>
-                  </a>
+                  <div className="d-flex flex-column align-items-center">
+                     <Button
+                        onClick={handleClick}
+                        variant="light"
+                        className="mb-3"
+                        style={{
+                           color: "#BE1452",
+                           backgroundColor: "#F8F3F5",
+                           borderRadius: "20px",
+                        }}
+                     >
+                        <img src={pencilIcon} style={{ marginRight: "5px" }} alt="Edit" />
+                     </Button>
+                  </div>
                </Col>
             </Row>
          </Container>
@@ -541,32 +645,36 @@ const ProjectPostingDetails = (props) => {
                      ""
                   )}
                   <Form.Group controlId="example" className="w-40 userGrp ml-0"></Form.Group> */}
-
-                  <Button
-                     className="d-flex py-1 ml-3"
-                     style={{
-                        color: "#BE1452",
-                        backgroundColor: "#F8F3F5",
-                        borderColor: "#DED6D9",
-                     }}
-                  >
-                     <div
+                  <a href="/builder/Project-details" style={{ textDecoration: "none" }}>
+                     <Button
+                        className="d-flex py-1 ml-3"
                         style={{
-                           width: "20px",
-                           height: "20px",
-                           display: "flex",
-                           alignItems: "center",
-                           justifyContent: "center",
+                           color: "#BE1452",
+                           backgroundColor: "#F8F3F5",
+                           borderColor: "#DED6D9",
+                        }}
+                        onClick={() => {
+                           localStorage.removeItem("builderProjectSubPostId");
                         }}
                      >
-                        <Image src={addIcon} style={{ width: "10px" }} />
-                     </div>
-                     <Text
-                        text={"Add New Tower"}
-                        fontWeight="bold"
-                        style={{ fontSize: "12px", color: "#BE1452" }}
-                     />
-                  </Button>
+                        <div
+                           style={{
+                              width: "20px",
+                              height: "20px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                           }}
+                        >
+                           <Image src={addIcon} style={{ width: "10px" }} />
+                        </div>
+                        <Text
+                           text={"Add New Tower"}
+                           fontWeight="bold"
+                           style={{ fontSize: "12px", color: "#BE1452" }}
+                        />
+                     </Button>
+                  </a>
                </div>
             </div>
 
@@ -582,7 +690,7 @@ const ProjectPostingDetails = (props) => {
                   paginationPerPage={rowsPerPage}
                   paginationRowsPerPageOptions={[8, 16, 24, 32]}
                   onChangePage={handlePageChange}
-                  expandableRows={true}
+                  expandableRows
                   expandableRowsComponent={ExpandedRowComponent}
                   onChangeRowsPerPage={handleRowsPerPageChange}
                   subHeaderComponent={subHeaderComponentMemo}

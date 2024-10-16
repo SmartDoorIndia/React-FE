@@ -2980,7 +2980,7 @@ export const ApiJson = {
 
    //Builder login
    Builderlogin: {
-      url: "/userauth/oauth/token?username=:mobile&password=:password&loginBy=otp&grant_type=password&deviceId=kdfjh&deviceType=android&appName=builder web&version=2.6.2+78",
+      url: "/userauth/oauth/token?username=:mobile&password=:password&loginBy=otp&grant_type=password&deviceId=kdfjh&deviceType=android&appName=builder web&version=2.7.1+82",
       method: "POST",
       data: {},
       headers: {
@@ -3003,7 +3003,7 @@ export const ApiJson = {
 
    // apiJson.js
    BuilderSignup: {
-      url: "/consumer/user/verifyUser/:mobile/:otp/22?deviceId=4343&deviceType=crome&appName=builder web&version=2.6.2+78",
+      url: "/consumer/user/verifyUser/:mobile/:otp/22?deviceId=4343&deviceType=crome&appName=builder web&version=2.7.1+82",
       method: "POST",
       data: {},
       headers: {
@@ -3037,14 +3037,13 @@ export const ApiJson = {
          builderLogoS3ImageUrl: "",
          builderLogoImageAsBase64: "",
          builderCoinbalance: 0.0,
-         directors: [
-         ],
+         directors: [],
          companyFacebookUrl: "",
          companyInstagramUrl: "",
          whatsappNumber: "",
          callNumber: "",
          contactPersonName: "",
-         builderProfileComplete: false
+         builderProfileComplete: false,
       },
       headers: {
          "Content-Type": "application/json",
@@ -3130,18 +3129,15 @@ export const ApiJson = {
          projectDescription: "",
          latitude: 0,
          longitude: 0,
-         builderProjectGeneralAmenities: [
-         ],
+         builderProjectGeneralAmenities: [],
          city: "",
          state: "",
          locality: "",
          country: null,
          cityLat: 0,
          cityLong: 0,
-         builderProjectImages: [
-         ],
-         builderProjectVideos: [
-         ]
+         builderProjectImages: [],
+         builderProjectVideos: [],
       },
       headers: {
          "Content-Type": "application/json",
@@ -3168,16 +3164,11 @@ export const ApiJson = {
          possessionTo: "",
          totalFloors: null,
          unitsPerFloor: null,
-         builderProjectSubPostInfo: [
+         builderProjectSubPostInfo: [],
+         builderProjectSubPostProperties: [],
+         builderProjectSubPostVideos: [],
 
-         ],
-         builderProjectSubPostProperties: [
-         ],
-         builderProjectSubPostVideos: [
-         ],
-     
-         builderProjectSubPostImages: [
-         ]
+         builderProjectSubPostImages: [],
       },
       headers: {
          "Content-Type": "application/json",
@@ -3188,8 +3179,7 @@ export const ApiJson = {
    getBuilderProjectSubPostById: {
       url: "/consumer/builder/getBuilderProjectSubPostById/:builderProjectSubPostId/:userId/",
       method: "GET",
-      data: {
-      },
+      data: {},
       headers: {
          "Content-Type": "application/json",
       },
@@ -3199,8 +3189,7 @@ export const ApiJson = {
    approveBuilderProfile: {
       url: "/consumer/builder/approveBuilderProfile/:builderId/:userId/",
       method: "POST",
-      data: {
-      },
+      data: {},
       headers: {
          Accept: "*/*",
          "Content-Type": "application/json",
@@ -3211,8 +3200,7 @@ export const ApiJson = {
    approveBuilderProject: {
       url: "/consumer/builder/approveBuilderProject/:builderProjectId/:userId/",
       method: "POST",
-      data: {
-      },
+      data: {},
       headers: {
          Accept: "*/*",
          "Content-Type": "application/json",
@@ -3249,7 +3237,7 @@ export const ApiJson = {
          userId: null,
          builderName: "",
          records: null,
-         pageNumber: null
+         pageNumber: null,
       },
       headers: {
          "Content-Type": "application/json",
@@ -3257,14 +3245,14 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: true,
    },
-   getBuilderStats : {
+   getBuilderStats: {
       url: "/consumer/builder/getBuilderStats/",
       method: "POST",
       data: {
          userId: null,
          builderName: "",
          records: null,
-         pageNumber: null
+         pageNumber: null,
       },
       headers: {
          "Content-Type": "application/json",
@@ -3273,6 +3261,5 @@ export const ApiJson = {
       showErrorMessage: true,
    },
 };
-
 
 console.log(userData);

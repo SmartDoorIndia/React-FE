@@ -47,11 +47,16 @@
 }
 .custom-input-group {
    border: 1px solid #ccc; /* Light gray border */
+   // border-radius: 10px; /* Rounded corners */
+   display: flex;
+   overflow: hidden; /* Hide overflow for rounded corners */
+}
+.customTotalAreaDevelopCon {
+   border: 1px solid #ccc; /* Light gray border */
    border-radius: 10px; /* Rounded corners */
    display: flex;
    overflow: hidden; /* Hide overflow for rounded corners */
 }
-
 .custom-form-control {
    border: none; /* Remove default border from Form.Control */
    box-shadow: none; /* Remove box shadow */

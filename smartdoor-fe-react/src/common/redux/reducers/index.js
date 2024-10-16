@@ -106,6 +106,7 @@ import { USER_LOGOUT } from "../types";
 import { batteryLevel } from "./views/batteryLevel.reducer";
 import ProjectsPostings from "./views/BuilderReducer/ProjectsPostings.reducer";
 import ProjectPostingDetails from "./views/BuilderReducer/ProjectPostingDetails.reducer";
+import BuilderListing from "./views/BuilderReducer/BuilderListing.reducer";
 
 const appReducer = combineReducers({
    dashboardTitle,
@@ -191,6 +192,7 @@ const appReducer = combineReducers({
    batteryLevel,
    ProjectsPostings,
    ProjectPostingDetails,
+   BuilderListing,
 });
 
 const rootReducer = (state, action) => {

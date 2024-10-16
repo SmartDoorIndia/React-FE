@@ -9,13 +9,13 @@ import {
    getLocalStorage,
 } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import Text from "../../../../shared/Text/Text";
+import { useParams } from "react-router-dom";
 import { TiCameraOutline } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
 import { IoIosAdd } from "react-icons/io";
-import { IoIosArrowDroprightCircle, IoIosArrowDropleftCircle } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
 import { Range } from "react-range"; // You may need to install this package
-import { FaTimesCircle, FaUtensilSpoon } from "react-icons/fa";
+import { FaTimesCircle } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import { PiPlayCircleLight } from "react-icons/pi";
@@ -25,21 +25,8 @@ import {
    addBuilderProjectSubPost,
    deleteBuilderProjectSubPostById,
 } from "../../../../common/redux/actions";
-// import Buttons from "../../../shared/Buttons/Buttons";
-const ProjectDetails = () => {
-   // const [formData, setFormData] = useState({
-   //    projectName: "",
-   //    customerAddress: "",
-   //    reraNumber: "",
-   //    generalAmenities: "",
-   //    projectDescription: "",
-   //    projectLocation: "",
-   //    projectImages: [],
-   //    projectVideo: "",
-   //    guidance: "",
-   //    salesManagerContact: "",
-   //    termsAccepted: false,
-   // });
+const ProjectDetails = (props) => {
+   // const builderProjectId = localStorage.getItem("builderProjectId"); // Retrieve ID
    const [show, setShow] = useState(false);
    const [imageCategory, setImageCategory] = useState("Interior");
    const [selectedImages, setSelectedImages] = useState([]); // Images selected in the modal
@@ -48,61 +35,37 @@ const ProjectDetails = () => {
    const [monthYearFrom, setMonthYearFrom] = useState({ month: "", year: "" });
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
    const currentYear = new Date().getFullYear();
-   const [videoLinks, setVideoLinks] = useState([]);
-   const [file, setFile] = useState(null);
    const [builderProjectSubPostId, setBuilderProjectSubPostId] = useState(null);
-   const [userId, setUserId] = useState(398);
-   const [error, setError] = useState(null);
-   // const [selectSubPostType, setSelectSubPostType] = useState(""); // Separate state for selected amenities
-   // const [selectedSubPost, setSelectedSubPost] = useState(data.subPostType || "");
-   const [files, setFiles] = useState({}); // To keep track of uploaded files
+   const [userId, setUserId] = useState(null);
+   const [builderProjectId, setBuilderProjectId] = useState(null);
 
-   const [isEditing, setIsEditing] = useState(false);
-   const [videoUrl, setVideoUrl] = useState("");
-   const [configuration, setConfiguration] = useState("Villas");
+   const [error, setError] = useState(null);
    const [showModal, setShowModal] = useState(false);
    const [currentVideoUrl, setCurrentVideoUrl] = useState("");
-
    const [towerRows, setTowerRows] = useState([]);
    const [plottedRows, setPlottedRows] = useState([]);
-
    const [formCount, setFormCount] = useState(1); // Start with one form
-   const [propertyIndex, setPropertyIndex] = useState(0);
    const [newVideoUrl, setNewVideoUrl] = useState(null);
    const [showMoreUnits, setShowMoreUnits] = useState(false);
-   const [showVillas, setShowVillas] = useState(false);
-   const [showPlots, setShowPlots] = useState(false);
-   const [selectedType, setSelectedType] = useState("Villas");
-
-   const handleAddForm = () => {
-      setFormCount((prevCount) => prevCount + 1); // Increment the count
-   };
-   const handleConfigurationChange = (e, index) => {
-      const value = e.target.value;
-      setData((prevData) => ({
-         ...prevData,
-         builderProjectSubPostProperties: prevData.builderProjectSubPostProperties.map(
-            (property, propertyIndex) => {
-               if (propertyIndex === index) {
-                  return { ...property, configuration: value };
-               }
-               return property;
-            }
-         ),
-      }));
-   };
+   const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
 
    const defaultSubpost = ["Tower", "Plotted"];
-
+   const auth = getLocalStorage("authData");
+   const storedUserId = auth.userid;
+   const storedBuilderId = auth.builderId;
+   const storedBuilderProjectId = localStorage.getItem("builderProjectId");
+   const storebuilderProjectSubPostId = localStorage.getItem("builderProjectSubPostId");
+   console.log("storedUserId", storedUserId);
+   console.log("storebuilderProjectSubPostId", storebuilderProjectSubPostId);
    const [data, setData] = useState({
       builderProjectSubPostId: null,
-      builderProjectId: null,
+      builderProjectId: localStorage.getItem("builderProjectId"),
       subPostType: "",
-      userId: null,
+      userId: auth.userid,
       builderProjectSubPostName: "",
       reraNumber: "",
       areaToDevelop: null,
-      areaToDevelopMeasurementUnitEnteredByUser: "",
+      areaToDevelopMeasurementUnitEnteredByUser: "Sq. Mt.",
       highlightsOrUsp: "",
       contactPersonName: "",
       contactPersonNumber: "",
@@ -112,46 +75,45 @@ const ProjectDetails = () => {
       unitsPerFloor: null,
       builderProjectSubPostInfo: [],
       builderProjectSubPostProperties: [
-         {
-            propertyId: null,
-            numberOfRooms: null,
-            propertyRoomCompositionType: "",
-            propertySubType: "",
-            totalProjectUnits: null,
-            minPlotArea: null,
-            maxPlotArea: null,
-            plotAreaMeasurementUnitEnteredByUser: "Sq. Mt",
-            minCarpetArea: null,
-            maxCarpetArea: null,
-            carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt",
-            minBuiltUpArea: null,
-            maxBuiltUpArea: null,
-            builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt",
-            comments: "",
-            minPrice: null,
-            maxPrice: null,
-
-            propertyVideos: [
-               {
-                  docId: null,
-                  docName: "",
-                  docURL: "",
-                  docOrderInFrontendView: null,
-                  docDescription: "",
-                  builderProjectImageAsBase64: null,
-               },
-            ],
-            propertyImages: [
-               {
-                  docId: null,
-                  docName: "",
-                  docURL: "",
-                  docOrderInFrontendView: 2,
-                  docDescription: "",
-                  builderProjectImageAsBase64: "",
-               },
-            ],
-         },
+         // {
+         //    propertyId: null,
+         //    numberOfRooms: null,
+         //    propertyRoomCompositionType: "",
+         //    propertySubType: "",
+         //    totalProjectUnits: null,
+         //    minPlotArea: null,
+         //    maxPlotArea: null,
+         //    plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+         //    minCarpetArea: null,
+         //    maxCarpetArea: null,
+         //    carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+         //    minBuiltUpArea: null,
+         //    maxBuiltUpArea: null,
+         //    builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+         //    comments: "",
+         //    minPrice: null,
+         //    maxPrice: null,
+         //    propertyVideos: [
+         //       {
+         //          docId: null,
+         //          docName: "",
+         //          docURL: "",
+         //          docOrderInFrontendView: null,
+         //          docDescription: "",
+         //          builderProjectImageAsBase64: null,
+         //       },
+         //    ],
+         //    propertyImages: [
+         //       {
+         //          docId: null,
+         //          docName: "",
+         //          docURL: "",
+         //          docOrderInFrontendView: 2,
+         //          docDescription: "",
+         //          builderProjectImageAsBase64: "",
+         //       },
+         //    ],
+         // },
       ],
       builderProjectSubPostVideos: [
          {
@@ -165,21 +127,39 @@ const ProjectDetails = () => {
       ],
 
       builderProjectSubPostImages: [
-         {
-            docId: null,
-            docName: "",
-            docURL: "",
-            docOrderInFrontendView: null,
-            docDescription: "",
-            builderProjectImageAsBase64: "",
-         },
+         // {
+         //    docId: null,
+         //    docName: "",
+         //    docURL: "",
+         //    docOrderInFrontendView: null,
+         //    docDescription: "",
+         //    builderProjectImageAsBase64: "",
+         // },
       ],
    });
    const step = 1; // Step size of 10L
    // const min
-   const [priceRanges, setPriceRanges] = useState(
-      data.builderProjectSubPostProperties.map((property) => [property.minPrice, property.maxPrice])
-   );
+   // const [priceRanges, setPriceRanges] = useState(
+   //    data.builderProjectSubPostProperties.map((property) => [property.minPrice, property.maxPrice])
+   // );
+   const [selectedType, setSelectedType] = useState("Villas");
+
+   // useEffect(() => {
+   //    if (data.builderProjectSubPostProperties && data.builderProjectSubPostProperties.length > 0) {
+   //       const villasData = data.builderProjectSubPostProperties.filter(
+   //          (item) => item.propertySubType === "Villas"
+   //       );
+   //       const plotsData = data.builderProjectSubPostProperties.filter(
+   //          (item) => item.propertySubType === "Plots"
+   //       );
+
+   //       if (villasData.length > 0) {
+   //          setSelectedType("Villas");
+   //       } else if (plotsData.length > 0) {
+   //          setSelectedType("Plots");
+   //       }
+   //    }
+   // }, [data.builderProjectSubPostProperties]);
 
    const imageFields = [
       { docName: "Floor Plan" },
@@ -188,65 +168,262 @@ const ProjectDetails = () => {
       { docName: "Bedroom 1 Images" },
       { docName: "Bedroom 2 Images" },
    ];
-   const auth = getLocalStorage("authData");
-   const storedUserId = auth.userid;
-   const storedBuilderId = auth.builderId;
-   console.log("storedUserId:- ", storedUserId);
-   console.log("storedBuilderId:- ", storedBuilderId);
-   // const storedBuilderProjectSubPostId = auth.builderProjectSubPostId;
+   console.log("storebuilderProjectSubPostId", storebuilderProjectSubPostId);
+   useEffect(() => {
+      const fetchData = async () => {
+         if (storebuilderProjectSubPostId != null) {
+            try {
+               const response = await getBuilderProjectSubPostById({
+                  builderProjectSubPostId: storebuilderProjectSubPostId,
+                  userId: storedUserId,
+                  builderProjectId: storedBuilderProjectId,
+               });
 
-   useEffect(async () => {
-      if (builderProjectSubPostId != null) {
-         await getBuilderProjectSubPostById({
-            builderProjectSubPostId: builderProjectSubPostId,
-            userId: storedUserId,
-            builderId: storedBuilderId,
-         })
-            .then((response) => {
                if (response?.data) {
                   const { resourceData, error: responseError } = response.data;
+
                   if (resourceData) {
-                     // Ensure no null values in resourceData
-                     // const sanitizedData = Object.fromEntries(
-                     //    Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
-                     // );
-                     console.log(resourceData);
-                     setData(resourceData);
+                     setData((prevData) => ({
+                        ...prevData,
+                        ...resourceData,
+                        builderProjectId:
+                           resourceData.builderProjectId ?? prevData.builderProjectId,
+                        builderProjectSubPostId:
+                           resourceData.builderProjectSubPostId ?? prevData.builderProjectSubPostId,
+                        userId: resourceData.userId ?? prevData.userId,
+                        builderId: resourceData.builderId ?? prevData.builderId,
+                     }));
+                     console.log("response.data", resourceData);
                   }
+
+                  if (
+                     resourceData.subPostType === "Tower" ||
+                     resourceData.subPostType === "Plotted"
+                  ) {
+                     setShowMoreUnits(true);
+                  } else {
+                     setShowMoreUnits(false);
+                  }
+
                   if (responseError) setError(responseError);
                }
-               // setLoading(false);
-            })
-            .catch((error) => {
-               // setLoading(false);
+            } catch (error) {
                setError(error);
                console.log("Error fetching builder data:", error);
-            });
-      }
-   }, [storedUserId, storedBuilderId, builderProjectSubPostId]);
+            }
+         } else {
+            // Clear data if no builderProjectSubPostId is present
+            localStorage.removeItem("builderProjectSubPostId");
+
+            setData({});
+            // Remove builderProjectSubPostId from localStorage
+         }
+      };
+
+      fetchData();
+   }, [storedUserId, storedBuilderId, builderProjectSubPostId, builderProjectId]);
 
    const handleSubmit = async (e) => {
       e.preventDefault();
-
       try {
-         // Filter out any videos with empty or null fields
+         const sanitizedVideos = data.builderProjectSubPostVideos.filter(
+            (video) => video.docName && video.docURL
+         );
+         const updatedBuilderProjectSubPostProperties = data.builderProjectSubPostProperties.map(
+            (property) => ({
+               ...property,
+               selectedPropertyType: selectedType, // Add selectedType to each property object
+            })
+         );
+
+         console.log(
+            "updatedBuilderProjectSubPostProperties",
+            updatedBuilderProjectSubPostProperties
+         );
+         const submissionData = {
+            ...data,
+            userId: getLocalStorage("authData").userid,
+            builderProjectId: storedBuilderProjectId,
+            builderProjectSubPostVideos: sanitizedVideos, // Only submit valid videos
+            builderProjectSubPostProperties: updatedBuilderProjectSubPostProperties, // Add the updated properties array
+         };
+         const response = await addBuilderProjectSubPost(submissionData);
+         console.log("Submission Data:", submissionData);
+         console.log("API Response:", response);
+         if (response?.data) {
+            const { resourceData, error: responseError } = response.data;
+            console.log("Resource Data:", resourceData);
+            if (resourceData) {
+               setData((prevData) => ({
+                  ...prevData,
+                  ...resourceData,
+               }));
+               localStorage.removeItem("builderProjectSubPostId");
+            } else if (responseError) {
+               setError(responseError);
+               console.error("Error in response:", responseError);
+            }
+            showSuccessToast("Project created successfully");
+            console.log("storebuilderProjectSubPostId", storebuilderProjectSubPostId);
+         }
+      } catch (error) {
+         console.error("Error submitting builder project:", error);
+         // console.log("API Response:", response);
+         showErrorToast("There was an error submitting the project.");
+      }
+   };
+   // const handleAddForm = async () => {
+   //    try {
+   //       const sanitizedVideos = data.builderProjectSubPostVideos.filter(
+   //          (video) => video.docName && video.docURL
+   //       );
+   //       const submissionData = {
+   //          ...data,
+   //          userId: getLocalStorage("authData").userid,
+   //          builderProjectSubPostVideos: sanitizedVideos, // Ensure only valid videos are submitted
+   //       };
+
+   //       console.log("Submission data:", submissionData);
+
+   //       const response = await addBuilderProjectSubPost(submissionData);
+   //       console.log("Response:", response);
+
+   //       if (response?.data) {
+   //          const { resourceData, error: responseError } = response.data;
+   //          if (resourceData) {
+   //             setData((prevData) => ({
+   //                ...prevData,
+   //                ...resourceData,
+   //             }));
+   //          } else if (responseError) {
+   //             setError(responseError);
+   //             console.error("Error in response:", responseError);
+   //          }
+   //          showSuccessToast("Form data saved successfully");
+   //          window.location.reload(); // Reloads the page
+   //       } else {
+   //          throw new Error("Failed to save form data.");
+   //       }
+   //    } catch (error) {
+   //       console.error("Error saving form data:", error);
+   //       showErrorToast("Failed to save form data.");
+   //    }
+   // };
+   const handleAddForm = async () => {
+      try {
+         // Sanitize the videos data
          const sanitizedVideos = data.builderProjectSubPostVideos.filter(
             (video) => video.docName && video.docURL
          );
 
+         // Prepare the submission data
          const submissionData = {
             ...data,
-            builderProjectSubPostVideos: sanitizedVideos, // Only submit valid videos
+            userId: getLocalStorage("authData").userid,
+            builderProjectSubPostVideos: sanitizedVideos, // Only valid videos are submitted
          };
 
+         console.log("Submission data:", submissionData);
+
+         // Submit the form data to the backend
          const response = await addBuilderProjectSubPost(submissionData);
+         console.log("Response:", response);
+
          if (response?.data) {
-            console.log("Project created successfully:", response.data);
-            showSuccessToast("Project created successfully");
+            const { resourceData, error: responseError } = response.data;
+
+            if (resourceData) {
+               console.log("Resource data:", resourceData);
+
+               // Clear the form fields immediately
+               setData({
+                  builderProjectSubPostId: null,
+                  builderProjectId: null,
+                  subPostType: "",
+                  userId: null,
+                  builderProjectSubPostName: "",
+                  reraNumber: "",
+                  areaToDevelop: null,
+                  areaToDevelopMeasurementUnitEnteredByUser: "Sq. Mt.",
+                  highlightsOrUsp: "",
+                  contactPersonName: "",
+                  contactPersonNumber: "",
+                  possessionFrom: "",
+                  possessionTo: "",
+                  totalFloors: null,
+                  unitsPerFloor: null,
+                  builderProjectSubPostInfo: [],
+                  builderProjectSubPostProperties: [
+                     {
+                        propertyId: null,
+                        numberOfRooms: null,
+                        propertyRoomCompositionType: "",
+                        propertySubType: "",
+                        totalProjectUnits: null,
+                        minPlotArea: null,
+                        maxPlotArea: null,
+                        plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+                        minCarpetArea: null,
+                        maxCarpetArea: null,
+                        carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+                        minBuiltUpArea: null,
+                        maxBuiltUpArea: null,
+                        builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+                        comments: "",
+                        minPrice: null,
+                        maxPrice: null,
+
+                        propertyVideos: [
+                           {
+                              docId: null,
+                              docName: "",
+                              docURL: "",
+                              docOrderInFrontendView: null,
+                              docDescription: "",
+                              builderProjectImageAsBase64: null,
+                           },
+                        ],
+                        propertyImages: [
+                           {
+                              docId: null,
+                              docName: "",
+                              docURL: "",
+                              docOrderInFrontendView: 2,
+                              docDescription: "",
+                              builderProjectImageAsBase64: "",
+                           },
+                        ],
+                     },
+                  ],
+                  builderProjectSubPostVideos: [],
+                  builderProjectSubPostImages: [],
+               });
+
+               setBuilderProjectSubPostId(null);
+               setBuilderProjectId(null);
+               setUserId(null);
+
+               // Clear URL ID and remove form data from the URL
+               const currentUrl = window.location.pathname;
+               const newUrl = currentUrl.replace(/\/\d+$/, ""); // Removes any ID at the end of the URL
+               window.history.replaceState({}, "", newUrl);
+               localStorage.removeItem("builderProjectSubPostId");
+               // Reload the page
+               window.location.reload();
+
+               // Show success notification
+               showSuccessToast("Form data saved successfully");
+            } else if (responseError) {
+               console.error("Error in response:", responseError);
+               setError(responseError);
+            }
+         } else {
+            console.error("Failed to save form data. Response:", response);
+            throw new Error("Failed to save form data.");
          }
       } catch (error) {
-         console.error("Error submitting builder project:", error);
-         showErrorToast("There was an error submitting the project.");
+         console.error("Error saving form data:", error);
+         showErrorToast("Failed to save form data.");
       }
    };
 
@@ -272,18 +449,22 @@ const ProjectDetails = () => {
 
       if (name === "newVideoUrl") {
          setNewVideoUrl(value); // Update the newVideoUrl state
-      } else if (fieldName && propertyIndex) {
+      } else if (fieldName && propertyIndex !== undefined) {
          setData((prevData) => {
-            const updatedProperties = [...prevData.builderProjectSubPostProperties];
+            const updatedProperties = [...prevData.builderProjectSubPostProperties]; // Clone the existing properties
             if (updatedProperties[parseInt(propertyIndex)]) {
-               updatedProperties[parseInt(propertyIndex)][fieldName] = value;
-               return { ...prevData, builderProjectSubPostProperties: updatedProperties };
-            } else {
-               return prevData;
+               updatedProperties[parseInt(propertyIndex)][fieldName] = value; // Update the specific field in the correct property
             }
+            return { ...prevData, builderProjectSubPostProperties: updatedProperties }; // Return the updated state
          });
+      } else {
+         setData((prevData) => ({
+            ...prevData,
+            [name]: value || "", // Update the specific field in the general data
+         }));
       }
    };
+
    const handleShow = () => {
       setSelectedImages([]); // Reset selected images
       setShow(true); // Open the modal
@@ -295,32 +476,48 @@ const ProjectDetails = () => {
 
    const handleProjectImagesChange = (e) => {
       const files = Array.from(e.target.files);
-      const newImages = files.map((file) => ({
-         name: file.name,
-         category: imageCategory, // Store the selected category with the image
-         file,
-      }));
-      setSelectedImages((prevImages) => [...prevImages, ...newImages]);
-
-      // Clear the file input to allow re-selecting the same file
+      const newImages = files.map((file) => {
+         const reader = new FileReader();
+         reader.onloadend = () => {
+            setSelectedImages((prevImages) => [
+               ...prevImages,
+               {
+                  docName: file.name,
+                  docDescription: imageCategory,
+                  file,
+                  builderProjectImageAsBase64: reader.result,
+               },
+            ]);
+         };
+         reader.readAsDataURL(file);
+         return {
+            docName: file.name,
+            docDescription: imageCategory,
+            file,
+         };
+      });
       fileInputRef.current.value = "";
    };
 
    const handleSaveImages = () => {
-      // Combine existing images with the newly selected images
-      setData((prevData) => ({
-         ...prevData,
-         builderProjectSubPostImages: [
-            ...prevData.builderProjectSubPostImages,
-            ...selectedImages.map((image) => ({
-               ...image, // Spread existing image properties
-               docDescription: "", // You can assign a description if needed
-            })),
-         ],
-      }));
-
-      setSelectedImages([]); // Clear selected images after saving
-      handleClose(); // Close the modal
+      setData((prevData) => {
+         const existingImages = prevData.builderProjectSubPostImages || [];
+         const newImages = selectedImages.map((image) => ({
+            ...image,
+            docId: image.docId || null,
+            docName: image.docName,
+            docURL: image.docURL || "",
+            docOrderInFrontendView: image.docOrderInFrontendView || null,
+            docDescription: image.docDescription,
+            builderProjectImageAsBase64: image.builderProjectImageAsBase64 || "",
+         }));
+         return {
+            ...prevData,
+            builderProjectSubPostImages: [...existingImages, ...newImages],
+         };
+      });
+      setSelectedImages([]);
+      handleClose();
    };
 
    const handleDeleteProjectImage = (imageToDelete) => {
@@ -331,7 +528,6 @@ const ProjectDetails = () => {
          ),
       }));
 
-      // Optional: Handle deletion from selectedImages if needed
       if (selectedImages.includes(imageToDelete)) {
          setSelectedImages((prevSelected) =>
             prevSelected.filter((image) => image !== imageToDelete)
@@ -353,41 +549,44 @@ const ProjectDetails = () => {
    };
 
    const handleAddVideo = () => {
+      // Ensure that newVideoUrl exists and is not an empty string
       if (newVideoUrl) {
+         // Initialize new video object with the necessary properties
          const newVideo = {
             docId: null,
-            docName: data.docName || "New Video", // Ensure docName is not empty
-            docDescription: "Description here", // Replace with actual description if available
-            docOrderInFrontendView: data.builderProjectSubPostVideos.length + 1, // Increment order
-            docURL: newVideoUrl, // New video URL
-            builderProjectImageAsBase64: null, // Default to null if no image is provided
+            docName: data.docName || "New Video", // Default video name if none provided
+            docDescription: "Description here", // Default description, replace with actual data if needed
+            docOrderInFrontendView: (data.builderProjectSubPostVideos?.length || 0) + 1, // Increment order safely
+            docURL: newVideoUrl, // The URL for the new video
+            builderProjectImageAsBase64: null, // Set default to null
          };
 
-         // Ensure no empty fields before adding the video
-         if (newVideo.docName && newVideo.docURL) {
+         // Only proceed if the video URL is valid
+         if (newVideo.docURL) {
+            // Update the list of videos, ensuring builderProjectSubPostVideos is an array
+            const updatedVideos = [...(data.builderProjectSubPostVideos || []), newVideo];
+
+            // Update the state with the new video list
             setData((prevData) => ({
                ...prevData,
-               builderProjectSubPostVideos: [...prevData.builderProjectSubPostVideos, newVideo],
+               builderProjectSubPostVideos: updatedVideos, // Ensure this is always an array
             }));
-         }
 
-         // Reset newVideoUrl to empty or null after adding
-         setNewVideoUrl("");
+            // Clear the input field after adding the video
+            setNewVideoUrl("");
+         }
       }
    };
 
    const handleDeleteVideo = (index) => {
-      console.log("Deleting video at index:", index);
       setData((prevData) => {
          const updatedVideos = prevData.builderProjectSubPostVideos.filter((_, i) => i !== index);
-         console.log("Updated videos:", updatedVideos);
          return {
             ...prevData,
             builderProjectSubPostVideos: updatedVideos,
          };
       });
    };
-
    const getEmbedUrl = (url) => {
       // YouTube
       const youtubeMatch = url.match(
@@ -407,14 +606,11 @@ const ProjectDetails = () => {
 
       return url.replace("watch?v=", "embed/"); // Example conversion
    };
-
    const handleFileChange = (e, propertyIndex, imageIndex) => {
       const file = e.target.files[0];
       const fieldName = e.target.name; // Get the name from the input field
-
       if (file) {
          const reader = new FileReader();
-
          reader.onloadend = () => {
             const newImage = {
                builderProjectImageAsBase64: reader.result, // Base64 representation of the file
@@ -424,25 +620,18 @@ const ProjectDetails = () => {
                docOrderInFrontendView: imageIndex + 1, // The order of the image
                docURL: "", // Assuming this will remain empty unless there's a specific URL
             };
-
             setData((prevData) => {
                const updatedProperties = [...prevData.builderProjectSubPostProperties];
-
-               // Ensure propertyImages is initialized
                if (!updatedProperties[propertyIndex].propertyImages) {
                   updatedProperties[propertyIndex].propertyImages = [];
                }
-
-               // Update the specific image at the provided imageIndex
                updatedProperties[propertyIndex].propertyImages[imageIndex] = newImage;
-
                return {
                   ...prevData,
                   builderProjectSubPostProperties: updatedProperties,
                };
             });
          };
-
          reader.readAsDataURL(file); // Convert file to Base64
       }
    };
@@ -457,13 +646,6 @@ const ProjectDetails = () => {
          return { ...prevData, builderProjectSubPostProperties: updatedProperties };
       });
    };
-   const handleFileRemove = (description) => {
-      setFiles((prev) => ({
-         ...prev,
-         [description]: null,
-      }));
-   };
-   // Delete file
 
    const handleSubPostChange = (e) => {
       const value = e.target.value;
@@ -472,15 +654,8 @@ const ProjectDetails = () => {
          subPostType: value,
       }));
    };
-   const labels = {
-      floorPlan: "Floor Plan",
-      hallImages: "Hall Images",
-      kitchenImages: "Kitchen Images",
-      bedroom1Images: "Bedroom 1 Images",
-      bedroom2Images: "Bedroom 2 Images",
-   };
+
    useEffect(() => {
-      // Whenever the user selects both month and year for 'from', update the possessionFrom
       if (monthYearFrom.month && monthYearFrom.year) {
          setData((prevData) => ({
             ...prevData,
@@ -490,7 +665,6 @@ const ProjectDetails = () => {
    }, [monthYearFrom]);
 
    useEffect(() => {
-      // Whenever the user selects both month and year for 'to', update the possessionTo
       if (monthYearTo.month && monthYearTo.year) {
          setData((prevData) => ({
             ...prevData,
@@ -516,8 +690,6 @@ const ProjectDetails = () => {
    };
    const handleSelectChange = (e) => {
       const selectedValue = e.target.value;
-
-      // Avoid adding empty values
       if (selectedValue) {
          setData((prevData) => ({
             ...prevData,
@@ -532,8 +704,6 @@ const ProjectDetails = () => {
 
    const handleRemoveProperty = (index) => {
       const updatedProperties = data.builderProjectSubPostProperties.filter((_, i) => i !== index);
-
-      // Update the state with the filtered properties
       setData((prevState) => ({
          ...prevState,
          builderProjectSubPostProperties: updatedProperties,
@@ -545,68 +715,259 @@ const ProjectDetails = () => {
          setPlottedRows(plottedRows.filter((_, i) => i !== index));
       }
    };
-   const handleAddMoreUnit = () => {
-      if (data.subPostType === "Tower") {
-         let tow = towerRows;
-         tow.push(
-            {
-               propertyId: null,
-               numberOfRooms: null,
-               propertyRoomCompositionType: "",
-               propertySubType: "",
-               totalProjectUnits: null,
-               minPlotArea: null,
-               maxPlotArea: null,
-               plotAreaMeasurementUnitEnteredByUser: "Sq. Mt",
-               minCarpetArea: null,
-               maxCarpetArea: null,
-               carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt",
-               minBuiltUpArea: null,
-               maxBuiltUpArea: null,
-               builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt",
-               comments: "",
-               minPrice: null,
-               maxPrice: null,
-   
-               propertyVideos: [
-                  {
-                     docId: null,
-                     docName: "",
-                     docURL: "",
-                     docOrderInFrontendView: null,
-                     docDescription: "",
-                     builderProjectImageAsBase64: null,
-                  },
-               ],
-               propertyImages: [
-                  {
-                     docId: null,
-                     docName: "",
-                     docURL: "",
-                     docOrderInFrontendView: 2,
-                     docDescription: "",
-                     builderProjectImageAsBase64: "",
-                  },
-               ],
-            }     
-         )
-         setTowerRows(tow);
-         setData((prevState) => ({
-            ...prevState,
-            builderProjectSubPostProperties: tow,
-         }));
+   // const handleAddMoreUnit = () => {
+   //    if (data.subPostType === "Tower") {
+   //       let tow = towerRows;
+   //       tow.push({
+   //          propertyId: null,
+   //          numberOfRooms: null,
+   //          propertyRoomCompositionType: "",
+   //          propertySubType: "",
+   //          totalProjectUnits: null,
+   //          minPlotArea: null,
+   //          maxPlotArea: null,
+   //          plotAreaMeasurementUnitEnteredBy: "Sq. Mt.",
+   //          minCarpetArea: null,
+   //          maxCarpetArea: null,
+   //          carpetAreaMeasurementUnitEnteredBy: "Sq. Mt.",
+   //          minBuiltUpArea: null,
+   //          maxBuiltUpArea: null,
+   //          builtUpAreaMeasurementUnitEnteredBy: "Sq. Mt.",
+   //          comments: "",
+   //          minPrice: null,
+   //          maxPrice: null,
 
-         console.log("data.builderProjectSubPostProperties", data.builderProjectSubPostProperties)
-      } else if (data.subPostType === "Plotted") {
-         setPlottedRows([...plottedRows, {}]);
-      }
+   //          propertyVideos: [
+   //             {
+   //                docId: null,
+   //                docName: "",
+   //                docURL: "",
+   //                docOrderInFrontendView: null,
+   //                docDescription: "",
+   //                builderProjectImageAsBase64: null,
+   //             },
+   //          ],
+   //          propertyImages: [
+   //             {
+   //                docId: null,
+   //                docName: "",
+   //                docURL: "",
+   //                docOrderInFrontendView: 2,
+   //                docDescription: "",
+   //                builderProjectImageAsBase64: "",
+   //             },
+   //          ],
+   //       });
+   //       setTowerRows(tow);
+   //       setData((prevState) => ({
+   //          ...prevState,
+   //          builderProjectSubPostProperties: tow,
+   //       }));
+   //    } else if (data.subPostType === "Plotted") {
+   //       let tow = towerRows;
+   //       tow.push({
+   //          propertyId: null,
+   //          numberOfRooms: null,
+   //          propertyRoomCompositionType: "",
+   //          propertySubType: "",
+   //          totalProjectUnits: null,
+   //          minPlotArea: null,
+   //          maxPlotArea: null,
+   //          plotAreaMeasurementUnitEnteredBy: "Sq. Mt.",
+   //          minCarpetArea: null,
+   //          maxCarpetArea: null,
+   //          carpetAreaMeasurementUnitEnteredBy: "Sq. Mt.",
+   //          minBuiltUpArea: null,
+   //          maxBuiltUpArea: null,
+   //          builtUpAreaMeasurementUnitEnteredBy: "Sq. Mt.",
+   //          comments: "",
+   //          minPrice: null,
+   //          maxPrice: null,
+
+   //          propertyVideos: [
+   //             {
+   //                docId: null,
+   //                docName: "",
+   //                docURL: "",
+   //                docOrderInFrontendView: null,
+   //                docDescription: "",
+   //                builderProjectImageAsBase64: null,
+   //             },
+   //          ],
+   //          propertyImages: [
+   //             {
+   //                docId: null,
+   //                docName: "",
+   //                docURL: "",
+   //                docOrderInFrontendView: 2,
+   //                docDescription: "",
+   //                builderProjectImageAsBase64: "",
+   //             },
+   //          ],
+   //       });
+   //       setTowerRows(tow);
+   //       setData((prevState) => ({
+   //          ...prevState,
+   //          builderProjectSubPostProperties: tow,
+   //       }));
+   //    }
+   // };
+   // const handleAddMoreUnit = () => {
+   //    if (data.subPostType === "Tower") {
+   //       setData((prevState) => ({
+   //          ...prevState,
+   //          builderProjectSubPostProperties: [
+   //             ...prevState.builderProjectSubPostProperties,
+   //             {
+   //                propertyId: null,
+   //                numberOfRooms: null,
+   //                propertyRoomCompositionType: "",
+   //                propertySubType: "",
+   //                totalProjectUnits: null,
+   //                minPlotArea: null,
+   //                maxPlotArea: null,
+   //                plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+   //                minCarpetArea: null,
+   //                maxCarpetArea: null,
+   //                carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+   //                minBuiltUpArea: null,
+   //                maxBuiltUpArea: null,
+   //                builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+   //                comments: "",
+   //                minPrice: null,
+   //                maxPrice: null,
+
+   //                propertyVideos: [
+   //                   {
+   //                      docId: null,
+   //                      docName: "",
+   //                      docURL: "",
+   //                      docOrderInFrontendView: null,
+   //                      docDescription: "",
+   //                      builderProjectImageAsBase64: null,
+   //                   },
+   //                ],
+   //                propertyImages: [
+   //                   {
+   //                      docId: null,
+   //                      docName: "",
+   //                      docURL: "",
+   //                      docOrderInFrontendView: 2,
+   //                      docDescription: "",
+   //                      builderProjectImageAsBase64: "",
+   //                   },
+   //                ],
+   //             },
+   //          ],
+   //       }));
+   //    } else if (data.subPostType === "Plotted") {
+   //       setData((prevState) => ({
+   //          ...prevState,
+   //          builderProjectSubPostProperties: [
+   //             ...prevState.builderProjectSubPostProperties,
+   //             {
+   //                propertyId: null,
+   //                numberOfRooms: null,
+   //                propertyRoomCompositionType: "",
+   //                propertySubType: "",
+   //                totalProjectUnits: null,
+   //                minPlotArea: null,
+   //                maxPlotArea: null,
+   //                plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+   //                minCarpetArea: null,
+   //                maxCarpetArea: null,
+   //                carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+   //                minBuiltUpArea: null,
+   //                maxBuiltUpArea: null,
+   //                builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+   //                comments: "",
+   //                minPrice: null,
+   //                maxPrice: null,
+
+   //                propertyVideos: [
+   //                   {
+   //                      docId: null,
+   //                      docName: "",
+   //                      docURL: "",
+   //                      docOrderInFrontendView: null,
+   //                      docDescription: "",
+   //                      builderProjectImageAsBase64: null,
+   //                   },
+   //                ],
+   //                propertyImages: [
+   //                   {
+   //                      docId: null,
+   //                      docName: "",
+   //                      docURL: "",
+   //                      docOrderInFrontendView: 2,
+   //                      docDescription: "",
+   //                      builderProjectImageAsBase64: "",
+   //                   },
+   //                ],
+   //             },
+   //          ],
+   //       }));
+   //    }
+   // };
+   const handleAddMoreUnit = () => {
+      // Define a new unit structure
+      const newUnit = {
+         propertyId: null,
+         numberOfRooms: null,
+         propertyRoomCompositionType: "",
+         propertySubType: "",
+         totalProjectUnits: null,
+         minPlotArea: null,
+         maxPlotArea: null,
+         plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+         minCarpetArea: null,
+         maxCarpetArea: null,
+         carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+         minBuiltUpArea: null,
+         maxBuiltUpArea: null,
+         builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
+         comments: "",
+         minPrice: null,
+         maxPrice: null,
+         propertyVideos: [
+            {
+               docId: null,
+               docName: "",
+               docURL: "",
+               docOrderInFrontendView: null,
+               docDescription: "",
+               builderProjectImageAsBase64: null,
+            },
+         ],
+         propertyImages: [
+            {
+               docId: null,
+               docName: "",
+               docURL: "",
+               docOrderInFrontendView: 2,
+               docDescription: "",
+               builderProjectImageAsBase64: "",
+            },
+         ],
+      };
+
+      // Update the state with the new unit
+      setData((prevState) => ({
+         ...prevState,
+         builderProjectSubPostProperties: [
+            ...(prevState.builderProjectSubPostProperties || []),
+            newUnit,
+         ],
+      }));
+
+      // Update the current unit index
+      setCurrentUnitIndex((prevIndex) => prevIndex + 1);
    };
 
-   const handleSaveAsDraft = () => {
-      // Save the current form data as a draft
-      localStorage.setItem("draftFormData", JSON.stringify(data));
+   // const currentUnit = data.builderProjectSubPostProperties[currentUnitIndex] || null;
 
-      // Optionally, show a success message
+   const handleSaveAsDraft = () => {
+      localStorage.setItem("draftFormData", JSON.stringify(data));
       alert("Draft saved successfully!");
    };
    useEffect(() => {
@@ -688,7 +1049,7 @@ const ProjectDetails = () => {
                               <Row className="mt-4">
                                  <Col lg={4}>
                                     <Form.Group controlId="formTotalAreaDevelop">
-                                       <InputGroup className="custom-input-group TotalAreaDevelopCon">
+                                       <InputGroup className="customTotalAreaDevelopCon TotalAreaDevelopCon">
                                           <Form.Control
                                              type="number"
                                              placeholder="Total Area to Develop"
@@ -715,9 +1076,9 @@ const ProjectDetails = () => {
                                                    }));
                                                 }}
                                              >
-                                                <option value="Sq. Mt">Sq. Mt</option>
-                                                <option value="Sq. Ft">Sq. Ft</option>
-                                                <option value="Sq. Yt">Sq. Yt</option>
+                                                <option value="Sq. Mt.">Sq. Mt.</option>
+                                                <option value="Sq. Ft.">Sq. Ft.</option>
+                                                <option value="Sq. Yd..">Sq. Yd.</option>
                                              </Form.Control>
                                           </InputGroup.Append>
                                        </InputGroup>
@@ -737,7 +1098,7 @@ const ProjectDetails = () => {
                                  <Col lg={4}>
                                     <Form.Group controlId="formUnitPerFloors">
                                        <Form.Control
-                                          type="text"
+                                          type="number"
                                           placeholder="Units Per Floor"
                                           name="unitsPerFloor"
                                           value={data.unitsPerFloor}
@@ -759,11 +1120,20 @@ const ProjectDetails = () => {
                                              Separate Amenities (Not compulsory)
                                           </option>
                                           {/* Dynamically render options from builderProjectSubPostInfo */}
-                                          {data.builderProjectSubPostInfo.map((amenity, index) => (
-                                             <option key={index} value={amenity}>
-                                                {amenity}
+                                          {data.builderProjectSubPostInfo &&
+                                          data.builderProjectSubPostInfo.length > 0 ? (
+                                             data.builderProjectSubPostInfo.map(
+                                                (amenity, index) => (
+                                                   <option key={index} value={amenity}>
+                                                      {amenity}
+                                                   </option>
+                                                )
+                                             )
+                                          ) : (
+                                             <option value="" disabled>
+                                                No amenities available
                                              </option>
-                                          ))}
+                                          )}
                                        </Form.Control>
                                     </Form.Group>
                                  </Col>
@@ -900,110 +1270,101 @@ const ProjectDetails = () => {
                                  </Col>
                               </Row>
                               <Row className="imageUploadRow mt-4">
-                                 {data.builderProjectSubPostImages.length > 0 ||
-                                 imagePreviews.length > 0 ? (
-                                    <Col lg={4}>
-                                       <Form.Group
-                                          controlId="formProjectImages"
-                                          className="formProjectImages"
-                                       >
-                                          <span>Upload project images</span>
-                                          <div className="image-upload mt-2">
-                                             <label
-                                                className="upload-label"
-                                                onClick={handleShow}
-                                                style={{ cursor: "pointer" }}
-                                             >
-                                                <TiCameraOutline className="camera-icon" />
-                                                <span>Upload Images</span>
-                                             </label>
-                                          </div>
+                                 <Col lg={4}>
+                                    <Form.Group
+                                       controlId="formProjectImages"
+                                       className="formProjectImages"
+                                    >
+                                       <span>Upload project images</span>
+                                       <div className="image-upload mt-2">
+                                          <label
+                                             className="upload-label"
+                                             onClick={handleShow}
+                                             style={{ cursor: "pointer" }}
+                                          >
+                                             <TiCameraOutline className="camera-icon" />
+                                             <span>Upload Images</span>
+                                          </label>
+                                       </div>
 
-                                          {/* Display Image Previews */}
-                                          {data.builderProjectSubPostImages.length > 0 ||
-                                          imagePreviews.length > 0 ? (
-                                             <Row className="mt-2">
-                                                {/* Dynamically display images from builderProjectSubPostImages */}
-                                                {[
-                                                   ...data.builderProjectSubPostImages,
-                                                   ...imagePreviews,
-                                                ].map((image, index) =>
-                                                   image.builderProjectImageAsBase64 ||
-                                                   image.file instanceof File ? (
-                                                      <Col
-                                                         lg="4"
-                                                         key={index}
-                                                         className="project-images mr-3"
+                                       {/* Display Image Previews */}
+                                       {(data?.builderProjectSubPostImages?.length > 0 ||
+                                          imagePreviews?.length > 0) && (
+                                          <Row className="mt-2">
+                                             {/* Dynamically display images from builderProjectSubPostImages */}
+                                             {[
+                                                ...(data?.builderProjectSubPostImages || []),
+                                                ...(imagePreviews || []),
+                                             ].map((image, index) =>
+                                                image.builderProjectImageAsBase64 ||
+                                                image.file instanceof File ? (
+                                                   <Col
+                                                      lg="4"
+                                                      key={index}
+                                                      className="project-images mr-3"
+                                                   >
+                                                      <div
+                                                         className="image-preview-container"
+                                                         style={{ position: "relative" }}
                                                       >
+                                                         <img
+                                                            src={
+                                                               image.builderProjectImageAsBase64 ||
+                                                               (image.file instanceof File
+                                                                  ? URL.createObjectURL(image.file)
+                                                                  : "")
+                                                            } // Use base64 or object URL
+                                                            alt={
+                                                               image.docDescription || image.docName
+                                                            } // Use description or name as alt text
+                                                            className="img-fluid"
+                                                            style={{
+                                                               maxWidth: "100px",
+                                                               borderRadius: "4px",
+                                                            }}
+                                                         />
                                                          <div
-                                                            className="image-preview-container"
-                                                            style={{ position: "relative" }}
+                                                            style={{
+                                                               color: "#949494",
+                                                               padding: "2px 5px",
+                                                               borderRadius: "4px",
+                                                               fontSize: "12px",
+                                                               fontWeight: 500,
+                                                               lineHeight: "13.66px",
+                                                               letterSpacing: "-0.02em",
+                                                               textAlign: "center",
+                                                               marginLeft: "20px",
+                                                            }}
                                                          >
-                                                            <img
-                                                               src={
-                                                                  image.builderProjectImageAsBase64 ||
-                                                                  (image.file instanceof File
-                                                                     ? URL.createObjectURL(
-                                                                          image.file
-                                                                       )
-                                                                     : "")
-                                                               } // Use base64 or object URL, check if image.file is a valid File object
-                                                               alt={
-                                                                  image.docDescription ||
-                                                                  image.docName
-                                                               } // Use description or name as alt text
-                                                               className="img-fluid"
-                                                               style={{
-                                                                  maxWidth: "100px",
-                                                                  borderRadius: "4px",
-                                                               }}
-                                                            />
-                                                            <div
-                                                               style={{
-                                                                  position: "absolute",
-                                                                  bottom: "-17px",
-                                                                  left: "30px",
-                                                                  color: "#949494",
-                                                                  padding: "2px 5px",
-                                                                  borderRadius: "4px",
-                                                                  fontSize: "12px",
-                                                                  fontWeight: 500,
-                                                                  lineHeight: "13.66px",
-                                                                  letterSpacing: "-0.02em",
-                                                                  textAlign: "left",
-                                                               }}
-                                                            >
-                                                               {image.docDescription ||
-                                                                  image.docName}{" "}
-                                                               {/* Display the image description */}
-                                                            </div>
-                                                            <RxCross2
-                                                               className="delete-icon"
-                                                               onClick={() =>
-                                                                  handleDeleteProjectImage(image)
-                                                               }
-                                                               style={{
-                                                                  position: "absolute",
-                                                                  top: "-5px",
-                                                                  right: "-39px",
-                                                                  cursor: "pointer",
-                                                                  color: "#fff",
-                                                                  background: "#ff0000",
-                                                                  borderRadius: "50%",
-                                                               }}
-                                                            />
+                                                            {image.docDescription || image.docName}{" "}
+                                                            {/* Display the image description */}
                                                          </div>
-                                                      </Col>
-                                                   ) : null
-                                                )}
-                                             </Row>
-                                          ) : null}
-                                       </Form.Group>
-                                       <Form.Text className="text-muted">
-                                          File should be 5MB (max) in png, jpg, etc.
-                                       </Form.Text>
-                                    </Col>
-                                 ) : null}
+                                                         <RxCross2
+                                                            className="delete-icon"
+                                                            onClick={() =>
+                                                               handleDeleteProjectImage(image)
+                                                            }
+                                                            style={{
+                                                               position: "absolute",
+                                                               top: "-5px",
+                                                               right: "-39px",
+                                                               cursor: "pointer",
+                                                               color: "#fff",
+                                                               background: "#ff0000",
+                                                               borderRadius: "50%",
+                                                            }}
+                                                         />
+                                                      </div>
+                                                   </Col>
+                                                ) : null
+                                             )}
+                                          </Row>
+                                       )}
+                                    </Form.Group>
+                                    <Form.Text className="text-muted">
+                                       File should be 5MB (max) in png, jpg, etc.
+                                    </Form.Text>
+                                 </Col>
 
                                  {/* Custom Modal */}
                                  <Modal
@@ -1071,7 +1432,8 @@ const ProjectDetails = () => {
                                                    >
                                                       {selectedImages
                                                          .filter(
-                                                            (image) => image.category === "Interior"
+                                                            (image) =>
+                                                               image.docDescription === "Interior"
                                                          )
                                                          .map((image, index) => (
                                                             <li
@@ -1097,8 +1459,8 @@ const ProjectDetails = () => {
                                                                   }}
                                                                />
                                                                <span style={{ marginLeft: "13px" }}>
-                                                                  {image.name}
-                                                               </span>{" "}
+                                                                  {image.docName}
+                                                               </span>
                                                             </li>
                                                          ))}
                                                    </ul>
@@ -1116,7 +1478,8 @@ const ProjectDetails = () => {
                                                    >
                                                       {selectedImages
                                                          .filter(
-                                                            (image) => image.category === "Exterior"
+                                                            (image) =>
+                                                               image.docDescription === "Exterior"
                                                          )
                                                          .map((image, index) => (
                                                             <li
@@ -1142,7 +1505,7 @@ const ProjectDetails = () => {
                                                                   }}
                                                                />
                                                                <span style={{ marginLeft: "13px" }}>
-                                                                  {image.name}
+                                                                  {image.docName}
                                                                </span>{" "}
                                                             </li>
                                                          ))}
@@ -1176,7 +1539,6 @@ const ProjectDetails = () => {
                                     </Modal.Body>
                                  </Modal>
                                  {/* Project Layout Section */}
-
                                  <Col lg={4}>
                                     <Form.Group
                                        controlId="formProjectVideo"
@@ -1197,6 +1559,7 @@ const ProjectDetails = () => {
                                                 onChange={handleInputChange}
                                                 style={{ paddingRight: "2.5rem" }}
                                              />
+                                             {/* Show cross icon only if there are videos */}
                                              {data.builderProjectSubPostVideos && (
                                                 <TiTimes
                                                    className="crossicon"
@@ -1211,6 +1574,7 @@ const ProjectDetails = () => {
                                                    }}
                                                 />
                                              )}
+                                             {/* Add video button */}
                                              <IoIosAdd
                                                 size={32}
                                                 className="Plus-icon"
@@ -1224,84 +1588,83 @@ const ProjectDetails = () => {
                                                 }}
                                              />
                                           </div>
+
                                           {/* Display the list of videos below the input */}
                                           {Array.isArray(data.builderProjectSubPostVideos) && (
-                                             <Row>
+                                             <div className="video-preview-container">
                                                 {data.builderProjectSubPostVideos.map(
                                                    (video, index) => {
-                                                      const embedUrl = getEmbedUrl(video.docURL); // Get embed URL
+                                                      const embedUrl = getEmbedUrl(video.docURL); // Generate embed URL
                                                       return (
                                                          embedUrl && (
-                                                            <Col lg="6" key={index}>
-                                                               <div
-                                                                  className="video-preview"
+                                                            <div
+                                                               className="video-preview"
+                                                               style={{
+                                                                  position: "relative",
+                                                                  display: "inline-block",
+                                                                  margin: "10px",
+                                                               }}
+                                                            >
+                                                               <iframe
+                                                                  width="120"
+                                                                  height="70"
+                                                                  src={embedUrl}
+                                                                  title={`Video thumbnail ${
+                                                                     index + 1
+                                                                  }`}
+                                                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                                  allowFullScreen
                                                                   style={{
-                                                                     position: "relative",
-                                                                     display: "inline-block",
-                                                                     margin: "10px",
+                                                                     borderRadius: "8px",
+                                                                     border: "1px solid #ddd",
                                                                   }}
-                                                               >
-                                                                  <iframe
-                                                                     width="120"
-                                                                     height="70"
-                                                                     src={embedUrl}
-                                                                     title={`Video thumbnail ${
-                                                                        index + 1
-                                                                     }`}
-                                                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                                     allowFullScreen
-                                                                     style={{
-                                                                        borderRadius: "8px",
-                                                                        border: "1px solid #ddd",
-                                                                     }}
-                                                                  ></iframe>
-                                                                  <PiPlayCircleLight
-                                                                     style={{
-                                                                        position: "absolute",
-                                                                        top: "50%",
-                                                                        left: "50%",
-                                                                        transform:
-                                                                           "translate(-50%, -50%)",
-                                                                        color: "#fff",
-                                                                        fontSize: "47px",
-                                                                        cursor: "pointer",
-                                                                     }}
-                                                                     onClick={() =>
-                                                                        handlePlayVideo(embedUrl)
-                                                                     }
-                                                                  />
-                                                                  <RxCross2
-                                                                     className="delete-icon"
-                                                                     onClick={() =>
-                                                                        handleDeleteVideo(index)
-                                                                     }
-                                                                     style={{
-                                                                        position: "absolute",
-                                                                        top: "-10px",
-                                                                        right: "-10px",
-                                                                        cursor: "pointer",
-                                                                        color: "#fff",
-                                                                        background: "#ff0000",
-                                                                        borderRadius: "50%",
-                                                                        padding: "3px",
-                                                                        zIndex: 1, // Ensure the icon is on top of other content
-                                                                     }}
-                                                                  />
-                                                               </div>
-                                                            </Col>
+                                                               ></iframe>
+                                                               <PiPlayCircleLight
+                                                                  style={{
+                                                                     position: "absolute",
+                                                                     top: "50%",
+                                                                     left: "50%",
+                                                                     transform:
+                                                                        "translate(-50%, -50%)",
+                                                                     color: "#fff",
+                                                                     fontSize: "47px",
+                                                                     cursor: "pointer",
+                                                                  }}
+                                                                  onClick={() =>
+                                                                     handlePlayVideo(embedUrl)
+                                                                  }
+                                                               />
+                                                               <RxCross2
+                                                                  className="delete-icon"
+                                                                  onClick={() =>
+                                                                     handleDeleteVideo(index)
+                                                                  }
+                                                                  style={{
+                                                                     position: "absolute",
+                                                                     top: "-10px",
+                                                                     right: "-10px",
+                                                                     cursor: "pointer",
+                                                                     color: "#fff",
+                                                                     background: "#ff0000",
+                                                                     borderRadius: "50%",
+                                                                     padding: "3px",
+                                                                     zIndex: 1,
+                                                                  }}
+                                                               />
+                                                            </div>
                                                          )
                                                       );
                                                    }
                                                 )}
-                                             </Row>
+                                             </div>
                                           )}
-
                                           <Form.Text className="text-muted">
                                              Paste the link of the video (YouTube, Vimeo, etc.)
                                           </Form.Text>
                                        </div>
                                     </Form.Group>
                                  </Col>
+
                                  <Modal
                                     show={showModal}
                                     onHide={() => setShowModal(false)}
@@ -1373,221 +1736,214 @@ const ProjectDetails = () => {
                               </div>
                               {data.subPostType === "Tower" &&
                                  showMoreUnits &&
-                                 towerRows.map((row, index) => (
-                                    <Row className="align-items-center m-1 border rounded UnitsForm">
-                                       {data.builderProjectSubPostProperties.map(
-                                          (property, propertyIndex) => (
-                                             <Col
-                                                key={propertyIndex}
-                                                lg={11}
-                                                className="UnitformContainer"
-                                             >
-                                                <Row className="mb-3">
-                                                   <Col>
-                                                      <Form.Group controlId="configuration">
-                                                         <label>BHK</label>
-                                                         <Form.Control
-                                                            as="select"
-                                                            name={`numberOfRooms_${propertyIndex}`}
-                                                            className="custom-select-size"
-                                                            onChange={(e) => {
-                                                               const [rooms, compositionType] =
-                                                                  e.target.value.split(" "); // Split value into numberOfRooms and propertyRoomCompositionType
-                                                               setData((prevData) => {
-                                                                  const updatedProperties = [
-                                                                     ...prevData.builderProjectSubPostProperties,
-                                                                  ];
-                                                                  updatedProperties[propertyIndex] =
-                                                                     {
-                                                                        ...updatedProperties[
-                                                                           propertyIndex
-                                                                        ],
-                                                                        numberOfRooms: rooms,
-                                                                        propertyRoomCompositionType:
-                                                                           compositionType,
-                                                                     };
-                                                                  return {
-                                                                     ...prevData,
-                                                                     builderProjectSubPostProperties:
-                                                                        updatedProperties,
-                                                                  };
-                                                               });
-                                                            }}
-                                                            value={
-                                                               property.numberOfRooms &&
-                                                               property.propertyRoomCompositionType
-                                                                  ? `${property.numberOfRooms} ${property.propertyRoomCompositionType}`
-                                                                  : ""
-                                                            }
-                                                         >
-                                                            {property.numberOfRooms &&
-                                                            property.propertyRoomCompositionType ? (
-                                                               <option
-                                                                  key={propertyIndex}
-                                                                  value={`${property.numberOfRooms} ${property.propertyRoomCompositionType}`}
-                                                               >
-                                                                  {`${property.numberOfRooms} ${property.propertyRoomCompositionType}`}
-                                                               </option>
-                                                            ) : null}
-                                                            <option value="2 BHK">2 BHK</option>
-                                                            <option value="3 BHK">3 BHK</option>
-                                                            <option value="4 BHK">4 BHK</option>
-                                                         </Form.Control>
-                                                      </Form.Group>
-                                                   </Col>
+                                 data.builderProjectSubPostProperties.map(
+                                    (property, propertyIndex) => (
+                                       <Row
+                                          className="align-items-center m-1 border rounded UnitsForm"
+                                          key={propertyIndex}
+                                       >
+                                          <Col lg={11} className="UnitformContainer">
+                                             <Row className="mb-3">
+                                                <Col>
+                                                   <Form.Group controlId="configuration">
+                                                      <label>BHK</label>
+                                                      <Form.Control
+                                                         as="select"
+                                                         name={`numberOfRooms_${propertyIndex}`}
+                                                         className="custom-select-size"
+                                                         onChange={(e) => {
+                                                            const [rooms, compositionType] =
+                                                               e.target.value.split(" "); // Split value into numberOfRooms and propertyRoomCompositionType
 
-                                                   <Col>
-                                                      <Form.Group controlId="totalUnits">
-                                                         <label>Total Units</label>
+                                                            setData((prevData) => {
+                                                               const updatedProperties = [
+                                                                  ...prevData.builderProjectSubPostProperties,
+                                                               ];
+                                                               updatedProperties[propertyIndex] = {
+                                                                  ...updatedProperties[
+                                                                     propertyIndex
+                                                                  ],
+                                                                  numberOfRooms: rooms,
+                                                                  propertyRoomCompositionType:
+                                                                     compositionType,
+                                                               };
+                                                               return {
+                                                                  ...prevData,
+                                                                  builderProjectSubPostProperties:
+                                                                     updatedProperties,
+                                                               };
+                                                            });
+                                                         }}
+                                                         value={
+                                                            property.numberOfRooms &&
+                                                            property.propertyRoomCompositionType
+                                                               ? `${property.numberOfRooms} ${property.propertyRoomCompositionType}`
+                                                               : "" // Set empty string as default value so that dropdown will not auto-select
+                                                         }
+                                                      >
+                                                         {/* Default value when no selection is made */}
+                                                         <option value="" disabled>
+                                                            Select
+                                                         </option>
+
+                                                         {/* Static options */}
+                                                         <option value="2 BHK">2 BHK</option>
+                                                         <option value="3 BHK">3 BHK</option>
+                                                         <option value="4 BHK">4 BHK</option>
+                                                      </Form.Control>
+                                                   </Form.Group>
+                                                </Col>
+
+                                                <Col>
+                                                   <Form.Group controlId="totalUnits">
+                                                      <label>Total Units</label>
+                                                      <Form.Control
+                                                         type="number"
+                                                         placeholder="Enter"
+                                                         name={`totalProjectUnits_${propertyIndex}`}
+                                                         onChange={handleInputChange}
+                                                         value={property.totalProjectUnits || ""}
+                                                      />
+                                                   </Form.Group>
+                                                </Col>
+
+                                                <Col>
+                                                   <Form.Group controlId="sizeFrom">
+                                                      <label>Size From</label>
+                                                      <InputGroup>
                                                          <Form.Control
                                                             type="number"
                                                             placeholder="Enter"
-                                                            name={`totalProjectUnits_${propertyIndex}`}
+                                                            name={`minCarpetArea_${propertyIndex}`}
+                                                            value={property.minCarpetArea || ""}
                                                             onChange={handleInputChange}
-                                                            value={property.totalProjectUnits || ""}
                                                          />
-                                                      </Form.Group>
-                                                   </Col>
-
-                                                   <Col>
-                                                      <Form.Group controlId="sizeFrom">
-                                                         <label>Size From</label>
-                                                         <InputGroup>
+                                                         <InputGroup.Append className="custom-input-group-append">
                                                             <Form.Control
-                                                               type="number"
-                                                               placeholder="Enter"
-                                                               name={`minCarpetArea_${propertyIndex}`}
-                                                               value={property.minCarpetArea || ""}
-                                                               onChange={handleInputChange}
-                                                            />
-                                                            <InputGroup.Append className="custom-input-group-append">
-                                                               <Form.Control
-                                                                  as="select"
-                                                                  className="custom-select-size custom-text"
-                                                                  style={{ borderRadius: "0px" }}
-                                                                  name={`carpetAreaMeasurementUnitEnteredByUser_${propertyIndex}`}
-                                                                  value={
-                                                                     property.carpetAreaMeasurementUnitEnteredByUser ||
-                                                                     "Sq. Mt"
-                                                                  }
-                                                                  onChange={(e) => {
-                                                                     const index = parseInt(
-                                                                        e.target.name.split("_")[1],
-                                                                        10
-                                                                     ); // Ensure you extract the correct index
+                                                               as="select"
+                                                               className="custom-select-size custom-text"
+                                                               style={{ borderRadius: "0px" }}
+                                                               name={`carpetAreaMeasurementUnitEnteredByUser_${propertyIndex}`}
+                                                               value={
+                                                                  property.carpetAreaMeasurementUnitEnteredByUser
+                                                               }
+                                                               onChange={(e) => {
+                                                                  const index = parseInt(
+                                                                     e.target.name.split("_")[1],
+                                                                     10
+                                                                  ); // Ensure you extract the correct index
 
-                                                                     // Add console.log to debug values before updating state
-                                                                     console.log(
-                                                                        "Selected Unit:",
-                                                                        e.target.value
-                                                                     );
-                                                                     console.log(
-                                                                        "Property Index:",
-                                                                        index
-                                                                     );
+                                                                  // Add console.log to debug values before updating state
+                                                                  console.log(
+                                                                     "Selected Unit:",
+                                                                     e.target.value
+                                                                  );
+                                                                  console.log(
+                                                                     "Property Index:",
+                                                                     index
+                                                                  );
 
-                                                                     setData((prevData) => {
-                                                                        const updatedProperties =
-                                                                           prevData.builderProjectSubPostProperties.map(
-                                                                              (prop, i) => {
-                                                                                 if (i === index) {
-                                                                                    return {
-                                                                                       ...prop,
-                                                                                       carpetAreaMeasurementUnitEnteredByUser:
-                                                                                          e.target
-                                                                                             .value, // Update only the correct property
-                                                                                    };
-                                                                                 }
-                                                                                 return prop;
+                                                                  setData((prevData) => {
+                                                                     const updatedProperties =
+                                                                        prevData.builderProjectSubPostProperties.map(
+                                                                           (prop, i) => {
+                                                                              if (i === index) {
+                                                                                 return {
+                                                                                    ...prop,
+                                                                                    carpetAreaMeasurementUnitEnteredByUser:
+                                                                                       e.target
+                                                                                          .value, // Update only the correct property
+                                                                                 };
                                                                               }
-                                                                           );
-
-                                                                        // Debug updated properties
-                                                                        console.log(
-                                                                           "Updated Properties:",
-                                                                           updatedProperties
+                                                                              return prop;
+                                                                           }
                                                                         );
 
-                                                                        return {
-                                                                           ...prevData,
-                                                                           builderProjectSubPostProperties:
-                                                                              updatedProperties,
-                                                                        };
-                                                                     });
-                                                                  }}
-                                                               >
-                                                                  <option value="Sq. Mt">
-                                                                     Sq. Mt
-                                                                  </option>
-                                                                  <option value="Sq. Ft">
-                                                                     Sq. Ft
-                                                                  </option>
-                                                                  <option value="Sq. Yt">
-                                                                     Sq. Yt
-                                                                  </option>
-                                                               </Form.Control>
-                                                            </InputGroup.Append>
-                                                         </InputGroup>
-                                                      </Form.Group>
-                                                   </Col>
+                                                                     // Debug updated properties
+                                                                     console.log(
+                                                                        "Updated Properties:",
+                                                                        updatedProperties
+                                                                     );
 
-                                                   <Col>
-                                                      <Form.Group controlId="sizeTo">
-                                                         <label>Size To</label>
+                                                                     return {
+                                                                        ...prevData,
+                                                                        builderProjectSubPostProperties:
+                                                                           updatedProperties,
+                                                                     };
+                                                                  });
+                                                               }}
+                                                            >
+                                                               <option value="Sq. Mt.">
+                                                                  Sq. Mt.
+                                                               </option>
+                                                               <option value="Sq. Ft.">
+                                                                  Sq. Ft.
+                                                               </option>
+                                                               <option value="Sq. Yd..">
+                                                                  Sq. Yd.
+                                                               </option>
+                                                            </Form.Control>
+                                                         </InputGroup.Append>
+                                                      </InputGroup>
+                                                   </Form.Group>
+                                                </Col>
 
-                                                         <InputGroup>
+                                                <Col>
+                                                   <Form.Group controlId="sizeTo">
+                                                      <label>Size To</label>
+
+                                                      <InputGroup>
+                                                         <Form.Control
+                                                            type="number"
+                                                            placeholder="Enter"
+                                                            name={`maxCarpetArea_${propertyIndex}`}
+                                                            value={property.maxCarpetArea || ""}
+                                                            onChange={handleInputChange}
+                                                         />
+
+                                                         <InputGroup.Append className="custom-input-group-append">
                                                             <Form.Control
-                                                               type="number"
-                                                               placeholder="Enter"
-                                                               name={`maxCarpetArea_${propertyIndex}`}
-                                                               value={property.maxCarpetArea || ""}
-                                                               onChange={handleInputChange}
-                                                            />
-
-                                                            <InputGroup.Append className="custom-input-group-append">
-                                                               <Form.Control
-                                                                  as="select"
-                                                                  className="custom-select-size custom-text"
-                                                                  style={{
-                                                                     borderRadius: "0px",
-                                                                  }}
-                                                                  name={`plotAreaMeasurementUnitEnteredByUser _${propertyIndex}`}
-                                                                  value={
-                                                                     property.plotAreaMeasurementUnitEnteredByUser ||
-                                                                     "Sq. Mt"
-                                                                  }
-                                                                  onChange={(e) => {
-                                                                     setData((prevData) => {
-                                                                        const updatedProperties = [
-                                                                           ...prevData.builderProjectSubPostProperties,
-                                                                        ];
-                                                                        updatedProperties[
-                                                                           parseInt(propertyIndex)
-                                                                        ].plotAreaMeasurementUnitEnteredByUser =
-                                                                           e.target.value;
-                                                                        return {
-                                                                           ...prevData,
-                                                                           builderProjectSubPostProperties:
-                                                                              updatedProperties,
-                                                                        };
-                                                                     });
-                                                                  }}
-                                                               >
-                                                                  <option value="Sq. Mt">
-                                                                     Sq. Mt
-                                                                  </option>
-                                                                  <option value="Sq. Ft">
-                                                                     Sq. Ft
-                                                                  </option>
-                                                                  <option value="Sq. Yt">
-                                                                     Sq. Yt
-                                                                  </option>
-                                                               </Form.Control>
-                                                            </InputGroup.Append>
-                                                         </InputGroup>
-                                                      </Form.Group>
-                                                   </Col>
-                                                   {/* 
+                                                               as="select"
+                                                               className="custom-select-size custom-text"
+                                                               style={{
+                                                                  borderRadius: "0px",
+                                                               }}
+                                                               name={`plotAreaMeasurementUnitEnteredByUser _${propertyIndex}`}
+                                                               value={
+                                                                  property.plotAreaMeasurementUnitEnteredByUser
+                                                               }
+                                                               onChange={(e) => {
+                                                                  setData((prevData) => {
+                                                                     const updatedProperties = [
+                                                                        ...prevData.builderProjectSubPostProperties,
+                                                                     ];
+                                                                     updatedProperties[
+                                                                        parseInt(propertyIndex)
+                                                                     ].plotAreaMeasurementUnitEnteredByUser =
+                                                                        e.target.value;
+                                                                     return {
+                                                                        ...prevData,
+                                                                        builderProjectSubPostProperties:
+                                                                           updatedProperties,
+                                                                     };
+                                                                  });
+                                                               }}
+                                                            >
+                                                               <option value="Sq. Mt.">
+                                                                  Sq. Mt.
+                                                               </option>
+                                                               <option value="Sq. Ft.">
+                                                                  Sq. Ft.
+                                                               </option>
+                                                               <option value="Sq. Yd.">
+                                                                  Sq. Yd.
+                                                               </option>
+                                                            </Form.Control>
+                                                         </InputGroup.Append>
+                                                      </InputGroup>
+                                                   </Form.Group>
+                                                </Col>
+                                                {/* 
                                        <Col>
                                           <Form.Group controlId="priceRange" className="priceRange">
                                              <label>Price Range</label>
@@ -1677,18 +2033,18 @@ const ProjectDetails = () => {
                                              </div>
                                           </Form.Group>
                                        </Col> */}
-                                                   <Col>
-                                                      <Form.Group controlId="sizeTo">
-                                                         <label>Price Min</label>
-                                                         <InputGroup>
-                                                            <Form.Control
-                                                               type="text"
-                                                               placeholder="Enter"
-                                                               name={`minPrice_${propertyIndex}`}
-                                                               value={property.minPrice || ""}
-                                                               onChange={handleInputChange}
-                                                            />
-                                                            {/* <Form.Control
+                                                <Col>
+                                                   <Form.Group controlId="sizeTo">
+                                                      <label>Price Min</label>
+                                                      <InputGroup>
+                                                         <Form.Control
+                                                            type="text"
+                                                            placeholder="Enter"
+                                                            name={`minPrice_${propertyIndex}`}
+                                                            value={property.minPrice || ""}
+                                                            onChange={handleInputChange}
+                                                         />
+                                                         {/* <Form.Control
                                                    as="select"
                                                    value={
                                                       property.plotAreaMeasurementUnitEnteredByUser
@@ -1698,21 +2054,21 @@ const ProjectDetails = () => {
                                                    <option>Sq.Mt.</option>
                                                    <option>Sq.Ft.</option>
                                                 </Form.Control> */}
-                                                         </InputGroup>
-                                                      </Form.Group>
-                                                   </Col>
-                                                   <Col>
-                                                      <Form.Group controlId="sizeTo">
-                                                         <label>Price Max</label>
-                                                         <InputGroup>
-                                                            <Form.Control
-                                                               type="text"
-                                                               placeholder="Enter"
-                                                               name={`maxPrice_${propertyIndex}`}
-                                                               value={property.maxPrice || ""}
-                                                               onChange={handleInputChange}
-                                                            />
-                                                            {/* <Form.Control
+                                                      </InputGroup>
+                                                   </Form.Group>
+                                                </Col>
+                                                <Col>
+                                                   <Form.Group controlId="sizeTo">
+                                                      <label>Price Max</label>
+                                                      <InputGroup>
+                                                         <Form.Control
+                                                            type="text"
+                                                            placeholder="Enter"
+                                                            name={`maxPrice_${propertyIndex}`}
+                                                            value={property.maxPrice || ""}
+                                                            onChange={handleInputChange}
+                                                         />
+                                                         {/* <Form.Control
                                                    as="select"
                                                    value={
                                                       property.plotAreaMeasurementUnitEnteredByUser
@@ -1722,64 +2078,46 @@ const ProjectDetails = () => {
                                                    <option>Sq.Mt.</option>
                                                    <option>Sq.Ft.</option>
                                                 </Form.Control> */}
-                                                         </InputGroup>
-                                                      </Form.Group>
-                                                   </Col>
-                                                </Row>
-                                                <Row>
-                                                   {imageFields.map((field, index) => (
-                                                      <Col key={index}>
-                                                         <Form.Group controlId={field.docName}>
-                                                            <label>{field.docName}</label>
-                                                            <Form.File custom>
-                                                               <Form.File.Input
-                                                                  name={field.docName}
-                                                                  onChange={(e) =>
-                                                                     handleFileChange(
-                                                                        e,
+                                                      </InputGroup>
+                                                   </Form.Group>
+                                                </Col>
+                                             </Row>
+                                             <Row>
+                                                {imageFields.map((field, index) => (
+                                                   <Col key={index}>
+                                                      <Form.Group controlId={field.docName}>
+                                                         <label>{field.docName}</label>
+                                                         <Form.File custom>
+                                                            <Form.File.Input
+                                                               name={field.docName}
+                                                               onChange={(e) =>
+                                                                  handleFileChange(
+                                                                     e,
+                                                                     propertyIndex,
+                                                                     index
+                                                                  )
+                                                               }
+                                                            />
+                                                            <Form.File.Label>
+                                                               <TiCameraOutline className="mr-2" />{" "}
+                                                               Browse
+                                                            </Form.File.Label>
+                                                         </Form.File>
+                                                         {property.propertyImages[index] &&
+                                                         property.propertyImages[index].docName ? (
+                                                            <div className="d-flex align-items-center">
+                                                               <RxCross2
+                                                                  className="delete-icon ml-2 text-danger"
+                                                                  style={{
+                                                                     cursor: "pointer",
+                                                                  }}
+                                                                  onClick={() =>
+                                                                     handleDeletePropertyImage(
                                                                         propertyIndex,
                                                                         index
                                                                      )
                                                                   }
                                                                />
-                                                               <Form.File.Label>
-                                                                  <TiCameraOutline className="mr-2" />{" "}
-                                                                  Browse
-                                                               </Form.File.Label>
-                                                            </Form.File>
-                                                            {property.propertyImages[index] &&
-                                                            property.propertyImages[index]
-                                                               .docName ? (
-                                                               <div className="d-flex align-items-center">
-                                                                  <RxCross2
-                                                                     className="delete-icon ml-2 text-danger"
-                                                                     style={{
-                                                                        cursor: "pointer",
-                                                                     }}
-                                                                     onClick={() =>
-                                                                        handleDeletePropertyImage(
-                                                                           propertyIndex,
-                                                                           index
-                                                                        )
-                                                                     }
-                                                                  />
-                                                                  <span
-                                                                     style={{
-                                                                        fontSize: "12px",
-                                                                        fontWeight: 400,
-                                                                        lineHeight: "16.39px",
-                                                                        letterSpacing: "-0.02em",
-                                                                        textAlign: "left",
-                                                                     }}
-                                                                  >
-                                                                     {
-                                                                        property.propertyImages[
-                                                                           index
-                                                                        ].docName
-                                                                     }
-                                                                  </span>
-                                                               </div>
-                                                            ) : (
                                                                <span
                                                                   style={{
                                                                      fontSize: "12px",
@@ -1788,663 +2126,728 @@ const ProjectDetails = () => {
                                                                      letterSpacing: "-0.02em",
                                                                      textAlign: "left",
                                                                   }}
-                                                                  className="mt-2 text-muted"
                                                                >
-                                                                  No image available
+                                                                  {
+                                                                     property.propertyImages[index]
+                                                                        .docName
+                                                                  }
                                                                </span>
-                                                            )}
-                                                         </Form.Group>
-                                                      </Col>
-                                                   ))}
-                                                   <Col md={12} className="mt-3">
-                                                      <Form.Group controlId="comments">
-                                                         <Form.Control
-                                                            type="text"
-                                                            placeholder="Comments"
-                                                            name={`comments_${propertyIndex}`}
-                                                            value={property.comments || ""}
-                                                            onChange={handleInputChange}
-                                                         />
+                                                            </div>
+                                                         ) : (
+                                                            <span
+                                                               style={{
+                                                                  fontSize: "12px",
+                                                                  fontWeight: 400,
+                                                                  lineHeight: "16.39px",
+                                                                  letterSpacing: "-0.02em",
+                                                                  textAlign: "left",
+                                                               }}
+                                                               className="mt-2 text-muted"
+                                                            >
+                                                               No image available
+                                                            </span>
+                                                         )}
                                                       </Form.Group>
                                                    </Col>
-                                                </Row>
-                                             </Col>
-                                          )
-                                       )}
-                                       {/* Close Button Area */}
-                                       <Col lg={1} className="p-0 d-flex justify-content-end">
-                                          <div className="close-col d-flex align-items-center justify-content-center">
-                                             <FaTimesCircle
-                                                style={{
-                                                   color: "#FF1919",
-                                                   cursor: "pointer",
-                                                }}
-                                                onClick={() => handleRemoveProperty(index)} // Call the remove function
-                                             />
-                                          </div>
-                                       </Col>
-                                    </Row>
-                                 ))}
-
-                              {data.subPostType === "Plotted" &&
-                                 showMoreUnits &&
-                                 plottedRows.map((row, index) => (
-                                    <Row key={index}>
-                                       {data.builderProjectSubPostProperties.map(
-                                          (property, propertyIndex) => (
-                                             <Row
-                                                key={propertyIndex}
-                                                className="align-items-center m-1 border rounded UnitsForm"
-                                             >
-                                                <div className="UnitformContainer1">
-                                                   <div className="mb-3 flex-container1">
-                                                      <div className="flex-item">
-                                                         <Form.Group controlId="formselectConfiguration">
-                                                            <label>Configuration</label>
-                                                            <Form.Control
-                                                               as="select"
-                                                               name="selectConfiguration"
-                                                               onChange={(e) => {
-                                                                  setSelectedType(e.target.value);
-                                                               }}
-                                                            >
-                                                               <option value="Villas">
-                                                                  Villas
-                                                               </option>
-                                                               <option value="Plots">Plots</option>
-                                                            </Form.Control>
-                                                         </Form.Group>
-                                                      </div>
-                                                      {selectedType === "Villas" && (
-                                                         <>
-                                                            <div className="flex-item">
-                                                               <Form.Group controlId="configuration">
-                                                                  <label>BHK</label>
-
-                                                                  <Form.Control
-                                                                     as="select"
-                                                                     defaultValue="6 BHK"
-                                                                     name=""
-                                                                     className="custom-select-size"
-                                                                  >
-                                                                     <option>2 BHK</option>
-                                                                     <option>3 BHK</option>
-                                                                  </Form.Control>
-                                                               </Form.Group>
-                                                            </div>
-
-                                                            <div className="flex-item">
-                                                               <Form.Group controlId="totalUnits">
-                                                                  <label>Total Units</label>
-                                                                  <Form.Control
-                                                                     type="number"
-                                                                     placeholder="Enter"
-                                                                     name={`totalProjectUnits_${propertyIndex}`}
-                                                                     value={
-                                                                        property.totalProjectUnits ||
-                                                                        ""
-                                                                     }
-                                                                     onChange={handleInputChange}
-                                                                  />
-                                                               </Form.Group>
-                                                            </div>
-
-                                                            <div className="flex-item">
-                                                               <Form.Group controlId="sizeFrom">
-                                                                  <label>Built up area From</label>
-                                                                  <InputGroup className="custom-input-group TotalAreaDevelopCon">
-                                                                     <Form.Control
-                                                                        type="number"
-                                                                        placeholder="Enter"
-                                                                        name={`minBuiltUpArea${propertyIndex}`}
-                                                                        value={
-                                                                           property.minBuiltUpArea ||
-                                                                           ""
-                                                                        }
-                                                                        onChange={handleInputChange}
-                                                                     />
-                                                                     <InputGroup.Append className="custom-input-group-append">
-                                                                        <Form.Control
-                                                                           as="select"
-                                                                           className="custom-select-size custom-text"
-                                                                           style={{
-                                                                              borderRadius: "0px",
-                                                                           }}
-                                                                           name={`builtUpAreaMeasurementUnitEnteredByUser _${propertyIndex}`}
-                                                                           value={
-                                                                              property.builtUpAreaMeasurementUnitEnteredByUser ||
-                                                                              "Sq. Mt"
-                                                                           }
-                                                                           onChange={(e) => {
-                                                                              setData(
-                                                                                 (prevData) => {
-                                                                                    const updatedProperties =
-                                                                                       [
-                                                                                          ...prevData.builderProjectSubPostProperties,
-                                                                                       ];
-                                                                                    updatedProperties[
-                                                                                       parseInt(
-                                                                                          propertyIndex
-                                                                                       )
-                                                                                    ].builtUpAreaMeasurementUnitEnteredByUser =
-                                                                                       e.target.value;
-                                                                                    return {
-                                                                                       ...prevData,
-                                                                                       builderProjectSubPostProperties:
-                                                                                          updatedProperties,
-                                                                                    };
-                                                                                 }
-                                                                              );
-                                                                           }}
-                                                                        >
-                                                                           <option value="Sq. Mt">
-                                                                              Sq. Mt
-                                                                           </option>
-                                                                           <option value="Sq. Ft">
-                                                                              Sq. Ft
-                                                                           </option>
-                                                                           <option value="Sq. Yt">
-                                                                              Sq. Yt
-                                                                           </option>
-                                                                        </Form.Control>
-                                                                     </InputGroup.Append>
-                                                                  </InputGroup>
-                                                               </Form.Group>
-                                                            </div>
-
-                                                            <div className="flex-item">
-                                                               <Form.Group controlId="sizeTo">
-                                                                  <label>Built up area To</label>
-
-                                                                  <InputGroup className="custom-input-group TotalAreaDevelopCon">
-                                                                     <Form.Control
-                                                                        type="number"
-                                                                        placeholder="Enter"
-                                                                        name={`maxBuiltUpArea${propertyIndex}`}
-                                                                        value={
-                                                                           property.maxBuiltUpArea ||
-                                                                           ""
-                                                                        }
-                                                                        onChange={handleInputChange}
-                                                                     />
-                                                                     <InputGroup.Append className="custom-input-group-append">
-                                                                        <Form.Control
-                                                                           as="select"
-                                                                           className="custom-select-size custom-text"
-                                                                           style={{
-                                                                              borderRadius: "0px",
-                                                                           }}
-                                                                           name="builtUpAreaMeasurementUnitEnteredByUser"
-                                                                           value={
-                                                                              property.builtUpAreaMeasurementUnitEnteredByUser ||
-                                                                              "Sq. Mt"
-                                                                           }
-                                                                           onChange={(e) => {
-                                                                              // Update the state with the selected unit
-                                                                              setData(
-                                                                                 (prevData) => ({
-                                                                                    ...prevData,
-                                                                                    builtUpAreaMeasurementUnitEnteredByUser:
-                                                                                       e.target
-                                                                                          .value,
-                                                                                 })
-                                                                              );
-                                                                           }}
-                                                                        >
-                                                                           <option value="Sq. Mt">
-                                                                              Sq. Mt
-                                                                           </option>
-                                                                           <option value="Sq. Ft">
-                                                                              Sq. Ft
-                                                                           </option>
-                                                                           <option value="Sq. Yt">
-                                                                              Sq. Yt
-                                                                           </option>
-                                                                        </Form.Control>
-                                                                     </InputGroup.Append>
-                                                                  </InputGroup>
-                                                               </Form.Group>
-                                                            </div>
-
-                                                            <div className="flex-item">
-                                                               <Form.Group controlId="sizeTo">
-                                                                  <label>Plot Size From</label>
-
-                                                                  <InputGroup className="custom-input-group TotalAreaDevelopCon">
-                                                                     <Form.Control
-                                                                        type="number"
-                                                                        placeholder="Enter"
-                                                                        name={`minPlotArea${propertyIndex}`}
-                                                                        value={
-                                                                           property.minPlotArea ||
-                                                                           ""
-                                                                        }
-                                                                        onChange={handleInputChange}
-                                                                     />
-                                                                     <InputGroup.Append className="custom-input-group-append">
-                                                                        <Form.Control
-                                                                           as="select"
-                                                                           className="custom-select-size custom-text"
-                                                                           name="plotAreaMeasurementUnitEnteredByUser"
-                                                                           style={{
-                                                                              borderRadius: "0px",
-                                                                           }}
-                                                                           value={
-                                                                              property.plotAreaMeasurementUnitEnteredByUser ||
-                                                                              "Sq. Mt"
-                                                                           }
-                                                                           onChange={(e) => {
-                                                                              // Update the state with the selected unit
-                                                                              setData(
-                                                                                 (prevData) => ({
-                                                                                    ...prevData,
-                                                                                    plotAreaMeasurementUnitEnteredByUser:
-                                                                                       e.target
-                                                                                          .value,
-                                                                                 })
-                                                                              );
-                                                                           }}
-                                                                        >
-                                                                           <option value="Sq. Mt">
-                                                                              Sq. Mt
-                                                                           </option>
-                                                                           <option value="Sq. Ft">
-                                                                              Sq. Ft
-                                                                           </option>
-                                                                           <option value="Sq. Yt">
-                                                                              Sq. Yt
-                                                                           </option>
-                                                                        </Form.Control>
-                                                                     </InputGroup.Append>
-                                                                  </InputGroup>
-                                                               </Form.Group>
-                                                            </div>
-
-                                                            <div className="flex-item">
-                                                               <Form.Group controlId="sizeTo">
-                                                                  <label>Plot Size To</label>
-
-                                                                  <InputGroup className="custom-input-group TotalAreaDevelopCon">
-                                                                     <Form.Control
-                                                                        type="number"
-                                                                        placeholder="Enter"
-                                                                        name={`maxPlotArea${propertyIndex}`}
-                                                                        value={
-                                                                           property.maxPlotArea ||
-                                                                           ""
-                                                                        }
-                                                                        onChange={handleInputChange}
-                                                                     />
-                                                                     <InputGroup.Append className="custom-input-group-append">
-                                                                        <Form.Control
-                                                                           as="select"
-                                                                           className="custom-select-size custom-text"
-                                                                           style={{
-                                                                              borderRadius: "0px",
-                                                                           }}
-                                                                           name="plotAreaMeasurementUnitEnteredByUser"
-                                                                           value={
-                                                                              property.plotAreaMeasurementUnitEnteredByUser ||
-                                                                              "Sq. Mt"
-                                                                           }
-                                                                           onChange={(e) => {
-                                                                              // Update the state with the selected unit
-                                                                              setData(
-                                                                                 (prevData) => ({
-                                                                                    ...prevData,
-                                                                                    plotAreaMeasurementUnitEnteredByUser:
-                                                                                       e.target
-                                                                                          .value,
-                                                                                 })
-                                                                              );
-                                                                           }}
-                                                                        >
-                                                                           <option value="Sq. Mt">
-                                                                              Sq. Mt
-                                                                           </option>
-                                                                           <option value="Sq. Ft">
-                                                                              Sq. Ft
-                                                                           </option>
-                                                                           <option value="Sq. Yt">
-                                                                              Sq. Yt
-                                                                           </option>
-                                                                        </Form.Control>
-                                                                     </InputGroup.Append>
-                                                                  </InputGroup>
-                                                               </Form.Group>
-                                                            </div>
-                                                            <div className="flex-item"></div>
-                                                            <div className="flex-item"></div>
-                                                            <div className="flex-item"></div>
-
-                                                            {imageFields.map((field, index) => (
-                                                               <div
-                                                                  className="flex-item"
-                                                                  key={index}
-                                                               >
-                                                                  <Form.Group
-                                                                     controlId={field.docName}
-                                                                  >
-                                                                     <label>{field.docName}</label>
-                                                                     <Form.File custom>
-                                                                        <Form.File.Input
-                                                                           name={field.docName}
-                                                                           onChange={(e) =>
-                                                                              handleFileChange(
-                                                                                 e,
-                                                                                 propertyIndex,
-                                                                                 index
-                                                                              )
-                                                                           }
-                                                                        />
-                                                                        <Form.File.Label>
-                                                                           <TiCameraOutline className="mr-2" />{" "}
-                                                                           Browse
-                                                                        </Form.File.Label>
-                                                                     </Form.File>
-                                                                     {property.propertyImages[
-                                                                        index
-                                                                     ] &&
-                                                                     property.propertyImages[index]
-                                                                        .docName ? (
-                                                                        <div className="d-flex align-items-center">
-                                                                           <RxCross2
-                                                                              className="delete-icon ml-2 text-danger"
-                                                                              style={{
-                                                                                 cursor: "pointer",
-                                                                              }}
-                                                                              onClick={() =>
-                                                                                 handleDeletePropertyImage(
-                                                                                    propertyIndex,
-                                                                                    index
-                                                                                 )
-                                                                              }
-                                                                           />
-                                                                           <span
-                                                                              style={{
-                                                                                 fontSize: "12px",
-                                                                                 fontWeight: 400,
-                                                                                 lineHeight:
-                                                                                    "16.39px",
-                                                                                 letterSpacing:
-                                                                                    "-0.02em",
-                                                                                 textAlign: "left",
-                                                                              }}
-                                                                           >
-                                                                              {
-                                                                                 property
-                                                                                    .propertyImages[
-                                                                                    index
-                                                                                 ].docName
-                                                                              }
-                                                                           </span>
-                                                                        </div>
-                                                                     ) : (
-                                                                        <span
-                                                                           style={{
-                                                                              fontSize: "12px",
-                                                                              fontWeight: 400,
-                                                                              lineHeight: "16.39px",
-                                                                              letterSpacing:
-                                                                                 "-0.02em",
-                                                                              textAlign: "left",
-                                                                           }}
-                                                                           className="mt-2 text-muted"
-                                                                        >
-                                                                           No image available
-                                                                        </span>
-                                                                     )}
-                                                                  </Form.Group>
-                                                               </div>
-                                                            ))}
-                                                         </>
-                                                      )}
-                                                      {selectedType === "Plots" && (
-                                                         <>
-                                                            <div className="flex-item">
-                                                               <Form.Group controlId="totalUnits">
-                                                                  <label>Total Units</label>
-                                                                  <Form.Control
-                                                                     type="number"
-                                                                     placeholder="Enter"
-                                                                     name={`totalProjectUnits_${propertyIndex}`}
-                                                                     onChange={handleInputChange}
-                                                                     value={
-                                                                        property.totalProjectUnits ||
-                                                                        ""
-                                                                     }
-                                                                  />
-                                                               </Form.Group>
-                                                            </div>
-
-                                                            <div className="flex-item">
-                                                               <Form.Group controlId="sizeFrom">
-                                                                  <label>Plot Size From</label>
-
-                                                                  <InputGroup className="custom-input-group TotalAreaDevelopCon">
-                                                                     <Form.Control
-                                                                        type="number"
-                                                                        placeholder="Enter"
-                                                                        name={`minPlotArea${propertyIndex}`}
-                                                                        value={
-                                                                           property.minPlotArea ||
-                                                                           ""
-                                                                        }
-                                                                        onChange={handleInputChange}
-                                                                     />
-                                                                     <InputGroup.Append className="custom-input-group-append">
-                                                                        <Form.Control
-                                                                           as="select"
-                                                                           className="custom-select-size custom-text"
-                                                                           style={{
-                                                                              borderRadius: "0px",
-                                                                           }}
-                                                                           name={`plotAreaMeasurementUnitEnteredByUser _${propertyIndex}`}
-                                                                           value={
-                                                                              property.plotAreaMeasurementUnitEnteredByUser ||
-                                                                              "Sq. Mt"
-                                                                           }
-                                                                           onChange={(e) => {
-                                                                              setData(
-                                                                                 (prevData) => {
-                                                                                    const updatedProperties =
-                                                                                       [
-                                                                                          ...prevData.builderProjectSubPostProperties,
-                                                                                       ];
-                                                                                    updatedProperties[
-                                                                                       parseInt(
-                                                                                          propertyIndex
-                                                                                       )
-                                                                                    ].plotAreaMeasurementUnitEnteredByUser =
-                                                                                       e.target.value;
-                                                                                    return {
-                                                                                       ...prevData,
-                                                                                       builderProjectSubPostProperties:
-                                                                                          updatedProperties,
-                                                                                    };
-                                                                                 }
-                                                                              );
-                                                                           }}
-                                                                        >
-                                                                           <option value="Sq. Mt">
-                                                                              Sq. Mt
-                                                                           </option>
-                                                                           <option value="Sq. Ft">
-                                                                              Sq. Ft
-                                                                           </option>
-                                                                           <option value="Sq. Yt">
-                                                                              Sq. Yt
-                                                                           </option>
-                                                                        </Form.Control>
-                                                                     </InputGroup.Append>
-                                                                  </InputGroup>
-                                                               </Form.Group>
-                                                            </div>
-
-                                                            <div className="flex-item">
-                                                               <Form.Group controlId="sizeTo">
-                                                                  <label>Plot Size To</label>
-
-                                                                  <InputGroup className="custom-input-group TotalAreaDevelopCon">
-                                                                     <Form.Control
-                                                                        type="number"
-                                                                        placeholder="Enter"
-                                                                        name={`maxPlotArea${propertyIndex}`}
-                                                                        value={
-                                                                           property.maxPlotArea ||
-                                                                           ""
-                                                                        }
-                                                                        onChange={handleInputChange}
-                                                                     />
-                                                                     <InputGroup.Append className="custom-input-group-append">
-                                                                        <Form.Control
-                                                                           as="select"
-                                                                           className="custom-select-size custom-text"
-                                                                           style={{
-                                                                              borderRadius: "0px",
-                                                                           }}
-                                                                           name={`plotAreaMeasurementUnitEnteredByUser _${propertyIndex}`}
-                                                                           value={
-                                                                              property.plotAreaMeasurementUnitEnteredByUser ||
-                                                                              "Sq. Mt"
-                                                                           }
-                                                                           onChange={(e) => {
-                                                                              setData(
-                                                                                 (prevData) => {
-                                                                                    const updatedProperties =
-                                                                                       [
-                                                                                          ...prevData.builderProjectSubPostProperties,
-                                                                                       ];
-                                                                                    updatedProperties[
-                                                                                       parseInt(
-                                                                                          propertyIndex
-                                                                                       )
-                                                                                    ].plotAreaMeasurementUnitEnteredByUser =
-                                                                                       e.target.value;
-                                                                                    return {
-                                                                                       ...prevData,
-                                                                                       builderProjectSubPostProperties:
-                                                                                          updatedProperties,
-                                                                                    };
-                                                                                 }
-                                                                              );
-                                                                           }}
-                                                                        >
-                                                                           <option value="Sq. Mt">
-                                                                              Sq. Mt
-                                                                           </option>
-                                                                           <option value="Sq. Ft">
-                                                                              Sq. Ft
-                                                                           </option>
-                                                                           <option value="Sq. Yt">
-                                                                              Sq. Yt
-                                                                           </option>
-                                                                        </Form.Control>
-                                                                     </InputGroup.Append>
-                                                                  </InputGroup>
-                                                               </Form.Group>
-                                                            </div>
-                                                            <div className="flex-item"></div>
-
-                                                            {imageFields.map((field, index) => (
-                                                               <div
-                                                                  key={index}
-                                                                  className="flex-item"
-                                                               >
-                                                                  <Form.Group
-                                                                     controlId={field.docName}
-                                                                  >
-                                                                     <label>{field.docName}</label>
-                                                                     <Form.File custom>
-                                                                        <Form.File.Input
-                                                                           name={field.docName}
-                                                                           onChange={(e) =>
-                                                                              handleFileChange(
-                                                                                 e,
-                                                                                 propertyIndex,
-                                                                                 index
-                                                                              )
-                                                                           }
-                                                                        />
-                                                                        <Form.File.Label>
-                                                                           <TiCameraOutline className="mr-2" />{" "}
-                                                                           Browse
-                                                                        </Form.File.Label>
-                                                                     </Form.File>
-                                                                     {property.propertyImages[
-                                                                        index
-                                                                     ] &&
-                                                                     property.propertyImages[index]
-                                                                        .docName ? (
-                                                                        <div className="d-flex align-items-center">
-                                                                           <RxCross2
-                                                                              className="delete-icon ml-2 text-danger"
-                                                                              style={{
-                                                                                 cursor: "pointer",
-                                                                              }}
-                                                                              onClick={() =>
-                                                                                 handleDeletePropertyImage(
-                                                                                    propertyIndex,
-                                                                                    index
-                                                                                 )
-                                                                              }
-                                                                           />
-                                                                           <span
-                                                                              style={{
-                                                                                 fontSize: "12px",
-                                                                                 fontWeight: 400,
-                                                                                 lineHeight:
-                                                                                    "16.39px",
-                                                                                 letterSpacing:
-                                                                                    "-0.02em",
-                                                                                 textAlign: "left",
-                                                                              }}
-                                                                           >
-                                                                              {
-                                                                                 property
-                                                                                    .propertyImages[
-                                                                                    index
-                                                                                 ].docName
-                                                                              }
-                                                                           </span>
-                                                                        </div>
-                                                                     ) : (
-                                                                        <span
-                                                                           style={{
-                                                                              fontSize: "12px",
-                                                                              fontWeight: 400,
-                                                                              lineHeight: "16.39px",
-                                                                              letterSpacing:
-                                                                                 "-0.02em",
-                                                                              textAlign: "left",
-                                                                           }}
-                                                                           className="mt-2 text-muted"
-                                                                        >
-                                                                           No image available
-                                                                        </span>
-                                                                     )}
-                                                                  </Form.Group>
-                                                               </div>
-                                                            ))}
-                                                         </>
-                                                      )}
-                                                      <div className="flex-itemp-0 d-flex justify-content-end"></div>
-                                                   </div>
-                                                   <div className="close-col d-flex align-items-center justify-content-center flex-container2">
-                                                      <FaTimesCircle
-                                                         onClick={() => handleRemoveProperty(index)} // Call the remove function
-                                                         style={{
-                                                            color: "#FF1919",
-                                                            cursor: "pointer",
-                                                         }}
+                                                ))}
+                                                <Col md={12} className="mt-3">
+                                                   <Form.Group controlId="comments">
+                                                      <Form.Control
+                                                         type="text"
+                                                         placeholder="Comments"
+                                                         name={`comments_${propertyIndex}`}
+                                                         value={property.comments || ""}
+                                                         onChange={handleInputChange}
                                                       />
-                                                   </div>
-                                                </div>
+                                                   </Form.Group>
+                                                </Col>
                                              </Row>
-                                          )
-                                       )}
-                                    </Row>
-                                 ))}
+                                          </Col>
+
+                                          {/* Close Button Area */}
+                                          <Col lg={1} className="p-0 d-flex justify-content-end">
+                                             <div className="close-col d-flex align-items-center justify-content-center">
+                                                <FaTimesCircle
+                                                   style={{
+                                                      color: "#FF1919",
+                                                      cursor: "pointer",
+                                                   }}
+                                                   onClick={() => handleRemoveProperty(index)} // Call the remove function
+                                                />
+                                             </div>
+                                          </Col>
+                                       </Row>
+                                    )
+                                 )}
+
+                              {data.subPostType === "Plotted" && showMoreUnits && (
+                                 <Row>
+                                    {data.builderProjectSubPostProperties.map(
+                                       (property, propertyIndex) => (
+                                          <Row
+                                             key={propertyIndex}
+                                             className="align-items-center m-1 border rounded UnitsForm"
+                                          >
+                                             <div className="UnitformContainer1">
+                                                <div className="mb-3 flex-container1">
+                                                   <div className="flex-item">
+                                                      <Form.Group controlId="formselectConfiguration">
+                                                         <label>Configuration</label>
+                                                         <Form.Control
+                                                            as="select"
+                                                            value={selectedType}
+                                                            onChange={(e) =>
+                                                               setSelectedType(e.target.value)
+                                                            }
+                                                         >
+                                                            <option value="Villas">Villas</option>
+                                                            <option value="Plots">Plots</option>
+                                                         </Form.Control>
+                                                      </Form.Group>
+                                                   </div>
+                                                   {selectedType === "Villas" && (
+                                                      <>
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="configuration">
+                                                               <label>BHK</label>
+                                                               <Form.Control
+                                                                  as="select"
+                                                                  name={`numberOfRooms_${propertyIndex}`}
+                                                                  className="custom-select-size"
+                                                                  onChange={(e) => {
+                                                                     const [
+                                                                        rooms,
+                                                                        compositionType,
+                                                                     ] = e.target.value.split(" "); // Split value into numberOfRooms and propertyRoomCompositionType
+
+                                                                     setData((prevData) => {
+                                                                        const updatedProperties = [
+                                                                           ...prevData.builderProjectSubPostProperties,
+                                                                        ];
+                                                                        updatedProperties[
+                                                                           propertyIndex
+                                                                        ] = {
+                                                                           ...updatedProperties[
+                                                                              propertyIndex
+                                                                           ],
+                                                                           numberOfRooms: rooms,
+                                                                           propertyRoomCompositionType:
+                                                                              compositionType,
+                                                                        };
+                                                                        return {
+                                                                           ...prevData,
+                                                                           builderProjectSubPostProperties:
+                                                                              updatedProperties,
+                                                                        };
+                                                                     });
+                                                                  }}
+                                                                  value={
+                                                                     property.numberOfRooms &&
+                                                                     property.propertyRoomCompositionType
+                                                                        ? `${property.numberOfRooms} ${property.propertyRoomCompositionType}`
+                                                                        : "" // Set empty string as default value so that dropdown will not auto-select
+                                                                  }
+                                                               >
+                                                                  {/* Default value when no selection is made */}
+                                                                  <option value="" disabled>
+                                                                     Select
+                                                                  </option>
+
+                                                                  {/* Static options */}
+                                                                  <option value="3 BHK">
+                                                                     3 BHK
+                                                                  </option>
+                                                                  <option value="4 BHK">
+                                                                     4 BHK
+                                                                  </option>
+                                                                  <option value="6 BHK">
+                                                                     6 BHK
+                                                                  </option>
+                                                               </Form.Control>
+                                                            </Form.Group>
+                                                         </div>
+
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="totalUnits">
+                                                               <label>Total Units</label>
+                                                               <Form.Control
+                                                                  type="number"
+                                                                  placeholder="Enter"
+                                                                  name={`totalProjectUnits_${propertyIndex}`}
+                                                                  value={
+                                                                     property.totalProjectUnits ||
+                                                                     ""
+                                                                  }
+                                                                  onChange={handleInputChange}
+                                                               />
+                                                            </Form.Group>
+                                                         </div>
+
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="sizeFrom">
+                                                               <label>Built up area From</label>
+                                                               <InputGroup className="custom-input-group TotalAreaDevelopCon">
+                                                                  <Form.Control
+                                                                     type="number"
+                                                                     placeholder="Enter"
+                                                                     name={`minBuiltUpArea_${propertyIndex}`}
+                                                                     value={
+                                                                        property.minBuiltUpArea ||
+                                                                        ""
+                                                                     }
+                                                                     onChange={handleInputChange}
+                                                                  />
+                                                                  <InputGroup.Append className="custom-input-group-append">
+                                                                     <Form.Control
+                                                                        as="select"
+                                                                        className="custom-select-size custom-text"
+                                                                        style={{
+                                                                           borderRadius: "0px",
+                                                                        }}
+                                                                        name={`builtUpAreaMeasurementUnitEnteredByUser _${propertyIndex}`}
+                                                                        value={
+                                                                           property.builtUpAreaMeasurementUnitEnteredByUser
+                                                                        }
+                                                                        onChange={(e) => {
+                                                                           setData((prevData) => {
+                                                                              const updatedProperties =
+                                                                                 [
+                                                                                    ...prevData.builderProjectSubPostProperties,
+                                                                                 ];
+                                                                              updatedProperties[
+                                                                                 parseInt(
+                                                                                    propertyIndex
+                                                                                 )
+                                                                              ].builtUpAreaMeasurementUnitEnteredByUser =
+                                                                                 e.target.value;
+                                                                              return {
+                                                                                 ...prevData,
+                                                                                 builderProjectSubPostProperties:
+                                                                                    updatedProperties,
+                                                                              };
+                                                                           });
+                                                                        }}
+                                                                     >
+                                                                        <option value="Sq. Mt.">
+                                                                           Sq. Mt.
+                                                                        </option>
+                                                                        <option value="Sq. Ft.">
+                                                                           Sq. Ft.
+                                                                        </option>
+                                                                        <option value="Sq. Yd.">
+                                                                           Sq. Yd.
+                                                                        </option>
+                                                                     </Form.Control>
+                                                                  </InputGroup.Append>
+                                                               </InputGroup>
+                                                            </Form.Group>
+                                                         </div>
+
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="sizeTo">
+                                                               <label>Built up area To</label>
+
+                                                               <InputGroup className="custom-input-group TotalAreaDevelopCon">
+                                                                  <Form.Control
+                                                                     type="number"
+                                                                     placeholder="Enter"
+                                                                     name={`maxBuiltUpArea_${propertyIndex}`}
+                                                                     value={
+                                                                        property.maxBuiltUpArea ||
+                                                                        ""
+                                                                     }
+                                                                     onChange={handleInputChange}
+                                                                  />
+                                                                  <InputGroup.Append className="custom-input-group-append">
+                                                                     <Form.Control
+                                                                        as="select"
+                                                                        className="custom-select-size custom-text"
+                                                                        style={{
+                                                                           borderRadius: "0px",
+                                                                        }}
+                                                                        name="builtUpAreaMeasurementUnitEnteredByUser"
+                                                                        value={
+                                                                           property.builtUpAreaMeasurementUnitEnteredByUser
+                                                                        }
+                                                                        onChange={(e) => {
+                                                                           // Update the state with the selected unit
+                                                                           setData((prevData) => ({
+                                                                              ...prevData,
+                                                                              builtUpAreaMeasurementUnitEnteredByUser:
+                                                                                 e.target.value,
+                                                                           }));
+                                                                        }}
+                                                                     >
+                                                                        <option value="Sq. Mt.">
+                                                                           Sq. Mt.
+                                                                        </option>
+                                                                        <option value="Sq. Ft.">
+                                                                           Sq. Ft.
+                                                                        </option>
+                                                                        <option value="Sq. Yd.">
+                                                                           Sq. Yd.
+                                                                        </option>
+                                                                     </Form.Control>
+                                                                  </InputGroup.Append>
+                                                               </InputGroup>
+                                                            </Form.Group>
+                                                         </div>
+
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="sizeTo">
+                                                               <label>Plot Size From</label>
+
+                                                               <InputGroup className="custom-input-group TotalAreaDevelopCon">
+                                                                  <Form.Control
+                                                                     type="number"
+                                                                     placeholder="Enter"
+                                                                     name={`minPlotArea_${propertyIndex}`}
+                                                                     value={
+                                                                        property.minPlotArea || ""
+                                                                     }
+                                                                     onChange={handleInputChange}
+                                                                  />
+                                                                  <InputGroup.Append className="custom-input-group-append">
+                                                                     <Form.Control
+                                                                        as="select"
+                                                                        className="custom-select-size custom-text"
+                                                                        name="plotAreaMeasurementUnitEnteredByUser"
+                                                                        style={{
+                                                                           borderRadius: "0px",
+                                                                        }}
+                                                                        value={
+                                                                           property.plotAreaMeasurementUnitEnteredByUser
+                                                                        }
+                                                                        onChange={(e) => {
+                                                                           // Update the state with the selected unit
+                                                                           setData((prevData) => ({
+                                                                              ...prevData,
+                                                                              plotAreaMeasurementUnitEnteredByUser:
+                                                                                 e.target.value,
+                                                                           }));
+                                                                        }}
+                                                                     >
+                                                                        <option value="Sq. Mt.">
+                                                                           Sq. Mt.
+                                                                        </option>
+                                                                        <option value="Sq. Ft.">
+                                                                           Sq. Ft.
+                                                                        </option>
+                                                                        <option value="Sq. Yd.">
+                                                                           Sq. Yd.
+                                                                        </option>
+                                                                     </Form.Control>
+                                                                  </InputGroup.Append>
+                                                               </InputGroup>
+                                                            </Form.Group>
+                                                         </div>
+
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="sizeTo">
+                                                               <label>Plot Size To</label>
+
+                                                               <InputGroup className="custom-input-group TotalAreaDevelopCon">
+                                                                  <Form.Control
+                                                                     type="number"
+                                                                     placeholder="Enter"
+                                                                     name={`maxPlotArea_${propertyIndex}`}
+                                                                     value={
+                                                                        property.maxPlotArea || ""
+                                                                     }
+                                                                     onChange={handleInputChange}
+                                                                  />
+                                                                  <InputGroup.Append className="custom-input-group-append">
+                                                                     <Form.Control
+                                                                        as="select"
+                                                                        className="custom-select-size custom-text"
+                                                                        style={{
+                                                                           borderRadius: "0px",
+                                                                        }}
+                                                                        name="plotAreaMeasurementUnitEnteredByUser"
+                                                                        value={
+                                                                           property.plotAreaMeasurementUnitEnteredByUser
+                                                                        }
+                                                                        onChange={(e) => {
+                                                                           // Update the state with the selected unit
+                                                                           setData((prevData) => ({
+                                                                              ...prevData,
+                                                                              plotAreaMeasurementUnitEnteredByUser:
+                                                                                 e.target.value,
+                                                                           }));
+                                                                        }}
+                                                                     >
+                                                                        <option value="Sq. Mt.">
+                                                                           Sq. Mt.
+                                                                        </option>
+                                                                        <option value="Sq. Ft.">
+                                                                           Sq. Ft.
+                                                                        </option>
+                                                                        <option value="Sq. Yd.">
+                                                                           Sq. Yd.
+                                                                        </option>
+                                                                     </Form.Control>
+                                                                  </InputGroup.Append>
+                                                               </InputGroup>
+                                                            </Form.Group>
+                                                         </div>
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="sizeTo">
+                                                               <label>Price Min</label>
+                                                               <InputGroup>
+                                                                  <Form.Control
+                                                                     type="text"
+                                                                     placeholder="Enter"
+                                                                     name={`minPrice_${propertyIndex}`}
+                                                                     value={property.minPrice || ""}
+                                                                     onChange={handleInputChange}
+                                                                  />
+                                                               </InputGroup>
+                                                            </Form.Group>
+                                                         </div>
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="sizeTo">
+                                                               <label>Price Max</label>
+                                                               <InputGroup>
+                                                                  <Form.Control
+                                                                     type="text"
+                                                                     placeholder="Enter"
+                                                                     name={`maxPrice_${propertyIndex}`}
+                                                                     value={property.maxPrice || ""}
+                                                                     onChange={handleInputChange}
+                                                                  />
+                                                               </InputGroup>
+                                                            </Form.Group>
+                                                         </div>
+                                                         <div className="flex-item"></div>
+
+                                                         {imageFields.map((field, index) => (
+                                                            <div className="flex-item" key={index}>
+                                                               <Form.Group
+                                                                  controlId={field.docName}
+                                                               >
+                                                                  <label>{field.docName}</label>
+                                                                  <Form.File custom>
+                                                                     <Form.File.Input
+                                                                        name={field.docName}
+                                                                        onChange={(e) =>
+                                                                           handleFileChange(
+                                                                              e,
+                                                                              propertyIndex,
+                                                                              index
+                                                                           )
+                                                                        }
+                                                                     />
+                                                                     <Form.File.Label>
+                                                                        <TiCameraOutline className="mr-2" />{" "}
+                                                                        Browse
+                                                                     </Form.File.Label>
+                                                                  </Form.File>
+                                                                  {property.propertyImages[index] &&
+                                                                  property.propertyImages[index]
+                                                                     .docName ? (
+                                                                     <div className="d-flex align-items-center">
+                                                                        <RxCross2
+                                                                           className="delete-icon ml-2 text-danger"
+                                                                           style={{
+                                                                              cursor: "pointer",
+                                                                           }}
+                                                                           onClick={() =>
+                                                                              handleDeletePropertyImage(
+                                                                                 propertyIndex,
+                                                                                 index
+                                                                              )
+                                                                           }
+                                                                        />
+                                                                        <span
+                                                                           style={{
+                                                                              fontSize: "12px",
+                                                                              fontWeight: 400,
+                                                                              lineHeight: "16.39px",
+                                                                              letterSpacing:
+                                                                                 "-0.02em",
+                                                                              textAlign: "left",
+                                                                           }}
+                                                                        >
+                                                                           {
+                                                                              property
+                                                                                 .propertyImages[
+                                                                                 index
+                                                                              ].docName
+                                                                           }
+                                                                        </span>
+                                                                     </div>
+                                                                  ) : (
+                                                                     <span
+                                                                        style={{
+                                                                           fontSize: "12px",
+                                                                           fontWeight: 400,
+                                                                           lineHeight: "16.39px",
+                                                                           letterSpacing: "-0.02em",
+                                                                           textAlign: "left",
+                                                                        }}
+                                                                        className="mt-2 text-muted"
+                                                                     >
+                                                                        No image available
+                                                                     </span>
+                                                                  )}
+                                                               </Form.Group>
+                                                            </div>
+                                                         ))}
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="comments">
+                                                               <Form.Control
+                                                                  type="text"
+                                                                  placeholder="Comments"
+                                                                  name={`comments_${propertyIndex}`}
+                                                                  value={property.comments || ""}
+                                                                  onChange={handleInputChange}
+                                                               />
+                                                            </Form.Group>
+                                                         </div>
+                                                      </>
+                                                   )}
+                                                   {selectedType === "Plots" && (
+                                                      <>
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="totalUnits">
+                                                               <label>Total Units</label>
+                                                               <Form.Control
+                                                                  type="number"
+                                                                  placeholder="Enter"
+                                                                  name={`totalProjectUnits_${propertyIndex}`}
+                                                                  onChange={handleInputChange}
+                                                                  value={
+                                                                     property.totalProjectUnits ||
+                                                                     ""
+                                                                  }
+                                                               />
+                                                            </Form.Group>
+                                                         </div>
+
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="sizeFrom">
+                                                               <label>Plot Size From</label>
+
+                                                               <InputGroup className="custom-input-group TotalAreaDevelopCon">
+                                                                  <Form.Control
+                                                                     type="number"
+                                                                     placeholder="Enter"
+                                                                     name={`minPlotArea_${propertyIndex}`}
+                                                                     value={
+                                                                        property.minPlotArea || ""
+                                                                     }
+                                                                     onChange={handleInputChange}
+                                                                  />
+                                                                  <InputGroup.Append className="custom-input-group-append">
+                                                                     <Form.Control
+                                                                        as="select"
+                                                                        className="custom-select-size custom-text"
+                                                                        style={{
+                                                                           borderRadius: "0px",
+                                                                        }}
+                                                                        name={`plotAreaMeasurementUnitEnteredByUser _${propertyIndex}`}
+                                                                        value={
+                                                                           property.plotAreaMeasurementUnitEnteredByUser
+                                                                        }
+                                                                        onChange={(e) => {
+                                                                           setData((prevData) => {
+                                                                              const updatedProperties =
+                                                                                 [
+                                                                                    ...prevData.builderProjectSubPostProperties,
+                                                                                 ];
+                                                                              updatedProperties[
+                                                                                 parseInt(
+                                                                                    propertyIndex
+                                                                                 )
+                                                                              ].plotAreaMeasurementUnitEnteredByUser =
+                                                                                 e.target.value;
+                                                                              return {
+                                                                                 ...prevData,
+                                                                                 builderProjectSubPostProperties:
+                                                                                    updatedProperties,
+                                                                              };
+                                                                           });
+                                                                        }}
+                                                                     >
+                                                                        <option value="Sq. Mt.">
+                                                                           Sq. Mt.
+                                                                        </option>
+                                                                        <option value="Sq. Ft.">
+                                                                           Sq. Ft.
+                                                                        </option>
+                                                                        <option value="Sq. Yd.">
+                                                                           Sq. Yd.
+                                                                        </option>
+                                                                     </Form.Control>
+                                                                  </InputGroup.Append>
+                                                               </InputGroup>
+                                                            </Form.Group>
+                                                         </div>
+
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="sizeTo">
+                                                               <label>Plot Size To</label>
+
+                                                               <InputGroup className="custom-input-group TotalAreaDevelopCon">
+                                                                  <Form.Control
+                                                                     type="number"
+                                                                     placeholder="Enter"
+                                                                     name={`maxPlotArea_${propertyIndex}`}
+                                                                     value={
+                                                                        property.maxPlotArea || ""
+                                                                     }
+                                                                     onChange={handleInputChange}
+                                                                  />
+                                                                  <InputGroup.Append className="custom-input-group-append">
+                                                                     <Form.Control
+                                                                        as="select"
+                                                                        className="custom-select-size custom-text"
+                                                                        style={{
+                                                                           borderRadius: "0px",
+                                                                        }}
+                                                                        name={`plotAreaMeasurementUnitEnteredByUser _${propertyIndex}`}
+                                                                        value={
+                                                                           property.plotAreaMeasurementUnitEnteredByUser
+                                                                        }
+                                                                        onChange={(e) => {
+                                                                           setData((prevData) => {
+                                                                              const updatedProperties =
+                                                                                 [
+                                                                                    ...prevData.builderProjectSubPostProperties,
+                                                                                 ];
+                                                                              updatedProperties[
+                                                                                 parseInt(
+                                                                                    propertyIndex
+                                                                                 )
+                                                                              ].plotAreaMeasurementUnitEnteredByUser =
+                                                                                 e.target.value;
+                                                                              return {
+                                                                                 ...prevData,
+                                                                                 builderProjectSubPostProperties:
+                                                                                    updatedProperties,
+                                                                              };
+                                                                           });
+                                                                        }}
+                                                                     >
+                                                                        <option value="Sq. Mt.">
+                                                                           Sq. Mt.
+                                                                        </option>
+                                                                        <option value="Sq. Ft.">
+                                                                           Sq. Ft.
+                                                                        </option>
+                                                                        <option value="Sq. Yd.">
+                                                                           Sq. Yd.
+                                                                        </option>
+                                                                     </Form.Control>
+                                                                  </InputGroup.Append>
+                                                               </InputGroup>
+                                                            </Form.Group>
+                                                         </div>
+                                                         <div className="flex-item"></div>
+
+                                                         {imageFields.map((field, index) => (
+                                                            <div key={index} className="flex-item">
+                                                               <Form.Group
+                                                                  controlId={field.docName}
+                                                               >
+                                                                  <label>{field.docName}</label>
+                                                                  <Form.File custom>
+                                                                     <Form.File.Input
+                                                                        name={field.docName}
+                                                                        onChange={(e) =>
+                                                                           handleFileChange(
+                                                                              e,
+                                                                              propertyIndex,
+                                                                              index
+                                                                           )
+                                                                        }
+                                                                     />
+                                                                     <Form.File.Label>
+                                                                        <TiCameraOutline className="mr-2" />{" "}
+                                                                        Browse
+                                                                     </Form.File.Label>
+                                                                  </Form.File>
+                                                                  {property.propertyImages[index] &&
+                                                                  property.propertyImages[index]
+                                                                     .docName ? (
+                                                                     <div className="d-flex align-items-center">
+                                                                        <RxCross2
+                                                                           className="delete-icon ml-2 text-danger"
+                                                                           style={{
+                                                                              cursor: "pointer",
+                                                                           }}
+                                                                           onClick={() =>
+                                                                              handleDeletePropertyImage(
+                                                                                 propertyIndex,
+                                                                                 index
+                                                                              )
+                                                                           }
+                                                                        />
+                                                                        <span
+                                                                           style={{
+                                                                              fontSize: "12px",
+                                                                              fontWeight: 400,
+                                                                              lineHeight: "16.39px",
+                                                                              letterSpacing:
+                                                                                 "-0.02em",
+                                                                              textAlign: "left",
+                                                                           }}
+                                                                        >
+                                                                           {
+                                                                              property
+                                                                                 .propertyImages[
+                                                                                 index
+                                                                              ].docName
+                                                                           }
+                                                                        </span>
+                                                                     </div>
+                                                                  ) : (
+                                                                     <span
+                                                                        style={{
+                                                                           fontSize: "12px",
+                                                                           fontWeight: 400,
+                                                                           lineHeight: "16.39px",
+                                                                           letterSpacing: "-0.02em",
+                                                                           textAlign: "left",
+                                                                        }}
+                                                                        className="mt-2 text-muted"
+                                                                     >
+                                                                        No image available
+                                                                     </span>
+                                                                  )}
+                                                               </Form.Group>
+                                                            </div>
+                                                         ))}
+                                                         <div className="flex-item">
+                                                            <Form.Group controlId="comments">
+                                                               <Form.Control
+                                                                  type="text"
+                                                                  placeholder="Comments"
+                                                                  name={`comments_${propertyIndex}`}
+                                                                  value={property.comments || ""}
+                                                                  onChange={handleInputChange}
+                                                               />
+                                                            </Form.Group>
+                                                         </div>
+                                                      </>
+                                                   )}
+                                                   <div className="flex-itemp-0 d-flex justify-content-end"></div>
+                                                </div>
+                                                <div className="close-col d-flex align-items-center justify-content-center flex-container2">
+                                                   <FaTimesCircle
+                                                      onClick={() => handleRemoveProperty(index)} // Call the remove function
+                                                      style={{
+                                                         color: "#FF1919",
+                                                         cursor: "pointer",
+                                                      }}
+                                                   />
+                                                </div>
+                                             </div>
+                                          </Row>
+                                       )
+                                    )}
+                                 </Row>
+                              )}
                               <Row>
                                  <Col lg="2">
                                     <Button
@@ -2492,7 +2895,7 @@ const ProjectDetails = () => {
                                  backgroundColor: "#F8F3F5",
                                  borderColor: "#DED6D9",
                               }}
-                              onClick={handleAddForm}
+                              onClick={handleAddForm} // Bind this function to handle the click
                            >
                               <div
                                  style={{

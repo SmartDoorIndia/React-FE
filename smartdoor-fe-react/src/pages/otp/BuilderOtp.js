@@ -62,63 +62,119 @@ const BuilderOtp = (props) => {
          handleLogin(otpValue);
       }
    };
-
+   // const handleLogin = async (otpValue) => {
+   //    setButtonDisable(true);
+   //    const passwordToBase64 = stringToBase64(otpValue); // Convert OTP to Base64
+   //    if (userExists) {
+   //       // User exists, proceed with login
+   //       const response = await dispatch(
+   //          BuilderLogin({ mobile: mobile, password: passwordToBase64 })
+   //       );
+   //       if (response.status === 200) {
+   //          showSuccessToast("Login successful");
+   //          console.log("auth response:- ", response);
+   //          setLocalStorage("authData", response.data);
+   //          history.push("/builder/detail"); // Redirect to login page or intended page
+   //       } else {
+   //          showErrorToast("Login failed");
+   //       }
+   //       //  props
+   //       //     .BuilderLogin({ username: mobile, password: passwordToBase64 })
+   //       //     .then((response) => {
+   //       //        setLocalStorage("authData", response.data);
+   //       //        setButtonDisable(false);
+   //       //        if (response.data && response.data.access_token) {
+   //       //           showSuccessToast("Login successful");
+   //       //           history.push("/admin/execution"); // Redirect to the dashboard or intended page
+   //       //        }
+   //       //     })
+   //       //     .catch((error) => {
+   //       //        setButtonDisable(false);
+   //       //        // Check for specific error message and display update instruction
+   //       //        if (
+   //       //           error.response &&
+   //       //           error.response.status === 404 &&
+   //       //           error.response.data.message.includes("old version")
+   //       //        ) {
+   //       //           showErrorToast(
+   //       //              "Your application is outdated. Please update to the latest version."
+   //       //           );
+   //       //        } else {
+   //       //           showErrorToast("Login failed");
+   //       //           console.log(error);
+   //       //        }
+   //       //     });
+   //    } else {
+   //       // User does not exist, handle sign-up
+   //       try {
+   //          const response = await dispatch(BuilderSignup({ mobile: mobile, otp: otpValue }));
+   //          if (response.status === 200) {
+   //             showSuccessToast("Sign Up successful");
+   //             setLocalStorage("authData", response.data);
+   //             history.push("/builder/detail"); // Redirect to login page or intended page
+   //          } else {
+   //             showErrorToast("Sign Up failed");
+   //          }
+   //       } catch (error) {
+   //          showErrorToast("Sign Up error");
+   //          console.log(error);
+   //       } finally {
+   //          setButtonDisable(false);
+   //       }
+   //    }
+   // };
    const handleLogin = async (otpValue) => {
       setButtonDisable(true);
       const passwordToBase64 = stringToBase64(otpValue); // Convert OTP to Base64
+
       if (userExists) {
          // User exists, proceed with login
-         const response = await dispatch(
-            BuilderLogin({ mobile: mobile, password: passwordToBase64 })
-         );
-         if (response.status === 200) {
-            showSuccessToast("Login successful");
-            console.log("auth response:- ", response);
-            setLocalStorage("authData", response.data);
-            history.push("/builder/detail"); // Redirect to login page or intended page
-         } else {
-            showErrorToast("Login failed");
+         try {
+            const response = await dispatch(
+               BuilderLogin({ mobile: mobile, password: passwordToBase64 })
+            );
+
+            if (response?.status === 200) {
+               showSuccessToast("Login successful");
+               console.log("auth response:", response);
+
+               // Store auth data in local storage
+               setLocalStorage("authData", response.data);
+
+               // Delay redirect to ensure auth data is set
+               setTimeout(() => {
+                  history.push("/builder/detail");
+               }); // Adding a slight delay to ensure data is set
+            } else {
+               showErrorToast("Login failed");
+            }
+         } catch (error) {
+            showErrorToast("Login error");
+            console.log("Login error:", error);
+         } finally {
+            setButtonDisable(false);
          }
-         //  props
-         //     .BuilderLogin({ username: mobile, password: passwordToBase64 })
-         //     .then((response) => {
-         //        setLocalStorage("authData", response.data);
-         //        setButtonDisable(false);
-         //        if (response.data && response.data.access_token) {
-         //           showSuccessToast("Login successful");
-         //           history.push("/admin/execution"); // Redirect to the dashboard or intended page
-         //        }
-         //     })
-         //     .catch((error) => {
-         //        setButtonDisable(false);
-         //        // Check for specific error message and display update instruction
-         //        if (
-         //           error.response &&
-         //           error.response.status === 404 &&
-         //           error.response.data.message.includes("old version")
-         //        ) {
-         //           showErrorToast(
-         //              "Your application is outdated. Please update to the latest version."
-         //           );
-         //        } else {
-         //           showErrorToast("Login failed");
-         //           console.log(error);
-         //        }
-         //     });
       } else {
          // User does not exist, handle sign-up
          try {
             const response = await dispatch(BuilderSignup({ mobile: mobile, otp: otpValue }));
-            if (response.status === 200) {
+
+            if (response?.status === 200) {
                showSuccessToast("Sign Up successful");
+
+               // Store auth data in local storage
                setLocalStorage("authData", response.data);
-               history.push("/builder/detail"); // Redirect to login page or intended page
+
+               // Delay redirect to ensure auth data is set
+               setTimeout(() => {
+                  history.push("/builder/detail");
+               }, 200); // Adding a slight delay to ensure data is set
             } else {
                showErrorToast("Sign Up failed");
             }
          } catch (error) {
             showErrorToast("Sign Up error");
-            console.log(error);
+            console.log("Sign Up error:", error);
          } finally {
             setButtonDisable(false);
          }
@@ -224,109 +280,114 @@ const BuilderOtp = (props) => {
                      <h2>Welcome</h2>
                      <p>Builder Sign In</p>
 
-                     <form noValidate onSubmit={validateForm} autoComplete="off">
-                        <div className="input-group">
-                           <input
-                              type="text"
-                              value={mobile}
-                              readOnly
-                              name="userNumber"
-                              className="input-field"
-                              id="phone-number"
-                           />
-                           <label htmlFor="phone-number">Phone Number</label>
-                           <FontAwesomeIcon icon={faArrowRight} className="input-icon clickable" />
-                        </div>
+                     <div className="d-flex flex-column " style={{ gap: "30px" }}>
+                        <form noValidate onSubmit={validateForm} autoComplete="off">
+                           <div className="input-group">
+                              <input
+                                 type="text"
+                                 value={mobile}
+                                 readOnly
+                                 name="userNumber"
+                                 className="input-field"
+                                 id="phone-number"
+                              />
+                              <label htmlFor="phone-number">Phone Number</label>
+                              <FontAwesomeIcon
+                                 icon={faArrowRight}
+                                 className="input-icon clickable"
+                              />
+                           </div>
 
-                        <div className="d-flex justify-content-center mt-4">
-                           <Form.Group className="mr-2 otpWrap">
-                              <Form.Control
-                                 autoFocus
-                                 name="otp1"
-                                 className="otpInput"
-                                 type="text"
-                                 maxLength="1"
-                                 size="1"
-                                 max="1"
-                                 pattern="[0–9]{1}"
-                                 value={loginData.otp1}
-                                 onChange={(e) =>
-                                    handleOtp1Change(e.target.value.replace(/[^0-9]/g, ""))
-                                 }
-                                 ref={num1}
-                              />
-                              <span className="dashBottom"></span>
-                           </Form.Group>
-                           <Form.Group className="mr-2 otpWrap">
-                              <Form.Control
-                                 name="otp2"
-                                 className="otpInput"
-                                 type="text"
-                                 maxLength="1"
-                                 size="1"
-                                 max="1"
-                                 pattern="[0–9]{1}"
-                                 value={loginData.otp2}
-                                 onChange={(e) =>
-                                    handleOtp2Change(e.target.value.replace(/[^0-9]/g, ""))
-                                 }
-                                 ref={num2}
-                              />
-                              <span className="dashBottom"></span>
-                           </Form.Group>
-                           <Form.Group className="mr-2 otpWrap">
-                              <Form.Control
-                                 name="otp3"
-                                 className="otpInput"
-                                 type="text"
-                                 maxLength="1"
-                                 size="1"
-                                 max="1"
-                                 pattern="[0–9]{1}"
-                                 value={loginData.otp3}
-                                 onChange={(e) =>
-                                    handleOtp3Change(e.target.value.replace(/[^0-9]/g, ""))
-                                 }
-                                 ref={num3}
-                              />
-                              <span className="dashBottom"></span>
-                           </Form.Group>
-                           <Form.Group className="mr-2 otpWrap">
-                              <Form.Control
-                                 name="otp4"
-                                 className="otpInput"
-                                 type="text"
-                                 maxLength="1"
-                                 size="1"
-                                 max="1"
-                                 pattern="[0–9]{1}"
-                                 value={loginData.otp4}
-                                 onChange={(e) =>
-                                    handleOtp4Change(e.target.value.replace(/[^0-9]/g, ""))
-                                 }
-                                 ref={num4}
-                              />
-                              <span className="dashBottom"></span>
-                           </Form.Group>
+                           <div className="d-flex justify-content-center mt-4">
+                              <Form.Group className="mr-2 otpWrap">
+                                 <Form.Control
+                                    autoFocus
+                                    name="otp1"
+                                    className="otpInput"
+                                    type="text"
+                                    maxLength="1"
+                                    size="1"
+                                    max="1"
+                                    pattern="[0–9]{1}"
+                                    value={loginData.otp1}
+                                    onChange={(e) =>
+                                       handleOtp1Change(e.target.value.replace(/[^0-9]/g, ""))
+                                    }
+                                    ref={num1}
+                                 />
+                                 <span className="dashBottom"></span>
+                              </Form.Group>
+                              <Form.Group className="mr-2 otpWrap">
+                                 <Form.Control
+                                    name="otp2"
+                                    className="otpInput"
+                                    type="text"
+                                    maxLength="1"
+                                    size="1"
+                                    max="1"
+                                    pattern="[0–9]{1}"
+                                    value={loginData.otp2}
+                                    onChange={(e) =>
+                                       handleOtp2Change(e.target.value.replace(/[^0-9]/g, ""))
+                                    }
+                                    ref={num2}
+                                 />
+                                 <span className="dashBottom"></span>
+                              </Form.Group>
+                              <Form.Group className="mr-2 otpWrap">
+                                 <Form.Control
+                                    name="otp3"
+                                    className="otpInput"
+                                    type="text"
+                                    maxLength="1"
+                                    size="1"
+                                    max="1"
+                                    pattern="[0–9]{1}"
+                                    value={loginData.otp3}
+                                    onChange={(e) =>
+                                       handleOtp3Change(e.target.value.replace(/[^0-9]/g, ""))
+                                    }
+                                    ref={num3}
+                                 />
+                                 <span className="dashBottom"></span>
+                              </Form.Group>
+                              <Form.Group className="mr-2 otpWrap">
+                                 <Form.Control
+                                    name="otp4"
+                                    className="otpInput"
+                                    type="text"
+                                    maxLength="1"
+                                    size="1"
+                                    max="1"
+                                    pattern="[0–9]{1}"
+                                    value={loginData.otp4}
+                                    onChange={(e) =>
+                                       handleOtp4Change(e.target.value.replace(/[^0-9]/g, ""))
+                                    }
+                                    ref={num4}
+                                 />
+                                 <span className="dashBottom"></span>
+                              </Form.Group>
+                           </div>
+                           <div className="resend-container">
+                              <p onClick={handleResendOtp}>Resend OTP</p>
+                           </div>
+                           <button type="submit" className="submit-button" disabled={buttonDisable}>
+                              Sign In
+                           </button>
+                        </form>
+                        <div className="social-icons">
+                           <a href="#">
+                              {" "}
+                              <FontAwesomeIcon icon={faFacebookF} />{" "}
+                           </a>
+                           <a href="#">
+                              <FontAwesomeIcon icon={faInstagram} />
+                           </a>
+                           <a href="#">
+                              <FontAwesomeIcon icon={faTwitter} />
+                           </a>
                         </div>
-                        <div className="resend-container">
-                           <p onClick={handleResendOtp}>Resend OTP</p>
-                        </div>
-                        <button type="submit" className="submit-button" disabled={buttonDisable}>
-                           Sign In
-                        </button>
-                     </form>
-                     <div className="social-icons">
-                        <a href="#">
-                           {" "}
-                           <FontAwesomeIcon icon={faFacebookF} />{" "}
-                        </a>
-                        <a href="#">
-                           <FontAwesomeIcon icon={faInstagram} />
-                        </a>
-                        <a href="#">
-                           <FontAwesomeIcon icon={faTwitter} />
-                        </a>
                      </div>
                   </div>
                </div>

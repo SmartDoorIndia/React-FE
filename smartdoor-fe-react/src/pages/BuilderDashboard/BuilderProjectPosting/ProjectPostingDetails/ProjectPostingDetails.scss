@@ -91,11 +91,11 @@
          }
          tr {
             td {
-               border: 0;
-               font-size: $body;
-               color: $secondry-color;
-               font-weight: $smbold;
-               text-align: center;
+               font-size: 0.875rem;
+               font-weight: 500;
+               line-height: 16.39px;
+               letter-spacing: -0.02em;
+               text-align: left;
                .action {
                   display: contents;
                   span {
@@ -111,7 +111,7 @@
                }
             }
             &:nth-of-type(odd) {
-               background-color: $lightgray;
+               // background-color: $lightgray;
             }
             .defaultTag {
                border-radius: 24px;
@@ -402,6 +402,45 @@ span.broker_details {
    font-weight: 600;
 }
 .ProjectPostingTableWrapper {
+   // .sc-cPiKLX {
+   //    position: relative;
+   //    background-color: transparent; // Make background transparent
+   //    border: none; // Remove border
+   //    cursor: pointer;
+   //    width: 40px; // Adjust width as needed
+   //    height: 40px; // Adjust height as needed
+   //    transition: transform 0.3s ease; // Smooth transition for rotation
+
+   //    &::before {
+   //       content: ""; // Create a custom arrow
+   //       position: absolute;
+   //       top: 50%; // Center vertically
+   //       left: 50%; // Center horizontally
+   //       width: 0;
+   //       height: 0;
+   //       border-left: 8px solid transparent; // Adjust arrow size
+   //       border-right: 8px solid transparent; // Adjust arrow size
+   //       border-bottom: 12px solid currentColor; // Down arrow
+   //       transform: translate(-50%, -50%); // Center the arrow
+   //       transition: all 0.3s ease; // Smooth transition for rotation
+   //    }
+
+   //    &.expanded::before {
+   //       border-bottom: none; // Remove down arrow
+   //       border-top: 12px solid currentColor; // Up arrow
+   //       transform: translate(-50%, -50%) rotate(180deg); // Rotate arrow
+   //    }
+
+   //    &:hover {
+   //       opacity: 0.8; // Change opacity on hover
+   //    }
+   // }
+   .sc-cPiKLX {
+      color: #be1452;
+   }
+   .fqvWcI {
+      border-bottom-width: 1px !important;
+   }
    .rdt_TableBody {
       max-height: calc(51vh);
       height: fit-content;
@@ -419,10 +458,17 @@ span.broker_details {
          text-align: center; /* Optional: Center align text */
       }
    }
+   .ghlrmz:hover:not(:disabled) {
+      background-color: transparent;
+   }
+   .ghlrmz:focus {
+      background-color: transparent;
+   }
+
    .rdt_TableRow {
       min-height: 50px;
       background-color: #e4e4e4 !important;
-      margin-bottom: 5px;
+      margin-bottom: 0px;
       .rdt_TableCell {
          text-align: center;
          &:nth-child(1) {

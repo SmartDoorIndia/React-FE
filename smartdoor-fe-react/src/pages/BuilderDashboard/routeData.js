@@ -22,9 +22,7 @@ const ProjectDetails = React.lazy(() => import("./NewProjectPost/ProjectDetails/
 const ProjectPostingDetails = React.lazy(() =>
    import("./BuilderProjectPosting/ProjectPostingDetails/ProjectPostingDetails")
 );
-const BuilderList = React.lazy(() =>
-   import("./BuilderList/BuilderList")
-);
+const BuilderList = React.lazy(() => import("./BuilderList/BuilderList"));
 
 // Route data for builder project
 const routeData = [
@@ -63,23 +61,23 @@ const routeData = [
    {
       path: "/builder/Posting-Property",
       name: "Add New Projects Post",
-      bradcrumb: ["Project Posting", "Add New Post"],
+      bradcrumb: ["Posting Property", "Add New Post"],
       excat: true,
       module: "BUILDER",
       component: NewProjectPost,
    },
    {
-      path: "/builder/Project-details",
+      path: "/builder/Project-details/",
       name: "Add New Projects Post",
-      bradcrumb: ["Project Posting", "Add New Post"],
+      bradcrumb: ["Project Details", "Add New Post"],
       excat: true,
       module: "BUILDER",
       component: ProjectDetails,
    },
    {
       path: "/builder/Project-Posting-Details",
-      name: "25 Karat",
-      bradcrumb: ["Project Posting", "Add New Post"],
+      name: localStorage.getItem("projectName"),
+      bradcrumb: ["Project Postings", "Project Details"],
       excat: true,
       module: "BUILDER",
       component: ProjectPostingDetails,

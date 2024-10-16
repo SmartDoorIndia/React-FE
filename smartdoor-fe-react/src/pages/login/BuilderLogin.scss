@@ -22,8 +22,9 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       text-align: center;
       width: 358px;
-      height: 80vh;
-
+      height: auto; /* Let the content determine the height */
+      max-height: 600px; /* Set a maximum height for large screens */
+      min-height: 470px;
       .logo {
          width: 100px;
          margin-bottom: 30px;

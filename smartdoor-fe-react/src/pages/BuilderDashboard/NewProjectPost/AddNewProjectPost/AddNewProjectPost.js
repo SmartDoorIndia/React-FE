@@ -19,75 +19,13 @@ import {
    approveBuilderProject,
    deleteBuilderProjectById,
 } from "../../../../common/redux/actions";
-import { showErrorToast } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import Text from "../../../../shared/Text/Text";
 import MapComponent from "../../../../shared/Map/MapComponent";
-import { MenuItem, Select, Checkbox } from "@mui/material";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 const AddNewProjectPost = () => {
-   // const [data, setData] = useState({
-   //    // builderProjectId: null,
-   //    // userId: 2180,
-   //    // builderId: 9,
-   //    // builderProjectName: "Rohit Builder Project",
-   //    // totalTowersPlanned: 10,
-   //    // landArea: 100.30000000000001,
-   //    // landAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-   //    // areaToDevelop: 200.5,
-   //    // areaToDevelopMeasurementUnitEnteredByUser: "Sq. Mt.",
-   //    // openAreaPercent: 31.0,
-   //    // possessionFrom: "01-2023",
-   //    // possessionTo: "05-2024",
-   //    // projectDescription: "Rohit Builder Project Description",
-   //    // latitude: 18.56988525390625,
-   //    // longitude: 73.77430725097656,
-   //    // builderProjectGeneralAmenities: ["dw", "jqkqk", "aaaaaa", "jjadsjk"],
-   //    // city: "Pimpri-Chinchwad",
-   //    // state: "Maharashtra",
-   //    // locality: "Baner",
-   //    // country: null,
-   //    // cityLat: 18.6297811,
-   //    // cityLong: 73.7997094,
-   //    // builderProjectImages: [
-   //    //    {
-   //    //       docId: null,
-   //    //       docName: "ffff",
-   //    //       docDescription: "upload image",
-   //    //       docOrderInFrontendView: 2,
-   //    //       docURL: "app-images/builder-project-image/smartDoor45545_1727681068589.png",
-   //    //       builderProjectImageAsBase64:
-   //    //          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg==",
-   //    //    },
-   //    //    {
-   //    //       docId: null,
-   //    //       docName: "kkkkk",
-   //    //       docDescription: "project layout",
-   //    //       docOrderInFrontendView: 4,
-   //    //       docURL: "app-images/builder-project-image/smartDoor91754_1727681068632.png",
-   //    //       builderProjectImageAsBase64:
-   //    //          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg==",
-   //    //    },
-   //    // ],
-   //    // builderProjectVideos: [
-   //    //    {
-   //    //       docId: null,
-   //    //       docName: "ffff",
-   //    //       docDescription: "jerj",
-   //    //       docOrderInFrontendView: 2,
-   //    //       docURL: "https://youtu.be/Q--CGvbvY3k?si=fONikhs5ccx4ayWE",
-   //    //       builderProjectImageAsBase64:
-   //    //          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg==",
-   //    //    },
-   //    //    {
-   //    //       docId: null,
-   //    //       docName: "klklaslk",
-   //    //       docDescription: "jerj",
-   //    //       docOrderInFrontendView: 2,
-   //    //       docURL: "https://youtu.be/Q--CGvbvY3k?si=fONikhs5ccx4ayWE",
-   //    //       builderProjectImageAsBase64:
-   //    //          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAMCAYAAACA0IaCAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAgSURBVDhPY/wPBAxUAkxQmipg1DDSwahhpIPBahgDAwCHWAQUsz0sHwAAAABJRU5ErkJggg==",
-   //    //    },
-   //    // ],
-   // });
+   const location = useLocation();
+   const { possessionFrom, possessionTo } = location.state || {};
+
    const [data, setData] = useState({
       builderProjectId: null,
       userId: null,
@@ -146,12 +84,95 @@ const AddNewProjectPost = () => {
       "Jogging Track",
       "Badminton",
    ];
+   // useEffect(() => {
+   //    const auth = getLocalStorage("authData");
+   //    const storedUserId = auth.userid;
+   //    const storedBuilderId = auth.builderId;
+   //    const urlParams = new URLSearchParams(window.location.search);
+   //    const storedBuilderProjectId =
+   //       urlParams.get("builderProjectId") || localStorage.getItem("builderProjectId") || "";
+
+   //    if (storedUserId) {
+   //       setUserId(storedUserId); // Set userId state from localStorage
+
+   //       setData((prevData) => ({
+   //          ...prevData,
+   //          userId: storedUserId,
+   //       }));
+   //    }
+
+   //    const fetchBuilderProject = async () => {
+   //       setLoading(true); // Set loading to true while fetching
+
+   //       try {
+   //          setData((prevData) => ({
+   //             ...prevData,
+   //             builderId: storedBuilderId,
+   //          }));
+
+   //          if (storedBuilderProjectId == null) return;
+
+   //          const response = await getBuilderProjectById({
+   //             builderProjectId: storedBuilderProjectId,
+   //             userId: storedUserId,
+   //          });
+   //          console.log("response", response);
+
+   //          if (response?.data) {
+   //             const { resourceData, error: responseError } = response.data;
+
+   //             if (resourceData) {
+   //                setSelectedAmenities(resourceData.selectedAmenities || "");
+   //                setData((prevData) => ({
+   //                   ...prevData,
+   //                   ...resourceData, // Merge fetched data
+   //                }));
+
+   //                // Parse possession dates
+   //                if (resourceData.possessionFrom) {
+   //                   const [monthFrom, yearFrom] = resourceData.possessionFrom.split("-");
+   //                   setMonthYearFrom({ month: monthFrom, year: yearFrom });
+   //                }
+
+   //                if (resourceData.possessionTo) {
+   //                   const [monthTo, yearTo] = resourceData.possessionTo.split("-");
+   //                   setMonthYearTo({ month: monthTo, year: yearTo });
+   //                }
+
+   //                setIsEditing(true);
+   //             } else if (responseError) {
+   //                setError(responseError);
+   //             }
+   //          }
+   //       } catch (error) {
+   //          setError(error);
+   //          console.error("Error fetching builder data:", error);
+   //       } finally {
+   //          setLoading(false); // Set loading to false after fetching
+   //       }
+   //    };
+
+   //    if (storedUserId) {
+   //       fetchBuilderProject();
+   //    }
+   // }, [builderProjectId]);
    useEffect(() => {
       const auth = getLocalStorage("authData");
       const storedUserId = auth.userid;
       const storedBuilderId = auth.builderId;
-      console.log("storedUserId:- ", storedUserId);
-      console.log("storedBuilderId:- ", storedBuilderId);
+      const urlParams = new URLSearchParams(window.location.search);
+      const builderProjectId =
+         urlParams.get("builderProjectId") || localStorage.getItem("builderProjectId") || "";
+
+      const path = window.location.pathname;
+      const pathParts = path.split("/");
+      const lastPathPart = pathParts[pathParts.length - 1];
+
+      let id = "";
+
+      if (!isNaN(lastPathPart)) {
+         id = lastPathPart;
+      }
 
       if (storedUserId) {
          setUserId(storedUserId); // Set userId state from localStorage
@@ -161,6 +182,7 @@ const AddNewProjectPost = () => {
             userId: storedUserId,
          }));
       }
+
       const fetchBuilderProject = async () => {
          setLoading(true); // Set loading to true while fetching
 
@@ -169,24 +191,49 @@ const AddNewProjectPost = () => {
                ...prevData,
                builderId: storedBuilderId,
             }));
-            if (builderProjectId == null) return;
-            console.log("data.builderId:- ", data.builderId);
-            const response = await getBuilderProjectById({
-               builderProjectId,
-               userId: storedUserId,
-            });
-            if (response?.data) {
-               const { resourceData, error: responseError } = response.data;
-               if (resourceData) {
-                  setSelectedAmenities(resourceData.selectedAmenities || "");
-                  setData((prevData) => ({
-                     ...prevData,
-                     ...resourceData, // Merge fetched data
-                  }));
-                  setIsEditing(true);
-               } else if (responseError) {
-                  setError(responseError);
+
+            if (id) {
+               const response = await getBuilderProjectById({
+                  builderProjectId: id,
+                  userId: storedUserId,
+               });
+               console.log("response", response);
+
+               if (response?.data) {
+                  const { resourceData, error: responseError } = response.data;
+
+                  if (resourceData) {
+                     setSelectedAmenities(resourceData.selectedAmenities || "");
+                     setData((prevData) => ({
+                        ...prevData,
+                        ...resourceData, // Merge fetched data
+                     }));
+
+                     // Parse possession dates
+                     if (resourceData.possessionFrom) {
+                        const [monthFrom, yearFrom] = resourceData.possessionFrom.split("-");
+                        setMonthYearFrom({ month: monthFrom, year: yearFrom });
+                     }
+
+                     if (resourceData.possessionTo) {
+                        const [monthTo, yearTo] = resourceData.possessionTo.split("-");
+                        setMonthYearTo({ month: monthTo, year: yearTo });
+                     }
+
+                     setIsEditing(true);
+                  } else if (responseError) {
+                     setError(responseError);
+                  }
                }
+            } else {
+               // Show blank fields
+               setData((prevData) => ({
+                  ...prevData,
+                  builderProjectId: "",
+                  selectedAmenities: "",
+                  possessionFrom: "",
+                  possessionTo: "",
+               }));
             }
          } catch (error) {
             setError(error);
@@ -274,35 +321,47 @@ const AddNewProjectPost = () => {
          }));
       }
    };
-
    const handleFileChange = (e, description) => {
-      const files = Array.from(e.target.files);
+      const files = Array.from(e.target.files); // Convert FileList to an array
+      const newImages = [];
+
       files.forEach((file) => {
          const reader = new FileReader();
-         reader.readAsDataURL(file);
-         reader.onload = () => {
-            const base64String = reader.result;
-            const newImage = {
-               docId: null,
+         reader.onload = (event) => {
+            const image = {
                docName: file.name,
                docDescription: description,
-               docOrderInFrontendView: data.builderProjectImages.length + 1,
-               docURL: "",
-               builderProjectImageAsBase64: base64String,
+               builderProjectImageAsBase64: event.target.result,
             };
-            setData((prevState) => ({
-               ...prevState,
-               builderProjectImages: [...prevState.builderProjectImages, newImage],
-            }));
+            newImages.push(image);
+
+            // Once all files are processed, update the state
+            if (newImages.length === files.length) {
+               setData((prevData) => ({
+                  ...prevData,
+                  builderProjectImages: [
+                     ...prevData.builderProjectImages,
+                     ...newImages, // Add all new images
+                  ],
+               }));
+
+               // Reset the file input after successful upload
+               e.target.value = ""; // This will clear the file input, allowing re-upload of the same image
+            }
          };
+         reader.readAsDataURL(file); // Convert image to base64
       });
    };
 
-   const handleDeleteImage = (index) => {
-      const updatedImages = data.builderProjectImages.filter((_, i) => i !== index);
-      setData((prevState) => ({
-         ...prevState,
-         builderProjectImages: updatedImages,
+   const handleDeleteImage = (index, description) => {
+      setData((prevData) => ({
+         ...prevData,
+         builderProjectImages: prevData.builderProjectImages
+            .filter((image) => image.docDescription === description)
+            .filter((_, i) => i !== index) // Remove only the image from the relevant category
+            .concat(
+               prevData.builderProjectImages.filter((image) => image.docDescription !== description)
+            ), // Keep other categories unchanged
       }));
    };
 
@@ -367,18 +426,47 @@ const AddNewProjectPost = () => {
    const handleSubmit = async (e) => {
       e.preventDefault();
       try {
+         // Prepare the submission data with selectedAmenities and userId
          const submissionData = {
             ...data,
-            selectedAmenities, // Include selectedAmenities in submission
+            selectedAmenities, // Include selected amenities
+            userId: getLocalStorage("authData").userid, // Ensure userId is included here
          };
-         data.userId = getLocalStorage("authData").userid;
+
+         // Call API to create builder project
          const response = await createBuilderProject(submissionData);
+
          if (response?.data) {
-            console.log("Project created successfully:", response.data);
-            // alert("Project created successfully");
+            const { resourceData, error: responseError } = response.data;
+
+            if (resourceData) {
+               // Handle resource data (Assuming resourceData contains the builderProjectId)
+               const builderProjectId = resourceData.builderProjectId; // Extract builderProjectId from the response
+
+               // Log the fetched resource data for debugging purposes
+               console.log("Fetched resource data:", resourceData);
+
+               // Optionally store resource data in state (if needed)
+               setData((prevData) => ({
+                  ...prevData,
+                  ...resourceData,
+               }));
+
+               // Save the builderProjectId in localStorage
+               localStorage.setItem("builderProjectId", builderProjectId);
+
+               // Redirect to the project details page using the builderProjectId
+               window.location.href = `/builder/Project-details/${builderProjectId}`;
+            } else if (responseError) {
+               // Handle the error response if any
+               setError(responseError);
+               console.error("Error in response:", responseError);
+            }
          }
       } catch (error) {
+         // Handle any errors during the form submission process
          console.error("Error submitting builder project:", error);
+         // Optionally show an error alert
          // alert("There was an error submitting the project.");
       }
    };
@@ -474,6 +562,7 @@ const AddNewProjectPost = () => {
                   getAddressComponent("locality") ||
                   getAddressComponent("administrative_area_level_2"); // City without "Division"
                const state = getAddressComponent("administrative_area_level_1"); // State
+               const country = getAddressComponent("country"); // Country
 
                console.log("Selected Place:", place);
 
@@ -485,6 +574,7 @@ const AddNewProjectPost = () => {
                   city: city,
                   state: state,
                   locality: locality,
+                  country: country, // Include country in the data
                }));
             }
          });
@@ -492,36 +582,7 @@ const AddNewProjectPost = () => {
          setAutocomplete(autocompleteObj);
       }
    }, [setAutocomplete]);
-   const handleLocationReset = () => {
-      setData({
-         latitude: "",
-         longitude: "",
-         city: "",
-         state: "",
-         locality: "",
-      });
-   };
-   const handleLocationSelect = (locationData) => {
-      const locality = locationData.locality;
-      console.log("---->", locality);
-      const regex = /([^,]+),\s*([^,]+),\s*([^,]+),\s*India/;
-      const match = locality.match(regex);
 
-      if (match) {
-         const city = match[1];
-         const state = match[3];
-         const localityName = match[1];
-
-         setData({
-            ...data,
-            city,
-            state,
-            locality: localityName,
-            latitude: locationData.latitude,
-            longitude: locationData.longitude,
-         });
-      }
-   };
    return (
       <div className="add-new-project-post mb-3">
          <Container fluid>
@@ -728,7 +789,7 @@ const AddNewProjectPost = () => {
                               <Form.Group controlId="formLandArea">
                                  <InputGroup className="custom-input-group">
                                     <Form.Control
-                                       type="text"
+                                       type="number"
                                        placeholder="Land Area"
                                        name="landArea"
                                        className="custom-form-control"
@@ -749,7 +810,7 @@ const AddNewProjectPost = () => {
                               <Form.Group controlId="formTotalAreaDevelop">
                                  <InputGroup className="custom-input-group">
                                     <Form.Control
-                                       type="text"
+                                       type="number"
                                        placeholder="Total Area to Develop"
                                        className="custom-form-control"
                                        name="areaToDevelop"
@@ -895,7 +956,7 @@ const AddNewProjectPost = () => {
                         <Form.Group controlId="formBasicContact">
                            <Form.Control
                               as="textarea" // Specify the element type as textarea
-                              rows={6} // You can specify the number of rows for the textarea
+                              rows={10} // You can specify the number of rows for the textarea
                               placeholder="Project description"
                               name="projectDescription"
                               value={data.projectDescription}
@@ -919,7 +980,6 @@ const AddNewProjectPost = () => {
                                     id="upload-project-image"
                                     type="file"
                                     className="upload-input"
-                                    name=""
                                     accept="image/*"
                                     multiple // Allow multiple files to be selected
                                     onChange={(e) => handleFileChange(e, "upload image")}
@@ -946,11 +1006,13 @@ const AddNewProjectPost = () => {
                                           />
                                           <RxCross2
                                              className="delete-icon"
-                                             onClick={() => handleDeleteImage(index)}
+                                             onClick={() =>
+                                                handleDeleteImage(index, "upload image")
+                                             } // Pass the docDescription to delete the correct image
                                              style={{
                                                 position: "absolute",
                                                 top: "-5px",
-                                                right: "1px",
+                                                right: "-4px",
                                                 cursor: "pointer",
                                                 color: "#fff",
                                                 background: "#ff0000",
@@ -1007,11 +1069,13 @@ const AddNewProjectPost = () => {
                                           />
                                           <RxCross2
                                              className="delete-icon"
-                                             onClick={() => handleDeleteImage(index)}
+                                             onClick={() =>
+                                                handleDeleteImage(index, "project layout")
+                                             } // Pass the docDescription to delete the correct image
                                              style={{
                                                 position: "absolute",
                                                 top: "-5px",
-                                                right: "1px",
+                                                right: "-4px",
                                                 cursor: "pointer",
                                                 color: "#fff",
                                                 background: "#ff0000",
@@ -1115,7 +1179,7 @@ const AddNewProjectPost = () => {
                                                 />
                                                 <RxCross2
                                                    className="delete-icon"
-                                                   onClick={() => handleDeleteVideo()}
+                                                   onClick={() => handleDeleteVideo(index)}
                                                    style={{
                                                       position: "absolute",
                                                       top: "-10px",

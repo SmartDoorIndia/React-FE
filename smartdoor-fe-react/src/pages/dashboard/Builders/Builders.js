@@ -1,98 +1,120 @@
 /** @format */
 
-import React, { useEffect, memo } from "react";
+import React, { useCallback, useEffect, memo } from "react";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import Pagination from "../../../shared/DataTable/Pagination";
 import { compose } from "redux";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { useState } from "react";
-import { Card, Modal, Button, Image } from "react-bootstrap";
+import { Button, Image } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
-import { IoFilterOutline } from "react-icons/io5";
-import {
-   handleStatusElement,
-   formateDate,
-   getLocalStorage,
-   showErrorToast,
-   showSuccessToast,
-} from "../../../common/helpers/Utils";
+import { handleStatusElement, getLocalStorage } from "../../../common/helpers/Utils";
 import { ToolTip } from "../../../common/helpers/Utils";
-import {
-   getBrokerListing,
-   getBrokerDetails,
-   giftCoinsToConsumer,
-} from "../../../common/redux/actions";
 import addIcon from "../../../assets/svg/add.svg";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import "./Builders.scss";
-import { DateRangePicker } from "rsuite";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
-import moment from "moment";
 import { TableLoader } from "../../../common/helpers/Loader";
 import Text from "../../../shared/Text/Text";
-import * as Actions from "../../../common/redux/types";
-import Buttons from "../../../shared/Buttons/Buttons";
-import { TextField } from "@mui/material";
 import { BiSortAlt2 } from "react-icons/bi";
+import { getBuilderList, getBuilderStats } from "../../../common/redux/actions"; // Ensure correct imports
 
-const getModalActionData = (row) => {
-   return { userData: row };
-};
 const Builders = (props) => {
-   const { getBrokerListing, allPlanDataBroker } = props;
+   const { BuilderListing } = props;
    const statusArr = CONSTANTS_STATUS.brokerStatus;
-   const data = useSelector((state) => state.allPlanDataBroker.data);
+   const auth = getLocalStorage("authData");
+   const storedUserId = auth.userid;
+   const [builderFilter, setBuilderFilter] = useState({
+      userId: storedUserId,
+      builderName: "",
+      records: 10,
+      pageNumber: 1,
+   });
+   const [data, setData] = useState([]);
+   const [loading, setLoading] = useState(true);
+
+   const [builderStats, setBuilderStats] = useState({
+      builderCount: 0,
+      builderProjectCount: 0,
+   });
    const [filterText, setFilterText] = useState(
-      data !== undefined ? allPlanDataBroker?.data?.searchString : ""
+      data !== undefined ? BuilderListing?.data?.searchString : ""
    );
    const [statusSelected, setStatusSelected] = useState(
-      data !== undefined ? allPlanDataBroker?.data?.status : ""
+      data !== undefined ? BuilderListing?.data?.status : ""
    );
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-   const [startDate, setStartDate] = useState(
-      data !== undefined ? allPlanDataBroker?.data?.fromDate : null
-   );
-   const [endDate, setEndDate] = useState(
-      data !== undefined ? allPlanDataBroker?.data?.toDate : null
-   );
+
    const [currentPage, setCurrentPage] = useState(
-      data !== undefined ? allPlanDataBroker?.data?.currentPage : 1
+      data !== undefined ? BuilderListing?.data?.currentPage : 1
    );
    const [rowsPerPage, setRowsPerPage] = useState(
-      data !== undefined ? allPlanDataBroker?.data?.rowsPerPage : 8
+      data !== undefined ? BuilderListing?.data?.rowsPerPage : 8
    );
-   const recordSize = allPlanDataBroker?.data?.records || 0;
+   const recordSize = BuilderListing?.data?.records || 0;
    const userData = getLocalStorage("authData");
    const dispatch = useDispatch();
 
-   const [showModal, setShowModal] = useState(false);
-   const [newCoinValue, setNewCoinValue] = useState(null);
-   const [currentBrokerId, setCurrentBrokerId] = useState(null);
-
-   useEffect(() => {
-      console.log(data);
-      dispatch({ type: Actions.BROKERS_PROPERTY_SUCCESS, data: [] });
-      if (data === undefined) {
-         getBrokerListing({
-            userId: userData.userid,
-            currentLat: null,
-            currentLong: null,
-            pageNo: currentPage,
-            records: rowsPerPage,
-            adminLogin: true,
-            searchString: "",
+   const [error, setError] = useState(null);
+   // Fetch builder data if editing an existing profile
+   const _getBuilderListAndStats = useCallback(() => {
+      getBuilderList(builderFilter)
+         .then((response) => {
+            if (response?.data) {
+               const { resourceData, error: responseError } = response.data;
+               if (resourceData) {
+                  // Ensure no null values in resourceData
+                  const sanitizedData = Object.fromEntries(
+                     Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
+                  );
+                  setData(sanitizedData);
+                  console.log("sanitizedData:- ", sanitizedData);
+               }
+               if (responseError) setError(responseError);
+            }
+            setLoading(false);
+         })
+         .catch((error) => {
+            setLoading(false);
+            setError(error);
+            console.log("Error fetching builder data:", error);
          });
-      }
-   }, [getBrokerListing]);
+
+      getBuilderStats(builderFilter)
+         .then((response) => {
+            if (response?.data) {
+               const { resourceData, error: responseError } = response.data;
+               if (resourceData) {
+                  // Ensure no null values in resourceData
+                  const sanitizedData = Object.fromEntries(
+                     Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
+                  );
+                  setBuilderStats(sanitizedData);
+                  console.log("sanitizedData:- ", sanitizedData);
+               }
+               if (responseError) setError(responseError);
+            }
+            setLoading(false);
+         })
+         .catch((error) => {
+            setLoading(false);
+            setError(error);
+            console.log("Error fetching builder data:", error);
+         });
+   }, []);
+
+   // Fetch builder profile on component mount or when builderId changes
+   useEffect(() => {
+      _getBuilderListAndStats();
+   }, []);
 
    const showValue = (status_value, startDate_, endDate_) => {
       let status = status_value || statusSelected;
       let filteredItems = [];
-      startDate_ = startDate_ || startDate;
-      endDate_ = endDate_ || endDate;
-      filteredItems = allPlanDataBroker.data?.brokerList?.length
-         ? allPlanDataBroker?.data?.brokerList
+
+      filteredItems = BuilderListing.data?.brokerList?.length
+         ? BuilderListing?.data?.brokerList
          : [];
 
       return filteredItems;
@@ -100,7 +122,7 @@ const Builders = (props) => {
 
    const handlePageChange = (newPage) => {
       setCurrentPage(Number(newPage));
-      getBrokerListing({
+      getBuilderList({
          userId: userData.userid,
          currentLat: null,
          currentLong: null,
@@ -109,14 +131,12 @@ const Builders = (props) => {
          adminLogin: true,
          status: statusSelected?.toUpperCase(),
          searchString: filterText,
-         fromDate: startDate,
-         toDate: endDate,
       });
    };
 
    const handleRowsPerPageChange = (newRowsPerPage) => {
       setRowsPerPage(newRowsPerPage);
-      getBrokerListing({
+      getBuilderList({
          userId: userData.userid,
          currentLat: null,
          currentLong: null,
@@ -125,8 +145,6 @@ const Builders = (props) => {
          adminLogin: true,
          status: statusSelected?.toUpperCase(),
          searchString: filterText,
-         fromDate: startDate,
-         toDate: endDate,
       });
    };
 
@@ -146,43 +164,6 @@ const Builders = (props) => {
       <div className="d-flex justify-content-center tableBottom"></div>
    );
 
-   const handleDateRangeChange = (date) => {
-      if (date && date[0] && date[1]) {
-         const startDt = date[0];
-         const endDt = date[1];
-         setStartDate(startDt);
-         setEndDate(endDt);
-         // showValue(statusSelected, startDate, endDate);
-         // setDatata(filteredItems);
-         getBrokerListing({
-            userId: userData.userid,
-            currentLat: null,
-            currentLong: null,
-            pageNo: 1,
-            records: rowsPerPage,
-            adminLogin: true,
-            status: statusSelected?.toUpperCase(),
-            searchString: filterText,
-            fromDate: startDt,
-            toDate: endDt,
-         });
-      }
-      if (date.length === 0) {
-         getBrokerListing({
-            userId: userData.userid,
-            currentLat: null,
-            currentLong: null,
-            pageNo: 1,
-            records: rowsPerPage,
-            adminLogin: true,
-            status: statusSelected?.toUpperCase(),
-            searchString: filterText,
-            fromDate: "",
-            toDate: "",
-         });
-      }
-   };
-
    const subHeaderComponentMemo = React.useMemo(() => {
       const handleClear = () => {
          if (filterText) {
@@ -195,7 +176,7 @@ const Builders = (props) => {
          <SearchInput
             onFilter={(e) => {
                setFilterText(e.target.value);
-               getBrokerListing({
+               getBuilderList({
                   userId: userData.userid,
                   currentLat: null,
                   currentLong: null,
@@ -204,8 +185,6 @@ const Builders = (props) => {
                   adminLogin: true,
                   status: statusSelected?.toUpperCase(),
                   searchString: e.target.value,
-                  fromDate: startDate,
-                  toDate: endDate,
                });
             }}
             onClear={handleClear}
@@ -217,7 +196,7 @@ const Builders = (props) => {
 
    const _filterStatus = (status_value) => {
       setStatusSelected(status_value);
-      getBrokerListing({
+      getBuilderList({
          userId: userData.userid,
          currentLat: null,
          currentLong: null,
@@ -226,8 +205,6 @@ const Builders = (props) => {
          adminLogin: true,
          status: status_value?.toUpperCase(),
          searchString: filterText,
-         fromDate: startDate,
-         toDate: endDate,
       });
       // showValue(status_value);
    };
@@ -324,28 +301,6 @@ const Builders = (props) => {
       },
    ];
 
-   const addCoins = () => {
-      if (newCoinValue < 0) {
-         showErrorToast("Enter positive value...");
-         setNewCoinValue(0);
-      } else if (!newCoinValue) {
-         showErrorToast("Enter SD coins...");
-      } else {
-         setShowModal(false);
-         giftCoinsToConsumer({ consumerId: currentBrokerId, coins: newCoinValue })
-            .then((response) => {
-               if (response.status === 200) {
-                  showSuccessToast(newCoinValue + " Coins gifted successfully");
-                  setNewCoinValue(null);
-               }
-            })
-            .catch((error) => {
-               console.log(error);
-               showErrorToast("Please try again...");
-            });
-      }
-   };
-
    return (
       <>
          <div className="tableBox">
@@ -393,6 +348,10 @@ const Builders = (props) => {
                         backgroundColor: "#F8F3F5",
                         borderColor: "#DED6D9",
                      }}
+                     // onClick={() => {
+                     //    localStorage.removeItem("builderProjectId");
+                     //    window.location.href = "/builder/detail";
+                     // }}
                   >
                      <div
                         style={{
@@ -418,7 +377,7 @@ const Builders = (props) => {
                <DataTableComponent
                   data={showValue()}
                   columns={columns}
-                  progressPending={allPlanDataBroker.isLoading}
+                  progressPending={BuilderListing.isLoading}
                   progressComponent={ProgressComponent}
                   paginationComponent={PaginationComponent}
                   paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
@@ -490,12 +449,12 @@ const Builders = (props) => {
       </>
    );
 };
-const mapStateToProps = ({ allPlanDataBroker }) => ({
-   allPlanDataBroker,
+const mapStateToProps = ({ BuilderListing }) => ({
+   BuilderListing,
 });
 const actions = {
-   getBrokerListing,
-   getBrokerDetails,
+   getBuilderList,
+   getBuilderStats,
 };
 const withConnect = connect(mapStateToProps, actions);
 

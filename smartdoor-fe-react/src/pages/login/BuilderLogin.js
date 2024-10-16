@@ -93,55 +93,57 @@ const BuilderLogin = (props) => {
                      <h2>Welcome</h2>
                      <p>Builder Sign In</p>
 
-                     <form noValidate onSubmit={validateForm} autoComplete="off">
-                        <div className="input-group">
-                           <input
-                              type="text"
-                              value={userNumber}
-                              onChange={changeHandler}
-                              name="userNumber"
-                              maxLength="10"
-                              className="input-field"
-                              id="phone-number"
-                           />
-                           <label htmlFor="phone-number">Phone Number</label>
-                           <FontAwesomeIcon
-                              icon={faArrowRight}
-                              onClick={handleArrowClick}
-                              className={`input-icon ${
+                     <div className="d-flex flex-column " style={{ gap: "30px" }}>
+                        <form noValidate onSubmit={validateForm} autoComplete="off">
+                           <div className="input-group">
+                              <input
+                                 type="text"
+                                 value={userNumber}
+                                 onChange={changeHandler}
+                                 name="userNumber"
+                                 maxLength="10"
+                                 className="input-field"
+                                 id="phone-number"
+                              />
+                              <label htmlFor="phone-number">Phone Number</label>
+                              <FontAwesomeIcon
+                                 icon={faArrowRight}
+                                 onClick={handleArrowClick}
+                                 className={`input-icon ${
+                                    userNumber.length === 10 ? "clickable" : "disabled"
+                                 }`}
+                                 style={{
+                                    cursor: userNumber.length === 10 ? "pointer" : "not-allowed",
+                                    opacity: userNumber.length === 10 ? 1 : 0.5,
+                                 }}
+                              />
+                           </div>
+
+                           {error.userNumber && <p className="error-text">{error.userNumber}</p>}
+
+                           <button
+                              type="submit"
+                              className={`submit-button ${
                                  userNumber.length === 10 ? "clickable" : "disabled"
                               }`}
-                              style={{
-                                 cursor: userNumber.length === 10 ? "pointer" : "not-allowed",
-                                 opacity: userNumber.length === 10 ? 1 : 0.5,
-                              }}
-                           />
+                              onClick={handleArrowClick}
+                              disabled={userNumber.length !== 10}
+                           >
+                              Sign In
+                           </button>
+                        </form>
+                        <div className="social-icons">
+                           <a href="#">
+                              {" "}
+                              <FontAwesomeIcon icon={faFacebookF} />{" "}
+                           </a>
+                           <a href="#">
+                              <FontAwesomeIcon icon={faInstagram} />
+                           </a>
+                           <a href="#">
+                              <FontAwesomeIcon icon={faTwitter} />
+                           </a>
                         </div>
-
-                        {error.userNumber && <p className="error-text">{error.userNumber}</p>}
-
-                        <button
-                           type="submit"
-                           className={`submit-button ${
-                              userNumber.length === 10 ? "clickable" : "disabled"
-                           }`}
-                           onClick={handleArrowClick}
-                           disabled={userNumber.length !== 10}
-                        >
-                           Sign In
-                        </button>
-                     </form>
-                     <div className="social-icons">
-                        <a href="#">
-                           {" "}
-                           <FontAwesomeIcon icon={faFacebookF} />{" "}
-                        </a>
-                        <a href="#">
-                           <FontAwesomeIcon icon={faInstagram} />
-                        </a>
-                        <a href="#">
-                           <FontAwesomeIcon icon={faTwitter} />
-                        </a>
                      </div>
                   </div>
                </div>

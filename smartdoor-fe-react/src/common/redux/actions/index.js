@@ -2351,7 +2351,7 @@ export const BuilderSignup = (data) => async (dispatch) => {
          deviceId: "jqj",
          deviceType: "android",
          appName: "builder web",
-         version: "2.6.2+78",
+         version: "2.7.1+82",
       });
       if (response.status === 200) {
          showSuccessToast("Sign Up successful");

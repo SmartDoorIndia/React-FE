@@ -1,6 +1,6 @@
 /** @format */
 // API integration on line 66, 123 and 137
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import "./BuilderProfileDetails.scss";
 import Text from "../../../shared/Text/Text";
 import { TiCameraOutline } from "react-icons/ti";
@@ -26,6 +26,7 @@ const BuilderProfileDetails = () => {
    const [showModal, setShowModal] = useState(false);
    const [loading, setLoading] = useState(true);
    const [isApproved, setIsApproved] = useState(false);
+   const fileInputRef = useRef(null); // Create a ref for the file input
 
    const [data, setData] = useState({
       mobile: "",
@@ -118,19 +119,20 @@ const BuilderProfileDetails = () => {
       }
    };
 
-   // Handle logo upload
    const handleLogoUpload = (e) => {
-      // const extractBase64 = data.builderLogoImageAsBase64.split(",")[1];
       const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-         setData((prevData) => ({
-            ...prevData,
-            builderLogoImageAsBase64: reader.result, // Base64 encoding of image
-         }));
-      };
       if (file) {
-         reader.readAsDataURL(file);
+         const reader = new FileReader();
+         reader.onloadend = () => {
+            setData((prevData) => ({
+               ...prevData,
+               builderLogoImageAsBase64: reader.result, // Base64 encoding of image
+               builderLogoS3ImageUrl: "", // Clear S3 URL if needed
+            }));
+            // Reset the input value to allow uploading the same file again
+            fileInputRef.current.value = null; // Clear the input value
+         };
+         reader.readAsDataURL(file); // Start reading the file
       }
    };
 
@@ -257,20 +259,19 @@ const BuilderProfileDetails = () => {
                                        className="upload-input"
                                        accept="image/*"
                                        onChange={handleLogoUpload}
+                                       ref={fileInputRef} // Attach the ref
                                     />
+
                                     {/* Displaying the uploaded image */}
                                     {data.builderLogoImageAsBase64 && (
                                        <div className="image-preview">
                                           <img
                                              src={
-                                                data.builderLogoS3ImageUrl != null &&
-                                                data.builderLogoS3ImageUrl != ""
-                                                   ? CONSTANTS.CONFIG_PROPERTY.s3Url +
-                                                     "/" +
-                                                     data.builderLogoS3ImageUrl
-                                                   : data.builderLogoImageAsBase64
+                                                data.builderLogoS3ImageUrl
+                                                   ? `${CONSTANTS.CONFIG_PROPERTY.s3Url}/${data.builderLogoS3ImageUrl}`
+                                                   : data.builderLogoImageAsBase64 // Use base64 if S3 URL is not available
                                              }
-                                             // src="https://smartdoor-uat.s3.ap-south-1.amazonaws.com/app-images/builder-logo/smartDoor93432_1725273649822.png"
+                                             alt="Builder Logo"
                                              className="preview-img"
                                           />
                                        </div>

@@ -30,22 +30,19 @@ const BuilderNav = () => {
                      <Image name="teamGroup" src={brokerActive} />
                      Builder Details
                   </Link>
-                  <Link to="/builder/project/Posting" className={"nav-link"}>
-                     <Image name="teamGroup" src={brokerActive} />
-                     Projects Posting
-                  </Link>
                   <Link to="/builder/Posting-Property" className={"nav-link"}>
                      <Image name="teamGroup" src={brokerActive} />
                      Posting Property
                   </Link>
+                  <Link to="/builder/project/Posting" className={"nav-link"}>
+                     <Image name="teamGroup" src={brokerActive} />
+                     Projects Posting
+                  </Link>
+
                   <Link to="/builder/Project-details" className={"nav-link"}>
                      <Image name="teamGroup" src={brokerActive} />
                      Project Details
                   </Link>
-                  {/* <Link to="/builder/Project-Posting-Details" className={"nav-link"}>
-                     <Image name="teamGroup" src={brokerActive} />
-                     Projects Postings
-                  </Link> */}
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>
