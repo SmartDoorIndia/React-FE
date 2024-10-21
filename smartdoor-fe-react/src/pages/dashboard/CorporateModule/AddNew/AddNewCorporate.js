@@ -11,12 +11,13 @@ import addIcon from '../../../../assets/svg/add.svg';
 import { validateCorpUser, validateCorporate } from "../../../../common/validations";
 import pencilIcon from '../../../../assets/svg/icon-edit.svg';
 import { compose } from "redux";
-import { addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getPlansForCorporate } from "../../../../common/redux/actions";
+import { addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getHubList, getPlansForCorporate } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const AddNewCorporate = (props) => {
+   const { getHubList, allHubList } = props;
    const [error, setError] = useState({});
    const [corporateId, setCorporateId] = useState(props?.location?.state?.corporateId !== undefined ? props?.location?.state?.corporateId : null);
    const [userErr, setUserErr] = useState({})
@@ -32,13 +33,16 @@ const AddNewCorporate = (props) => {
    const [newUser, setNewUser] = useState({
       name: '',
       mobile: '',
-      sdPosting: ''
+      sdPosting: '',
+      hubList: []
    });
    const [userList, setUserList] = useState([]);
    const [smartDoorPlanList, setSmartDoorPlanList] = useState([]);
    const [nonSmartDoorPlanList, setNonSmartDoorPlanList] = useState([]);
    const [addNewUserFlag, setAddNewUserFlag] = useState(false);
    const [addNewCorpFlag, setAddNewCorpFlag] = useState(true);
+   const [editUserIndex, setEditUserIndex] = useState(null);
+
    const history = useHistory();
 
    const getPlans = async () => {
@@ -87,6 +91,7 @@ const AddNewCorporate = (props) => {
          getCorporateUser();
       }
       getPlans();
+      getHubList();
       console.log(props)
    }, []);
 
@@ -99,12 +104,36 @@ const AddNewCorporate = (props) => {
             name: newUser.name,
             mobile: newUser.mobile,
             sdPosting: newUser.sdPosting === 'Smart Door Posting' ? true : false,
-            corporateId: corporateId
+            corporateId: corporateId,
+            hubList: newUser.hubList
          }
          const response = await addEditCorporateUser(userObj)
          if (response.status === 200) {
             userlist.push(newUser);
             setUserList([...userlist]);
+            setNewUser(prevUser => ({ ...prevUser, name: '', mobile: '', sdPosting: '' }));
+            setAddNewUserFlag(false);
+         } else {
+            showErrorToast(response.data.message);
+            return null;
+         }
+      }
+   }
+
+   const editUser = async () => {
+      const valid = await validateCorpUser(newUser);
+      setUserErr(valid.errors)
+      if (valid.isValid) {
+         let userlist = [...userList];
+         const userObj = {
+            userId: newUser.userId,
+            name: newUser.name,
+            mobile: newUser.mobile,
+            sdPosting: newUser.sdPosting === 'Smart Door Posting' ? true : false,
+            corporateId: corporateId
+         }
+         const response = await addEditCorporateUser(userObj)
+         if (response.status === 200) {
             setNewUser(prevUser => ({ ...prevUser, name: '', mobile: '', sdPosting: '' }));
             setAddNewUserFlag(false);
          } else {
@@ -272,17 +301,17 @@ const AddNewCorporate = (props) => {
             <Text
                text={"User Details"}
                fontWeight="bold"
-               style={{ fontSize: "16px", marginLeft: "17px" }}
+               style={{ fontSize: "16px", marginLeft: "17px", marginBottom: '1%' }}
             />
             {userList.map((elememt, index) => (
                <>
                   <Row className="ml-1 mr-1" id={index}>
                      <Col lg="4" style={{ marginTop: "0%" }}>
                         <TextField
-                           className="w-100 mt-4"
+                           className="w-100 mt-2"
                            type="text"
                            id={index}
-                           disabled={true}
+                           disabled={editUserIndex === index ? false : true}
                            label="Admin Name"
                            // onInput={(e) => {
                            //    setUserList((prevUserList) => {
@@ -297,10 +326,10 @@ const AddNewCorporate = (props) => {
                      </Col>
                      <Col lg="4" style={{ marginTop: "0%" }}>
                         <TextField
-                           className="w-100 mt-4"
+                           className="w-100 mt-2"
                            type="number"
                            id={index}
-                           disabled={true}
+                           disabled={editUserIndex === index ? false : true}
                            label="Mobile Number"
                            InputProps={{
                               startAdornment:
@@ -321,10 +350,10 @@ const AddNewCorporate = (props) => {
                      </Col>
                      <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
                         <TextField
-                           className="w-100 mt-4"
+                           className="w-100 mt-2"
                            select
                            id={index}
-                           disabled={true}
+                           disabled={editUserIndex === index ? false : true}
                            label="Posting Permission"
                            // onChange={(e) => {
                            //    setUserList((prevUserList) => {
@@ -340,12 +369,63 @@ const AddNewCorporate = (props) => {
                            ))}
                         </TextField>
                      </Col>
-                     {/* {index !== 0 ?
-                        <Col lg='1'>
-                           <img src={deleteIcon} alt="" style={{ cursor: 'pointer', marginTop: '70%', height: '25px', width: '25px' }} onClick={() => { deleteUser(index) }}></img>
-                        </Col>
-                        : null} */}
+                     <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
+                        <TextField
+                           className="w-100 mt-2"
+                           select
+                           multiple={true}
+                           SelectProps={{
+                              multiple: true
+                           }}
+                           id={index}
+                           disabled={editUserIndex === index ? false : true}
+                           label="Assign Hub"
+                           value={elememt.hubList || []}  // Ensure the value is an array
+                           onChange={(e) => {
+                              const { value } = e.target;
+                              console.log(e)
+                              setUserList((prevUserList) => {
+                                 let newList = [...prevUserList];
+                                 newList[index] = {
+                                    ...newList[index],
+                                    hubList: typeof value === 'string' ? value.split(',') : value
+                                 };
+                                 return newList;
+                              });
+                           }}
+                        >
+                           <MenuItem value='' disabled>select</MenuItem>
+                           {allHubList?.data?.hubList?.map(elememt => (
+                              <MenuItem key={elememt.hubId} value={elememt.hubId}>
+                                 {elememt.hubName}
+                              </MenuItem>
+                           ))}
+                        </TextField>
+
+                     </Col>
+                     <Col lg='1'>
+                        {editUserIndex !== index ?
+                           <img id={index}
+                              src={pencilIcon}
+                              alt="Edit Icon"
+                              style={{
+                                 marginTop: '40%',
+                                 width: '30px', // Adjust as necessary
+                                 height: '30px', // Adjust as necessary
+                                 cursor: 'pointer',
+                                 backgroundColor: '#BE1452',
+                                 borderRadius: '50%'
+                              }}
+                              onClick={() => { setEditUserIndex(index) }}
+                           />
+                           :
+                           <Buttons id={index} disabled={false} name='Done' varient='primary' style={{ marginTop: '70%' }}
+                              onClick={() => { setEditUserIndex(null) }} ></Buttons>
+                        }
+                     </Col>
                   </Row>
+                  
+                  <hr />
                </>
             ))}
             {addNewUserFlag ?
@@ -402,6 +482,30 @@ const AddNewCorporate = (props) => {
                            ))}
                         </TextField>
                      </Col>
+                     <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
+                        <TextField
+                           className="w-100 mt-4"
+                           select
+                           multiple={true}
+                           SelectProps={{
+                              multiple: true
+                           }}
+                           error={userErr?.hubList}
+                           label="Assign Hub"
+                           value={newUser.hubList || []}  // Ensure the value is an array
+                           onChange={(e) => {
+                              console.log(e)
+                              setNewUser(prevUser => ({ ...prevUser, hubList: e.target.value }))
+                           }}
+                        >
+                           <MenuItem value='' disabled>select</MenuItem>
+                           {allHubList?.data?.hubList?.map(elememt => (
+                              <MenuItem key={elememt.hubId} value={elememt.hubId}>
+                                 {elememt.hubName}
+                              </MenuItem>
+                           ))}
+                        </TextField>
+                     </Col>
                      {/* {index !== 0 ?
                               <Col lg='1'>
                                  <img src={deleteIcon} alt="" style={{ cursor: 'pointer', marginTop: '70%', height: '25px', width: '25px' }} onClick={() => { deleteUser(index) }}></img>
@@ -435,9 +539,10 @@ const AddNewCorporate = (props) => {
    );
 };
 
-const mapStateToProps = ({ }) => ({});
+const mapStateToProps = ({ allHubList }) => ({ allHubList });
 const actions = {
-   getAllCorporateUser
+   getAllCorporateUser,
+   getHubList
 }
 
 export default compose(connect(mapStateToProps, actions))(AddNewCorporate);

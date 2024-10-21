@@ -59,6 +59,7 @@ const Brokers = React.lazy(() => import('./Broker/Broker'));
 const BrokerApprovedDetail = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
 const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails') );
 const BatteryLvlChk = React.lazy(() => import('./BatteryLevelCheck/BatteryLvlChk'));
+const HubList = React.lazy(() => import('./Hub/HubList'));
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -1230,6 +1231,15 @@ const routeData = [
     excat: true,
     component: BatteryLvlChk,
   },
+
+  {
+    path: '/admin/hub-list',
+    name: 'Hub List',
+    bradcrumb: false,
+    excat: true,
+    component: HubList
+  },
+
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

@@ -2121,3 +2121,19 @@ export const getBatteryLevel = (data) => async(dispatch) => {
   }
   return response;
 }
+
+export const createNewHub = async (data) => {
+  const response = await mainApiService('createNewHub', data);
+  return response;
+}
+
+export const getHubList = (data) => async(dispatch) => {
+  dispatch({type: Actions.HUB_LIST_LOADING, data: {}});
+  const response = await mainApiService('getHubList', data);
+  if(response.status === 200 && response.data.resourceData) {
+    dispatch({type: Actions.HUB_LIST_SUCCESS, data: {hubList: response?.data?.resourceData}});
+  } else {
+    dispatch({type: Actions.HUB_LIST_ERROR, data: response.data});
+  }
+  return response;
+}

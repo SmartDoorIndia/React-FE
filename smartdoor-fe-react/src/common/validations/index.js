@@ -1255,6 +1255,10 @@ export const validateCorpUser = (data) => {
     errors.sdPosting = true;
     // hasError = true;
   }
+  if ((data?.hubList?.length === 0)) {
+    errors.hubList = true;
+    // hasError = true;
+  }
   // if (mobileFlag) {
   //   showErrorToast("All mobile numbers should be unique...")
   // }

@@ -2996,6 +2996,33 @@ export const ApiJson = {
     },
     showResultMessage: false,
     showErrorMessage: true,
+  },
+
+  getHubList: {
+    url: "/admin/admin/getAllSmartDoorHubs",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  createNewHub: {
+    url: "/admin/admin/createSmartDoorHub",
+    method: "POST",
+    data: {
+      hubId: null,
+      hubName: ''
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
   }
 };
 console.log(userData)

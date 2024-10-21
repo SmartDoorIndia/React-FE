@@ -97,6 +97,7 @@ import { termsConditions } from './views/termsConditions.reducer';
 import { brokerProperty } from './views/BrokerProperty.reducer';
 import { allCorporates } from './views/corporateList.reducer';
 import { corporateProperty } from './views/corporateProperty.reducer';
+import { allHubList } from './views/hubList.reducer';
 
 import { USER_LOGOUT } from '../types';
 import { batteryLevel } from './views/batteryLevel.reducer';
@@ -182,7 +183,8 @@ const appReducer = combineReducers({
   brokerProperty,
   allCorporates,
   corporateProperty,
-  batteryLevel
+  batteryLevel,
+  allHubList
 });
 
 const rootReducer = (state, action) => {

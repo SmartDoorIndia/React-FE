@@ -363,3 +363,7 @@ export const CORPORATE_PROPERTY_LOADING = 'src/pages/Dashboard/corporateProperty
 export const BATTERY_LEVEL_SUCCESS = 'src/pages/Dashboard/BatteryLevelCheck/Success';
 export const BATTERY_LEVEL_ERROR = 'src/pages/Dashboard/BatteryLevelCheck/Error';
 export const BATTERY_LEVEL_LOADING = 'src/pages/Dashboar/BatteryLevelCheck/Loading';
+
+export const HUB_LIST_SUCCESS = 'src/pages/Dashboard/HubList/Success';
+export const HUB_LIST_ERROR = 'src/pages/Dashboard/HubList/Error';
+export const HUB_LIST_LOADING = 'src/pages/Dashboar/HubList/Loading';

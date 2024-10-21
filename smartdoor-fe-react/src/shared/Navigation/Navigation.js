@@ -305,6 +305,17 @@ const Nav = () => {
                            />
                            Battery Level Check
                         </Link>
+                        <Link
+                           to="/admin/hub-list"
+                           className={`nav-link ${pathname.includes("/admin/hub-list") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/hub-list") ? borkerIcon : dashboard}
+                           />
+                           Hub List
+                        </Link>
                      </>
                   )}
 
