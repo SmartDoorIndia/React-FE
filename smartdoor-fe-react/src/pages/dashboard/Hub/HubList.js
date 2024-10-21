@@ -99,9 +99,9 @@ const HubList = (props) => {
         <Pagination {...props}
             rowCount={allHubList?.data?.hubList?.length}
             rowsPerPage={rowsPerPage}
-            onChangeRowsPerPage={handleRowsPerPageChange}
+            // onChangeRowsPerPage={handleRowsPerPageChange}
             currentPage={currentPage}
-            onChangePage={handlePageChange}
+            // onChangePage={handlePageChange}
             paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
             PaginationActionButton={PaginationActionButton} />
     );
@@ -150,14 +150,14 @@ const HubList = (props) => {
                         columns={columns}
                         progressPending={allHubList?.isLoading}
                         progressComponent={ProgressComponent}
-                        paginationComponent={PaginationComponent}
-                        paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                        paginationPerPage={rowsPerPage}
-                        currentPage={currentPage}
-                        onChangePage={handlePageChange}
-                        onChangeRowsPerPage={handleRowsPerPageChange}
-                        perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                        paginationServer={true}
+                        // paginationComponent={PaginationComponent}
+                        // paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                        // paginationPerPage={rowsPerPage}
+                        // currentPage={currentPage}
+                        // onChangePage={handlePageChange}
+                        // onChangeRowsPerPage={handleRowsPerPageChange}
+                        // perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                        // paginationServer={true}
                         persistTableHead
                     />
                 </div>

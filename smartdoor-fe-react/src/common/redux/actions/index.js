@@ -2137,3 +2137,8 @@ export const getHubList = (data) => async(dispatch) => {
   }
   return response;
 }
+
+export const getCorporateUserHubList = async(data) => {
+  const response = await mainApiService('getCorporateUserHubList', data);
+  return response;
+}

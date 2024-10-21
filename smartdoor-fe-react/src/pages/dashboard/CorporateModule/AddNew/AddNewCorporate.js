@@ -11,7 +11,7 @@ import addIcon from '../../../../assets/svg/add.svg';
 import { validateCorpUser, validateCorporate } from "../../../../common/validations";
 import pencilIcon from '../../../../assets/svg/icon-edit.svg';
 import { compose } from "redux";
-import { addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getHubList, getPlansForCorporate } from "../../../../common/redux/actions";
+import { addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getCorporateUserHubList, getHubList, getPlansForCorporate } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -34,7 +34,7 @@ const AddNewCorporate = (props) => {
       name: '',
       mobile: '',
       sdPosting: '',
-      hubList: []
+      hubIdList: []
    });
    const [userList, setUserList] = useState([]);
    const [smartDoorPlanList, setSmartDoorPlanList] = useState([]);
@@ -70,14 +70,33 @@ const AddNewCorporate = (props) => {
       });
    }
 
+   const fetchHubIdList = async (user) => {
+      try {
+         const response = await getCorporateUserHubList({ corporateUserId: user.userId });
+         if (response?.data?.resourceData?.length === 0) {
+            return [];
+         } else {
+            // Extracting hubId from each element and returning as an array
+            return response?.data?.resourceData?.map(element => element.hubId);
+         }
+      } catch (error) {
+         console.error('Error fetching hub ID list:', error);
+         return []; // Return empty array in case of error
+      }
+   };
+
+
    const getCorporateUser = async () => {
       try {
          const response = await getAllCorporateUser({ corporateId: corporateId });
          if (response?.status === 200) {
-            let userlist = response.data.resourceData.map(user => ({
-               ...user,
-               sdPosting: user.sdPosting ? 'Smart Door Posting' : 'Non Smart Door Posting'
-            }));
+            let userlist = await Promise.all(
+               response.data.resourceData.map(async (user) => ({
+                  ...user,
+                  sdPosting: user.sdPosting ? 'Smart Door Posting' : 'Non Smart Door Posting',
+                  hubIdList: await fetchHubIdList(user), // Await the fetchHubIdList promise
+               }))
+            );
             setUserList(userlist);
          }
       } catch (error) {
@@ -105,7 +124,7 @@ const AddNewCorporate = (props) => {
             mobile: newUser.mobile,
             sdPosting: newUser.sdPosting === 'Smart Door Posting' ? true : false,
             corporateId: corporateId,
-            hubList: newUser.hubList
+            hubIdList: newUser.hubIdList
          }
          const response = await addEditCorporateUser(userObj)
          if (response.status === 200) {
@@ -113,6 +132,7 @@ const AddNewCorporate = (props) => {
             setUserList([...userlist]);
             setNewUser(prevUser => ({ ...prevUser, name: '', mobile: '', sdPosting: '' }));
             setAddNewUserFlag(false);
+            showSuccessToast("User added successfully");
          } else {
             showErrorToast(response.data.message);
             return null;
@@ -121,21 +141,24 @@ const AddNewCorporate = (props) => {
    }
 
    const editUser = async () => {
-      const valid = await validateCorpUser(newUser);
+      const valid = await validateCorpUser(userList[editUserIndex]);
       setUserErr(valid.errors)
       if (valid.isValid) {
          let userlist = [...userList];
          const userObj = {
-            userId: newUser.userId,
-            name: newUser.name,
-            mobile: newUser.mobile,
-            sdPosting: newUser.sdPosting === 'Smart Door Posting' ? true : false,
-            corporateId: corporateId
+            userId: userList[editUserIndex].userId,
+            name: userList[editUserIndex].name,
+            mobile: userList[editUserIndex].mobile,
+            sdPosting: userList[editUserIndex].sdPosting === 'Smart Door Posting' ? true : false,
+            corporateId: corporateId,
+            hubIdList: userList[editUserIndex].hubIdList
          }
          const response = await addEditCorporateUser(userObj)
          if (response.status === 200) {
             setNewUser(prevUser => ({ ...prevUser, name: '', mobile: '', sdPosting: '' }));
             setAddNewUserFlag(false);
+            setEditUserIndex(null)
+            showSuccessToast("User edited successfully");
          } else {
             showErrorToast(response.data.message);
             return null;
@@ -380,7 +403,7 @@ const AddNewCorporate = (props) => {
                            id={index}
                            disabled={editUserIndex === index ? false : true}
                            label="Assign Hub"
-                           value={elememt.hubList || []}  // Ensure the value is an array
+                           value={elememt.hubIdList || []}  // Ensure the value is an array
                            onChange={(e) => {
                               const { value } = e.target;
                               console.log(e)
@@ -388,7 +411,7 @@ const AddNewCorporate = (props) => {
                                  let newList = [...prevUserList];
                                  newList[index] = {
                                     ...newList[index],
-                                    hubList: typeof value === 'string' ? value.split(',') : value
+                                    hubIdList: typeof value === 'string' ? value.split(',') : value
                                  };
                                  return newList;
                               });
@@ -420,11 +443,11 @@ const AddNewCorporate = (props) => {
                            />
                            :
                            <Buttons id={index} disabled={false} name='Done' varient='primary' style={{ marginTop: '70%' }}
-                              onClick={() => { setEditUserIndex(null) }} ></Buttons>
+                              onClick={() => { editUser(); }} ></Buttons>
                         }
                      </Col>
                   </Row>
-                  
+
                   <hr />
                </>
             ))}
@@ -490,12 +513,12 @@ const AddNewCorporate = (props) => {
                            SelectProps={{
                               multiple: true
                            }}
-                           error={userErr?.hubList}
+                           error={userErr?.hubIdList}
                            label="Assign Hub"
-                           value={newUser.hubList || []}  // Ensure the value is an array
+                           value={newUser.hubIdList || []}  // Ensure the value is an array
                            onChange={(e) => {
                               console.log(e)
-                              setNewUser(prevUser => ({ ...prevUser, hubList: e.target.value }))
+                              setNewUser(prevUser => ({ ...prevUser, hubIdList: e.target.value }))
                            }}
                         >
                            <MenuItem value='' disabled>select</MenuItem>

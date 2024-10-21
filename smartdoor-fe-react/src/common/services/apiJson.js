@@ -3023,7 +3023,21 @@ export const ApiJson = {
     },
     showResultMessage: false,
     showErrorMessage: true,
-  }
+  },
+
+  getCorporateUserHubList: {
+    url: "/admin/admin/getAllSmartDoorHubs?corporateUserId=:corporateUserId",
+    method: "GET",
+    data: {
+      corporateUserId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 
