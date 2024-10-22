@@ -193,28 +193,33 @@ const ProjectDetails = (props) => {
             ? data.builderProjectSubPostVideos.filter((video) => video.docName && video.docURL)
             : [];
 
-         const updatedBuilderProjectSubPostProperties = data.builderProjectSubPostProperties.map(
-            (property, index) => {
-               let propertySubType = "";
+         const updatedBuilderProjectSubPostProperties = Array.isArray(
+            data.builderProjectSubPostProperties
+         )
+            ? data.builderProjectSubPostProperties.map((property, index) => {
+                 let propertySubType = "";
 
-               // Use the selectedType specific to this unit (index)
-               if (data.subPostType === "Tower") {
-                  propertySubType = "Apartment"; // Set propertySubType for "Tower"
-               } else if (selectedType[index] === "Villas") {
-                  propertySubType = "Independent House / Bungalow";
-               } else if (selectedType[index] === "Plot") {
-                  propertySubType = "Plot";
-               }
+                 // Use the selectedType specific to this unit (index)
+                 if (data.subPostType === "Tower") {
+                    propertySubType = "Apartment"; // Set propertySubType for "Tower"
+                 } else if (selectedType[index] === "Villas") {
+                    propertySubType = "Independent House / Bungalow";
+                 } else if (selectedType[index] === "Plot") {
+                    propertySubType = "Plot";
+                 }
 
-               return {
-                  ...property,
-                  propertySubType,
-                  propertyImages: property.propertyImages.filter((image) => image && image.docName), // Filter out null or empty images
-               };
-            }
-         );
+                 return {
+                    ...property,
+                    propertySubType,
+                    propertyImages: property.propertyImages.filter(
+                       (image) => image && image.docName
+                    ), // Filter out null or empty images
+                 };
+              })
+            : [];
 
          // Prepare submission data
+         console.log("storedBuilderProjectId", storedBuilderProjectId);
          const submissionData = {
             ...data,
             userId: storedUserId,

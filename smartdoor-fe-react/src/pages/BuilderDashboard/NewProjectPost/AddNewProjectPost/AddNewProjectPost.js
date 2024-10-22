@@ -375,6 +375,7 @@ const AddNewProjectPost = () => {
                   ...prevData,
                   ...resourceData,
                }));
+               localStorage.setItem("builderProjectId", resourceData.builderProjectId);
                window.location.href = `/builder/Project-details/`;
             }
          } else {
