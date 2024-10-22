@@ -38,6 +38,7 @@ const getModalActionData = (row) => {
 };
 const Broker = (props) => {
    const { getBrokerListing, allPlanDataBroker } = props;
+   console.log("allPlanDataBroker", props);
    const statusArr = CONSTANTS_STATUS.brokerStatus;
    const data = useSelector((state) => state.allPlanDataBroker.data);
    const [filterText, setFilterText] = useState(

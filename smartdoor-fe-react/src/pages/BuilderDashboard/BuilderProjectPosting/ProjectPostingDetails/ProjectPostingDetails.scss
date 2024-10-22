@@ -90,12 +90,16 @@
             }
          }
          tr {
+            th {
+               border-top: none;
+            }
             td {
                font-size: 0.875rem;
                font-weight: 500;
                line-height: 16.39px;
                letter-spacing: -0.02em;
                text-align: left;
+               border-top: none;
                .action {
                   display: contents;
                   span {
@@ -441,8 +445,13 @@ span.broker_details {
    .fqvWcI {
       border-bottom-width: 1px !important;
    }
+   .rdt_ExpanderRow {
+      .table {
+         margin-bottom: 0;
+      }
+   }
    .rdt_TableBody {
-      max-height: calc(51vh);
+      // max-height: calc(51vh);
       height: fit-content;
       overflow-y: visible;
       overflow-x: hidden;
@@ -468,7 +477,7 @@ span.broker_details {
    .rdt_TableRow {
       min-height: 50px;
       background-color: #e4e4e4 !important;
-      margin-bottom: 0px;
+      margin-bottom: 5px;
       .rdt_TableCell {
          text-align: center;
          &:nth-child(1) {

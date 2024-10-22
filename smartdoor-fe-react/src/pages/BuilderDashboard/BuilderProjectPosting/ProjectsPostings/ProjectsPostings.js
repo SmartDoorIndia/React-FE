@@ -11,29 +11,22 @@ import { handleStatusElement, getLocalStorage } from "../../../../common/helpers
 import { ToolTip } from "../../../../common/helpers/Utils";
 import { getBuilderProjects, getBuilderProjectStats } from "../../../../common/redux/actions";
 import addIcon from "../../../../assets/svg/add.svg";
-import { Link } from "react-router-dom/cjs/react-router-dom";
 import "./ProjectsPostings.scss";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import Text from "../../../../shared/Text/Text";
 
 const ProjectsPostings = (props) => {
-   const { ProjectsPostings } = props;
-   const data = useSelector((state) => state.builderReducer?.data); // Safely access builderReducer data
-   console.log("data", data);
-   const [filterText, setFilterText] = useState(
-      ProjectsPostings?.data?.searchString || "" // Use empty string if searchString is undefined
-   );
-   // Other states
+   const { getBuilderProjects, ProjectsPostings } = props; // Destructure actions from props
+   const data = useSelector((state) => state.builderReducer?.data || {});
+   const [filterText, setFilterText] = useState(ProjectsPostings?.data?.searchString || "");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [currentPage, setCurrentPage] = useState(
       data !== undefined ? ProjectsPostings?.data?.currentPage : 1
-   ); // Default to 1
+   );
    const [rowsPerPage, setRowsPerPage] = useState(
       data !== undefined ? ProjectsPostings?.data?.rowsPerPage : 8
    ); // Default to 8
-   const [totalRecords, setTotalRecords] = useState(0); // Track total records count
    const auth = getLocalStorage("authData");
-
    const [projectPostingFilter, setProjectPostingFilter] = useState({
       builderId: auth.builderId,
       searchString: "",
@@ -41,23 +34,8 @@ const ProjectsPostings = (props) => {
       records: rowsPerPage,
       pageNumber: currentPage,
    });
-   const [builderProjects, setBuilderProjects] = useState(null);
+   const [builderProjects, setBuilderProjects] = useState([]);
    const [builderProjectStats, setBuilderProjectStats] = useState(null);
-
-   //    getBuilderProjects(updatedFilter).then((response) => {
-   //       setBuilderProjects(response.data.resourceData);
-   //       const resourceData = response.data.resourceData;
-   //       console.log(response.data.resourceData);
-   //       resourceData.forEach((project) => {
-   //          localStorage.setItem("builderProjectId", project.builderProjectId);
-   //       });
-   //    });
-
-   //    getBuilderProjectStats(updatedFilter).then((response) => {
-   //       setBuilderProjectStats(response.data.resourceData);
-   //       console.log(response.data.resourceData);
-   //    });
-   // }, [projectPostingFilter, rowsPerPage, currentPage]); // Runs the effect when these dependencies change
 
    useEffect(() => {
       const updatedFilter = {
@@ -67,33 +45,13 @@ const ProjectsPostings = (props) => {
       };
 
       const handleGetBuilderProjects = async () => {
-         // try {
-         //    const response = await getBuilderProjects(updatedFilter);
-         //    console.log("API Response:", response); // Log the entire response
-         //    const resourceData = response && response.data && response.data.resourceData;
-
-         //    // Check if resourceData is defined and is an array
-         //    if (resourceData && Array.isArray(resourceData)) {
-         //       setBuilderProjects(resourceData);
-         //       resourceData.forEach((project) => {
-         //          localStorage.setItem("builderProjectId", project.builderProjectId);
-         //       });
-         //    } else {
-         //       console.error("resourceData is not an array or is undefined:", resourceData);
-         //       setBuilderProjects([]); // Set to an empty array or handle as needed
-         //    }
-         // } catch (error) {
-         //    console.error("Error fetching builder projects:", error);
-         // }
          try {
             const response = await getBuilderProjects(updatedFilter);
             setBuilderProjects(response.data.resourceData);
-            console.log("getBuilderProjectSubPosts", response.data.resourceData);
          } catch (error) {
             console.error(error);
          }
       };
-
       const handleGetBuilderProjectStats = async () => {
          try {
             const statsFilter = {
@@ -103,9 +61,9 @@ const ProjectsPostings = (props) => {
             };
             const response = await getBuilderProjectStats(statsFilter);
             setBuilderProjectStats(response.data.resourceData);
-            console.log(response.data.resourceData);
+            console.log("Project Stats:", response.data.resourceData);
          } catch (error) {
-            console.error(error);
+            console.error("Error fetching builder project stats:", error);
          }
       };
 
@@ -113,57 +71,41 @@ const ProjectsPostings = (props) => {
       handleGetBuilderProjectStats();
    }, [projectPostingFilter, rowsPerPage, currentPage]);
    const showValue = () => {
-      let filteredItems =
-         Array.isArray(builderProjects) && builderProjects.length > 0 ? builderProjects : [];
-
-      return filteredItems;
+      return Array.isArray(builderProjects) && builderProjects.length > 0 ? builderProjects : [];
    };
 
    const handlePageChange = (newPage) => {
       setCurrentPage(Number(newPage));
-      getBuilderProjects({
-         address: "",
-         builderId: "",
-         builderName: "",
-         builderProjectId: "",
-         builderProjectName: "",
-         builderProjectPostingStatus: "",
-         numberOfTowers: "",
-         totalProjectUnits: "",
+      setProjectPostingFilter((prev) => ({
+         ...prev,
          pageNumber: newPage,
-         searchString: filterText,
-      });
+      }));
    };
 
    const handleRowsPerPageChange = (newRowsPerPage) => {
       setRowsPerPage(newRowsPerPage);
-      getBuilderProjects({
-         address: "",
-         builderId: "",
-         builderName: "",
-         builderProjectId: "",
-         builderProjectName: "",
-         builderProjectPostingStatus: "",
-         numberOfTowers: "",
-         totalProjectUnits: "",
+      setCurrentPage(1); // Reset to first page when changing rows per page
+      setProjectPostingFilter((prev) => ({
+         ...prev,
          records: newRowsPerPage,
-         pageNumber: currentPage,
-         searchString: filterText,
-      });
+         pageNumber: 1,
+      }));
    };
 
    const ProgressComponent = <TableLoader />;
-   const PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
-      <Pagination
-         {...props}
-         PaginationActionButton={PaginationActionButton}
-         currentPage={currentPage}
-         rowsPerPage={rowsPerPage}
-         rowCount={totalRecords}
-         onChangePage={handlePageChange}
-         onChangeRowsPerPage={handleRowsPerPageChange}
-      />
-   );
+   const PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => {
+      return (
+         <Pagination
+            {...props}
+            PaginationActionButton={PaginationActionButton}
+            currentPage={currentPage}
+            rowsPerPage={rowsPerPage}
+            rowCount={builderProjectStats?.BuilderProjectCount || 0} // Use totalRecords for pagination
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handleRowsPerPageChange}
+         />
+      );
+   };
    const PaginationActionButton = () => (
       <div className="d-flex justify-content-center tableBottom"></div>
    );
@@ -179,55 +121,28 @@ const ProjectsPostings = (props) => {
                searchString: "",
                pageNumber: 1,
             }));
-
-            // // Fetch all builder projects when search is cleared
-            // getBuilderProjects({
-            //    address: "", // Optional, if you have a default or initial address
-            //    builderId: 6, // Your desired builder ID
-            //    builderName: "Rohit Builder Company", // Your desired builder name
-            //    builderProjectId: 11, // Your desired project ID
-            //    builderProjectName: "Rohit Builder Project", // Your desired project name
-            //    builderProjectPostingStatus: "INACTIVE", // Desired status
-            //    numberOfTowers: 3, // Desired number of towers
-            //    totalProjectUnits: 1008, // Desired total units
-            // });
          }
       };
 
       return (
          <SearchInput
             onFilter={(e) => {
-               const searchValue = e.target.value; // Get the search value
-               setFilterText(searchValue); // Update the filter text
-
-               // Update projectPostingFilter's searchString
+               const searchValue = e.target.value;
+               setFilterText(searchValue);
                setProjectPostingFilter((prev) => ({
                   ...prev,
-                  searchString: searchValue, // Update searchString
-                  pageNumber: 1, // Reset page number for new search
+                  searchString: searchValue,
+                  pageNumber: 1,
                }));
-
-               // getBuilderProjects({
-               //    // Include your additional fields here
-               //    address: "Baner, Pimpri-Chinchwad, Maharashtra", // Example address
-               //    builderId: 6, // Your desired builder ID
-               //    builderName: "Rohit Builder Company", // Your desired builder name
-               //    builderProjectId: 11, // Your desired project ID
-               //    builderProjectName: "Rohit Builder Project", // Your desired project name
-               //    builderProjectPostingStatus: "INACTIVE", // Desired status
-               //    numberOfTowers: 3, // Desired number of towers
-               //    totalProjectUnits: 1008, // Desired total units
-               // });
             }}
-            onClear={handleClear} // Handle clear button click
-            filterText={filterText} // Bind the filter text
-            placeholder="Search" // Placeholder for search input
+            onClear={handleClear}
+            filterText={filterText}
+            placeholder="Search"
          />
       );
    }, [filterText, resetPaginationToggle]);
-   // Function to handle the click event on the "View" button
    const handleClickViewAndRedirect = async (row) => {
-      const builderProjectId = row.builderProjectId; // Access the builderProjectId from the row
+      const builderProjectId = row.builderProjectId;
       console.log("builderProjectId", builderProjectId);
 
       if (!builderProjectId) {
@@ -235,14 +150,13 @@ const ProjectsPostings = (props) => {
          return;
       }
 
-      localStorage.setItem("builderProjectId", builderProjectId); // Set the builderProjectId in local storage
-      window.location.href = `/builder/Project-Posting-Details/${builderProjectId}`; // Navigate to the next page
+      localStorage.setItem("builderProjectId", builderProjectId);
+      window.location.href = `/builder/Project-Posting-Details/${builderProjectId}`;
    };
 
    const columns = [
       {
          name: "",
-         // selector: (row) => row.builderProjectName,
          center: true,
          minWidth: "150px",
          maxWidth: "160px",
@@ -351,7 +265,7 @@ const ProjectsPostings = (props) => {
                         color: "#BE1452",
                         backgroundColor: "#F8F3F5",
                         borderColor: "#DED6D9",
-                        zIndex: 2, // Ensures button stays on top
+                        zIndex: 2,
                      }}
                      onClick={() => {
                         localStorage.removeItem("builderProjectId");
@@ -385,14 +299,14 @@ const ProjectsPostings = (props) => {
                   progressPending={ProjectsPostings.isLoading}
                   progressComponent={ProgressComponent}
                   pagination
-                  paginationTotalRows={totalRecords}
-                  paginationPerPage={rowsPerPage}
-                  paginationRowsPerPageOptions={[8, 16, 24, 32]}
+                  paginationComponent={PaginationComponent}
+                  paginationServer
+                  paginationRowsPerPageOptions={[7, 14, 21, 28]} // Rows per page options
+                  paginationPerPage={7} // Default rows per page
+                  perPageOptions={[7, 14, 21, 28]} // Per-page options
                   onChangePage={handlePageChange}
-                  paginationServer={true}
-                  onChangeRowsPerPage={handleRowsPerPageChange}
                   subHeaderComponent={subHeaderComponentMemo}
-                  persistTableHead={true} // Note the change from "string" to boolean
+                  persistTableHead={true}
                   filterComponent={subHeaderComponentMemo}
                   keyField="id"
                   className="data-table" // Add a custom class if needed for further styling

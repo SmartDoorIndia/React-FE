@@ -384,9 +384,12 @@ export const BATTERY_LEVEL_ERROR = "src/pages/Dashboard/BatteryLevelCheck/Error"
 export const BATTERY_LEVEL_LOADING = "src/pages/Dashboar/BatteryLevelCheck/Loading";
 
 // ProjectPosting1
-export const GET_BUILDER_PROJECTS_REQUEST = "GET_BUILDER_PROJECTS_REQUEST";
-export const GET_BUILDER_PROJECTS_SUCCESS = "GET_BUILDER_PROJECTS_SUCCESS";
-export const GET_BUILDER_PROJECTS_FAILURE = "GET_BUILDER_PROJECTS_FAILURE";
+export const GET_BUILDER_PROJECTS_ERROR =
+   "/src/pages/BuilderDashboard/BuilderProjectPosting/ProjectsPostings/Error";
+export const GET_BUILDER_PROJECTS_SUCCESS =
+   "/src/pages/BuilderDashboard/BuilderProjectPosting/ProjectsPostings/Success";
+export const GET_BUILDER_PROJECTS_LOADING =
+   "/src/pages/BuilderDashboard/BuilderProjectPosting/ProjectsPostings/Loading";
 //ProjectPosting2
 export const GET_BUILDER_PROJECT_STATS_REQUEST = "GET_BUILDER_PROJECT_STATS_REQUEST";
 export const GET_BUILDER_PROJECT_STATS_SUCCESS = "GET_BUILDER_PROJECT_STATS_SUCCESS";

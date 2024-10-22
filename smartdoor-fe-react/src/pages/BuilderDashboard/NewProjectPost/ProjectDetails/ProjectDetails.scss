@@ -87,6 +87,10 @@
          width: 15%;
          margin: 1px 14px;
       }
+      .comment-conta {
+         width: 100%;
+         margin: 1px 14px;
+      }
    }
    .flex-container2 {
       width: 6%;
@@ -367,7 +371,7 @@
 .projectDetailForm {
    .form-control {
       height: 44px !important;
-      border-radius: 8px !important;
+      // border-radius: 8px !important;
    }
 }
 // Units Form
@@ -425,7 +429,7 @@
    background-color: #f8f3f5;
    // height: 100%;
    width: 40px;
-   min-height: 37vh; /* Ensure it takes full height */
+   min-height: 42vh; /* Ensure it takes full height */
    display: flex;
    align-items: center;
    justify-content: center;

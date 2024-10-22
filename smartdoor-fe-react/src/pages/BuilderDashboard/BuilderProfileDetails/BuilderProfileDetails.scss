@@ -296,49 +296,49 @@
    }
 
    /* Hide the default checkbox */
-   .custom-checkbox .form-check-input {
-      position: absolute;
-      opacity: 0;
-      cursor: pointer;
-   }
+   .custom-checkbox {
+      .form-check-input {
+         position: absolute;
+         opacity: 0; // Hide the default checkbox
+         cursor: pointer;
+         width: 24px;
+         height: 24px; // Ensure the checkbox still occupies space
+      }
 
-   /* Create a custom checkbox */
-   .custom-checkbox .form-check-input + .form-check-label {
-      position: relative;
-      padding-left: 35px;
-      cursor: pointer;
-   }
+      .form-check-input + .form-check-label {
+         position: relative;
+         padding-left: 35px; // Space for custom checkbox
+         cursor: pointer; // Ensure the label is clickable
+      }
 
-   /* Style the custom checkbox */
-   .custom-checkbox .form-check-input + .form-check-label::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 24px;
-      height: 24px;
-      background-color: #ffffff;
-      border: 2px solid #be1452;
-      border-radius: 5px;
-   }
+      .form-check-input + .form-check-label::before {
+         content: "";
+         position: absolute;
+         top: 0;
+         left: 0;
+         width: 24px;
+         height: 24px;
+         background-color: #ffffff; // Background color of the checkbox
+         border: 2px solid #be1452; // Border color
+         border-radius: 5px; // Rounded corners
+      }
 
-   /* Apply background color when checked */
-   .custom-checkbox .form-check-input:checked + .form-check-label::before {
-      background-color: #be1452;
-      border-color: #be1452;
-   }
+      .form-check-input:checked + .form-check-label::before {
+         background-color: #be1452; // Background color when checked
+         border-color: #be1452; // Border color when checked
+      }
 
-   /* Add a checkmark inside the checkbox */
-   .custom-checkbox .form-check-input:checked + .form-check-label::after {
-      content: "";
-      position: absolute;
-      top: 4px;
-      left: 8px;
-      width: 7px;
-      height: 14px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
+      .form-check-input:checked + .form-check-label::after {
+         content: "";
+         position: absolute;
+         top: 4px;
+         left: 8px;
+         width: 7px;
+         height: 14px;
+         border: solid white; // Checkmark color
+         border-width: 0 2px 2px 0; // Checkmark dimensions
+         transform: rotate(45deg); // Rotate to form a checkmark
+      }
    }
 
    .form-group {

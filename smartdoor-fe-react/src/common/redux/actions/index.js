@@ -2385,11 +2385,25 @@ export const createBuilderProfileDetail = async (data) => {
 };
 
 // To get a list of builder projects by filter
-export const getBuilderProjects = async (data) => {
+export const getBuilderProjects = (data) => async (dispatch) => {
+   // const response = await mainApiService("getBuilderProjects", data);
+   dispatch({ type: Actions.GET_BUILDER_PROJECTS_LOADING, data: {} });
    const response = await mainApiService("getBuilderProjects", data);
+   if (response.status === 200 && response.data.resourceData) {
+      dispatch({
+         type: Actions.GET_BUILDER_PROJECTS_SUCCESS,
+         data: {
+            batteryLevelList: response?.data?.resourceData,
+            records: response?.data?.resourceData?.length,
+            currentPage: data?.pageNo,
+            rowsPerPage: data?.pageSize,
+         },
+      });
+   } else {
+      dispatch({ type: Actions.GET_BUILDER_PROJECTS_ERROR, data: response.data });
+   }
    return response;
 };
-
 // To get number of builder projects and properties by filter
 export const getBuilderProjectStats = async (data) => {
    const response = await mainApiService("getBuilderProjectStats", data);
@@ -2401,7 +2415,10 @@ export const getBuilderProjectSubPosts = async (data) => {
    const response = await mainApiService("getBuilderProjectSubPosts", data);
    return response;
 };
-
+export const getBuilderProjectSubPostsStats = async (data) => {
+   const response = await mainApiService("getBuilderProjectSubPostsStats", data);
+   return response;
+};
 // To get the details of a builder project by builder project id
 export const getBuilderProjectById = async (data) => {
    const response = await mainApiService("getBuilderProjectById", data);

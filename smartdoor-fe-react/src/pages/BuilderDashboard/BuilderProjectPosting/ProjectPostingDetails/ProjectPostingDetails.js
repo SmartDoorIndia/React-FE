@@ -12,10 +12,13 @@ import { useState } from "react";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import addIcon from "../../../../assets/svg/add.svg";
 import { getLocalStorage, ToolTip } from "../../../../common/helpers/Utils";
-import { getBuilderProjectSubPosts, getBuilderProjectById } from "../../../../common/redux/actions";
+import {
+   getBuilderProjectSubPosts,
+   getBuilderProjectById,
+   getBuilderProjectSubPostsStats,
+} from "../../../../common/redux/actions";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import Text from "../../../../shared/Text/Text";
-import { MdOutlineKeyboardDoubleArrowUp, MdOutlineKeyboardDoubleArrowDown } from "react-icons/md"; // Import the icons"; // Import the expanded row component
 
 const ProjectPostingDetails = (props) => {
    const { ProjectPostingDetails } = props;
@@ -24,11 +27,13 @@ const ProjectPostingDetails = (props) => {
       data !== undefined ? ProjectPostingDetails?.data?.searchString : ""
    );
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-   const [currentPage, setCurrentPage] = useState(1); // Default to 1
-   const [rowsPerPage, setRowsPerPage] = useState(8); // Default to 8
+   const [currentPage, setCurrentPage] = useState(
+      data !== undefined ? ProjectPostingDetails?.data?.currentPage : 1
+   );
+   const [builderProjectSubPostStats, setBuilderProjectSubPostStats] = useState({});
+   const [rowsPerPage, setRowsPerPage] = useState(7);
    const [totalRecords, setTotalRecords] = useState(0); // To track total records count
-   const [expandedRow, setExpandedRow] = useState(null); // State to track expanded row
-   const [selectedType, setSelectedType] = useState(""); // Initial state for selectedType
+   const recordSize = ProjectPostingDetails?.data?.records || 0;
    const [builderProjectSubPosts, setBuilderProjectSubPosts] = useState(null);
    const auth = getLocalStorage("authData");
    const StorebuilderProjectId = localStorage.getItem("builderProjectId");
@@ -40,53 +45,39 @@ const ProjectPostingDetails = (props) => {
       builderProjectId: StorebuilderProjectId, // Set from localStorage
       searchString: "",
       userId: auth?.userid || null,
-      records: 10,
-      pageNumber: 1,
+      records: rowsPerPage,
+      pageNumber: currentPage,
    });
 
    useEffect(() => {
       localStorage.removeItem("builderProjectId");
-
-      // Set the new builderProjectId in local storage
       localStorage.setItem("builderProjectId", builderProjectId);
       const StorebuilderProjectId = localStorage.getItem("builderProjectId");
-      //    getBuilderProjectSubPosts(projectSubPostsFilter).then((response) => {
-      //       setBuilderProjectSubPosts(response.data.resourceData);
-      //       console.log("getBuilderProjectSubPosts", response.data.resourceData);
-      //    });
-
-      //    getBuilderProjectById({
-      //       builderProjectId: StorebuilderProjectId, // Use the state value for builderProjectId
-      //       userId: userId,
-      //    }).then((response) => {
-      //       setBuilderProjectDetails(response.data.resourceData);
-      //       console.log("Builder Project Details:", response.data.resourceData);
-      //    });
-      // }, [builderProjectId, userId, projectSubPostsFilter]);
       const handleGetBuilderProjectSubPosts = async () => {
          try {
             const response = await getBuilderProjectSubPosts(projectSubPostsFilter);
-
-            // Check if the response contains the resource data
             if (response?.data?.resourceData) {
                const resourceData = response.data.resourceData;
+               setBuilderProjectSubPosts(resourceData);
+               setTotalRecords(response.data.totalRecords); // Update total records from the response
+            } else {
+               console.log("No resource data found in the response.");
+               return [];
+            }
+         } catch (error) {
+            console.error("Error fetching builder project sub-posts:", error);
+         }
+      };
 
-               // Map through the sub-posts and ensure selectedPropertyType is set
-               const updatedSubPosts = resourceData.map((subPost) => ({
-                  ...subPost,
-                  builderProjectSubPostProperties: subPost.builderProjectSubPostProperties
-                     ? subPost.builderProjectSubPostProperties.map((property) => ({
-                          ...property,
-                          selectedPropertyType: property.selectedPropertyType || "", // Ensure selectedPropertyType is returned or defaulted to ""
-                       }))
-                     : [], // If builderProjectSubPostProperties is undefined, default to an empty array
-               }));
-
-               console.log("Updated SubPosts:", updatedSubPosts);
-
-               // Set the updated posts in the state
-               setBuilderProjectSubPosts(updatedSubPosts);
-               return updatedSubPosts;
+      const handleGetBuilderProjectSubPostsStats = async () => {
+         try {
+            const response = await getBuilderProjectSubPostsStats(projectSubPostsFilter);
+            if (response?.data?.resourceData) {
+               const resourceData = response.data.resourceData;
+               setBuilderProjectSubPostStats(resourceData);
+               // BuilderProjectSubPostStats.builderProjectSubPostCount
+               // setBuilderProjectSubPosts(resourceData);
+               // setTotalRecords(response.data.totalRecords); // Update total records from the response
             } else {
                console.log("No resource data found in the response.");
                return [];
@@ -97,31 +88,69 @@ const ProjectPostingDetails = (props) => {
       };
 
       const handleGetBuilderProjectById = async () => {
+         localStorage.removeItem("builderProjectId");
+         const newBuilderProjectId = StorebuilderProjectId; // Replace with the actual new ID
+         localStorage.setItem("builderProjectId", newBuilderProjectId);
+
          try {
-            localStorage.removeItem("builderProjectId");
-
-            // Set the new ID
-            const newBuilderProjectId = StorebuilderProjectId; // Replace with the actual new ID
-            localStorage.setItem("builderProjectId", newBuilderProjectId);
-
             const response = await getBuilderProjectById({
                builderProjectId: newBuilderProjectId, // Use the state value for builderProjectId
                userId: userId,
             });
-            setBuilderProjectDetails(response.data.resourceData);
-            console.log("Builder Project Details:", response.data.resourceData);
+
+            const builderProjectDetails = response.data.resourceData;
+            if (!builderProjectDetails) {
+               console.error("No builder project details found in the response.");
+               return;
+            }
+
+            const builderProjectImages = Array.isArray(builderProjectDetails.builderProjectImages)
+               ? builderProjectDetails.builderProjectImages
+               : [];
+
+            const imagesWithBase64 = await Promise.all(
+               builderProjectImages.map(async (img) => {
+                  if (img.docURL) {
+                     const base64Image = await fetchImageAsBase64(img.docURL);
+                     return { ...img, builderProjectImageAsBase64: base64Image };
+                  } else {
+                     return img;
+                  }
+               })
+            );
+
+            setBuilderProjectDetails({
+               ...builderProjectDetails,
+               builderProjectImages: imagesWithBase64, // Set images with base64 data
+            });
+            console.log("Builder Project Details:", builderProjectDetails);
          } catch (error) {
-            console.error(error);
+            console.error("Error fetching builder project:", error);
          }
+         return () => {
+            localStorage.removeItem("builderProjectId");
+         };
       };
 
       handleGetBuilderProjectSubPosts();
+      handleGetBuilderProjectSubPostsStats();
       handleGetBuilderProjectById();
-   }, [builderProjectId, userId, projectSubPostsFilter]);
-   const handleRowExpand = (rowId) => {
-      setExpandedRow(expandedRow === rowId ? null : rowId); // Toggle expanded row
+   }, [StorebuilderProjectId, userId, projectSubPostsFilter]);
+   const fetchImageAsBase64 = async (imageURL) => {
+      try {
+         const response = await fetch(imageURL);
+         const blob = await response.blob();
+         return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+         });
+      } catch (error) {
+         console.error("Error fetching image as base64:", error);
+         return null; // Return null if there is an error
+      }
    };
-
    const showValue = () => {
       let filteredItems =
          Array.isArray(builderProjectSubPosts) && builderProjectSubPosts.length > 0
@@ -133,42 +162,20 @@ const ProjectPostingDetails = (props) => {
 
    const handlePageChange = (newPage) => {
       setCurrentPage(Number(newPage));
-      getBuilderProjectSubPosts({
-         builderProjectSubPostId: "",
-         builderProjectSubPostName: "",
-         builderProjectSubPostPropertyResponseList: [
-            {
-               builderProjectSubPostId: null,
-               numberOfRooms: null,
-               propertyId: null,
-               propertyRoomCompositionType: "",
-               propertySubType: "",
-               totalProjectUnits: null,
-               unitType: "",
-               selectedPropertyType: "",
-            },
-         ],
-      });
+      setProjectSubPostsFilter((prev) => ({
+         ...prev,
+         pageNumber: newPage, // Update the page number
+      }));
    };
 
    const handleRowsPerPageChange = (newRowsPerPage) => {
       setRowsPerPage(newRowsPerPage);
-      getBuilderProjectSubPosts({
-         builderProjectSubPostId: "",
-         builderProjectSubPostName: "",
-         builderProjectSubPostPropertyResponseList: [
-            {
-               builderProjectSubPostId: null,
-               numberOfRooms: null,
-               propertyId: null,
-               propertyRoomCompositionType: "",
-               propertySubType: "",
-               totalProjectUnits: null,
-               unitType: "",
-               selectedPropertyType: "",
-            },
-         ],
-      });
+      setCurrentPage(1); // Reset to first page when changing rows per page
+      setProjectSubPostsFilter((prev) => ({
+         ...prev,
+         records: newRowsPerPage,
+         pageNumber: 1,
+      }));
    };
 
    const ProgressComponent = <TableLoader />;
@@ -178,7 +185,7 @@ const ProjectPostingDetails = (props) => {
          PaginationActionButton={PaginationActionButton}
          currentPage={currentPage}
          rowsPerPage={rowsPerPage}
-         rowCount={totalRecords}
+         rowCount={builderProjectSubPostStats.builderProjectSubPostCount}
          onChangePage={handlePageChange}
          onChangeRowsPerPage={handleRowsPerPageChange}
       />
@@ -222,8 +229,6 @@ const ProjectPostingDetails = (props) => {
 
    const handleClickview = (row) => {
       const storebuilderProjectSubPostId = row.builderProjectSubPostId; // Access the builderProjectSubPostId from the row
-      console.log("storebuilderProjectSubPostId", storebuilderProjectSubPostId);
-
       if (!storebuilderProjectSubPostId) {
          console.error("No project ID found in the row data.");
          return;
@@ -234,14 +239,14 @@ const ProjectPostingDetails = (props) => {
          builderProjectId: StorebuilderProjectId,
          userId: auth.userid,
       };
-      console.log("Request Data:", requestData);
+      console.log("Request Data:", requestData.userId);
 
       getBuilderProjectSubPosts(requestData)
          .then((response) => {
             if (response.data && response.data.resourceData) {
                console.log(response.data.resourceData);
                const resourceData = response.data.resourceData;
-
+               console.log("resourceData====>", resourceData);
                // Format possession dates safely
                const formattedPossessionFrom = formatDate(resourceData.possessionFrom);
                const formattedPossessionTo = formatDate(resourceData.possessionTo);
@@ -266,25 +271,6 @@ const ProjectPostingDetails = (props) => {
    };
 
    const columns = [
-      // {
-      //    name: "Expand",
-      //    cell: (row) => (
-      //       <button
-      //          className="expand-button"
-      //          onClick={() => handleRowExpand(row.id)}
-      //          style={{ background: "none", border: "none", cursor: "pointer" }}
-      //       >
-      //          {expandedRow === row.id ? (
-      //             <MdOutlineKeyboardDoubleArrowUp />
-      //          ) : (
-      //             <MdOutlineKeyboardDoubleArrowDown />
-      //          )}
-      //       </button>
-      //    ),
-      //    center: true,
-      //    minWidth: "50px",
-      //    maxWidth: "50px",
-      // },
       {
          name: "Towers / Plotted",
          selector: (row) => row.builderProjectSubPostName,
@@ -296,15 +282,12 @@ const ProjectPostingDetails = (props) => {
       {
          name: "Unit Types",
          selector: (row) => {
-            // Check if the array exists and loop through all units
             const units = row.builderProjectSubPostPropertyResponseList || [];
-
-            // Map through the array and format each unit's details
             return (
                units
                   .map((unit) => `${unit.numberOfRooms} ${unit.propertyRoomCompositionType}`)
                   .join(", ") || "N/A"
-            ); // Join the details with a comma separator, fallback to 'N/A' if empty
+            );
          },
          center: true,
          minWidth: "120px",
@@ -371,15 +354,14 @@ const ProjectPostingDetails = (props) => {
                <tbody>
                   {data.builderProjectSubPostPropertyResponseList.map((property, index) => (
                      <tr key={index} style={{ borderBottom: "1px solid #DED6D9" }}>
-                        <td></td>
-                        <td style={{ width: "5%" }}></td>
-                        <td style={{ width: "17%" }}>
+                        <td style={{ width: "17%" }}></td>
+                        <td style={{ width: "7%" }}>
                            {property.numberOfRooms}&nbsp;
-                           {property.propertyRoomCompositionType}&nbsp; {property.propertySubType}
+                           {property.propertyRoomCompositionType}&nbsp;
                         </td>
-                        <td style={{ width: "10%" }}>{property.totalProjectUnits}</td>
-                        <td>{property.status}</td>
-                        <td>{property.action}</td>
+
+                        <td style={{ width: "19%" }}>{property.totalProjectUnits}</td>
+                        <td style={{ width: "10%" }}></td>
                      </tr>
                   ))}
                </tbody>
@@ -395,15 +377,15 @@ const ProjectPostingDetails = (props) => {
       });
       return `${monthName} ${year}`;
    };
-   console.log("builderProjectId", builderProjectId);
+   console.log("builderProjectId", StorebuilderProjectId);
 
    const handleClick = () => {
       const urlParams = new URLSearchParams(window.location.search);
-      const builderProjectId =
+      const storebuilderProjectId =
          urlParams.get("builderProjectId") || localStorage.getItem("builderProjectId");
       if (builderProjectId) {
          getBuilderProjectById({
-            builderProjectId: builderProjectId,
+            builderProjectId: storebuilderProjectId,
             userId: auth.userid,
          })
             .then((response) => {
@@ -685,10 +667,11 @@ const ProjectPostingDetails = (props) => {
                   progressPending={ProjectPostingDetails.isLoading}
                   progressComponent={ProgressComponent}
                   pagination
+                  paginationComponent={PaginationComponent}
                   paginationServer
-                  paginationTotalRows={totalRecords}
-                  paginationPerPage={rowsPerPage}
-                  paginationRowsPerPageOptions={[8, 16, 24, 32]}
+                  paginationRowsPerPageOptions={[7, 14, 21, 28]} // Rows per page options
+                  paginationPerPage={7} // Default rows per page
+                  perPageOptions={[7, 14, 21, 28]} // Per-page options
                   onChangePage={handlePageChange}
                   expandableRows
                   expandableRowsComponent={ExpandedRowComponent}

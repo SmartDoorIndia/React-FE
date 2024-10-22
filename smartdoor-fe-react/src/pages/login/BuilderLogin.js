@@ -11,7 +11,6 @@ import { validateLogin } from "../../common/validations/ValidationLogin";
 import { BuilderGetOtp } from "../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../common/helpers/Utils";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-
 import "./BuilderLogin.scss";
 import Logo from "../../assets/images/smartdoor-logo.svg";
 
@@ -48,11 +47,7 @@ const BuilderLogin = (props) => {
 
       try {
          const response = await dispatch(BuilderGetOtp({ mobile: userNumber, signal }));
-
-         if (signal.aborted) return; // If the signal is aborted, stop execution
-
-         // setButtonDisable(false);
-
+         if (signal.aborted) return;
          if (Object.keys(response.data).length === 0) {
             showErrorToast("Unable to generate OTP");
          } else if (response.data.status === 200) {
@@ -69,8 +64,6 @@ const BuilderLogin = (props) => {
          setButtonDisable(false);
          console.log(error);
       }
-
-      // Cleanup on unmount to avoid memory leaks
       return () => {
          abortController.abort(); // Abort the request if the component unmounts
       };

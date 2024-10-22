@@ -9,12 +9,10 @@ import {
    getLocalStorage,
 } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import Text from "../../../../shared/Text/Text";
-import { useParams } from "react-router-dom";
 import { TiCameraOutline } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
 import { IoIosAdd } from "react-icons/io";
 import { IoIosArrowDown } from "react-icons/io";
-import { Range } from "react-range"; // You may need to install this package
 import { FaTimesCircle } from "react-icons/fa";
 import { FaTimes } from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
@@ -25,8 +23,10 @@ import {
    addBuilderProjectSubPost,
    deleteBuilderProjectSubPostById,
 } from "../../../../common/redux/actions";
+import { CONSTANTS } from "../../../../common/helpers/Constants";
+
 const ProjectDetails = (props) => {
-   // const builderProjectId = localStorage.getItem("builderProjectId"); // Retrieve ID
+   // const { builderProjectSubPostId } = useParams(); // Get the project ID from URL parameters
    const [show, setShow] = useState(false);
    const [imageCategory, setImageCategory] = useState("Interior");
    const [selectedImages, setSelectedImages] = useState([]); // Images selected in the modal
@@ -35,12 +35,12 @@ const ProjectDetails = (props) => {
    const [monthYearFrom, setMonthYearFrom] = useState({ month: "", year: "" });
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
    const currentYear = new Date().getFullYear();
-   const [builderProjectSubPostId, setBuilderProjectSubPostId] = useState(null);
    const [userId, setUserId] = useState(null);
    const [builderProjectId, setBuilderProjectId] = useState(null);
-
    const [error, setError] = useState(null);
    const [showModal, setShowModal] = useState(false);
+   const [showImageModal, setImageShowModal] = useState(false);
+   const [selectedImageSrc, setSelectedImageSrc] = useState("");
    const [currentVideoUrl, setCurrentVideoUrl] = useState("");
    const [towerRows, setTowerRows] = useState([]);
    const [plottedRows, setPlottedRows] = useState([]);
@@ -48,20 +48,18 @@ const ProjectDetails = (props) => {
    const [newVideoUrl, setNewVideoUrl] = useState(null);
    const [showMoreUnits, setShowMoreUnits] = useState(false);
    const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
-
-   const defaultSubpost = ["Tower", "Plotted"];
+   const [selectedType, setSelectedType] = useState([]);
+   const [builderProjectSubPostId, setBuilderProjectSubPostId] = useState(null);
    const auth = getLocalStorage("authData");
-   const storedUserId = auth.userid;
+   const storedUserId = auth?.userid;
    const storedBuilderId = auth.builderId;
    const storedBuilderProjectId = localStorage.getItem("builderProjectId");
    const storebuilderProjectSubPostId = localStorage.getItem("builderProjectSubPostId");
-   console.log("storedUserId", storedUserId);
-   console.log("storebuilderProjectSubPostId", storebuilderProjectSubPostId);
    const [data, setData] = useState({
       builderProjectSubPostId: null,
       builderProjectId: localStorage.getItem("builderProjectId"),
       subPostType: "",
-      userId: auth.userid,
+      userId: auth?.userid,
       builderProjectSubPostName: "",
       reraNumber: "",
       areaToDevelop: null,
@@ -74,92 +72,10 @@ const ProjectDetails = (props) => {
       totalFloors: null,
       unitsPerFloor: null,
       builderProjectSubPostInfo: [],
-      builderProjectSubPostProperties: [
-         // {
-         //    propertyId: null,
-         //    numberOfRooms: null,
-         //    propertyRoomCompositionType: "",
-         //    propertySubType: "",
-         //    totalProjectUnits: null,
-         //    minPlotArea: null,
-         //    maxPlotArea: null,
-         //    plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-         //    minCarpetArea: null,
-         //    maxCarpetArea: null,
-         //    carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-         //    minBuiltUpArea: null,
-         //    maxBuiltUpArea: null,
-         //    builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-         //    comments: "",
-         //    minPrice: null,
-         //    maxPrice: null,
-         //    propertyVideos: [
-         //       {
-         //          docId: null,
-         //          docName: "",
-         //          docURL: "",
-         //          docOrderInFrontendView: null,
-         //          docDescription: "",
-         //          builderProjectImageAsBase64: null,
-         //       },
-         //    ],
-         //    propertyImages: [
-         //       {
-         //          docId: null,
-         //          docName: "",
-         //          docURL: "",
-         //          docOrderInFrontendView: 2,
-         //          docDescription: "",
-         //          builderProjectImageAsBase64: "",
-         //       },
-         //    ],
-         // },
-      ],
-      builderProjectSubPostVideos: [
-         {
-            docId: null,
-            docName: "",
-            docURL: "",
-            docOrderInFrontendView: null,
-            docDescription: "",
-            builderProjectImageAsBase64: "",
-         },
-      ],
-
-      builderProjectSubPostImages: [
-         // {
-         //    docId: null,
-         //    docName: "",
-         //    docURL: "",
-         //    docOrderInFrontendView: null,
-         //    docDescription: "",
-         //    builderProjectImageAsBase64: "",
-         // },
-      ],
+      builderProjectSubPostProperties: [{ propertyImages: [] }],
+      builderProjectSubPostVideos: [],
+      builderProjectSubPostImages: [],
    });
-   const step = 1; // Step size of 10L
-   // const min
-   // const [priceRanges, setPriceRanges] = useState(
-   //    data.builderProjectSubPostProperties.map((property) => [property.minPrice, property.maxPrice])
-   // );
-   const [selectedType, setSelectedType] = useState("Villas");
-
-   // useEffect(() => {
-   //    if (data.builderProjectSubPostProperties && data.builderProjectSubPostProperties.length > 0) {
-   //       const villasData = data.builderProjectSubPostProperties.filter(
-   //          (item) => item.propertySubType === "Villas"
-   //       );
-   //       const plotsData = data.builderProjectSubPostProperties.filter(
-   //          (item) => item.propertySubType === "Plots"
-   //       );
-
-   //       if (villasData.length > 0) {
-   //          setSelectedType("Villas");
-   //       } else if (plotsData.length > 0) {
-   //          setSelectedType("Plots");
-   //       }
-   //    }
-   // }, [data.builderProjectSubPostProperties]);
 
    const imageFields = [
       { docName: "Floor Plan" },
@@ -168,110 +84,203 @@ const ProjectDetails = (props) => {
       { docName: "Bedroom 1 Images" },
       { docName: "Bedroom 2 Images" },
    ];
-   console.log("storebuilderProjectSubPostId", storebuilderProjectSubPostId);
+   const defaultSubpost = ["Tower", "Plotted"];
+   const handleTypeChange = (index, value) => {
+      setSelectedType((prevTypes) => {
+         const updatedTypes = [...prevTypes];
+         updatedTypes[index] = value; // Update the selected type for the specific property
+         return updatedTypes;
+      });
+
+      // Update the state with the new type
+      setData((prevState) => {
+         const updatedProperties = [...prevState.builderProjectSubPostProperties];
+         updatedProperties[index].propertySubType = value; // Update the propertySubType
+         return { ...prevState, builderProjectSubPostProperties: updatedProperties };
+      });
+   };
+
    useEffect(() => {
       const fetchData = async () => {
-         if (storebuilderProjectSubPostId != null) {
-            try {
-               const response = await getBuilderProjectSubPostById({
-                  builderProjectSubPostId: storebuilderProjectSubPostId,
-                  userId: storedUserId,
-                  builderProjectId: storedBuilderProjectId,
-               });
+         if (!storebuilderProjectSubPostId) {
+            setData({}); // Set data to an empty object if ID is not present
+            return; // Exit the function early
+         }
+         try {
+            const requestData = {
+               builderProjectSubPostId: storebuilderProjectSubPostId,
+               builderProjectId: storedBuilderProjectId,
+               userId: storedUserId,
+            };
+            const response = await getBuilderProjectSubPostById(requestData);
+            if (response?.data) {
+               const { resourceData, error: responseError } = response.data;
+               if (resourceData) {
+                  const { userId, ...restResourceData } = resourceData; // Omit userId here
 
-               if (response?.data) {
-                  const { resourceData, error: responseError } = response.data;
+                  const filteredUnits = resourceData.builderProjectSubPostProperties.filter(
+                     (property) => property.propertySubType && property.propertySubType !== ""
+                  );
+                  const mappedProperties = filteredUnits.map((property) => {
+                     const images = property.propertyImages || []; // Ensure propertyImages is an array
+                     return {
+                        ...property,
+                        propertyImages: images.map((image) => ({
+                           ...image,
+                           // Ensure each image has the necessary fields
+                           docURL: image.docURL || "",
+                           builderProjectImageAsBase64: image.builderProjectImageAsBase64 || "",
+                        })),
+                     };
+                  });
 
-                  if (resourceData) {
-                     setData((prevData) => ({
-                        ...prevData,
-                        ...resourceData,
-                        builderProjectId:
-                           resourceData.builderProjectId ?? prevData.builderProjectId,
-                        builderProjectSubPostId:
-                           resourceData.builderProjectSubPostId ?? prevData.builderProjectSubPostId,
-                        userId: resourceData.userId ?? prevData.userId,
-                        builderId: resourceData.builderId ?? prevData.builderId,
-                     }));
-                     console.log("response.data", resourceData);
-                  }
+                  setData((prevData) => ({
+                     ...prevData,
+                     ...resourceData,
+                     builderProjectId: resourceData.builderProjectId ?? prevData.builderProjectId,
+                     builderProjectSubPostId:
+                        resourceData.builderProjectSubPostId ?? prevData.builderProjectSubPostId,
+                     builderProjectSubPostProperties: mappedProperties,
+                  }));
+                  const [fromMonth, fromYear] = restResourceData.possessionFrom.split("-");
+                  const [toMonth, toYear] = restResourceData.possessionTo.split("-");
 
-                  if (
-                     resourceData.subPostType === "Tower" ||
-                     resourceData.subPostType === "Plotted"
-                  ) {
-                     setShowMoreUnits(true);
-                  } else {
-                     setShowMoreUnits(false);
-                  }
+                  setMonthYearFrom({
+                     month: String(fromMonth).padStart(2, "0"), // Ensure two-digit format
+                     year: fromYear, // Year as a string
+                  });
 
-                  if (responseError) setError(responseError);
+                  setMonthYearTo({
+                     month: String(toMonth).padStart(2, "0"), // Ensure two-digit format
+                     year: toYear, // Year as a string
+                  });
+
+                  const initialSelectedTypes = restResourceData.builderProjectSubPostProperties.map(
+                     (property) => {
+                        if (property.propertySubType === "Independent House / Bungalow") {
+                           return "Villas"; // Map to Villas
+                        } else {
+                           return property.propertySubType || "Villas"; // Default to Villas if not defined
+                        }
+                     }
+                  );
+                  setSelectedType(initialSelectedTypes);
                }
-            } catch (error) {
-               setError(error);
-               console.log("Error fetching builder data:", error);
-            }
-         } else {
-            // Clear data if no builderProjectSubPostId is present
-            localStorage.removeItem("builderProjectSubPostId");
 
-            setData({});
-            // Remove builderProjectSubPostId from localStorage
+               if (resourceData.subPostType === "Tower" || resourceData.subPostType === "Plotted") {
+                  setShowMoreUnits(true);
+               } else {
+                  setShowMoreUnits(false);
+               }
+
+               if (responseError) setError(responseError);
+            }
+         } catch (error) {
+            setError(error);
          }
       };
 
       fetchData();
+      return () => {
+         localStorage.removeItem("builderProjectSubPostId"); // Remove builderProjectSubPostId when component unmounts
+      };
    }, [storedUserId, storedBuilderId, builderProjectSubPostId, builderProjectId]);
-
    const handleSubmit = async (e) => {
       e.preventDefault();
+
       try {
-         const sanitizedVideos = data.builderProjectSubPostVideos.filter(
-            (video) => video.docName && video.docURL
-         );
+         const sanitizedVideos = data.builderProjectSubPostVideos
+            ? data.builderProjectSubPostVideos.filter((video) => video.docName && video.docURL)
+            : [];
+
          const updatedBuilderProjectSubPostProperties = data.builderProjectSubPostProperties.map(
-            (property) => ({
-               ...property,
-               selectedPropertyType: selectedType, // Add selectedType to each property object
-            })
+            (property, index) => {
+               let propertySubType = "";
+
+               // Use the selectedType specific to this unit (index)
+               if (data.subPostType === "Tower") {
+                  propertySubType = "Apartment"; // Set propertySubType for "Tower"
+               } else if (selectedType[index] === "Villas") {
+                  propertySubType = "Independent House / Bungalow";
+               } else if (selectedType[index] === "Plot") {
+                  propertySubType = "Plot";
+               }
+
+               return {
+                  ...property,
+                  propertySubType,
+                  propertyImages: property.propertyImages.filter((image) => image && image.docName), // Filter out null or empty images
+               };
+            }
          );
 
-         console.log(
-            "updatedBuilderProjectSubPostProperties",
-            updatedBuilderProjectSubPostProperties
-         );
+         // Prepare submission data
          const submissionData = {
             ...data,
-            userId: getLocalStorage("authData").userid,
+            userId: storedUserId,
             builderProjectId: storedBuilderProjectId,
             builderProjectSubPostVideos: sanitizedVideos, // Only submit valid videos
-            builderProjectSubPostProperties: updatedBuilderProjectSubPostProperties, // Add the updated properties array
+            builderProjectSubPostProperties: updatedBuilderProjectSubPostProperties,
          };
+         console.log("submissionData", submissionData);
+
          const response = await addBuilderProjectSubPost(submissionData);
-         console.log("Submission Data:", submissionData);
-         console.log("API Response:", response);
+
+         // Handle the response
          if (response?.data) {
             const { resourceData, error: responseError } = response.data;
-            console.log("Resource Data:", resourceData);
+
             if (resourceData) {
                setData((prevData) => ({
                   ...prevData,
                   ...resourceData,
                }));
-               localStorage.removeItem("builderProjectSubPostId");
+
+               // Update the URL to remove any ID if present
+               const currentUrl = window.location.pathname;
+               const newUrl = currentUrl.replace(/\/\d+$/, ""); // Removes any ID at the end of the URL
+               window.history.replaceState({}, "", newUrl);
+
+               // Clear the form fields but retain numeric values
+               setData({
+                  builderProjectSubPostId: null,
+                  builderProjectId: null,
+                  subPostType: "",
+                  userId: null,
+                  builderProjectSubPostName: "",
+                  reraNumber: "",
+                  areaToDevelop: "", // Retaining as null since it's likely a number
+                  areaToDevelopMeasurementUnitEnteredByUser: "",
+                  highlightsOrUsp: "",
+                  contactPersonName: "",
+                  contactPersonNumber: "",
+                  possessionFrom: "", // Clear to null (for numbers/dates)
+                  possessionTo: "", // Clear to null (for numbers/dates)
+                  totalFloors: "", // Clear to null (for numbers)
+                  unitsPerFloor: "", // Clear to null (for numbers)
+                  builderProjectSubPostInfo: [],
+                  builderProjectSubPostProperties: [],
+                  builderProjectSubPostVideos: [],
+                  builderProjectSubPostImages: [],
+               });
+               // localStorage.removeItem("builderProjectSubPostId");
+               setMonthYearFrom({ month: "", year: "" });
+               setMonthYearTo({ month: "", year: "" });
+               showSuccessToast("Project created successfully");
             } else if (responseError) {
                setError(responseError);
                console.error("Error in response:", responseError);
             }
-            showSuccessToast("Project created successfully");
-            console.log("storebuilderProjectSubPostId", storebuilderProjectSubPostId);
          }
       } catch (error) {
          console.error("Error submitting builder project:", error);
-         // console.log("API Response:", response);
          showErrorToast("There was an error submitting the project.");
+      } finally {
+         // This ensures that localStorage is cleared after form submission
+         // localStorage.removeItem("builderProjectSubPostId");
       }
    };
+
    // const handleAddForm = async () => {
    //    try {
    //       const sanitizedVideos = data.builderProjectSubPostVideos.filter(
@@ -315,102 +324,48 @@ const ProjectDetails = (props) => {
          const sanitizedVideos = data.builderProjectSubPostVideos.filter(
             (video) => video.docName && video.docURL
          );
-
-         // Prepare the submission data
+         const updatedBuilderProjectSubPostProperties = data.builderProjectSubPostProperties.map(
+            (property, index) => {
+               let propertySubType = "";
+               console.log("data.builderProjectSubPostType", data.subPostType);
+               // Use the selectedType specific to this unit (index)
+               if (data.subPostType === "Tower") {
+                  propertySubType = "Apartment"; // Set propertySubType for "Tower"
+               } else if (selectedType[index] === "Villas") {
+                  propertySubType = "Independent House / Bungalow";
+               } else if (selectedType[index] === "Plot") {
+                  propertySubType = "Plot";
+               }
+               return {
+                  ...property,
+                  propertySubType, // Assign the determined value to propertySubType
+               };
+            }
+         );
          const submissionData = {
             ...data,
-            userId: getLocalStorage("authData").userid,
-            builderProjectSubPostVideos: sanitizedVideos, // Only valid videos are submitted
+            userId: storedUserId,
+            builderProjectId: storedBuilderProjectId,
+            builderProjectSubPostVideos: sanitizedVideos, // Only submit valid videos
+            builderProjectSubPostProperties: updatedBuilderProjectSubPostProperties, // Only valid videos are submitted
          };
 
-         console.log("Submission data:", submissionData);
-
-         // Submit the form data to the backend
          const response = await addBuilderProjectSubPost(submissionData);
-         console.log("Response:", response);
-
          if (response?.data) {
             const { resourceData, error: responseError } = response.data;
 
             if (resourceData) {
-               console.log("Resource data:", resourceData);
+               setData((prevData) => ({
+                  ...prevData,
+                  ...resourceData,
+               }));
 
-               // Clear the form fields immediately
-               setData({
-                  builderProjectSubPostId: null,
-                  builderProjectId: null,
-                  subPostType: "",
-                  userId: null,
-                  builderProjectSubPostName: "",
-                  reraNumber: "",
-                  areaToDevelop: null,
-                  areaToDevelopMeasurementUnitEnteredByUser: "Sq. Mt.",
-                  highlightsOrUsp: "",
-                  contactPersonName: "",
-                  contactPersonNumber: "",
-                  possessionFrom: "",
-                  possessionTo: "",
-                  totalFloors: null,
-                  unitsPerFloor: null,
-                  builderProjectSubPostInfo: [],
-                  builderProjectSubPostProperties: [
-                     {
-                        propertyId: null,
-                        numberOfRooms: null,
-                        propertyRoomCompositionType: "",
-                        propertySubType: "",
-                        totalProjectUnits: null,
-                        minPlotArea: null,
-                        maxPlotArea: null,
-                        plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-                        minCarpetArea: null,
-                        maxCarpetArea: null,
-                        carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-                        minBuiltUpArea: null,
-                        maxBuiltUpArea: null,
-                        builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-                        comments: "",
-                        minPrice: null,
-                        maxPrice: null,
-
-                        propertyVideos: [
-                           {
-                              docId: null,
-                              docName: "",
-                              docURL: "",
-                              docOrderInFrontendView: null,
-                              docDescription: "",
-                              builderProjectImageAsBase64: null,
-                           },
-                        ],
-                        propertyImages: [
-                           {
-                              docId: null,
-                              docName: "",
-                              docURL: "",
-                              docOrderInFrontendView: 2,
-                              docDescription: "",
-                              builderProjectImageAsBase64: "",
-                           },
-                        ],
-                     },
-                  ],
-                  builderProjectSubPostVideos: [],
-                  builderProjectSubPostImages: [],
-               });
-
-               setBuilderProjectSubPostId(null);
-               setBuilderProjectId(null);
-               setUserId(null);
-
-               // Clear URL ID and remove form data from the URL
                const currentUrl = window.location.pathname;
                const newUrl = currentUrl.replace(/\/\d+$/, ""); // Removes any ID at the end of the URL
                window.history.replaceState({}, "", newUrl);
                localStorage.removeItem("builderProjectSubPostId");
-               // Reload the page
-               window.location.reload();
 
+               window.location.reload();
                // Show success notification
                showSuccessToast("Form data saved successfully");
             } else if (responseError) {
@@ -423,8 +378,11 @@ const ProjectDetails = (props) => {
          }
       } catch (error) {
          console.error("Error saving form data:", error);
-         showErrorToast("Failed to save form data.");
+         showErrorToast("Please complete all required fields");
       }
+      return () => {
+         localStorage.removeItem("builderProjectSubPostId");
+      };
    };
 
    const deleteBuilderProjectSubPost = async (e) => {
@@ -432,8 +390,8 @@ const ProjectDetails = (props) => {
 
       try {
          const response = await deleteBuilderProjectSubPostById({
-            builderProjectSubPostId: builderProjectSubPostId,
-            userId: userId,
+            builderProjectSubPostId: storebuilderProjectSubPostId,
+            userId: storedUserId,
          });
       } catch (error) {
          showErrorToast("Error deleting builder project sub post");
@@ -472,6 +430,17 @@ const ProjectDetails = (props) => {
 
    const handleClose = () => {
       setShow(false); // Close the modal
+      setSelectedImageSrc("");
+   };
+   const handleImageModalShow = (image) => {
+      if (image.startsWith("data:image")) {
+         // This is a base64 image, set it directly
+         setSelectedImageSrc(image);
+      } else {
+         // It's a URL, prepend the S3 URL base path if necessary
+         setSelectedImageSrc(`${CONSTANTS.CONFIG_PROPERTY.s3Url}/${image}`);
+      }
+      setImageShowModal(true);
    };
 
    const handleProjectImagesChange = (e) => {
@@ -520,38 +489,44 @@ const ProjectDetails = (props) => {
       handleClose();
    };
 
-   const handleDeleteProjectImage = (imageToDelete) => {
+   const handleDeleteProjectImage = (index, description) => {
       setData((prevData) => ({
          ...prevData,
-         builderProjectSubPostImages: prevData.builderProjectSubPostImages.filter(
-            (image) => image !== imageToDelete
-         ),
+         builderProjectSubPostImages: prevData.builderProjectSubPostImages
+            .filter((image) => image.docDescription === description)
+            .filter((_, i) => i !== index) // Remove only the image from the relevant category
+            .concat(
+               prevData.builderProjectSubPostImages.filter(
+                  (image) => image.docDescription !== description
+               )
+            ), // Keep other categories unchanged
       }));
-
-      if (selectedImages.includes(imageToDelete)) {
-         setSelectedImages((prevSelected) =>
-            prevSelected.filter((image) => image !== imageToDelete)
+   };
+   const handleDeleteSelectedImage = (indexToDelete, docDescription) => {
+      setSelectedImages((prevImages) => {
+         const filteredImages = [...prevImages]; // Create a shallow copy of the images array
+         const imagesToKeep = filteredImages.filter(
+            (image) => image.docDescription === docDescription
          );
-      }
+
+         if (imagesToKeep[indexToDelete]) {
+            // Remove the image at the specified index for the corresponding docDescription
+            filteredImages.splice(
+               prevImages.findIndex((image) => image === imagesToKeep[indexToDelete]),
+               1
+            );
+         }
+
+         return filteredImages;
+      });
    };
 
-   const handleDeleteSelectedImage = (index) => {
-      const updatedImages = [...selectedImages];
-      updatedImages.splice(index, 1); // Remove the image at the specified index
-      setSelectedImages(updatedImages);
-   };
    const clearInput = () => {
-      setData((prevData) => ({
-         ...prevData,
-         builderProjectSubPostVideos: [],
-      }));
-      setNewVideoUrl("");
+      setNewVideoUrl(""); // Clear the input field
    };
 
    const handleAddVideo = () => {
-      // Ensure that newVideoUrl exists and is not an empty string
       if (newVideoUrl) {
-         // Initialize new video object with the necessary properties
          const newVideo = {
             docId: null,
             docName: data.docName || "New Video", // Default video name if none provided
@@ -560,20 +535,14 @@ const ProjectDetails = (props) => {
             docURL: newVideoUrl, // The URL for the new video
             builderProjectImageAsBase64: null, // Set default to null
          };
-
-         // Only proceed if the video URL is valid
          if (newVideo.docURL) {
-            // Update the list of videos, ensuring builderProjectSubPostVideos is an array
             const updatedVideos = [...(data.builderProjectSubPostVideos || []), newVideo];
-
-            // Update the state with the new video list
-            setData((prevData) => ({
-               ...prevData,
-               builderProjectSubPostVideos: updatedVideos, // Ensure this is always an array
-            }));
-
-            // Clear the input field after adding the video
-            setNewVideoUrl("");
+            setData((prevData) => {
+               const updatedVideos = [...(prevData.builderProjectSubPostVideos || [])]; // Ensure it's an array
+               updatedVideos.push(newVideo);
+               return { ...prevData, builderProjectSubPostVideos: updatedVideos };
+            });
+            clearInput(); // Clear the input after adding the video
          }
       }
    };
@@ -601,31 +570,44 @@ const ProjectDetails = (props) => {
       if (vimeoMatch) {
          return `https://player.vimeo.com/video/${vimeoMatch[4]}`;
       }
-
-      // Add other video platforms as needed
-
       return url.replace("watch?v=", "embed/"); // Example conversion
    };
-   const handleFileChange = (e, propertyIndex, imageIndex) => {
+   const handleFileChange = (e, propertyIndex, docDescription) => {
       const file = e.target.files[0];
-      const fieldName = e.target.name; // Get the name from the input field
       if (file) {
          const reader = new FileReader();
          reader.onloadend = () => {
             const newImage = {
                builderProjectImageAsBase64: reader.result, // Base64 representation of the file
-               docDescription: fieldName, // You can initialize this with an empty string
+               docDescription, // Use docDescription to identify the image
                docId: null, // Initialize with null, unless you have an actual ID to assign
                docName: file.name, // Name of the file
-               docOrderInFrontendView: imageIndex + 1, // The order of the image
+               docOrderInFrontendView: null, // Optional: Set if you need specific order
                docURL: "", // Assuming this will remain empty unless there's a specific URL
             };
+
             setData((prevData) => {
                const updatedProperties = [...prevData.builderProjectSubPostProperties];
-               if (!updatedProperties[propertyIndex].propertyImages) {
-                  updatedProperties[propertyIndex].propertyImages = [];
+               const currentProperty = updatedProperties[propertyIndex];
+
+               // Ensure the propertyImages array exists
+               if (!currentProperty.propertyImages) {
+                  currentProperty.propertyImages = [];
                }
-               updatedProperties[propertyIndex].propertyImages[imageIndex] = newImage;
+
+               // Find the image with the same docDescription
+               const existingImageIndex = currentProperty.propertyImages.findIndex(
+                  (img) => img.docDescription === docDescription
+               );
+
+               if (existingImageIndex !== -1) {
+                  // If the image exists, replace it
+                  currentProperty.propertyImages[existingImageIndex] = newImage;
+               } else {
+                  // Otherwise, add the new image
+                  currentProperty.propertyImages.push(newImage);
+               }
+
                return {
                   ...prevData,
                   builderProjectSubPostProperties: updatedProperties,
@@ -636,16 +618,51 @@ const ProjectDetails = (props) => {
       }
    };
 
-   // Handle image deletion
-   const handleDeletePropertyImage = (propertyIndex, index) => {
+   const handleDeletePropertyImage = (propertyIndex, docDescription) => {
       setData((prevData) => {
          const updatedProperties = [...prevData.builderProjectSubPostProperties];
-         if (updatedProperties[propertyIndex].propertyImages) {
-            updatedProperties[propertyIndex].propertyImages.splice(index, 1); // Remove image at index
-         }
-         return { ...prevData, builderProjectSubPostProperties: updatedProperties };
+         const currentProperty = updatedProperties[propertyIndex];
+
+         // Filter out the image with the matching docDescription
+         currentProperty.propertyImages = currentProperty.propertyImages.filter(
+            (img) => img.docDescription !== docDescription
+         );
+
+         return {
+            ...prevData,
+            builderProjectSubPostProperties: updatedProperties,
+         };
       });
+
+      // Reset file input field after deletion
+      const fileInput = document.querySelector(`input[name="${docDescription}"]`);
+      if (fileInput) {
+         fileInput.value = ""; // Reset the file input to allow re-upload
+      }
    };
+
+   // const handleDeletePropertyImage = (propertyIndex, imageIndex) => {
+   //    setData((prevData) => {
+   //       const updatedProperties = [...prevData.builderProjectSubPostProperties];
+   //       const propertyImages = [...updatedProperties[propertyIndex].propertyImages];
+
+   //       // Check if the image to be deleted is new or existing
+   //       const imageToDelete = propertyImages[imageIndex];
+
+   //       // Only delete the image if it is new or an existing image (handle based on flag or image type)
+   //       if (imageToDelete.isNew || (imageIndex >= 0 && imageIndex < propertyImages.length)) {
+   //          // Remove the image at the specified index
+   //          propertyImages.splice(imageIndex, 1);
+   //       }
+
+   //       updatedProperties[propertyIndex].propertyImages = propertyImages;
+
+   //       return {
+   //          ...prevData,
+   //          builderProjectSubPostProperties: updatedProperties,
+   //       };
+   //    });
+   // };
 
    const handleSubPostChange = (e) => {
       const value = e.target.value;
@@ -715,202 +732,8 @@ const ProjectDetails = (props) => {
          setPlottedRows(plottedRows.filter((_, i) => i !== index));
       }
    };
-   // const handleAddMoreUnit = () => {
-   //    if (data.subPostType === "Tower") {
-   //       let tow = towerRows;
-   //       tow.push({
-   //          propertyId: null,
-   //          numberOfRooms: null,
-   //          propertyRoomCompositionType: "",
-   //          propertySubType: "",
-   //          totalProjectUnits: null,
-   //          minPlotArea: null,
-   //          maxPlotArea: null,
-   //          plotAreaMeasurementUnitEnteredBy: "Sq. Mt.",
-   //          minCarpetArea: null,
-   //          maxCarpetArea: null,
-   //          carpetAreaMeasurementUnitEnteredBy: "Sq. Mt.",
-   //          minBuiltUpArea: null,
-   //          maxBuiltUpArea: null,
-   //          builtUpAreaMeasurementUnitEnteredBy: "Sq. Mt.",
-   //          comments: "",
-   //          minPrice: null,
-   //          maxPrice: null,
 
-   //          propertyVideos: [
-   //             {
-   //                docId: null,
-   //                docName: "",
-   //                docURL: "",
-   //                docOrderInFrontendView: null,
-   //                docDescription: "",
-   //                builderProjectImageAsBase64: null,
-   //             },
-   //          ],
-   //          propertyImages: [
-   //             {
-   //                docId: null,
-   //                docName: "",
-   //                docURL: "",
-   //                docOrderInFrontendView: 2,
-   //                docDescription: "",
-   //                builderProjectImageAsBase64: "",
-   //             },
-   //          ],
-   //       });
-   //       setTowerRows(tow);
-   //       setData((prevState) => ({
-   //          ...prevState,
-   //          builderProjectSubPostProperties: tow,
-   //       }));
-   //    } else if (data.subPostType === "Plotted") {
-   //       let tow = towerRows;
-   //       tow.push({
-   //          propertyId: null,
-   //          numberOfRooms: null,
-   //          propertyRoomCompositionType: "",
-   //          propertySubType: "",
-   //          totalProjectUnits: null,
-   //          minPlotArea: null,
-   //          maxPlotArea: null,
-   //          plotAreaMeasurementUnitEnteredBy: "Sq. Mt.",
-   //          minCarpetArea: null,
-   //          maxCarpetArea: null,
-   //          carpetAreaMeasurementUnitEnteredBy: "Sq. Mt.",
-   //          minBuiltUpArea: null,
-   //          maxBuiltUpArea: null,
-   //          builtUpAreaMeasurementUnitEnteredBy: "Sq. Mt.",
-   //          comments: "",
-   //          minPrice: null,
-   //          maxPrice: null,
-
-   //          propertyVideos: [
-   //             {
-   //                docId: null,
-   //                docName: "",
-   //                docURL: "",
-   //                docOrderInFrontendView: null,
-   //                docDescription: "",
-   //                builderProjectImageAsBase64: null,
-   //             },
-   //          ],
-   //          propertyImages: [
-   //             {
-   //                docId: null,
-   //                docName: "",
-   //                docURL: "",
-   //                docOrderInFrontendView: 2,
-   //                docDescription: "",
-   //                builderProjectImageAsBase64: "",
-   //             },
-   //          ],
-   //       });
-   //       setTowerRows(tow);
-   //       setData((prevState) => ({
-   //          ...prevState,
-   //          builderProjectSubPostProperties: tow,
-   //       }));
-   //    }
-   // };
-   // const handleAddMoreUnit = () => {
-   //    if (data.subPostType === "Tower") {
-   //       setData((prevState) => ({
-   //          ...prevState,
-   //          builderProjectSubPostProperties: [
-   //             ...prevState.builderProjectSubPostProperties,
-   //             {
-   //                propertyId: null,
-   //                numberOfRooms: null,
-   //                propertyRoomCompositionType: "",
-   //                propertySubType: "",
-   //                totalProjectUnits: null,
-   //                minPlotArea: null,
-   //                maxPlotArea: null,
-   //                plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-   //                minCarpetArea: null,
-   //                maxCarpetArea: null,
-   //                carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-   //                minBuiltUpArea: null,
-   //                maxBuiltUpArea: null,
-   //                builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-   //                comments: "",
-   //                minPrice: null,
-   //                maxPrice: null,
-
-   //                propertyVideos: [
-   //                   {
-   //                      docId: null,
-   //                      docName: "",
-   //                      docURL: "",
-   //                      docOrderInFrontendView: null,
-   //                      docDescription: "",
-   //                      builderProjectImageAsBase64: null,
-   //                   },
-   //                ],
-   //                propertyImages: [
-   //                   {
-   //                      docId: null,
-   //                      docName: "",
-   //                      docURL: "",
-   //                      docOrderInFrontendView: 2,
-   //                      docDescription: "",
-   //                      builderProjectImageAsBase64: "",
-   //                   },
-   //                ],
-   //             },
-   //          ],
-   //       }));
-   //    } else if (data.subPostType === "Plotted") {
-   //       setData((prevState) => ({
-   //          ...prevState,
-   //          builderProjectSubPostProperties: [
-   //             ...prevState.builderProjectSubPostProperties,
-   //             {
-   //                propertyId: null,
-   //                numberOfRooms: null,
-   //                propertyRoomCompositionType: "",
-   //                propertySubType: "",
-   //                totalProjectUnits: null,
-   //                minPlotArea: null,
-   //                maxPlotArea: null,
-   //                plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-   //                minCarpetArea: null,
-   //                maxCarpetArea: null,
-   //                carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-   //                minBuiltUpArea: null,
-   //                maxBuiltUpArea: null,
-   //                builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-   //                comments: "",
-   //                minPrice: null,
-   //                maxPrice: null,
-
-   //                propertyVideos: [
-   //                   {
-   //                      docId: null,
-   //                      docName: "",
-   //                      docURL: "",
-   //                      docOrderInFrontendView: null,
-   //                      docDescription: "",
-   //                      builderProjectImageAsBase64: null,
-   //                   },
-   //                ],
-   //                propertyImages: [
-   //                   {
-   //                      docId: null,
-   //                      docName: "",
-   //                      docURL: "",
-   //                      docOrderInFrontendView: 2,
-   //                      docDescription: "",
-   //                      builderProjectImageAsBase64: "",
-   //                   },
-   //                ],
-   //             },
-   //          ],
-   //       }));
-   //    }
-   // };
    const handleAddMoreUnit = () => {
-      // Define a new unit structure
       const newUnit = {
          propertyId: null,
          numberOfRooms: null,
@@ -951,21 +774,20 @@ const ProjectDetails = (props) => {
          ],
       };
 
-      // Update the state with the new unit
+      const newUnitIndex = data.builderProjectSubPostProperties?.length || 0;
+      setSelectedType((prevTypes) => {
+         const newTypes = [...prevTypes, "Villas"]; // Add a new type to the end of the array
+         return newTypes;
+      });
       setData((prevState) => ({
          ...prevState,
          builderProjectSubPostProperties: [
-            ...(prevState.builderProjectSubPostProperties || []),
+            ...(prevState.builderProjectSubPostProperties || []), // Ensure this is an array
             newUnit,
          ],
       }));
-
-      // Update the current unit index
       setCurrentUnitIndex((prevIndex) => prevIndex + 1);
    };
-
-   // const currentUnit = data.builderProjectSubPostProperties[currentUnitIndex] || null;
-
    const handleSaveAsDraft = () => {
       localStorage.setItem("draftFormData", JSON.stringify(data));
       alert("Draft saved successfully!");
@@ -1087,7 +909,7 @@ const ProjectDetails = (props) => {
                                  <Col lg={4}>
                                     <Form.Group controlId="formTotalFloors">
                                        <Form.Control
-                                          type="text"
+                                          type="number"
                                           placeholder="Total Floors"
                                           name="totalFloors"
                                           value={data.totalFloors}
@@ -1183,7 +1005,7 @@ const ProjectDetails = (props) => {
                                              as="select"
                                              aria-label="Month"
                                              name="month"
-                                             value={monthYearFrom.month} // Preselect the month from parsed value
+                                             value={monthYearFrom.month} // Preselect the month
                                              onChange={handleFromMonthChange}
                                           >
                                              <option value="">Select Month</option>
@@ -1204,8 +1026,8 @@ const ProjectDetails = (props) => {
                                           <Form.Control
                                              as="select"
                                              aria-label="Year"
-                                             name="year" // Set name for the year select
-                                             value={monthYearFrom.year} // Preselect the year from parsed value
+                                             name="year"
+                                             value={monthYearFrom.year} // Preselect the year
                                              onChange={handleFromYearChange}
                                           >
                                              <option value="">Select Year</option>
@@ -1221,6 +1043,7 @@ const ProjectDetails = (props) => {
                                        </Col>
                                     </Form.Group>
                                  </Col>
+
                                  <Col lg="4">
                                     <Text text="Possession to" />
                                     <Form.Group as={Row} controlId="monthYear">
@@ -1228,9 +1051,9 @@ const ProjectDetails = (props) => {
                                           <Form.Label>Month</Form.Label>
                                           <Form.Control
                                              as="select"
-                                             name="month" // Set name for the month select
+                                             name="month"
                                              aria-label="Month"
-                                             value={monthYearTo.month} // Preselect the month from parsed value
+                                             value={monthYearTo.month} // Preselect the month
                                              onChange={handleToMonthChange}
                                           >
                                              <option value="">Select Month</option>
@@ -1251,8 +1074,8 @@ const ProjectDetails = (props) => {
                                           <Form.Control
                                              as="select"
                                              aria-label="Year"
-                                             name="year" // Set name for the year select
-                                             value={monthYearTo.year} // Preselect the year from parsed value
+                                             name="year"
+                                             value={monthYearTo.year} // Preselect the year
                                              onChange={handleToYearChange}
                                           >
                                              <option value="">Select Year</option>
@@ -1269,6 +1092,7 @@ const ProjectDetails = (props) => {
                                     </Form.Group>
                                  </Col>
                               </Row>
+
                               <Row className="imageUploadRow mt-4">
                                  <Col lg={4}>
                                     <Form.Group
@@ -1291,13 +1115,12 @@ const ProjectDetails = (props) => {
                                        {(data?.builderProjectSubPostImages?.length > 0 ||
                                           imagePreviews?.length > 0) && (
                                           <Row className="mt-2">
-                                             {/* Dynamically display images from builderProjectSubPostImages */}
+                                             {/* Combine and map images from both sources */}
                                              {[
                                                 ...(data?.builderProjectSubPostImages || []),
                                                 ...(imagePreviews || []),
-                                             ].map((image, index) =>
-                                                image.builderProjectImageAsBase64 ||
-                                                image.file instanceof File ? (
+                                             ].map((image, index) => {
+                                                return (
                                                    <Col
                                                       lg="4"
                                                       key={index}
@@ -1309,11 +1132,10 @@ const ProjectDetails = (props) => {
                                                       >
                                                          <img
                                                             src={
-                                                               image.builderProjectImageAsBase64 ||
-                                                               (image.file instanceof File
-                                                                  ? URL.createObjectURL(image.file)
-                                                                  : "")
-                                                            } // Use base64 or object URL
+                                                               image.docURL
+                                                                  ? `${CONSTANTS.CONFIG_PROPERTY.s3Url}/${image.docURL}` // Use docURL if available
+                                                                  : image.builderProjectImageAsBase64 // Fallback to base64 if docURL is not available
+                                                            }
                                                             alt={
                                                                image.docDescription || image.docName
                                                             } // Use description or name as alt text
@@ -1342,7 +1164,10 @@ const ProjectDetails = (props) => {
                                                          <RxCross2
                                                             className="delete-icon"
                                                             onClick={() =>
-                                                               handleDeleteProjectImage(image)
+                                                               handleDeleteProjectImage(
+                                                                  index,
+                                                                  image.docDescription
+                                                               )
                                                             }
                                                             style={{
                                                                position: "absolute",
@@ -1356,8 +1181,8 @@ const ProjectDetails = (props) => {
                                                          />
                                                       </div>
                                                    </Col>
-                                                ) : null
-                                             )}
+                                                );
+                                             })}
                                           </Row>
                                        )}
                                     </Form.Group>
@@ -1447,9 +1272,11 @@ const ProjectDetails = (props) => {
                                                                   className="delete-icon"
                                                                   onClick={() =>
                                                                      handleDeleteSelectedImage(
-                                                                        index
+                                                                        index,
+                                                                        "Interior"
                                                                      )
-                                                                  }
+                                                                  } // Pass docDescription here
+                                                                  // Pass index and docDescription here
                                                                   style={{
                                                                      position: "absolute",
                                                                      top: "0px",
@@ -1493,9 +1320,11 @@ const ProjectDetails = (props) => {
                                                                   className="delete-icon"
                                                                   onClick={() =>
                                                                      handleDeleteSelectedImage(
-                                                                        index
+                                                                        index,
+                                                                        "Exterior"
                                                                      )
                                                                   }
+                                                                  // Pass index and docDescription here
                                                                   style={{
                                                                      position: "absolute",
                                                                      top: "0px",
@@ -1559,8 +1388,8 @@ const ProjectDetails = (props) => {
                                                 onChange={handleInputChange}
                                                 style={{ paddingRight: "2.5rem" }}
                                              />
-                                             {/* Show cross icon only if there are videos */}
-                                             {data.builderProjectSubPostVideos && (
+                                             {/* Show cross icon only if there is a value in the input */}
+                                             {newVideoUrl && ( // Change this line
                                                 <TiTimes
                                                    className="crossicon"
                                                    onClick={clearInput}
@@ -1591,7 +1420,7 @@ const ProjectDetails = (props) => {
 
                                           {/* Display the list of videos below the input */}
                                           {Array.isArray(data.builderProjectSubPostVideos) && (
-                                             <div className="video-preview-container">
+                                             <Row className="video-preview-container d-flex">
                                                 {data.builderProjectSubPostVideos.map(
                                                    (video, index) => {
                                                       const embedUrl = getEmbedUrl(video.docURL); // Generate embed URL
@@ -1604,6 +1433,7 @@ const ProjectDetails = (props) => {
                                                                   display: "inline-block",
                                                                   margin: "10px",
                                                                }}
+                                                               key={index} // Add key prop
                                                             >
                                                                <iframe
                                                                   width="120"
@@ -1656,7 +1486,7 @@ const ProjectDetails = (props) => {
                                                       );
                                                    }
                                                 )}
-                                             </div>
+                                             </Row>
                                           )}
                                           <Form.Text className="text-muted">
                                              Paste the link of the video (YouTube, Vimeo, etc.)
@@ -2094,7 +1924,7 @@ const ProjectDetails = (props) => {
                                                                   handleFileChange(
                                                                      e,
                                                                      propertyIndex,
-                                                                     index
+                                                                     field.docName
                                                                   )
                                                                }
                                                             />
@@ -2103,36 +1933,62 @@ const ProjectDetails = (props) => {
                                                                Browse
                                                             </Form.File.Label>
                                                          </Form.File>
-                                                         {property.propertyImages[index] &&
-                                                         property.propertyImages[index].docName ? (
-                                                            <div className="d-flex align-items-center">
-                                                               <RxCross2
-                                                                  className="delete-icon ml-2 text-danger"
-                                                                  style={{
-                                                                     cursor: "pointer",
-                                                                  }}
-                                                                  onClick={() =>
-                                                                     handleDeletePropertyImage(
-                                                                        propertyIndex,
-                                                                        index
-                                                                     )
-                                                                  }
-                                                               />
-                                                               <span
-                                                                  style={{
-                                                                     fontSize: "12px",
-                                                                     fontWeight: 400,
-                                                                     lineHeight: "16.39px",
-                                                                     letterSpacing: "-0.02em",
-                                                                     textAlign: "left",
-                                                                  }}
-                                                               >
-                                                                  {
-                                                                     property.propertyImages[index]
-                                                                        .docName
-                                                                  }
-                                                               </span>
-                                                            </div>
+
+                                                         {/* Check if property.propertyImages exists and map images based on docDescription */}
+                                                         {property.propertyImages &&
+                                                         property.propertyImages.length > 0 ? (
+                                                            property.propertyImages
+                                                               .filter(
+                                                                  (image) =>
+                                                                     image.docDescription ===
+                                                                     field.docName
+                                                               ) // Filter images by docDescription
+                                                               .map((image, imgIndex) => (
+                                                                  <div
+                                                                     key={imgIndex}
+                                                                     className="d-flex align-items-center"
+                                                                  >
+                                                                     <RxCross2
+                                                                        className="delete-icon ml-2 text-danger"
+                                                                        style={{
+                                                                           cursor: "pointer",
+                                                                        }}
+                                                                        onClick={() =>
+                                                                           handleDeletePropertyImage(
+                                                                              propertyIndex,
+                                                                              image.docDescription
+                                                                           )
+                                                                        } // Pass both indices
+                                                                     />
+                                                                     <span
+                                                                        style={{
+                                                                           fontSize: "12px",
+                                                                           fontWeight: 400,
+                                                                           lineHeight: "16.39px",
+                                                                           letterSpacing: "-0.02em",
+                                                                           textAlign: "left",
+                                                                           cursor: "pointer",
+                                                                        }}
+                                                                        onClick={() => {
+                                                                           // Set the selected image source
+                                                                           if (
+                                                                              image.builderProjectImageAsBase64
+                                                                           ) {
+                                                                              setSelectedImageSrc(
+                                                                                 image.builderProjectImageAsBase64
+                                                                              );
+                                                                           } else {
+                                                                              setSelectedImageSrc(
+                                                                                 `${CONSTANTS.CONFIG_PROPERTY.s3Url}/${image.docURL}`
+                                                                              );
+                                                                           }
+                                                                           setImageShowModal(true); // Open the modal
+                                                                        }} // Open modal on click
+                                                                     >
+                                                                        {image.docName}
+                                                                     </span>
+                                                                  </div>
+                                                               ))
                                                          ) : (
                                                             <span
                                                                style={{
@@ -2150,6 +2006,52 @@ const ProjectDetails = (props) => {
                                                       </Form.Group>
                                                    </Col>
                                                 ))}
+
+                                                <Modal
+                                                   show={showImageModal}
+                                                   onHide={() => setImageShowModal(false)}
+                                                   centered
+                                                >
+                                                   <Modal.Body style={{ position: "relative" }}>
+                                                      <h4
+                                                         style={{
+                                                            fontSize: "24px",
+                                                            fontWeight: 700,
+                                                            lineHeight: "21.86px",
+                                                            letterSpacing: "-0.02em",
+                                                            textAlign: "left",
+                                                            marginBottom: "20px",
+                                                         }}
+                                                      >
+                                                         Project Images
+                                                      </h4>
+
+                                                      <RxCross2
+                                                         className="delete-icon"
+                                                         onClick={() => setImageShowModal(false)}
+                                                         style={{
+                                                            position: "absolute",
+                                                            top: "-11px",
+                                                            right: "-11px",
+                                                            cursor: "pointer",
+                                                            color: "#fff",
+                                                            background: "#ff1919",
+                                                            fontSize: "24px",
+                                                            borderRadius: "50%",
+                                                            zIndex: 1,
+                                                         }}
+                                                      />
+
+                                                      {selectedImageSrc && (
+                                                         <img
+                                                            src={selectedImageSrc}
+                                                            alt={selectedImageSrc ? "Image" : ""}
+                                                            className="img-fluid"
+                                                         />
+                                                      )}
+                                                   </Modal.Body>
+                                                </Modal>
+
                                                 <Col md={12} className="mt-3">
                                                    <Form.Group controlId="comments">
                                                       <Form.Control
@@ -2191,21 +2093,29 @@ const ProjectDetails = (props) => {
                                              <div className="UnitformContainer1">
                                                 <div className="mb-3 flex-container1">
                                                    <div className="flex-item">
-                                                      <Form.Group controlId="formselectConfiguration">
+                                                      <Form.Group
+                                                         controlId={`formselectConfiguration-${propertyIndex}`}
+                                                      >
                                                          <label>Configuration</label>
                                                          <Form.Control
                                                             as="select"
-                                                            value={selectedType}
+                                                            value={
+                                                               selectedType[propertyIndex] ||
+                                                               "Villas"
+                                                            } // Use selectedType for the current unit
                                                             onChange={(e) =>
-                                                               setSelectedType(e.target.value)
+                                                               handleTypeChange(
+                                                                  propertyIndex,
+                                                                  e.target.value
+                                                               )
                                                             }
                                                          >
                                                             <option value="Villas">Villas</option>
-                                                            <option value="Plots">Plots</option>
+                                                            <option value="Plot">Plot</option>
                                                          </Form.Control>
                                                       </Form.Group>
                                                    </div>
-                                                   {selectedType === "Villas" && (
+                                                   {selectedType[propertyIndex] === "Villas" && (
                                                       <>
                                                          <div className="flex-item">
                                                             <Form.Group controlId="configuration">
@@ -2519,7 +2429,6 @@ const ProjectDetails = (props) => {
                                                             </Form.Group>
                                                          </div>
                                                          <div className="flex-item"></div>
-
                                                          {imageFields.map((field, index) => (
                                                             <div className="flex-item" key={index}>
                                                                <Form.Group
@@ -2533,7 +2442,7 @@ const ProjectDetails = (props) => {
                                                                            handleFileChange(
                                                                               e,
                                                                               propertyIndex,
-                                                                              index
+                                                                              field.docName
                                                                            )
                                                                         }
                                                                      />
@@ -2542,40 +2451,52 @@ const ProjectDetails = (props) => {
                                                                         Browse
                                                                      </Form.File.Label>
                                                                   </Form.File>
-                                                                  {property.propertyImages[index] &&
-                                                                  property.propertyImages[index]
-                                                                     .docName ? (
-                                                                     <div className="d-flex align-items-center">
-                                                                        <RxCross2
-                                                                           className="delete-icon ml-2 text-danger"
-                                                                           style={{
-                                                                              cursor: "pointer",
-                                                                           }}
-                                                                           onClick={() =>
-                                                                              handleDeletePropertyImage(
-                                                                                 propertyIndex,
-                                                                                 index
-                                                                              )
-                                                                           }
-                                                                        />
-                                                                        <span
-                                                                           style={{
-                                                                              fontSize: "12px",
-                                                                              fontWeight: 400,
-                                                                              lineHeight: "16.39px",
-                                                                              letterSpacing:
-                                                                                 "-0.02em",
-                                                                              textAlign: "left",
-                                                                           }}
-                                                                        >
-                                                                           {
-                                                                              property
-                                                                                 .propertyImages[
-                                                                                 index
-                                                                              ].docName
-                                                                           }
-                                                                        </span>
-                                                                     </div>
+
+                                                                  {/* Check if property.propertyImages exists and map images based on docDescription */}
+                                                                  {property.propertyImages &&
+                                                                  property.propertyImages.length >
+                                                                     0 ? (
+                                                                     property.propertyImages
+                                                                        .filter(
+                                                                           (image) =>
+                                                                              image.docDescription ===
+                                                                              field.docName
+                                                                        ) // Filter images by docDescription
+                                                                        .map((image, imgIndex) => (
+                                                                           <div
+                                                                              key={imgIndex}
+                                                                              className="d-flex align-items-center"
+                                                                           >
+                                                                              <RxCross2
+                                                                                 className="delete-icon ml-2 text-danger"
+                                                                                 style={{
+                                                                                    cursor:
+                                                                                       "pointer",
+                                                                                 }}
+                                                                                 onClick={() =>
+                                                                                    handleDeletePropertyImage(
+                                                                                       propertyIndex,
+                                                                                       image.docDescription
+                                                                                    )
+                                                                                 } // Pass both indices
+                                                                              />
+                                                                              <span
+                                                                                 style={{
+                                                                                    fontSize:
+                                                                                       "12px",
+                                                                                    fontWeight: 400,
+                                                                                    lineHeight:
+                                                                                       "16.39px",
+                                                                                    letterSpacing:
+                                                                                       "-0.02em",
+                                                                                    textAlign:
+                                                                                       "left",
+                                                                                 }}
+                                                                              >
+                                                                                 {image.docName}
+                                                                              </span>
+                                                                           </div>
+                                                                        ))
                                                                   ) : (
                                                                      <span
                                                                         style={{
@@ -2593,7 +2514,61 @@ const ProjectDetails = (props) => {
                                                                </Form.Group>
                                                             </div>
                                                          ))}
-                                                         <div className="flex-item">
+
+                                                         {/* Image Modal */}
+                                                         <Modal
+                                                            show={showImageModal}
+                                                            onHide={() => setImageShowModal(false)}
+                                                            centered
+                                                         >
+                                                            <Modal.Body
+                                                               style={{ position: "relative" }}
+                                                            >
+                                                               <h4
+                                                                  style={{
+                                                                     fontSize: "24px",
+                                                                     fontWeight: 700,
+                                                                     lineHeight: "21.86px",
+                                                                     letterSpacing: "-0.02em",
+                                                                     textAlign: "left",
+                                                                     marginBottom: "20px",
+                                                                  }}
+                                                               >
+                                                                  Project Images
+                                                               </h4>
+
+                                                               <RxCross2
+                                                                  className="delete-icon"
+                                                                  onClick={() =>
+                                                                     setImageShowModal(false)
+                                                                  }
+                                                                  style={{
+                                                                     position: "absolute",
+                                                                     top: "-11px",
+                                                                     right: "-11px",
+                                                                     cursor: "pointer",
+                                                                     color: "#fff",
+                                                                     background: "#ff1919",
+                                                                     fontSize: "24px",
+                                                                     borderRadius: "50%",
+                                                                     zIndex: 1,
+                                                                  }}
+                                                               />
+
+                                                               {selectedImageSrc && (
+                                                                  <img
+                                                                     src={selectedImageSrc}
+                                                                     alt={
+                                                                        selectedImageSrc
+                                                                           ? "Image"
+                                                                           : ""
+                                                                     }
+                                                                     className="img-fluid"
+                                                                  />
+                                                               )}
+                                                            </Modal.Body>
+                                                         </Modal>
+                                                         <div className="flex-item comment-conta">
                                                             <Form.Group controlId="comments">
                                                                <Form.Control
                                                                   type="text"
@@ -2606,7 +2581,7 @@ const ProjectDetails = (props) => {
                                                          </div>
                                                       </>
                                                    )}
-                                                   {selectedType === "Plots" && (
+                                                   {selectedType[propertyIndex] === "Plot" && (
                                                       <>
                                                          <div className="flex-item">
                                                             <Form.Group controlId="totalUnits">
@@ -2746,7 +2721,7 @@ const ProjectDetails = (props) => {
                                                          <div className="flex-item"></div>
 
                                                          {imageFields.map((field, index) => (
-                                                            <div key={index} className="flex-item">
+                                                            <Col key={index}>
                                                                <Form.Group
                                                                   controlId={field.docName}
                                                                >
@@ -2758,7 +2733,7 @@ const ProjectDetails = (props) => {
                                                                            handleFileChange(
                                                                               e,
                                                                               propertyIndex,
-                                                                              index
+                                                                              field.docName
                                                                            )
                                                                         }
                                                                      />
@@ -2767,40 +2742,52 @@ const ProjectDetails = (props) => {
                                                                         Browse
                                                                      </Form.File.Label>
                                                                   </Form.File>
-                                                                  {property.propertyImages[index] &&
-                                                                  property.propertyImages[index]
-                                                                     .docName ? (
-                                                                     <div className="d-flex align-items-center">
-                                                                        <RxCross2
-                                                                           className="delete-icon ml-2 text-danger"
-                                                                           style={{
-                                                                              cursor: "pointer",
-                                                                           }}
-                                                                           onClick={() =>
-                                                                              handleDeletePropertyImage(
-                                                                                 propertyIndex,
-                                                                                 index
-                                                                              )
-                                                                           }
-                                                                        />
-                                                                        <span
-                                                                           style={{
-                                                                              fontSize: "12px",
-                                                                              fontWeight: 400,
-                                                                              lineHeight: "16.39px",
-                                                                              letterSpacing:
-                                                                                 "-0.02em",
-                                                                              textAlign: "left",
-                                                                           }}
-                                                                        >
-                                                                           {
-                                                                              property
-                                                                                 .propertyImages[
-                                                                                 index
-                                                                              ].docName
-                                                                           }
-                                                                        </span>
-                                                                     </div>
+
+                                                                  {/* Check if property.propertyImages exists and map images based on docDescription */}
+                                                                  {property.propertyImages &&
+                                                                  property.propertyImages.length >
+                                                                     0 ? (
+                                                                     property.propertyImages
+                                                                        .filter(
+                                                                           (image) =>
+                                                                              image.docDescription ===
+                                                                              field.docName
+                                                                        ) // Filter images by docDescription
+                                                                        .map((image, imgIndex) => (
+                                                                           <div
+                                                                              key={imgIndex}
+                                                                              className="d-flex align-items-center"
+                                                                           >
+                                                                              <RxCross2
+                                                                                 className="delete-icon ml-2 text-danger"
+                                                                                 style={{
+                                                                                    cursor:
+                                                                                       "pointer",
+                                                                                 }}
+                                                                                 onClick={() =>
+                                                                                    handleDeletePropertyImage(
+                                                                                       propertyIndex,
+                                                                                       image.docDescription
+                                                                                    )
+                                                                                 } // Pass both indices
+                                                                              />
+                                                                              <span
+                                                                                 style={{
+                                                                                    fontSize:
+                                                                                       "12px",
+                                                                                    fontWeight: 400,
+                                                                                    lineHeight:
+                                                                                       "16.39px",
+                                                                                    letterSpacing:
+                                                                                       "-0.02em",
+                                                                                    textAlign:
+                                                                                       "left",
+                                                                                 }}
+                                                                              >
+                                                                                 {image.docName}
+                                                                              </span>
+                                                                           </div>
+                                                                        ))
                                                                   ) : (
                                                                      <span
                                                                         style={{
@@ -2816,9 +2803,63 @@ const ProjectDetails = (props) => {
                                                                      </span>
                                                                   )}
                                                                </Form.Group>
-                                                            </div>
+                                                            </Col>
                                                          ))}
-                                                         <div className="flex-item">
+
+                                                         {/* Image Modal */}
+                                                         <Modal
+                                                            show={showImageModal}
+                                                            onHide={() => setImageShowModal(false)}
+                                                            centered
+                                                         >
+                                                            <Modal.Body
+                                                               style={{ position: "relative" }}
+                                                            >
+                                                               <h4
+                                                                  style={{
+                                                                     fontSize: "24px",
+                                                                     fontWeight: 700,
+                                                                     lineHeight: "21.86px",
+                                                                     letterSpacing: "-0.02em",
+                                                                     textAlign: "left",
+                                                                     marginBottom: "20px",
+                                                                  }}
+                                                               >
+                                                                  Project Images
+                                                               </h4>
+
+                                                               <RxCross2
+                                                                  className="delete-icon"
+                                                                  onClick={() =>
+                                                                     setImageShowModal(false)
+                                                                  }
+                                                                  style={{
+                                                                     position: "absolute",
+                                                                     top: "-11px",
+                                                                     right: "-11px",
+                                                                     cursor: "pointer",
+                                                                     color: "#fff",
+                                                                     background: "#ff1919",
+                                                                     fontSize: "24px",
+                                                                     borderRadius: "50%",
+                                                                     zIndex: 1,
+                                                                  }}
+                                                               />
+
+                                                               {selectedImageSrc && (
+                                                                  <img
+                                                                     src={selectedImageSrc}
+                                                                     alt={
+                                                                        selectedImageSrc
+                                                                           ? "Image"
+                                                                           : ""
+                                                                     }
+                                                                     className="img-fluid"
+                                                                  />
+                                                               )}
+                                                            </Modal.Body>
+                                                         </Modal>
+                                                         <div className="flex-item comment-conta">
                                                             <Form.Group controlId="comments">
                                                                <Form.Control
                                                                   type="text"

@@ -3099,6 +3099,22 @@ export const ApiJson = {
       showResultMessage: false,
       showErrorMessage: true,
    },
+   getBuilderProjectSubPostsStats: {
+      url: "/consumer/builder/getBuilderProjectSubPostsStats/",
+      method: "POST",
+      data: {
+         builderId: null,
+         searchString: null,
+         userId: null,
+         records: null,
+         pageNumber: null,
+      },
+      headers: {
+         "Content-Type": "application/json",
+      },
+      showResultMessage: false,
+      showErrorMessage: true,
+   },
    getBuilderProjectById: {
       url: "/consumer/builder/getBuilderProjectById/:builderProjectId/:userId/",
       method: "GET",

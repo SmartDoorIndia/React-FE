@@ -21,12 +21,12 @@ const BuilderProfileDetails = () => {
 
    const builderId = getLocalStorage("authData").builderId;
    const userId = getLocalStorage("authData").userid;
-   const [isChecked, setIsChecked] = useState(true); // Set to checked by default
+   const [isChecked, setIsChecked] = useState(false); // Set to checked by default
    const [isFormValid, setIsFormValid] = useState(false);
    const [showModal, setShowModal] = useState(false);
-   const [loading, setLoading] = useState(true);
    const [isApproved, setIsApproved] = useState(false);
    const fileInputRef = useRef(null); // Create a ref for the file input
+   const [loading, setLoading] = useState(true);
 
    const [data, setData] = useState({
       mobile: "",
@@ -70,6 +70,7 @@ const BuilderProfileDetails = () => {
    // Fetch builder data if editing an existing profile
    const _getBuilderById = useCallback(() => {
       if (!builderId) return; // Skip if no builderId
+      setLoading(true);
       getBuilderById({ builderId: builderId, userId: userId })
          .then((response) => {
             if (response?.data) {
@@ -80,6 +81,7 @@ const BuilderProfileDetails = () => {
                      Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
                   );
                   setData(sanitizedData);
+                  setIsChecked(true);
                }
                if (responseError) setError(responseError);
             }
@@ -160,6 +162,7 @@ const BuilderProfileDetails = () => {
          });
 
          // Invalidate the form state to disable the submit button
+         setIsChecked(false);
          setIsFormValid(false);
       } catch (error) {
          // Show error toast on failure
@@ -229,6 +232,7 @@ const BuilderProfileDetails = () => {
    const handleCheckboxChange = (event) => {
       setIsChecked(event.target.checked);
    };
+
    return (
       <div className="profile-page">
          <div className="container-fluid content">
@@ -266,16 +270,23 @@ const BuilderProfileDetails = () => {
                                     {data.builderLogoImageAsBase64 && (
                                        <div className="image-preview">
                                           <img
-                                             src={
-                                                data.builderLogoS3ImageUrl
-                                                   ? `${CONSTANTS.CONFIG_PROPERTY.s3Url}/${data.builderLogoS3ImageUrl}`
-                                                   : data.builderLogoImageAsBase64 // Use base64 if S3 URL is not available
-                                             }
+                                             src={data.builderLogoImageAsBase64}
                                              alt="Builder Logo"
                                              className="preview-img"
                                           />
                                        </div>
                                     )}
+
+                                    {!data.builderLogoImageAsBase64 &&
+                                       data.builderLogoS3ImageUrl && (
+                                          <div className="image-preview">
+                                             <img
+                                                src={`${CONSTANTS.CONFIG_PROPERTY.s3Url}/${data.builderLogoS3ImageUrl}`}
+                                                alt="Builder Logo"
+                                                className="preview-img"
+                                             />
+                                          </div>
+                                       )}
                                  </label>
                               </div>
                            </Col>
@@ -488,12 +499,12 @@ const BuilderProfileDetails = () => {
                         <Col lg="12">
                            <Form.Check
                               type="checkbox"
+                              id="custom-checkbox"
                               label="I declare that I represent the above details to be true and as my own organisation and SmartDoor may take requisite action if any detail is found to be untrue."
                               checked={isChecked}
                               onChange={handleCheckboxChange}
                               className="custom-checkbox"
                            />
-                           {/* <p>{isChecked ? "Checked" : "Unchecked"}</p> */}
                         </Col>
                      </Row>
                      <Row>

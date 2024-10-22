@@ -67,7 +67,7 @@ const routeData = [
       component: NewProjectPost,
    },
    {
-      path: "/builder/Project-details/",
+      path: "/builder/Project-details",
       name: "Add New Projects Post",
       bradcrumb: ["Project Details", "Add New Post"],
       excat: true,

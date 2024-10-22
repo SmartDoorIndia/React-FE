@@ -8,7 +8,7 @@ import sideLogo from "../../assets/images/sidebar-logo.svg";
 import { Link } from "react-router-dom";
 import brokerActive from "../../assets/svg/broker-active.svg";
 
-const BuilderNav = () => {
+const BuilderNav = ({ builderProjectSubPostId }) => {
    return (
       <div className="mainMenu">
          <ReactBoostrap.Navbar expand="lg">
@@ -18,14 +18,14 @@ const BuilderNav = () => {
             <ReactBoostrap.Navbar.Toggle aria-controls="basic-navbar-nav" />
             <ReactBoostrap.Navbar.Collapse id="basic-navbar-nav">
                <ReactBoostrap.Nav className="mr-auto">
-                  <Link to="/admin/user-management" className={"nav-link"}>
+                  {/* <Link to="/admin/user-management" className={"nav-link"}>
                      <Image name="teamGroup" src={brokerActive} />
                      Projects
                   </Link>
                   <Link to="/admin/user-management" className={"nav-link"}>
                      <Image name="teamGroup" src={brokerActive} />
                      Manage Users
-                  </Link>
+                  </Link> */}
                   <Link to="/builder/detail" className={"nav-link"}>
                      <Image name="teamGroup" src={brokerActive} />
                      Builder Details
@@ -39,7 +39,7 @@ const BuilderNav = () => {
                      Projects Posting
                   </Link>
 
-                  <Link to="/builder/Project-details" className={"nav-link"}>
+                  <Link to={`/builder/Project-details/`} className={"nav-link"}>
                      <Image name="teamGroup" src={brokerActive} />
                      Project Details
                   </Link>

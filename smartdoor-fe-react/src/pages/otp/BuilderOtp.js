@@ -142,39 +142,13 @@ const BuilderOtp = (props) => {
                setLocalStorage("authData", response.data);
 
                // Delay redirect to ensure auth data is set
-               setTimeout(() => {
-                  history.push("/builder/detail");
-               }); // Adding a slight delay to ensure data is set
+               window.location.href = "/builder/detail";
             } else {
                showErrorToast("Login failed");
             }
          } catch (error) {
             showErrorToast("Login error");
             console.log("Login error:", error);
-         } finally {
-            setButtonDisable(false);
-         }
-      } else {
-         // User does not exist, handle sign-up
-         try {
-            const response = await dispatch(BuilderSignup({ mobile: mobile, otp: otpValue }));
-
-            if (response?.status === 200) {
-               showSuccessToast("Sign Up successful");
-
-               // Store auth data in local storage
-               setLocalStorage("authData", response.data);
-
-               // Delay redirect to ensure auth data is set
-               setTimeout(() => {
-                  history.push("/builder/detail");
-               }, 200); // Adding a slight delay to ensure data is set
-            } else {
-               showErrorToast("Sign Up failed");
-            }
-         } catch (error) {
-            showErrorToast("Sign Up error");
-            console.log("Sign Up error:", error);
          } finally {
             setButtonDisable(false);
          }
