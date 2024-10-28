@@ -367,3 +367,7 @@ export const BATTERY_LEVEL_LOADING = 'src/pages/Dashboar/BatteryLevelCheck/Loadi
 export const HUB_LIST_SUCCESS = 'src/pages/Dashboard/HubList/Success';
 export const HUB_LIST_ERROR = 'src/pages/Dashboard/HubList/Error';
 export const HUB_LIST_LOADING = 'src/pages/Dashboar/HubList/Loading';
+
+export const KIT_LIST_SUCCESS = 'src/pages/Dashboard/kitList/Success';
+export const KIT_LIST_ERROR = 'src/pages/Dashboard/kitList/Error';
+export const KIT_LIST_LOADING = 'src/pages/Dashboar/kitList/Loading';

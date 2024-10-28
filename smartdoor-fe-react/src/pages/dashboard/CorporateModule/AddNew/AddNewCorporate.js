@@ -15,6 +15,7 @@ import { addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorpora
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import Loader from "../../../../common/helpers/Loader";
 
 const AddNewCorporate = (props) => {
    const { getHubList, allHubList } = props;
@@ -76,7 +77,6 @@ const AddNewCorporate = (props) => {
          if (response?.data?.resourceData?.length === 0) {
             return [];
          } else {
-            // Extracting hubId from each element and returning as an array
             return response?.data?.resourceData?.map(element => element.hubId);
          }
       } catch (error) {
@@ -94,7 +94,7 @@ const AddNewCorporate = (props) => {
                response.data.resourceData.map(async (user) => ({
                   ...user,
                   sdPosting: user.sdPosting ? 'Smart Door Posting' : 'Non Smart Door Posting',
-                  hubIdList: await fetchHubIdList(user), // Await the fetchHubIdList promise
+                  hubIdList: await fetchHubIdList(user),
                }))
             );
             setUserList(userlist);
@@ -326,6 +326,9 @@ const AddNewCorporate = (props) => {
                fontWeight="bold"
                style={{ fontSize: "16px", marginLeft: "17px", marginBottom: '1%' }}
             />
+            {userList.length === 0 ?
+               <Loader />
+            : null}
             {userList.map((elememt, index) => (
                <>
                   <Row className="ml-1 mr-1" id={index}>
@@ -442,7 +445,7 @@ const AddNewCorporate = (props) => {
                               onClick={() => { setEditUserIndex(index) }}
                            />
                            :
-                           <Buttons id={index} disabled={false} name='Done' varient='primary' style={{ marginTop: '70%' }}
+                           <Buttons id={index} disabled={false} name='Done' varient='primary' style={{ marginTop: '40%' }}
                               onClick={() => { editUser(); }} ></Buttons>
                         }
                      </Col>

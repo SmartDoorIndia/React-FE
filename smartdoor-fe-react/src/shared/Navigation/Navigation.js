@@ -316,6 +316,17 @@ const Nav = () => {
                            />
                            Hub List
                         </Link>
+                        <Link
+                           to="/admin/kit-list"
+                           className={`nav-link ${pathname.includes("/admin/kit-list") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/kit-list") ? borkerIcon : dashboard}
+                           />
+                           Kit List
+                        </Link>
                      </>
                   )}
 

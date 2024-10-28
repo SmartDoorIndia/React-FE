@@ -162,7 +162,7 @@ const HubList = (props) => {
                     />
                 </div>
             </div>
-            <Modal show={showAddNewHubModal} onHide={() => { setShowAddNewHubModal(false); }} centered >
+            <Modal show={showAddNewHubModal} onHide={() => { setShowAddNewHubModal(false); setNewHub({hubId: null, hubName: ''}); }} centered >
                 <Modal.Header className='text-center'>
                     <Text text={newHub.hubId !== null ? 'Edit Hub' : 'Add New Hub'} style={{ fontSize: '20px', fontWeight: '700' }} />
                 </Modal.Header>
@@ -186,17 +186,24 @@ const HubList = (props) => {
                             :
                             <Buttons name={newHub.hubId !== null ? 'Save' : 'Add New Hub'} variant='primary'
                                 onClick={async () => {
-                                    setLoading(true);
                                     console.log(newHub)
-                                    const response = await createNewHub(newHub);
-                                    setLoading(false);
-                                    if (response.status === 200) {
-                                        showSuccessToast('Hub saved successfully');
-                                        getHubList();
-                                        setShowAddNewHubModal(false);
-                                    } else {
-                                        showErrorToast('Please try again later...');
+                                    if(newHub.hubName.length === 0 || (newHub.hubName.trim()).length === 0) {
+                                        showErrorToast("Please enter valid hub name...");
                                         return null;
+                                    } else 
+                                    {
+                                        setLoading(true);
+                                        const response = await createNewHub(newHub);
+                                        setLoading(false);
+                                        if (response.status === 200) {
+                                            showSuccessToast('Hub saved successfully');
+                                            getHubList();
+                                            setShowAddNewHubModal(false);
+                                            setNewHub({hubId: null, hubName: ''});
+                                        } else {
+                                            showErrorToast('Please try again later...');
+                                            return null;
+                                        }
                                     }
                                 }}></Buttons>
                         }

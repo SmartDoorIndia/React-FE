@@ -2318,7 +2318,7 @@ export const ApiJson = {
     showResultMessage: true,
     showErrorMessage: true
   },
-  
+
   getSmartDoorServiceStatus: {
     url: 'consumer/property/getSmartDoorServiceStatus',
     method: 'POST',
@@ -3000,7 +3000,7 @@ export const ApiJson = {
 
   getHubList: {
     url: "/admin/admin/getAllSmartDoorHubs",
-    method: "GET",
+    method: "POST",
     data: {},
     headers: {
       Accept: "*/*",
@@ -3031,6 +3031,54 @@ export const ApiJson = {
     data: {
       corporateUserId: null
     },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  getCorporatePlans: {
+    url: 'consumer/property/getCorporatePlans',
+    method: 'GET',
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  getKitHubList: {
+    url: "/smartlock/smartlock/getKitListbyPropertyId/:propertyId",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  getKitDevices: {
+    url: "/smartlock/smartlock/getKItDeviceData/:kitid",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  editKitDetails: {
+    url: "/smartlock/smartlock/editKitDetails",
+    method: "PUT",
+    data: {},
     headers: {
       Accept: "*/*",
       "Content-Type": "application/json",
