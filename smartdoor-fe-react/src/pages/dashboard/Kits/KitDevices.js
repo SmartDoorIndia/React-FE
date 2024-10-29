@@ -10,6 +10,7 @@ import { Card, Modal } from "react-bootstrap";
 import { Checkbox, MenuItem, TextField } from "@mui/material";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import TextArea from "../../../shared/Inputs/TextArea/TextArea";
 
 const KitDevices = (props) => {
     const { allHubList, getHubList } = props;
@@ -20,12 +21,25 @@ const KitDevices = (props) => {
     const [error, setError] = useState({});
     const [showEditCameraData, setShowEditCameraData] = useState(false);
     const [selectedCameraData, setselectedCameraData] = useState({})
+    const [showEditSmartLockData, setShowEditSmartLockData] = useState(false);
+    const [selectedSmartLockData, setselectedSmartLockData] = useState({})
     const [addCameraFlag, setAddCameraFlag] = useState(false);
     const [cameraTypeList, setCameraTypeList] = useState([]);
     const [assignedHub, setAssignedHub] = useState('');
     const [corporatePlanList, setCorporatePlanList] = useState([]);
     const [selectedPlanIdList, setSelectedPlanIdList] = useState([]);
     const [assignedCorporatePlans, setAssignedCorporatePlans] = useState([]);
+
+    const showSmartLockData = (id) => {
+        console.log(id)
+        setShowEditSmartLockData(true)
+        smartLockList.forEach(element => {
+            if (element.id === id) {
+                setselectedSmartLockData(element)
+                console.log(element)
+            }
+        });
+    }
 
     const smartLockColumns = [
         {
@@ -66,7 +80,7 @@ const KitDevices = (props) => {
                         size="xSmall"
                         color="white"
                         className="mt-2 mb-2"
-                        onClick={() => { }} />
+                        onClick={() => { showSmartLockData(id) }} />
                 </div>
             ),
         },
@@ -242,7 +256,7 @@ const KitDevices = (props) => {
                         }}
                     >
                         {allHubList?.data?.hubList?.map((element) => (
-                            <MenuItem key={element.hubId} value={element.hubName} >
+                            <MenuItem key={element.hubId} value={element.hubId} >
                                 {element.hubName}
                             </MenuItem>
                         ))}
@@ -325,7 +339,7 @@ const KitDevices = (props) => {
                     <div className="text-end" style={{textAlign:'end'}}>
                         <Buttons className='mt-3' name='Submit' onClick={async () => {
                             console.log(assignedCorporatePlans);
-                            const assignedHubId = allHubList.data.hubList.find((hub) => hub.hubName === assignedHub);
+                            const assignedHubId = allHubList.data.hubList.find((hub) => hub.hubId === assignedHub);
                             console.log(assignedHubId)
                             const requestBody = {
                                 kitId: props.location.state.kitId,
@@ -343,6 +357,171 @@ const KitDevices = (props) => {
                 </div>
 
             </div>
+
+            <Modal size="lg" show={showEditSmartLockData} onHide={() => { setShowEditSmartLockData(false); }} centered={true} >
+                <Modal.Body>
+                    <Text
+                        className="m-2 h5"
+                        size="medium"
+                        text="View SmartLock Data"
+                    />
+                    <div className="d-flex mt-3 row col-12">
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="id"
+                            contentEditable='false'
+                            label="id"
+                            value={selectedSmartLockData?.id}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="propertyId"
+                            contentEditable='false'
+                            label="propertyId"
+                            value={selectedSmartLockData?.propertyId}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="uid"
+                            contentEditable='false'
+                            label="uid"
+                            value={selectedSmartLockData?.uid}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="lockmac"
+                            multiline
+                            contentEditable='false'
+                            label="lockmac"
+                            value={selectedSmartLockData?.lockmac}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="lockPowerPercentage"
+                            contentEditable='false'
+                            label="lockPowerPercentage"
+                            value={selectedSmartLockData?.lockPowerPercentage}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="expiresIn"
+                            contentEditable='false'
+                            label="expiresIn"
+                            value={selectedSmartLockData?.expiresIn}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="tokenType"
+                            contentEditable='false'
+                            label="tokenType"
+                            value={selectedSmartLockData?.tokenType}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="scope"
+                            contentEditable='false'
+                            label="scope"
+                            value={selectedSmartLockData?.scope}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="smartlockAdminPasscode"
+                            contentEditable='false'
+                            label="smartlockAdminPasscode"
+                            value={selectedSmartLockData?.smartlockAdminPasscode}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="smartlockInstalled"
+                            contentEditable='false'
+                            label="smartlockInstalled"
+                            value={selectedSmartLockData?.smartlockInstalled ? 'Yes' : 'No'}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="gatewayInstalled"
+                            contentEditable='false'
+                            label="gatewayInstalled"
+                            value={selectedSmartLockData?.gatewayInstalled ? 'Yes' : 'No'}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="doorOpen"
+                            contentEditable='false'
+                            label="doorOpen"
+                            value={selectedSmartLockData?.doorOpen ? 'Yes' : 'No'}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="accessToken"
+                            multiline
+                            contentEditable='false'
+                            label="accessToken"
+                            value={selectedSmartLockData?.accessToken}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="refreshToken"
+                            multiline
+                            contentEditable='false'
+                            label="refreshToken"
+                            value={selectedSmartLockData?.refreshToken}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="username"
+                            multiline
+                            contentEditable='false'
+                            label="username"
+                            value={selectedSmartLockData?.username}
+                        />
+                        <TextField
+                            disabled={true}
+                            className='col-4 px-1 mt-3'
+                            id="password"
+                            multiline
+                            contentEditable='false'
+                            label="password"
+                            value={selectedSmartLockData?.password}
+                        />
+                        <div className='col-12 px-1'>
+                            <TextArea
+                                disabled={true}
+                                id="lockData"
+                                contentEditable='false'
+                                label="lockData"
+                                value={selectedSmartLockData?.lockData}
+                            />
+                        </div>
+                    </div>
+                    {/* <div className="mb-5">
+                        <Buttons
+                            name="Hide Data"
+                            varient="primary"
+                            style={{ float: 'right', marginInlineEnd: '4%' }}
+                            size="xSmall"
+                            color="white"
+                            className="mt-2 mb-2"
+                            onClick={() => { setShowEditSmartLockData(false) }} />
+                    </div> */}
+                </Modal.Body>
+            </Modal>
+
             <Modal size="lg" show={addCameraFlag} onHide={() => { setAddCameraFlag(false); setShowEditCameraData(false) }} centered={true} >
                 <Modal.Body>
                     <Text
@@ -354,6 +533,7 @@ const KitDevices = (props) => {
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="uuId"
+                            disabled={true}
                             error={error.uuId}
                             contentEditable={true}
                             label="UUID"
@@ -363,21 +543,15 @@ const KitDevices = (props) => {
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="propertyId"
+                            disabled={true}
                             contentEditable={false}
                             label="Property Id"
                             value={selectedCameraData?.propertyId}
                         />
-                        {/* <TextField
-                            className='col-4 px-1 mt-3'
-                            id="propertyId"
-                            contentEditable={false}
-                            label="Camera DeviceId"
-                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: Number(e.target.value )})) }}
-                            value={selectedCameraData?.cameraId}
-                        /> */}
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="userName"
+                            disabled={true}
                             contentEditable={true}
                             error={error.userName}
                             type="text"
@@ -388,6 +562,7 @@ const KitDevices = (props) => {
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="password"
+                            disabled={true}
                             contentEditable={true}
                             error={error.password}
                             type="text"
@@ -398,6 +573,7 @@ const KitDevices = (props) => {
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="cameraType"
+                            disabled={true}
                             select
                             error={error.cameraType}
                             label="Camera Type"
@@ -411,6 +587,7 @@ const KitDevices = (props) => {
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="nickName"
+                            disabled={true}
                             contentEditable={true}
                             error={error.nickName}
                             type="text"
@@ -421,6 +598,7 @@ const KitDevices = (props) => {
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="endPointType"
+                            disabled={true}
                             select
                             error={error.endpointType}
                             label="EndPoint Type"
@@ -434,12 +612,13 @@ const KitDevices = (props) => {
                         <TextField
                             className='col-4 px-1 mt-3'
                             id="deleted"
+                            disabled={true}
                             contentEditable={false}
                             label="Is deleted"
                             value={selectedCameraData?.deleted ? 'Yes' : 'No'}
                         />
                     </div>
-                    <div className="d-flex justify-content-center">
+                    {/* <div className="d-flex justify-content-center">
                         {loading ? <Loader />
                             :
                             <Buttons
@@ -450,7 +629,7 @@ const KitDevices = (props) => {
                                 className="mt-2 mb-2 p-3"
                                 onClick={() => { }} />
                         }
-                    </div>
+                    </div> */}
                 </Modal.Body>
             </Modal>
         </>

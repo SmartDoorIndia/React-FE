@@ -187,24 +187,36 @@ const HubList = (props) => {
                             <Buttons name={newHub.hubId !== null ? 'Save' : 'Add New Hub'} variant='primary'
                                 onClick={async () => {
                                     console.log(newHub)
-                                    if(newHub.hubName.length === 0 || (newHub.hubName.trim()).length === 0) {
-                                        showErrorToast("Please enter valid hub name...");
+                                    if (newHub.hubName.length === 0 || newHub.hubName.trim().length === 0) {
+                                        showErrorToast("Please enter a valid hub name...");
                                         return null;
-                                    } else 
-                                    {
+                                    } else {
+                                        const isDuplicate = allHubList?.data?.hubList?.some((hub) => {
+                                            if (hub.hubName === newHub.hubName.trim() && newHub.hubId === null) {
+                                                showErrorToast("Hub Name already exists. Please enter a new hub name...");
+                                                return true; // This will stop further iteration
+                                            }
+                                            return false;
+                                        });
+                                    
+                                        if (isDuplicate) {
+                                            return null; // Stop further steps if a duplicate is found
+                                        }
+                                    
                                         setLoading(true);
                                         const response = await createNewHub(newHub);
                                         setLoading(false);
+                                    
                                         if (response.status === 200) {
                                             showSuccessToast('Hub saved successfully');
                                             getHubList();
                                             setShowAddNewHubModal(false);
-                                            setNewHub({hubId: null, hubName: ''});
+                                            setNewHub({ hubId: null, hubName: '' });
                                         } else {
                                             showErrorToast('Please try again later...');
-                                            return null;
                                         }
                                     }
+                                    
                                 }}></Buttons>
                         }
                     </div>

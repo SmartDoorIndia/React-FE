@@ -87,7 +87,8 @@ const KitList = (props) => {
     }, []);
 
     const showData = () => {
-        return allKitList.data.kitList;
+        return hub ? allKitList?.data?.kitList?.filter((item) => item.hubname === hub): allKitList?.data?.kitList;
+
     }
 
     return (
@@ -106,7 +107,7 @@ const KitList = (props) => {
                                 <option value="">Select Hub</option>
                                 {allHubList?.data?.hubList?.length > 0
                                     ? allHubList?.data?.hubList?.map((hub) => (
-                                        <option key={hub.hubId} value={hub.hubId}>
+                                        <option key={hub.hubName} value={hub.hubName}>
                                             {hub.hubName}
                                         </option>
                                     ))
@@ -119,7 +120,7 @@ const KitList = (props) => {
                     <DataTableComponent
                         data={showData()}
                         columns={kitColumns}
-                        // progressPending={allHubList?.isLoading}
+                        progressPending={allKitList?.isLoading}
                         progressComponent={ProgressComponent}
                         // paginationComponent={PaginationComponent}
                         // paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
