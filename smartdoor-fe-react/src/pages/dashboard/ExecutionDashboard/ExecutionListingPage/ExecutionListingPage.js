@@ -193,6 +193,7 @@ const ExecutionListing = (props) => {
       center:true,
       maxWidth:"150px",
       minWidth: '140px',
+      wrap: true,
       style:{"text-align": "center"},
       cell: ({corporateName}) => ( 
         // <span> {propertySubType || "-"} </span>

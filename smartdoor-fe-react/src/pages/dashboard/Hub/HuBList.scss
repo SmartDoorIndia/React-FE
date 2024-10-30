@@ -283,13 +283,7 @@
                     white-space: nowrap;overflow: visible;
                 }                
             }
-            &:nth-child(4) {
-                .elipsis-text {
-                    white-space: nowrap;overflow: hidden;
-                    width: 180px;min-width: 180px;
-                    text-overflow: ellipsis;display: block;text-align: center;
-                }
-            }
+            
         }
         // &:active {
         //     background-color: aqua;
