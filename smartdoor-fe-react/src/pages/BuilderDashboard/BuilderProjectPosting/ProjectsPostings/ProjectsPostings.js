@@ -9,26 +9,32 @@ import { Button, Image } from "react-bootstrap";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import { handleStatusElement, getLocalStorage } from "../../../../common/helpers/Utils";
 import { ToolTip } from "../../../../common/helpers/Utils";
-import { getBuilderProjects, getBuilderProjectStats } from "../../../../common/redux/actions";
+import {
+   getBuilderProjects,
+   getBuilderProjectStats,
+   approveBuilderProject,
+} from "../../../../common/redux/actions";
 import addIcon from "../../../../assets/svg/add.svg";
 import "./ProjectsPostings.scss";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import Text from "../../../../shared/Text/Text";
+import { useParams } from "react-router-dom";
 
 const ProjectsPostings = (props) => {
-   const { getBuilderProjects, ProjectsPostings } = props; // Destructure actions from props
+   const { getBuilderProjects, ProjectsPostings } = props;
    const data = useSelector((state) => state.builderReducer?.data || {});
    const [filterText, setFilterText] = useState(ProjectsPostings?.data?.searchString || "");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [currentPage, setCurrentPage] = useState(
       data !== undefined ? ProjectsPostings?.data?.currentPage : 1
    );
+   const { builderId } = useParams();
    const [rowsPerPage, setRowsPerPage] = useState(
       data !== undefined ? ProjectsPostings?.data?.rowsPerPage : 8
-   ); // Default to 8
+   );
    const auth = getLocalStorage("authData");
    const [projectPostingFilter, setProjectPostingFilter] = useState({
-      builderId: auth.builderId,
+      builderId: builderId || localStorage.getItem("builderId"),
       searchString: "",
       userId: auth.userid,
       records: rowsPerPage,
@@ -36,6 +42,7 @@ const ProjectsPostings = (props) => {
    });
    const [builderProjects, setBuilderProjects] = useState([]);
    const [builderProjectStats, setBuilderProjectStats] = useState(null);
+   const isBuilderProfileApproved = localStorage.getItem("builderProfileApproved") === "true";
 
    useEffect(() => {
       const updatedFilter = {
@@ -43,11 +50,15 @@ const ProjectsPostings = (props) => {
          records: rowsPerPage,
          pageNumber: currentPage,
       };
-
       const handleGetBuilderProjects = async () => {
          try {
-            const response = await getBuilderProjects(updatedFilter);
-            setBuilderProjects(response.data.resourceData);
+            if (builderId) {
+               const projectResponse = await getBuilderProjects({ builderId });
+               setBuilderProjects([projectResponse.data.resourceData]);
+            } else {
+               const response = await getBuilderProjects(updatedFilter);
+               setBuilderProjects(response.data.resourceData);
+            }
          } catch (error) {
             console.error(error);
          }
@@ -69,7 +80,24 @@ const ProjectsPostings = (props) => {
 
       handleGetBuilderProjects();
       handleGetBuilderProjectStats();
+      approveBuilderProject();
+      return () => {
+         localStorage.removeItem("builderId");
+      };
    }, [projectPostingFilter, rowsPerPage, currentPage]);
+   const approveBuilderProject = async (e) => {
+      e.preventDefault();
+      try {
+         const response = await approveBuilderProject({
+            builderId,
+            userId: auth.userid,
+         });
+         console.log("response", response);
+      } catch (error) {
+         console.error("Error approving project:", error);
+      }
+   };
+
    const showValue = () => {
       return Array.isArray(builderProjects) && builderProjects.length > 0 ? builderProjects : [];
    };
@@ -84,7 +112,7 @@ const ProjectsPostings = (props) => {
 
    const handleRowsPerPageChange = (newRowsPerPage) => {
       setRowsPerPage(newRowsPerPage);
-      setCurrentPage(1); // Reset to first page when changing rows per page
+      setCurrentPage(1);
       setProjectPostingFilter((prev) => ({
          ...prev,
          records: newRowsPerPage,
@@ -100,7 +128,7 @@ const ProjectsPostings = (props) => {
             PaginationActionButton={PaginationActionButton}
             currentPage={currentPage}
             rowsPerPage={rowsPerPage}
-            rowCount={builderProjectStats?.BuilderProjectCount || 0} // Use totalRecords for pagination
+            rowCount={builderProjectStats?.BuilderProjectCount || 0}
             onChangePage={handlePageChange}
             onChangeRowsPerPage={handleRowsPerPageChange}
          />
@@ -253,7 +281,29 @@ const ProjectsPostings = (props) => {
                />
             </div>
          </div>
-
+         <div className="d-flex justify-content-end">
+            {" "}
+            {/* {isBuilderProfileApproved && (
+               <div className="ml-4">
+                  <span className="badge badge-success">Approved</span>
+               </div>
+            )} */}
+            {isBuilderProfileApproved && (
+               <div className="approval-badge d-flex justify-content-end m-2">
+                  <span
+                     style={{
+                        color: "White",
+                        backgroundColor: "green",
+                        padding: "5px 10px",
+                        borderRadius: "5px",
+                     }}
+                  >
+                     Approved
+                  </span>
+               </div>
+            )}
+         </div>
+         {/* <Button onClick={handleApproveProject}>Approve Project</Button> */}
          <div className="tableBox">
             <div className="d-flex flex-md-column flex-xl-row justify-content-xl-end align-items-center tableHeading">
                <div className="locationSelect d-flex justify-content-end align-items-center w-100">
@@ -301,15 +351,15 @@ const ProjectsPostings = (props) => {
                   pagination
                   paginationComponent={PaginationComponent}
                   paginationServer
-                  paginationRowsPerPageOptions={[7, 14, 21, 28]} // Rows per page options
-                  paginationPerPage={7} // Default rows per page
-                  perPageOptions={[7, 14, 21, 28]} // Per-page options
+                  paginationRowsPerPageOptions={[7, 14, 21, 28]}
+                  paginationPerPage={7}
+                  perPageOptions={[7, 14, 21, 28]}
                   onChangePage={handlePageChange}
                   subHeaderComponent={subHeaderComponentMemo}
                   persistTableHead={true}
                   filterComponent={subHeaderComponentMemo}
                   keyField="id"
-                  className="data-table" // Add a custom class if needed for further styling
+                  className="data-table"
                />
             </div>
          </div>

@@ -1,165 +1,110 @@
 /** @format */
 
 import React, { useCallback, useEffect, memo } from "react";
-import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
-import Pagination from "../../../shared/DataTable/Pagination";
+import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
+import Pagination from "../../../../shared/DataTable/Pagination";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { useState } from "react";
 import { Button, Image } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import DataTableComponent from "../../../shared/DataTable/DataTable";
-import { handleStatusElement, getLocalStorage } from "../../../common/helpers/Utils";
-import { ToolTip } from "../../../common/helpers/Utils";
-import addIcon from "../../../assets/svg/add.svg";
+import DataTableComponent from "../../../../shared/DataTable/DataTable";
+import { handleStatusElement, getLocalStorage } from "../../../../common/helpers/Utils";
+import { ToolTip } from "../../../../common/helpers/Utils";
+import addIcon from "../../../../assets/svg/add.svg";
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import "./Builders.scss";
-import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
-import { TableLoader } from "../../../common/helpers/Loader";
-import Text from "../../../shared/Text/Text";
+import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
+import { TableLoader } from "../../../../common/helpers/Loader";
+import Text from "../../../../shared/Text/Text";
 import { BiSortAlt2 } from "react-icons/bi";
-import { getBuilderList, getBuilderStats } from "../../../common/redux/actions"; // Ensure correct imports
+import {
+   getBuilderList,
+   getBuilderStats,
+   approveBuilderProfile,
+} from "../../../../common/redux/actions"; // Ensure correct imports
 
-const Builders = (props) => {
+const BuilderListing = (props) => {
    const { BuilderListing } = props;
    const statusArr = CONSTANTS_STATUS.brokerStatus;
-   const auth = getLocalStorage("authData");
-   const storedUserId = auth.userid;
-   const [builderFilter, setBuilderFilter] = useState({
-      userId: storedUserId,
-      builderName: "",
-      records: 10,
-      pageNumber: 1,
-   });
    const [data, setData] = useState([]);
-   const [loading, setLoading] = useState(true);
-
-   const [builderStats, setBuilderStats] = useState({
-      builderCount: 0,
-      builderProjectCount: 0,
-   });
    const [filterText, setFilterText] = useState(
       data !== undefined ? BuilderListing?.data?.searchString : ""
    );
-   const [statusSelected, setStatusSelected] = useState(
-      data !== undefined ? BuilderListing?.data?.status : ""
-   );
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
+   const [currentPage, setCurrentPage] = useState(1);
+   const [rowsPerPage, setRowsPerPage] = useState(7);
+   const auth = getLocalStorage("authData");
+   const storedUserId = auth.userid;
+   const storebuilderName = localStorage.getItem("companyName");
+   const [builderFilter, setBuilderFilter] = useState({
+      userId: storedUserId,
+      builderName: "",
+      records: rowsPerPage,
+      pageNumber: currentPage,
+   });
+   const [builderStats, setBuilderStats] = useState({
+      builderCount: null,
+      builderProjectCount: null,
+   });
 
-   const [currentPage, setCurrentPage] = useState(
-      data !== undefined ? BuilderListing?.data?.currentPage : 1
-   );
-   const [rowsPerPage, setRowsPerPage] = useState(
-      data !== undefined ? BuilderListing?.data?.rowsPerPage : 8
-   );
-   const recordSize = BuilderListing?.data?.records || 0;
-   const userData = getLocalStorage("authData");
-   const dispatch = useDispatch();
-
-   const [error, setError] = useState(null);
-   // Fetch builder data if editing an existing profile
-   const _getBuilderListAndStats = useCallback(() => {
-      getBuilderList(builderFilter)
-         .then((response) => {
-            if (response?.data) {
-               const { resourceData, error: responseError } = response.data;
-               if (resourceData) {
-                  // Ensure no null values in resourceData
-                  const sanitizedData = Object.fromEntries(
-                     Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
-                  );
-                  setData(sanitizedData);
-                  console.log("sanitizedData:- ", sanitizedData);
-               }
-               if (responseError) setError(responseError);
-            }
-            setLoading(false);
-         })
-         .catch((error) => {
-            setLoading(false);
-            setError(error);
-            console.log("Error fetching builder data:", error);
-         });
-
-      getBuilderStats(builderFilter)
-         .then((response) => {
-            if (response?.data) {
-               const { resourceData, error: responseError } = response.data;
-               if (resourceData) {
-                  // Ensure no null values in resourceData
-                  const sanitizedData = Object.fromEntries(
-                     Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
-                  );
-                  setBuilderStats(sanitizedData);
-                  console.log("sanitizedData:- ", sanitizedData);
-               }
-               if (responseError) setError(responseError);
-            }
-            setLoading(false);
-         })
-         .catch((error) => {
-            setLoading(false);
-            setError(error);
-            console.log("Error fetching builder data:", error);
-         });
-   }, []);
-
-   // Fetch builder profile on component mount or when builderId changes
    useEffect(() => {
-      _getBuilderListAndStats();
-   }, []);
+      const handleGetBuilderList = async () => {
+         try {
+            const response = await getBuilderList(builderFilter);
+            setData(response.data.resourceData);
+         } catch (error) {
+            console.error(error);
+         }
+      };
+      const handleGetBuilderStats = async () => {
+         try {
+            const response = await getBuilderStats(builderFilter);
+            setBuilderStats(response.data.resourceData);
+         } catch (error) {
+            console.error("Error fetching builder project stats:", error);
+         }
+      };
 
-   const showValue = (status_value, startDate_, endDate_) => {
-      let status = status_value || statusSelected;
-      let filteredItems = [];
-
-      filteredItems = BuilderListing.data?.brokerList?.length
-         ? BuilderListing?.data?.brokerList
-         : [];
-
-      return filteredItems;
+      handleGetBuilderList();
+      handleGetBuilderStats();
+   }, [builderFilter, rowsPerPage, currentPage]);
+   const showValue = () => {
+      return Array.isArray(data) && data.length > 0 ? data : [];
    };
 
    const handlePageChange = (newPage) => {
       setCurrentPage(Number(newPage));
-      getBuilderList({
-         userId: userData.userid,
-         currentLat: null,
-         currentLong: null,
-         pageNo: newPage,
-         records: rowsPerPage,
-         adminLogin: true,
-         status: statusSelected?.toUpperCase(),
-         searchString: filterText,
-      });
+      setBuilderFilter((prev) => ({
+         ...prev,
+         pageNumber: newPage,
+      }));
    };
 
    const handleRowsPerPageChange = (newRowsPerPage) => {
       setRowsPerPage(newRowsPerPage);
-      getBuilderList({
-         userId: userData.userid,
-         currentLat: null,
-         currentLong: null,
-         pageNo: currentPage,
+      setCurrentPage(1); // Reset to first page when changing rows per page
+      setBuilderFilter((prev) => ({
+         ...prev,
          records: newRowsPerPage,
-         adminLogin: true,
-         status: statusSelected?.toUpperCase(),
-         searchString: filterText,
-      });
+         pageNumber: 1,
+      }));
    };
 
    const ProgressComponent = <TableLoader />;
-   const PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
-      <Pagination
-         {...props}
-         PaginationActionButton={PaginationActionButton}
-         currentPage={currentPage}
-         rowsPerPage={rowsPerPage}
-         rowCount={recordSize}
-         onChangePage={handlePageChange}
-         onChangeRowsPerPage={handleRowsPerPageChange}
-      />
-   );
+   const PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => {
+      return (
+         <Pagination
+            {...props}
+            PaginationActionButton={PaginationActionButton}
+            currentPage={currentPage}
+            rowsPerPage={rowsPerPage}
+            rowCount={builderStats?.builderCount || 0} // Use totalRecords for pagination
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handleRowsPerPageChange}
+         />
+      );
+   };
    const PaginationActionButton = () => (
       <div className="d-flex justify-content-center tableBottom"></div>
    );
@@ -169,23 +114,25 @@ const Builders = (props) => {
          if (filterText) {
             setResetPaginationToggle(!resetPaginationToggle);
             setFilterText("");
+
+            setBuilderFilter((prev) => ({
+               ...prev,
+               searchString: "",
+               pageNumber: 1,
+            }));
          }
       };
 
       return (
          <SearchInput
             onFilter={(e) => {
-               setFilterText(e.target.value);
-               getBuilderList({
-                  userId: userData.userid,
-                  currentLat: null,
-                  currentLong: null,
-                  pageNo: 1,
-                  records: rowsPerPage,
-                  adminLogin: true,
-                  status: statusSelected?.toUpperCase(),
-                  searchString: e.target.value,
-               });
+               const searchValue = e.target.value;
+               setFilterText(searchValue);
+               setBuilderFilter((prev) => ({
+                  ...prev,
+                  searchString: searchValue,
+                  pageNumber: 1,
+               }));
             }}
             onClear={handleClear}
             filterText={filterText}
@@ -193,26 +140,51 @@ const Builders = (props) => {
          />
       );
    }, [filterText, resetPaginationToggle]);
+   const handleClickViewAndRedirect = async (row) => {
+      const builderId = row.builderId;
+      console.log("builderId", builderId);
 
-   const _filterStatus = (status_value) => {
-      setStatusSelected(status_value);
-      getBuilderList({
-         userId: userData.userid,
-         currentLat: null,
-         currentLong: null,
-         pageNo: 1,
-         records: rowsPerPage,
-         adminLogin: true,
-         status: status_value?.toUpperCase(),
-         searchString: filterText,
-      });
-      // showValue(status_value);
+      if (!builderId) {
+         console.error("No builderId found in the row data.");
+         return;
+      }
+
+      // Set the builderId in local storage
+      localStorage.setItem("builderId", builderId);
+
+      // Check if the builder is approved and set the approval flag
+      if (row.builderProfileApproved) {
+         localStorage.setItem("builderProfileApproved", "true");
+      } else {
+         localStorage.setItem("builderProfileApproved", "false"); // Set to false if not approved
+      }
+
+      // Redirect to the detail page regardless of approval status
+      window.location.href = `/builder/detail/${builderId}`;
+   };
+   const handleClickProjectAndRedirect = async (row) => {
+      const builderId = row.builderId;
+
+      if (!builderId) {
+         console.error("No builderProjectId found in the row data.");
+         return;
+      }
+      // Set the builderId in local storage
+      localStorage.setItem("builderId", builderId);
+
+      // Check if the builder is approved and set the approval flag
+      if (row.builderProfileApproved) {
+         localStorage.setItem("builderProfileApproved", "true");
+      } else {
+         localStorage.removeItem("builderProfileApproved"); // Remove if not approved
+      }
+      window.location.href = `/builder/project/Posting/${builderId}`;
    };
 
    const columns = [
       {
          name: "Builders",
-         selector: (row) => row.name,
+         selector: (row) => row.builderName,
          sortable: true,
          center: true,
          minWidth: "150px",
@@ -220,15 +192,14 @@ const Builders = (props) => {
       },
       {
          name: "Contact Person",
-         selector: (row) => row.name,
+         selector: (row) => row.contactPersonName,
          center: true,
          minWidth: "150px",
          maxWidth: "150px",
       },
       {
          name: "Mobile Number",
-         selector: (row) => row.mobileforCustomer,
-         sortable: true,
+         selector: (row) => row.mobile,
          center: true,
          minWidth: "145px",
          maxWidth: "150px",
@@ -236,36 +207,44 @@ const Builders = (props) => {
 
       {
          name: "Projects",
-         selector: (row) => row.postingcount,
+         selector: (row) => row.numberOfProjects,
          sortable: true,
          center: true,
          maxWidth: "160px",
       },
       {
          name: "Last updated on",
-         selector: (row) => row.joinDate,
+         selector: (row) => {
+            const date = new Date(row.lastModifiedDate);
+            return date.toLocaleDateString("en-US", {
+               year: "numeric",
+               month: "short",
+               day: "numeric",
+            });
+         },
          sortable: false,
-         center: true,
-         maxWidth: "160px",
-      },
-      {
-         name: "Plan",
-         sortable: true,
          center: true,
          maxWidth: "160px",
       },
 
+      // {
+      //    name: "Plan",
+      //    sortable: true,
+      //    center: true,
+      //    maxWidth: "160px",
+      // },
       {
          name: "Status",
-         selector: (row) => row.status,
+         selector: (row) => row.builderProfileApproved,
          sortable: false,
-         center: true,
          minWidth: "120px",
-         cell: ({ status }) => handleStatusElement(status),
+         cell: ({ builderProfileApproved }) => (
+            <span>{handleStatusElement(builderProfileApproved ? "APPROVED" : "UNDER REVIEW")}</span>
+         ),
       },
       {
          name: "Projects to Review ",
-         // selector: (row) => row.joinDate,
+         selector: (row) => row.projectsToApprove,
          sortable: false,
          center: true,
          maxWidth: "160px",
@@ -275,26 +254,30 @@ const Builders = (props) => {
          selector: (row) => row.action,
          sortable: false,
          center: false,
-         minWidth: "150px",
+         minWidth: "145px",
          maxWidth: "150px",
          cell: (row) => (
             <div className="action">
                <ToolTip name="View">
-                  <span>
-                     {row.status === "Expired" ? (
-                        <span>View </span>
-                     ) : (
-                        <Link
-                           to={{
-                              pathname: ``,
-                              state: { loginMobile: row.loginMobile },
-                           }}
-                           className="action-link"
+                  {row.status === "Expired" ? (
+                     <span>View</span>
+                  ) : (
+                     <>
+                        <button
+                           onClick={() => handleClickViewAndRedirect(row)}
+                           className="action-link btn"
                         >
-                           View&nbsp;
-                        </Link>
-                     )}
-                  </span>
+                           View
+                        </button>
+                        {" | "}
+                        <button
+                           onClick={() => handleClickProjectAndRedirect(row)}
+                           className="action-link btn"
+                        >
+                           Projects
+                        </button>
+                     </>
+                  )}
                </ToolTip>
             </div>
          ),
@@ -316,11 +299,7 @@ const Builders = (props) => {
                         >
                            <Form.Control
                               as="text"
-                              value={statusSelected}
                               className="FilterControl"
-                              onChange={(e) => {
-                                 _filterStatus(e.target.value);
-                              }}
                               style={{ display: "flex", alignItems: "center" }} // Ensure icon and label align properly
                            >
                               <BiSortAlt2
@@ -348,10 +327,10 @@ const Builders = (props) => {
                         backgroundColor: "#F8F3F5",
                         borderColor: "#DED6D9",
                      }}
-                     // onClick={() => {
-                     //    localStorage.removeItem("builderProjectId");
-                     //    window.location.href = "/builder/detail";
-                     // }}
+                     onClick={() => {
+                        localStorage.removeItem("builderId");
+                        window.location.href = "/builder/detail";
+                     }}
                   >
                      <div
                         style={{
@@ -365,7 +344,7 @@ const Builders = (props) => {
                         <Image src={addIcon} style={{ width: "10px" }} />
                      </div>
                      <Text
-                        text={"Add New Posting"}
+                        text={"Add New Builder"}
                         fontWeight="bold"
                         style={{ fontSize: "12px", color: "#BE1452" }}
                      />
@@ -458,4 +437,4 @@ const actions = {
 };
 const withConnect = connect(mapStateToProps, actions);
 
-export default compose(withConnect, memo)(Builders);
+export default compose(withConnect, memo)(BuilderListing);

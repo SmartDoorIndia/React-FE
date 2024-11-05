@@ -98,14 +98,12 @@ const BrokerApprovedDetail = (props) => {
                         color="TaupeGrey"
                         text="Location Assigned"
                      />
-                     <div className="details-heading d-flex" >
-
+                     <div className="details-heading d-flex">
                         {brokerApprovedData && brokerApprovedData.resourceData && (
                            <>
                               {brokerApprovedData?.resourceData.brokerlocation?.city && (
                                  <span className="details-value">
                                     {brokerApprovedData.resourceData?.brokerlocation?.city}
-
                                  </span>
                               )}
                            </>
@@ -125,7 +123,7 @@ const BrokerApprovedDetail = (props) => {
                               brokerApprovedData.resourceData.specializedIn.map(
                                  (data, index) =>
                                     index ===
-                                    brokerApprovedData.resourceData.specializedIn.length - 1 && (
+                                       brokerApprovedData.resourceData.specializedIn.length - 1 && (
                                        <p key={index} className="details-value">
                                           {data.specializedIn}
                                        </p>
@@ -147,7 +145,8 @@ const BrokerApprovedDetail = (props) => {
                               {brokerApprovedData?.resourceData?.rent && (
                                  <span className="details-value">Rent</span>
                               )}
-                              {(brokerApprovedData?.resourceData?.sale || brokerApprovedData?.resourceData?.buy) && (
+                              {(brokerApprovedData?.resourceData?.sale ||
+                                 brokerApprovedData?.resourceData?.buy) && (
                                  <span className="details-value">Buy / Sell </span>
                               )}
                            </>
@@ -181,7 +180,7 @@ const BrokerApprovedDetail = (props) => {
                   text="Personal Details"
                />
                <Row className="mt-2">
-                  <Col lg='2'>
+                  <Col lg="2">
                      <Text
                         size="xSmall"
                         fontWeight="semibold"
@@ -199,7 +198,7 @@ const BrokerApprovedDetail = (props) => {
                         </p>
                      </div>
                   </Col>
-                  <Col lg='2'>
+                  <Col lg="2">
                      <Text
                         size="xSmall"
                         fontWeight="semibold"
@@ -217,7 +216,7 @@ const BrokerApprovedDetail = (props) => {
                         </p>
                      </div>
                   </Col>
-                  <Col lg='3'>
+                  <Col lg="3">
                      <Text size="xSmall" fontWeight="semibold" color="TaupeGrey" text="Email" />
                      <div className="details-heading">
                         <p
@@ -230,7 +229,7 @@ const BrokerApprovedDetail = (props) => {
                         </p>
                      </div>
                   </Col>
-                  <Col lg='5'>
+                  <Col lg="5">
                      <Text
                         size="xSmall"
                         fontWeight="semibold"
@@ -239,8 +238,12 @@ const BrokerApprovedDetail = (props) => {
                      />
                      <div className="details-heading">
                         <p className="details-value approved-loca">
-                           {brokerApprovedData?.resourceData?.companyName ? brokerApprovedData?.resourceData?.companyName + "," : ""}
-                           {brokerApprovedData?.resourceData?.companyAddress ? brokerApprovedData?.resourceData?.companyAddress : ""}
+                           {brokerApprovedData?.resourceData?.companyName
+                              ? brokerApprovedData?.resourceData?.companyName + ","
+                              : ""}
+                           {brokerApprovedData?.resourceData?.companyAddress
+                              ? brokerApprovedData?.resourceData?.companyAddress
+                              : ""}
                         </p>
                      </div>
                   </Col>

@@ -1,0 +1,70 @@
+/** @format */
+
+.builderpropertydetail-container {
+   // SCSS for the list and items
+   .list-container {
+      list-style: none; // Remove default bullet points
+      padding: 0; // Remove padding from UL
+      margin: 0; // Remove margin from UL
+      display: flex; // Display list items in one line
+      gap: 20px; // Space between list items
+   }
+
+   // Style for individual list items
+   .list-item {
+      padding: 10px 10px;
+      cursor: pointer;
+      transition: border-bottom 0.3s ease, color 0.3s ease;
+
+      &:hover {
+         color: #000; // Change text color on hover
+      }
+
+      // Default border-bottom (no border for inactive items)
+      border-bottom: 2px solid transparent;
+   }
+
+   // Active item with red bottom border
+   .active-item {
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 24px;
+      text-align: center;
+      border-bottom: 2px solid #be1452; // Red bottom border for active item
+   }
+
+   // Inactive item with light opacity
+   .inactive-item {
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 24px;
+      text-align: center;
+      color: #bcbcbc;
+   }
+
+   .builderpropertydetail,
+   .builderpropertydetail2,
+   .builderpropertydetail3 {
+      strong {
+         font-size: 12px;
+         font-weight: 500;
+         line-height: 16.39px;
+         text-align: left;
+         color: #949494;
+      }
+
+      p {
+         font-size: 14px;
+         font-weight: 700;
+         line-height: 19.12px;
+         text-align: left;
+         color: #252525;
+      }
+      .flex-row {
+         gap: 1px;
+         div {
+            width: 24%;
+         }
+      }
+   }
+}

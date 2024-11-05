@@ -18,16 +18,16 @@ const BuilderProfileDetails = () => {
    const {
       auth: { userData },
    } = useUserContext();
-
-   const builderId = getLocalStorage("authData").builderId;
+   const storedBuilderId = getLocalStorage("authData").builderId; // Get builderId from authData
+   const builderId = localStorage.getItem("builderId") || storedBuilderId;
+   const [approvalBadgeVisible, setApprovalBadgeVisible] = useState(false);
    const userId = getLocalStorage("authData").userid;
    const [isChecked, setIsChecked] = useState(false); // Set to checked by default
    const [isFormValid, setIsFormValid] = useState(false);
-   const [showModal, setShowModal] = useState(false);
    const [isApproved, setIsApproved] = useState(false);
+   const [showModal, setShowModal] = useState(false);
    const fileInputRef = useRef(null); // Create a ref for the file input
    const [loading, setLoading] = useState(true);
-
    const [data, setData] = useState({
       mobile: "",
       companyName: "",
@@ -46,6 +46,14 @@ const BuilderProfileDetails = () => {
       contactPersonName: "",
       builderProfileComplete: true,
    });
+   useEffect(() => {
+      const approvalStatus = localStorage.getItem("builderProfileApproved");
+      if (approvalStatus === "true") {
+         setIsApproved(true);
+      } else {
+         setIsApproved(false);
+      }
+   }, []);
    const validateForm = () => {
       const {
          brandName,
@@ -67,9 +75,8 @@ const BuilderProfileDetails = () => {
       setIsFormValid(isValid);
    };
    const [error, setError] = useState(null);
-   // Fetch builder data if editing an existing profile
    const _getBuilderById = useCallback(() => {
-      if (!builderId) return; // Skip if no builderId
+      if (!builderId) return;
       setLoading(true);
       getBuilderById({ builderId: builderId, userId: userId })
          .then((response) => {
@@ -80,6 +87,14 @@ const BuilderProfileDetails = () => {
                   const sanitizedData = Object.fromEntries(
                      Object.entries(resourceData).map(([key, value]) => [key, value ?? ""])
                   );
+                  // Set the logo fields correctly
+                  setData((prevData) => ({
+                     ...prevData,
+                     ...sanitizedData, // Spread the sanitized data
+                  }));
+                  if (!sanitizedData.callNumber && sanitizedData.mobile) {
+                     sanitizedData.callNumber = sanitizedData.mobile;
+                  }
                   setData(sanitizedData);
                   setIsChecked(true);
                }
@@ -97,8 +112,25 @@ const BuilderProfileDetails = () => {
    // Fetch builder profile on component mount or when builderId changes
    useEffect(() => {
       _getBuilderById();
-   }, [_getBuilderById]);
+   }, []);
 
+   const callApproveBuilderProfile = async () => {
+      if (!isApproved) {
+         try {
+            const response = await approveBuilderProfile({ builderId, userId });
+            if (response.status === 200) {
+               setIsApproved(true); // Set approval to true
+               localStorage.setItem("builderProfileApproved", "true"); // Update local storage
+               showSuccessToast("Builder profile approved successfully.");
+            }
+         } catch (error) {
+            console.error("Error approving builder profile:", error);
+            showErrorToast("Error approving profile. Please try again.");
+         }
+      } else {
+         showErrorToast("Builder profile is already approved.");
+      }
+   };
    const handleChange = (event) => {
       const { name, value } = event.target;
 
@@ -143,13 +175,23 @@ const BuilderProfileDetails = () => {
       setLoading(true);
 
       try {
-         // Submit the builder profile details
-         await createBuilderProfileDetail(data);
+         console.log("Data being submitted:", data);
 
-         // Call to approve the builder profile after successful creation
-         await callApproveBuilderProfile(); // Approve the profile
+         const response = await createBuilderProfileDetail(data);
+         console.log("API Response:", response);
 
-         // Clear form data fields after submission
+         // if (response && response.data && response.data.resourceData) {
+         //    const approvalResponse = await callApproveBuilderProfile();
+         //    if (approvalResponse && approvalResponse.status === 200) {
+         //       showSuccessToast("Builder profile approved successfully.");
+         //    }
+         // } else {
+         //    console.error("No resource data returned:", response);
+         //    showErrorToast(" Failed to create builder profile. Please check your input.");
+         // }
+
+         // localStorage.setItem("companyName", data.companyName);
+
          setData({
             brandName: "",
             companyName: "",
@@ -161,43 +203,19 @@ const BuilderProfileDetails = () => {
             directors: ["", "", "", ""],
          });
 
-         // Invalidate the form state to disable the submit button
          setIsChecked(false);
          setIsFormValid(false);
+         setIsApproved(false);
+         const currentUrl = window.location.pathname;
+         const newUrl = currentUrl.replace(/\/\d+$/, "");
+         window.history.replaceState({}, "", newUrl);
+         localStorage.removeItem("builderId");
+         localStorage.removeItem("builderProfileApproved");
       } catch (error) {
-         // Show error toast on failure
          showErrorToast("Error submitting form. Please try again.");
          console.error("Error submitting builder profile:", error);
       } finally {
          setLoading(false);
-      }
-   };
-
-   const callApproveBuilderProfile = async () => {
-      try {
-         // Log the builderId and userId to verify they are being passed correctly
-         console.log("Approving profile for builderId:", builderId, "userId:", userId);
-
-         const response = await approveBuilderProfile({ builderId, userId });
-
-         // Log the response to check the status and data
-         console.log("Approve API response:", response);
-
-         if (response.status === 200) {
-            showSuccessToast(
-               "Your request for Builder profile has been sent to the SmartDoor Admin. We will send you the updates to your registered email address."
-            );
-
-            setShowModal(true); // Show modal on successful approval
-         } else {
-            // Log the error message from the response
-            console.log("Unexpected response:", response.data);
-            showErrorToast("Unexpected response from the server.");
-         }
-      } catch (error) {
-         // Log the full error object for debugging
-         console.error("Error approving builder profile:", error);
-         showErrorToast("Error approving profile. Please try again.");
       }
    };
 
@@ -209,26 +227,6 @@ const BuilderProfileDetails = () => {
       return typeof base64 === "string" && base64.startsWith("data:image/png;base64,");
    };
 
-   // // Determine the correct src for the image
-   // const getImageSrc = () => {
-   //    if (data.builderLogoS3ImageUrl && data.builderLogoS3ImageUrl.trim() !== "") {
-   //       // Construct the full S3 URL
-   //       const s3Url = `${CONSTANTS.CONFIG_PROPERTY.s3Url.replace(
-   //          /\/+$/,
-   //          ""
-   //       )}/${data.builderLogoS3ImageUrl.replace(/^\/+/, "")}`;
-   //       console.log("S3 URL:", s3Url); // Log the S3 URL for debugging
-   //       return s3Url;
-   //    } else if (isBase64Image(data.builderLogoImageAsBase64)) {
-   //       console.log("Base64 Image:", data.builderLogoImageAsBase64); // Log the Base64 data for debugging
-   //       return data.builderLogoImageAsBase64;
-   //    }
-   //    console.error("Invalid image data");
-   //    return null;
-   // };
-
-   // const imageSrc = getImageSrc();
-
    const handleCheckboxChange = (event) => {
       setIsChecked(event.target.checked);
    };
@@ -236,6 +234,40 @@ const BuilderProfileDetails = () => {
    return (
       <div className="profile-page">
          <div className="container-fluid content">
+            {/* {!isApproved ? (
+               <Button variant="warning" onClick={callApproveBuilderProfile}>
+                  Approve
+               </Button>
+            ) : (
+               <span
+                  style={{
+                     color: "White",
+                     backgroundColor: "green",
+                     padding: "5px 10px",
+                     borderRadius: "5px",
+                  }}
+               >
+                  Approved
+               </span>
+            )} */}
+            {builderId ? (
+               isApproved ? (
+                  <span
+                     style={{
+                        color: "White",
+                        backgroundColor: "green",
+                        padding: "5px 10px",
+                        borderRadius: "5px",
+                     }}
+                  >
+                     Approved
+                  </span>
+               ) : (
+                  <Button variant="warning" onClick={callApproveBuilderProfile}>
+                     Under Review
+                  </Button>
+               )
+            ) : null}
             <div className="form-container">
                <form noValidate onSubmit={handleSubmit} autoComplete="off">
                   <div className="newEntry">
@@ -263,7 +295,7 @@ const BuilderProfileDetails = () => {
                                        className="upload-input"
                                        accept="image/*"
                                        onChange={handleLogoUpload}
-                                       ref={fileInputRef} // Attach the ref
+                                       ref={fileInputRef}
                                     />
 
                                     {/* Displaying the uploaded image */}
@@ -277,6 +309,7 @@ const BuilderProfileDetails = () => {
                                        </div>
                                     )}
 
+                                    {/* Check for S3 URL if Base64 is not available */}
                                     {!data.builderLogoImageAsBase64 &&
                                        data.builderLogoS3ImageUrl && (
                                           <div className="image-preview">

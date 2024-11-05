@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import "./BuilderProjectPosting.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCirclePlus } from "@fortawesome/free-solid-svg-icons"; // Import the specific icon
+import { faCirclePlus } from "@fortawesome/free-solid-svg-icons";
 import { getBuilderById } from "../../../../common/redux/actions";
 import { useUserContext } from "../../../../common/helpers/Auth";
 

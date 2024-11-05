@@ -155,8 +155,16 @@ const SmartDoorCities = React.lazy(() => import("./SmartdoorCities/SmartDoorCiti
 const BuilderProfileDetails = React.lazy(() =>
    import("../BuilderDashboard/BuilderProfileDetails/BuilderProfileDetails")
 );
-const Builders = React.lazy(() => import("./Builders/Builders"));
-
+const BuilderListing = React.lazy(() => import("./Builders/BuilderListing/BuilderListing"));
+const BuilderPropertyList = React.lazy(() =>
+   import("./Builders/BuilderProperties/BuilderProperties")
+);
+const BuilderProjectDetailView = React.lazy(() =>
+   import("./Builders/BuilderProjectDetailView/BuilderProjectDetailView")
+);
+const BuilderPropertyDetails = React.lazy(() =>
+   import("./Builders/BuilderPropertyDetails/BuilderPropertyDetails")
+);
 // Routing data
 const routeData = [
    // Sales Management Route
@@ -1275,7 +1283,28 @@ const routeData = [
       name: "Builders",
       bradcrumb: false,
       excat: true,
-      component: Builders,
+      component: BuilderListing,
+   },
+   {
+      path: "/admin/builder/properties",
+      name: "Builders",
+      bradcrumb: false,
+      excat: true,
+      component: BuilderPropertyList,
+   },
+   {
+      path: "/admin/builder/project-details",
+      name: "Builders",
+      bradcrumb: false,
+      excat: true,
+      component: BuilderProjectDetailView,
+   },
+   {
+      path: "/admin/builder/property-details",
+      name: "Builders",
+      bradcrumb: false,
+      excat: true,
+      component: BuilderPropertyDetails,
    },
    // {
    //   path: '/admin/execution/installation-detail/property-details',

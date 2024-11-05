@@ -206,7 +206,7 @@ const Nav = () => {
                            />
                            User Management
                         </Link>
-                        <Link
+                        {/* <Link
                            to="/admin/builders"
                            className={`nav-link ${
                               pathname.includes("/admin/builders") ? "nav-active" : ""
@@ -217,7 +217,7 @@ const Nav = () => {
                               src={pathname.includes("/admin/builders") ? borkerIcon : dashboard}
                            />
                            Builders
-                        </Link>
+                        </Link> */}
                         {/* <Link
                            to="/admin/realtor-advisor-management"
                            className={`nav-link ${pathname.includes("realtor-advisor-management") ? "nav-active" : ""
@@ -373,6 +373,70 @@ const Nav = () => {
                               }
                            />
                            Battery Level Check
+                        </Link>
+                        <Link
+                           to="/admin/builders"
+                           className={`nav-link ${
+                              pathname.includes("/admin/builders") ? "nav-active" : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/builders") ? borkerIcon : dashboard}
+                           />
+                           Builders
+                        </Link>
+                        <Link
+                           to="/admin/builder/properties"
+                           className={`nav-link ${
+                              pathname.includes("/admin/builder/properties") ? "nav-active" : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={
+                                 pathname.includes("/admin/builder/properties")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
+                           />
+                           Builder Properties
+                        </Link>
+                        <Link
+                           to="/admin/builder/project-details"
+                           className={`nav-link ${
+                              pathname.includes("/admin/builder/project-details")
+                                 ? "nav-active"
+                                 : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={
+                                 pathname.includes("/admin/builder/project-details")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
+                           />
+                           Project Detail
+                        </Link>
+                        <Link
+                           to="/admin/builder/property-details"
+                           className={`nav-link ${
+                              pathname.includes("/admin/builder/property-details")
+                                 ? "nav-active"
+                                 : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={
+                                 pathname.includes("/admin/builder/property-details")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
+                           />
+                           Property Details
                         </Link>
                      </>
                   )}

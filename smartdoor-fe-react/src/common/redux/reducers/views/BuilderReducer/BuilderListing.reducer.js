@@ -11,6 +11,10 @@ import {
 
 const initialState = {
    builderList: [], // Holds the list of builders
+   records: 0,
+   currentPage: 1,
+   rowsPerPage: 7,
+   searchString: "",
    builderStats: {}, // Holds the stats related to builders
    isLoading: false, // Loading indicator for both list and stats
    error: null, // Error handling
@@ -29,6 +33,7 @@ const BuilderListing = (state = initialState, action) => {
             ...state,
             isLoading: false,
             builderList: action.payload, // Assuming the payload contains the builder list
+            records: action.data.records,
          };
       case GET_BUILDER_LIST_FAILURE:
          return {

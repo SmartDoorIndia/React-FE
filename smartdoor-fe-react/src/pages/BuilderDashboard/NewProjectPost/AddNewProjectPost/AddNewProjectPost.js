@@ -1,15 +1,14 @@
 /** @format */
-// API integration on line 117, 261 and 272
 import React, { useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { Col, Dropdown, FormControl, InputGroup, Row } from "react-bootstrap";
-import "./AddNewProjectPost.scss"; // Make sure to import the SCSS file
+import "./AddNewProjectPost.scss";
 import { TiCameraOutline } from "react-icons/ti";
 import { TiTimes } from "react-icons/ti";
 import { IoIosAdd } from "react-icons/io";
 import { getLocalStorage } from "../../../../common/helpers/Utils";
 import { MdMyLocation } from "react-icons/md";
-import { FaMapMarkerAlt } from "react-icons/fa"; // Import the icon from react-icons
+import { FaMapMarkerAlt } from "react-icons/fa";
 import Container from "react-bootstrap/Container";
 import { RxCross2 } from "react-icons/rx";
 import { PiPlayCircleLight } from "react-icons/pi";
@@ -21,7 +20,6 @@ import {
 } from "../../../../common/redux/actions";
 import Text from "../../../../shared/Text/Text";
 import MapComponent from "../../../../shared/Map/MapComponent";
-import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { CONSTANTS } from "../../../../common/helpers/Constants";
 
 const AddNewProjectPost = () => {
@@ -34,9 +32,9 @@ const AddNewProjectPost = () => {
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
-   const [selectedAmenities, setSelectedAmenities] = useState(""); // Separate state for selected amenities
+   const [selectedAmenities, setSelectedAmenities] = useState("");
    const [isEditing, setIsEditing] = useState(false);
-   const inputRef = useRef(null); // Reference to the input field
+   const inputRef = useRef(null);
    const [showDropdown, setShowDropdown] = useState(false);
    const [data, setData] = useState({
       builderProjectId: null,
@@ -91,13 +89,13 @@ const AddNewProjectPost = () => {
             .then((blob) => {
                const reader = new FileReader();
                reader.onloadend = () => {
-                  resolve(reader.result); // This is the base64 URL
+                  resolve(reader.result);
                };
                reader.readAsDataURL(blob);
             })
             .catch((error) => {
                console.error("Error fetching image as base64:", error);
-               resolve(null); // In case of error, resolve with null
+               resolve(null);
             });
       });
    };
@@ -120,7 +118,7 @@ const AddNewProjectPost = () => {
       }
 
       if (storedUserId) {
-         setUserId(storedUserId); // Set userId state from localStorage
+         setUserId(storedUserId);
          setData((prevData) => ({
             ...prevData,
             userId: storedUserId,
@@ -128,7 +126,7 @@ const AddNewProjectPost = () => {
       }
 
       const fetchBuilderProject = async () => {
-         setLoading(true); // Set loading to true while fetching
+         setLoading(true);
 
          try {
             setData((prevData) => ({
@@ -147,10 +145,8 @@ const AddNewProjectPost = () => {
                   const { resourceData, error: responseError } = response.data;
 
                   if (resourceData) {
-                     // Set selected amenities and other data
                      setSelectedAmenities(resourceData.selectedAmenities || "");
 
-                     // Convert images to base64
                      const imagesWithBase64 = await Promise.all(
                         resourceData.builderProjectImages.map(async (img) => {
                            if (img.docURL) {
@@ -162,14 +158,12 @@ const AddNewProjectPost = () => {
                         })
                      );
 
-                     // Set the images and data
                      setData((prevData) => ({
                         ...prevData,
                         ...resourceData,
-                        builderProjectImages: imagesWithBase64, // Set base64 images
+                        builderProjectImages: imagesWithBase64,
                      }));
 
-                     // Handle possession dates
                      if (resourceData.possessionFrom) {
                         const [monthFrom, yearFrom] = resourceData.possessionFrom.split("-");
                         setMonthYearFrom({ month: monthFrom, year: yearFrom });
@@ -186,43 +180,39 @@ const AddNewProjectPost = () => {
                   }
                }
             } else {
-               // Show blank fields when no ID is available
                setData((prevData) => ({
                   ...prevData,
                   builderProjectId: "",
                   selectedAmenities: "",
                   possessionFrom: "",
                   possessionTo: "",
-                  builderProjectImages: [], // Ensure images are cleared
+                  builderProjectImages: [],
                }));
             }
          } catch (error) {
             setError(error);
             console.error("Error fetching builder data:", error);
          } finally {
-            setLoading(false); // Set loading to false after fetching
+            setLoading(false);
          }
       };
 
       if (storedUserId && builderProjectId) {
          fetchBuilderProject();
       }
-   }, [builderProjectId]); // Ensure effect re-runs when builderProjectId changes
+   }, [builderProjectId]);
 
    const toggleDropdown = () => {
       setShowDropdown(!showDropdown);
    };
 
-   // Handle checkbox change
    const handleCheckboxChange = (event) => {
       const { value, checked } = event.target;
       setData((prevData) => {
          let selectedAmenities = [...prevData.builderProjectGeneralAmenities];
          if (checked) {
-            // Add the selected amenity
             selectedAmenities.push(value);
          } else {
-            // Remove the unselected amenity
             selectedAmenities = selectedAmenities.filter((amenity) => amenity !== value);
          }
 
@@ -255,12 +245,12 @@ const AddNewProjectPost = () => {
       } else {
          setData((prevData) => ({
             ...prevData,
-            [name]: value || "", // Default to an empty string to avoid undefined
+            [name]: value || "",
          }));
       }
    };
    const handleFileChange = (e, description) => {
-      const files = Array.from(e.target.files); // Convert FileList to an array
+      const files = Array.from(e.target.files);
       const newImages = [];
 
       const promises = files.map((file) => {
@@ -270,13 +260,13 @@ const AddNewProjectPost = () => {
                const image = {
                   docName: file.name,
                   docDescription: description,
-                  builderProjectImageAsBase64: event.target.result, // Base64 string
-                  docURL: null, // Set docURL to null initially
+                  builderProjectImageAsBase64: event.target.result,
+                  docURL: null,
                };
                newImages.push(image);
-               resolve(); // Resolve the promise when image is ready
+               resolve();
             };
-            reader.readAsDataURL(file); // Convert image to base64
+            reader.readAsDataURL(file);
          });
       });
 
@@ -337,7 +327,7 @@ const AddNewProjectPost = () => {
       if (vimeoMatch) {
          return `https://player.vimeo.com/video/${vimeoMatch[4]}`;
       }
-      return url.replace("watch?v=", "embed/"); // Example conversion
+      return url.replace("watch?v=", "embed/");
    };
 
    const handleDeleteVideo = (index) => {
@@ -348,7 +338,7 @@ const AddNewProjectPost = () => {
          return {
             ...prevData,
             builderProjectVideos: updatedVideos,
-            newVideoUrl: "", // Clear the new video URL input
+            newVideoUrl: "",
          };
       });
    };
@@ -379,15 +369,13 @@ const AddNewProjectPost = () => {
                window.location.href = `/builder/Project-details/`;
             }
          } else {
-            // If there is no successful response, handle the error
-            const responseError = response?.data?.error || "Unknown error occurred"; // Handle error safely
-            setError(responseError); // Set error message in state to display
+            const responseError = response?.data?.error || "Unknown error occurred";
+            setError(responseError);
             console.error("Error in response:", responseError);
          }
       } catch (error) {
-         // Catch any other errors during submission
          console.error("Error submitting builder project:", error);
-         setError("An unexpected error occurred. Please try again."); // Show generic error message
+         setError("An unexpected error occurred. Please try again.");
       }
    };
 

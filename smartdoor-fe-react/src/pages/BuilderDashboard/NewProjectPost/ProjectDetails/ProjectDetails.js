@@ -26,16 +26,14 @@ import {
 import { CONSTANTS } from "../../../../common/helpers/Constants";
 
 const ProjectDetails = (props) => {
-   // const { builderProjectSubPostId } = useParams(); // Get the project ID from URL parameters
    const [show, setShow] = useState(false);
    const [imageCategory, setImageCategory] = useState("Interior");
-   const [selectedImages, setSelectedImages] = useState([]); // Images selected in the modal
-   const [imagePreviews, setImagePreviews] = useState([]); // Images to display on the page
+   const [selectedImages, setSelectedImages] = useState([]);
+   const [imagePreviews, setImagePreviews] = useState([]);
    const fileInputRef = useRef(null);
    const [monthYearFrom, setMonthYearFrom] = useState({ month: "", year: "" });
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
    const currentYear = new Date().getFullYear();
-   const [userId, setUserId] = useState(null);
    const [builderProjectId, setBuilderProjectId] = useState(null);
    const [error, setError] = useState(null);
    const [showModal, setShowModal] = useState(false);
@@ -88,14 +86,13 @@ const ProjectDetails = (props) => {
    const handleTypeChange = (index, value) => {
       setSelectedType((prevTypes) => {
          const updatedTypes = [...prevTypes];
-         updatedTypes[index] = value; // Update the selected type for the specific property
+         updatedTypes[index] = value;
          return updatedTypes;
       });
 
-      // Update the state with the new type
       setData((prevState) => {
          const updatedProperties = [...prevState.builderProjectSubPostProperties];
-         updatedProperties[index].propertySubType = value; // Update the propertySubType
+         updatedProperties[index].propertySubType = value;
          return { ...prevState, builderProjectSubPostProperties: updatedProperties };
       });
    };
@@ -103,7 +100,27 @@ const ProjectDetails = (props) => {
    useEffect(() => {
       const fetchData = async () => {
          if (!storebuilderProjectSubPostId) {
-            setData({}); // Set data to an empty object if ID is not present
+            setData({
+               builderProjectSubPostId: null,
+               builderProjectId: null,
+               subPostType: "",
+               userId: null,
+               builderProjectSubPostName: "",
+               reraNumber: "",
+               areaToDevelop: null,
+               areaToDevelopMeasurementUnitEnteredByUser: "Sq. Mt.",
+               highlightsOrUsp: "",
+               contactPersonName: "",
+               contactPersonNumber: "",
+               possessionFrom: "",
+               possessionTo: "",
+               totalFloors: null,
+               unitsPerFloor: null,
+               builderProjectSubPostInfo: [],
+               builderProjectSubPostProperties: [{ propertyImages: [] }],
+               builderProjectSubPostVideos: [],
+               builderProjectSubPostImages: [],
+            });
             return; // Exit the function early
          }
          try {
@@ -127,7 +144,6 @@ const ProjectDetails = (props) => {
                         ...property,
                         propertyImages: images.map((image) => ({
                            ...image,
-                           // Ensure each image has the necessary fields
                            docURL: image.docURL || "",
                            builderProjectImageAsBase64: image.builderProjectImageAsBase64 || "",
                         })),
@@ -146,21 +162,20 @@ const ProjectDetails = (props) => {
                   const [toMonth, toYear] = restResourceData.possessionTo.split("-");
 
                   setMonthYearFrom({
-                     month: String(fromMonth).padStart(2, "0"), // Ensure two-digit format
-                     year: fromYear, // Year as a string
+                     month: String(fromMonth).padStart(2, "0"),
+                     year: fromYear,
                   });
 
                   setMonthYearTo({
-                     month: String(toMonth).padStart(2, "0"), // Ensure two-digit format
-                     year: toYear, // Year as a string
+                     month: String(toMonth).padStart(2, "0"),
+                     year: toYear,
                   });
 
                   const initialSelectedTypes = restResourceData.builderProjectSubPostProperties.map(
                      (property) => {
                         if (property.propertySubType === "Independent House / Bungalow") {
-                           return "Villas"; // Map to Villas
-                        } else {
-                           return property.propertySubType || "Villas"; // Default to Villas if not defined
+                           return "Villas";
+                           return property.propertySubType || "Villas";
                         }
                      }
                   );
@@ -182,7 +197,7 @@ const ProjectDetails = (props) => {
 
       fetchData();
       return () => {
-         localStorage.removeItem("builderProjectSubPostId"); // Remove builderProjectSubPostId when component unmounts
+         localStorage.removeItem("builderProjectSubPostId");
       };
    }, [storedUserId, storedBuilderId, builderProjectSubPostId, builderProjectId]);
    const handleSubmit = async (e) => {
@@ -198,10 +213,8 @@ const ProjectDetails = (props) => {
          )
             ? data.builderProjectSubPostProperties.map((property, index) => {
                  let propertySubType = "";
-
-                 // Use the selectedType specific to this unit (index)
                  if (data.subPostType === "Tower") {
-                    propertySubType = "Apartment"; // Set propertySubType for "Tower"
+                    propertySubType = "Apartment";
                  } else if (selectedType[index] === "Villas") {
                     propertySubType = "Independent House / Bungalow";
                  } else if (selectedType[index] === "Plot") {
@@ -213,12 +226,11 @@ const ProjectDetails = (props) => {
                     propertySubType,
                     propertyImages: property.propertyImages.filter(
                        (image) => image && image.docName
-                    ), // Filter out null or empty images
+                    ),
                  };
               })
             : [];
 
-         // Prepare submission data
          console.log("storedBuilderProjectId", storedBuilderProjectId);
          const submissionData = {
             ...data,
@@ -231,7 +243,6 @@ const ProjectDetails = (props) => {
 
          const response = await addBuilderProjectSubPost(submissionData);
 
-         // Handle the response
          if (response?.data) {
             const { resourceData, error: responseError } = response.data;
 
@@ -241,12 +252,10 @@ const ProjectDetails = (props) => {
                   ...resourceData,
                }));
 
-               // Update the URL to remove any ID if present
                const currentUrl = window.location.pathname;
-               const newUrl = currentUrl.replace(/\/\d+$/, ""); // Removes any ID at the end of the URL
+               const newUrl = currentUrl.replace(/\/\d+$/, "");
                window.history.replaceState({}, "", newUrl);
 
-               // Clear the form fields but retain numeric values
                setData({
                   builderProjectSubPostId: null,
                   builderProjectId: null,
@@ -254,21 +263,20 @@ const ProjectDetails = (props) => {
                   userId: null,
                   builderProjectSubPostName: "",
                   reraNumber: "",
-                  areaToDevelop: "", // Retaining as null since it's likely a number
+                  areaToDevelop: "",
                   areaToDevelopMeasurementUnitEnteredByUser: "",
                   highlightsOrUsp: "",
                   contactPersonName: "",
                   contactPersonNumber: "",
-                  possessionFrom: "", // Clear to null (for numbers/dates)
-                  possessionTo: "", // Clear to null (for numbers/dates)
-                  totalFloors: "", // Clear to null (for numbers)
-                  unitsPerFloor: "", // Clear to null (for numbers)
+                  possessionFrom: "",
+                  possessionTo: "",
+                  totalFloors: "",
+                  unitsPerFloor: "",
                   builderProjectSubPostInfo: [],
                   builderProjectSubPostProperties: [],
                   builderProjectSubPostVideos: [],
                   builderProjectSubPostImages: [],
                });
-               // localStorage.removeItem("builderProjectSubPostId");
                setMonthYearFrom({ month: "", year: "" });
                setMonthYearTo({ month: "", year: "" });
                showSuccessToast("Project created successfully");
@@ -281,51 +289,11 @@ const ProjectDetails = (props) => {
          console.error("Error submitting builder project:", error);
          showErrorToast("There was an error submitting the project.");
       } finally {
-         // This ensures that localStorage is cleared after form submission
-         // localStorage.removeItem("builderProjectSubPostId");
       }
    };
 
-   // const handleAddForm = async () => {
-   //    try {
-   //       const sanitizedVideos = data.builderProjectSubPostVideos.filter(
-   //          (video) => video.docName && video.docURL
-   //       );
-   //       const submissionData = {
-   //          ...data,
-   //          userId: getLocalStorage("authData").userid,
-   //          builderProjectSubPostVideos: sanitizedVideos, // Ensure only valid videos are submitted
-   //       };
-
-   //       console.log("Submission data:", submissionData);
-
-   //       const response = await addBuilderProjectSubPost(submissionData);
-   //       console.log("Response:", response);
-
-   //       if (response?.data) {
-   //          const { resourceData, error: responseError } = response.data;
-   //          if (resourceData) {
-   //             setData((prevData) => ({
-   //                ...prevData,
-   //                ...resourceData,
-   //             }));
-   //          } else if (responseError) {
-   //             setError(responseError);
-   //             console.error("Error in response:", responseError);
-   //          }
-   //          showSuccessToast("Form data saved successfully");
-   //          window.location.reload(); // Reloads the page
-   //       } else {
-   //          throw new Error("Failed to save form data.");
-   //       }
-   //    } catch (error) {
-   //       console.error("Error saving form data:", error);
-   //       showErrorToast("Failed to save form data.");
-   //    }
-   // };
    const handleAddForm = async () => {
       try {
-         // Sanitize the videos data
          const sanitizedVideos = data.builderProjectSubPostVideos.filter(
             (video) => video.docName && video.docURL
          );
@@ -333,7 +301,6 @@ const ProjectDetails = (props) => {
             (property, index) => {
                let propertySubType = "";
                console.log("data.builderProjectSubPostType", data.subPostType);
-               // Use the selectedType specific to this unit (index)
                if (data.subPostType === "Tower") {
                   propertySubType = "Apartment"; // Set propertySubType for "Tower"
                } else if (selectedType[index] === "Villas") {
@@ -343,7 +310,7 @@ const ProjectDetails = (props) => {
                }
                return {
                   ...property,
-                  propertySubType, // Assign the determined value to propertySubType
+                  propertySubType,
                };
             }
          );
@@ -351,8 +318,8 @@ const ProjectDetails = (props) => {
             ...data,
             userId: storedUserId,
             builderProjectId: storedBuilderProjectId,
-            builderProjectSubPostVideos: sanitizedVideos, // Only submit valid videos
-            builderProjectSubPostProperties: updatedBuilderProjectSubPostProperties, // Only valid videos are submitted
+            builderProjectSubPostVideos: sanitizedVideos,
+            builderProjectSubPostProperties: updatedBuilderProjectSubPostProperties,
          };
 
          const response = await addBuilderProjectSubPost(submissionData);
@@ -366,12 +333,11 @@ const ProjectDetails = (props) => {
                }));
 
                const currentUrl = window.location.pathname;
-               const newUrl = currentUrl.replace(/\/\d+$/, ""); // Removes any ID at the end of the URL
+               const newUrl = currentUrl.replace(/\/\d+$/, "");
                window.history.replaceState({}, "", newUrl);
                localStorage.removeItem("builderProjectSubPostId");
 
                window.location.reload();
-               // Show success notification
                showSuccessToast("Form data saved successfully");
             } else if (responseError) {
                console.error("Error in response:", responseError);
@@ -439,10 +405,8 @@ const ProjectDetails = (props) => {
    };
    const handleImageModalShow = (image) => {
       if (image.startsWith("data:image")) {
-         // This is a base64 image, set it directly
          setSelectedImageSrc(image);
       } else {
-         // It's a URL, prepend the S3 URL base path if necessary
          setSelectedImageSrc(`${CONSTANTS.CONFIG_PROPERTY.s3Url}/${image}`);
       }
       setImageShowModal(true);
@@ -504,7 +468,7 @@ const ProjectDetails = (props) => {
                prevData.builderProjectSubPostImages.filter(
                   (image) => image.docDescription !== description
                )
-            ), // Keep other categories unchanged
+            ),
       }));
    };
    const handleDeleteSelectedImage = (indexToDelete, docDescription) => {
@@ -515,7 +479,6 @@ const ProjectDetails = (props) => {
          );
 
          if (imagesToKeep[indexToDelete]) {
-            // Remove the image at the specified index for the corresponding docDescription
             filteredImages.splice(
                prevImages.findIndex((image) => image === imagesToKeep[indexToDelete]),
                1
@@ -534,20 +497,20 @@ const ProjectDetails = (props) => {
       if (newVideoUrl) {
          const newVideo = {
             docId: null,
-            docName: data.docName || "New Video", // Default video name if none provided
-            docDescription: "Description here", // Default description, replace with actual data if needed
-            docOrderInFrontendView: (data.builderProjectSubPostVideos?.length || 0) + 1, // Increment order safely
-            docURL: newVideoUrl, // The URL for the new video
-            builderProjectImageAsBase64: null, // Set default to null
+            docName: data.docName || "New Video",
+            docDescription: "Description here",
+            docOrderInFrontendView: (data.builderProjectSubPostVideos?.length || 0) + 1,
+            docURL: newVideoUrl,
+            builderProjectImageAsBase64: null,
          };
          if (newVideo.docURL) {
             const updatedVideos = [...(data.builderProjectSubPostVideos || []), newVideo];
             setData((prevData) => {
-               const updatedVideos = [...(prevData.builderProjectSubPostVideos || [])]; // Ensure it's an array
+               const updatedVideos = [...(prevData.builderProjectSubPostVideos || [])];
                updatedVideos.push(newVideo);
                return { ...prevData, builderProjectSubPostVideos: updatedVideos };
             });
-            clearInput(); // Clear the input after adding the video
+            clearInput();
          }
       }
    };
@@ -583,33 +546,27 @@ const ProjectDetails = (props) => {
          const reader = new FileReader();
          reader.onloadend = () => {
             const newImage = {
-               builderProjectImageAsBase64: reader.result, // Base64 representation of the file
-               docDescription, // Use docDescription to identify the image
-               docId: null, // Initialize with null, unless you have an actual ID to assign
-               docName: file.name, // Name of the file
-               docOrderInFrontendView: null, // Optional: Set if you need specific order
-               docURL: "", // Assuming this will remain empty unless there's a specific URL
+               builderProjectImageAsBase64: reader.result,
+               docDescription,
+               docId: null,
+               docName: file.name,
+               docOrderInFrontendView: null,
+               docURL: "",
             };
 
             setData((prevData) => {
                const updatedProperties = [...prevData.builderProjectSubPostProperties];
                const currentProperty = updatedProperties[propertyIndex];
-
-               // Ensure the propertyImages array exists
                if (!currentProperty.propertyImages) {
                   currentProperty.propertyImages = [];
                }
-
-               // Find the image with the same docDescription
                const existingImageIndex = currentProperty.propertyImages.findIndex(
                   (img) => img.docDescription === docDescription
                );
 
                if (existingImageIndex !== -1) {
-                  // If the image exists, replace it
                   currentProperty.propertyImages[existingImageIndex] = newImage;
                } else {
-                  // Otherwise, add the new image
                   currentProperty.propertyImages.push(newImage);
                }
 
@@ -619,7 +576,7 @@ const ProjectDetails = (props) => {
                };
             });
          };
-         reader.readAsDataURL(file); // Convert file to Base64
+         reader.readAsDataURL(file);
       }
    };
 
@@ -627,8 +584,6 @@ const ProjectDetails = (props) => {
       setData((prevData) => {
          const updatedProperties = [...prevData.builderProjectSubPostProperties];
          const currentProperty = updatedProperties[propertyIndex];
-
-         // Filter out the image with the matching docDescription
          currentProperty.propertyImages = currentProperty.propertyImages.filter(
             (img) => img.docDescription !== docDescription
          );
@@ -638,36 +593,11 @@ const ProjectDetails = (props) => {
             builderProjectSubPostProperties: updatedProperties,
          };
       });
-
-      // Reset file input field after deletion
       const fileInput = document.querySelector(`input[name="${docDescription}"]`);
       if (fileInput) {
-         fileInput.value = ""; // Reset the file input to allow re-upload
+         fileInput.value = "";
       }
    };
-
-   // const handleDeletePropertyImage = (propertyIndex, imageIndex) => {
-   //    setData((prevData) => {
-   //       const updatedProperties = [...prevData.builderProjectSubPostProperties];
-   //       const propertyImages = [...updatedProperties[propertyIndex].propertyImages];
-
-   //       // Check if the image to be deleted is new or existing
-   //       const imageToDelete = propertyImages[imageIndex];
-
-   //       // Only delete the image if it is new or an existing image (handle based on flag or image type)
-   //       if (imageToDelete.isNew || (imageIndex >= 0 && imageIndex < propertyImages.length)) {
-   //          // Remove the image at the specified index
-   //          propertyImages.splice(imageIndex, 1);
-   //       }
-
-   //       updatedProperties[propertyIndex].propertyImages = propertyImages;
-
-   //       return {
-   //          ...prevData,
-   //          builderProjectSubPostProperties: updatedProperties,
-   //       };
-   //    });
-   // };
 
    const handleSubPostChange = (e) => {
       const value = e.target.value;
@@ -720,8 +650,8 @@ const ProjectDetails = (props) => {
       }
    };
    const handlePlayVideo = (videoUrl) => {
-      setCurrentVideoUrl(videoUrl); // Set the video URL to be displayed
-      setShowModal(true); // Open the modal
+      setCurrentVideoUrl(videoUrl);
+      setShowModal(true);
    };
 
    const handleRemoveProperty = (index) => {
@@ -781,13 +711,13 @@ const ProjectDetails = (props) => {
 
       const newUnitIndex = data.builderProjectSubPostProperties?.length || 0;
       setSelectedType((prevTypes) => {
-         const newTypes = [...prevTypes, "Villas"]; // Add a new type to the end of the array
+         const newTypes = [...prevTypes, "Villas"];
          return newTypes;
       });
       setData((prevState) => ({
          ...prevState,
          builderProjectSubPostProperties: [
-            ...(prevState.builderProjectSubPostProperties || []), // Ensure this is an array
+            ...(prevState.builderProjectSubPostProperties || []),
             newUnit,
          ],
       }));
@@ -2811,7 +2741,6 @@ const ProjectDetails = (props) => {
                                                             </Col>
                                                          ))}
 
-                                                         {/* Image Modal */}
                                                          <Modal
                                                             show={showImageModal}
                                                             onHide={() => setImageShowModal(false)}

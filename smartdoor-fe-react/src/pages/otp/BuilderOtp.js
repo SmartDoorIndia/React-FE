@@ -152,6 +152,23 @@ const BuilderOtp = (props) => {
          } finally {
             setButtonDisable(false);
          }
+      } else {
+         try {
+            const response = await dispatch(BuilderSignup({ mobile: mobile, otp: otpValue }));
+            if (response.status === 200) {
+               showSuccessToast("Sign Up successful");
+               setLocalStorage("authData", response.data);
+               // Delay redirect to ensure auth data is set
+               window.location.href = "/builder/detail";
+            } else {
+               showErrorToast("Sign Up failed");
+            }
+         } catch (error) {
+            showErrorToast("Sign Up error");
+            console.log(error);
+         } finally {
+            setButtonDisable(false);
+         }
       }
    };
 

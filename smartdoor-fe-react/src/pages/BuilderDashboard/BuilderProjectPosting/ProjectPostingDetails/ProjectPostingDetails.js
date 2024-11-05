@@ -32,17 +32,19 @@ const ProjectPostingDetails = (props) => {
    );
    const [builderProjectSubPostStats, setBuilderProjectSubPostStats] = useState({});
    const [rowsPerPage, setRowsPerPage] = useState(7);
-   const [totalRecords, setTotalRecords] = useState(0); // To track total records count
+   const [totalRecords, setTotalRecords] = useState(0);
    const recordSize = ProjectPostingDetails?.data?.records || 0;
    const [builderProjectSubPosts, setBuilderProjectSubPosts] = useState(null);
    const auth = getLocalStorage("authData");
    const StorebuilderProjectId = localStorage.getItem("builderProjectId");
    const storebuilderProjectSubPostId = localStorage.getItem("builderProjectSubPostId");
    const [builderProjectId, setBuilderProjectId] = useState(StorebuilderProjectId);
-   const [userId, setUserId] = useState(auth?.userid || null); // Initialize userId from auth
-   const [builderProjectDetails, setBuilderProjectDetails] = useState(null); // Start with null
+   const [userId, setUserId] = useState(auth?.userid || null);
+
+   const [builderProjectDetails, setBuilderProjectDetails] = useState(null);
+   const isBuilderProfileApproved = localStorage.getItem("builderProfileApproved") === "true";
    const [projectSubPostsFilter, setProjectSubPostsFilter] = useState({
-      builderProjectId: StorebuilderProjectId, // Set from localStorage
+      builderProjectId: StorebuilderProjectId,
       searchString: "",
       userId: auth?.userid || null,
       records: rowsPerPage,
@@ -59,7 +61,7 @@ const ProjectPostingDetails = (props) => {
             if (response?.data?.resourceData) {
                const resourceData = response.data.resourceData;
                setBuilderProjectSubPosts(resourceData);
-               setTotalRecords(response.data.totalRecords); // Update total records from the response
+               setTotalRecords(response.data.totalRecords);
             } else {
                console.log("No resource data found in the response.");
                return [];
@@ -75,9 +77,6 @@ const ProjectPostingDetails = (props) => {
             if (response?.data?.resourceData) {
                const resourceData = response.data.resourceData;
                setBuilderProjectSubPostStats(resourceData);
-               // BuilderProjectSubPostStats.builderProjectSubPostCount
-               // setBuilderProjectSubPosts(resourceData);
-               // setTotalRecords(response.data.totalRecords); // Update total records from the response
             } else {
                console.log("No resource data found in the response.");
                return [];
@@ -89,12 +88,11 @@ const ProjectPostingDetails = (props) => {
 
       const handleGetBuilderProjectById = async () => {
          localStorage.removeItem("builderProjectId");
-         const newBuilderProjectId = StorebuilderProjectId; // Replace with the actual new ID
+         const newBuilderProjectId = StorebuilderProjectId;
          localStorage.setItem("builderProjectId", newBuilderProjectId);
-
          try {
             const response = await getBuilderProjectById({
-               builderProjectId: newBuilderProjectId, // Use the state value for builderProjectId
+               builderProjectId: newBuilderProjectId,
                userId: userId,
             });
 
@@ -121,7 +119,7 @@ const ProjectPostingDetails = (props) => {
 
             setBuilderProjectDetails({
                ...builderProjectDetails,
-               builderProjectImages: imagesWithBase64, // Set images with base64 data
+               builderProjectImages: imagesWithBase64,
             });
             console.log("Builder Project Details:", builderProjectDetails);
          } catch (error) {
@@ -136,6 +134,27 @@ const ProjectPostingDetails = (props) => {
       handleGetBuilderProjectSubPostsStats();
       handleGetBuilderProjectById();
    }, [StorebuilderProjectId, userId, projectSubPostsFilter]);
+   const approveBuilderProject = async (e) => {
+      e.preventDefault();
+      try {
+         const response = await approveBuilderProject({
+            // builderId,
+            userId: auth.userid,
+         });
+      } catch (error) {
+         console.error("Error approving project:", error);
+      }
+   };
+   // const handleApproveProject = async () => {
+   //    try {
+   //       const builderProjectId = builderId;
+   //       const userId = auth.userid;
+   //       await approveBuilderProject(builderProjectId, userId);
+   //       localStorage.setItem("builderProfileApproved", "true");
+   //    } catch (error) {
+   //       console.error("Error approving project:", error);
+   //    }
+   // };
    const fetchImageAsBase64 = async (imageURL) => {
       try {
          const response = await fetch(imageURL);
@@ -148,7 +167,7 @@ const ProjectPostingDetails = (props) => {
          });
       } catch (error) {
          console.error("Error fetching image as base64:", error);
-         return null; // Return null if there is an error
+         return null;
       }
    };
    const showValue = () => {
@@ -164,13 +183,13 @@ const ProjectPostingDetails = (props) => {
       setCurrentPage(Number(newPage));
       setProjectSubPostsFilter((prev) => ({
          ...prev,
-         pageNumber: newPage, // Update the page number
+         pageNumber: newPage,
       }));
    };
 
    const handleRowsPerPageChange = (newRowsPerPage) => {
       setRowsPerPage(newRowsPerPage);
-      setCurrentPage(1); // Reset to first page when changing rows per page
+      setCurrentPage(1);
       setProjectSubPostsFilter((prev) => ({
          ...prev,
          records: newRowsPerPage,
@@ -211,24 +230,24 @@ const ProjectPostingDetails = (props) => {
       return (
          <SearchInput
             onFilter={(e) => {
-               const searchValue = e.target.value; // Get the search value
-               setFilterText(searchValue); // Update the filter text
+               const searchValue = e.target.value;
+               setFilterText(searchValue);
 
                setProjectSubPostsFilter((prev) => ({
                   ...prev,
-                  searchString: searchValue, // Update searchString
-                  pageNumber: 1, // Reset page number for new search
+                  searchString: searchValue,
+                  pageNumber: 1,
                }));
             }}
-            onClear={handleClear} // Handle clear button click
-            filterText={filterText} // Bind the filter text
-            placeholder="Search" // Placeholder for search input
+            onClear={handleClear}
+            filterText={filterText}
+            placeholder="Search"
          />
       );
    }, [filterText, resetPaginationToggle]);
 
    const handleClickview = (row) => {
-      const storebuilderProjectSubPostId = row.builderProjectSubPostId; // Access the builderProjectSubPostId from the row
+      const storebuilderProjectSubPostId = row.builderProjectSubPostId;
       if (!storebuilderProjectSubPostId) {
          console.error("No project ID found in the row data.");
          return;
@@ -244,10 +263,8 @@ const ProjectPostingDetails = (props) => {
       getBuilderProjectSubPosts(requestData)
          .then((response) => {
             if (response.data && response.data.resourceData) {
-               console.log(response.data.resourceData);
                const resourceData = response.data.resourceData;
                console.log("resourceData====>", resourceData);
-               // Format possession dates safely
                const formattedPossessionFrom = formatDate(resourceData.possessionFrom);
                const formattedPossessionTo = formatDate(resourceData.possessionTo);
 
@@ -258,7 +275,6 @@ const ProjectPostingDetails = (props) => {
                });
 
                const builderProjectSubPostId = requestData.builderProjectSubPostId;
-               console.log("builderProjectSubPostId--", builderProjectSubPostId);
                localStorage.setItem("builderProjectSubPostId", builderProjectSubPostId);
                window.location.href = `/builder/Project-details/${builderProjectSubPostId}`;
             } else {
@@ -398,17 +414,17 @@ const ProjectPostingDetails = (props) => {
                      possessionFrom: formattedPossessionFrom,
                      possessionTo: formattedPossessionTo,
                   });
-                  console.log(response.data.resourceData); // Log the project details for debugging
+                  console.log(response.data.resourceData);
                   window.location.href = `/builder/Posting-Property/${builderProjectId}`;
                } else {
                   console.error("Invalid project data received:", response.data);
                }
             })
             .catch((error) => {
-               window.location.href = `/builder/Posting-Property/`; // Navigate to the page with a blank ID field
+               window.location.href = `/builder/Posting-Property/`;
             });
       } else {
-         console.error("No project ID found in local storage."); // Log if no project ID is found
+         console.error("No project ID found in local storage.");
       }
    };
    localStorage.setItem("projectName", builderProjectDetails?.builderProjectName);
@@ -669,9 +685,9 @@ const ProjectPostingDetails = (props) => {
                   pagination
                   paginationComponent={PaginationComponent}
                   paginationServer
-                  paginationRowsPerPageOptions={[7, 14, 21, 28]} // Rows per page options
-                  paginationPerPage={7} // Default rows per page
-                  perPageOptions={[7, 14, 21, 28]} // Per-page options
+                  paginationRowsPerPageOptions={[7, 14, 21, 28]}
+                  paginationPerPage={7}
+                  perPageOptions={[7, 14, 21, 28]}
                   onChangePage={handlePageChange}
                   expandableRows
                   expandableRowsComponent={ExpandedRowComponent}
