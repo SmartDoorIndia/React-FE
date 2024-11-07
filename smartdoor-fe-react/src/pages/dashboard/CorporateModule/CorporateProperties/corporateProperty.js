@@ -114,7 +114,7 @@ const CorporateProperty = (props) => {
             name: "City",
             selector: ((row) => row.city),
             sortable: true,
-            center: true,
+            center: false,
             wrap: true,
             minWidth: "250px",
             cell: ({ city }) => (

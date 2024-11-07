@@ -130,7 +130,7 @@ const AddNewCorporate = (props) => {
          if (response.status === 200) {
             userlist.push(newUser);
             setUserList([...userlist]);
-            setNewUser(prevUser => ({ ...prevUser, name: '', mobile: '', sdPosting: '' }));
+            setNewUser(prevUser => ({ ...prevUser, name: '', mobile: '', sdPosting: '', hubIdList: [] }));
             setAddNewUserFlag(false);
             showSuccessToast("User added successfully");
          } else {

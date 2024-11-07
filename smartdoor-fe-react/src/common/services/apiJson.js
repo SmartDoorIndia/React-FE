@@ -3027,7 +3027,7 @@ export const ApiJson = {
 
   getCorporateUserHubList: {
     url: "/admin/admin/getAllSmartDoorHubs?corporateUserId=:corporateUserId",
-    method: "GET",
+    method: "POST",
     data: {
       corporateUserId: null
     },

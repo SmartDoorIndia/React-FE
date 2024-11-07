@@ -279,7 +279,7 @@
    .rdt_TableRow {
       min-height: fit-content;
       .rdt_TableCell {
-         text-align: center;
+         // text-align: center;
          &:nth-child(1) {
             &:first-child {
                width: 70px;
@@ -307,7 +307,7 @@
                min-width: 180px;
                text-overflow: ellipsis;
                display: block;
-               text-align: center;
+               // text-align: center;
             }
          }
       }

@@ -284,6 +284,9 @@ const Broker = (props) => {
          sortable: false,
          center: true,
          minWidth: "120px",
+         cell: ({plan}) => (
+            <Text size="Small" color="secondryColor elipsis-text" text={plan || '-'} />
+         )
       },
       {
          name: "Posted Properties",
@@ -298,6 +301,9 @@ const Broker = (props) => {
          sortable: false,
          center: true,
          maxWidth: "100px",
+         cell: ({chat}) => (
+            <Text size="Small" color="secondryColor elipsis-text" text={chat || '-'} />
+         )
       },
       {
          name: "Profile Status",

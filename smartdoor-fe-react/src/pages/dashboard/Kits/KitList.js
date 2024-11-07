@@ -47,7 +47,7 @@ const KitList = (props) => {
             style: { padding: "0 !important" },
             cell: ({ hubname }) => (
                 <ToolTip position="top" style={{ width: '100%' }} name={hubname}>
-                    <Text size="Small" color="secondryColor elipsis-text" text={hubname} />
+                    <Text size="Small" color="secondryColor elipsis-text" text={hubname || '-'} />
                 </ToolTip>
             ),
             id: 2

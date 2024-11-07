@@ -210,24 +210,25 @@ const ExecutionListing = (props) => {
       center:true,
       minWidth:"120px",
       cell: ({ id, assignedTo, userList }) => (
-           !assignedTo ?
-             <div className="w-100">
-               <div className="assignTo">
-                 <Form.Group controlId="exampleForm.SelectCustom" className="w-100 display-flex">
-                   <Form.Control as="select" className="w-100" 
-                   onChange={ (e)=>handleChangeAssignee(id ,e.target.value) }
-                   >
-                     <option >Assign</option>
-                     {
-                       userList.map((data, index)=>
-                         <option key={ index } value={ data.id }>{data.name}</option>,
-                       )
-                     }
-                   </Form.Control>
-                 </Form.Group>
-               </div>
-             </div> :  
-             <Text size="Small" color="secondryColor" className="text-center elipsis-text" text={ assignedTo ? assignedTo.capitalizeWord() : '-' } /> 
+          //  !assignedTo ?
+          //    <div className="w-100">
+          //      <div className="assignTo">
+          //        <Form.Group controlId="exampleForm.SelectCustom" className="w-100 display-flex">
+          //          <Form.Control as="select" className="w-100" 
+          //          onChange={ (e)=>handleChangeAssignee(id ,e.target.value) }
+          //          >
+          //            <option >Assign</option>
+          //            {
+          //              userList.map((data, index)=>
+          //                <option key={ index } value={ data.id }>{data.name}</option>,
+          //              )
+          //            }
+          //          </Form.Control>
+          //        </Form.Group>
+          //      </div>
+          //    </div> :  
+          //    <Text size="Small" color="secondryColor" className="text-center elipsis-text" text={ assignedTo ? assignedTo.capitalizeWord() : '-' } /> 
+             <Text size="Small" color="secondryColor" className="text-center elipsis-text" text={ assignedTo ? assignedTo.capitalizeWord() : 'Unassigned' } /> 
       ),
     }, 
     {

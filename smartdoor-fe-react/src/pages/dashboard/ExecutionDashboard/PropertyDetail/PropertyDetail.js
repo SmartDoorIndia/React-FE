@@ -3,7 +3,7 @@ import Form from 'react-bootstrap/Form'
 import Buttons from '../../../../shared/Buttons/Buttons';
 import Text from '../../../../shared/Text/Text';
 import { Col, Row, Modal } from 'react-bootstrap';
-import { changeInstallationAssignee, getExecutionTaskDetail, approveProperty, getInstallationExecutiveList, getSmartLockData } from '../../../../common/redux/actions';
+import { changeInstallationAssignee, getExecutionTaskDetail, approveProperty, getInstallationExecutiveList, getSmartLockData, getHubList } from '../../../../common/redux/actions';
 
 import './PropertyDetail.scss';
 import { formateDate, handleStatusElement, formateDateTime } from '../../../../common/helpers/Utils';
@@ -12,15 +12,19 @@ import { Link } from 'react-router-dom';
 import Dialer from '../../../../assets/svg/Dialer.svg'
 import { useUserContext } from '../../../../common/helpers/Auth';
 import QRCode from 'react-qr-code';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 
 const PropertyDetail = (props) => {
   const taskId = props.location.state ? props.location.state.taskId : '';
+  const { allHubList, getHubList } = props;
 
   // STATES..
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
   const [error, setError] = useState(null);
   const [selectedSelection, setSelect] = useState('');
+  const [selectedHub, setSelectedHub] = useState('');
   const [assignToListToggle, setAssignToListToggle] = useState(false);
   const [executiveList, setExecutiveList] = useState([]);
   const [show, setShow] = useState(false);
@@ -87,11 +91,12 @@ const PropertyDetail = (props) => {
   }, []);
 
   const _getPropertyDetail = useCallback(() => {
+    setLoading(true);
     getExecutionTaskDetail({ taskId: taskId })
       .then((response) => {
         console.log('getExecutionTaskDetail', response)
         if (response.data) {
-          if (response.data.resourceData) setData(response.data.resourceData)
+          if (response.data.resourceData) { setData(response.data.resourceData); setSelectedHub(response?.data?.resourceData?.hubId) }
           _getSmartLockData(response.data.resourceData.propertyId);
 
           // if (response.data.error) setError(response.data.error)
@@ -168,8 +173,14 @@ const PropertyDetail = (props) => {
       })
   }, [getInstallationExecutiveList])
 
+  const _getHubList = useCallback(async () => {
+    await getHubList();
+  }, [getHubList]);
+
   useEffect(() => {
+    getHubList();
     _getInstallationExecutiveList();
+    console.log(allHubList)
   }, [_getInstallationExecutiveList])
 
 
@@ -180,8 +191,10 @@ const PropertyDetail = (props) => {
       // timeSlot: data.timeSlot,
       // userRequestDate: data.taskDate,
       city: executiveList.location,
+      hubId: selectedHub
     }).then((res) => {
       if (res.data.status === 200) {
+        setAssignToListToggle(!assignToListToggle);
         _getPropertyDetail();
       }
     })
@@ -270,21 +283,7 @@ const PropertyDetail = (props) => {
 
                     <span className="ml-2"></span>
                     {/* disabled={data.status === 'COMPLETED' ? true : false}*/}
-                    {data.status && (data.status === 'COMPLETED' || data.status === 'IN PROGRESS' || data.status === 'ASSIGNED' || data.status === 'ACCEPTED') ? null :
-                      <Buttons
-                        // disabled={
-                        //     data.status === 'ASSIGNED' || handleStatus(data.reviews, data.status,"edit") ? true : false}
-                        name={assignToListToggle ? 'Save' : 'Edit'}
-                        varient="primary"
-                        type="submit"
-                        size="xSmall"
-                        color="white"
-                        onClick={() => {
-                          setAssignToListToggle(!assignToListToggle);
-                          assignToListToggle ? handleChangeAssignee() : console.log('')
-                        }}
-                      />
-                    }
+
                     {showPrintBtn ?
                       <Buttons
                         name={'Print QR'}
@@ -337,30 +336,7 @@ const PropertyDetail = (props) => {
                       {/* </Link> */}
                     </div>
                   </Col>
-                  <Col>
-                    <div>
-                      <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="Assigned To" />
-                      {
-                        assignToListToggle ?
-                          <div className="w-75 e_select">
-                            <Form.Group controlId="exampleForm.SelectCustom" className="">
-                              <Form.Control as="select" onChange={(e) => setSelect(e.target.value)}>
-                                <option value="" disabled selected>Assign</option>
-                                {/* <option value="" >None</option>*/}
-                                {
-                                  executiveList ? executiveList.map((data, index) =>
-                                    <option key={index} value={data.id}>{data.name}</option>,
-                                  ) :
-                                    null
-                                }
-                              </Form.Control>
-                            </Form.Group>
-                          </div> :
-                          <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || '-'} />
-                      }
-                      {/* <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || "-"} />                         */}
-                    </div>
-                  </Col>
+
                   <Col>
                     <div>
                       <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="Property Type" />
@@ -369,6 +345,71 @@ const PropertyDetail = (props) => {
                   </Col>
                 </Row>
 
+                <div className="separator mt-3"></div>
+                <div className='d-flex mt-3'>
+                  <div className='col-lg-3'>
+                    <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="Assigned To" />
+                    {
+                      assignToListToggle ?
+                        <div className="w-75 e_select">
+                          <Form.Group controlId="exampleForm.SelectCustom" className="">
+                            <Form.Control as="select" onChange={(e) => setSelect(e.target.value)}>
+                              <option value="" disabled selected>Assign</option>
+                              {/* <option value="" >None</option>*/}
+                              {
+                                executiveList ? executiveList.map((data, index) =>
+                                  <option key={index} value={data.id}>{data.name}</option>,
+                                ) :
+                                  null
+                              }
+                            </Form.Control>
+                          </Form.Group>
+                        </div> :
+                        <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || '-'} />
+                    }
+                    {/* <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || "-"} />                         */}
+                  </div>
+                  <div className='col-lg-3'>
+                    <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="Assigned Hub" />
+
+                    <div className="w-75 e_select">
+                      <Form.Group controlId="exampleForm.SelectCustom" className="">
+                        <Form.Control disabled={!assignToListToggle} as="select" onChange={(e) => setSelectedHub(e.target.value)} value={selectedHub}>
+                          <option value="" disabled selected>Assign Hub</option>
+                          {/* <option value="" >None</option>*/}
+                          {
+                            allHubList?.allHubList?.data?.hubList?.map((data, index) =>
+                              <option key={data.hubId} value={data.hubId}>{data.hubName}</option>,
+                            )
+                          }
+                        </Form.Control>
+                      </Form.Group>
+                    </div>
+                    {/* <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || "-"} />                         */}
+                  </div>
+                  {/* <Col lg='3'>
+                  </Col> */}
+                  <Col lg='1'>
+                    {data.status && (data.status === 'COMPLETED' || data.status === 'IN PROGRESS' || data.status === 'ASSIGNED' || data.status === 'ACCEPTED') ? null :
+                      <Buttons
+                        className='mt-3'
+                        // disabled={
+                        //     data.status === 'ASSIGNED' || handleStatus(data.reviews, data.status,"edit") ? true : false}
+                        name={assignToListToggle ? 'Save' : 'Edit'}
+                        varient="primary"
+                        type="submit"
+                        size="medium"
+                        color="white"
+                        onClick={() => {
+                          if (!assignToListToggle) {
+                            setAssignToListToggle(!assignToListToggle);
+                          }
+                          assignToListToggle ? handleChangeAssignee() : console.log('')
+                        }}
+                      />
+                    }
+                  </Col>
+                </div>
                 <div className="separator mt-5"></div>
                 <div id='qrcode' style={{ display: 'none' }} className='qrcode'>
                   <QRCode
@@ -457,4 +498,21 @@ const PropertyDetail = (props) => {
   )
 }
 
-export default memo(PropertyDetail);
+const mapStateToProps = (allHubList) => ({
+  allHubList// Ensure this matches the state structure in your reducer
+});
+
+// Map Redux actions to component props
+const mapDispatchToProps = {
+  changeInstallationAssignee,
+  getExecutionTaskDetail,
+  approveProperty,
+  getInstallationExecutiveList,
+  getSmartLockData,
+  getHubList,
+};
+
+// Export with compose and connect
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps), memo
+)(PropertyDetail);

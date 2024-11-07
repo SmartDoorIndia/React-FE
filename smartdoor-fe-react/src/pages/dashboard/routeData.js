@@ -1151,6 +1151,14 @@ const routeData = [
   },
 
   {
+    path: '/admin/corporate/editCorporate',
+    name: 'Edit corporate',
+    bradcrumb: ['Corporate', 'Edit corporate'],
+    excat: false,
+    // module:'Corporate',
+    component: AddnewCorporate
+  },
+  {
     path: '/admin/corporate/addNewCorporate',
     name: 'Add New corporate',
     bradcrumb: ['Corporate', 'Add New corporate'],

@@ -194,7 +194,8 @@ const PropertyModule = (props) => {
          name: "Mobile",
          // selector: "ownerName",
          center: true,
-         maxWidth: "120px",
+         maxWidth: "130px",
+         minWidth: "130px",
          cell: ({ ownerMobile, posetdByMobile }) => (
             <span>{ownerMobile === null ? <>{posetdByMobile}</> : <>{ownerMobile}</>}</span>
          )
