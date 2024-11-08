@@ -297,7 +297,7 @@ const PropertyDevice = (props) => {
             minWidth: '170px',
             cell: ({ uuId }) => (
                 <div>
-                    {loading ? <Loader />
+                    {loading && uuId === currentUUID ? <Loader />
                         :
                         <Buttons name='View LiveStream' varient='primary' size='xSmall' onClick={async () => {
                             // setShowLiveStream(true);
@@ -819,7 +819,7 @@ const PropertyDevice = (props) => {
                 <Modal.Body>
 
                     <ReactPlayer
-                        type=''
+                        // type=''
                         url={livestreamURL}
                         controls={true}
                         muted={false}
