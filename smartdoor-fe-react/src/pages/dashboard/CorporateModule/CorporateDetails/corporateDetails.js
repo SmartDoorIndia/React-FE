@@ -51,7 +51,7 @@ const CorporateDetails = (props) => {
                     </Col>
                     <Col lg='2'>
                         <Button className="d-flex px-2" style={{ borderColor: '#BE1452', backgroundColor: '#FCDAE6', color: '#BE1452', borderRadius: '8', fontWeight: '500' }}
-                            onClick={() => {history.push('/admin/corporate/addNewCorporate', {corporateId: corporateId});}} >
+                            onClick={() => {history.push('/admin/corporate/editCorporate', {corporateId: corporateId});}} >
                             <img className='p-0' src={pencilIcon} alt={''} style={{ width: '18px', height: '18px' }} />
                             Edit Details</Button>
                     </Col>

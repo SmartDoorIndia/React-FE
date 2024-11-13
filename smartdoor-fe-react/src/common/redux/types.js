@@ -379,10 +379,6 @@ export const CORPORATE_PROPERTY_SUCCESS = "src/pages/Dashboard/corporateProperty
 export const CORPORATE_PROPERTY_ERROR = "src/pages/Dashboard/corporateProperty/Error";
 export const CORPORATE_PROPERTY_LOADING = "src/pages/Dashboard/corporateProperty/Loading";
 
-export const BATTERY_LEVEL_SUCCESS = "src/pages/Dashboard/BatteryLevelCheck/Success";
-export const BATTERY_LEVEL_ERROR = "src/pages/Dashboard/BatteryLevelCheck/Error";
-export const BATTERY_LEVEL_LOADING = "src/pages/Dashboar/BatteryLevelCheck/Loading";
-
 // ProjectPosting1
 export const GET_BUILDER_PROJECTS_ERROR =
    "/src/pages/BuilderDashboard/BuilderProjectPosting/ProjectsPostings/Error";
@@ -417,3 +413,14 @@ export const GET_BUILDER_LIST_STATS_FAILURE = "GET_BUILDER_LIST_STATS_FAILURE";
 export const FETCH_PROPERTY_LIST_REQUEST = "FETCH_PROPERTY_LIST_REQUEST";
 export const FETCH_PROPERTY_LIST_SUCCESS = "FETCH_PROPERTY_LIST_SUCCESS";
 export const FETCH_PROPERTY_LIST_FAILURE = "FETCH_PROPERTY_LIST_FAILURE";
+export const BATTERY_LEVEL_SUCCESS = 'src/pages/Dashboard/BatteryLevelCheck/Success';
+export const BATTERY_LEVEL_ERROR = 'src/pages/Dashboard/BatteryLevelCheck/Error';
+export const BATTERY_LEVEL_LOADING = 'src/pages/Dashboar/BatteryLevelCheck/Loading';
+
+export const HUB_LIST_SUCCESS = 'src/pages/Dashboard/HubList/Success';
+export const HUB_LIST_ERROR = 'src/pages/Dashboard/HubList/Error';
+export const HUB_LIST_LOADING = 'src/pages/Dashboar/HubList/Loading';
+
+export const KIT_LIST_SUCCESS = 'src/pages/Dashboard/kitList/Success';
+export const KIT_LIST_ERROR = 'src/pages/Dashboard/kitList/Error';
+export const KIT_LIST_LOADING = 'src/pages/Dashboar/kitList/Loading';

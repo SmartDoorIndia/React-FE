@@ -279,7 +279,7 @@ const SmartDoorCities = (props) => {
                                         : null}
                                 </TextField>
                             </div>
-                            <div className="mapLocation my-3 col-6">
+                            <div className="mapLocation col-6">
                                 <div style={{ height: "200px", overflow: "hidden" }}>
                                     <MapComponent
                                         zoom={8}

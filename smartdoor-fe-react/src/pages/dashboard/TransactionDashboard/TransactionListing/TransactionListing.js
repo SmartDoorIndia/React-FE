@@ -166,7 +166,7 @@ const MeetingRequestColumns = [
           <ToolTip position="top" style={{ width: "100%" }} name={location || ""}>
              <span className="cursor-pointer elipsis-text">
                 {" "}
-                {location.substring(
+                {location?.substring(
                    0,
                    location.indexOf(",") !== -1 ? location.indexOf(",") : location.length
                 )}
@@ -276,7 +276,7 @@ const MeetingRequestColumns = [
          <ToolTip position="top" style={{ width: "100%" }} name={location || ""}>
             <span className="cursor-pointer elipsis-text">
                {" "}
-               {location.substring(
+               {location?.substring(
                   0,
                   location.indexOf(",") !== -1 ? location.indexOf(",") : location.length
                )}
@@ -448,7 +448,7 @@ const MeetingRequestColumns = [
           <ToolTip position="top" style={{ width: "100%" }} name={location || ""}>
              <span className="cursor-pointer elipsis-text">
                 {" "}
-                {location.substring(
+                {location?.substring(
                    0,
                    location.indexOf(",") !== -1 ? location.indexOf(",") : location.length
                 )}

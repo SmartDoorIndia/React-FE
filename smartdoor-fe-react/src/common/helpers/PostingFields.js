@@ -333,6 +333,83 @@ const PostingFields = {
                             "Expected time": "",
                             "Fractional Ownership checkbox": false
                         }
+                    },
+                    "Pg": {
+                        "Apartment": {
+                            "Specs": [
+                                "BHK",
+                                "Attached",
+                                "Carpet area/built-up area of the room",
+                                "Loading factor",
+                                "Car parkings",
+                                "Furnishing type",
+                                "Furnishing description",
+                                "Facility included",
+                                "General amenities",
+                                "Property description"
+                            ],
+                            "Pricing": {
+                                "Rent": "",
+                                "Sharing": "",
+                                "Maintenance": "",
+                                "Security deposit": "",
+                                "Preferred for": [
+                                    "Only Girls",
+                                    "Only Boys",
+                                    "Both"
+                                ]
+                            }
+                        },
+                        "Independent House / Bungalow": {
+                            "Specs": [
+                                "BHK",
+                                "Attached",
+                                "Carpet area/built-up area of the room",
+                                "Loading factor",
+                                "Car parkings",
+                                "Furnishing type",
+                                "Furnishing description",
+                                "Facility included",
+                                "General amenities",
+                                "Property description"
+                            ],
+                            "Pricing": {
+                                "Rent": "",
+                                "Sharing": "",
+                                "Maintenance": "",
+                                "Security deposit": "",
+                                "Preferred for": [
+                                    "Only Girls",
+                                    "Only Boys",
+                                    "Both"
+                                ]
+                            }
+                        },
+                        "Builder Floor": {
+                            "Specs": [
+                                "BHK",
+                                "Attached",
+                                "Carpet area/built-up area of the room",
+                                "Loading factor",
+                                "Car parkings",
+                                "Furnishing type",
+                                "Furnishing description",
+                                "Facility included",
+                                "General amenities",
+                                "Property description"
+                            ],
+                            "Pricing": {
+                                "Rent": "",
+                                "Sharing": "",
+                                "Maintenance": "",
+                                "Security deposit": "",
+                                "Preferred for": [
+                                    "Only Girls",
+                                    "Only Boys",
+                                    "Both"
+                                ]
+                            }
+                        }
                     }
                 },
                 "Commercial": {
@@ -479,6 +556,83 @@ const PostingFields = {
                             "discount %": "",
                             "Expected time": "",
                             "Fractional Ownership checkbox": false
+                        }
+                    },
+                    "Pg": {
+                        "Apartment": {
+                            "Specs": [
+                                "BHK",
+                                "Attached",
+                                "Carpet area/built-up area of the room",
+                                "Loading factor",
+                                "Car parkings",
+                                "Furnishing type",
+                                "Furnishing description",
+                                "Facility included",
+                                "General amenities",
+                                "Property description"
+                            ],
+                            "Pricing": {
+                                "Rent": "",
+                                "Sharing": "",
+                                "Maintenance": "",
+                                "Security deposit": "",
+                                "Preferred for": [
+                                    "Only Girls",
+                                    "Only Boys",
+                                    "Both"
+                                ]
+                            }
+                        },
+                        "Independent House / Bungalow": {
+                            "Specs": [
+                                "BHK",
+                                "Attached",
+                                "Carpet area/built-up area of the room",
+                                "Loading factor",
+                                "Car parkings",
+                                "Furnishing type",
+                                "Furnishing description",
+                                "Facility included",
+                                "General amenities",
+                                "Property description"
+                            ],
+                            "Pricing": {
+                                "Rent": "",
+                                "Sharing": "",
+                                "Maintenance": "",
+                                "Security deposit": "",
+                                "Preferred for": [
+                                    "Only Girls",
+                                    "Only Boys",
+                                    "Both"
+                                ]
+                            }
+                        },
+                        "Builder Floor": {
+                            "Specs": [
+                                "BHK",
+                                "Attached",
+                                "Carpet area/built-up area of the room",
+                                "Loading factor",
+                                "Car parkings",
+                                "Furnishing type",
+                                "Furnishing description",
+                                "Facility included",
+                                "General amenities",
+                                "Property description"
+                            ],
+                            "Pricing": {
+                                "Rent": "",
+                                "Sharing": "",
+                                "Maintenance": "",
+                                "Security deposit": "",
+                                "Preferred for": [
+                                    "Only Girls",
+                                    "Only Boys",
+                                    "Both"
+                                ]
+                            }
                         }
                     }
                 },

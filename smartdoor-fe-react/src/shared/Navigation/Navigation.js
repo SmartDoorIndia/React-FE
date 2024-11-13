@@ -21,8 +21,6 @@ const Nav = () => {
    const { pathname } = useLocation();
    const [isOpen, setIsOpen] = useState(true);
    const [isActive, setIsActive] = useState(false);
-   // const [isPropertyDDOpen, setisPropertyDDOpen] = useState(true);
-   // const [isPropertyActive, setIsPropertyActive] = useState(false);
 
    const userData = getLocalStorage("authData");
 
@@ -36,11 +34,7 @@ const Nav = () => {
       ) {
          setIsOpen(true);
          setIsActive(true);
-         // setIsPropertyActive(false);
-         // setisPropertyDDOpen(false);
       } else if (pathname.includes("/admin/property") || pathname.includes("builder-property")) {
-         // setisPropertyDDOpen(true);
-         // setIsPropertyActive(true);
          setIsOpen(false);
          setIsActive(false);
       } else if (
@@ -50,8 +44,6 @@ const Nav = () => {
       ) {
          setIsActive(false);
          setIsOpen(false);
-         // setIsPropertyActive(false);
-         // setisPropertyDDOpen(false);
       } else {
          setIsActive(false);
          setIsOpen(false);
@@ -109,7 +101,6 @@ const Nav = () => {
                            >
                               Helpdesk Team
                            </Link>
-                           {/* /admin/finance */}
                            <Link
                               to="/admin/finance"
                               className={`dropdown-item  ${
@@ -206,33 +197,6 @@ const Nav = () => {
                            />
                            User Management
                         </Link>
-                        {/* <Link
-                           to="/admin/builders"
-                           className={`nav-link ${
-                              pathname.includes("/admin/builders") ? "nav-active" : ""
-                           }`}
-                        >
-                           <Image
-                              name="houseIcon"
-                              src={pathname.includes("/admin/builders") ? borkerIcon : dashboard}
-                           />
-                           Builders
-                        </Link> */}
-                        {/* <Link
-                           to="/admin/realtor-advisor-management"
-                           className={`nav-link ${pathname.includes("realtor-advisor-management") ? "nav-active" : ""
-                              }`}
-                        >
-                           <Image
-                              name="teamGroup"
-                              src={
-                                 pathname.includes("realtor-advisor-managementt")
-                                    ? propertyAdvisorActive
-                                    : propertyAdvisorIcon
-                              }
-                           />
-                           Realtor Advisor Management
-                        </Link> */}
                      </>
                   ) : null}
 
@@ -437,6 +401,26 @@ const Nav = () => {
                               }
                            />
                            Property Details
+                           to="/admin/hub-list"
+                           className={`nav-link ${pathname.includes("/admin/hub-list") ? "nav-active" : ""
+                              }`}
+                        
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/hub-list") ? borkerIcon : dashboard}
+                           />
+                           Hub List
+                        </Link>
+                        <Link
+                           to="/admin/kit-list"
+                           className={`nav-link ${pathname.includes("/admin/kit-list") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/kit-list") ? borkerIcon : dashboard}
+                           />
+                           Kit List
                         </Link>
                      </>
                   )}

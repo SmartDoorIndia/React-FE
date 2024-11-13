@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Text from "../../../shared/Text/Text";
 import { useHistory } from 'react-router-dom';
 import { ToolTip } from "../../../common/helpers/Utils";
@@ -41,7 +41,7 @@ const CorporateHome = (props) => {
          name: "Company",
          selector: ((row) => row.companyName),
          sortable: true,
-         center: true,
+         center: false,
          wrap: true,
          maxWidth: "250px",
          cell: ({ companyName }) => (
@@ -56,8 +56,9 @@ const CorporateHome = (props) => {
          name: "Address",
          selector: ((row) => row.companyAddress),
          sortable: false,
-         center: true,
+         center: false,
          maxWidth: "150px",
+         wrap: true,
          cell: ({ companyAddress }) => (
             <ToolTip position="top" style={{ width: '100%' }} name={companyAddress}>
                <Text size="Small" color="secondryColor elipsis-text" text={companyAddress} />
@@ -182,12 +183,12 @@ const CorporateHome = (props) => {
          <SearchInput
             onFilter={(e) => {
                setFilterText(e.target.value);
-               getAllCorporates({
-                  corporateId: 0,
-                  pageNo: currentPage,
-                  pageSize: rowsPerPage,
-                  searchString: e.target.value
-               });
+               // getAllCorporates({
+               //    corporateId: 0,
+               //    pageNo: currentPage,
+               //    pageSize: rowsPerPage,
+               //    searchString: e.target.value
+               // });
             }}
             onClear={() => handleClear}
             filterText={filterText}
@@ -197,7 +198,7 @@ const CorporateHome = (props) => {
    }, [filterText, resetPaginationToggle]);
 
    useEffect(() => {
-      dispatch({type: Actions.CORPORATE_PROPERTY_SUCCESS, data: []});
+      dispatch({ type: Actions.CORPORATE_PROPERTY_SUCCESS, data: [] });
       console.log(data)
       getAllCorporates({
          corporateId: 0,
@@ -207,11 +208,17 @@ const CorporateHome = (props) => {
       });
    }, [getAllCorporates]);
 
-   const showData = () => {
-      let filteredItems = [];
-      filteredItems = allCorporates?.data?.corporateList
-      return allCorporates?.data?.corporateList;
-   }
+
+
+   const showData = useCallback(() => {
+      return allCorporates?.data?.corporateList?.filter((element) =>
+         element.companyName?.toLowerCase().includes(filterText.toLowerCase())
+      ) || [];
+   }, [allCorporates, filterText]);
+
+   // Use `filteredData` wherever you would use `showData`
+
+
 
    return (
       <>

@@ -503,38 +503,18 @@ export const getPlansForAdmin = (data) => async (dispatch) => {
 
 // Action to Get All Plans For Admin
 export const getNonSDProperties = (data) => async (dispatch) => {
-   dispatch({ type: Actions.NON_SD_PROPERTIES_LOADING, data: {} });
-   const response = await mainApiService("getNonSDProperties", data);
-   if (response) {
-      if (response.data && response.status === 200) {
-         if (response.data.resourceData) {
-            await dispatch({
-               type: Actions.NON_SD_PROPERTIES_SUCCESS,
-               data: {
-                  propertyData: response.data.resourceData,
-                  records: response.data.records,
-                  currentPage: data?.pageNo,
-                  rowsPerPage: data?.pageSize,
-                  searchStr: data?.searchString,
-                  propertyId: data.propertyId,
-                  city: data?.city,
-                  location: data?.location,
-                  smartLockProperty: data?.smartLockProperty,
-                  propertyStatus: data?.propertyStatus,
-                  fromDate: data.fromDate,
-                  toDate: data.toDate,
-                  pState: data.pState,
-                  defaultSort: data.defaultSort,
-                  defaultSortId: data.defaultSortId,
-                  defaultSortFieldId: data.defaultSortFieldId,
-               },
-            });
-            return response;
-         }
-      } else {
-         dispatch({ type: Actions.NON_SD_PROPERTIES_ERROR, data: response.data });
+  dispatch({ type: Actions.NON_SD_PROPERTIES_LOADING, data: {} });
+  const response = await mainApiService('getNonSDProperties', data);
+  if (response) {
+    if (response.data && response.status === 200) {
+      if (response.data.resourceData) {
+        await dispatch({ type: Actions.NON_SD_PROPERTIES_SUCCESS, data: { propertyData: response.data.resourceData, records: response.data.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate: data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId } });
+        return response;
       }
-   }
+    } else {
+      dispatch({ type: Actions.NON_SD_PROPERTIES_ERROR, data: response.data });
+    }
+  }
 };
 
 // Action to get all properties..
@@ -2127,9 +2107,9 @@ export const setCallBackUrl = async (data) => {
 };
 
 export const deleteCamera = async (data) => {
-   const response = await mainApiService("deleteCamera", data);
-   return response;
-};
+  const response = await mainApiService('deleteCamera', data);
+  return response;
+}
 
 export const getDeviceToken = async (data) => {
    const response = await mainApiService("getDeviceToken", data);
@@ -2285,47 +2265,15 @@ export const getAllCorporateUser = async (data) => {
 };
 
 export const getAllCorporateProperties = (data) => async (dispatch) => {
-   dispatch({ type: Actions.CORPORATE_PROPERTY_LOADING, data: {} });
-   const response = await mainApiService("getCorporateProperties", data);
-   if (response.status === 200 && response.data.resourceData) {
-      dispatch({
-         type: Actions.CORPORATE_PROPERTY_SUCCESS,
-         data: {
-            corpPropertyList: response?.data?.resourceData,
-            records: response?.data?.records,
-            currentPage: data?.pageNo,
-            rowsPerPage: data?.pageSize,
-            searchString: data?.searchString,
-            sdType: data?.sdType,
-            fromDate: data?.fromDate,
-            toDate: data?.toDate,
-            status: data?.status,
-         },
-      });
-   } else {
-      dispatch({ type: Actions.CORPORATE_PROPERTY_ERROR, data: response.data });
-   }
-   return response;
-};
-
-export const getBatteryLevel = (data) => async (dispatch) => {
-   dispatch({ type: Actions.BATTERY_LEVEL_LOADING, data: {} });
-   const response = await mainApiService("getBatteryLvlChk", data);
-   if (response.status === 200 && response.data.resourceData) {
-      dispatch({
-         type: Actions.BATTERY_LEVEL_SUCCESS,
-         data: {
-            batteryLevelList: response?.data?.resourceData,
-            records: response?.data?.resourceData?.length,
-            currentPage: data?.pageNo,
-            rowsPerPage: data?.pageSize,
-         },
-      });
-   } else {
-      dispatch({ type: Actions.BATTERY_LEVEL_ERROR, data: response.data });
-   }
-   return response;
-};
+dispatch({ type: Actions.CORPORATE_PROPERTY_LOADING, data: {} });
+const response = await mainApiService('getCorporateProperties', data);
+if (response.status === 200 && response.data.resourceData) {
+  dispatch({ type: Actions.CORPORATE_PROPERTY_SUCCESS, data: { corpPropertyList: response?.data?.resourceData, records: response?.data?.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchString: data?.searchString, sdType: data?.sdType, fromDate: data?.fromDate, toDate: data?.toDate, status: data?.status } });
+} else {
+  dispatch({ type: Actions.CORPORATE_PROPERTY_ERROR, data: response.data });
+}
+return response;
+}
 
 // Builder login
 export const BuilderLogin = (data) => async (dispatch) => {
@@ -2492,3 +2440,63 @@ export const getBuilderStats = async (data) => {
    const response = await mainApiService("getBuilderStats", data);
    return response;
 };
+
+export const getBatteryLevel = (data) => async (dispatch) => {
+  dispatch({ type: Actions.BATTERY_LEVEL_LOADING, data: {} });
+  const response = await mainApiService('getBatteryLvlChk', data);
+  if (response.status === 200 && response.data.resourceData) {
+    dispatch({ type: Actions.BATTERY_LEVEL_SUCCESS, data: { batteryLevelList: response?.data?.resourceData, records: response?.data?.resourceData?.length, currentPage: data?.pageNo, rowsPerPage: data?.pageSize } });
+  } else {
+    dispatch({ type: Actions.BATTERY_LEVEL_ERROR, data: response.data });
+  }
+  return response;
+}
+
+export const createNewHub = async (data) => {
+  const response = await mainApiService('createNewHub', data);
+  return response;
+}
+
+export const getHubList = (data) => async (dispatch) => {
+  dispatch({ type: Actions.HUB_LIST_LOADING, data: {} });
+  const response = await mainApiService('getHubList', data);
+  if (response.status === 200 && response.data.resourceData) {
+    dispatch({ type: Actions.HUB_LIST_SUCCESS, data: { hubList: response?.data?.resourceData } });
+  } else {
+    dispatch({ type: Actions.HUB_LIST_ERROR, data: response.data });
+  }
+  return response;
+}
+
+export const getCorporateUserHubList = async (data) => {
+  const response = await mainApiService('getCorporateUserHubList', data);
+  return response;
+}
+
+export const getCorporatePlanList = async (data) => {
+  const response = await mainApiService('getCorporatePlans', data);
+  return response;
+}
+
+export const getKitList = (data) => async (dispatch) => {
+  dispatch({ type: Actions.KIT_LIST_LOADING, data: {} });
+  const response = await mainApiService('getKitHubList', data);
+  if (response.status === 200 && response.data.resourceData) {
+    dispatch({ type: Actions.KIT_LIST_SUCCESS, data: { kitList: response?.data?.resourceData } });
+  } else {
+    dispatch({ type: Actions.KIT_LIST_ERROR, data: response.data });
+  }
+  return response;
+}
+
+export const getKitDevices = async (data)  => {
+  const response = await mainApiService('getKitDevices', data);
+  
+  return response;
+}
+
+export const editKitDevices = async (data)  => {
+  const response = await mainApiService('editKitDetails', data);
+  
+  return response;
+}

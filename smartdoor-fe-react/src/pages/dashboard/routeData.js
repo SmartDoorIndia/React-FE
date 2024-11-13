@@ -3,84 +3,65 @@
 import React from "react";
 
 // Lazy import of Dashboard's components
-const SalesDashboard = React.lazy(() => import("./SalesModule/SalesDashboard"));
-const NewEntry = React.lazy(() => import("./SalesModule/NewEntry/NewEntry"));
-const LeadDetails = React.lazy(() => import("./SalesModule/LeadDetails/LeadDetails"));
-const NewTeamMember = React.lazy(() => import("./NewTeamMember/NewTeamMember"));
-const UserManagement = React.lazy(() => import("./UserManagement/UserManagement"));
-const SocietiesModule = React.lazy(() => import("./SocietiesModule/SocietiesMainModule"));
-const SocietiesDetails = React.lazy(() => import("./SocietiesModule/SocietiesDetails"));
-const NewSociety = React.lazy(() => import("./SocietiesModule/NewSociety"));
-const ExecutionDashboard = React.lazy(() => import("./ExecutionDashboard/ExecutionDashboard"));
-const ExecutionListingPage = React.lazy(() =>
-   import("./ExecutionDashboard/ExecutionListingPage/ExecutionListingPage")
-);
-const EditTeamMember = React.lazy(() => import("./EditTeamMember/EditTeamMember"));
-const PropertyModule = React.lazy(() => import("./PropertyModule/ConsumerProperty/Property"));
-const PropertyDetailsModule = React.lazy(() => import("./PropertyModule/propertDetails"));
-const PropertyDocModule = React.lazy(() => import("./PropertyModule/PropertyDoc"));
-const DeletedProperties = React.lazy(() =>
-   import("./PropertyModule/DeletedProperties/DelUnlistedProperties")
-);
-const PropertyDevice = React.lazy(() => import("./PropertyModule/PropertyDevices/PropertyDevice"));
-const EditPost1 = React.lazy(() => import("./PropertyModule/EditPropertyDetails/EditPost1"));
-const EditPost2 = React.lazy(() => import("./PropertyModule/EditPropertyDetails/EditPost2"));
-const EditPost3 = React.lazy(() => import("./PropertyModule/EditPropertyDetails/EditPost3"));
-const EditPost4 = React.lazy(() => import("./PropertyModule/EditPropertyDetails/EditPost4"));
-const AddNewCity = React.lazy(() => import("./AddNewCity/AddCity"));
-const ManagePlan = React.lazy(() => import("./ManagePlan/ManagePlan"));
-const AddNewPlan = React.lazy(() => import("./AddNewPlan/NewPlan"));
-const NonSDProperties = React.lazy(() => import("./NonSdProperties/NonSDProperties"));
-const Advisors = React.lazy(() => import("./Advisors/Advisors"));
-const AddNewPost = React.lazy(() => import("./AddNewPost/AddNewPost"));
-const AddNewPost2 = React.lazy(() => import("./AddNewPost/AddNewPost2"));
-const AddNewPost3 = React.lazy(() => import("./AddNewPost/AddNewPost3"));
-const AddNewPost4 = React.lazy(() => import("./AddNewPost/AddNewPost4"));
-const AddNewPost5 = React.lazy(() => import("./AddNewPost/AddNewPost5"));
-const StaticMobNumbers = React.lazy(() => import("./StaticMobileNums/StaticMobNums"));
-const AddCoins = React.lazy(() => import("./AddCoins/AddCoins"));
-const ChatWithOwner = React.lazy(() => import("./ChatWithOwner/chatWithOwner"));
-const FeaturedVideos = React.lazy(() => import("./FeaturedVideos/FeaturedVideos"));
-const MarketingAgency = React.lazy(() =>
-   import("./MarketingAgencyModule/MarketingAgency/MarketingAgencyList")
-);
-const Add_EditAgency = React.lazy(() => import("./MarketingAgencyModule/Add_EditAgency"));
-const AgencyDetail = React.lazy(() => import("./MarketingAgencyModule/AgencyDetials/AgencyDetail"));
-const AgencyProperty = React.lazy(() =>
-   import("./MarketingAgencyModule/AgencyProperties/AgencyProperty")
-);
-const AgencyCustomers = React.lazy(() =>
-   import("./MarketingAgencyModule/AgencyCustomers/AgencyCustomers")
-);
-const AgencyExecutives = React.lazy(() =>
-   import("./MarketingAgencyModule/AgencyUsers/Add_EditExecutives")
-);
-const ExecutiveList = React.lazy(() => import("./MarketingAgencyModule/AgencyUsers/ExecutiveList"));
-const ExecutiveDetails = React.lazy(() =>
-   import("./MarketingAgencyModule/AgencyUsers/ExecutiveDetails")
-);
-const CustomerDetails = React.lazy(() =>
-   import("./MarketingAgencyModule/AgencyCustomers/CustomerDetails")
-);
-const ExecutiveHome = React.lazy(() =>
-   import("./MarketingAgencyModule/AgencyUserPropertyTab/ExecutiveHome")
-);
-const PostingMainPage = React.lazy(() => import("./PropertyPostingFlow/PostingMainPage"));
-const BasicDetails = React.lazy(() => import("./PropertyPostingFlow/BasicDetails"));
-const Uploads = React.lazy(() => import("./PropertyPostingFlow/Uploads"));
-const TermsConditions = React.lazy(() => import("./PropertyPostingFlow/TermsConditions"));
-const Corporate = React.lazy(() => import("./CorporateModule/CorporateHome"));
-const AddnewCorporate = React.lazy(() => import("./CorporateModule/AddNew/AddNewCorporate"));
-const CorporateDetails = React.lazy(() =>
-   import("./CorporateModule/CorporateDetails/corporateDetails")
-);
-const CorporateProperty = React.lazy(() =>
-   import("./CorporateModule/CorporateProperties/corporateProperty")
-);
-const Brokers = React.lazy(() => import("./Broker/Broker"));
-const BrokerApprovedDetail = React.lazy(() => import("./Broker/BrokerApprovedDetail"));
-const BrokerDetail = React.lazy(() => import("./Broker/BrokerDetails"));
-const BatteryLvlChk = React.lazy(() => import("./BatteryLevelCheck/BatteryLvlChk"));
+const SalesDashboard = React.lazy(() => import('./SalesModule/SalesDashboard'));
+const NewEntry = React.lazy(() => import('./SalesModule/NewEntry/NewEntry'));
+const LeadDetails = React.lazy(() => import('./SalesModule/LeadDetails/LeadDetails'));
+const NewTeamMember = React.lazy(() => import('./NewTeamMember/NewTeamMember'));
+const UserManagement = React.lazy(() => import('./UserManagement/UserManagement'));
+const SocietiesModule = React.lazy(() => import('./SocietiesModule/SocietiesMainModule'));
+const SocietiesDetails = React.lazy(() => import('./SocietiesModule/SocietiesDetails'));
+const NewSociety = React.lazy(() => import('./SocietiesModule/NewSociety'));
+const ExecutionDashboard = React.lazy(() => import('./ExecutionDashboard/ExecutionDashboard'));
+const ExecutionListingPage = React.lazy(() => import('./ExecutionDashboard/ExecutionListingPage/ExecutionListingPage'));
+const EditTeamMember = React.lazy(() => import('./EditTeamMember/EditTeamMember'));
+const PropertyModule = React.lazy(() => import('./PropertyModule/ConsumerProperty/Property'));
+const PropertyDetailsModule = React.lazy(() => import('./PropertyModule/propertDetails'));
+const PropertyDocModule = React.lazy(() => import('./PropertyModule/PropertyDoc'));
+const DeletedProperties = React.lazy(() => import('./PropertyModule/DeletedProperties/DelUnlistedProperties'))
+const PropertyDevice = React.lazy(() => import('./PropertyModule/PropertyDevices/PropertyDevice'))
+const EditPost1 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/EditPost1'))
+const EditPost2 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/EditPost2'))
+const EditPost3 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/EditPost3'))
+const EditPost4 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/EditPost4'))
+const AddNewCity = React.lazy(()=> import('./AddNewCity/AddCity'));
+const ManagePlan = React.lazy(() => import('./ManagePlan/ManagePlan'));
+const AddNewPlan = React.lazy(() => import('./AddNewPlan/NewPlan'));
+const NonSDProperties = React.lazy(() => import('./NonSdProperties/NonSDProperties'));
+const Advisors = React.lazy(() => import('./Advisors/Advisors'))
+const AddNewPost = React.lazy(() => import('./AddNewPost/AddNewPost'))
+const AddNewPost2 = React.lazy(() => import('./AddNewPost/AddNewPost2'));
+const AddNewPost3 = React.lazy(() => import('./AddNewPost/AddNewPost3'));
+const AddNewPost4 = React.lazy(() => import('./AddNewPost/AddNewPost4'));
+const AddNewPost5 = React.lazy(() => import('./AddNewPost/AddNewPost5'));
+const StaticMobNumbers = React.lazy(() => import('./StaticMobileNums/StaticMobNums'))
+const AddCoins = React.lazy(() => import('./AddCoins/AddCoins'))
+const ChatWithOwner = React.lazy(() => import('./ChatWithOwner/chatWithOwner'))
+const FeaturedVideos = React.lazy(() => import('./FeaturedVideos/FeaturedVideos'))
+const MarketingAgency = React.lazy(() => import('./MarketingAgencyModule/MarketingAgency/MarketingAgencyList'))
+const Add_EditAgency = React.lazy(() => import('./MarketingAgencyModule/Add_EditAgency'))
+const AgencyDetail = React.lazy(() => import('./MarketingAgencyModule/AgencyDetials/AgencyDetail'))
+const AgencyProperty = React.lazy(() => import('./MarketingAgencyModule/AgencyProperties/AgencyProperty'))
+const AgencyCustomers = React.lazy(() => import('./MarketingAgencyModule/AgencyCustomers/AgencyCustomers'))
+const AgencyExecutives = React.lazy(() => import('./MarketingAgencyModule/AgencyUsers/Add_EditExecutives'))
+const ExecutiveList = React.lazy(() => import('./MarketingAgencyModule/AgencyUsers/ExecutiveList'))
+const ExecutiveDetails = React.lazy(() => import('./MarketingAgencyModule/AgencyUsers/ExecutiveDetails'))
+const CustomerDetails = React.lazy(() => import('./MarketingAgencyModule/AgencyCustomers/CustomerDetails'))
+const ExecutiveHome = React.lazy(() => import('./MarketingAgencyModule/AgencyUserPropertyTab/ExecutiveHome'))
+const PostingMainPage = React.lazy(() => import('./PropertyPostingFlow/PostingMainPage'))
+const BasicDetails = React.lazy(() => import('./PropertyPostingFlow/BasicDetails'))
+const Uploads = React.lazy(() => import('./PropertyPostingFlow/Uploads'))
+const TermsConditions = React.lazy(() => import('./PropertyPostingFlow/TermsConditions'))
+const Corporate = React.lazy(() => import('./CorporateModule/CorporateHome'))
+const AddnewCorporate = React.lazy(() => import('./CorporateModule/AddNew/AddNewCorporate'))
+const CorporateDetails = React.lazy(() => import('./CorporateModule/CorporateDetails/corporateDetails'))
+const CorporateProperty = React.lazy(() => import('./CorporateModule/CorporateProperties/corporateProperty'))
+const Brokers = React.lazy(() => import('./Broker/Broker'));
+const BrokerApprovedDetail = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
+const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails') );
+const BatteryLvlChk = React.lazy(() => import('./BatteryLevelCheck/BatteryLvlChk'));
+const HubList = React.lazy(() => import('./Hub/HubList'));
+const KitList = React.lazy(() => import('./Kits/KitList'));
+const KitDevices = React.lazy(() => import('./Kits/KitDevices'));
 
 const InstallationCalenderView = React.lazy(() =>
    import("./ExecutionDashboard/InstallationCalender/InstallationCalender")
@@ -1067,14 +1048,22 @@ const routeData = [
       component: AgencyDetail,
    },
 
-   {
-      path: "/admin/marketingAgency",
-      name: "Marketing Agency",
-      bradcrumb: false,
-      excat: true,
-      module: "MARKETING",
-      component: MarketingAgency,
-   },
+  {
+    path: '/admin/corporate/editCorporate',
+    name: 'Edit corporate',
+    bradcrumb: ['Corporate', 'Edit corporate'],
+    excat: false,
+    // module:'Corporate',
+    component: AddnewCorporate
+  },
+  {
+    path: '/admin/corporate/addNewCorporate',
+    name: 'Add New corporate',
+    bradcrumb: ['Corporate', 'Add New corporate'],
+    excat: false,
+    // module:'Corporate',
+    component: AddnewCorporate
+  },
 
    {
       path: "/admin/agencyProperties",
@@ -1105,14 +1094,53 @@ const routeData = [
       component: AgencyCustomers,
    },
 
-   {
-      path: "/admin/executives/add-new-executive",
-      name: "Add New Executive",
-      bradcrumb: ["Executive management", "Add New"],
-      excat: true,
-      // module:'MARKETING',
-      component: AgencyExecutives,
-   },
+  {
+    path:'/admin/batteryLevelCheck/viewProperty',
+    name:'Property Details',
+    bradcrumb: ['Battery Level Check', 'Property Details'],
+    excat: true,
+    component: PropertyDetailsModule,
+  },
+  
+  {
+    path:'/admin/batteryLevelCheck',
+    name:'Battery Level Check',
+    bradcrumb: false,
+    excat: true,
+    component: BatteryLvlChk,
+  },
+
+  {
+    path: '/admin/hub-list',
+    name: 'Hub List',
+    bradcrumb: false,
+    excat: true,
+    component: HubList
+  },
+
+  {
+    path: '/admin/kit-list/kit-devices',
+    name: 'Kit Devices',
+    bradcrumb: ['Kit List', 'Kit Devices'],
+    excat: true,
+    component: KitDevices
+  },
+  {
+    path: '/admin/kit-list',
+    name: 'Kit List',
+    bradcrumb: false,
+    excat: true,
+    component: KitList
+  },
+
+  // {
+  //   path: '/admin/execution/installation-detail/property-details',
+  //   name: 'Installation Team Dashboard',
+  //   bradcrumb: [ 'Installation Team', 'Task Details', 'Property Details' ],
+  //   excat: true,
+  //   module: 'EXECUTION',
+  //   component: PropertyDetailsModule,
+  // },
 
    {
       path: "/admin/executives/executive-details/edit-executive",

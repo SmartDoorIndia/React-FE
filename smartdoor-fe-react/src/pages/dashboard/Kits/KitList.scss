@@ -1,6 +1,6 @@
 /** @format */
 
-@import "../../../../scss/modules/variables.scss";
+@import "../../../scss/modules/variables.scss";
 .whiteBg {
    .scroll {
       overflow: hidden;
@@ -138,7 +138,7 @@
       }
       .locationSelect {
          display: flex;
-         justify-content: end;
+         justify-content: space-between;
          .form-group {
             display: flex;
             margin-bottom: 0;
@@ -258,34 +258,32 @@
 /*******Css start here************/
 @media screen {
 }
-.corporatePropTableWrapper {
+.kitListTableWrapper {
+   .rdt_TableHead {
+      .rdt_TableCol {
+         &:nth-child(1) {
+            width: fit-content;
+            min-width: fit-content;
+         }
+      }
+   }
    .rdt_TableBody {
       max-height: calc(51vh);
       height: fit-content;
       overflow-y: scroll;
       overflow-x: hidden;
    }
-   .rdt_TableHeadRow {
-      .rdt_TableCol {
-         &:nth-child(1) {
-            width: 70px;
-            min-width: 70px;
-         }
-         white-space: normal; /* Allows headers to wrap */
-         word-wrap: break-word; /* Allows headers to break words */
-         text-align: center; /* Optional: Center align text */
-      }
-   }
    .rdt_TableRow {
-      min-height: fit-content;
+      min-height: auto;
       .rdt_TableCell {
-         // text-align: center;
+         text-align: center;
          &:nth-child(1) {
             &:first-child {
-               width: 70px;
-               min-width: 70px;
+               min-width: none;
                white-space: nowrap;
                overflow: visible;
+               width: fit-content;
+               min-width: fit-content;
             }
          }
          &:nth-child(4) {
@@ -297,17 +295,6 @@
                text-overflow: ellipsis;
                display: block;
                text-align: center;
-            }
-         }
-         &:nth-child(6) {
-            .elipsis-text {
-               white-space: nowrap;
-               overflow: hidden;
-               width: 180px;
-               min-width: 180px;
-               text-overflow: ellipsis;
-               display: block;
-               // text-align: center;
             }
          }
       }

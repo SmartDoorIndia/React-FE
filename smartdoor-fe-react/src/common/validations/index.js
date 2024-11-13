@@ -783,7 +783,7 @@ export const validateBasicDetails = (data) => {
       errors.expectedPossessionDate = true;
     }
   }
-  if (data.propertySubType === 'PG/Co-iving') {
+  if (data.propertySubType === 'PG/Co-living') {
     if (isBlank(data.guestHouseOrPgPropertyType)) {
       errors.guestHouseOrPgPropertyType = true;
     }
@@ -1253,6 +1253,10 @@ export const validateCorpUser = (data) => {
   }
   if (isBlank(data?.sdPosting)) {
     errors.sdPosting = true;
+    // hasError = true;
+  }
+  if ((data?.hubIdList?.length === 0)) {
+    errors.hubIdList = true;
     // hasError = true;
   }
   // if (mobileFlag) {

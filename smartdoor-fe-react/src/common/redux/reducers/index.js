@@ -75,32 +75,34 @@ import {
    helpdeskDashboardCity,
 } from "./views/helpdesk.reducer";
 import {
-   transactionTeamsData,
-   transactionDashboardCount,
-   transactionMeetingRequestData,
-   transactionLeadsData,
-   transactionTeamsCityData,
-   allTransactionCities,
-   allTransactionLocationsByCity,
-   dealApprovalData,
-} from "./views/transaction.reducer";
-import { allPlanDataBroker } from "./views/ManageBroker.reducer";
-import { addNewPostReducer } from "./views/addNewPost.reducer";
-import { addNewPost2Reducer } from "./views/addNewPost2.reducer";
-import { featuredVideos } from "./views/featuredVideos.reducer";
-import { agencyList } from "./views/agencyList.reducer";
-import { AgencyExecutiveList } from "./views/AgencyExeutiveList.reducer";
-import { agencyCustomers } from "./views/agencyCustomers.reducer";
-import { agencyProperties } from "./views/agencyProperties.reducer";
-import { basicDetailFields } from "./views/basicDetails.reducer";
-import { addressDetailFields } from "./views/addressDetails.reducer";
-import { specDetailFields } from "./views/specDetails.reducer";
-import { pricingDetailFields } from "./views/pricingDetails.reducer";
-import { uploadImages } from "./views/uploadImages.reducer";
-import { termsConditions } from "./views/termsConditions.reducer";
-import { brokerProperty } from "./views/BrokerProperty.reducer";
-import { allCorporates } from "./views/corporateList.reducer";
-import { corporateProperty } from "./views/corporateProperty.reducer";
+  transactionTeamsData,
+  transactionDashboardCount,
+  transactionMeetingRequestData ,
+  transactionLeadsData,
+  transactionTeamsCityData,
+  allTransactionCities,
+  allTransactionLocationsByCity,
+  dealApprovalData
+} from './views/transaction.reducer';
+import { allPlanDataBroker } from './views/ManageBroker.reducer';
+import { addNewPostReducer } from './views/addNewPost.reducer';
+import { addNewPost2Reducer } from './views/addNewPost2.reducer';
+import { featuredVideos } from './views/featuredVideos.reducer';
+import { agencyList } from './views/agencyList.reducer';
+import { AgencyExecutiveList } from './views/AgencyExeutiveList.reducer';
+import { agencyCustomers } from './views/agencyCustomers.reducer';
+import { agencyProperties } from './views/agencyProperties.reducer';
+import { basicDetailFields } from './views/basicDetails.reducer';
+import { addressDetailFields } from './views/addressDetails.reducer';
+import { specDetailFields } from './views/specDetails.reducer';
+import { pricingDetailFields } from './views/pricingDetails.reducer';
+import { uploadImages } from './views/uploadImages.reducer';
+import { termsConditions } from './views/termsConditions.reducer';
+import { brokerProperty } from './views/BrokerProperty.reducer';
+import { allCorporates } from './views/corporateList.reducer';
+import { corporateProperty } from './views/corporateProperty.reducer';
+import { allHubList } from './views/hubList.reducer';
+import { allKitList } from './views/kitList.reducer';
 
 import { USER_LOGOUT } from "../types";
 import { batteryLevel } from "./views/batteryLevel.reducer";
@@ -109,90 +111,92 @@ import ProjectPostingDetails from "./views/BuilderReducer/ProjectPostingDetails.
 import BuilderListing from "./views/BuilderReducer/BuilderListing.reducer";
 
 const appReducer = combineReducers({
-   dashboardTitle,
-   salesLeadsDataTable,
-   login,
-   otp,
-   salesTeamData,
-   salesLeadsCount,
-   allUsersData,
-   allPlanData,
-   allNonSDProperties,
-   allSocietyData,
-   allAdminRoles,
-   allCities,
-   allCitiesWithId,
-   allStatesWithId,
-   allLocationsByCity,
-   userAuthData,
-   excutiveTeamsData,
-   publishedProperyData,
-   serviceRequestData,
-   installationReqData,
-   societyAnalyticsData,
-   societyDealsData,
-   societyPropertyLeadsData,
-   societyPropertyListedData,
-   generalCityDepData,
-   allPropertyData,
-   deletedPropertyData,
-   excutiveDashboardCity,
-   propertyAnalyticsData,
-   executionDashboardCount,
-   getPropertyCityData,
-   getSocietyLeadsCityData,
-   getSalesTeamCityData,
-   getAllSocietyCityData,
-   getAllConsumerUsersData,
-   getAllFiltersData,
-   getAllBuilderProjectsData,
-   helpdeskDashboardCount,
-   helpdeskTeams,
-   helpdeskPropertyLeads,
-   helpdeskServiceReq,
-   helpdeskDashboardCity,
-   consumerTransactionsDataTable,
-   refundRequestsDataTable,
-   payablePartnerCommisionDataTable,
-   financeTeamDataTable,
-   financeCount,
-   getAllFinanceTeamsCityData,
-   financeRefundRequestDetails,
-   getAllRealtorsData,
-   allExecutiveLocationsByCity,
-   transactionTeamsData,
-   transactionDashboardCount,
-   transactionMeetingRequestData,
-   transactionLeadsData,
-   transactionTeamsCityData,
-   allTransactionCities,
-   allTransactionLocationsByCity,
-   dealApprovalData,
-   allExecutives,
-   allRealtorCities,
-   allRealtorLocationsByCity,
-   getBuybackRequestsData,
-   addNewPostReducer,
-   addNewPost2Reducer,
-   featuredVideos,
-   agencyList,
-   AgencyExecutiveList,
-   agencyCustomers,
-   agencyProperties,
-   basicDetailFields,
-   addressDetailFields,
-   specDetailFields,
-   pricingDetailFields,
-   uploadImages,
-   termsConditions,
-   allPlanDataBroker,
-   brokerProperty,
-   allCorporates,
-   corporateProperty,
-   batteryLevel,
-   ProjectsPostings,
-   ProjectPostingDetails,
-   BuilderListing,
+  dashboardTitle,
+  salesLeadsDataTable,
+  login,
+  otp,
+  salesTeamData,
+  salesLeadsCount,
+  allUsersData,
+  allPlanData,
+  allNonSDProperties,
+  allSocietyData,
+  allAdminRoles,
+  allCities,
+  allCitiesWithId,
+  allStatesWithId,
+  allLocationsByCity,
+  userAuthData,
+  excutiveTeamsData,
+  publishedProperyData,
+  serviceRequestData,
+  installationReqData,
+  societyAnalyticsData,
+  societyDealsData,
+  societyPropertyLeadsData,
+  societyPropertyListedData,
+  generalCityDepData,
+  allPropertyData,
+  deletedPropertyData,
+  excutiveDashboardCity,
+  propertyAnalyticsData,
+  executionDashboardCount,
+  getPropertyCityData,
+  getSocietyLeadsCityData,
+  getSalesTeamCityData,
+  getAllSocietyCityData,
+  getAllConsumerUsersData,
+  getAllFiltersData,
+  getAllBuilderProjectsData,
+  helpdeskDashboardCount,
+  helpdeskTeams,
+  helpdeskPropertyLeads,
+  helpdeskServiceReq,
+  helpdeskDashboardCity,
+  consumerTransactionsDataTable,
+  refundRequestsDataTable, 
+  payablePartnerCommisionDataTable,
+  financeTeamDataTable,
+  financeCount,
+  getAllFinanceTeamsCityData,
+  financeRefundRequestDetails,
+  getAllRealtorsData,
+  allExecutiveLocationsByCity,
+  transactionTeamsData,
+  transactionDashboardCount,
+  transactionMeetingRequestData,
+  transactionLeadsData,
+  transactionTeamsCityData,
+  allTransactionCities,
+  allTransactionLocationsByCity,
+  dealApprovalData,
+  allExecutives,
+  allRealtorCities, 
+  allRealtorLocationsByCity,
+  getBuybackRequestsData,
+  addNewPostReducer,
+  addNewPost2Reducer,
+  featuredVideos,
+  agencyList,
+  AgencyExecutiveList,
+  agencyCustomers,
+  agencyProperties,
+  basicDetailFields,
+  addressDetailFields,
+  specDetailFields,
+  pricingDetailFields,
+  uploadImages,
+  termsConditions,
+  allPlanDataBroker,
+  brokerProperty,
+  allCorporates,
+  corporateProperty,
+  batteryLevel,
+  allHubList,
+  allKitList,
+  ProjectsPostings,
+  ProjectPostingDetails,
+  BuilderListing
 });
 
 const rootReducer = (state, action) => {

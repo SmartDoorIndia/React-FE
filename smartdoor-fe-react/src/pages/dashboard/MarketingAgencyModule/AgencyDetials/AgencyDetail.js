@@ -169,7 +169,7 @@ const AgencyDetail = (props) => {
                             </Col>
                             <Col lg='3'>
                                 <Text text={'Location'} fontWeight={'500'} style={{ color: '#949494', fontSize: '12px' }} />
-                                <Text text={agencyDetails?.agencyLocation} fontWieight={'500'} style={{ fontSize: '14px' }} />
+                                <Text text={agencyDetails?.location} fontWieight={'500'} style={{ fontSize: '14px' }} />
                             </Col>
                         </Row>
                         <Row className="d-flex mt-3">
