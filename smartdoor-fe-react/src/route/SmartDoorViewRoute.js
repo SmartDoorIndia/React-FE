@@ -35,7 +35,7 @@ const SmartDoorViewRoute = () => {
                   <PublicRoute path="/login" component={Login} />
                   <PublicRoute path="/builder/BuilderOtp" component={BuilderOtp} />
                   <PublicRoute path="/builder/login" component={BuilderLogin} />
-                  <Redirect from="*" to="/builder/login" />
+                  {/* <Redirect from="*" to="/builder/login" /> */}
                   {/* <Redirect from="*" to="/login" /> */}
                </>
             )}

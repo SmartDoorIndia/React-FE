@@ -42,7 +42,7 @@ const PrivateRoute = ({
 
                return (
                   <>
-                     <Redirect to="/login" /> <Redirect from="*" to="/builder/login" />
+                     <Redirect to="/login" /> {/*<Redirect from="*" to="/builder/login" />*/}
                   </>
                );
             }
