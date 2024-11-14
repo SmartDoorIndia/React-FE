@@ -1,6 +1,6 @@
 /** @format */
 
-import { MenuItem, TextField } from "@mui/material";
+import { MenuItem, Switch, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Col, Image, Row } from "react-bootstrap";
 import Text from "../../../../shared/Text/Text";
@@ -326,9 +326,9 @@ const AddNewCorporate = (props) => {
                fontWeight="bold"
                style={{ fontSize: "16px", marginLeft: "17px", marginBottom: '1%' }}
             />
-            {userList.length === 0 ?
+            {/* {userList.length === 0 ?
                <Loader />
-            : null}
+            : null} */}
             {userList.map((elememt, index) => (
                <>
                   <Row className="ml-1 mr-1" id={index}>
@@ -428,6 +428,10 @@ const AddNewCorporate = (props) => {
                            ))}
                         </TextField>
 
+                     </Col>
+                     <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
+                        <Switch disabled={editUserIndex === index ? false : true} checked={false} onChange={(e) => {}} color="warning" />
+                        <Text text={'Allow to view MIS to this user'} style={{fontSize:'18px', fontWeight:'500'}} />
                      </Col>
                      <Col lg='1'>
                         {editUserIndex !== index ?
