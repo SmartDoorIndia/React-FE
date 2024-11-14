@@ -130,7 +130,7 @@ const CorporateHome = (props) => {
       }
    ]
 
-   const [filterText, setFilterText] = React.useState(data?.length !== 0 ? allCorporates.searchString : '');
+   const [filterText, setFilterText] = React.useState('');
    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
    const [currentPage, setCurrentPage] = useState(data?.length !== 0 ? allCorporates?.data?.currentPage : 1);
    const [rowsPerPage, setRowsPerPage] = useState(data?.length !== 0 ? allCorporates?.data?.rowsPerPage : 8);
@@ -199,7 +199,6 @@ const CorporateHome = (props) => {
 
    useEffect(() => {
       dispatch({ type: Actions.CORPORATE_PROPERTY_SUCCESS, data: [] });
-      console.log(data)
       getAllCorporates({
          corporateId: 0,
          pageNo: currentPage,
@@ -210,11 +209,14 @@ const CorporateHome = (props) => {
 
 
 
-   const showData = useCallback(() => {
-      return allCorporates?.data?.corporateList?.filter((element) =>
-         element.companyName?.toLowerCase().includes(filterText.toLowerCase())
-      ) || [];
-   }, [allCorporates, filterText]);
+   const showData = () => {
+      let filteredItems = [];
+      filteredItems = allCorporates?.data?.corporateList?.length ?
+         allCorporates?.data?.corporateList?.filter((element) => {
+             return element.companyName?.toLowerCase().includes(filterText?.toLowerCase()) 
+            }) : []
+      return filteredItems;
+   }
 
    // Use `filteredData` wherever you would use `showData`
 

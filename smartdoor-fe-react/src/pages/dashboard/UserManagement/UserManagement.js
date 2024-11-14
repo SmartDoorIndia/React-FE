@@ -291,21 +291,16 @@ const UserManagement = (props) => {
          name: "City",
          selector: "city",
          center: true,
-         maxWidth: "250px",
+         minWidth: "250px",
          style: { padding: '0px !important' },
          wrap: true,
          cell: ({ city }) =>
-         (<span className="cursor-pointer elipsis-text" title={city}>
-            {city.map((element) => <span>{element} {' '}</span>) || "-"}
-         </span>)
-         // <ToolTip
-         //       position="top"
-         //       style={{ width: "100%" }}
-         //       name={city}
-         //    >
-
-         // </ToolTip>
-         ,
+         (
+            <ToolTip position='top' name={city.join(", ")} >
+               <span className="cursor-pointer elipsis-text" title={city}>
+                  <Text size="Small" color="secondryColor" text={city.join(", ") || "-"} />
+               </span>
+            </ToolTip>)
       },
       {
          name: "Position",

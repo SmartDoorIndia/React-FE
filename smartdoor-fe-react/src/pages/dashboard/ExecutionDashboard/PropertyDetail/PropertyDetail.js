@@ -369,24 +369,26 @@ const PropertyDetail = (props) => {
                     }
                     {/* <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || "-"} />                         */}
                   </div>
-                  <div className='col-lg-3'>
-                    <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="Assigned Hub" />
+                  {data.kitId === null ?
+                    <div className='col-lg-3'>
+                      <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="Assigned Hub" />
 
-                    <div className="w-75 e_select">
-                      <Form.Group controlId="exampleForm.SelectCustom" className="">
-                        <Form.Control disabled={!assignToListToggle} as="select" onChange={(e) => setSelectedHub(e.target.value)} value={selectedHub}>
-                          <option value="" disabled selected>Assign Hub</option>
-                          {/* <option value="" >None</option>*/}
-                          {
-                            allHubList?.allHubList?.data?.hubList?.map((data, index) =>
-                              <option key={data.hubId} value={data.hubId}>{data.hubName}</option>,
-                            )
-                          }
-                        </Form.Control>
-                      </Form.Group>
+                      <div className="w-75 e_select">
+                        <Form.Group controlId="exampleForm.SelectCustom" className="">
+                          <Form.Control disabled={!assignToListToggle} as="select" onChange={(e) => setSelectedHub(e.target.value)} value={selectedHub}>
+                            <option value="" disabled selected>Assign Hub</option>
+                            {/* <option value="" >None</option>*/}
+                            {
+                              allHubList?.allHubList?.data?.hubList?.map((data, index) =>
+                                <option key={data.hubId} value={data.hubId}>{data.hubName}</option>,
+                              )
+                            }
+                          </Form.Control>
+                        </Form.Group>
+                      </div>
+                      {/* <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || "-"} />                         */}
                     </div>
-                    {/* <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || "-"} />                         */}
-                  </div>
+                    : null}
                   {/* <Col lg='3'>
                   </Col> */}
                   <Col lg='1'>
