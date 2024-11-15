@@ -346,6 +346,7 @@ const UserManagement = (props) => {
          name: 'Gift Coins',
          selector: "user",
          center: true,
+         minWidth:'150px',
          cell: ((user) =>
             <div>
                <Buttons
