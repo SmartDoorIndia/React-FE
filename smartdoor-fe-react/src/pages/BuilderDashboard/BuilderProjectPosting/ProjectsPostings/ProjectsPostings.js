@@ -34,7 +34,7 @@ const ProjectsPostings = (props) => {
    );
    const auth = getLocalStorage("authData");
    const [projectPostingFilter, setProjectPostingFilter] = useState({
-      builderId: builderId || localStorage.getItem("builderId"),
+      builderId: getLocalStorage("authData").builderId,
       searchString: "",
       userId: auth.userid,
       records: rowsPerPage,
