@@ -1251,6 +1251,16 @@ export const validateCorpUser = (data) => {
     showErrorToast("Invalid mobile number")
     // hasError = true;
   }
+  // if (!isBlank(data?.email)) {
+  //   if (!validateRegex.validateEmail.test(data.email)) {
+  //     errors.email = true;
+  //     showErrorToast("Invalid email")
+  //   }
+  // } else if (isBlank(data?.email)) {
+  //   errors.email = true;
+  //   showErrorToast("Invalid email")
+  // }
+
   if (isBlank(data?.sdPosting)) {
     errors.sdPosting = true;
     // hasError = true;

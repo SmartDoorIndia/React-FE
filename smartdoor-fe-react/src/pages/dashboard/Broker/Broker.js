@@ -247,15 +247,20 @@ const Broker = (props) => {
       {
          name: "Name",
          selector: ((row) => row.name),
-         center: true,
+         center: false,
          minWidth: "150px",
          maxWidth: "150px",
+         cell: ({ name }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={name}>
+               <Text size="Small" color="secondryColor elipsis-text" text={name} />
+            </ToolTip>
+         )
       },
       {
          name: "Location",
          selector: (row) => row.locationName,
          sortable: false,
-         center: true,
+         center: false,
          minWidth: "120px",
       },
       {
@@ -270,8 +275,8 @@ const Broker = (props) => {
          name: "Email",
          selector: ((row) => row.email),
          sortable: false,
-         center: true,
-         minWidth: "245px",
+         center: false,
+         minWidth: "250px",
          cell: ({ email }) => (
             <ToolTip position="top" style={{ width: '100%' }} name={email}>
                <Text size="Small" color="secondryColor elipsis-text" text={email} />

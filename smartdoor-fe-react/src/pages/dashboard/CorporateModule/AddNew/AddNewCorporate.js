@@ -43,6 +43,7 @@ const AddNewCorporate = (props) => {
    const [addNewUserFlag, setAddNewUserFlag] = useState(false);
    const [addNewCorpFlag, setAddNewCorpFlag] = useState(true);
    const [editUserIndex, setEditUserIndex] = useState(null);
+   const [selectedHub, setSelectedHub] = useState('');
 
    const history = useHistory();
 
@@ -374,6 +375,17 @@ const AddNewCorporate = (props) => {
                         />
                         <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
                      </Col>
+                     {/* <Col lg="4" style={{ marginTop: "0%" }}>
+                        <TextField
+                           className="w-100 mt-2"
+                           type="email"
+                           id={index}
+                           disabled={editUserIndex === index ? false : true}
+                           label="Email"
+                           defaultValue={elememt.email}
+                        />
+                        <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
+                     </Col> */}
                      <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
                         <TextField
                            className="w-100 mt-2"
@@ -429,10 +441,10 @@ const AddNewCorporate = (props) => {
                         </TextField>
 
                      </Col>
-                     <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
+                     {/* <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
                         <Switch disabled={editUserIndex === index ? false : true} checked={false} onChange={(e) => {}} color="warning" />
                         <Text text={'Allow to view MIS to this user'} style={{fontSize:'18px', fontWeight:'500'}} />
-                     </Col>
+                     </Col> */}
                      <Col lg='1'>
                         {editUserIndex !== index ?
                            <img id={index}
@@ -495,6 +507,20 @@ const AddNewCorporate = (props) => {
                         />
                         <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
                      </Col>
+                     {/* <Col lg="4" style={{ marginTop: "0%" }}>
+                        <TextField
+                           id="newUserMobile"
+                           className="w-100 mt-4"
+                           type="email"
+                           label="Email"
+                           error={userErr?.email}
+                           onInput={(e) => {
+                              setNewUser(prevUser => ({ ...prevUser, email: e.target.value }));
+                           }}
+                           value={newUser.email}
+                        />
+                        <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
+                     </Col> */}
                      <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
                         <TextField
                            id="newUserSDPosting"
@@ -542,11 +568,13 @@ const AddNewCorporate = (props) => {
                               </Col>
                               : null} */}
                   </Row>
-                  <Button className="mr-1" style={{ float: 'right', backgroundColor: '#BE1452', color: 'white' }}
+                  <Button className="mr-1" style={{ float: 'right', backgroundColor: '#BE1452', color: 'white', border: 'none' }}
                      onClick={() => { addNewUser(); }}>Submit</Button>
+                  <Button className="mr-1" style={{ float: 'right', backgroundColor: '#BE1452', color: 'white', border: 'none' }}
+                     onClick={() => { setAddNewUserFlag(false) }}>Cancel</Button>
+                  <hr className="mt-5" />
                </>
                : null}
-            <hr className="mt-5" />
             <Button className="d-flex py-1 ml-3 mb-2" style={{ color: '#BE1452', backgroundColor: '#F8F3F5', borderColor: '#DED6D9' }}
                onClick={() => { setAddNewUserFlag(true) }} disabled={!addNewUserFlag && corporateId !== null ? false : true} >
                <div style={{
@@ -560,10 +588,53 @@ const AddNewCorporate = (props) => {
                </div>
                <Text text={'Add More User'} fontWeight='bold' style={{ fontSize: '12px', color: '#BE1452' }} />
             </Button>
+            <hr className="mt-4" />
+            <div className="ml-3 mt-1 mb-3 ">
+               <Row>
+                  <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
+                     <TextField
+                        className="w-100 mt-2"
+                        select
+                        multiple={true}
+                        SelectProps={{
+                           multiple: false
+                        }}
+                        label="Select Hub"
+                        value={selectedHub}  // Ensure the value is an array
+                        onChange={(e) => {
+                           console.log(e)
+                           setSelectedHub(e.target.value);
+                        }}
+                     >
+                        <MenuItem value='' disabled>select</MenuItem>
+                        {allHubList?.data?.hubList?.map(elememt => (
+                           <MenuItem key={elememt.hubId} value={elememt.hubId}>
+                              {elememt.hubName}
+                           </MenuItem>
+                        ))}
+                     </TextField>
+                  </Col>
+                  <Col lg='8' style={{ paddingInlineEnd: '0%' }}>
+                     <TextField
+                        className="w-90 mt-2"
+                        label='Email'
+                        multiline
+                        maxRows={3}>
+
+                     </TextField>
+                  </Col>
+               </Row>
+               <div className="mt-2 mr-5">
+                  <Buttons size='small' disabled={!addNewUserFlag && corporateId !== null ? false : true} name='Done' varient='primary' className='col-1 py-2'
+                     onClick={() => { setSelectedHub(''); }} style={{float:'right'}} ></Buttons>
+               </div>
+               <hr className="mt-5" />
+            </div>
             <div className="d-flex ml-3 mb-2">
                <Buttons disabled={!addNewUserFlag && corporateId !== null ? false : true} name='Done' varient='primary' className='col-2 py-2'
                   onClick={() => { history.goBack(); }} ></Buttons>
             </div>
+
          </div>
       </>
    );

@@ -244,9 +244,9 @@ const UserManagement = (props) => {
          name: "Name ",
          selector: "name",
          center: true,
-         // maxWidth: '120px',
+         minWidth: '180px',
          cell: ({ name, contactNumber, imageUrl }) => (
-            <div className="userName">
+            <div className="">
                {/* <div className="userImage">
           <Image name="userImage" src={ imageUrl || userImage } />
         </div> */}
