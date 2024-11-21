@@ -2170,3 +2170,13 @@ export const editKitDevices = async (data)  => {
   
   return response;
 }
+
+export const getCorporateEmailList = async (data) => {
+  const response = await mainApiService('getCorporateEmails', data);
+  return response;
+}
+
+export const setCorporateEmailList = async (data) => {
+  const response = await mainApiService('setCorporateEmails', data);
+  return response;
+}

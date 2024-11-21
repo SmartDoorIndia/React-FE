@@ -11,7 +11,7 @@ import addIcon from '../../../../assets/svg/add.svg';
 import { validateCorpUser, validateCorporate } from "../../../../common/validations";
 import pencilIcon from '../../../../assets/svg/icon-edit.svg';
 import { compose } from "redux";
-import { addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getCorporateUserHubList, getHubList, getPlansForCorporate } from "../../../../common/redux/actions";
+import { addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getCorporateEmailList, getCorporateUserHubList, getHubList, getPlansForCorporate, setCorporateEmailList } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -44,6 +44,7 @@ const AddNewCorporate = (props) => {
    const [addNewCorpFlag, setAddNewCorpFlag] = useState(true);
    const [editUserIndex, setEditUserIndex] = useState(null);
    const [selectedHub, setSelectedHub] = useState('');
+   const [emailList, setEmailList] = useState('');
 
    const history = useHistory();
 
@@ -201,7 +202,7 @@ const AddNewCorporate = (props) => {
 
    return (
       <>
-         <div className="bg-white border">
+         <div className="bg-white border" style={{ overflowX: 'hidden' }}>
             <Text
                text={"Corporate Details"}
                fontWeight="bold"
@@ -593,6 +594,7 @@ const AddNewCorporate = (props) => {
                <Row>
                   <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
                      <TextField
+                        placeholder="Select hub to fetch emails"
                         className="w-100 mt-2"
                         select
                         multiple={true}
@@ -601,9 +603,15 @@ const AddNewCorporate = (props) => {
                         }}
                         label="Select Hub"
                         value={selectedHub}  // Ensure the value is an array
-                        onChange={(e) => {
+                        onChange={async (e) => {
                            console.log(e)
                            setSelectedHub(e.target.value);
+                           const response = await getCorporateEmailList({ hubId: e.target.value, corporateId: corporateId })
+                           if (response.status === 200) {
+                              setEmailList(response.data.resourceData || '');
+                           } else {
+                              showErrorToast("Unable to fetch email list")
+                           }
                         }}
                      >
                         <MenuItem value='' disabled>select</MenuItem>
@@ -619,17 +627,28 @@ const AddNewCorporate = (props) => {
                         className="w-90 mt-2"
                         label='Email'
                         multiline
-                        maxRows={3}>
-
+                        maxRows={3}
+                        value={emailList}
+                        onChange={(e) => { setEmailList(e.target.value); }}>
                      </TextField>
                   </Col>
                </Row>
                <div className="mt-2 mr-5">
                   <Buttons size='small' disabled={!addNewUserFlag && corporateId !== null ? false : true} name='Done' varient='primary' className='col-1 py-2'
-                     onClick={() => { setSelectedHub(''); }} style={{float:'right'}} ></Buttons>
+                     onClick={async () => {
+                        await setCorporateEmailList({ corporateId: corporateId, hubId: selectedHub, emailList: emailList })
+                        .then((response) => {
+                           if(response.status === 200) {
+                              setSelectedHub('');
+                              showSuccessToast("Email list set successfully...");
+                           } else {
+                              showErrorToast("Please try again...");
+                           }
+                        });
+                     }} style={{ float: 'right' }} ></Buttons>
                </div>
-               <hr className="mt-5" />
             </div>
+            <hr className="mt-5" />
             <div className="d-flex ml-3 mb-2">
                <Buttons disabled={!addNewUserFlag && corporateId !== null ? false : true} name='Done' varient='primary' className='col-2 py-2'
                   onClick={() => { history.goBack(); }} ></Buttons>

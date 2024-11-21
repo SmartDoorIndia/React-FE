@@ -3086,6 +3086,36 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+
+  getCorporateEmails: {
+    url: "/consumer/corporate/getCorporateEmailList/:hubId/:corporateId",
+    method: "GET",
+    data: {
+
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  setCorporateEmails: {
+    url: "/consumer/corporate/updateCorporateEmailList",
+    method: "POST",
+    data: {
+      corporateId: null,
+      hubId: null,
+      emailList: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 
