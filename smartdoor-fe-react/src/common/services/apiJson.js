@@ -3116,6 +3116,18 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+
+  BuildergetOtp: {
+    url: "/userauth/public/sendLoginOtp?mobile=:mobile&appName=builder web",
+    method: "POST",
+    data: {},
+    headers: {
+       "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+ },
+ 
 };
 console.log(userData)
 

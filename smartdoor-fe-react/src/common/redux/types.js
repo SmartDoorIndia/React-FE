@@ -6,6 +6,8 @@
 export const LOGIN = 'LOGIN';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const USER_LOGOUT = 'USER_LOGOUT';
+export const SIGN_UP_SUCCESS = "SIGN_UP_SUCCESS";
+export const SIGN_UP_FAILURE = "SIGN_UP_FAILURE";
 
 // Auth otp Type
 export const OTP = 'LOGIN';

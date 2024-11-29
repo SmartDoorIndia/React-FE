@@ -6,6 +6,7 @@ import { Switch, Redirect, Route } from 'react-router-dom';
 import PublicRoute from './PublicRoute';
 import Login from '../pages/login';
 import Dashboard from '../pages/dashboard';
+import BuilderLogin from "../pages/login/BuilderLogin";
 import BuilderDashboard from '../pages/BuilderDashboard';
 import { FallBackLoader } from '../common/helpers/Loader';
 import { useUserContext } from '../common/helpers/Auth';
@@ -31,7 +32,8 @@ const SmartDoorViewRoute = () => {
               <>
                 <PublicRoute path="/otp" component={ Otp } />
                 <PublicRoute path="/login" component={ Login } />
-                <Redirect from="*" to="/login" />
+                <PublicRoute path="/builder/login" component={BuilderLogin} />
+                {/* <Redirect from="*" to="/login" /> */}
               </>
             )}
       </Switch>

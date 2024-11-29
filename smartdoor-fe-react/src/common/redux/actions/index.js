@@ -2159,15 +2159,15 @@ export const getKitList = (data) => async (dispatch) => {
   return response;
 }
 
-export const getKitDevices = async (data)  => {
+export const getKitDevices = async (data) => {
   const response = await mainApiService('getKitDevices', data);
-  
+
   return response;
 }
 
-export const editKitDevices = async (data)  => {
+export const editKitDevices = async (data) => {
   const response = await mainApiService('editKitDetails', data);
-  
+
   return response;
 }
 
@@ -2180,3 +2180,32 @@ export const setCorporateEmailList = async (data) => {
   const response = await mainApiService('setCorporateEmails', data);
   return response;
 }
+
+export const BuilderGetOtp = (data) => async (dispatch) => {
+  const response = await mainApiService("BuildergetOtp", data);
+  dispatch({ type: Actions.ADMIN_AUTH_OTP_DATA, data: response.data });
+  return response;
+};
+
+export const BuilderSignup = (data) => async (dispatch) => {
+  try {
+    const response = await mainApiService("BuilderSignup", {
+      mobile: data.mobile,
+      otp: data.otp,
+      deviceId: "jqj",
+      deviceType: "android",
+      appName: "builder web",
+      version: "2.7.1+82",
+    });
+    if (response.status === 200) {
+      showSuccessToast("Sign Up successful");
+      dispatch({ type: Actions.SIGN_UP_SUCCESS, payload: response });
+      return response;
+    } else {
+      showErrorToast(response.message || "Sign Up failed");
+    }
+  } catch (error) {
+    showErrorToast("Sign Up failed");
+    dispatch({ type: Actions.SIGN_UP_FAILURE, payload: error });
+  }
+};
