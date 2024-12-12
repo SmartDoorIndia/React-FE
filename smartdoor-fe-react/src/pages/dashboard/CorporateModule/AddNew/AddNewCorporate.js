@@ -636,10 +636,15 @@ const AddNewCorporate = (props) => {
                <div className="mt-2 mr-5">
                   <Buttons size='small' disabled={!addNewUserFlag && corporateId !== null ? false : true} name='Done' varient='primary' className='col-1 py-2'
                      onClick={async () => {
+                        if(emailList.trim().length === 0) {
+                           showErrorToast("Please enter valid email list....")
+                           return null;
+                           }
                         await setCorporateEmailList({ corporateId: corporateId, hubId: selectedHub, emailList: emailList })
                         .then((response) => {
                            if(response.status === 200) {
                               setSelectedHub('');
+                              setEmailList('')
                               showSuccessToast("Email list set successfully...");
                            } else {
                               showErrorToast("Please try again...");
