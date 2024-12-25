@@ -819,19 +819,23 @@ export const validateAddressDetails = (data, floorFlag) => {
     errors.buildingProjectSociety = true;
   }
   if (floorFlag) {
-    if (isBlank(data.floorNumber)) {
+    if ((data.floorNumber)?.toString()?.length === 0 || (data.floorNumber) === null) {
       errors.floorNumber = true;
     }
-    if (data.floorNumber < 0) {
+    if (Number(data.floorNumber) < 0) {
       errors.floorNumber = true;
       showErrorToast("Invalid floor number")
     }
-    if (isBlank(data.totalFloors)) {
+    if ((data.totalFloors)?.toString()?.length === 0 || (data.totalFloors) === null) {
       errors.totalFloors = true;
       showErrorToast("Invalid total floor")
     }
     if (data.totalFloors < 0) {
       errors.totalFloors = true;
+    }
+    if(Number(data.floorNumber) > Number(data.totalFloors)) {
+      errors.totalFloors = true;
+      showErrorToast("Invalid total floor")
     }
   }
 
@@ -986,7 +990,7 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.numberOfBaths = true;
       showErrorToast('Maximum 6 washrooms allowed')
     }
-    if (isBlank(data.numberOfBaths)) {
+    if ((data.numberOfBaths)?.toString()?.length === 0 || data.numberOfBaths === null) {
       errors.numberOfBaths = true;
     }
     if (Number(data.numberOfBaths) < 0) {
@@ -1013,7 +1017,7 @@ export const validateSpecs = (data, specList, testDesc) => {
       errors.numberOfReservedCarParking = true;
       showErrorToast('Invalid no. of reserved car parkings')
     }
-    if (isBlank(data.numberOfReservedCarParking)) {
+    if ((data.numberOfReservedCarParking)?.toString()?.length === 0 || data.numberOfReservedCarParking === null) {
       errors.numberOfReservedCarParking = true;
     }
   }

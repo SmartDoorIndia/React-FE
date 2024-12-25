@@ -371,7 +371,7 @@ const AddressSection = (props) => {
 		});
 	}
 
-	const saveAddressDetails = () => {
+	const saveAddressDetails = async () => {
 		let valid = {}
 		let mAddress = "";
 		let addressDetail = { ...addressDetails };
@@ -402,9 +402,9 @@ const AddressSection = (props) => {
 				showErrorToast("In valid floor number...");
 				return null;
 			}
-			valid = validateAddressDetails(addressDetails, true);
+			valid = await validateAddressDetails(addressDetails, true);
 		} else {
-			valid = validateAddressDetails(addressDetails, false);
+			valid = await validateAddressDetails(addressDetails, false);
 		}
 		setError(valid.errors);
 		if (valid.isValid) {
@@ -455,9 +455,9 @@ const AddressSection = (props) => {
 				showErrorToast("In valid floor number...");
 				return null;
 			}
-			valid = validateAddressDetails(addressDetails, true);
+			valid = await validateAddressDetails(addressDetails, true);
 		} else {
-			valid = validateAddressDetails(addressDetails, false);
+			valid = await validateAddressDetails(addressDetails, false);
 		}
 		setError(valid.errors);
 		let userId = getLocalStorage('authData');
