@@ -83,8 +83,8 @@ const FinanceListingPage = (props) => {
       selector: 'customer',
       center: true,
       maxWidth: '300px',
-      cell: ({ customer })=>(<div>{customer||'-'}</div>),
-      style: { 'text-overflow':'none' },
+      cell: ({ customer })=>(<div className='text-start'>{customer||'-'}</div>),
+      // style: { 'text-overflow':'none' },
     },
     // {
     //   name: 'Source',

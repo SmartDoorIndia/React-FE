@@ -91,7 +91,7 @@ const ExecutionListing = (props) => {
     getAllCity();
     if (props?.tabName === "Installation/Un-installation Requests") {
       if (installationReqData?.data?.length === 0 || installationReqData?.data?.length === 4) {
-        getInstallationRequest({ city: "", location: "", pageSize: "100", pageNo: "1" });
+        getInstallationRequest({ city: "", location: "", pageSize: "1000", pageNo: "1" });
       }
     }
     if (props?.tabName === "Published Property") {
