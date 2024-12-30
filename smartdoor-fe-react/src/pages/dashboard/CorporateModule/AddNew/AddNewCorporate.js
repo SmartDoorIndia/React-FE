@@ -341,13 +341,18 @@ const AddNewCorporate = (props) => {
                            id={index}
                            disabled={editUserIndex === index ? false : true}
                            label="Admin Name"
-                           // onInput={(e) => {
-                           //    setUserList((prevUserList) => {
-                           //       let newList = [...prevUserList];
-                           //       newList[index] = { ...newList[index], name: e.target.value };
-                           //       return [...newList]
-                           //    })
-                           // }}
+                           onChange={(e) => {
+                              const { value } = e.target;
+                              console.log(e)
+                              setUserList((prevUserList) => {
+                                 let newList = [...prevUserList];
+                                 newList[index] = {
+                                    ...newList[index],
+                                    name: value
+                                 };
+                                 return newList;
+                              });
+                           }}
                            defaultValue={elememt.name}
                         />
                         <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
@@ -365,13 +370,18 @@ const AddNewCorporate = (props) => {
                                     <Text className='ml-2 mr-2' text={'+91'} style={{ fontSize: '16px' }} fontWeight={'500'} />
                                  </>
                            }}
-                           // onInput={(e) => {
-                           //    setUserList((prevUserList) => {
-                           //       let newList = [...prevUserList];
-                           //       newList[index] = { ...newList[index], mobile: e.target.value };
-                           //       return [...newList]
-                           //    })
-                           // }}
+                           onChange={(e) => {
+                              const { value } = e.target;
+                              console.log(e)
+                              setUserList((prevUserList) => {
+                                 let newList = [...prevUserList];
+                                 newList[index] = {
+                                    ...newList[index],
+                                    mobile: value
+                                 };
+                                 return newList;
+                              });
+                           }}
                            defaultValue={elememt.mobile}
                         />
                         <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
@@ -394,13 +404,18 @@ const AddNewCorporate = (props) => {
                            id={index}
                            disabled={editUserIndex === index ? false : true}
                            label="Posting Permission"
-                           // onChange={(e) => {
-                           //    setUserList((prevUserList) => {
-                           //       let newList = [...prevUserList];
-                           //       newList[index] = { ...newList[index], sdPosting: e.target.value };
-                           //       return [...newList]
-                           //    })
-                           // }}
+                           onChange={(e) => {
+                              const { value } = e.target;
+                              console.log(e)
+                              setUserList((prevUserList) => {
+                                 let newList = [...prevUserList];
+                                 newList[index] = {
+                                    ...newList[index],
+                                    sdPosting: e.target.value
+                                 };
+                                 return newList;
+                              });
+                           }}
                            value={elememt.sdPosting} >
                            <MenuItem value='' disabled>select</MenuItem>
                            {permissionList.map(elememt => (
@@ -636,15 +651,20 @@ const AddNewCorporate = (props) => {
                <div className="mt-2 mr-5">
                   <Buttons size='small' disabled={!addNewUserFlag && corporateId !== null ? false : true} name='Done' varient='primary' className='col-1 py-2'
                      onClick={async () => {
+                        if (emailList.trim().length === 0) {
+                           showErrorToast("Please enter valid email list....")
+                           return null;
+                        }
                         await setCorporateEmailList({ corporateId: corporateId, hubId: selectedHub, emailList: emailList })
-                        .then((response) => {
-                           if(response.status === 200) {
-                              setSelectedHub('');
-                              showSuccessToast("Email list set successfully...");
-                           } else {
-                              showErrorToast("Please try again...");
-                           }
-                        });
+                           .then((response) => {
+                              if (response.status === 200) {
+                                 setSelectedHub('');
+                                 setEmailList('')
+                                 showSuccessToast("Email list set successfully...");
+                              } else {
+                                 showErrorToast("Please try again...");
+                              }
+                           });
                      }} style={{ float: 'right' }} ></Buttons>
                </div>
             </div>
