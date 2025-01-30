@@ -1842,9 +1842,8 @@ export const getSystemVariables = async (data) => {
 
 export const addEditAgency = async (data) => {
   const response = await mainApiService('addEditAgency', data);
-  if (response.status === 200) {
-    return response;
-  }
+  return response;
+
 }
 
 export const getAllAgencies = (data) => async (dispatch) => {
@@ -2159,15 +2158,15 @@ export const getKitList = (data) => async (dispatch) => {
   return response;
 }
 
-export const getKitDevices = async (data)  => {
+export const getKitDevices = async (data) => {
   const response = await mainApiService('getKitDevices', data);
-  
+
   return response;
 }
 
-export const editKitDevices = async (data)  => {
+export const editKitDevices = async (data) => {
   const response = await mainApiService('editKitDetails', data);
-  
+
   return response;
 }
 
@@ -2180,3 +2179,73 @@ export const setCorporateEmailList = async (data) => {
   const response = await mainApiService('setCorporateEmails', data);
   return response;
 }
+
+export const getAccountEmailDetails = async (data) => {
+  const response = await mainApiService('getAccountEmail', data);
+  return response;
+}
+
+export const approveBuilderProfile = async (data) => {
+  const response = await mainApiService("approveBuilderProfile", data);
+  if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);
+  else if (response.data && response.data.error) showErrorToast(response.data.error);
+  else showErrorToast("Unexpected error. Please try again later");
+  return response;
+};
+
+export const createBuilderProject = async (data) => {
+  const response = await mainApiService("createBuilderProject", data);
+  if (response.data && response.data.status === 200) {
+    showSuccessToast("Profile created successfully.");
+  } else if (response.data && response.data.status === 409)
+    showErrorToast("Builder already exist.");
+  else if (response.data && response.data.status !== 409 && response.data.error) {
+    showErrorToast(response.data.error);
+  } else showErrorToast("Unexpected error. Please try again later");
+  return response;
+};
+
+export const createBuilderProfileDetail = async (data) => {
+  const response = await mainApiService("createBuilderProfileDetail", data);
+  if (response.data && response.data.status === 200) {
+    showSuccessToast("Profile created successfully.");
+  } else if (response.data && response.data.status === 409)
+    showErrorToast("Builder already exist.");
+  else if (response.data && response.data.status !== 409 && response.data.error) {
+    showErrorToast(response.data.error);
+  } else showErrorToast("Unexpected error. Please try again later");
+  return response;
+};
+
+export const getBuilderById = async (data) => {
+  const response = await mainApiService("getBuilderById", data);
+  console.log("--->", response);
+  return response;
+};
+
+export const getBuilderProjectById = async (data) => {
+  const response = await mainApiService("getBuilderProjectById", data);
+  return response;
+};
+
+export const getBuilderProjectSubPosts = async (data) => {
+  const response = await mainApiService("getBuilderProjectSubPosts", data);
+  return response;
+};
+export const getBuilderProjectSubPostsStats = async (data) => {
+  const response = await mainApiService("getBuilderProjectSubPostsStats", data);
+  return response;
+};
+
+export const approveBuilderProject = async (data) => {
+  const response = await mainApiService("approveBuilderProject", data);
+  if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);
+  else if (response.data && response.data.error) showErrorToast(response.data.error);
+  else showErrorToast("Unexpected error. Please try again later");
+  return response;
+};
+
+export const deleteBuilderProjectById = async (data) => {
+  const response = await mainApiService("deleteBuilderProjectById", data);
+  return response;
+};

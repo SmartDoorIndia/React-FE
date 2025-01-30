@@ -14,7 +14,7 @@ import AutoCompleteTextField from '../../../shared/Inputs/AutoComplete/textField
 const Add_EditAgency = (props) => {
     const addNew = props.location.state.addNew;
     const [agencyDetails, setAgencyDetails] = useState(props.location.state?.agencyDetails || {
-        agencyId: null,
+        agencyId: 0,
         agencyName: '',
         location: '',
         contactName: '',

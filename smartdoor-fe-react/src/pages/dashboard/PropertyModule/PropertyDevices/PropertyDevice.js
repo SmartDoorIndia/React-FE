@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { connect } from "react-redux";
-import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes, setCallBackUrl, getDeviceToken, deleteCamera } from "../../../../common/redux/actions";
+import { getSmartLockData, getContactSensor, getCameraDevice, editCameraData, getCameraTypes, setCallBackUrl, getDeviceToken, deleteCamera, getAccountEmailDetails } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import Buttons from "../../../../shared/Buttons/Buttons";
@@ -54,6 +54,7 @@ const PropertyDevice = (props) => {
     const [showLiveStream, setShowLiveStream] = useState(false);
     const [livestreamURL, setLivestreamURL] = useState('');
     const [currentUUID, setCurrentUUID] = useState(null);
+    const [accountDetails, setAccountDetails] = useState({});
     let liveStremUrl = ''
 
     const _getSmartLockData = useCallback(async () => {
@@ -105,6 +106,8 @@ const PropertyDevice = (props) => {
                     data.push(result_data.data.resourceData)
                     setCameraData(result_data.data.resourceData);
                     console.log("result_data.data.resourceData: Camera:", result_data.data.resourceData);
+                } else if (result_data.status !== 200) {
+                    setCameraData([])
                 }
             } catch (err) {
                 showErrorToast("Unexpected Error.");
@@ -405,13 +408,26 @@ const PropertyDevice = (props) => {
         console.log(valid)
         if (valid.isValid) {
             setLoading(true)
-            const response = await editCameraData(selectedCameraData);
+            let reqData = { ...selectedCameraData, ...accountDetails, adminLogin: selectedCameraData.cameraType === '4G_CAMERA' ? true : false, cameraAlreadyAdded: false }
+            const response = await editCameraData(reqData);
             setLoading(false);
             if (response.status === 200) {
                 showSuccessToast("CameraDevice Data updated successfully");
                 setShowEditCameraData(false);
                 setAddCameraFlag(false);
                 _getCameraDevice(propertyId);
+                setselectedCameraData(prevCameraData => ({
+                    ...prevCameraData,
+                    uuId: '',
+                    userName: '',
+                    password: '',
+                    nickName: '',
+                    cameraDeviceId: '',
+                    cameraId: '',
+                    cameraType: '',
+                    endpointType: '',
+                    propertyId: propertyId
+                }))
             }
         }
     }
@@ -475,9 +491,7 @@ const PropertyDevice = (props) => {
                     size="xSmall"
                     color="white"
                     className="mt-2 mb-2"
-                    onClick={() => {
-                        setAddCameraFlag(true);
-                        setChangeUUIDFlag(false);
+                    onClick={async () => {
                         setselectedCameraData(prevCameraData => ({
                             ...prevCameraData,
                             uuId: '',
@@ -490,6 +504,10 @@ const PropertyDevice = (props) => {
                             endpointType: '',
                             propertyId: propertyId
                         }))
+                        setAddCameraFlag(true);
+                        setChangeUUIDFlag(false);
+                        const response = await getAccountEmailDetails();
+                        setAccountDetails(response?.data?.resourceData)
                     }} /> &nbsp;&nbsp;
             </div>
 
@@ -695,7 +713,20 @@ const PropertyDevice = (props) => {
                     </div>
                 </Modal.Body>
             </Modal>
-            <Modal size="lg" show={addCameraFlag} onHide={() => { setAddCameraFlag(false); setShowEditCameraData(false) }} centered={true} >
+            <Modal size="lg" show={addCameraFlag} onHide={() => {
+                setAddCameraFlag(false); setShowEditCameraData(false); setselectedCameraData(prevCameraData => ({
+                    ...prevCameraData,
+                    uuId: '',
+                    userName: '',
+                    password: '',
+                    nickName: '',
+                    cameraDeviceId: '',
+                    cameraId: '',
+                    cameraType: '',
+                    endpointType: '',
+                    propertyId: propertyId
+                }))
+            }} centered={true} >
                 <Modal.Body>
                     <Text
                         className="m-2 h5"

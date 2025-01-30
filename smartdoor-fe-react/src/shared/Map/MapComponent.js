@@ -57,10 +57,10 @@ export class MapComponent extends Component {
 
    componentDidMount() {
 
-      if( window.google && window ) {
+      if (window.google && window) {
          this.setState(prevState => ({
             showMap: true
-         }));         
+         }));
       }
    }
 
@@ -70,14 +70,22 @@ export class MapComponent extends Component {
          this.props.p_lat && this.props.p_lng
             ? { lat: this.props.p_lat, lng: this.props.p_lng }
             : LAT_LNG;
+      const containerStyles = this.props.style || {
+         width: "100%",
+         height: this.props.height || "190px", // Default height
+         display: "inline-block",
+         borderRadius: "5px",
+      };
 
       return (
          <>
-            { this.state.showMap && window && window.google ? (
+            <div style={containerStyles} >
+
+               {this.state.showMap && window && window.google ? (
                   <Map
                      google={google}
                      zoom={this.props.p_lat && this.props.p_lng ? 16 : 4}
-                     style={mapStyles}
+                     // style={mapStyles}
                      initialCenter={LatLng}
                      defaultCenter={LatLng}
                      defaultZoom={16}
@@ -93,10 +101,11 @@ export class MapComponent extends Component {
                         />
                      ) : null}
                   </Map>
-               ): (
+               ) : (
                   <div className="Small TaupeGrey smbold"> Map Loading... </div>
                )
-            }
+               }
+            </div>
 
          </>
       );

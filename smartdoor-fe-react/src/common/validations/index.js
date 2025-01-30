@@ -833,7 +833,7 @@ export const validateAddressDetails = (data, floorFlag) => {
     if (data.totalFloors < 0) {
       errors.totalFloors = true;
     }
-    if(Number(data.floorNumber) > Number(data.totalFloors)) {
+    if (Number(data.floorNumber) > Number(data.totalFloors)) {
       errors.totalFloors = true;
       showErrorToast("Invalid total floor")
     }
@@ -1043,7 +1043,7 @@ export const validateSpecs = (data, specList, testDesc) => {
   }
 }
 
-export const validatePricing = (data, pricingList) => {
+export const validatePricing = (data, pricingList, propertyCategory) => {
   const errors = {};
 
   if (pricingList.includes('Rent')) {
@@ -1103,6 +1103,18 @@ export const validatePricing = (data, pricingList) => {
         }
       }
     }
+  }
+  if (isBlank(data.brokerageType)) {
+    errors.brokerageType = true;
+  }
+  if (isBlank(data.brokerageValue)) {
+    errors.brokerageValue = true;
+  }
+  if(data.brokerageType === 'BrokerageMonths' && Number(data.brokerageValue) > 3) {
+    errors.brokerageValue = true;
+  }
+  if(data.brokerageType === 'BrokeragePercentage' && Number(data.brokerageValue) > 5) {
+    errors.brokerageValue = true;
   }
   if (pricingList.includes('Add additional fields')) {
     errors.additionalFieldsForChargesDue = []
@@ -1289,19 +1301,19 @@ export const validateCorpUser = (data) => {
 export const validateNewCity = (data) => {
   let errors = {};
 
-  if(isBlank(data.cityName)) {
+  if (isBlank(data.cityName)) {
     errors.cityName = true;
   }
-  if(isBlank(data.cityLat)) {
+  if (isBlank(data.cityLat)) {
     errors.cityLat = true;
   }
-  if(isBlank(data.cityLong)) {
+  if (isBlank(data.cityLong)) {
     errors.cityLong = true;
   }
-  if(isBlank(data.radius)) {
+  if (isBlank(data.radius)) {
     errors.radius = true;
   }
-  if(isBlank(data.stateId)) {
+  if (isBlank(data.stateId)) {
     errors.stateId = true;
   }
 

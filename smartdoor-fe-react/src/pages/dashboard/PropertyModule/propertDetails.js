@@ -579,9 +579,9 @@ const PropertyDetails = (props) => {
    const qrGenerator = (slData) => {
       console.log(slData, "slData for qr");
       const data = {
-         accessToken: slData.accessToken,
-         lockId: slData.lockId,
-         lockmac: slData.lockmac,
+         // accessToken: slData.accessToken,
+         // lockId: slData.lockId,
+         // lockmac: slData.lockmac,
          propertyId: slData.propertyId
       }
       setQrData(data, () => {

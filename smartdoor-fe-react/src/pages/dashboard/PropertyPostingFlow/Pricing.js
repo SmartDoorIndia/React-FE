@@ -3,7 +3,7 @@ import { Col, Row } from "react-bootstrap";
 import { compose } from "redux"
 import PostingFields from "../../../common/helpers/PostingFields";
 import { connect, useDispatch } from "react-redux";
-import { Checkbox, MenuItem, Slider, TextField } from "@mui/material";
+import { Checkbox, FormControlLabel, FormControl, MenuItem, Radio, RadioGroup, Slider, TextField } from "@mui/material";
 import POSTING_CONSTANTS from "../../../common/helpers/POSTING_CONSTANTS";
 import Text from "../../../shared/Text/Text";
 import { dateWithFormate, formateDate, formateDateTime, getLocalStorage, showErrorToast, showSuccessToast } from '../../../common/helpers/Utils';
@@ -38,10 +38,19 @@ const Pricing = (props) => {
     const [error, setError] = useState({});
     const [savePricingFlag, setSavePricingFlag] = useState(false);
     const propertyId = props?.propertyId;
+    const [openForBrokerFlag, setOpenForBrokerFlag] = useState(false)
+    const [initialBrokerageType, setInitialBrokerageType] = useState(pricingDetailFields?.data?.brokerageType || null);
+
     const dispatch = useDispatch();
     const history = useHistory();
 
     useEffect(() => {
+        console.log(pricingDetailFields)
+        if (pricingDetailFields?.data?.brokerageType !== null) {
+            setOpenForBrokerFlag(true);
+        } else {
+            setOpenForBrokerFlag(false)
+        }
         if (Object.keys(basicDetailFields.data).length !== 0) {
             let pricingObj = {};
             let fields = basicDetailFields.data;
@@ -54,7 +63,7 @@ const Pricing = (props) => {
                 category = fields.propertyCategory
             }
             if (fields.propertyType === 'Residential') {
-                if (fields.propertySubType === '' || fields.propertySubType === 'PG/Co-living' ) {
+                if (fields.propertySubType === '' || fields.propertySubType === 'PG/Co-living') {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType]?.Pricing
                 } else {
                     pricingObj = PostingFields.postingFieldsObject[category][fields.stageOfProperty === null ? 'Ready' : fields.stageOfProperty][fields.propertyType][fields.propertySubType]?.Pricing
@@ -68,7 +77,7 @@ const Pricing = (props) => {
                 setPreferredForList(Object.values(pricingObj['Preferred for']));
             }
             if ((Object.keys(pricingObj)).includes('Expected time')) {
-                if(pricingDetails?.expectedTimeToSellThePropertyWithin !== null) {
+                if (pricingDetails?.expectedTimeToSellThePropertyWithin !== null) {
                     if (pricingDetails?.expectedTimeToSellThePropertyWithin?.toString()?.length !== 0) {
                         const dateString = pricingDetails.expectedTimeToSellThePropertyWithin;
                         const parts = dateString?.split('-');
@@ -81,19 +90,19 @@ const Pricing = (props) => {
                     }
                 }
             }
-            if((Object.keys(pricingObj)).includes('Selling price')) {
+            if ((Object.keys(pricingObj)).includes('Selling price')) {
                 const propRate = parseFloat(pricingDetails.propertyRate / 100000)
                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, propertyRate: propRate }))
             }
-            if((Object.keys(pricingObj)).includes('Rent')) {
+            if ((Object.keys(pricingObj)).includes('Rent')) {
                 const propRate = parseFloat(pricingDetails.propertyRate / 1000)
                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, propertyRate: propRate }))
             }
-            if((Object.keys(pricingObj)).includes('Maintenance')) {
+            if ((Object.keys(pricingObj)).includes('Maintenance')) {
                 const maintenance = parseFloat(pricingDetails.maintenanceCharge / 1000)
                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, maintenanceCharge: maintenance }))
             }
-            if((Object.keys(pricingObj)).includes('Security deposit')) {
+            if ((Object.keys(pricingObj)).includes('Security deposit')) {
                 const securityAmt = parseFloat(pricingDetails.securityAmount / 1000)
                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, securityAmount: securityAmt }))
             }
@@ -113,7 +122,7 @@ const Pricing = (props) => {
                     setAdditionalFieldsList([...updatedAdditionalFields]);
                 }
             }
-            
+
         }
     }, []);
 
@@ -142,24 +151,24 @@ const Pricing = (props) => {
 
     const savePricingDetails = async () => {
         let valid = {}
-        let pricingDetail = {...pricingDetails};
-        if(pricingList.includes('Selling price')) {
+        let pricingDetail = { ...pricingDetails };
+        if (pricingList.includes('Selling price')) {
             const propRate = parseFloat(pricingDetails.propertyRate * 100000)
             pricingDetail.propertyRate = propRate;
         }
-        if(pricingList.includes('Rent')) {
+        if (pricingList.includes('Rent')) {
             const propRate = parseFloat(pricingDetails.propertyRate * 1000)
             pricingDetail.propertyRate = propRate;
         }
-        if(pricingList.includes('Maintenance')) {
+        if (pricingList.includes('Maintenance')) {
             const maintenance = parseFloat(pricingDetails.maintenanceCharge * 1000)
             pricingDetail.maintenanceCharge = maintenance;
         }
-        if(pricingList.includes('Security deposit')) {
+        if (pricingList.includes('Security deposit')) {
             const securityAmt = parseFloat(pricingDetails.securityAmount * 1000)
             pricingDetail.securityAmount = securityAmt;
-        }        
-        if(pricingList.includes('Add additional fields')) {
+        }
+        if (pricingList.includes('Add additional fields')) {
             // (pricingDetail.additionalFieldsForChargesDue).map((element) => {
             //     const dues = parseFloat(element.charge * 1000);
             //     element.charge = dues;
@@ -173,38 +182,39 @@ const Pricing = (props) => {
             });
             pricingDetail.additionalFieldsForChargesDue = [...updatedAdditionalFields]
         }
-        valid = validatePricing(pricingDetail, pricingList);
+        valid = validatePricing(pricingDetail, pricingList, basicDetailFields?.data?.propertyCategory);
         setError(valid.errors);
         if (valid.isValid) {
             dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetail })
-            setSavePricingFlag(true);
-            savePricingDetailsFields({ saveFlag: true })
-            if(editPropertyFlag) {
+            if (editPropertyFlag) {
                 notifyPricingDetails(true)
+            } else {
+                setSavePricingFlag(true);
+                savePricingDetailsFields({ saveFlag: true })
             }
         }
     }
 
     const notifyPricingDetails = async (loadNext) => {
         let valid = {}
-        let pricingDetail = {...pricingDetails};
-        if(pricingList.includes('Selling price')) {
+        let pricingDetail = { ...pricingDetails };
+        if (pricingList.includes('Selling price')) {
             const propRate = parseFloat(pricingDetails.propertyRate * 100000)
             pricingDetail.propertyRate = propRate;
         }
-        if(pricingList.includes('Rent')) {
+        if (pricingList.includes('Rent')) {
             const propRate = parseFloat(pricingDetails.propertyRate * 1000)
             pricingDetail.propertyRate = propRate;
         }
-        if(pricingList.includes('Maintenance')) {
+        if (pricingList.includes('Maintenance')) {
             const maintenance = parseFloat(pricingDetails.maintenanceCharge * 1000)
             pricingDetail.maintenanceCharge = maintenance;
         }
-        if(pricingList.includes('Security deposit')) {
+        if (pricingList.includes('Security deposit')) {
             const securityAmt = parseFloat(pricingDetails.securityAmount * 1000)
             pricingDetail.securityAmount = securityAmt;
         }
-        if(pricingList.includes('Add additional fields')) {
+        if (pricingList.includes('Add additional fields')) {
             // (pricingDetail.additionalFieldsForChargesDue).map((element) => {
             //     const dues = parseFloat(element.charge * 1000);
             //     element.charge = dues;
@@ -231,11 +241,11 @@ const Pricing = (props) => {
                 pricingDetail.expectedTimeToSellThePropertyWithin = formattedDate;
                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, expectedTimeToSellThePropertyWithin: formattedDate }));
             }
-            
+
             let userId = getLocalStorage('authData');
             const data = {
                 ...(propertyId && { smartdoorPropertyId: propertyId }),
-                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails :{
+                miscellaneousDetails: editPropertyFlag === true ? miscellaneousDetails : {
                     postedById: userId.userid,
                     lastPageOfInfoFilled: 3,
                     draft: true,
@@ -271,10 +281,14 @@ const Pricing = (props) => {
                 dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetail })
                 setSavePricingFlag(true)
                 savePricingDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: true })
-                if(!loadNext) {
+                if (!loadNext) {
                     showSuccessToast('Property Posted successfully');
                     history.goBack();
                 }
+            } else {
+                setSavePricingFlag(false)
+                savePricingDetailsFields({ propertyId: response?.data?.resourceData?.propertyId, saveFlag: false })
+                showErrorToast(response?.data?.message)
             }
         }
     }
@@ -294,12 +308,12 @@ const Pricing = (props) => {
                                 InputProps={{
                                     startAdornment: (
                                         <>
-                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{ fontSize: '14px' }} />
                                         </>
                                     ),
                                     endAdornment: (
                                         <>
-                                            <Text text='Thousand' style={{fontSize: '14px'}} />
+                                            <Text text='Thousand' style={{ fontSize: '14px' }} />
                                         </>
                                     )
                                 }}
@@ -314,16 +328,16 @@ const Pricing = (props) => {
                                 className="w-100 mb-2"
                                 type="number"
                                 label={'Maintenance Charges (Monthly)'}
-                                inputProps={{ }}
+                                inputProps={{}}
                                 InputProps={{
                                     startAdornment: (
                                         <>
-                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{ fontSize: '14px' }} />
                                         </>
                                     ),
                                     endAdornment: (
                                         <>
-                                            <Text text='Thousand' style={{fontSize: '14px'}} />
+                                            <Text text='Thousand' style={{ fontSize: '14px' }} />
                                         </>
                                     )
                                 }}
@@ -339,16 +353,16 @@ const Pricing = (props) => {
                                 className="w-100 mb-2"
                                 type="number"
                                 label={'Security Deposit'}
-                                inputProps={{ }}
+                                inputProps={{}}
                                 InputProps={{
                                     startAdornment: (
                                         <>
-                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{ fontSize: '14px' }} />
                                         </>
                                     ),
                                     endAdornment: (
                                         <>
-                                            <Text text='Thousand' style={{fontSize: '14px'}} />
+                                            <Text text='Thousand' style={{ fontSize: '14px' }} />
                                         </>
                                     )
                                 }}
@@ -401,16 +415,16 @@ const Pricing = (props) => {
                                 type="number"
                                 error={error.propertyRate}
                                 label={'Selling Price'}
-                                inputProps={{ }}
+                                inputProps={{}}
                                 InputProps={{
                                     startAdornment: (
                                         <>
-                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{ fontSize: '14px' }} />
                                         </>
                                     ),
                                     endAdornment: (
                                         <>
-                                            <Text text='Lacs' style={{fontSize: '14px'}} />
+                                            <Text text='Lacs' style={{ fontSize: '14px' }} />
                                         </>
                                     )
                                 }}
@@ -469,7 +483,110 @@ const Pricing = (props) => {
                                 fontWeight={'500'} style={{ fontSize: '13px' }} />
                         </Col>
                         : null}
+                    <Col lg='2' className="d-flex">
+                        <Checkbox onChange={(e) => { setOpenForBrokerFlag(e.target.checked) }}
+                            disabled={openForBrokerFlag ? true : false}
+                            checked={openForBrokerFlag ? true : false} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
+                        <Text text={'Open for Brokers? '} className="mt-5 w-100"
+                            fontWeight={'700'} style={{ fontSize: '14px', wordBreak: 'break-word' }} />
+                    </Col>
+                    {pricingDetails.brokerageType !== null && pricingDetails.brokerageType?.length !== 0 ?
+                        <>
+                            {basicDetailFields?.data?.propertyCategory === "Selling" ?
+                                <>
+                                    <Col lg='6'>
+                                        <FormControl>
+                                            <RadioGroup
+                                                row
+                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                name="row-radio-buttons-group"
+                                                onChange={(e) => {
+                                                    if (!editPropertyFlag) {
+                                                        setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
+                                                    }
+                                                }}
+                                                value={pricingDetails.brokerageType}
+                                            >
+                                                <div className="d-flex">
+                                                    <FormControlLabel className="" style={{ width: '400px' }} value={"BrokeragePercentage"} control={<Radio />} label="Brokerage Percentage" />
+                                                    <TextField
+                                                        className="w-100"
+                                                        type="number"
+                                                        inputProps={{ min: 1, max: 5 }}
+                                                        disabled={pricingDetails?.brokerageType === 'BrokeragePercentage' ? false : true}
+                                                        error={error.brokerageValue}
+                                                        onChange={(e) => {
+                                                            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
+                                                        }}
+                                                        value={pricingDetails?.brokerageType === 'BrokeragePercentage' ? pricingDetails.brokerageValue : 0}
+                                                    />
+                                                </div>
+                                                <div className="d-flex mt-3">
+                                                    <FormControlLabel className="" style={{ width: '400px' }} value={"BrokerageAbsoluteValue"} control={<Radio />} label="Borkerage Absolute Value" />
+                                                    <TextField
+                                                        className="w-100"
+                                                        type="number"
+                                                        disabled={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? false : true}
+                                                        error={error.brokerageValue}
+                                                        onChange={(e) => {
+                                                            if (!editPropertyFlag) {
+                                                                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
+                                                            }
+                                                        }}
+                                                        value={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? pricingDetails.brokerageValue : 0}
+                                                    />
+                                                </div>
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </Col>
+                                </>
+                                :
+                                <>
+                                    <Col lg='6'>
+                                        <FormControl>
+                                            <RadioGroup
+                                                row
+                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                name="row-radio-buttons-group"
+                                                // onChange={(e) => { setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) })) }}
+                                                value={pricingDetails.brokerageType}
+                                            >
+                                                <div className="d-flex">
+                                                    <FormControlLabel className="" style={{ width: '400px' }} value={"BrokerageMonths"} control={<Radio />} label="Brokerage Months" />
+                                                    <TextField
+                                                        className="w-100"
+                                                        type="number"
+                                                        inputProps={{ min: 0, max: 3 }}
+                                                        // disabled={pricingDetails?.brokerageType === 'BrokerageMonths' ? false : true}
+                                                        error={error.brokerageValue}
+                                                        onChange={(e) => {
+                                                            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: Number(e.target.value) }));
+                                                        }}
+                                                        value={pricingDetails?.brokerageType === 'BrokerageMonths' ? pricingDetails.brokerageValue : 0}
+                                                    />
+                                                </div>
+                                                <div className="d-flex mt-3">
+                                                    <FormControlLabel className="" style={{ width: '400px' }} value={"BrokerageAbsoluteValue"} control={<Radio />} label="Borkerage Absolute Value" />
+                                                    <TextField
+                                                        className="w-100"
+                                                        type="number"
+                                                        disabled={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? false : true}
+                                                        error={error.brokerageValue}
+                                                        onChange={(e) => {
+                                                            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
+                                                        }}
+                                                        contentEditable={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? true : false}
+                                                        value={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? pricingDetails.brokerageValue : 0}
+                                                    />
+                                                </div>
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </Col>
+                                </>}
+                        </>
+                        : null}
                 </Row>
+
                 {pricingList.includes('Add additional fields') ?
                     <>
                         <Col lg='4'>
@@ -489,7 +606,7 @@ const Pricing = (props) => {
                                                 id={index}
                                                 error={error.additionalFieldsForChargesDue && error.additionalFieldsForChargesDue[index]?.label}
                                                 label={'Label'}
-                                                onChange={async(e) => {
+                                                onChange={async (e) => {
                                                     await setAdditionalFieldsList((prevAdditionalFieldsList) => {
 
                                                         let newList = [...prevAdditionalFieldsList];
@@ -521,12 +638,12 @@ const Pricing = (props) => {
                                                 InputProps={{
                                                     startAdornment: (
                                                         <>
-                                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{fontSize: '14px'}} />
+                                                            <Text className='ml-2 mr-2' text=' ₹ ' style={{ fontSize: '14px' }} />
                                                         </>
                                                     ),
                                                     endAdornment: (
                                                         <>
-                                                            <Text text='Thousand' style={{fontSize: '14px'}} />
+                                                            <Text text='Thousand' style={{ fontSize: '14px' }} />
                                                         </>
                                                     )
                                                 }}
@@ -545,10 +662,10 @@ const Pricing = (props) => {
             {savePricingFlag === false ?
                 <div className="d-flex">
                     {!editPropertyFlag ?
-                    <>
-                        <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyPricingDetails(false); }}></Buttons> &nbsp; &nbsp;
-                    </>
-                    :null}
+                        <>
+                            <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyPricingDetails(false); }}></Buttons> &nbsp; &nbsp;
+                        </>
+                        : null}
                     <Buttons className='p-2 px-4' name='Next' onClick={() => { savePricingDetails(); }}></Buttons> &nbsp; &nbsp;
                     {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
                 </div>

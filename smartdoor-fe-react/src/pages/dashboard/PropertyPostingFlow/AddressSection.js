@@ -511,114 +511,121 @@ const AddressSection = (props) => {
 		<>
 			<div className="whiteBg mb-1">
 				<Row>
-					<Col lg={4}>
-						<AutoCompleteTextField
-							error={error.locality}
-							className='w-100'
-							sdIconFlag={false}
-							currentLocFlag={false}
-							label="Select  location of property"
-							cityLatLng={null}
-							placeholder="Enter location"
-							id="PropertyCityAutoComplete"
-							onSelectOption={(e) => { handleSelectLocalityOption(e) }}
-							onInputChange={(value) =>
-								setAddressDetails({ ...addressDetails, locality: value })
-							}
-							predictionType="business"
-							customValue={addressDetails.locality}
-						/>
-					</Col>
-					<Col lg={4}>
-						<TextField
-							error={error.city}
-							className=" w-100"
-							disabled
-							label="Selected city"
-							type='text'
-							InputProps={{
-								endAdornment: <>
-									{sdIconFlag ?
-										<div className='d-flex mt-3'>
-											<Image style={{ height: '22px', width: '22px' }} src={sdIcon}></Image>
-											<Text text={'SD'} fontWeight='600' style={{ fontSize: '12px', color: '#BE1452' }} />
-										</div>
-										: null}
-								</>
-							}}
-							value={addressDetails.city}
-						>
-						</TextField>
+					<Col lg={8}>
+						<Row>
+
+							<Col lg={6}>
+								<AutoCompleteTextField
+									error={error.locality}
+									className='w-100'
+									sdIconFlag={false}
+									currentLocFlag={false}
+									label="Select  location of property"
+									cityLatLng={null}
+									placeholder="Enter location"
+									id="PropertyCityAutoComplete"
+									onSelectOption={(e) => { handleSelectLocalityOption(e) }}
+									onInputChange={(value) =>
+										setAddressDetails({ ...addressDetails, locality: value })
+									}
+									predictionType="business"
+									customValue={addressDetails.locality}
+								/>
+							</Col>
+							<Col lg={6}>
+								<TextField
+									error={error.city}
+									className=" w-100"
+									disabled
+									label="Selected city"
+									type='text'
+									InputProps={{
+										endAdornment: <>
+											{sdIconFlag ?
+												<div className='d-flex mt-3'>
+													<Image style={{ height: '22px', width: '22px' }} src={sdIcon}></Image>
+													<Text text={'SD'} fontWeight='600' style={{ fontSize: '12px', color: '#BE1452' }} />
+												</div>
+												: null}
+										</>
+									}}
+									value={addressDetails.city}
+								>
+								</TextField>
+							</Col>
+							<Col lg={5} className='mt-3'>
+								<TextField
+									label="Latitude"
+									type='number'
+									className='w-100'
+									onChange={(e) => {
+										setAddressDetails({ ...addressDetails, latitude: Number(e.target.value) });
+									}}
+									value={addressDetails.latitude}
+								/>
+							</Col>
+							<Col lg={5} className='mt-3'>
+								<TextField
+									label="Longitude"
+									type='number'
+									className='w-100'
+									onChange={(e) => {
+										setAddressDetails({ ...addressDetails, longitude: Number(e.target.value) });
+									}}
+									value={addressDetails.longitude}
+								/>
+							</Col>
+							<Col lg={2}>
+								<Buttons className='mt-3' name='Update location' varient='primary' onClick={() => {
+									if (addressDetails.latitude !== 0 && addressDetails.longitude !== 0) {
+										handleLatLngChanged();
+									}
+								}} />
+							</Col>
+							<Col lg={6}>
+								<TextField
+									error={error.houseNumber}
+									className=" w-100 mt-4"
+									label="Block No./Flat No./Plot No."
+									type='text'
+									onChange={(e) => { setAddressDetails({ ...addressDetails, houseNumber: e.target.value }) }}
+									value={addressDetails.houseNumber}
+								>
+								</TextField>
+							</Col>
+							<Col lg='6'>
+								<TextField
+									error={error.landmark}
+									className=" w-100 mt-4"
+									label="Landmark"
+									type='text'
+									onChange={(e) => { setAddressDetails({ ...addressDetails, landmark: e.target.value }) }}
+									value={addressDetails.landmark}
+								>
+								</TextField>
+							</Col>
+						</Row>
 					</Col>
 					<Col>
-						<div className="mapLocation my-3">
-							<div style={{ height: "15", overflow: "hidden" }}>
+						<div className="mapLocation">
+							<div style={{ height: "15px", overflow: "hidden", display: 'inline' }}>
 								<MapComponent
 									height='190px'
 									p_lat={addressDetails?.latitude !== 0 ? addressDetails.latitude : addressDetails.cityLat}
 									p_lng={addressDetails?.longitude !== 0 ? addressDetails.longitude : addressDetails.cityLong}
 									draggable={true}
-									onMarkerDragEnd={handleMarkerChanged} />
+									onMarkerDragEnd={handleMarkerChanged}
+								/>
 							</div>
 						</div>
 					</Col>
 				</Row>
-				<Row className='mt-4'>
-					<Col lg={3}>
-						<TextField
-							label="Latitude"
-							type='number'
-							className='w-100'
-							onChange={(e) => {
-								setAddressDetails({ ...addressDetails, latitude: Number(e.target.value) });
-							}}
-							value={addressDetails.latitude}
-						/>
-					</Col>
-					<Col lg={3}>
-						<TextField
-							label="Longitude"
-							type='number'
-							className='w-100'
-							onChange={(e) => {
-								setAddressDetails({ ...addressDetails, longitude: Number(e.target.value) });
-							}}
-							value={addressDetails.longitude}
-						/>
-					</Col>
-					<Col lg={2}>
-						<Buttons className='mt-1' name='Update location' varient='primary' onClick={() => {
-							if (addressDetails.latitude !== 0 && addressDetails.longitude !== 0) {
-								handleLatLngChanged();
-							}
-						}} />
-					</Col>
+				{/* <Row className='mt-4'>
 				</Row>
 				<Row>
-					<Col lg={4}>
-						<TextField
-							error={error.houseNumber}
-							className=" w-100 mt-4"
-							label="Block No./Flat No./Plot No."
-							type='text'
-							onChange={(e) => { setAddressDetails({ ...addressDetails, houseNumber: e.target.value }) }}
-							value={addressDetails.houseNumber}
-						>
-						</TextField>
-					</Col>
-					<Col lg='4'>
-						<TextField
-							error={error.landmark}
-							className=" w-100 mt-4"
-							label="Landmark"
-							type='text'
-							onChange={(e) => { setAddressDetails({ ...addressDetails, landmark: e.target.value }) }}
-							value={addressDetails.landmark}
-						>
-						</TextField>
-					</Col>
 
-				</Row>
+
+				</Row> */}
 				<Row>
 					<Col lg='4'>
 						<Autocomplete

@@ -3116,6 +3116,19 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+
+  getAccountEmail: {
+    url: "smartlock/smartlock/getCameraAccountCredentials",
+    method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 
