@@ -46,10 +46,14 @@ const Pricing = (props) => {
 
     useEffect(() => {
         console.log(pricingDetailFields)
-        if (pricingDetailFields?.data?.brokerageType !== null) {
-            setOpenForBrokerFlag(true);
+        if (!editPropertyFlag) {
+            setOpenForBrokerFlag(false);
         } else {
-            setOpenForBrokerFlag(false)
+            if (pricingDetailFields?.data?.brokerageType !== null && pricingDetailFields?.data?.brokerageType?.length !== 0) {
+                setOpenForBrokerFlag(true);
+            } else {
+                setOpenForBrokerFlag(false)
+            }
         }
         if (Object.keys(basicDetailFields.data).length !== 0) {
             let pricingObj = {};
@@ -485,104 +489,125 @@ const Pricing = (props) => {
                         : null}
                     <Col lg='2' className="d-flex">
                         <Checkbox onChange={(e) => { setOpenForBrokerFlag(e.target.checked) }}
-                            disabled={openForBrokerFlag ? true : false}
+                            disabled={openForBrokerFlag && editPropertyFlag ? true : false}
                             checked={openForBrokerFlag ? true : false} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
                         <Text text={'Open for Brokers? '} className="mt-5 w-100"
                             fontWeight={'700'} style={{ fontSize: '14px', wordBreak: 'break-word' }} />
                     </Col>
-                    {pricingDetails.brokerageType !== null && pricingDetails.brokerageType?.length !== 0 ?
+                    {basicDetailFields?.data?.propertyCategory === "Selling" && openForBrokerFlag ?
                         <>
-                            {basicDetailFields?.data?.propertyCategory === "Selling" ?
-                                <>
-                                    <Col lg='6'>
-                                        <FormControl>
-                                            <RadioGroup
-                                                row
-                                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                                name="row-radio-buttons-group"
+                            <Col lg='6'>
+                                <FormControl>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="row-radio-buttons-group"
+                                        onChange={(e) => {
+                                            if (!editPropertyFlag) {
+                                                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
+                                            } else {
+                                                if (pricingDetails.brokerageType === null) {
+                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
+                                                }
+                                            }
+                                        }}
+                                        value={pricingDetails.brokerageType}
+                                    >
+                                        <div className="d-flex">
+                                            <FormControlLabel className="" style={{ width: '400px' }} value={"BrokeragePercentage"} control={<Radio />} label="Brokerage Percentage" />
+                                            <TextField
+                                                className="w-100"
+                                                type="number"
+                                                inputProps={{ min: 1, max: 5 }}
+                                                disabled={pricingDetails?.brokerageType === 'BrokeragePercentage' ? false : true}
+                                                error={error.brokerageValue}
+                                                onChange={(e) => {
+                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
+                                                }}
+                                                value={pricingDetails?.brokerageType === 'BrokeragePercentage' ? pricingDetails.brokerageValue : 0}
+                                            />
+                                        </div>
+                                        {pricingDetails.brokerageValue <= 0 && pricingDetails.brokerageType === 'BrokeragePercentage' ?
+                                            <Text text={"Brokerage percentage must between 1% - 5%"} style={{ color: 'red', fontSize: '12px', fontWeight: '500' }} />
+                                            : null}
+                                        <div className="d-flex mt-3">
+                                            <FormControlLabel className="" style={{ width: '400px' }} value={"BrokerageAbsoluteValue"} control={<Radio />} label="Borkerage Absolute Value" />
+                                            <TextField
+                                                className="w-100"
+                                                type="number"
+                                                disabled={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? false : true}
+                                                error={error.brokerageValue}
                                                 onChange={(e) => {
                                                     if (!editPropertyFlag) {
-                                                        setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
+                                                        setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
                                                     }
                                                 }}
-                                                value={pricingDetails.brokerageType}
-                                            >
-                                                <div className="d-flex">
-                                                    <FormControlLabel className="" style={{ width: '400px' }} value={"BrokeragePercentage"} control={<Radio />} label="Brokerage Percentage" />
-                                                    <TextField
-                                                        className="w-100"
-                                                        type="number"
-                                                        inputProps={{ min: 1, max: 5 }}
-                                                        disabled={pricingDetails?.brokerageType === 'BrokeragePercentage' ? false : true}
-                                                        error={error.brokerageValue}
-                                                        onChange={(e) => {
-                                                            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
-                                                        }}
-                                                        value={pricingDetails?.brokerageType === 'BrokeragePercentage' ? pricingDetails.brokerageValue : 0}
-                                                    />
-                                                </div>
-                                                <div className="d-flex mt-3">
-                                                    <FormControlLabel className="" style={{ width: '400px' }} value={"BrokerageAbsoluteValue"} control={<Radio />} label="Borkerage Absolute Value" />
-                                                    <TextField
-                                                        className="w-100"
-                                                        type="number"
-                                                        disabled={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? false : true}
-                                                        error={error.brokerageValue}
-                                                        onChange={(e) => {
-                                                            if (!editPropertyFlag) {
-                                                                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
-                                                            }
-                                                        }}
-                                                        value={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? pricingDetails.brokerageValue : 0}
-                                                    />
-                                                </div>
-                                            </RadioGroup>
-                                        </FormControl>
-                                    </Col>
-                                </>
-                                :
-                                <>
-                                    <Col lg='6'>
-                                        <FormControl>
-                                            <RadioGroup
-                                                row
-                                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                                name="row-radio-buttons-group"
-                                                // onChange={(e) => { setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) })) }}
-                                                value={pricingDetails.brokerageType}
-                                            >
-                                                <div className="d-flex">
-                                                    <FormControlLabel className="" style={{ width: '400px' }} value={"BrokerageMonths"} control={<Radio />} label="Brokerage Months" />
-                                                    <TextField
-                                                        className="w-100"
-                                                        type="number"
-                                                        inputProps={{ min: 0, max: 3 }}
-                                                        // disabled={pricingDetails?.brokerageType === 'BrokerageMonths' ? false : true}
-                                                        error={error.brokerageValue}
-                                                        onChange={(e) => {
-                                                            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: Number(e.target.value) }));
-                                                        }}
-                                                        value={pricingDetails?.brokerageType === 'BrokerageMonths' ? pricingDetails.brokerageValue : 0}
-                                                    />
-                                                </div>
-                                                <div className="d-flex mt-3">
-                                                    <FormControlLabel className="" style={{ width: '400px' }} value={"BrokerageAbsoluteValue"} control={<Radio />} label="Borkerage Absolute Value" />
-                                                    <TextField
-                                                        className="w-100"
-                                                        type="number"
-                                                        disabled={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? false : true}
-                                                        error={error.brokerageValue}
-                                                        onChange={(e) => {
-                                                            setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
-                                                        }}
-                                                        contentEditable={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? true : false}
-                                                        value={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? pricingDetails.brokerageValue : 0}
-                                                    />
-                                                </div>
-                                            </RadioGroup>
-                                        </FormControl>
-                                    </Col>
-                                </>}
+                                                value={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? pricingDetails.brokerageValue : 0}
+                                            />
+                                        </div>
+                                    </RadioGroup>
+                                </FormControl>
+                            </Col>
+                        </>
+                        :
+                        null}
+                    {basicDetailFields?.data?.propertyCategory === "Renting" && openForBrokerFlag ?
+                        <>
+                            <Col lg='6'>
+                                <FormControl>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="demo-row-radio-buttons-group-label"
+                                        name="row-radio-buttons-group"
+                                        onChange={(e) => {
+                                            if (!editPropertyFlag) {
+                                                setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
+                                            } else {
+                                                if (pricingDetails.brokerageType === null) {
+                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
+                                                }
+                                            }
+                                        }}
+                                        value={pricingDetails.brokerageType}
+                                    >
+                                        <div className="d-flex">
+                                            <FormControlLabel className="" style={{ width: '400px' }} value={"BrokerageMonths"} control={<Radio />} label="Brokerage Months" />
+                                            <TextField
+                                                className="w-100"
+                                                type="number"
+                                                inputProps={{ min: 0, max: 3 }}
+                                                disabled={pricingDetails?.brokerageType === 'BrokerageMonths' ? false : true}
+                                                error={error.brokerageValue}
+                                                onChange={(e) => {
+                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: Number(e.target.value) }));
+                                                }}
+                                                value={pricingDetails?.brokerageType === 'BrokerageMonths' ? pricingDetails.brokerageValue : 0}
+                                            />
+                                        </div>
+                                        {pricingDetails.brokerageValue <= 0 && pricingDetails.brokerageType === 'BrokerageMonths' ?
+                                            <Text text={"Brokerage month must between 15 days - 3 months"} style={{ color: 'red', fontSize: '12px', fontWeight: '500' }} />
+                                            : null}
+                                        <div className="d-flex mt-3">
+                                            <FormControlLabel className="" style={{ width: '400px' }} value={"BrokerageAbsoluteValue"} control={<Radio />} label="Borkerage Absolute Value" />
+                                            <TextField
+                                                className="w-100"
+                                                type="number"
+                                                disabled={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? false : true}
+                                                error={error.brokerageValue}
+                                                onChange={(e) => {
+                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
+                                                }}
+                                                contentEditable={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? true : false}
+                                                value={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? pricingDetails.brokerageValue : 0}
+                                            />
+                                        </div>
+                                    </RadioGroup>
+                                </FormControl>
+                            </Col>
+                        </>
+                        : null}
+                    {pricingDetails.brokerageType !== null && pricingDetails.brokerageType?.length !== 0 ?
+                        <>
                         </>
                         : null}
                 </Row>

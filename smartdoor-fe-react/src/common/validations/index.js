@@ -1087,7 +1087,7 @@ export const validatePricing = (data, pricingList, propertyCategory) => {
     if (isBlank(data.propertyRate)) {
       errors.propertyRate = true;
     }
-    if (Number(data.propertyRate) < 0 || Number(data.propertyRate) < 1000000) {
+    if (Number(data.propertyRate) < 0 || Number(data.propertyRate) < 500000) {
       errors.propertyRate = true;
       showErrorToast("Invalid selling price, minimum 1000000 required")
     }
@@ -1110,12 +1110,12 @@ export const validatePricing = (data, pricingList, propertyCategory) => {
   if (isBlank(data.brokerageValue)) {
     errors.brokerageValue = true;
   }
-  if(data.brokerageType === 'BrokerageMonths' && Number(data.brokerageValue) > 3) {
-    errors.brokerageValue = true;
-  }
-  if(data.brokerageType === 'BrokeragePercentage' && Number(data.brokerageValue) > 5) {
-    errors.brokerageValue = true;
-  }
+  // if(data.brokerageType === 'BrokerageMonths' && Number(data.brokerageValue) > 3) {
+  //   errors.brokerageValue = true;
+  // }
+  // if(data.brokerageType === 'BrokeragePercentage' && Number(data.brokerageValue) > 5) {
+  //   errors.brokerageValue = true;
+  // }
   if (pricingList.includes('Add additional fields')) {
     errors.additionalFieldsForChargesDue = []
     let hasError = false
