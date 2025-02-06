@@ -186,7 +186,7 @@ const Pricing = (props) => {
             });
             pricingDetail.additionalFieldsForChargesDue = [...updatedAdditionalFields]
         }
-        valid = validatePricing(pricingDetail, pricingList, basicDetailFields?.data?.propertyCategory);
+        valid = validatePricing(pricingDetail, pricingList, basicDetailFields?.data?.propertyCategory, openForBrokerFlag);
         setError(valid.errors);
         if (valid.isValid) {
             dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: pricingDetail })
@@ -232,7 +232,7 @@ const Pricing = (props) => {
             });
             pricingDetail.additionalFieldsForChargesDue = [...updatedAdditionalFields]
         }
-        valid = validatePricing(pricingDetail, pricingList);
+        valid = validatePricing(pricingDetail, pricingList, "", openForBrokerFlag);
         setError(valid.errors);
         if (valid.isValid) {
             if (pricingList.includes('Expected time') && pricingDetail.isQuickSale === true) {
@@ -507,7 +507,7 @@ const Pricing = (props) => {
                                                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
                                             } else {
                                                 if (pricingDetails.brokerageType === null) {
-                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
+                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value), brokerageValue: 0 }))
                                                 }
                                             }
                                         }}
@@ -538,9 +538,7 @@ const Pricing = (props) => {
                                                 disabled={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? false : true}
                                                 error={error.brokerageValue}
                                                 onChange={(e) => {
-                                                    if (!editPropertyFlag) {
-                                                        setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
-                                                    }
+                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: Number(e.target.value) }));
                                                 }}
                                                 value={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? pricingDetails.brokerageValue : 0}
                                             />
@@ -564,7 +562,7 @@ const Pricing = (props) => {
                                                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
                                             } else {
                                                 if (pricingDetails.brokerageType === null) {
-                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value) }))
+                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: (e.target.value), brokerageValue: 0 }))
                                                 }
                                             }
                                         }}
@@ -595,7 +593,7 @@ const Pricing = (props) => {
                                                 disabled={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? false : true}
                                                 error={error.brokerageValue}
                                                 onChange={(e) => {
-                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: e.target.value }));
+                                                    setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageValue: Number(e.target.value) }));
                                                 }}
                                                 contentEditable={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? true : false}
                                                 value={pricingDetails?.brokerageType === 'BrokerageAbsoluteValue' ? pricingDetails.brokerageValue : 0}

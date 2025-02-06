@@ -108,7 +108,7 @@ const PropertyDetails = (props) => {
    const userData = getLocalStorage("authData");
    const dispatch = useDispatch();
    const [specList, setSpecList] = useState([]);
-
+   const [confirmHideModal, setConfirmHideModal] = useState(false);
 
    const batteryStatusCensor = (censorBatteryStatus) => {
       if (censorBatteryStatus === 0) {
@@ -751,6 +751,7 @@ const PropertyDetails = (props) => {
             defaultSort: allNonSDProperties?.data?.defaultSort, defaultSortId: allNonSDProperties?.data?.defaultSortId, defaultSortFieldId: allNonSDProperties?.data?.defaultSortFieldId
          })
             .then((response) => {
+               setConfirmHideModal(false);
                console.log(response)
                PropertyList = response?.data?.resourceData
             });
@@ -775,7 +776,7 @@ const PropertyDetails = (props) => {
          })
             .then((response) => {
                console.log(response)
-               PropertyList = response.data.resourceData
+               PropertyList = response?.data?.resourceData
             });
          if (menuName === 'Properties') {
             handleSortedData();
@@ -1344,23 +1345,23 @@ const PropertyDetails = (props) => {
                                     <>
                                        <Buttons
                                           style={{ float: 'left' }}
-                                          name="Delete"
+                                          name="Hide"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2 bg-danger"
-                                          onClick={() => { handleDelete() }} /> &nbsp; &nbsp;
+                                          onClick={() => { setConfirmHideModal(true) }} /> &nbsp; &nbsp;
                                     </> : <></>}
                                  {isDeleted === false && userData.roleName === 'SUPER ADMIN' ?
                                     <>
                                        <Buttons
                                           style={{ float: 'left' }}
-                                          name="Delete"
+                                          name="Hide"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2 bg-danger"
-                                          onClick={() => { handleDelete() }} /> &nbsp; &nbsp;
+                                          onClick={() => { setConfirmHideModal(true) }} /> &nbsp; &nbsp;
                                     </> : <></>}
                               </div>
                               <div>
@@ -1951,6 +1952,63 @@ const PropertyDetails = (props) => {
                                           }
                                        />
                                     </td>
+                                    <td className="p-2">
+                                       <Text
+                                          size="xSmall"
+                                          fontWeight="bold"
+                                          color="secondryColor"
+                                          text={"Brokerage Value"}
+                                       />
+                                       {propertyData?.pricing?.brokerageType !== null ?
+                                          <>
+                                             {propertyData?.pricing?.brokerageType === 'BrokerageAbsoluteValue' ?
+                                                <Text
+                                                   size="Small"
+                                                   fontWeight="semibold"
+                                                   color="secondryColor"
+                                                   text={
+                                                      propertyData?.pricing?.brokerageValue
+                                                         ? `₹${propertyData?.pricing?.brokerageValue}`
+                                                         : "-"
+                                                   }
+                                                />
+                                                : null}
+                                             {propertyData?.pricing?.brokerageType === 'BrokerageMonths' ?
+                                                <Text
+                                                   size="Small"
+                                                   fontWeight="semibold"
+                                                   color="secondryColor"
+                                                   text={
+                                                      propertyData?.pricing?.brokerageValue
+                                                         ? (propertyData?.pricing?.brokerageValue + 'months of monthly rent')
+                                                         : "-"
+                                                   }
+                                                />
+                                                : null}
+                                             {propertyData?.pricing?.brokerageType === 'BrokeragePercentage' ?
+                                                <Text
+                                                   size="Small"
+                                                   fontWeight="semibold"
+                                                   color="secondryColor"
+                                                   text={
+                                                      propertyData?.pricing?.brokerageValue
+                                                         ? (propertyData?.pricing?.brokerageValue + '% of property price')
+                                                         : "-"
+                                                   }
+                                                />
+                                                : null}
+                                          </>
+                                          :
+                                          <Text
+                                             size="Small"
+                                             fontWeight="semibold"
+                                             color="secondryColor"
+                                             text={
+                                                "N/A"
+                                             }
+                                          />}
+                                    </td>
+
                                     {specList.includes('Reserved car parkings') ?
                                        <td className="p-2">
                                           <Text
@@ -2651,7 +2709,7 @@ const PropertyDetails = (props) => {
         handleShow = { handleShow }
         handlePerformAction = { ()=> handleRealtorStatus(blockData.id, blockData.status ? "UNBLOCKED" : "BLOCKED" ) }
       /> */}
-                  
+
                   <MessageModal
                      show={showMsgModal}
                      handleShow={handleshowMsgModal}
@@ -2828,6 +2886,36 @@ const PropertyDetails = (props) => {
                         className="mr-3"
                         onClick={() => { setRemoteUnlockErr(false) }} />
                   </div>
+               </div>
+            </Modal.Body>
+         </Modal>
+         <Modal show={confirmHideModal} onHide={() => { setConfirmHideModal(false) }} centered>
+            <Modal.Body>
+               <Text
+                  size="regular"
+                  fontWeight="bold"
+                  color="secondryColor"
+                  className="text-center"
+                  text={propertyData?.miscellaneousDetails?.smartLockProperty === true ? 'Devices on this property will remain active. Are you sure you want to hide this property? ' : 'Are you sure you want to hide this property?'} />
+
+               <div className="d-flex justify-content-center mt-5 mb-3">
+                  <Buttons
+                     name="Cancel"
+                     varient="disable"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => { setConfirmHideModal(false); }} />
+
+                  <Buttons
+                     name="Confirm"
+                     varient="primary"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => { handleDelete(); }} />
                </div>
             </Modal.Body>
          </Modal>

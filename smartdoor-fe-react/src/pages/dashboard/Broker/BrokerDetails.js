@@ -57,12 +57,13 @@ const BrokerDetails = (props) => {
    const [filterText, setFilterText] = useState(data !== undefined ? brokerProperty?.data?.searchString : "");
    const [currentPage, setCurrentPage] = useState(data !== undefined && data.length !== 0 ? brokerProperty?.data?.currentPage : 1);
    const [rowsPerPage, setRowsPerPage] = useState(data !== undefined && data.length !== 0 ? brokerProperty?.data?.rowsPerPage : 8);
-   const recordSize = (brokerProperty?.data?.records || 0)
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [holdStatus, setHoldStatus] = useState(false);
    const [postedProperty, setPostedProperty] = useState([]);
    const userData = getLocalStorage("authData");
    const loginMobile = props?.location?.state?.loginMobile;
+   const propertiesPosted = props?.location?.state?.propertiesPosted;
+   const recordSize = Number(propertiesPosted);
    const history = useHistory();
 
    const toggleHoldStatus = () => {
@@ -127,6 +128,7 @@ const BrokerDetails = (props) => {
          })
    }, [getBrokerPostedProperty, brokerdetailId])
    useEffect(async () => {
+      console.log(props)
       await _getBrokerDetails();
       let brokerId = brokerdetailId
       if ((data === undefined || data.length === 0) && Broker_data?.status !== 'PENDING_APPROVAL' && Broker_data?.status !== 'PAYMENT_PENDING') {
@@ -172,8 +174,9 @@ const BrokerDetails = (props) => {
          currentPage={currentPage}
          rowsPerPage={rowsPerPage}
          rowCount={recordSize}
-         handlePageChange={handlePageChange}
-         handleRowsPerPageChange={handleRowsPerPageChange}
+         onChangePage={handlePageChange}
+         onChangeRowsPerPage={handleRowsPerPageChange}
+         paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
          PaginationActionButton={PaginationActionButton} />
    );
    const PaginationActionButton = () => (
@@ -305,7 +308,7 @@ const BrokerDetails = (props) => {
          name: "Location",
          selector: (row) => row.location,
          sortable: false,
-         maxWidth: "150px",
+         maxWidth: "250px",
          minWidth: "150px",
          center: true,
          cell: ({ location }) => (<span>{location || '-'}</span>)
@@ -783,7 +786,7 @@ const BrokerDetails = (props) => {
                                     color="secondryColor"
                                     text=""
                                  />
-                                 <p className="bold"> Properties Posted - {count}</p>
+                                 <p className="bold"> Properties Posted - {propertiesPosted}</p>
                               </div>
                               <div className="locationSelect d-flex align-items-xl-center align-items-left">
                                  {subHeaderComponentMemo}
@@ -831,10 +834,11 @@ const BrokerDetails = (props) => {
                                  perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                                  filterText={filterText}
                                  subHeaderComponent={subHeaderComponentMemo}
-                                 handlePageChange={handlePageChange}
-                                 handleRowsPerPageChange={handleRowsPerPageChange}
+                                 onChangePage={handlePageChange}
+                                 onChangeRowsPerPage={handleRowsPerPageChange}
                                  currentPage={currentPage}
                                  rowsPerPage={rowsPerPage}
+                                 paginationServer={true}
                                  persistTableHead="true"
                                  filterComponent={subHeaderComponentMemo}
                               ></DataTable>

@@ -1043,7 +1043,7 @@ export const validateSpecs = (data, specList, testDesc) => {
   }
 }
 
-export const validatePricing = (data, pricingList, propertyCategory) => {
+export const validatePricing = (data, pricingList, propertyCategory, openForBrokerFlag) => {
   const errors = {};
 
   if (pricingList.includes('Rent')) {
@@ -1104,11 +1104,13 @@ export const validatePricing = (data, pricingList, propertyCategory) => {
       }
     }
   }
-  if (isBlank(data.brokerageType)) {
-    errors.brokerageType = true;
-  }
-  if (isBlank(data.brokerageValue)) {
-    errors.brokerageValue = true;
+  if(openForBrokerFlag === true) {
+    if (isBlank(data.brokerageType)) {
+      errors.brokerageType = true;
+    }
+    if (isBlank(data.brokerageValue)) {
+      errors.brokerageValue = true;
+    }
   }
   // if(data.brokerageType === 'BrokerageMonths' && Number(data.brokerageValue) > 3) {
   //   errors.brokerageValue = true;
