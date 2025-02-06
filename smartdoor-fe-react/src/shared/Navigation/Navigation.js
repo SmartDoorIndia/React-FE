@@ -327,6 +327,17 @@ const Nav = () => {
                            />
                            Kit List
                         </Link>
+                        {/* <Link
+                           to="/admin/builders"
+                           className={`nav-link ${pathname.includes("/admin/builders") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/builders") ? borkerIcon : dashboard}
+                           />
+                           Builders
+                        </Link> */}
                      </>
                   )}
 
