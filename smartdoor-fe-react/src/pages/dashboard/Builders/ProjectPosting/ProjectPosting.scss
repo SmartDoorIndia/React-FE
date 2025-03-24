@@ -1,0 +1,29 @@
+/** @format */
+
+.MuiButtonBase-root-MuiAccordionSummary-root {
+   .Mui-expanded {
+      min-height: 42px;
+      height: 42px;
+   }
+}
+
+.Accordion {
+    .AccordionSummary {
+        &::-ms-expand {
+            height: 42px;
+            min-height: 42px;
+        }
+    }
+}
+
+.textFieldInput .MuiInputBase-root.MuiOutlinedInput-root {
+    min-width: 100%;
+    border-radius: 10px; /* Example customization */
+ }
+
+ /* Customize the input inside the TextField */
+ .textFieldInput .MuiInputBase-input {
+    min-width: 100%;
+    border-radius: 10px; /* Rounder corners */
+    height: 18px !important;
+ }

@@ -1324,3 +1324,111 @@ export const validateNewCity = (data) => {
     isValid: isEmpty(errors)
   }
 }
+
+export const validateBuilderDetails = (data) => {
+  let errors = {};
+
+  if(isBlank(data.brandName)) {
+    errors.brandName = true;
+  }
+  if(isBlank(data.companyName)) {
+    errors.companyName = true;
+  }
+  if(isBlank(data.companyAddress)) {
+    errors.companyAddress = true;
+  }
+  if(isBlank(data.companyGst)) {
+    errors.companyGst = true;
+  }
+  if(isBlank(data.companyLogoImageUrl)) {
+    errors.companyLogoImageUrl = true;
+  }
+  if(isBlank(data.companyEmail)) {
+    errors.companyEmail = true;
+  }
+  if(isBlank(data.facebookUrl)) {
+    errors.facebookUrl = true;
+  }
+  if(isBlank(data.whatsappNumber)) {
+    errors.whatsappNumber = true;
+  }
+  if(isBlank(data.instaUrl)) {
+    errors.instaUrl = true;
+  }
+  if(isBlank(data.contactName)) {
+    errors.contactName = true;
+  }
+  if(isBlank(data.contactNumber)) {
+    errors.contactNumber = true;
+  } else if(data?.contactNumber?.length !== 10) {
+    errors.contactNumber = true;
+  }
+  if(data?.directors?.length <= 2) {
+    errors.directors = true;
+  }
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateProjectDetails = (data) => {
+  let errors = {};
+
+  if(isBlank(data?.projectName)) {
+    errors.projectName = true;
+  }
+  if(Number(data?.totalTowers) < 0) {
+    errors.totalTowers = true;
+  }
+  if(Number(data?.landArea) < 0) {
+    errors.landArea = true;
+  }
+  if(Number(data?.totalAreaToDevelop) < 0) {
+    errors.totalAreaToDevelop = true;
+  }
+  if(Number(data?.openAreaPerc) < 0) {
+    errors.openAreaPerc = true;
+  }
+  if(isBlank(data?.possessionFrom)) {
+    errors.possessionFrom = true;
+  }
+  if(isBlank(data?.possessionTo)) {
+    errors.possessionTo = true;
+  }
+  if(isBlank(data?.projectDescription)) {
+    errors.projectDescription = true;
+  }
+  if((data?.builderProjectGeneralAmenities?.length) < 0) {
+    errors.builderProjectGeneralAmenities = true;
+  }
+  if(isBlank(data?.locality)) {
+    errors.locality = true;
+  }
+  if(isBlank(data?.reraNumber)) {
+    errors.reraNumber = true;
+  }
+  if(isBlank(data?.contactPersonName)) {
+    errors.contactPersonName = true;
+  }
+  if(isBlank(data?.contactPersonNumber)) {
+    errors.contactPersonNumber = true;
+  } else {
+    if(data?.contactPersonNumber?.length !== 10) {
+      errors.contactPersonNumber = true;
+    }
+  }
+  if((data?.projectImages?.length) < 0) {
+    errors.projectImages = true;
+  }
+  if((data?.projectVideos?.length) < 0) {
+    errors.projectVideos = true;
+  }
+  if((data?.projectLayout?.length) < 0) {
+    errors.projectLayout = true;
+  }
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}

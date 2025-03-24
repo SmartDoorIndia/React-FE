@@ -750,6 +750,8 @@ export const getAllConsumers = (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
       dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: { consumersData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchString, kycStatus: data.kycStatus, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId } });
+    } else if (response.status === 404) {
+      dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: { consumersData: [], records: 0, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchString, kycStatus: data.kycStatus, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId } });
     } else dispatch({ type: Actions.CONSUMSER_MANAGEMENT_ERROR, data: response.data.resourceData });
   }
 };
@@ -2185,6 +2187,11 @@ export const getAccountEmailDetails = async (data) => {
   return response;
 }
 
+export const getBuilderList = async (data) => {
+  const response = await mainApiService("getBuilderList", data);
+  return response;
+}
+
 export const approveBuilderProfile = async (data) => {
   const response = await mainApiService("approveBuilderProfile", data);
   if (response.data && response.data.status === 200) showSuccessToast(response.data.customMessage);
@@ -2193,8 +2200,8 @@ export const approveBuilderProfile = async (data) => {
   return response;
 };
 
-export const createBuilderProject = async (data) => {
-  const response = await mainApiService("createBuilderProject", data);
+export const saveBuilderProject = async (data) => {
+  const response = await mainApiService("saveBuilderProject", data);
   if (response.data && response.data.status === 200) {
     showSuccessToast("Profile created successfully.");
   } else if (response.data && response.data.status === 409)
@@ -2249,3 +2256,25 @@ export const deleteBuilderProjectById = async (data) => {
   const response = await mainApiService("deleteBuilderProjectById", data);
   return response;
 };
+
+export const fetchProjectIdList = async (data) => {
+  const response = await mainApiService("fetchProjectIdList", data);
+  return response;
+}
+
+export const fetchBuilderProjectList = (data) => async (dispatch) => {
+  dispatch({type: Actions.BUILDER_PROJECT_LIST_LOADING, data: []})
+  const response = await mainApiService("fetchBuilderProjectList", data);
+  if(response.status === 200) {
+    dispatch({type: Actions.BUILDER_PROJECT_LIST_SUCCESS, data: { projectList: response?.data?.resourceData, currentPage: data?.currentPage, rowsPerPage: data?.rowsPerPage, searchStr: data?.searchStr }})
+  } else {
+    dispatch({type: Actions.BUILDERPROPERTY_ERROR, data: { projectList: {}}})
+  }
+  return response;
+}
+
+export const fetchBuilderProjectById = async (data) => {
+  const response = await mainApiService("fetchBuilderProjectList", data);
+  return response;
+}
+

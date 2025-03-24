@@ -947,3 +947,20 @@ export function sensorBatteryStatus(loginuserRole, position) {
 //     moment().valueOf() + generateRandomString() + "." + extension;
 //   return newFileName;
 // };
+
+export function handlePhoneChange (e)  {
+  const result = e.target.value.replace(/\D/g, '');
+  const mobileNum = (result.slice(0, 10));
+  return mobileNum;
+}
+
+export const getYouTubeVideoId = (url) => {
+  const regExp = /^.*(youtu.be\/|v\/|\/u\/\w\/|embed\/|watch\?v=|v=|\?v=|&v=)([^#&?]*).*/;
+  const match = url?.match(regExp);
+
+  if (match && match[2].length === 11) {
+    return match[2];
+  } else {
+    return null; // Invalid YouTube URL
+  }
+};

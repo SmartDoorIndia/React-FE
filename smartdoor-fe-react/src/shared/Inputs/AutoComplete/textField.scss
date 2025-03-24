@@ -1,0 +1,12 @@
+.custom-text-field2 {
+    .MuiOutlinedInput-root {
+      padding-right: 0%;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      .MuiOutlinedInput-input {
+        height: 0.4375em;
+      }
+    }
+  }

@@ -23,7 +23,7 @@ const EditPost1 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/
 const EditPost2 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/EditPost2'))
 const EditPost3 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/EditPost3'))
 const EditPost4 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/EditPost4'))
-const AddNewCity = React.lazy(()=> import('./AddNewCity/AddCity'));
+const AddNewCity = React.lazy(() => import('./AddNewCity/AddCity'));
 const ManagePlan = React.lazy(() => import('./ManagePlan/ManagePlan'));
 const AddNewPlan = React.lazy(() => import('./AddNewPlan/NewPlan'));
 const NonSDProperties = React.lazy(() => import('./NonSdProperties/NonSDProperties'));
@@ -57,11 +57,18 @@ const CorporateDetails = React.lazy(() => import('./CorporateModule/CorporateDet
 const CorporateProperty = React.lazy(() => import('./CorporateModule/CorporateProperties/corporateProperty'))
 const Brokers = React.lazy(() => import('./Broker/Broker'));
 const BrokerApprovedDetail = React.lazy(() => import('./Broker/BrokerApprovedDetail'));
-const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails') );
+const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails'));
 const BatteryLvlChk = React.lazy(() => import('./BatteryLevelCheck/BatteryLvlChk'));
 const HubList = React.lazy(() => import('./Hub/HubList'));
 const KitList = React.lazy(() => import('./Kits/KitList'));
 const KitDevices = React.lazy(() => import('./Kits/KitDevices'));
+const BuilderList = React.lazy(() => import('./Builders/BuilderList/BuilderList'));
+const BuilderProfileDetails = React.lazy(() => import('./Builders/BuilderProfileDetails/BuilderProfileDetails'))
+const BuilderInfo = React.lazy(() => import('./Builders/BuilderInfo/BuilderInfo'));
+const AddNewProjectPost = React.lazy(() => import('./Builders/AddNewProjectPost/AddNewProjectPost'));
+// const ProjectPostingDetails = React.lazy(() => import('./Builders/ProjectPostingDetails/ProjectPostingDetails'));
+const ProjectPosting = React.lazy(() => import('./Builders/ProjectPosting/ProjectPosting'));
+const ProjectDetailsPage = React.lazy(() => import('./Builders/ProjectDetailsPage/ProjectDetailsPage'));
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -91,7 +98,7 @@ const HelpDeskListingPage = React.lazy(() =>
   import('./HelpDeskDashboard/HelpDeskListing/HelpDeskListing'),
 );
 const FinanceRefundRequestDetails = React.lazy(() =>
-import('./FinanceModule/FinanceRefundRequestDetails/FinanceRefundRequestDetails'),
+  import('./FinanceModule/FinanceRefundRequestDetails/FinanceRefundRequestDetails'),
 );
 const ServiceRequest = React.lazy(() =>
   import('./HelpDeskDashboard/ServiceRequest/ServiceRequest'),
@@ -99,9 +106,9 @@ const ServiceRequest = React.lazy(() =>
 const CreateTicket = React.lazy(() => import('./HelpDeskDashboard/CreateTicket/CreateTicket'));
 const SocietyLeads = React.lazy(() => import('./SalesModule/SocietyLeads/SocietyLeads'));
 
-const BuilderProjectView = React.lazy(() =>
-  import('./BuilderProject/BuilderProjectView/BuilderProjectView'),
-);
+// const BuilderProjectView = React.lazy(() =>
+//   import('./BuilderProject/BuilderProjectView/BuilderProjectView'),
+// );
 const BuilderProjectEdit = React.lazy(() =>
   import('./BuilderProject/BuilderProjectEdit/BuilderProjectEdit'),
 );
@@ -121,7 +128,7 @@ const RealtorReviews = React.lazy(() =>
 const TransactionDashboard = React.lazy(() => import('./TransactionDashboard/Transaction'));
 const TransactionDetailsPage = React.lazy(() => import('./TransactionDashboard/TranscationDetails/TransactionDetails'));
 const TransactionListingPage = React.lazy(() => import('./TransactionDashboard/TransactionListing/TransactionListing'));
-const DealApprovalDetailPage = React.lazy(()=> import('./TransactionDashboard/DealApproval/DealApproval'))
+const DealApprovalDetailPage = React.lazy(() => import('./TransactionDashboard/DealApproval/DealApproval'))
 const SmartDoorCities = React.lazy(() => import('./SmartdoorCities/SmartDoorCities'))
 
 // Routing data
@@ -131,7 +138,7 @@ const routeData = [
   {
     path: '/admin/sales/sales-lead/consumer/property/property-documents',
     name: 'Society Sales Team Dashboard',
-    bradcrumb: [  'Society Leads', 'Lead Details', 'Consumer', 'Property Details', 'Property Documents' ],
+    bradcrumb: ['Society Leads', 'Lead Details', 'Consumer', 'Property Details', 'Property Documents'],
     excat: true,
     module: 'EXECUTION SALES LEAD',
     component: PropertyDocModule,
@@ -139,7 +146,7 @@ const routeData = [
   {
     path: '/admin/sales/sales-lead/consumer/property-details',
     name: 'Society Sales Team Dashboard',
-    bradcrumb: [  'Society Leads', 'Lead Details', 'Consumer', 'Property Details' ],
+    bradcrumb: ['Society Leads', 'Lead Details', 'Consumer', 'Property Details'],
     excat: true,
     module: 'EXECUTION SALES LEAD',
     component: PropertyDetailsModule,
@@ -147,7 +154,7 @@ const routeData = [
   {
     path: '/admin/sales/society-leads',
     name: 'Society Sales Team Dashboard',
-    bradcrumb: [ '< Society Sales Team Dashboard' ],
+    bradcrumb: ['< Society Sales Team Dashboard'],
     excat: true,
     module: 'SALES',
     component: SocietyLeads,
@@ -155,7 +162,7 @@ const routeData = [
   {
     path: '/admin/sales/lead-details/enroll-new-society',
     name: 'Society Sales Team Dashboard',
-    bradcrumb: [ 'Society Leads', 'Lead Details' , 'Enroll New Society'],
+    bradcrumb: ['Society Leads', 'Lead Details', 'Enroll New Society'],
     excat: true,
     // module: 'SALES',
     module: 'EXECUTION SALES LEAD',
@@ -164,7 +171,7 @@ const routeData = [
   {
     path: '/admin/sales/lead-details',
     name: 'Society Sales Team Dashboard',
-    bradcrumb: [ 'Society Leads', 'Lead Details' ],
+    bradcrumb: ['Society Leads', 'Lead Details'],
     excat: true,
     // module: 'SALES',
     module: 'EXECUTION SALES LEAD',
@@ -173,7 +180,7 @@ const routeData = [
   {
     path: '/admin/sales/sales-lead/consumer-details/:consumerId',
     name: 'Society Sales Team Dashboard',
-    bradcrumb: [ 'Society Leads', 'Lead Details', 'Consumer Details' ],
+    bradcrumb: ['Society Leads', 'Lead Details', 'Consumer Details'],
     excat: true,
     module: 'EXECUTION',
     component: ConsumerManagementDetails,
@@ -181,7 +188,7 @@ const routeData = [
   {
     path: '/admin/sales/new-entry',
     name: 'Society Sales Team Dashboard',
-    bradcrumb: [ 'Society Leads', 'New Entry' ],
+    bradcrumb: ['Society Leads', 'New Entry'],
     excat: true,
     module: 'SALES',
     component: NewEntry,
@@ -189,7 +196,7 @@ const routeData = [
   {
     path: '/admin/sales/add-member',
     name: 'Society Sales Team Dashboard',
-    bradcrumb: [ 'Society Leads', 'New Entry' ],
+    bradcrumb: ['Society Leads', 'New Entry'],
     excat: true,
     title: { formTitle: 'New Team Member', buttonText: 'Add Team Member' },
     module: 'SALES',
@@ -207,7 +214,7 @@ const routeData = [
   {
     path: '/admin/user-management/add-new-member',
     name: 'User Management',
-    bradcrumb: [ 'Team Members', 'Add New User' ],
+    bradcrumb: ['Team Members', 'Add New User'],
     excat: true,
     title: { formTitle: 'Add New User', buttonText: 'Save' },
     module: 'USER',
@@ -217,7 +224,7 @@ const routeData = [
   {
     path: '/admin/manage-plan/add-new-plan',
     name: 'Manage Plans',
-    bradcrumb: [ 'Existing Plans', 'Plan' ],
+    bradcrumb: ['Existing Plans', 'Plan'],
     excat: true,
     title: { formTitle: 'Add New Plan', buttonText: 'Save' },
     module: 'USER',
@@ -227,7 +234,7 @@ const routeData = [
   {
     path: '/admin/user-management/edit-member',
     name: 'User Management',
-    bradcrumb: [ 'Team Members', 'Edit User' ],
+    bradcrumb: ['Team Members', 'Edit User'],
     excat: true,
     title: { formTitle: 'Edit User', buttonText: 'Save' },
     module: 'USER',
@@ -247,7 +254,7 @@ const routeData = [
   {
     path: '/admin/societies/property-details',
     name: 'Societies',
-    bradcrumb: [ 'Societies', 'Society Details','Property Details' ],
+    bradcrumb: ['Societies', 'Society Details', 'Property Details'],
     excat: true,
     module: 'SOCIETY',
     component: PropertyDetailsModule,
@@ -255,7 +262,7 @@ const routeData = [
   {
     path: '/admin/societies/details',
     name: 'Societies',
-    bradcrumb: [ 'Societies', 'Society Details' ],
+    bradcrumb: ['Societies', 'Society Details'],
     excat: true,
     module: 'SOCIETY',
     component: SocietiesDetails,
@@ -263,7 +270,7 @@ const routeData = [
   {
     path: '/admin/societies/new-societies',
     name: 'Societies',
-    bradcrumb: [ 'Societies Enlisted', 'New Entry' ],
+    bradcrumb: ['Societies Enlisted', 'New Entry'],
     excat: true,
     module: 'SOCIETY',
     component: NewSociety,
@@ -281,16 +288,16 @@ const routeData = [
   {
     path: '/admin/execution/installation-requests',
     name: 'Installation Team Dashboard',
-    bradcrumb: [ '< Installation Team Dashboard' ],
+    bradcrumb: ['< Installation Team Dashboard'],
     excat: true,
     module: 'EXECUTION',
-    tabName:"Installation/Un-installation Requests",
+    tabName: "Installation/Un-installation Requests",
     component: ExecutionListingPage,
   },
   {
     path: '/admin/execution/published-property/property-details',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  'Published Property','Property Details' ],
+    bradcrumb: ['Published Property', 'Property Details'],
     excat: true,
     module: 'EXECUTION',
     component: PropertyDetailsModule,
@@ -300,17 +307,17 @@ const routeData = [
   {
     path: '/admin/execution/published-property',
     name: 'Installation Team Dashboard',
-    bradcrumb: [ '< Installation Team Dashboard' ],
+    bradcrumb: ['< Installation Team Dashboard'],
     excat: true,
     module: 'EXECUTION',
-    tabName:"Published Property",
+    tabName: "Published Property",
     component: ExecutionListingPage,
-  }, 
+  },
   // { "path": "/admin/execution/user-detail", name:"Execution Team Dashboard", bradcrumb: false, tabName: ["Tasks", "Completed"], excat:true, module: "EXECUTION", component: UserDetailsModal  },
   {
     path: '/admin/execution/installation-calender',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  'Installation Requests' , 'Assign Executive' ],
+    bradcrumb: ['Installation Requests', 'Assign Executive'],
     excat: true,
     module: 'EXECUTION',
     component: InstallationCalenderView,
@@ -318,7 +325,7 @@ const routeData = [
   {
     path: '/admin/execution/installation-detail/property-details',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  'Installation Requests' , 'Task Details', 'Property Details' ],
+    bradcrumb: ['Installation Requests', 'Task Details', 'Property Details'],
     excat: true,
     module: 'EXECUTION',
     component: PropertyDetailsModule,
@@ -326,7 +333,7 @@ const routeData = [
   {
     path: '/admin/execution/installation-detail/consumer/property-details',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  'Installation Requests','Task Details', 'Consumer','Property Details' ],
+    bradcrumb: ['Installation Requests', 'Task Details', 'Consumer', 'Property Details'],
     excat: true,
     module: 'EXECUTION INSTALLATION REQUESTS',
     component: PropertyDetailsModule,
@@ -334,7 +341,7 @@ const routeData = [
   {
     path: '/admin/execution/installation-detail/consumer-details/:consumerId',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  'Installation Requests','Task Details', 'Consumer Details' ],
+    bradcrumb: ['Installation Requests', 'Task Details', 'Consumer Details'],
     excat: true,
     module: 'EXECUTION INSTALLATION REQUESTS',
     component: ConsumerManagementDetails,
@@ -342,7 +349,7 @@ const routeData = [
   {
     path: '/admin/execution/installation-detail/property-detail',
     name: 'Property Details',
-    bradcrumb: [  'Installation Requests','Task Details', 'Property Details' ],
+    bradcrumb: ['Installation Requests', 'Task Details', 'Property Details'],
     excat: true,
     module: 'EXECUTION',
     component: PropertyDetailsModule,
@@ -350,7 +357,7 @@ const routeData = [
   {
     path: '/admin/execution/installation-detail',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  'Installation Requests','Task Details' ],
+    bradcrumb: ['Installation Requests', 'Task Details'],
     excat: true,
     module: 'EXECUTION',
     component: ExecutionPropertyDetail,
@@ -358,7 +365,7 @@ const routeData = [
   {
     path: '/admin/execution/serviceRequest/consumer/property-details',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  'Service Requests','Service Request Details', 'Consumer','Property Details' ],
+    bradcrumb: ['Service Requests', 'Service Request Details', 'Consumer', 'Property Details'],
     excat: true,
     module: 'EXECUTION SERVICE REQUESTS',
     component: PropertyDetailsModule,
@@ -366,7 +373,7 @@ const routeData = [
   {
     path: '/admin/execution/serviceRequest/consumer-details/:consumerId',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  'Service Requests','Service Request Details', 'Consumer Details' ],
+    bradcrumb: ['Service Requests', 'Service Request Details', 'Consumer Details'],
     excat: true,
     module: 'EXECUTION SERVICE REQUESTS',
     component: ConsumerManagementDetails,
@@ -374,7 +381,7 @@ const routeData = [
   {
     path: '/admin/execution/serviceRequest-details/:serviceRequestId',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  'Service Requests',  'Service Request Details' ],
+    bradcrumb: ['Service Requests', 'Service Request Details'],
     excat: true,
     module: 'EXECUTION',
     component: HelpdeskServiceRequestDetails,
@@ -382,7 +389,7 @@ const routeData = [
   {
     path: '/admin/execution/serviceRequest',
     name: 'Installation Team Dashboard',
-    bradcrumb: [  '< Installation Team Dashboard' ],
+    bradcrumb: ['< Installation Team Dashboard'],
     excat: true,
     module: 'EXECUTION',
     component: ServiceRequest,
@@ -406,7 +413,7 @@ const routeData = [
     // module:'MARKETING',
     component: PostingMainPage
   },
-  
+
   {
     path: '/admin/property/property-details',
     name: 'Properties',
@@ -419,7 +426,7 @@ const routeData = [
   {
     path: '/admin/property/property-documents',
     name: 'Properties',
-    bradcrumb: [ 'Property Listed', 'Property Documents' ],
+    bradcrumb: ['Property Listed', 'Property Documents'],
     headerButton: 'Back',
     excat: true,
     module: 'EXECUTION',
@@ -428,7 +435,7 @@ const routeData = [
   {
     path: '/admin/property/property-devices',
     name: 'Properties',
-    bradcrumb: [ 'Property Listed', 'Property Devices' ],
+    bradcrumb: ['Property Listed', 'Property Devices'],
     headerButton: 'Back',
     excat: true,
     module: 'EXECUTION',
@@ -437,7 +444,7 @@ const routeData = [
   {
     path: '/admin/property/new-property',
     name: 'Properties',
-    bradcrumb: [ 'Property Listed', 'New Property' ],
+    bradcrumb: ['Property Listed', 'New Property'],
     excat: true,
     module: 'EXECUTION',
     component: NewProperty,
@@ -445,7 +452,7 @@ const routeData = [
   {
     path: '/admin/property/edit-property',
     name: 'Properties',
-    bradcrumb: [ 'Property Listed', 'Edit Property' ],
+    bradcrumb: ['Property Listed', 'Edit Property'],
     excat: true,
     module: 'EXECUTION',
     component: EditProperty,
@@ -478,7 +485,7 @@ const routeData = [
     path: '/admin/property/edit-more-info',
     name: 'Edit Info',
     bradcrumb: [],
-    excat: true,  
+    excat: true,
     module: 'EXECUTION',
     component: EditPost4,
   },
@@ -508,18 +515,18 @@ const routeData = [
   },
 
   // Builder property
-  {
-    path: '/admin/builder-project/details/:builderProjectId',
-    name: 'Builder Project',
-    bradcrumb: [ 'Builder Projects', 'Project Details' ],
-    excat: true,
-    module: 'BUILDER PROJECT',
-    component: BuilderProjectView,
-  },
+  // {
+  //   path: '/admin/builder-project/details/:builderProjectId',
+  //   name: 'Builder Project',
+  //   bradcrumb: ['Builder Projects', 'Project Details'],
+  //   excat: true,
+  //   module: 'BUILDER PROJECT',
+  //   component: BuilderProjectView,
+  // },
   {
     path: '/admin/builder-project/edit',
     name: 'Builder Projects',
-    bradcrumb: [ 'Builder Project', 'Project Details', "Edit Details" ],
+    bradcrumb: ['Builder Project', 'Project Details', "Edit Details"],
     excat: true,
     module: 'BUILDER-PROPERTY',
     component: BuilderProjectEdit,
@@ -536,7 +543,7 @@ const routeData = [
   {
     path: '/admin/consumer-management/consumer-details/property-details',
     name: 'Consumer Management',
-    bradcrumb: [ 'Consumers', 'Consumer Details','Property Details' ],
+    bradcrumb: ['Consumers', 'Consumer Details', 'Property Details'],
     excat: true,
     module: 'CONSUMER',
     component: PropertyDetailsModule,
@@ -544,7 +551,7 @@ const routeData = [
   {
     path: '/admin/consumer-management/consumer-details/:consumerId',
     name: 'Consumer Management',
-    bradcrumb: [ 'Consumers', 'Consumer Details' ],
+    bradcrumb: ['Consumers', 'Consumer Details'],
     excat: true,
     module: 'CONSUMER',
     component: ConsumerManagementDetails,
@@ -561,15 +568,15 @@ const routeData = [
   {
     path: '/admin/helpdesk/property-leads/create-ticket',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [  'Property Leads', 'Create Ticket' ],
+    bradcrumb: ['Property Leads', 'Create Ticket'],
     excat: true,
     module: 'HELPDESK',
     component: CreateTicket,
   },
-  {    
+  {
     path: '/admin/helpdesk/property-leads/consumer-details/:consumerId',
     name: 'Consumer Management',
-    bradcrumb: [ 'Property Leads', 'Consumer Details' ],
+    bradcrumb: ['Property Leads', 'Consumer Details'],
     excat: true,
     module: 'HELPDESK',
     component: ConsumerManagementDetails,
@@ -577,7 +584,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/property-leads',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [  '< Helpdesk Team Dashboard' ],
+    bradcrumb: ['< Helpdesk Team Dashboard'],
     excat: true,
     module: 'HELPDESK',
     tabName: 'Property Leads',
@@ -586,7 +593,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/new-lead',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [  'New Lead' ],
+    bradcrumb: ['New Lead'],
     excat: true,
     module: 'HELPDESK',
     component: NewEntry,
@@ -594,7 +601,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/serviceRequest/consumer/create-ticket',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [ 'Service Requests','Service Request Details', 'Consumer', 'Create Ticket' ],
+    bradcrumb: ['Service Requests', 'Service Request Details', 'Consumer', 'Create Ticket'],
     excat: true,
     module: 'HELPDESK',
     component: CreateTicket,
@@ -602,7 +609,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/create-ticket',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [ 'Caller Details', 'Create Ticket' ],
+    bradcrumb: ['Caller Details', 'Create Ticket'],
     excat: true,
     module: 'HELPDESK',
     component: CreateTicket,
@@ -610,7 +617,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/consumer-details/:consumerId',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [ 'Caller Details' ],
+    bradcrumb: ['Caller Details'],
     excat: true,
     module: 'HELPDESK',
     component: ConsumerManagementDetails,
@@ -618,7 +625,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/lead-details',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [  'Property Leads' ,'Lead Details' ],
+    bradcrumb: ['Property Leads', 'Lead Details'],
     excat: true,
     module: 'HELPDESK',
     component: LeadDetails,
@@ -626,7 +633,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/serviceRequest-details/:serviceRequestId',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [  'Service Requests', 'Service Request Details' ],
+    bradcrumb: ['Service Requests', 'Service Request Details'],
     excat: true,
     module: 'HELPDESK',
     component: HelpdeskServiceRequestDetails,
@@ -642,7 +649,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/serviceRequest/consumer/property-details',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [  'Service Requests','Service Request Details', 'Consumer','Property Details' ],
+    bradcrumb: ['Service Requests', 'Service Request Details', 'Consumer', 'Property Details'],
     excat: true,
     module: 'HELPDESK INSTALLATION REQUESTS',
     component: PropertyDetailsModule,
@@ -650,7 +657,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/serviceRequest/consumer-details/:consumerId',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [  'Service Requests', 'Service Request Details', 'Consumer Details' ],
+    bradcrumb: ['Service Requests', 'Service Request Details', 'Consumer Details'],
     excat: true,
     module: 'HELPDESK INSTALLATION REQUESTS',
     component: ConsumerManagementDetails,
@@ -658,7 +665,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/serviceRequest/create-ticket',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [  'Service Request', 'Create Ticket' ],
+    bradcrumb: ['Service Request', 'Create Ticket'],
     excat: true,
     module: 'HELPDESK',
     component: CreateTicket,
@@ -666,7 +673,7 @@ const routeData = [
   {
     path: '/admin/helpdesk/serviceRequest',
     name: 'Helpdesk Team Dashboard',
-    bradcrumb: [  '< Helpdesk Team Dashboard' ],
+    bradcrumb: ['< Helpdesk Team Dashboard'],
     excat: true,
     module: 'HELPDESK',
     component: ServiceRequest,
@@ -683,7 +690,7 @@ const routeData = [
   {
     path: 'admin/finance/refund-request/consumer-transactions/property-details',
     name: 'Finance Team Dashboard',
-    bradcrumb: [  'Refund Request','Consumer Transactions','Property Details' ],
+    bradcrumb: ['Refund Request', 'Consumer Transactions', 'Property Details'],
     excat: true,
     module: 'FINANCE',
     component: PropertyDetailsModule,
@@ -692,7 +699,7 @@ const routeData = [
   {
     path: '/admin/finance/transactions/invoice',
     name: 'Finance Team Dashboard',
-    bradcrumb: ['Consumer Transactions','Consumer Transactions Details', 'Invoice' ],
+    bradcrumb: ['Consumer Transactions', 'Consumer Transactions Details', 'Invoice'],
     excat: true,
     module: 'FINANCE',
     component: FinanceInvoice,
@@ -700,7 +707,7 @@ const routeData = [
   {
     path: '/admin/finance/consumer-transaction-details/property-details',
     name: 'Finance Team Dashboard',
-    bradcrumb: [  'Consumer Transactions','Consumer Transaction Details', 'Property Details' ],
+    bradcrumb: ['Consumer Transactions', 'Consumer Transaction Details', 'Property Details'],
     excat: true,
     module: 'FINANCE',
     component: PropertyDetailsModule,
@@ -708,7 +715,7 @@ const routeData = [
   {
     path: '/admin/finance/refundRequest-details/property-details',
     name: 'Finance Team Dashboard',
-    bradcrumb: [  'Refund Request','Refund Request Details', 'Property Details' ],
+    bradcrumb: ['Refund Request', 'Refund Request Details', 'Property Details'],
     excat: true,
     module: 'FINANCE',
     component: PropertyDetailsModule,
@@ -716,19 +723,19 @@ const routeData = [
   {
     path: '/admin/finance/refundRequest/:userid',
     name: 'Finance Team Dashboard',
-    bradcrumb: [ 'Consumer Transactions','Consumer Transaction Details' ],
+    bradcrumb: ['Consumer Transactions', 'Consumer Transaction Details'],
     excat: true,
     module: 'FINANCE',
     component: FinanceRefundRequest,
   },
-  
- 
- 
+
+
+
   //FinanceRefundRequestDetails
   {
     path: '/admin/finance/refundRequest-details/:buybackRequestId',
     name: 'Finance Team Dashboard',
-    bradcrumb: [  'Refund Request', 'Refund Request Details' ],
+    bradcrumb: ['Refund Request', 'Refund Request Details'],
     excat: true,
     module: 'FINANCE',
     component: FinanceRefundRequestDetails,
@@ -736,7 +743,7 @@ const routeData = [
   {
     path: '/admin/finance/transactions',
     name: 'Finance Team Dashboard',
-    bradcrumb: [ '< Finance Team Dashboard' ],
+    bradcrumb: ['< Finance Team Dashboard'],
     excat: true,
     module: 'FINANCE',
     tabName: 'Consumer Transactions',
@@ -746,7 +753,7 @@ const routeData = [
   {
     path: '/admin/finance/buyback-request',
     name: 'Finance Team Dashboard',
-    bradcrumb: [  '< Finance Team Dashboard' ],
+    bradcrumb: ['< Finance Team Dashboard'],
     excat: true,
     module: 'FINANCE',
     tabName: 'Buyback Request',
@@ -789,15 +796,15 @@ const routeData = [
   {
     path: '/admin/realtor-advisor-management/advisor-details/:userId/reviews',
     name: 'Realtor Advisor Management',
-    bradcrumb: [ 'Realtors', 'Realtor Details', 'Reviews' ],
+    bradcrumb: ['Realtors', 'Realtor Details', 'Reviews'],
     excat: true,
     module: 'REALTOR',
     component: RealtorReviews,
   },
-   {
+  {
     path: '/admin/realtor-advisor-management/advisor-details/property-details',
     name: 'Realtor Team Dashboard',
-    bradcrumb: [ 'Realtors', 'Realtor Details' ,'Property Details' ],
+    bradcrumb: ['Realtors', 'Realtor Details', 'Property Details'],
     excat: true,
     module: 'REALTOR',
     component: PropertyDetailsModule,
@@ -805,7 +812,7 @@ const routeData = [
   {
     path: '/admin/realtor-advisor-management/advisor-details/:advisorId',
     name: 'Realtor Advisor Management',
-    bradcrumb: [ 'Realtors', 'Realtor Details' ],
+    bradcrumb: ['Realtors', 'Realtor Details'],
     excat: true,
     module: 'REALTOR',
     component: RealtorManagementDetails,
@@ -823,7 +830,7 @@ const routeData = [
   {
     path: '/admin/transaction/meeting-details/:id',
     name: 'Transaction Team Dashboard',
-    bradcrumb: [ 'Meeting Requests', 'Meeting Details' ],
+    bradcrumb: ['Meeting Requests', 'Meeting Details'],
     excat: true,
     module: 'TRANSACTION',
     component: TransactionDetailsPage,
@@ -831,7 +838,7 @@ const routeData = [
   {
     path: '/admin/transaction/lead-details/:id',
     name: 'Transaction Team Dashboard',
-    bradcrumb: [ 'Transaction Leads', 'Lead Details' ],
+    bradcrumb: ['Transaction Leads', 'Lead Details'],
     excat: true,
     module: 'TRANSACTION',
     component: TransactionDetailsPage,
@@ -857,7 +864,7 @@ const routeData = [
   {
     path: '/admin/transaction/deal-approvals',
     name: 'Transaction Team Dashboard',
-    bradcrumb: [ '< Transaction Team Dashboard'],
+    bradcrumb: ['< Transaction Team Dashboard'],
     excat: true,
     module: 'TRANSACTION',
     tabName: 'Deal Approvals',
@@ -866,7 +873,7 @@ const routeData = [
   {
     path: '/admin/transaction/getApprovalDetail/:id',
     name: 'Transaction Team Dashboard',
-    bradcrumb: [ 'Deal Approvals', 'Deal Approval Details' ],
+    bradcrumb: ['Deal Approvals', 'Deal Approval Details'],
     excat: true,
     module: 'TRANSACTION',
     tabName: 'Deal Approvals',
@@ -883,7 +890,7 @@ const routeData = [
   {
     path: '/admin/transaction-leads/property-details',
     name: 'Transaction Team Dashboard',
-    bradcrumb: [ 'Transaction Leads','Lead Details', 'Property Details' ],
+    bradcrumb: ['Transaction Leads', 'Lead Details', 'Property Details'],
     excat: true,
     module: 'TRANSACTION',
     component: PropertyDetailsModule,
@@ -893,7 +900,7 @@ const routeData = [
   {
     path: '/admin/meeting-requests/property-details',
     name: 'Transaction Team Dashboard',
-    bradcrumb: [ 'Meeting Requests' , 'Meeting Details' , 'Property details' ],
+    bradcrumb: ['Meeting Requests', 'Meeting Details', 'Property details'],
     excat: true,
     module: 'TRANSACTION',
     component: PropertyDetailsModule,
@@ -909,47 +916,47 @@ const routeData = [
   {
     path: '/admin/posts/add-new-post/basic-details',
     name: 'Add New Post',
-    bradcrumb: [ 'Users' ,'Add new Posting' ],
+    bradcrumb: ['Users', 'Add new Posting'],
     excat: true,
     component: AddNewPost,
     stepper: '1',
-    module : 'NEW POST'
+    module: 'NEW POST'
   },
   {
     path: '/admin/posts/add-new-post/address',
     name: 'Add New Post',
-    bradcrumb: [ 'Users' ,'Add new Posting' ],
+    bradcrumb: ['Users', 'Add new Posting'],
     excat: true,
     component: AddNewPost2,
     stepper: '2',
-    module : 'NEW POST'
+    module: 'NEW POST'
   },
   {
     path: '/admin/posts/add-new-post/pics',
     name: 'Add New Post',
-    bradcrumb: [ 'Users' ,'Add new Posting' ],
+    bradcrumb: ['Users', 'Add new Posting'],
     excat: true,
     component: AddNewPost3,
     stepper: '3',
-    module : 'NEW POST'
+    module: 'NEW POST'
   },
   {
     path: '/admin/posts/add-new-post/info',
     name: 'Add New Post',
-    bradcrumb: [ 'Users' ,'Add new Posting' ],
+    bradcrumb: ['Users', 'Add new Posting'],
     excat: true,
     component: AddNewPost4,
     stepper: '4',
-    module : 'NEW POST'
+    module: 'NEW POST'
   },
   {
     path: '/admin/posts/add-new-post/select_plan',
     name: 'Add New Post',
-    bradcrumb: [ 'Users' ,'Add new Posting' ],
+    bradcrumb: ['Users', 'Add new Posting'],
     excat: true,
     component: AddNewPost5,
     stepper: '5',
-    module : 'NEW POST'
+    module: 'NEW POST'
   },
 
   //Static Mobile Numbers
@@ -1000,7 +1007,7 @@ const routeData = [
     name: 'Marketing Agency',
     bradcrumb: ['Marketing Agency', 'Add New'],
     excat: false,
-    module:'MARKETING',
+    module: 'MARKETING',
     component: Add_EditAgency
   },
 
@@ -1009,7 +1016,7 @@ const routeData = [
     name: 'Edit Agency Details',
     bradcrumb: ['Marketing Agency', 'Agency Details', 'Edit Agency Details'],
     excat: false,
-    module:'MARKETING',
+    module: 'MARKETING',
     component: Add_EditAgency
   },
 
@@ -1018,16 +1025,16 @@ const routeData = [
     name: 'Agency Details',
     bradcrumb: ['Marketing Agency', 'Agency Details'],
     excat: false,
-    module:'MARKETING',
+    module: 'MARKETING',
     component: AgencyDetail
   },
-  
+
   {
     path: '/admin/marketingAgency',
     name: 'Marketing Agency',
     bradcrumb: false,
     excat: true,
-    module:'MARKETING',
+    module: 'MARKETING',
     component: MarketingAgency
   },
 
@@ -1036,8 +1043,8 @@ const routeData = [
     name: 'Properties',
     bradcrumb: false,
     excat: true,
-    title: {formTitle: 'agencyName'},
-    module:'MARKETING',
+    title: { formTitle: 'agencyName' },
+    module: 'MARKETING',
     component: AgencyProperty
   },
 
@@ -1055,7 +1062,7 @@ const routeData = [
     name: 'Customers',
     bradcrumb: false,
     excat: true,
-    title: {formTitle: 'agencyName'},
+    title: { formTitle: 'agencyName' },
     // module:'MARKETING',
     component: AgencyCustomers
   },
@@ -1140,7 +1147,7 @@ const routeData = [
     // module:'MARKETING',
     component: PostingMainPage
   },
-  
+
   {
     path: '/admin/executive/properties',
     name: 'Add New Posting',
@@ -1184,7 +1191,7 @@ const routeData = [
     // module:'Corporate',
     component: CorporateProperty
   },
-  
+
   {
     path: '/admin/corporate/corporateDetails',
     name: 'Corporate Companies',
@@ -1193,13 +1200,13 @@ const routeData = [
     // module:'Corporate',
     component: CorporateDetails
   },
-  
+
   {
     path: '/admin/corporate',
     name: 'Corporate',
     bradcrumb: false,
     excat: false,
-    module:'Corporate',
+    module: 'Corporate',
     component: Corporate
   },
 
@@ -1211,32 +1218,32 @@ const routeData = [
     component: Brokers,
   },
   {
-    path:'/admin/getBrokerDetailsForApprove/:brokerdetailId',
-    name:'Brokers',
+    path: '/admin/getBrokerDetailsForApprove/:brokerdetailId',
+    name: 'Brokers',
     bradcrumb: ['Brokers', 'Brokers Approved'],
     excat: true,
     component: BrokerApprovedDetail,
   },
   {
-    path:'/admin/BrokerDetails/:brokerdetailId',
-    name:'Brokers',
-    bradcrumb: [ 'Brokers', 'Broker Details' ],
+    path: '/admin/BrokerDetails/:brokerdetailId',
+    name: 'Brokers',
+    bradcrumb: ['Brokers', 'Broker Details'],
     breadcrumb: false,
     excat: true,
     component: BrokerDetail,
   },
 
   {
-    path:'/admin/batteryLevelCheck/viewProperty',
-    name:'Property Details',
+    path: '/admin/batteryLevelCheck/viewProperty',
+    name: 'Property Details',
     bradcrumb: ['Battery Level Check', 'Property Details'],
     excat: true,
     component: PropertyDetailsModule,
   },
-  
+
   {
-    path:'/admin/batteryLevelCheck',
-    name:'Battery Level Check',
+    path: '/admin/batteryLevelCheck',
+    name: 'Battery Level Check',
     bradcrumb: false,
     excat: true,
     component: BatteryLvlChk,
@@ -1265,6 +1272,45 @@ const routeData = [
     component: KitList
   },
 
+  {
+    path: '/admin/builders/builder-details/add-new-project',
+    name: 'Add New Project',
+    bradcrumb: ["Project Posting", "Add New Project"],
+    excat: true,
+    component: ProjectPosting
+  },
+
+  {
+    path: '/admin/builders/builder-details/project-details',
+    name: 'Builder Details',
+    bradcrumb: ["Builders", "Builder Details", "Project Details"],
+    excat: true,
+    component: ProjectDetailsPage
+  },
+
+  {
+    path: '/admin/builders/builder-details',
+    name: 'Builder Details',
+    bradcrumb: ["Builders", "Builder Details"],
+    excat: true,
+    component: BuilderInfo
+  },
+
+  {
+    path: '/admin/builders/builder-profile',
+    name: 'Builder Profile',
+    bradcrumb: ["Builders", "Builder Profile"],
+    excat: true,
+    component: BuilderProfileDetails
+  },
+
+  {
+    path: '/admin/builders',
+    name: 'Builders',
+    bradcrumb: false,
+    excat: true,
+    component: BuilderList
+  }
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

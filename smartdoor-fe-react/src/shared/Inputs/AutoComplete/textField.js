@@ -11,6 +11,8 @@ import Image from '../../Image';
 import contentIcon from '../../../assets/images/content-ico.svg';
 import Text from '../../Text/Text';
 import currentLocLogo from '../../../assets/images/fixedmapPinPoint.png.png';
+import mapIcon from '../../../assets/images/mapOpen.png.png';
+import './textField.scss';
 
 /**
  * Name:AutoCompleteInput
@@ -50,11 +52,12 @@ const AutoCompleteTextField = (props) => {
     cityName,
     sdIconFlag,
     currentLocFlag,
+    useCurrentLocation,
     ...rest
   } = props;
 
   // Input Element props
-  label = label || 'Location';
+  // label = label || 'Location';
   id = id || defaultID;
   placeholder = placeholder || 'Enter Location';
 
@@ -111,7 +114,7 @@ const AutoCompleteTextField = (props) => {
   const _addremoveListner = () => {
     (function (ac) {
       google.maps.places.Autocomplete = function (node, opts) {
-        const clone = node.cloneNode(true);
+        const clone = node?.cloneNode(true);
         const pac = new ac(node, opts);
         google.maps.event.addListener(pac, 'remove', function (restore) {
           google.maps.event.clearInstanceListeners(pac);
@@ -292,6 +295,7 @@ const AutoCompleteTextField = (props) => {
       //     e.preventDefault()
       //   }
       // }}
+      hiddenLabel
       onBlur={() => {
         if (onBlurInput)
           onBlurInput()
@@ -317,7 +321,9 @@ const AutoCompleteTextField = (props) => {
             : null}
           {currentLocFlag ?
             <div className='d-flex mt-2'>
-              <Image className='mt-2' src={currentLocLogo}></Image>
+              <Image className='mt-2 mr-2' src={currentLocLogo} style={{cursor:'pointer'}}
+                onClick={() => {props.useCurrentLocation()}} ></Image>
+              {/* <Image className='mt-2 mr-2 ml-2' src={mapIcon}></Image> */}
               {/* <Text text={'SmartDoor'} fontWeight='600' style={{fontSize:'12px', color:'#BE1452'}} /> */}
             </div>
             : null}

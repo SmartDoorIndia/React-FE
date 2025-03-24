@@ -1094,7 +1094,7 @@ const ConsumerManagement = (props) => {
             />
 
             <ListingDataTable
-              title="Upcoming Visits For Owner"
+              title="Upcoming Visits For Consumer"
               data={upcomingVisitsForYou === null ? [] : upcomingVisitsForYou}
               columns={upcomingRequestForCols}
               // isLoading={ServiceRequestData.isLoading}
@@ -1104,7 +1104,7 @@ const ConsumerManagement = (props) => {
             />
 
             <ListingDataTable
-              title=" Upcoming Visits From Owner"
+              title=" Upcoming Visits From Consumer"
               data={upcomingVisitsFromYou === null ? [] : upcomingVisitsFromYou}
               columns={upcomingRequestsFromCols}
               // isLoading={ServiceRequestData.isLoading}
@@ -1114,7 +1114,7 @@ const ConsumerManagement = (props) => {
             />
 
             <ListingDataTable
-              title="Visit Requests For Owner (History)"
+              title="Visit Requests For Consumer (History)"
               data={visitHistoryFor === null ? [] : visitHistoryFor}
               columns={visitRequestForCols}
               // isLoading={ServiceRequestData.isLoading}
@@ -1124,7 +1124,7 @@ const ConsumerManagement = (props) => {
             />
 
             <ListingDataTable
-              title="Visit Requests From Owner (History)"
+              title="Visit Requests From Consumer (History)"
               data={visitHistoryFrom === null ? [] : visitHistoryFrom}
               columns={visitRequestFromCols}
               // isLoading={ServiceRequestData.isLoading}

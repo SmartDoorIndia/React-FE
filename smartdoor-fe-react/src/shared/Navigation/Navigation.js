@@ -67,7 +67,7 @@ const Nav = () => {
             <ReactBoostrap.Navbar.Toggle aria-controls="basic-navbar-nav" />
             <ReactBoostrap.Navbar.Collapse id="basic-navbar-nav">
                <ReactBoostrap.Nav className="mr-auto">
-                  {userData.roleName !== 'MARKETING EXECUTIVE' && userData.roleName !== 'MARKETING ADMIN' ?
+                  {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'INSTALLATION ADMIN' || userData.roleName === 'TRANSACTION ADMIN' || userData.roleName === 'FINANCE ADMIN' || userData.roleName === 'HELP DESK ADMIN' ?
                      <ReactBoostrap.NavDropdown
                         show={isOpen}
                         onClick={() => {
@@ -86,39 +86,48 @@ const Nav = () => {
                         Society Sales Team
                      </Link> */}
                         <>
-                           <Link
-                              to="/admin/execution"
-                              className={`dropdown-item  ${pathname.includes("execution") ? "active" : ""
-                                 }`}
-                           >
-                              Installation Team
-                           </Link>
-                           <Link
-                              to="/admin/helpdesk"
-                              className={`dropdown-item  ${pathname.includes("helpdesk") ? "active" : ""
-                                 }`}
-                           >
-                              Helpdesk Team
-                           </Link>
-                           <Link
-                              to="/admin/finance"
-                              className={`dropdown-item  ${pathname.includes("finance") ? "active" : ""}`}
-                           >
-                              Finance Team
-                           </Link>
-                           <Link
-                              to="/admin/transaction"
-                              className={`dropdown-item  ${pathname.includes("/transaction") && !pathname.includes("transactions")
-                                 ? "active"
-                                 : ""
-                                 }`}
-                           >
-                              Transaction Team
-                           </Link>
+                           {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'INSTALLATION ADMIN' ?
+                              <Link
+                                 to="/admin/execution"
+                                 className={`dropdown-item  ${pathname.includes("execution") ? "active" : ""
+                                    }`}
+                              >
+                                 Installation Team
+                              </Link>
+                              : null}
+                           {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'HELP DESK ADMIN' ?
+                              <Link
+                                 to="/admin/helpdesk"
+                                 className={`dropdown-item  ${pathname.includes("helpdesk") ? "active" : ""
+                                    }`}
+                              >
+                                 Helpdesk Team
+                              </Link>
+                              : null}
+                           {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'FINANCE ADMIN' ?
+                              <Link
+                                 to="/admin/finance"
+                                 className={`dropdown-item  ${pathname.includes("finance") ? "active" : ""}`}
+                              >
+                                 Finance Team
+                              </Link>
+                              : null}
+                           {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'TRANSACTION  ADMIN' ?
+                              <Link
+                                 to="/admin/transaction"
+                                 className={`dropdown-item  ${pathname.includes("/transaction") && !pathname.includes("transactions")
+                                    ? "active"
+                                    : ""
+                                    }`}
+                              >
+                                 Transaction Team
+                              </Link>
+                              : null}
                         </>
                      </ReactBoostrap.NavDropdown>
                      : null}
-                  {userData.roleName !== 'MARKETING EXECUTIVE' && userData.roleName !== 'MARKETING ADMIN' ?
+
+                  {userData.roleName === "SUPER ADMIN" && (
                      <>
                         <Link
                            to="/admin/property"
@@ -155,7 +164,10 @@ const Nav = () => {
                            />
                            Societies
                         </Link> */}
-
+                     </>
+                  )}
+                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "CONSUMER ADMIN") && (
+                     <>
                         <Link
                            to="/admin/consumer-management"
                            className={`nav-link ${pathname.includes("consumer-management") ? "nav-active" : ""
@@ -167,7 +179,10 @@ const Nav = () => {
                            />
                            Consumer Management
                         </Link>
-
+                     </>
+                  )}
+                  {userData.roleName === "SUPER ADMIN" && (
+                     <>
                         <Link
                            to="/admin/user-management"
                            className={`nav-link ${pathname.includes("user-management") ? "nav-active" : ""
@@ -180,9 +195,8 @@ const Nav = () => {
                            User Management
                         </Link>
                      </>
-                     : null}
-
-                  {userData.roleName === "SUPER ADMIN" && (
+                  )}
+                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "NONSD ADMIN") && (
                      <>
                         <Link
                            to="/admin/nonsdproperty"
@@ -199,6 +213,10 @@ const Nav = () => {
                            />
                            Non SmartDoor Properties
                         </Link>
+                     </>
+                  )}
+                  {userData.roleName === "SUPER ADMIN" && (
+                     <>
                         <Link
                            to="/admin/addPlans"
                            className={`nav-link ${pathname.includes("addPlans") ? "nav-active" : ""
@@ -214,6 +232,10 @@ const Nav = () => {
                            />
                            Manage Plans
                         </Link>
+                     </>
+                  )}
+                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "BROKER ADMIN") && (
+                     <>
                         <Link
                            to="/admin/broker"
                            className={`nav-link ${pathname.includes("broker") ? "nav-active" : ""
@@ -225,19 +247,25 @@ const Nav = () => {
                            />
                            Brokers
                         </Link>
-                        <>
-                           <Link
-                              to="/admin/corporate"
-                              className={`nav-link ${pathname.includes("/admin/corporate") ? "nav-active" : ""
-                                 }`}
-                           >
-                              <Image
-                                 name="borkerIcon"
-                                 src={pathname.includes("/admin/corporate") ? borkerIcon : dashboard}
-                              />
-                              Corporate
-                           </Link>
-                        </>
+                     </>
+                  )}
+                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "CORPORATE ADMIN") && (
+                     <>
+                        <Link
+                           to="/admin/corporate"
+                           className={`nav-link ${pathname.includes("/admin/corporate") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="borkerIcon"
+                              src={pathname.includes("/admin/corporate") ? borkerIcon : dashboard}
+                           />
+                           Corporate
+                        </Link>
+                     </>
+                  )}
+                  {userData.roleName === "SUPER ADMIN" && (
+                     <>
                         <Link
                            to="/admin/static-mobile-numbers"
                            className={`nav-link ${pathname.includes("static-mobile-numbers") ? "nav-active" : ""
@@ -268,6 +296,10 @@ const Nav = () => {
                            />
                            Smartdoor Cities
                         </Link>
+                     </>
+                  )}
+                  {userData.roleName === "SUPER ADMIN" && (
+                     <>
                         <Link
                            to="/admin/featured-videos"
                            className={`nav-link ${pathname.includes("featured-videos") ? "nav-active" : ""
@@ -294,6 +326,10 @@ const Nav = () => {
                            />
                            Marketing Agency
                         </Link>
+                     </>
+                  )}
+                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") && (
+                     <>
                         <Link
                            to="/admin/batteryLevelCheck"
                            className={`nav-link ${pathname.includes("/admin/batteryLevelCheck") ? "nav-active" : ""
@@ -327,7 +363,11 @@ const Nav = () => {
                            />
                            Kit List
                         </Link>
-                        {/* <Link
+                     </>
+                  )}
+                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "BUILDER ADMIN") && (
+                     <>
+                        <Link
                            to="/admin/builders"
                            className={`nav-link ${pathname.includes("/admin/builders") ? "nav-active" : ""
                               }`}
@@ -337,7 +377,7 @@ const Nav = () => {
                               src={pathname.includes("/admin/builders") ? borkerIcon : dashboard}
                            />
                            Builders
-                        </Link> */}
+                        </Link>
                      </>
                   )}
 

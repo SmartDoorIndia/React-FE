@@ -99,6 +99,7 @@ import { allCorporates } from './views/corporateList.reducer';
 import { corporateProperty } from './views/corporateProperty.reducer';
 import { allHubList } from './views/hubList.reducer';
 import { allKitList } from './views/kitList.reducer';
+import { builderProjectList } from './views/builderProjectList.reducer';
 
 import { USER_LOGOUT } from '../types';
 import { batteryLevel } from './views/batteryLevel.reducer';
@@ -186,7 +187,8 @@ const appReducer = combineReducers({
   corporateProperty,
   batteryLevel,
   allHubList,
-  allKitList
+  allKitList,
+  builderProjectList
 });
 
 const rootReducer = (state, action) => {

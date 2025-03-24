@@ -3129,6 +3129,84 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+
+  getBuilderList: {
+    url: "admin/builder/getBuilderList",
+    method: "POST",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  getBuilderById: {
+    url: "admin/builder/getBuilderDetails/:builderId",
+    method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  createBuilderProfileDetail: {
+    url: "admin/builder/saveBuilder",
+    method: "POST",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  fetchProjectIdList: {
+    url: "admin/builder/getBuilderProjectListById/:builderId",
+    method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  fetchBuilderProjectList: {
+    url: "admin/builder/getProjectDetailsAdmin/:projectId",
+    method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  saveBuilderProject: {
+    url: "admin/builder/saveProjectDetails",
+    method: "POST",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 
