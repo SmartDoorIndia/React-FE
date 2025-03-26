@@ -11,6 +11,15 @@ const SubProjectDetails = (props) => {
     const [editTowerFlag, setEditTowerFlag] = useState(false);
     const [editUnitFlag, setEditUnitFlag] = useState(false);
 
+    const updateSubProjectEdit = (subProject) => {
+        setEditTowerFlag(false)
+        setSubProjectDetails(subProject);
+    }
+
+    const toggleEditTowerFlag = () => {
+        setEditTowerFlag(false);
+    }
+
     return (
         <>
             <div>
@@ -94,7 +103,9 @@ const SubProjectDetails = (props) => {
                             subProjectDetails={subProjectDetails}
                             editTower={true}
                             parentProjectId={props?.parentProjectId}
-                            builderId={props?.builderId} />
+                            builderId={props?.builderId}
+                            updateSubProject={updateSubProjectEdit}
+                            toggleEditTower={toggleEditTowerFlag} />
                     </>
                     : null}
             </div>

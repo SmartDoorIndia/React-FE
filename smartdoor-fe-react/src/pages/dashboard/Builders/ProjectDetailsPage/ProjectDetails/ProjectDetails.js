@@ -14,11 +14,15 @@ const ProjectDetails = (props) => {
     console.log(props)
 
     const handleShowProjectPost = () => {
-        setEditProjectFlag(false);
         console.log("Calling parent function..."); // Debugging
+        setEditProjectFlag(false);
         handleProjectEdit();  // This calls the function in the parent component
     };
       
+    const toggleEditProject = () => {
+        setEditProjectFlag(false);
+    }
+
     return (
         <>
             <Row>
@@ -26,7 +30,7 @@ const ProjectDetails = (props) => {
                     <div className="d-none d-md-block">
                         {projectDetails?.projectImages?.length > 0 ? (
                             <ImageSliderComponent
-                                imagesArr={projectDetails?.projectImages}
+                                imagesArr={projectDetails?.projectImages || []}
                                 videosArr={[]}
                                 imageLoader={false}
                                 smartdoorProperty={false}
@@ -92,12 +96,12 @@ const ProjectDetails = (props) => {
             </Row>
             <hr />
             <div>
-                <div className='mt-2'>
+                <div className='mt-2 mb-3'>
                     <Text text={"Project & Property Description"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
                     <Text text={projectDetails?.propertyDescription} style={{ fontSize: '14px', fontWeight: '500' }} />
                 </div>
             </div>
-            <div>
+            <div className='justify-self-end mb-2' >
                 <Buttons name="Edit" onClick={() => { setEditProjectFlag(true); }} />
             </div>
             {editProjectFlag &&
@@ -105,6 +109,7 @@ const ProjectDetails = (props) => {
                     <AddNewProjectPost 
                     projectDetails={projectDetails} 
                     editProject={true} 
+                    toggleEdit={toggleEditProject}
                     builderId={props?.builderId}
                     showEditProject={handleShowProjectPost} />
                 </>

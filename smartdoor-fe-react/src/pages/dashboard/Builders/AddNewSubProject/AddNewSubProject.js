@@ -25,6 +25,7 @@ import { validateProjectDetails, validateSubProjectDetails } from "../../../../c
 import Buttons from "../../../../shared/Buttons/Buttons";
 
 const AddNewSubProject = (props) => {
+   const { updateSubProject, builderId, editTower, toggleEditTower } = props
    const [show, setShow] = useState(false);
    const [imageCategory, setImageCategory] = useState("Interior");
    const [selectedImages, setSelectedImages] = useState([]);
@@ -299,14 +300,14 @@ const AddNewSubProject = (props) => {
          const date = new Date(possessionFrom);
 
          setMonthYearFrom({
-            month: date.toLocaleString("en-US", { month: "long" }),
+            month: String(date.getMonth() + 1).padStart(2, "0"),
             year: date.getFullYear()
          });
 
          const possessionTo = props?.subProjectDetails?.possessionTo;
          const dateTo = new Date(possessionTo);
          setMonthYearTo({
-            month: dateTo.toLocaleString("en-US", { month: "long" }),
+            month: String(dateTo.getMonth() + 1).padStart(2, "0"),
             year: dateTo.getFullYear()
          })
          setData((prevData) => ({
@@ -462,7 +463,9 @@ const AddNewSubProject = (props) => {
             if (response?.data) {
                // history.push(-1);
                // fetchProjectId(response?.data?.resourceData);
-
+               if (editTower) {
+                  updateSubProject(data);
+               }
             } else {
                const responseError = response?.data?.error || "Unknown error occurred";
                setError(responseError);
@@ -479,10 +482,10 @@ const AddNewSubProject = (props) => {
 
    return (
       <>
-         <div className="">
-            <div className="builderProjectDetails">
+         <div className="" style={{ backgroundColor: editTower ? 'whitesmoke' : 'white' }}>
+            <div className="builderProjectDetails" >
                <div className="">
-                  <div className="mt-2 bg-white">
+                  <div className="mt-2 ">
                      <div className="p-3">
                         <Row>
                            <Col lg="4">
@@ -1000,7 +1003,14 @@ const AddNewSubProject = (props) => {
                            </Col> */}
 
                         </Row>
-                        <Buttons name="Add Tower" varient="primary" onClick={() => { saveSubProjectDetails(); }} />
+                        <div style={{justifySelf: 'end'}}>
+                           {editTower && (
+                              <>
+                                 <Buttons name={"Cancel"} varient="secondary" onClick={() => { toggleEditTower() }} /> &nbsp;&nbsp;
+                              </>
+                           )}
+                           <Buttons name={editTower ? "Save" : "Add Tower"} varient="primary" onClick={() => { saveSubProjectDetails(); }} />
+                        </div>
                         <hr className="p-0 w-100" />
                         {/* Tower */}
 

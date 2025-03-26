@@ -29,7 +29,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { validateProjectDetails } from "../../../../common/validations";
 
 const AddNewProjectPost = (props) => {
-   const { fetchProjectId, projectId, builderId, showEditProject } = props
+   const { fetchProjectId, projectId, builderId, showEditProject, toggleEdit } = props
 
    const fileInputRef = useRef();
    const currentYear = new Date().getFullYear();
@@ -94,14 +94,14 @@ const AddNewProjectPost = (props) => {
          const date = new Date(possessionFrom);
 
          setMonthYearFrom({
-            month: date.toLocaleString("en-US", { month: "long" }),
+            month: String(date.getMonth() + 1).padStart(2, "0"),
             year: date.getFullYear()
          });
 
          const possessionTo = props?.projectDetails?.possessionTo;
          const dateTo = new Date(possessionTo);
          setMonthYearTo({
-            month: dateTo.toLocaleString("en-US", { month: "long" }),
+            month: String(dateTo.getMonth() + 1).padStart(2, "0"),
             year: dateTo.getFullYear()
          })
          let projectImageList = props?.projectDetails?.projectImages;
@@ -280,9 +280,10 @@ const AddNewProjectPost = (props) => {
 
             if (response?.data) {
                // history.push(-1);
-               fetchProjectId(response?.data?.resourceData);
                if (props?.editProject) {
                   showEditProject();
+               } else {
+                  fetchProjectId(response?.data?.resourceData);
                }
             } else {
                const responseError = response?.data?.error || "Unknown error occurred";
@@ -579,7 +580,7 @@ const AddNewProjectPost = (props) => {
    }
 
    return (
-      <div className="add-new-project-post mb-3" style={{ overflowX: 'hidden' }}>
+      <div className="add-new-project-post mb-3" style={{ overflowX: 'hidden', backgroundColor: props?.editProject ? "whitesmoke" : "white" }}>
          <Container fluid>
             {/* <h2 className="page-title">PROJECT DETAIL</h2> */}
 
@@ -649,7 +650,7 @@ const AddNewProjectPost = (props) => {
                      </div>
 
                   </Col>
-                  <Col lg={7} className="form-col">
+                  <Col lg={7} className="form-col" style={{ backgroundColor: props?.editProject ? "whitesmoke" : "white" }}>
                      <Row>
                         <Col lg={6}>
                            <TextField
@@ -1239,6 +1240,13 @@ const AddNewProjectPost = (props) => {
                      // disabled={this.state.disableSubmit}
                      id="submit-team-member-button"
                      className=" btn-small cancel-btn"
+                     onClick={() => {
+                        if(props?.editProject) {
+                           toggleEdit();
+                        } else {
+                           history.push(-1);
+                        }
+                     }}
                   >
                      Cancel
                   </button>

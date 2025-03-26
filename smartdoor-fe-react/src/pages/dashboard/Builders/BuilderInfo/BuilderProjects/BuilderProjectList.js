@@ -16,7 +16,7 @@ import {
    fetchBuilderProjectList,
    fetchBuilderProjectById,
 } from "../../../../../common/redux/actions";
-import { TableLoader } from "../../../../../common/helpers/Loader";
+import { FallBackLoader, TableLoader } from "../../../../../common/helpers/Loader";
 import Text from "../../../../../shared/Text/Text";
 import { provideAuth } from "../../../../../common/helpers/Auth";
 import { da } from "date-fns/locale";
@@ -32,6 +32,7 @@ const BuilderProjectList = (props) => {
    const [builderProjectDetails, setBuilderProjectDetails] = useState({});
    const [builderProjectList, setBuilderProjectList] = useState([]);
    const [loading, setLoading] = useState(false);
+   const [expandLoading, setExpandLoading] = useState(false);
    const history = useHistory();
 
    useEffect(async () => {
@@ -168,7 +169,7 @@ const BuilderProjectList = (props) => {
                            // setBuilderProjectDetails(
                            //    response?.data?.resourceData
                            // ); 
-                           console.log(row); 
+                           console.log(row);
                            history.push("/admin/builders/builder-details/project-details", { projectId: row?.projectId, builderId: props?.builderId })
                         }}
                         className="action-link btn"
@@ -186,9 +187,13 @@ const BuilderProjectList = (props) => {
 
    ]
    const ExpandedRowComponent = ({ data }) => {
-      console.log(data)
       return (
          <div>
+            {expandLoading ?
+            <>
+               <TableLoader className="justify-content-center" />
+            </>
+            : null}
             {builderProjectDetails?.subProjectList?.map((subProject) => (
                <>
                   <div style={{ backgroundColor: '#F3ECEC' }}>
@@ -217,16 +222,29 @@ const BuilderProjectList = (props) => {
                   <Text className="ml-3" text={"Units Available"} style={{ fontSize: '14px', fontWeight: '700' }} />
                   <table className="table ml-5" style={{ tableLayout: "fixed", width: "90%" }}>
                      <tbody>
-                        {subProject?.properties?.map((property, index) => (
-                           <tr key={index} style={{ borderBottom: "1px solid #DED6D9" }} >
-                              <td>{property.compositionType}</td>
-                              <td>{formateDate(property.possessionFrom, "MMM YYYY")} - {formatDate(property.possessionTo, "MMM YYYY")}</td>
-                              <td>{property.reraNumber}</td>
-                              <td>{property.totalFloors + " Total Floors"}</td>
-                              <td>{property.totalUnits + " Total Units"}</td>
-                              <td>{property.unitsPerFloor + " Units Per Floor"}</td>
-                           </tr>
-                        ))}
+                        {(() => {
+                           const filteredProperties = subProject?.properties?.filter(property => property?.propertyId !== null) || [];
+
+                           return filteredProperties.length > 0 ? (
+                              filteredProperties.map((property, index) => (
+                                 <tr key={index} style={{ borderBottom: "1px solid #DED6D9" }}>
+                                    <td>{property.compositionType}</td>
+                                    <td>{formatDate(property.possessionFrom, "MMM YYYY")} - {formatDate(property.possessionTo, "MMM YYYY")}</td>
+                                    <td>{property.reraNumber}</td>
+                                    <td>{property.totalFloors + " Total Floors"}</td>
+                                    <td>{property.totalUnits + " Total Units"}</td>
+                                    <td>{property.unitsPerFloor + " Units Per Floor"}</td>
+                                 </tr>
+                              ))
+                           ) : (
+                              <tr>
+                                 <td colSpan="6" style={{ textAlign: "center", padding: "10px" }}>
+                                    No Units available
+                                 </td>
+                              </tr>
+                           );
+                        })()}
+
                      </tbody>
                   </table>
                </>
@@ -246,10 +264,12 @@ const BuilderProjectList = (props) => {
    const handleExpandRow = async (expanded, project) => {
       if (expanded) {
          try {
+            setExpandLoading(true);
             const response = await fetchBuilderProjectById({
                projectId: project?.projectId,
                builderId: props?.builderId
             });
+            setExpandLoading(false);
 
             setBuilderProjectDetails(
                response?.data?.resourceData

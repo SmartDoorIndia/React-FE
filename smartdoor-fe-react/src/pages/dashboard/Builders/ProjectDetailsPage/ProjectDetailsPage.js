@@ -9,6 +9,7 @@ import Image from '../../../../shared/Image';
 import addIcon from "../../../../assets/svg/add.svg";
 import { Button, Col, Row } from 'react-bootstrap';
 import AddNewSubProject from '../AddNewSubProject/AddNewSubProject';
+import { FallBackLoader } from '../../../../common/helpers/Loader';
 
 const ProjectDetailsPage = (props) => {
     const [projectDetails, setProjectDetails] = useState({
@@ -16,14 +17,17 @@ const ProjectDetailsPage = (props) => {
     });
     const [subProjectList, setSubProjectList] = useState([]);
     const [addTowerFlag, setAddTowerFlag] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         console.log(props?.location?.state?.projectId)
+        setLoading(true);
         fetchBuilderProjectById({ projectId: props?.location?.state?.projectId, builderId: props?.location?.state?.builderId })
-            .then((response) => {
+        .then((response) => {
+                setLoading(false);
                 console.log(response);
                 setProjectDetails(response?.data?.resourceData);
-                if(response?.data?.resourceData?.subProjectList !== null ) {
+                if (response?.data?.resourceData?.subProjectList !== null) {
                     setSubProjectList([...response?.data?.resourceData?.subProjectList]);
                 }
             });
@@ -31,11 +35,17 @@ const ProjectDetailsPage = (props) => {
 
     const handleShowProjectPost = useCallback(async () => {
         console.log("handleShowProjectPost called in ProjectDetailsPage");
+        console.log(props)
         const response = await fetchBuilderProjectById({
-            projectId: projectDetails?.projectId,
-            builderId: props?.builderId
+            projectId: props?.location?.state?.projectId,
+            builderId: props?.location?.state?.builderId
         });
-        setProjectDetails(response?.data?.resourceData?.builderProjectSearchDto[0]);
+        if(response?.status === 200) {
+            setProjectDetails(response?.data?.resourceData);
+            if (response?.data?.resourceData?.subProjectList !== null) {
+                setSubProjectList([...response?.data?.resourceData?.subProjectList]);
+            }
+        }
 
     }, [projectDetails, props?.builderId]);
 
@@ -45,6 +55,11 @@ const ProjectDetailsPage = (props) => {
 
     return (
         <>
+            {loading ?
+                <>
+                    <FallBackLoader />
+                </>
+                : null}
             <div style={{ overflowX: 'hidden' }} >
                 {/* <Buttons name="Edit" varient="primary" onClick={() => { history.push('/admin/builders/builder-details/add-new-project', { projectId: props?.location?.state?.projectId, builderId: props?.location?.state?.builderId, projectDetails: props?.location?.state?.projectDetails, editProject: true }) }} /> */}
                 <Accordion defaultExpanded={true} className='mb-3' style={{ boxShadow: 'none' }} >
@@ -97,7 +112,7 @@ const ProjectDetailsPage = (props) => {
                             </AccordionSummary>
                             <AccordionDetails sx={{ border: 'solid 1px #DED6D9', borderRadius: '6px' }}>
                                 <SubProjectDetails subProjectDetails={subProject} builderId={props?.location?.state?.builderId}
-                                parentProjectId={props?.location?.state?.projectId} />
+                                    parentProjectId={props?.location?.state?.projectId} />
                             </AccordionDetails>
                         </Accordion>
                     </>
