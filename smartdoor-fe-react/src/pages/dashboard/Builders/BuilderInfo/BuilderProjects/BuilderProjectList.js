@@ -14,6 +14,7 @@ import { formateDate, ToolTip } from "../../../../../common/helpers/Utils";
 import {
    fetchProjectIdList,
    fetchBuilderProjectList,
+   fetchBuilderProjectById,
 } from "../../../../../common/redux/actions";
 import { TableLoader } from "../../../../../common/helpers/Loader";
 import Text from "../../../../../shared/Text/Text";
@@ -27,7 +28,8 @@ const BuilderProjectList = (props) => {
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [currentPage, setCurrentPage] = useState(1);
    const [rowsPerPage, setRowsPerPage] = useState(7);
-   const [builderProjectSubPosts, setBuilderProjectSubPosts] = useState(null);
+   const [expandedProjectId, setExpandedProjectId] = useState(null);
+   const [builderProjectDetails, setBuilderProjectDetails] = useState({});
    const [builderProjectList, setBuilderProjectList] = useState([]);
    const [loading, setLoading] = useState(false);
    const history = useHistory();
@@ -38,31 +40,11 @@ const BuilderProjectList = (props) => {
       if (response.status === 200) {
          setLoading(true)
          if (response?.data?.resourceData?.length > 0) {
-            response?.data?.resourceData?.forEach(async (projectId) => {
-               const resp = await fetchBuilderProjectList({
-                  projectId: projectId,
-                  // propertyDataRequired: true
-               });
-               console.log(builderProjectList);
-               let projectList = builderProjectList;
-               if (resp?.data?.resourceData?.builderProjectSearchDto !== null) {
-                  projectList.push(resp?.data?.resourceData);
-                  setBuilderProjectList([...projectList]);
-               }
-            });
             setLoading(false);
+            setBuilderProjectList(response?.data?.resourceData)
          }
       }
    }, [fetchProjectIdList]);
-
-   const showValue = () => {
-      let filteredItems =
-         Array.isArray(builderProjectSubPosts) && builderProjectSubPosts.length > 0
-            ? builderProjectSubPosts
-            : [];
-
-      return filteredItems;
-   };
 
    const handlePageChange = (newPage) => {
       setCurrentPage(Number(newPage));
@@ -113,7 +95,7 @@ const BuilderProjectList = (props) => {
    const columns = [
       {
          name: "Project Name",
-         selector: (row) => row?.builderProjectSearchDto[0]?.projectName || 'N/A',
+         selector: (row) => row?.projectName || 'N/A',
          center: true,
          sortable: true,
          minWidth: "200px",
@@ -121,20 +103,20 @@ const BuilderProjectList = (props) => {
       },
       {
          name: "Address",
-         selector: (row) => row?.builderProjectSearchDto[0]?.projectAddress || 'N/A',
+         selector: (row) => row?.projectAddress || 'N/A',
          center: true,
          minWidth: "120px",
       },
       {
          name: "# of Towers / Plotted",
-         selector: (row) => row?.builderPropertyDetailList?.length || 'N/A',
+         selector: (row) => 'N/A',
          sortable: false,
          center: true,
          maxWidth: "160px",
       },
       {
          name: "# of Units",
-         selector: (row) => row.contactPersonName || 'N/A',
+         selector: (row) => 'N/A',
          center: true,
          minWidth: "150px",
          maxWidth: "150px",
@@ -177,7 +159,18 @@ const BuilderProjectList = (props) => {
                            lineHeight: "18px",
                            textAlign: "left",
                         }}
-                        onClick={() => { console.log(row); history.push("/admin/builders/builder-details/project-details", { projectDetails: row, builderId: props?.builderId }) }}
+                        onClick={async () => {
+                           // const response = await fetchBuilderProjectById({
+                           //    projectId: row?.projectId,
+                           //    builderId: props?.builderId
+                           // });
+
+                           // setBuilderProjectDetails(
+                           //    response?.data?.resourceData
+                           // ); 
+                           console.log(row); 
+                           history.push("/admin/builders/builder-details/project-details", { projectId: row?.projectId, builderId: props?.builderId })
+                        }}
                         className="action-link btn"
                      >
                         View
@@ -196,32 +189,48 @@ const BuilderProjectList = (props) => {
       console.log(data)
       return (
          <div>
-            <table className="table" style={{ tableLayout: "fixed", width: "100%", border: "1px solid #949494" }}>
-               <thead>
-                  <tr style={{ borderBottom: "1px solid #DED6D9" }}>
-                     <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Tower Name</th>
-                     <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Composition Type</th>
-                     <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Possession</th>
-                     <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Rera Number</th>
-                     <th className="text-start" style={{ width: "10%", textAlign: 'left', }}>Total Floors</th>
-                     <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Units per Floor</th>
-                     <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Contact Person Mobile Number</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  {data.builderPropertyDetailList.map((property, index) => (
-                     <tr key={index} style={{ borderBottom: "1px solid #DED6D9" }}>
-                        <td>{property.towerName}</td>
-                        <td>{property.compositionType}</td>
-                        <td>{formateDate(property.possessionFrom, "MMM YYYY")} - {formatDate(property.possessionTo, "MMM YYYY")}</td>
-                        <td>{property.reraNumber}</td>
-                        <td>{property.totalFloors}</td>
-                        <td>{property.unitsPerFloor}</td>
-                        <td>{property.contactNumber}</td>
-                     </tr>
-                  ))}
-               </tbody>
-            </table>
+            {builderProjectDetails?.subProjectList?.map((subProject) => (
+               <>
+                  <div style={{ backgroundColor: '#F3ECEC' }}>
+
+                     <Text className="ml-3" text={subProject?.projectName} style={{ fontSize: '16px', fontWeight: '700' }} />
+
+                     <table className="table ml-5" style={{ tableLayout: "fixed", width: "90%", alignContent: 'center', backgroundColor: '#F3ECEC' }}>
+                        <thead>
+                           <tr style={{ borderBottom: "1px solid #DED6D9" }}>
+                              <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Rera Number</th>
+                              <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Total Area To Develop</th>
+                              <th className="text-start" style={{ width: "10%", textAlign: 'left', }}>Total Floors</th>
+                              <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Contact Person Mobile Number</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           <tr>
+                              <td>{subProject.reraNumber}</td>
+                              <td>{subProject?.totalAreaToDevelop}</td>
+                              <td>{subProject?.totalFloors}</td>
+                              <td>{subProject?.contactNumber}</td>
+                           </tr>
+                        </tbody>
+                     </table>
+                  </div>
+                  <Text className="ml-3" text={"Units Available"} style={{ fontSize: '14px', fontWeight: '700' }} />
+                  <table className="table ml-5" style={{ tableLayout: "fixed", width: "90%" }}>
+                     <tbody>
+                        {subProject?.properties?.map((property, index) => (
+                           <tr key={index} style={{ borderBottom: "1px solid #DED6D9" }} >
+                              <td>{property.compositionType}</td>
+                              <td>{formateDate(property.possessionFrom, "MMM YYYY")} - {formatDate(property.possessionTo, "MMM YYYY")}</td>
+                              <td>{property.reraNumber}</td>
+                              <td>{property.totalFloors + " Total Floors"}</td>
+                              <td>{property.totalUnits + " Total Units"}</td>
+                              <td>{property.unitsPerFloor + " Units Per Floor"}</td>
+                           </tr>
+                        ))}
+                     </tbody>
+                  </table>
+               </>
+            ))}
          </div>
       );
    };
@@ -233,6 +242,29 @@ const BuilderProjectList = (props) => {
       });
       return `${monthName} ${year}`;
    };
+
+   const handleExpandRow = async (expanded, project) => {
+      if (expanded) {
+         try {
+            const response = await fetchBuilderProjectById({
+               projectId: project?.projectId,
+               builderId: props?.builderId
+            });
+
+            setBuilderProjectDetails(
+               response?.data?.resourceData
+            );
+
+            // Set only the current project as expanded (collapse others)
+            setExpandedProjectId(project.projectId);
+         } catch (error) {
+            console.error("Error fetching project details:", error);
+         }
+      } else {
+         setExpandedProjectId(null); // Collapse all rows when clicking again
+      }
+   };
+
 
    return (
       <>
@@ -250,7 +282,7 @@ const BuilderProjectList = (props) => {
                               backgroundColor: "#F8F3F5",
                               borderColor: "#DED6D9",
                            }}
-                           onClick={() => {history.push("/admin/builders/builder-details/add-new-project", {builderId: props?.builderId, editProject: false})}}
+                           onClick={() => { history.push("/admin/builders/builder-details/add-new-project", { builderId: props?.builderId, editProject: false }) }}
                         >
                            <div
                               style={{
@@ -287,7 +319,11 @@ const BuilderProjectList = (props) => {
                      perPageOptions={[8, 16, 24, 32]} // Per-page options
                      onChangePage={handlePageChange}
                      expandableRows
-                     expandableRowsComponent={ExpandedRowComponent}
+                     expandableRowsComponent={({ data }) => (
+                        <ExpandedRowComponent projectDetails={builderProjectDetails[data.projectId] || {}} />
+                     )}
+                     expandableRowExpanded={(row) => row.projectId === expandedProjectId}
+                     onRowExpandToggled={handleExpandRow}
                      onChangeRowsPerPage={handleRowsPerPageChange}
                      subHeaderComponent={subHeaderComponentMemo}
                      persistTableHead="true"

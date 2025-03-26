@@ -3183,7 +3183,7 @@ export const ApiJson = {
   },
 
   fetchBuilderProjectList: {
-    url: "admin/builder/getProjectDetailsAdmin/:projectId",
+    url: "admin/builder/getProjectDetailsAdmin/:projectId/:builderId",
     method: "GET",
     data: {
     },
@@ -3197,6 +3197,19 @@ export const ApiJson = {
 
   saveBuilderProject: {
     url: "admin/builder/saveProjectDetails",
+    method: "POST",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  saveBuilderSubProject: {
+    url: "admin/builder/saveSubProjectDetails",
     method: "POST",
     data: {
     },

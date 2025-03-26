@@ -150,6 +150,16 @@ const BuilderProfileDetails = (props) => {
                directors: newDirectors, // Set the updated directors array back into data
             };
          });
+         if(value?.trim()?.length === 0) {
+            setData((prevData) => {
+               const directorList = [...prevData.directors];
+               directorList.pop();
+               return {
+                  ...prevData,
+                  directors: directorList
+               }
+            })
+         }
          validateForm();
       } else if (id === ("whatsappNumber")) {
          const mobileNum = handlePhoneChange(event);

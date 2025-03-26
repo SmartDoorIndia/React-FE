@@ -7,6 +7,7 @@ import {
    showErrorToast,
    getLocalStorage,
    handlePhoneChange,
+   showSuccessToast,
 } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import Text from "../../../../shared/Text/Text";
 import { TiCameraOutline } from "react-icons/ti";
@@ -17,8 +18,11 @@ import { RxCross2 } from "react-icons/rx";
 import { PiPlayCircleLight } from "react-icons/pi";
 import addIcon from "../../../../assets/svg/add.svg";
 import CONSTANTS from "../../../../common/helpers/Constants";
-import { InputAdornment, MenuItem, TextField } from "@mui/material";
+import { Checkbox, InputAdornment, ListItemText, MenuItem, TextField } from "@mui/material";
 import Units from "./AddNewUnit/Units";
+import { saveBuilderProject, saveBuilderSubProject, uploadImage } from "../../../../common/redux/actions";
+import { validateProjectDetails, validateSubProjectDetails } from "../../../../common/validations";
+import Buttons from "../../../../shared/Buttons/Buttons";
 
 const AddNewSubProject = (props) => {
    const [show, setShow] = useState(false);
@@ -29,7 +33,6 @@ const AddNewSubProject = (props) => {
    const [monthYearFrom, setMonthYearFrom] = useState({ month: "", year: "" });
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
    const currentYear = new Date().getFullYear();
-   const [builderProjectId, setBuilderProjectId] = useState(null);
    const [error, setError] = useState(null);
    const [showModal, setShowModal] = useState(false);
    const [showImageModal, setImageShowModal] = useState(false);
@@ -39,14 +42,12 @@ const AddNewSubProject = (props) => {
    const [showMoreUnits, setShowMoreUnits] = useState(false);
    const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
    const [selectedType, setSelectedType] = useState([]);
-   const [builderProjectSubPostId, setBuilderProjectSubPostId] = useState(null);
    const auth = getLocalStorage("authData");
    const [data, setData] = useState({
-      builderId: '',
+      builderId: props?.builderId,
       parentProjectId: props.projectId,
       projectId: null,
       propertyType: "",
-      userId: auth?.userid,
       projectName: "",
       reraNumber: "",
       totalAreaToDevelop: null,
@@ -61,19 +62,32 @@ const AddNewSubProject = (props) => {
       amenities: [],
       builderProjectSubPostInfo: [],
       builderProjectSubPostProperties: [],
-      projectVideos: [],
+      projectVideoUrl: '',
       projectImages: [],
    });
 
    const measurementUnits = ["Sq. Ft", "Sq. Mt.", "Sq. Yd."];
 
    const defaultSubpost = ["Tower", "Plotted"];
-
-   useEffect(() => {
-
-   }, []);
-
-
+   const defaultAmenities = [
+      "Common Guest",
+      "Power Backup",
+      "Playground",
+      "Inhouse Market",
+      "Children Play Area",
+      "Tennis Court",
+      "Table Tennis",
+      "Podium Space",
+      "BasketBall",
+      "Sauna",
+      "Steam",
+      "Squash Court",
+      "Piped Gas",
+      "Cricket Pitch/Lawn",
+      "Snooker/Billiards",
+      "Jogging Track",
+      "Badminton",
+   ];
 
    const handleInputChange = (e) => {
       const { name, value } = e.target;
@@ -116,6 +130,49 @@ const AddNewSubProject = (props) => {
    const handleProjectImagesChange = (e) => {
       const files = Array.from(e.target.files);
       fileInputRef.current.value = "";
+      if (files.length > 0) {
+         let formData = new FormData();
+         const maxSizeInBytes = 15 * 1024 * 1024; // 10MB
+         Array.from(files).map((file) => {
+            if (file.size > maxSizeInBytes) {
+               showErrorToast('File must be less than 15MB...')
+               return;
+            }
+         })
+         let fileList = []
+         for (let i = 0; i < files.length; i++) {
+            fileList.push(files[i])
+            formData.append('file', files[i]);
+         }
+         formData.append('id', '0')
+         formData.append('enumType', 'PROJECT_IMAGES');
+         uploadImage(formData)
+            .then((response) => {
+               if (response.data.status === 200) {
+                  console.log(response.data.resourceData)
+                  let projectImage = [...data?.projectImages];
+                  for (let i = 0; i < response.data.resourceData.length; i++) {
+                     // projectImage.push({
+                     //    docId: 0,
+                     //    docName: "",
+                     //    docDescription: imageCategory,
+                     //    docOrderInFrontendView: i,
+                     //    docURL: response.data.resourceData[i],
+                     // });
+                     projectImage.push(response.data.resourceData[i])
+                  }
+                  console.log(projectImage)
+                  setData((prevData) => ({
+                     ...prevData,
+                     projectImages: [...projectImage],
+                  }));
+                  showSuccessToast(response.data.customMessage)
+               }
+            })
+            .catch((error) => {
+               // setLoading(false);
+            });
+      }
    };
 
    const handleSaveImages = () => {
@@ -142,31 +199,33 @@ const AddNewSubProject = (props) => {
    const handleDeleteProjectImage = (index, description) => {
       setData((prevData) => ({
          ...prevData,
-         builderProjectSubPostImages: prevData.builderProjectSubPostImages
+         projectImages: prevData.projectImages
             .filter((image) => image.docDescription === description)
             .filter((_, i) => i !== index) // Remove only the image from the relevant category
             .concat(
-               prevData.builderProjectSubPostImages.filter(
+               prevData.projectImages.filter(
                   (image) => image.docDescription !== description
                )
             ),
       }));
    };
+
    const handleDeleteSelectedImage = (indexToDelete, docDescription) => {
-      setSelectedImages((prevImages) => {
-         const filteredImages = [...prevImages]; // Create a shallow copy of the images array
-         const imagesToKeep = filteredImages.filter(
+      setData((prevData) => {
+         const updatedProjectImages = prevData.projectImages.filter(
             (image) => image.docDescription === docDescription
          );
 
-         if (imagesToKeep[indexToDelete]) {
-            filteredImages.splice(
-               prevImages.findIndex((image) => image === imagesToKeep[indexToDelete]),
-               1
-            );
+         if (updatedProjectImages[indexToDelete]) {
+            return {
+               ...prevData,
+               projectImages: prevData.projectImages.filter(
+                  (image) => image !== updatedProjectImages[indexToDelete]
+               ),
+            };
          }
 
-         return filteredImages;
+         return prevData;
       });
    };
 
@@ -195,15 +254,15 @@ const AddNewSubProject = (props) => {
       }
    };
 
-   const handleDeleteVideo = (index) => {
+   const handleDeleteVideo = () => {
       setData((prevData) => {
-         const updatedVideos = prevData.builderProjectSubPostVideos.filter((_, i) => i !== index);
          return {
             ...prevData,
-            builderProjectSubPostVideos: updatedVideos,
+            projectVideoUrl: '',
          };
       });
    };
+
    const getEmbedUrl = (url) => {
       // YouTube
       const youtubeMatch = url.match(
@@ -221,22 +280,63 @@ const AddNewSubProject = (props) => {
       return url.replace("watch?v=", "embed/"); // Example conversion
    };
 
-
    const handleSubPostChange = (e) => {
       const value = e.target.value;
       console.log(e)
       setData((prevData) => ({
          ...prevData,
-         subPostType: value,
-         builderProjectSubPostProperties: []
+         propertyType: value,
+         properties: []
       }));
    };
+
+   useEffect(() => {
+      console.log(props?.projectId)
+      console.log(props?.builderId)
+      if (props?.editTower === true) {
+         setData({ ...props?.subProjectDetails, builderId: props?.builderId, parentProjectId: props?.parentProjectId })
+         const possessionFrom = props?.subProjectDetails?.possessionFrom;
+         const date = new Date(possessionFrom);
+
+         setMonthYearFrom({
+            month: date.toLocaleString("en-US", { month: "long" }),
+            year: date.getFullYear()
+         });
+
+         const possessionTo = props?.subProjectDetails?.possessionTo;
+         const dateTo = new Date(possessionTo);
+         setMonthYearTo({
+            month: dateTo.toLocaleString("en-US", { month: "long" }),
+            year: dateTo.getFullYear()
+         })
+         setData((prevData) => ({
+            ...prevData, contactPersonName: props?.subProjectDetails?.contactName,
+            contactPersonNumber: props?.subProjectDetails?.contactNumber, highlightsOrUsp: props?.subProjectDetails?.highlights
+         }))
+         // let projectImageList = props?.subProjectDetails?.projectImages;
+         // let imageList = []
+         // projectImageList.forEach((image, index) => {
+         //    let imageDto = {
+         //       docId: '',
+         //       docName: '',
+         //       docDescription: '',
+         //       docOrderInFrontendView: index + 1,
+         //       docURL: image
+         //    }
+         //    imageList.push(imageDto);
+         // });
+         // setData((prevData) => ({ ...prevData, openAreaPerc: props?.projectDetails?.openAreaPercent }))
+         // if (props?.projectDetails?.projectAmenities === null) {
+         //    setData((prevData) => ({ ...prevData, projectAmenities: [] }))
+         // }
+      }
+   }, [])
 
    useEffect(() => {
       if (monthYearFrom.month && monthYearFrom.year) {
          setData((prevData) => ({
             ...prevData,
-            possessionFrom: `${monthYearFrom.month}-${monthYearFrom.year}`, // Save in the desired format
+            possessionFrom: `${monthYearFrom.year}-${monthYearFrom.month}-01`, // Save in the desired format
          }));
       }
    }, [monthYearFrom]);
@@ -245,7 +345,7 @@ const AddNewSubProject = (props) => {
       if (monthYearTo.month && monthYearTo.year) {
          setData((prevData) => ({
             ...prevData,
-            possessionTo: `${monthYearTo.month}-${monthYearTo.year}`, // Save in the desired format
+            possessionTo: `${monthYearTo.year}-${monthYearTo.month}-01`, // Save in the desired format
          }));
       }
    }, [monthYearTo]);
@@ -266,13 +366,12 @@ const AddNewSubProject = (props) => {
       setMonthYearTo((prev) => ({ ...prev, year: e.target.value }));
    };
    const handleSelectChange = (e) => {
-      const selectedValue = e.target.value;
-      if (selectedValue) {
-         setData((prevData) => ({
-            ...prevData,
-            builderProjectSubPostInfo: [...prevData.builderProjectSubPostInfo, selectedValue], // Add the selected value to the existing array
-         }));
-      }
+      const { value } = e.target; // Extract the selected values array
+
+      setData((prevData) => ({
+         ...prevData,
+         amenities: value, // Set the new selected values
+      }));
    };
    const handlePlayVideo = (videoUrl) => {
       setCurrentVideoUrl(videoUrl);
@@ -280,17 +379,6 @@ const AddNewSubProject = (props) => {
    };
 
    const handleRemoveUnit = (index) => {
-      // const updatedProperties = data.builderProjectSubPostProperties.filter((_, i) => i !== index);
-      // setData((prevState) => ({
-      //    ...prevState,
-      //    builderProjectSubPostProperties: updatedProperties,
-      // }));
-
-      // if (data.subPostType === "Tower") {
-      //    setTowerRows(towerRows.filter((_, i) => i !== index));
-      // } else if (data.subPostType === "Plotted") {
-      //    setPlottedRows(plottedRows.filter((_, i) => i !== index));
-      // }
       let units = data.builderProjectSubPostProperties;
       units.splice(index);
       setData((prevData) => ({
@@ -357,13 +445,37 @@ const AddNewSubProject = (props) => {
       console.log(data)
    };
 
-   useEffect(() => {
-      const savedData = localStorage.getItem("draftFormData");
-      console.log("savedData", savedData);
-      if (savedData) {
-         setData(JSON.parse(savedData));
+   const saveSubProjectDetails = async () => {
+      console.log(data)
+      // e.preventDefault();
+      try {
+         const submissionData = {
+            ...data,
+         };
+
+         const valid = await validateSubProjectDetails(submissionData);
+         console.log(valid);
+
+         if (valid.isValid) {
+            const response = await saveBuilderSubProject(submissionData);
+
+            if (response?.data) {
+               // history.push(-1);
+               // fetchProjectId(response?.data?.resourceData);
+
+            } else {
+               const responseError = response?.data?.error || "Unknown error occurred";
+               setError(responseError);
+               console.error("Error in response:", responseError);
+            }
+         } else {
+            return null;
+         }
+      } catch (error) {
+         console.error("Error submitting builder project:", error);
+         setError("An unexpected error occurred. Please try again.");
       }
-   }, []);
+   }
 
    return (
       <>
@@ -377,8 +489,8 @@ const AddNewSubProject = (props) => {
                               <TextField
                                  className="w-100 textFieldInput"
                                  select
-                                 name="subPostType"
-                                 value={data.subPostType}
+                                 name="propertyType"
+                                 value={data.propertyType}
                                  onChange={handleSubPostChange}
                                  label={"Property Type"}
                                  sx={{
@@ -405,9 +517,9 @@ const AddNewSubProject = (props) => {
                                  className="w-100 textFieldInput"
                                  type="text"
                                  label="Tower Name"
-                                 name="builderProjectSubPostName"
-                                 defaultValue={data.builderProjectSubPostName}
-                                 onInput={handleInputChange}
+                                 name="projectName"
+                                 value={data.projectName}
+                                 onChange={handleInputChange}
                               />
                            </Col>
                            <Col lg={4}>
@@ -416,8 +528,8 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Rera Number"
                                  name="reraNumber"
-                                 defaultValue={data.reraNumber}
-                                 onInput={handleInputChange}
+                                 value={data.reraNumber}
+                                 onChange={handleInputChange}
                               />
                            </Col>
                         </Row>
@@ -427,21 +539,21 @@ const AddNewSubProject = (props) => {
                                  className="w-100 textFieldInput"
                                  type="number"
                                  label="Total Area To Develop"
-                                 name="areaToDevelop"
-                                 defaultValue={data.areaToDevelop}
-                                 onInput={handleInputChange}
+                                 name="totalAreaToDevelop"
+                                 value={data.totalAreaToDevelop}
+                                 onChange={handleInputChange}
                                  InputProps={{
                                     endAdornment: <>
                                        <InputAdornment position="end" sx={{ marginLeft: "-97px" }} >
                                           <TextField
                                              className="textFieldInput w-100"
-                                             name="areaToDevelopMeasurementUnitEnteredByUser"
+                                             name="totalAreaMetrics"
                                              select
-                                             defaultValue={data.areaToDevelopMeasurementUnitEnteredByUser}
-                                             onInput={(e) => {
+                                             value={data.totalAreaMetrics}
+                                             onChange={(e) => {
                                                 setData((prevData) => ({
                                                    ...prevData,
-                                                   areaToDevelopMeasurementUnitEnteredByUser:
+                                                   totalAreaMetrics:
                                                       e.target.value,
                                                 }));
                                              }}
@@ -468,28 +580,28 @@ const AddNewSubProject = (props) => {
                               >
                               </TextField>
                            </Col>
-                           {data.subPostType === 'Tower' ?
+                           {data.propertyType === 'Tower' ?
                               <Col lg={4} className="mt-4">
                                  <TextField
                                     className="w-100 textFieldInput"
                                     type="number"
                                     label="Tower Floors"
                                     name="totalFloors"
-                                    defaultValue={data.totalFloors}
-                                    onInput={handleInputChange}
+                                    value={data.totalFloors}
+                                    onChange={handleInputChange}
                                  />
                               </Col>
                               : null
                            }
-                           {data.subPostType === 'Tower' ?
+                           {data.propertyType === 'Tower' ?
                               <Col lg={4} className="mt-4">
                                  <TextField
                                     className="w-100 textFieldInput"
                                     type="text"
                                     label="Units Per Floor"
                                     name="unitsPerFloor"
-                                    defaultValue={data.unitsPerFloor}
-                                    onInput={handleInputChange}
+                                    value={data.unitsPerFloor}
+                                    onChange={handleInputChange}
                                  />
                               </Col>
                               : null}
@@ -499,8 +611,8 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Highlights / USP"
                                  name="highlightsOrUsp"
-                                 defaultValue={data.highlightsOrUsp}
-                                 onInput={handleInputChange}
+                                 value={data.highlightsOrUsp}
+                                 onChange={handleInputChange}
                               />
                            </Col>
                            <Col lg="4" className="mt-4">
@@ -518,26 +630,24 @@ const AddNewSubProject = (props) => {
                                        maxHeight: "52px",
                                     },
                                  }}
-                                 defaultValue={data.selectedAmenity}
-                                 onInput={(e) => handleSelectChange(e)}
+                                 SelectProps={{
+                                    multiple: true,
+                                    renderValue: (selected) => selected.join(", ")
+                                 }}
+                                 value={data.amenities}
+                                 onChange={(e) => handleSelectChange(e)}
                               >
                                  <MenuItem value="" >
                                     Separate Amenities (Not compulsory)
                                  </MenuItem>
-                                 {data.builderProjectSubPostInfo.length > 0 ?
-                                    <>
-                                       {data.builderProjectSubPostInfo.map(
-                                          (amenity, index) => (
-                                             <MenuItem key={index} value={amenity}>
-                                                {amenity}
-                                             </MenuItem>
-                                          )
-                                       )}
-                                    </>
-                                    :
-                                    <MenuItem value="" disabled>
-                                       No amenities available
-                                    </MenuItem>}
+                                 {defaultAmenities?.map(
+                                    (amenity, index) => (
+                                       <MenuItem key={index} value={amenity}>
+                                          <Checkbox checked={data?.amenities?.includes(amenity)} />
+                                          <ListItemText primary={amenity} />
+                                       </MenuItem>
+                                    )
+                                 )}
                               </TextField>
                            </Col>
                            <Col lg={4} className="mt-4">
@@ -546,8 +656,8 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Contact Person Name"
                                  name="contactPersonName"
-                                 defaultValue={data.contactPersonName}
-                                 onInput={handleInputChange}
+                                 value={data.contactPersonName}
+                                 onChange={handleInputChange}
                               />
                            </Col>
                            <Col lg={4} className="mt-4">
@@ -571,8 +681,8 @@ const AddNewSubProject = (props) => {
                                        select
                                        label="Month"
                                        name="month"
-                                       defaultValue={monthYearFrom.month}
-                                       onInput={handleFromMonthChange}
+                                       value={monthYearFrom.month}
+                                       onChange={handleFromMonthChange}
                                        sx={{
                                           ".MuiInputBase-root": {
                                              display: "flex",
@@ -602,8 +712,8 @@ const AddNewSubProject = (props) => {
                                        select
                                        label="Year"
                                        name="year"
-                                       defaultValue={monthYearFrom.year}
-                                       onInput={handleFromYearChange}
+                                       value={monthYearFrom.year}
+                                       onChange={handleFromYearChange}
                                        sx={{
                                           ".MuiInputBase-root": {
                                              display: "flex",
@@ -637,8 +747,8 @@ const AddNewSubProject = (props) => {
                                        select
                                        label="Month"
                                        name="month"
-                                       defaultValue={monthYearTo.month}
-                                       onInput={handleToMonthChange}
+                                       value={monthYearTo.month}
+                                       onChange={handleToMonthChange}
                                        sx={{
                                           ".MuiInputBase-root": {
                                              display: "flex",
@@ -668,7 +778,7 @@ const AddNewSubProject = (props) => {
                                        select
                                        label="Year"
                                        name="year"
-                                       defaultValue={monthYearTo.year}
+                                       value={monthYearTo.year}
                                        onChange={handleToYearChange}
                                        sx={{
                                           ".MuiInputBase-root": {
@@ -714,12 +824,12 @@ const AddNewSubProject = (props) => {
                                  </div>
 
                                  {/* Display Image Previews */}
-                                 {(data?.builderProjectSubPostImages?.length > 0 ||
+                                 {(data?.projectImages?.length > 0 ||
                                     imagePreviews?.length > 0) && (
                                        <Row className="mt-2">
                                           {/* Combine and map images from both sources */}
                                           {[
-                                             ...(data?.builderProjectSubPostImages || []),
+                                             ...(data?.projectImages || []),
                                              ...(imagePreviews || []),
                                           ].map((image, index) => {
                                              return (
@@ -733,11 +843,7 @@ const AddNewSubProject = (props) => {
                                                       style={{ position: "relative" }}
                                                    >
                                                       <img
-                                                         src={
-                                                            image.docURL
-                                                               ? `${CONSTANTS.CONFIG_PROPERTY.s3Url}/${image.docURL}` // Use docURL if available
-                                                               : image.builderProjectImageAsBase64 // Fallback to base64 if docURL is not available
-                                                         }
+                                                         src={image.docURL}
                                                          alt={
                                                             image.docDescription || image.docName
                                                          } // Use description or name as alt text
@@ -793,7 +899,7 @@ const AddNewSubProject = (props) => {
                               </Form.Text>
                            </Col>
 
-                           <Col lg={4}>
+                           {/* <Col lg={4}>
                               <Form.Group
                                  controlId="formProjectVideo"
                                  className="mb-4 video-upload-container formProjectVideo"
@@ -808,13 +914,13 @@ const AddNewSubProject = (props) => {
                                        <Form.Control
                                           type="text"
                                           placeholder="Upload Videos"
-                                          name="newVideoUrl"
-                                          value={newVideoUrl}
+                                          name="projectVideoUrl"
+                                          value={data?.projectVideoUrl}
                                           onChange={handleInputChange}
                                           style={{ paddingRight: "2.5rem" }}
                                        />
-                                       {/* Show cross icon only if there is a value in the input */}
-                                       {newVideoUrl && ( // Change this line
+                                       
+                                       {data?.projectVideoUrl && ( // Change this line
                                           <TiTimes
                                              className="crossicon"
                                              onClick={clearInput}
@@ -828,88 +934,62 @@ const AddNewSubProject = (props) => {
                                              }}
                                           />
                                        )}
-                                       {/* Add video button */}
-                                       <IoIosAdd
-                                          size={32}
-                                          className="Plus-icon"
-                                          onClick={handleAddVideo}
-                                          style={{
-                                             cursor: "pointer",
-                                             marginLeft: "10px",
-                                             color: "#fff",
-                                             backgroundColor: "#BE1452",
-                                             padding: "5px",
-                                          }}
-                                       />
                                     </div>
 
-                                    {/* Display the list of videos below the input */}
-                                    {Array.isArray(data.builderProjectSubPostVideos) && (
+                                    {(data.projectVideoUrl) && (
                                        <Row className="video-preview-container d-flex">
-                                          {data.builderProjectSubPostVideos.map(
-                                             (video, index) => {
-                                                const embedUrl = getEmbedUrl(video.docURL); // Generate embed URL
-                                                return (
-                                                   embedUrl && (
-                                                      <div
-                                                         className="video-preview"
-                                                         style={{
-                                                            position: "relative",
-                                                            display: "inline-block",
-                                                            margin: "10px",
-                                                         }}
-                                                         key={index} // Add key prop
-                                                      >
-                                                         <iframe
-                                                            width="120"
-                                                            height="70"
-                                                            src={embedUrl}
-                                                            title={`Video thumbnail ${index + 1
-                                                               }`}
-                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                            allowFullScreen
-                                                            style={{
-                                                               borderRadius: "8px",
-                                                               border: "1px solid #ddd",
-                                                            }}
-                                                         ></iframe>
-                                                         <PiPlayCircleLight
-                                                            style={{
-                                                               position: "absolute",
-                                                               top: "50%",
-                                                               left: "50%",
-                                                               transform:
-                                                                  "translate(-50%, -50%)",
-                                                               color: "#fff",
-                                                               fontSize: "47px",
-                                                               cursor: "pointer",
-                                                            }}
-                                                            onClick={() =>
-                                                               handlePlayVideo(embedUrl)
-                                                            }
-                                                         />
-                                                         <RxCross2
-                                                            className="delete-icon"
-                                                            onClick={() =>
-                                                               handleDeleteVideo(index)
-                                                            }
-                                                            style={{
-                                                               position: "absolute",
-                                                               top: "-10px",
-                                                               right: "-10px",
-                                                               cursor: "pointer",
-                                                               color: "#fff",
-                                                               background: "#ff0000",
-                                                               borderRadius: "50%",
-                                                               padding: "3px",
-                                                               zIndex: 1,
-                                                            }}
-                                                         />
-                                                      </div>
-                                                   )
-                                                );
-                                             }
-                                          )}
+                                          <div
+                                             className="video-preview"
+                                             style={{
+                                                position: "relative",
+                                                display: "inline-block",
+                                                margin: "10px",
+                                             }}
+                                          >
+                                             <iframe
+                                                width="120"
+                                                height="70"
+                                                src={data.projectVideoUrl}
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                                style={{
+                                                   borderRadius: "8px",
+                                                   border: "1px solid #ddd",
+                                                }}
+                                             ></iframe>
+                                             <PiPlayCircleLight
+                                                style={{
+                                                   position: "absolute",
+                                                   top: "50%",
+                                                   left: "50%",
+                                                   transform:
+                                                      "translate(-50%, -50%)",
+                                                   color: "#fff",
+                                                   fontSize: "47px",
+                                                   cursor: "pointer",
+                                                }}
+                                                onClick={() =>
+                                                   handlePlayVideo(data?.projectVideoUrl)
+                                                }
+                                             />
+                                             <RxCross2
+                                                className="delete-icon"
+                                                onClick={() =>
+                                                   handleDeleteVideo()
+                                                }
+                                                style={{
+                                                   position: "absolute",
+                                                   top: "-10px",
+                                                   right: "-10px",
+                                                   cursor: "pointer",
+                                                   color: "#fff",
+                                                   background: "#ff0000",
+                                                   borderRadius: "50%",
+                                                   padding: "3px",
+                                                   zIndex: 1,
+                                                }}
+                                             />
+                                          </div>
                                        </Row>
                                     )}
                                     <Form.Text className="text-muted">
@@ -917,10 +997,10 @@ const AddNewSubProject = (props) => {
                                     </Form.Text>
                                  </div>
                               </Form.Group>
-                           </Col>
-
+                           </Col> */}
 
                         </Row>
+                        <Buttons name="Add Tower" varient="primary" onClick={() => { saveSubProjectDetails(); }} />
                         <hr className="p-0 w-100" />
                         {/* Tower */}
 
@@ -958,7 +1038,7 @@ const AddNewSubProject = (props) => {
                                  borderColor: "#DED6D9",
                               }}
                               onClick={() => {
-                                 if (data.subPostType !== null && data.subPostType.length !== 0) {
+                                 if (data.propertyType !== null && data.propertyType.length !== 0) {
                                     setShowMoreUnits(true);
                                     handleAddMoreUnit();
                                  } else {
@@ -1156,12 +1236,12 @@ const AddNewSubProject = (props) => {
                               className="mt-3 pl-1"
                               style={{ listStyle: "none", padding: 0 }}
                            >
-                              {selectedImages
-                                 .filter(
+                              {data?.projectImages
+                                 ?.filter(
                                     (image) =>
                                        image.docDescription === "Interior"
                                  )
-                                 .map((image, index) => (
+                                 ?.map((image, index) => (
                                     <li
                                        key={index}
                                        style={{
@@ -1204,12 +1284,12 @@ const AddNewSubProject = (props) => {
                               className="mt-3 pl-1"
                               style={{ listStyle: "none", padding: 0 }}
                            >
-                              {selectedImages
-                                 .filter(
+                              {data?.projectImages
+                                 ?.filter(
                                     (image) =>
                                        image.docDescription === "Exterior"
                                  )
-                                 .map((image, index) => (
+                                 ?.map((image, index) => (
                                     <li
                                        key={index}
                                        style={{

@@ -2203,9 +2203,21 @@ export const approveBuilderProfile = async (data) => {
 export const saveBuilderProject = async (data) => {
   const response = await mainApiService("saveBuilderProject", data);
   if (response.data && response.data.status === 200) {
-    showSuccessToast("Profile created successfully.");
+    showSuccessToast("Project created successfully.");
   } else if (response.data && response.data.status === 409)
-    showErrorToast("Builder already exist.");
+    showErrorToast("Project already exist.");
+  else if (response.data && response.data.status !== 409 && response.data.error) {
+    showErrorToast(response.data.error);
+  } else showErrorToast("Unexpected error. Please try again later");
+  return response;
+};
+
+export const saveBuilderSubProject = async (data) => {
+  const response = await mainApiService("saveBuilderSubProject", data);
+  if (response.data && response.data.status === 200) {
+    showSuccessToast("Sub Project created successfully.");
+  } else if (response.data && response.data.status === 409)
+    showErrorToast("Sub Project already exist.");
   else if (response.data && response.data.status !== 409 && response.data.error) {
     showErrorToast(response.data.error);
   } else showErrorToast("Unexpected error. Please try again later");

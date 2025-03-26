@@ -1399,11 +1399,11 @@ export const validateProjectDetails = (data) => {
   if(isBlank(data?.projectDescription)) {
     errors.projectDescription = true;
   }
-  if((data?.builderProjectGeneralAmenities?.length) < 0) {
-    errors.builderProjectGeneralAmenities = true;
+  if((data?.projectAmenities?.length) < 0) {
+    errors.projectAmenities = true;
   }
-  if(isBlank(data?.locality)) {
-    errors.locality = true;
+  if(isBlank(data?.projectAddress)) {
+    errors.projectAddress = true;
   }
   if(isBlank(data?.reraNumber)) {
     errors.reraNumber = true;
@@ -1421,12 +1421,67 @@ export const validateProjectDetails = (data) => {
   if((data?.projectImages?.length) < 0) {
     errors.projectImages = true;
   }
-  if((data?.projectVideos?.length) < 0) {
-    errors.projectVideos = true;
+  if(isBlank(data?.projectVideoUrl)) {
+    errors.projectVideoUrl = true;
   }
-  if((data?.projectLayout?.length) < 0) {
-    errors.projectLayout = true;
+  if((data?.brochureUrl?.length) < 0) {
+    errors.brochureUrl = true;
   }
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}
+
+export const validateSubProjectDetails = (data) => {
+  let errors = {};
+
+  if(isBlank(data?.projectName)) {
+    errors.projectName = true;
+  }
+  if(Number(data?.totalTowers) < 0) {
+    errors.totalTowers = true;
+  }
+  if(Number(data?.totalAreaToDevelop) < 0) {
+    errors.totalAreaToDevelop = true;
+  }
+  if(isBlank(data?.possessionFrom)) {
+    errors.possessionFrom = true;
+  }
+  if(isBlank(data?.possessionTo)) {
+    errors.possessionTo = true;
+  }
+  if(isBlank(data?.highlightsOrUsp)) {
+    errors.highlightsOrUsp = true;
+  }
+  if((data?.amenities?.length) < 0) {
+    errors.amenities = true;
+  }
+  // if(isBlank(data?.projectAddress)) {
+  //   errors.projectAddress = true;
+  // }
+  if(isBlank(data?.reraNumber)) {
+    errors.reraNumber = true;
+  }
+  if(isBlank(data?.contactPersonName)) {
+    errors.contactPersonName = true;
+  }
+  if(isBlank(data?.contactPersonNumber)) {
+    errors.contactPersonNumber = true;
+  } else {
+    if(data?.contactPersonNumber?.length !== 10) {
+      errors.contactPersonNumber = true;
+    }
+  }
+  if((data?.projectImages?.length) < 0) {
+    errors.projectImages = true;
+  }
+  // if(isBlank(data?.projectVideoUrl)) {
+  //   errors.projectVideoUrl = true;
+  // }
+  // if((data?.brochureUrl)) {
+  //   errors.brochureUrl = true;
+  // }
   return {
     errors,
     isValid: isEmpty(errors)

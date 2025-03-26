@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material'
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
 import React, { memo, useEffect, useState } from 'react'
 import ExpandIcon from '../../../../assets/images/expandIcon.png';
 import AddNewProjectPost from '../AddNewProjectPost/AddNewProjectPost';
@@ -9,27 +9,22 @@ import { Button, Col, Row } from 'react-bootstrap';
 import Image from '../../../../shared/Image';
 import addIcon from '../../../../assets/svg/add.svg';
 import closeBtn from '../../../../assets/images/closeBtn.png';
-import { fetchBuilderProjectList } from '../../../../common/redux/actions';
+import { fetchBuilderProjectById } from '../../../../common/redux/actions';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 
 const ProjectPosting = (props) => {
-    const { fetchBuilderProjectList } = props;
-    const [projectDetails, setProjectDetails] = useState(props?.location?.state?.projectDetails);
+    const [projectDetails, setProjectDetails] = useState({
+        builderProjectSearchDto: []
+    });
     const [subProjectList, setSubProjectList] = useState([]);
     const [projectId, setBuilderProjectId] = useState(props?.location?.state?.projectId || null);
     const builderId = props?.location?.state?.builderId;
 
     useEffect(() => {
-        console.log(props?.location?.state?.projectDetails)
-        // if (projectId !== null) {
-        //     const resp = fetchBuilderProjectList({
-        //         projectId: projectId,
-        //         builderId: builderId
-        //     });
-        //     setProjectDetails(resp?.data?.resourceData);
-        // }
-    }, []);
+        // console.log(props?.location?.state?.projectId)
+        
+    }, [projectId, builderId]);
 
     const addMoreTower = () => {
         const subProject1 = {};
@@ -45,6 +40,7 @@ const ProjectPosting = (props) => {
     }
 
     const getProjectId = (projectId) => {
+        console.log(projectId)
         setBuilderProjectId(projectId)
     }
 
@@ -70,7 +66,7 @@ const ProjectPosting = (props) => {
                         <Text className="page-title ml-3" text={'PROJECT DETAIL'} style={{ fontSize: '18px', fontWeight: '700', color: 'white' }}></Text>
                     </AccordionSummary>
                     <AccordionDetails>
-                        <AddNewProjectPost fetchProjectId={getProjectId} projectDetails={projectDetails?.builderProjectSearchDto[0] || null} />
+                        <AddNewProjectPost fetchProjectId={getProjectId} projectId={projectId} builderId={builderId} />
                     </AccordionDetails>
                 </Accordion>
 
@@ -103,7 +99,7 @@ const ProjectPosting = (props) => {
                                 </div>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <AddNewSubProject projectId={projectId} />
+                                <AddNewSubProject projectId={projectId} builderId={builderId} />
                             </AccordionDetails>
                         </Accordion>
                     </>
@@ -118,7 +114,7 @@ const ProjectPosting = (props) => {
                                     backgroundColor: "#F8F3F5",
                                     borderColor: "#DED6D9",
                                 }}
-                                disabled={projectId === null ? true : false}
+                                disabled={false}
                                 onClick={() => { addMoreTower() }} // Bind this function to handle the click
                             >
                                 <div
@@ -179,7 +175,7 @@ const mapStateToProps = ({ }) => ({
 
 });
 const actions = {
-    fetchBuilderProjectList,
+    fetchBuilderProjectById,
 };
 const withConnect = connect(mapStateToProps, actions);
 

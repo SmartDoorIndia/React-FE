@@ -1,13 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Col, Row } from 'react-bootstrap';
 import ImageSliderComponent from "../../../../../shared/ImageSliderComp/ImageSliderComponent";
 import Text from '../../../../../shared/Text/Text';
 import MapComponent from "../../../../../shared/Map/MapComponent";
+import Buttons from '../../../../../shared/Buttons/Buttons';
+import AddNewProjectPost from '../../AddNewProjectPost/AddNewProjectPost';
 
 const ProjectDetails = (props) => {
+    const {handleProjectEdit} = props;
+    const projectDetails = (props?.projectDetails);
+    const [editProjectFlag, setEditProjectFlag] = useState(false);
 
-    const projectDetails = props?.projectDetails;
-    console.log(projectDetails)
+    console.log(props)
+
+    const handleShowProjectPost = () => {
+        setEditProjectFlag(false);
+        console.log("Calling parent function..."); // Debugging
+        handleProjectEdit();  // This calls the function in the parent component
+    };
+      
     return (
         <>
             <Row>
@@ -52,7 +63,7 @@ const ProjectDetails = (props) => {
                         <Col lg={6}>
                             <div className='mt-3'>
                                 <Text text={"General Amenities"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={"12"} style={{ fontSize: '14px', fontWeight: '500' }} />
+                                <Text text={projectDetails?.projectAmenities} style={{ fontSize: '14px', fontWeight: '500' }} />
                             </div>
                             <div className='mt-2'>
                                 <Text text={"Land Area"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
@@ -86,6 +97,18 @@ const ProjectDetails = (props) => {
                     <Text text={projectDetails?.propertyDescription} style={{ fontSize: '14px', fontWeight: '500' }} />
                 </div>
             </div>
+            <div>
+                <Buttons name="Edit" onClick={() => { setEditProjectFlag(true); }} />
+            </div>
+            {editProjectFlag &&
+                <>
+                    <AddNewProjectPost 
+                    projectDetails={projectDetails} 
+                    editProject={true} 
+                    builderId={props?.builderId}
+                    showEditProject={handleShowProjectPost} />
+                </>
+            }
         </>
     )
 }

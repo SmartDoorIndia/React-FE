@@ -16,6 +16,7 @@ import {
    deleteBuilderProjectById,
    getSmartDoorServiceStatus,
    uploadImage,
+   fetchBuilderProjectById,
 } from "../../../../common/redux/actions";
 import Text from "../../../../shared/Text/Text";
 import MapComponent from "../../../../shared/Map/MapComponent";
@@ -28,7 +29,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { validateProjectDetails } from "../../../../common/validations";
 
 const AddNewProjectPost = (props) => {
-   const { fetchProjectId, projectDetails } = props
+   const { fetchProjectId, projectId, builderId, showEditProject } = props
 
    const fileInputRef = useRef();
    const currentYear = new Date().getFullYear();
@@ -36,12 +37,10 @@ const AddNewProjectPost = (props) => {
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
-   const [selectedAmenities, setSelectedAmenities] = useState("");
-   const [showDropdown, setShowDropdown] = useState(false);
    const [data, setData] = useState({
-      projectId: null,
+      builderId: builderId,
+      projectId: projectId || null,
       userId: null,
-      builderId: null,
       projectName: "",
       totalTowers: null,
       landArea: null,
@@ -52,23 +51,18 @@ const AddNewProjectPost = (props) => {
       projectDescription: "",
       latitude: 0.0,
       longitude: 0.0,
-      generalAmenities: [],
+      projectAmenities: [],
       city: "",
       state: "",
-      locality: "",
+      projectAddress: "",
       country: null,
       cityLat: 0.0,
       cityLong: 0.0,
       contactPersonName: '',
       contactPersonNumber: '',
       projectImages: [],
-      projectVideos: [{
-         docDescription: '',
-         docId: 0,
-         docName: "",
-         docURL:""
-      }],
-      projectLayout: [],
+      projectVideoUrl: "",
+      brochureUrl: "",
       reraNumber: ''
    });
    const defaultAmenities = [
@@ -93,7 +87,40 @@ const AddNewProjectPost = (props) => {
    const history = useHistory();
 
    useEffect(() => {
-      console.log(props?.projectDetails)
+      console.log(props)
+      if (props?.editProject === true) {
+         setData({ ...props?.projectDetails, builderId: props?.builderId })
+         const possessionFrom = props?.projectDetails?.possessionFrom;
+         const date = new Date(possessionFrom);
+
+         setMonthYearFrom({
+            month: date.toLocaleString("en-US", { month: "long" }),
+            year: date.getFullYear()
+         });
+
+         const possessionTo = props?.projectDetails?.possessionTo;
+         const dateTo = new Date(possessionTo);
+         setMonthYearTo({
+            month: dateTo.toLocaleString("en-US", { month: "long" }),
+            year: dateTo.getFullYear()
+         })
+         let projectImageList = props?.projectDetails?.projectImages;
+         let imageList = []
+         projectImageList.forEach((image, index) => {
+            let imageDto = {
+               docId: '',
+               docName: '',
+               docDescription: '',
+               docOrderInFrontendView: index + 1,
+               docURL: image
+            }
+            imageList.push(imageDto);
+         });
+         setData((prevData) => ({ ...prevData, projectImages: imageList, openAreaPerc: props?.projectDetails?.openAreaPercent }))
+         if (props?.projectDetails?.projectAmenities === null) {
+            setData((prevData) => ({ ...prevData, projectAmenities: [] }))
+         }
+      }
    }, []);
 
    const handleCheckboxChange = (event) => {
@@ -101,35 +128,12 @@ const AddNewProjectPost = (props) => {
 
       setData((prevData) => ({
          ...prevData,
-         generalAmenities: value, // Set the new selected values
+         projectAmenities: value, // Set the new selected values
       }));
-   };
-
-
-
-   const handleInputChange = (event) => {
-      const { name, value, type, options } = event.target;
-
-      if (type === "select" && options) {
-         const selectedValues = Array.from(options)
-            .filter((option) => option.selected)
-            .map((option) => option.value);
-
-         setData((prevData) => ({
-            ...prevData,
-            [name]: selectedValues,
-         }));
-      } else {
-         setData((prevData) => ({
-            ...prevData,
-            [name]: value || "",
-         }));
-      }
    };
 
    const handleFileChange = (e, description) => {
       const files = Array.from(e.target.files);
-      const newImages = [];
 
       if (files.length > 0) {
          let formData = new FormData();
@@ -168,20 +172,20 @@ const AddNewProjectPost = (props) => {
                         projectImages: [...projectImage],
                      }));
                   } else {
-                     let projectLayout = [];
-                     for (let i = 0; i < response.data.resourceData.length; i++) {
-                        projectLayout.push({
-                           docId: 0,
-                           docName: "",
-                           docDescription: "",
-                           docOrderInFrontendView: i,
-                           docURL: response.data.resourceData[i],
-                        });
-                     }
-                     console.log(projectLayout)
+                     // let brochureUrl = [];
+                     // for (let i = 0; i < response.data.resourceData.length; i++) {
+                     //    brochureUrl.push({
+                     //       docId: 0,
+                     //       docName: "",
+                     //       docDescription: "",
+                     //       docOrderInFrontendView: i,
+                     //       docURL: response.data.resourceData[i],
+                     //    });
+                     // }
+                     // console.log(brochureUrl)
                      setData((prevData) => ({
                         ...prevData,
-                        projectLayout: [...projectLayout],
+                        brochureUrl: response.data.resourceData[0],
                      }));
                   }
                   showSuccessToast(response.data.customMessage)
@@ -194,39 +198,40 @@ const AddNewProjectPost = (props) => {
    };
 
    const handleDeleteImage = (index, description) => {
-      setData((prevData) => ({
-         ...prevData,
-         projectImages: prevData.projectImages
-            .filter((image) => image.docDescription === description)
-            .filter((_, i) => i !== index)
-            .concat(
-               prevData.projectImages.filter((image) => image.docDescription !== description)
-            ),
-      }));
+      if (description === 'brochureUrl') {
+         setData((prevData) => ({
+            ...prevData,
+            brochureUrl: ''
+         }))
+      } else {
+         setData((prevData) => ({
+            ...prevData,
+            projectImages: prevData.projectImages.filter((_, i) => i !== index)
+         }));
+      }
    };
 
    const clearInput = () => {
       setData(prevData => ({
          ...prevData,
-         projectVideos: prevData.projectVideos.map((video, index) =>
-            index === 0 ? { ...video, docURL: "" } : video
-         )
-      }));
-   };
+         projectVideoUrl: ""
+      }))
+   }
+
    const handleAddVideo = () => {
       if (data.newVideoUrl) {
          const newVideo = {
             docId: null,
             docName: data.docName || "New Video",
             docDescription: "Description here",
-            docOrderInFrontendView: data.projectVideos.length + 1,
+            docOrderInFrontendView: data.projectVideoUrl.length + 1,
             docURL: data.newVideoUrl,
             builderProjectImageAsBase64: null,
          };
 
          setData((prevData) => ({
             ...prevData,
-            projectVideos: [...prevData.projectVideos, newVideo],
+            projectVideoUrl: [...prevData.projectVideoUrl, newVideo],
             newVideoUrl: "",
          }));
       }
@@ -249,11 +254,11 @@ const AddNewProjectPost = (props) => {
    const handleDeleteVideo = (index) => {
       console.log("Deleting video at index:", index);
       setData((prevData) => {
-         const updatedVideos = prevData.projectVideos.filter((_, i) => i !== index);
+         const updatedVideos = prevData.projectVideoUrl.filter((_, i) => i !== index);
          console.log("Updated videos:", updatedVideos);
          return {
             ...prevData,
-            projectVideos: updatedVideos,
+            projectVideoUrl: updatedVideos,
             newVideoUrl: "",
          };
       });
@@ -265,8 +270,6 @@ const AddNewProjectPost = (props) => {
       try {
          const submissionData = {
             ...data,
-            selectedAmenities,
-            builderId: 1,
          };
 
          const valid = await validateProjectDetails(submissionData);
@@ -278,7 +281,9 @@ const AddNewProjectPost = (props) => {
             if (response?.data) {
                // history.push(-1);
                fetchProjectId(response?.data?.resourceData);
-
+               if (props?.editProject) {
+                  showEditProject();
+               }
             } else {
                const responseError = response?.data?.error || "Unknown error occurred";
                setError(responseError);
@@ -306,7 +311,7 @@ const AddNewProjectPost = (props) => {
       if (monthYearFrom.month && monthYearFrom.year) {
          setData((prevData) => ({
             ...prevData,
-            possessionFrom: `${monthYearFrom.month}-${monthYearFrom.year}`, // Save in the desired format
+            possessionFrom: `${monthYearFrom.year}-${monthYearFrom.month}-01`, // Save in the desired format
          }));
       }
    }, [monthYearFrom]);
@@ -315,12 +320,13 @@ const AddNewProjectPost = (props) => {
       if (monthYearTo.month && monthYearTo.year) {
          setData((prevData) => ({
             ...prevData,
-            possessionTo: `${monthYearTo.month}-${monthYearTo.year}`, // Save in the desired format
+            possessionTo: `${monthYearTo.year}-${monthYearTo.month}-01`, // Save in the desired format
          }));
       }
    }, [monthYearTo]);
 
    const handleFromMonthChange = (e) => {
+      console.log(e)
       setMonthYearFrom((prev) => ({ ...prev, month: e.target.value }));
    };
 
@@ -389,16 +395,18 @@ const AddNewProjectPost = (props) => {
    const handleLatLngChanged = async () => {
       let newData = { ...data };
       const location = { lat: data.latitude, lng: data.longitude };
-      console.log(data)
+      // console.log(data)
       const res = await geocodeByLatLng(location);
       const m_address = await mapAddressComponents(res[0].address_components);
       if (m_address?.sublocality_level_1.length !== 0 && m_address?.locality.length !== 0 && m_address?.administrative_area_level_3.length !== 0 && m_address?.state.length !== 0) {
          newData.city = m_address?.locality;
          newData.locality = m_address?.sublocality_level_1;
+         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + m_address.postal_code;
          newData.zipCode = m_address?.postal_code;
          newData.state = m_address?.state;
          newData.country = m_address?.country;
       }
+      console.log(m_address)
       let reqData = {
          sublocality_level_1: m_address?.sublocality_level_1,
          cityName: m_address?.locality,
@@ -406,12 +414,12 @@ const AddNewProjectPost = (props) => {
          latitude: data.latitude,
          longitude: data.longitude,
       }
-      const responseData = await getSmartDoorServiceStatus(reqData);
-      if (responseData.status === 200) {
-         console.log(responseData)
-         // setSDIconFlag(responseData.data.resourceData.serviceStatus)
-         newData.city = responseData.data.resourceData.cityName;
-      }
+      // const responseData = await getSmartDoorServiceStatus(reqData);
+      // if (responseData.status === 200) {
+      //    // console.log(responseData)
+      //    // setSDIconFlag(responseData.data.resourceData.serviceStatus)
+      //    newData.city = responseData.data.resourceData.cityName;
+      // }
       const response = await geocodeByAddress(newData.city);
       const latFunction = response[0].geometry.location.lat;
       const eLat = latFunction();
@@ -444,6 +452,7 @@ const AddNewProjectPost = (props) => {
       if (m_address.sublocality_level_1.length !== 0 && m_address.locality.length !== 0 && m_address.administrative_area_level_3.length !== 0 && m_address.state.length !== 0) {
          newData.city = m_address.locality;
          newData.locality = m_address.sublocality_level_1;
+         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + m_address.postal_code;
          newData.zipCode = m_address.postal_code;
          newData.state = m_address.state;
          newData.country = m_address.country;
@@ -455,12 +464,12 @@ const AddNewProjectPost = (props) => {
          latitude: e.lat,
          longitude: e.lng,
       }
-      const responseData = await getSmartDoorServiceStatus(reqData);
-      if (responseData.status === 200) {
-         console.log(responseData)
-         // setSDIconFlag(responseData.data.resourceData.serviceStatus)
-         newData.city = responseData.data.resourceData.cityName;
-      }
+      // const responseData = await getSmartDoorServiceStatus(reqData);
+      // if (responseData.status === 200) {
+      //    console.log(responseData)
+      //    // setSDIconFlag(responseData.data.resourceData.serviceStatus)
+      //    newData.city = responseData.data.resourceData.cityName;
+      // }
       const response = await geocodeByAddress(newData.city);
       const latFunction = response[0].geometry.location.lat;
       const eLat = latFunction();
@@ -484,6 +493,7 @@ const AddNewProjectPost = (props) => {
       if (m_address?.sublocality_level_1.length !== 0 && m_address?.locality.length !== 0 && m_address?.administrative_area_level_3.length !== 0 && m_address?.state.length !== 0) {
          newData.city = m_address?.locality;
          newData.locality = m_address?.sublocality_level_1;
+         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + m_address.postal_code;
          newData.zipCode = m_address?.postal_code;
          newData.state = m_address?.state;
          newData.country = m_address?.country;
@@ -495,12 +505,12 @@ const AddNewProjectPost = (props) => {
          latitude: latLng.latitude,
          longitude: latLng.longitude,
       }
-      const responseData = await getSmartDoorServiceStatus(reqData);
-      if (responseData.status === 200) {
-         console.log(responseData)
-         // setSDIconFlag(responseData.data.resourceData.serviceStatus)
-         newData.city = responseData.data.resourceData.cityName;
-      }
+      // const responseData = await getSmartDoorServiceStatus(reqData);
+      // if (responseData.status === 200) {
+      //    console.log(responseData)
+      //    // setSDIconFlag(responseData.data.resourceData.serviceStatus)
+      //    newData.city = responseData.data.resourceData.cityName;
+      // }
       const response = await geocodeByAddress(newData.city);
       const latFunction = response[0].geometry.location.lat;
       const eLat = latFunction();
@@ -534,6 +544,7 @@ const AddNewProjectPost = (props) => {
       if (m_address.sublocality_level_1.length !== 0 && m_address.locality.length !== 0 && m_address.administrative_area_level_3.length !== 0 && m_address.state.length !== 0) {
          newData.city = m_address.locality;
          newData.locality = m_address.sublocality_level_1;
+         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + m_address.postal_code;
          newData.zipCode = m_address.postal_code;
          newData.state = m_address.state;
          newData.country = m_address.country;
@@ -545,12 +556,12 @@ const AddNewProjectPost = (props) => {
          latitude: e.latlng.lat,
          longitude: e.latlng.lng,
       }
-      const responseData = await getSmartDoorServiceStatus(reqData);
-      if (responseData.status === 200) {
-         console.log(responseData)
-         // setSDIconFlag(responseData.data.resourceData.serviceStatus)
-         newData.city = responseData.data.resourceData.cityName;
-      }
+      // const responseData = await getSmartDoorServiceStatus(reqData);
+      // if (responseData.status === 200) {
+      //    console.log(responseData)
+      //    // setSDIconFlag(responseData.data.resourceData.serviceStatus)
+      //    newData.city = responseData.data.resourceData.cityName;
+      // }
 
       const response = await geocodeByAddress(newData.city, m_address.state);
       const latFunction = response[0].geometry.location.lat;
@@ -594,10 +605,10 @@ const AddNewProjectPost = (props) => {
                               id="PropertyCityAutoComplete"
                               onSelectOption={(e) => { handleSelectLocalityOption(e) }}
                               onInputChange={(value) =>
-                                 setData({ ...data, locality: value })
+                                 setData({ ...data, projectAddress: value })
                               }
                               predictionType="business"
-                              customValue={data.locality}
+                              customValue={data?.projectAddress}
                               useCurrentLocation={() => setCurrentLocation()}
                            />
 
@@ -615,8 +626,8 @@ const AddNewProjectPost = (props) => {
                               >
                                  <MapComponent
                                     height={'260px'}
-                                    p_lat={data.latitude}
-                                    p_lng={data.longitude}
+                                    p_lat={data?.latitude}
+                                    p_lng={data?.longitude}
                                     style={{
                                        height: "260px",
                                        width: "100%",
@@ -631,8 +642,8 @@ const AddNewProjectPost = (props) => {
                            {/* Map Footer */}
                         </div>
                         <div className="map-footer" style={{ padding: "10px 10px" }}>
-                           {data.locality
-                              ? `${data.locality}, ${data.city}, ${data.state}`
+                           {data?.projectAddress
+                              ? `${data?.projectAddress}`
                               : "Location not available"}
                         </div>
                      </div>
@@ -645,7 +656,7 @@ const AddNewProjectPost = (props) => {
                               className="mt-4 w-100 textFieldInput"
                               label='Project Name'
                               id='projectName'
-                              value={data.projectName}
+                              value={data?.projectName}
                               onChange={(e) => { setData({ ...data, projectName: e?.target.value }) }}
                            />
                         </Col>
@@ -654,12 +665,13 @@ const AddNewProjectPost = (props) => {
                               select
                               className="mt-4 w-100 textFieldInput p-0"
                               label="General Amenities"
-                              id="generalAmenities"
-                              value={data?.generalAmenities} // Controlled component
-                              onChange={handleCheckboxChange} // Now works correctly with multiple select
+                              id="projectAmenities"
+                              name="projectAmenities"
+                              value={data?.projectAmenities}
+                              onChange={handleCheckboxChange}
                               SelectProps={{
                                  multiple: true,
-                                 renderValue: (selected) => selected.join(", "), // Display selected values as comma-separated
+                                 renderValue: (selected) => selected.join(", ")
                               }}
                               variant="outlined"
                               sx={{
@@ -677,7 +689,7 @@ const AddNewProjectPost = (props) => {
                            >
                               {defaultAmenities?.map((amenity, index) => (
                                  <MenuItem key={index} value={amenity}>
-                                    <Checkbox checked={data?.generalAmenities?.includes(amenity)} />
+                                    <Checkbox checked={data?.projectAmenities?.includes(amenity)} />
                                     <ListItemText primary={amenity} />
                                  </MenuItem>
                               ))}
@@ -691,7 +703,7 @@ const AddNewProjectPost = (props) => {
                               type="number"
                               label='Total Tower / Plotted Planned'
                               id='totalTowers'
-                              value={data.totalTowers}
+                              value={data?.totalTowers}
                               onChange={(e) => { setData({ ...data, totalTowers: e?.target.value }) }}
                            />
                         </Col>
@@ -701,7 +713,7 @@ const AddNewProjectPost = (props) => {
                               type="number"
                               label='Land Area'
                               id='landArea'
-                              value={data.landArea}
+                              value={data?.landArea}
                               onChange={(e) => { setData({ ...data, landArea: e?.target.value }) }}
                               InputProps={{
                                  endAdornment: <>
@@ -723,7 +735,7 @@ const AddNewProjectPost = (props) => {
                               type="number"
                               label='Total Area to Develop'
                               id='totalAreaToDevelop'
-                              value={data.totalAreaToDevelop}
+                              value={data?.totalAreaToDevelop}
                               onChange={(e) => { setData({ ...data, totalAreaToDevelop: e?.target.value }) }}
                               InputProps={{
                                  endAdornment: <>
@@ -743,7 +755,7 @@ const AddNewProjectPost = (props) => {
                               type="number"
                               label='Open Area'
                               id='openAreaPerc'
-                              value={data.openAreaPerc}
+                              value={data?.openAreaPerc}
                               onChange={(e) => { setData({ ...data, openAreaPerc: e?.target.value }) }}
                               InputProps={{
                                  endAdornment: <>
@@ -867,7 +879,7 @@ const AddNewProjectPost = (props) => {
                               onChange={(e) => {
                                  setData({ ...data, latitude: Number(e.target.value) });
                               }}
-                              value={data.latitude}
+                              value={data?.latitude}
                            />
                         </Col>
                         <Col lg={4}>
@@ -878,12 +890,12 @@ const AddNewProjectPost = (props) => {
                               onChange={(e) => {
                                  setData({ ...data, longitude: Number(e.target.value) });
                               }}
-                              value={data.longitude}
+                              value={data?.longitude}
                            />
                         </Col>
                         <Col lg={4}>
                            <Buttons className='mt-2' name='Update location' varient='primary' onClick={() => {
-                              if (data.latitude !== 0 && data.longitude !== 0) {
+                              if (data?.latitude !== 0 && data?.longitude !== 0) {
                                  handleLatLngChanged();
                               }
                            }} />
@@ -898,7 +910,7 @@ const AddNewProjectPost = (props) => {
                         type="text"
                         className="textFieldInput w-100"
                         label="Contact Person Name"
-                        value={data.contactPersonName}
+                        value={data?.contactPersonName}
                         onChange={(e) => setData({ ...data, contactPersonName: e?.target.value })}
                      />
                   </Col>
@@ -909,7 +921,7 @@ const AddNewProjectPost = (props) => {
                         inputProps={{ min: 0 }}
                         className="textFieldInput w-100"
                         label="Phone Number"
-                        value={data.contactPersonNumber}
+                        value={data?.contactPersonNumber}
                         onChange={(e) => {
                            const mobileNum = handlePhoneChange(e);
                            setData({ ...data, contactPersonNumber: mobileNum })
@@ -923,7 +935,7 @@ const AddNewProjectPost = (props) => {
                         inputProps={{ min: 0 }}
                         className="textFieldInput w-100"
                         label="Rera Number"
-                        value={data.reraNumber}
+                        value={data?.reraNumber}
                         onChange={(e) => {
                            setData({ ...data, reraNumber: e?.target?.value })
                         }}
@@ -935,7 +947,7 @@ const AddNewProjectPost = (props) => {
                         className="textFieldInput w-100"
                         type="text"
                         label="Project Description"
-                        value={data.projectDescription}
+                        value={data?.projectDescription}
                         onChange={(e) => { setData({ ...data, projectDescription: e?.target.value }) }}
                      />
                   </Col>
@@ -956,7 +968,7 @@ const AddNewProjectPost = (props) => {
                                  type="file"
                                  className="upload-input"
                                  accept="image/*"
-                                 multiple // Allow multiple files to be selected
+                                 multiple
                                  onChange={(e) => handleFileChange(e, "PROJECT_IMAGES")}
                                  ref={fileInputRef}
                               />
@@ -1015,7 +1027,7 @@ const AddNewProjectPost = (props) => {
                         controlId="formProjectLayout"
                         className="mb-4 formProjectLayout"
                      >
-                        <span>Project Layout</span>
+                        <span>Brochure URL</span>
 
                         <div className="image-upload mt-2">
                            <label htmlFor="upload-project-layout" className="upload-label">
@@ -1025,14 +1037,14 @@ const AddNewProjectPost = (props) => {
                                  type="file"
                                  className="upload-input"
                                  accept="image/*"
-                                 multiple // Allow multiple files to be selected
+                                 multiple
                                  onChange={(e) => handleFileChange(e, "PROJECT_LAYOUT")}
                                  ref={fileInputRef}
                               />
-                              <span>Upload Layout</span>
+                              <span>Upload Brochure URL</span>
                            </label>
                            <div className="d-flex flex-wrap mt-2 justify-content-center">
-                              {data?.projectImages
+                              {/* {data?.projectImages
                                  ?.filter((image) => image.docDescription === "project layout")
                                  ?.map((image, index) => (
                                     <div
@@ -1066,7 +1078,35 @@ const AddNewProjectPost = (props) => {
                                           }}
                                        />
                                     </div>
-                                 ))}
+                                 ))} */}
+                              <div
+                                 className="project-images mt-3"
+                                 style={{ position: "relative", marginRight: "10px" }}
+                              >
+                                 <img
+                                    src={
+                                       data?.brochureUrl
+                                    }
+                                    alt={""} // Ensure alt text is appropriate for accessibility
+                                    className="img-fluid"
+                                    style={{ maxWidth: "115px" }}
+                                 />
+                                 <RxCross2
+                                    className="delete-icon"
+                                    onClick={() =>
+                                       handleDeleteImage(null, "brochureUrl")
+                                    }
+                                    style={{
+                                       position: "absolute",
+                                       top: "-5px",
+                                       right: "-4px",
+                                       cursor: "pointer",
+                                       color: "#fff",
+                                       background: "#ff0000",
+                                       borderRadius: "50%",
+                                    }}
+                                 />
+                              </div>
                            </div>
                            <Form.Text className="text-muted">
                               File should be 5MB(max) in png, jpg, etc.
@@ -1091,18 +1131,16 @@ const AddNewProjectPost = (props) => {
                                  type="text"
                                  placeholder="Upload Video"
                                  name="newVideoUrl" // Changed to newVideoUrl
-                                 value={data?.projectVideos[0]?.docURL || ''} // Use newVideoUrl for the input value
+                                 value={data?.projectVideoUrl || ''} // Use newVideoUrl for the input value
                                  onChange={(e) => {
                                     setData(prevData => ({
                                        ...prevData,
-                                       projectVideos: prevData.projectVideos.map((video, index) =>
-                                          index === 0 ? { ...video, docURL: e.target.value } : video
-                                       )
+                                       projectVideoUrl: e?.target?.value
                                     }));
                                  }}
                                  style={{ paddingRight: "2.5rem" }}
                               />
-                              {data?.projectVideos[0]?.docURL && (
+                              {data?.projectVideoUrl && (
                                  <TiTimes
                                     className="crossicon"
                                     onClick={clearInput}
@@ -1132,62 +1170,59 @@ const AddNewProjectPost = (props) => {
                            {/* Display the list of videos below the input */}
 
                            <Row>
-                              {(data.projectVideos || []).map((video, index) => {
-                                 const embedUrl = getEmbedUrl(video.docURL); // Get embed URL
-                                 return (
-                                    embedUrl && (
-                                       <Col lg="6" key={index}>
-                                          <div
-                                             className="video-preview"
+                              {data?.projectVideoUrl && (
+                                 <>
+                                    <Col lg="6">
+                                       <div
+                                          className="video-preview"
+                                          style={{
+                                             position: "relative",
+                                             display: "inline-block",
+                                             margin: "10px",
+                                          }}
+                                       >
+                                          <iframe
+                                             width="120"
+                                             height="70"
+                                             src={data?.projectVideoUrl}
+                                             title={`Video thumbnail`}
+                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                             allowFullScreen
                                              style={{
-                                                position: "relative",
-                                                display: "inline-block",
-                                                margin: "10px",
+                                                borderRadius: "8px",
+                                                border: "1px solid #ddd",
                                              }}
-                                          >
-                                             <iframe
-                                                width="120"
-                                                height="70"
-                                                src={embedUrl}
-                                                title={`Video thumbnail ${index + 1}`}
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                                style={{
-                                                   borderRadius: "8px",
-                                                   border: "1px solid #ddd",
-                                                }}
-                                             ></iframe>
-                                             <PiPlayCircleLight
-                                                style={{
-                                                   position: "absolute",
-                                                   top: "50%",
-                                                   left: "50%",
-                                                   transform: "translate(-50%, -50%)",
-                                                   color: "#fff",
-                                                   fontSize: "47px",
-                                                   cursor: "pointer",
-                                                }}
-                                             />
-                                             <RxCross2
-                                                className="delete-icon"
-                                                onClick={() => handleDeleteVideo(index)}
-                                                style={{
-                                                   position: "absolute",
-                                                   top: "-10px",
-                                                   right: "-10px",
-                                                   cursor: "pointer",
-                                                   color: "#fff",
-                                                   background: "#ff0000",
-                                                   borderRadius: "50%",
-                                                   padding: "3px",
-                                                   zIndex: 1, // Ensure the icon is on top of other content
-                                                }}
-                                             />
-                                          </div>
-                                       </Col>
-                                    )
-                                 );
-                              })}
+                                          ></iframe>
+                                          <PiPlayCircleLight
+                                             style={{
+                                                position: "absolute",
+                                                top: "50%",
+                                                left: "50%",
+                                                transform: "translate(-50%, -50%)",
+                                                color: "#fff",
+                                                fontSize: "47px",
+                                                cursor: "pointer",
+                                             }}
+                                          />
+                                          <RxCross2
+                                             className="delete-icon"
+                                             onClick={() => handleDeleteVideo()}
+                                             style={{
+                                                position: "absolute",
+                                                top: "-10px",
+                                                right: "-10px",
+                                                cursor: "pointer",
+                                                color: "#fff",
+                                                background: "#ff0000",
+                                                borderRadius: "50%",
+                                                padding: "3px",
+                                                zIndex: 1, // Ensure the icon is on top of other content
+                                             }}
+                                          />
+                                       </div>
+                                    </Col>
+                                 </>
+                              )}
                            </Row>
 
                            <Form.Text className="text-muted">
@@ -1214,7 +1249,7 @@ const AddNewProjectPost = (props) => {
                      className=" btn-small submit-btn"
                      onClick={() => { handleSubmit(); }}
                   >
-                     Save & Add Tower/Plotted
+                     {props?.editProject === true ? "Save" : "Save & Add Tower/Plotted"}
                   </button>
                </div>
                {/* </form> */}
