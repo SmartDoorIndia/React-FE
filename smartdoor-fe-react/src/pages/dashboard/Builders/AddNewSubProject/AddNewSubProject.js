@@ -67,7 +67,7 @@ const AddNewSubProject = (props) => {
       projectImages: [],
    });
 
-   const measurementUnits = ["Sq. Ft", "Sq. Mt.", "Sq. Yd."];
+   const measurementUnits = ["Sq. Ft.", "Sq. Mt.", "Sq. Yd."];
 
    const defaultSubpost = ["Tower", "Plotted"];
    const defaultAmenities = [
