@@ -2224,6 +2224,18 @@ export const saveBuilderSubProject = async (data) => {
   return response;
 };
 
+export const saveBuilderSubProjectUnits = async (data) => {
+  const response = await mainApiService("saveBuilderSubProjectUnits", data);
+  if (response.data && response.data.status === 200) {
+    showSuccessToast("Sub Project unit created successfully.");
+  } else if (response.data && response.data.status === 409)
+    showErrorToast("Sub Project already exist.");
+  else if (response.data && response.data.status !== 409 && response.data.error) {
+    showErrorToast(response.data.error);
+  } else showErrorToast("Unexpected error. Please try again later");
+  return response;
+};
+
 export const createBuilderProfileDetail = async (data) => {
   const response = await mainApiService("createBuilderProfileDetail", data);
   if (response.data && response.data.status === 200) {

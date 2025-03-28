@@ -61,8 +61,7 @@ const AddNewSubProject = (props) => {
       totalFloors: null,
       unitsPerFloor: null,
       amenities: [],
-      builderProjectSubPostInfo: [],
-      builderProjectSubPostProperties: [],
+      properties: [],
       projectVideoUrl: '',
       projectImages: [],
    });
@@ -380,67 +379,31 @@ const AddNewSubProject = (props) => {
    };
 
    const handleRemoveUnit = (index) => {
-      let units = data.builderProjectSubPostProperties;
+
+      let units = data.properties;
       units.splice(index);
       setData((prevData) => ({
          ...prevData,
-         builderProjectSubPostProperties: units
+         properties: units
       }))
    };
 
    const handleAddMoreUnit = () => {
       const newUnit = {
-         configuration: 'BHK',
-         propertyImageList: [],
-         propertyId: null,
-         numberOfRooms: null,
-         propertyRoomCompositionType: "",
-         propertySubType: "",
-         totalProjectUnits: null,
-         minPlotArea: null,
-         maxPlotArea: null,
-         plotAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-         minCarpetArea: null,
-         maxCarpetArea: null,
-         carpetAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-         minBuiltUpArea: null,
-         maxBuiltUpArea: null,
-         builtUpAreaMeasurementUnitEnteredByUser: "Sq. Mt.",
-         comments: "",
-         minPrice: null,
-         maxPrice: null,
-         propertyVideos: [
-            {
-               docId: null,
-               docName: "",
-               docURL: "",
-               docOrderInFrontendView: null,
-               docDescription: "",
-               builderProjectImageAsBase64: null,
-            },
-         ],
-         propertyImages: [
-            {
-               docId: null,
-               docName: "",
-               docURL: "",
-               docOrderInFrontendView: 2,
-               docDescription: "",
-               builderProjectImageAsBase64: "",
-            },
-         ],
+         builderId: props?.builderId,
+         projectId: data.projectId,
       };
 
       setSelectedType((prevTypes) => {
-         const newTypes = [...prevTypes, "Villas"];
+         const newTypes = [...prevTypes, "Independent House / Bungalow"];
          return newTypes;
       });
       let units = [];
-      units = data.builderProjectSubPostProperties;
+      units = data.properties;
       units.push(newUnit);
       setData((prevState) => ({
          ...prevState,
-         builderProjectSubPostProperties: units
+         properties: units
       }));
       setCurrentUnitIndex((prevIndex) => prevIndex + 1);
       console.log(data)
@@ -455,6 +418,7 @@ const AddNewSubProject = (props) => {
          };
 
          const valid = await validateSubProjectDetails(submissionData);
+         setError(valid.errors);
          console.log(valid);
 
          if (valid.isValid) {
@@ -465,10 +429,12 @@ const AddNewSubProject = (props) => {
                // fetchProjectId(response?.data?.resourceData);
                if (editTower) {
                   updateSubProject(data);
+               } else {
+                  setData((prevData) => ({...prevData, projectId: response?.data?.resourceData}))
                }
             } else {
                const responseError = response?.data?.error || "Unknown error occurred";
-               setError(responseError);
+               // setError(responseError);
                console.error("Error in response:", responseError);
             }
          } else {
@@ -476,8 +442,17 @@ const AddNewSubProject = (props) => {
          }
       } catch (error) {
          console.error("Error submitting builder project:", error);
-         setError("An unexpected error occurred. Please try again.");
+         // setError("An unexpected error occurred. Please try again.");
       }
+   }
+
+   const handleFetchUnit = (unitDetails) => {
+      console.log("", unitDetails)
+      setShowMoreUnits(false);
+      let units = [...data?.properties];
+      units[units.length - 1] = unitDetails;
+      setData((prevData) => ({ ...prevData, properties: [...units] }));
+      updateSubProject(data);
    }
 
    return (
@@ -508,6 +483,7 @@ const AddNewSubProject = (props) => {
                                        width: "100% !important"
                                     },
                                  }}
+                                 error={error?.propertyType}
                               >
                                  <MenuItem value={""} disabled>Select</MenuItem>
                                  {defaultSubpost.map((subPost, index) => (
@@ -523,6 +499,7 @@ const AddNewSubProject = (props) => {
                                  name="projectName"
                                  value={data.projectName}
                                  onChange={handleInputChange}
+                                 error={error?.projectName}
                               />
                            </Col>
                            <Col lg={4}>
@@ -533,6 +510,7 @@ const AddNewSubProject = (props) => {
                                  name="reraNumber"
                                  value={data.reraNumber}
                                  onChange={handleInputChange}
+                                 error={error?.reraNumber}
                               />
                            </Col>
                         </Row>
@@ -543,8 +521,10 @@ const AddNewSubProject = (props) => {
                                  type="number"
                                  label="Total Area To Develop"
                                  name="totalAreaToDevelop"
+                                 inputProps={{ min: 0 }}
                                  value={data.totalAreaToDevelop}
                                  onChange={handleInputChange}
+                                 error={error?.totalAreaToDevelop}
                                  InputProps={{
                                     endAdornment: <>
                                        <InputAdornment position="end" sx={{ marginLeft: "-97px" }} >
@@ -588,10 +568,12 @@ const AddNewSubProject = (props) => {
                                  <TextField
                                     className="w-100 textFieldInput"
                                     type="number"
+                                    inputProps={{ min: 0 }}
                                     label="Tower Floors"
                                     name="totalFloors"
                                     value={data.totalFloors}
                                     onChange={handleInputChange}
+                                    error={error?.totalFloors}
                                  />
                               </Col>
                               : null
@@ -605,6 +587,7 @@ const AddNewSubProject = (props) => {
                                     name="unitsPerFloor"
                                     value={data.unitsPerFloor}
                                     onChange={handleInputChange}
+                                    error={error?.unitsPerFloor}
                                  />
                               </Col>
                               : null}
@@ -616,6 +599,7 @@ const AddNewSubProject = (props) => {
                                  name="highlightsOrUsp"
                                  value={data.highlightsOrUsp}
                                  onChange={handleInputChange}
+                                 error={error?.highlightsOrUsp}
                               />
                            </Col>
                            <Col lg="4" className="mt-4">
@@ -639,6 +623,7 @@ const AddNewSubProject = (props) => {
                                  }}
                                  value={data.amenities}
                                  onChange={(e) => handleSelectChange(e)}
+                                 error={error?.amenities}
                               >
                                  <MenuItem value="" >
                                     Separate Amenities (Not compulsory)
@@ -661,6 +646,7 @@ const AddNewSubProject = (props) => {
                                  name="contactPersonName"
                                  value={data.contactPersonName}
                                  onChange={handleInputChange}
+                                 error={error?.contactPersonName}
                               />
                            </Col>
                            <Col lg={4} className="mt-4">
@@ -671,6 +657,7 @@ const AddNewSubProject = (props) => {
                                  name="contactPersonNumber"
                                  value={data.contactPersonNumber}
                                  onChange={handleInputChange}
+                                 error={error?.contactPersonNumber}
                               />
                            </Col>
                         </Row>
@@ -1003,7 +990,7 @@ const AddNewSubProject = (props) => {
                            </Col> */}
 
                         </Row>
-                        <div style={{justifySelf: 'end'}}>
+                        <div style={{ justifySelf: 'end' }}>
                            {editTower && (
                               <>
                                  <Buttons name={"Cancel"} varient="secondary" onClick={() => { toggleEditTower() }} /> &nbsp;&nbsp;
@@ -1029,10 +1016,16 @@ const AddNewSubProject = (props) => {
 
                         {showMoreUnits ?
                            <>
-                              {data.builderProjectSubPostProperties.map(
+                              {data.properties.map(
                                  (property, propertyIndex) => (
                                     <>
-                                       <Units subProjectDetails={data} handleRemoveUnit={handleRemoveUnit} unitIndex={propertyIndex} />
+                                       <Units
+                                          builderId={props?.builderId}
+                                          projectId={data?.projectId}
+                                          subProjectDetails={data}
+                                          handleRemoveUnit={handleRemoveUnit}
+                                          unitIndex={propertyIndex}
+                                          fetchUnitDetails={handleFetchUnit} />
                                     </>
                                  ))}
                            </>
@@ -1040,38 +1033,42 @@ const AddNewSubProject = (props) => {
                         }
 
                         <div>
-                           <Button
-                              className="d-flex mb-2 mt-3"
-                              style={{
-                                 color: "#BE1452",
-                                 backgroundColor: "#F8F3F5",
-                                 borderColor: "#DED6D9",
-                              }}
-                              onClick={() => {
-                                 if (data.propertyType !== null && data.propertyType.length !== 0) {
-                                    setShowMoreUnits(true);
-                                    handleAddMoreUnit();
-                                 } else {
-                                    showErrorToast("Please select property type...")
-                                    return 0;
-                                 }
-                              }}
-                           >
-                              <div
-                                 style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                 }}
-                              >
-                                 <Image src={addIcon} style={{ width: "14px", height: '14px' }} />
-                              </div>
-                              <Text
-                                 text={"Add More Unit"}
-                                 fontWeight="bold"
-                                 style={{ fontSize: "12px", color: "#BE1452" }}
-                              />
-                           </Button>
+                           {editTower !== true ?
+                              <>
+                                 <Button
+                                    className="d-flex mb-2 mt-3"
+                                    style={{
+                                       color: "#BE1452",
+                                       backgroundColor: "#F8F3F5",
+                                       borderColor: "#DED6D9",
+                                    }}
+                                    onClick={() => {
+                                       if (data.propertyType !== null && data.propertyType.length !== 0) {
+                                          setShowMoreUnits(true);
+                                          handleAddMoreUnit();
+                                       } else {
+                                          showErrorToast("Please select property type...")
+                                          return 0;
+                                       }
+                                    }}
+                                 >
+                                    <div
+                                       style={{
+                                          display: "flex",
+                                          alignItems: "center",
+                                          justifyContent: "center",
+                                       }}
+                                    >
+                                       <Image src={addIcon} style={{ width: "14px", height: '14px' }} />
+                                    </div>
+                                    <Text
+                                       text={"Add More Unit"}
+                                       fontWeight="bold"
+                                       style={{ fontSize: "12px", color: "#BE1452" }}
+                                    />
+                                 </Button>
+                              </>
+                              : null}
                         </div>
                      </div>
                   </div>

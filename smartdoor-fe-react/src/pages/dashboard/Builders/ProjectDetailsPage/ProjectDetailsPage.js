@@ -36,10 +36,12 @@ const ProjectDetailsPage = (props) => {
     const handleShowProjectPost = useCallback(async () => {
         console.log("handleShowProjectPost called in ProjectDetailsPage");
         console.log(props)
+        setLoading(true);
         const response = await fetchBuilderProjectById({
             projectId: props?.location?.state?.projectId,
             builderId: props?.location?.state?.builderId
         });
+        setLoading(false);
         if(response?.status === 200) {
             setProjectDetails(response?.data?.resourceData);
             if (response?.data?.resourceData?.subProjectList !== null) {

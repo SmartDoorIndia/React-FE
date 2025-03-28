@@ -32,6 +32,7 @@ const AddNewProjectPost = (props) => {
    const { fetchProjectId, projectId, builderId, showEditProject, toggleEdit } = props
 
    const fileInputRef = useRef();
+   const fileInputRef1 = useRef();
    const currentYear = new Date().getFullYear();
    const [monthYearFrom, setMonthYearFrom] = useState({ month: "", year: "" });
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
@@ -273,6 +274,7 @@ const AddNewProjectPost = (props) => {
          };
 
          const valid = await validateProjectDetails(submissionData);
+         setError(valid.errors);
          console.log(valid);
 
          if (valid.isValid) {
@@ -287,7 +289,7 @@ const AddNewProjectPost = (props) => {
                }
             } else {
                const responseError = response?.data?.error || "Unknown error occurred";
-               setError(responseError);
+               // setError(responseError);
                console.error("Error in response:", responseError);
             }
          } else {
@@ -295,7 +297,7 @@ const AddNewProjectPost = (props) => {
          }
       } catch (error) {
          console.error("Error submitting builder project:", error);
-         setError("An unexpected error occurred. Please try again.");
+         // setError("An unexpected error occurred. Please try again.");
       }
    };
 
@@ -659,6 +661,7 @@ const AddNewProjectPost = (props) => {
                               id='projectName'
                               value={data?.projectName}
                               onChange={(e) => { setData({ ...data, projectName: e?.target.value }) }}
+                              error={error.projectName}
                            />
                         </Col>
                         <Col lg="6">
@@ -702,10 +705,12 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 mt-4 textFieldInput"
                               type="number"
+                              inputProps={{ min: 0 }}
                               label='Total Tower / Plotted Planned'
                               id='totalTowers'
                               value={data?.totalTowers}
                               onChange={(e) => { setData({ ...data, totalTowers: e?.target.value }) }}
+                              error={error.totalTowers}
                            />
                         </Col>
                         <Col lg={6} className="">
@@ -714,8 +719,10 @@ const AddNewProjectPost = (props) => {
                               type="number"
                               label='Land Area'
                               id='landArea'
+                              inputProps={{ min: 0 }}
                               value={data?.landArea}
                               onChange={(e) => { setData({ ...data, landArea: e?.target.value }) }}
+                              error={error.landArea}
                               InputProps={{
                                  endAdornment: <>
                                     <InputAdornment position="end" sx={{ marginLeft: "-40px" }} >
@@ -734,10 +741,12 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 textFieldInput"
                               type="number"
+                              inputProps={{ min: 0 }}
                               label='Total Area to Develop'
                               id='totalAreaToDevelop'
                               value={data?.totalAreaToDevelop}
                               onChange={(e) => { setData({ ...data, totalAreaToDevelop: e?.target.value }) }}
+                              error={error.totalAreaToDevelop}
                               InputProps={{
                                  endAdornment: <>
                                     <InputAdornment position="end" sx={{ marginLeft: "-55px" }} >
@@ -754,10 +763,12 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 textFieldInput"
                               type="number"
+                              inputProps={{ min: 0 }}
                               label='Open Area'
                               id='openAreaPerc'
                               value={data?.openAreaPerc}
                               onChange={(e) => { setData({ ...data, openAreaPerc: e?.target.value }) }}
+                              error={error.openAreaPerc}
                               InputProps={{
                                  endAdornment: <>
                                     <InputAdornment position="end" sx={{ marginLeft: "-40px" }} >
@@ -1040,7 +1051,7 @@ const AddNewProjectPost = (props) => {
                                  accept="image/*"
                                  multiple
                                  onChange={(e) => handleFileChange(e, "PROJECT_LAYOUT")}
-                                 ref={fileInputRef}
+                                 ref={fileInputRef1}
                               />
                               <span>Upload Brochure URL</span>
                            </label>

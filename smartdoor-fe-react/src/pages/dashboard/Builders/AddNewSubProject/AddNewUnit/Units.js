@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import UnitPostingFields from '../../../../../common/helpers/UnitPostingFields';
 import { Col, Form, InputGroup, Modal, Row } from 'react-bootstrap';
 import { InputAdornment, MenuItem, Slider, TextField } from '@mui/material';
@@ -8,19 +8,38 @@ import { RxCross2 } from "react-icons/rx";
 import { FaTimesCircle } from "react-icons/fa";
 import closeBtn from "../../../../../assets/images/closeBtn.png";
 import './AddNewUnit.scss';
+import { saveBuilderSubProjectUnits, uploadImage } from '../../../../../common/redux/actions';
+import { showErrorToast, showSuccessToast } from '../../../../../common/helpers/Utils';
+import Buttons from '../../../../../shared/Buttons/Buttons';
 
 const Units = (props) => {
-    const { handleRemoveUnit, unitIndex } = props;
+    const { handleRemoveUnit, unitIndex, builderId, projectId, fetchUnitDetails, editUnit, closeUnitTab } = props;
     const [subProjectDetails, setSubProjectDetails] = useState(props?.subProjectDetails || {
         unitDetails: {
             configuration: 'BHK',
-            propertyImageList: []
+            propertyImagesList: []
         }
     });
     const [unitFieldsList, setUnitFieldsList] = useState([]);
-    const [unitDetails, setUnitDetails] = useState({
-        configuration: '',
-        propertyImageList: []
+    const [unitDetails, setUnitDetails] = useState(props?.property || {
+        builderId: builderId,
+        builderProjectId: projectId,
+        propertyId: null,
+        propertyType: '',
+        propertySubType: '',
+        numberOfRooms: '',
+        compositionType: '',
+        totalUnits: '',
+        minBuiltUpArea: '',
+        maxBuiltUpArea: '',
+        minPlotSize: '',
+        maxPlotSize: '',
+        minArea: '',
+        maxArea: '',
+        minPrice: 1000000,
+        maxPrice: 10000000,
+        floorPlan: [],
+        propertyImagesList: []
     })
     const imageFields = [
         { docName: "Floor Plan" },
@@ -31,6 +50,8 @@ const Units = (props) => {
     ];
     const [showImageModal, setImageShowModal] = useState(false);
     const [selectedImageSrc, setSelectedImageSrc] = useState("");
+    const fileInputRef = useRef();
+    const fileInputRef1 = useRef();
 
     const handleConfigurationChange = (e) => {
         if (subProjectDetails.subPostType === 'Tower') {
@@ -57,88 +78,203 @@ const Units = (props) => {
     }
 
     const handleFileChange = (e, docDescription) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const newImage = {
-                    builderProjectImageAsBase64: reader.result,
-                    docDescription,
-                    docId: null,
-                    docName: file.name,
-                    docOrderInFrontendView: null,
-                    docURL: "",
-                };
+        // const file = e.target.files[0];
+        // if (file) {
+        //     const reader = new FileReader();
+        //     reader.onloadend = () => {
+        //         const newImage = {
+        //             builderProjectImageAsBase64: reader.result,
+        //             docDescription,
+        //             docId: null,
+        //             docName: file.name,
+        //             docOrderInFrontendView: null,
+        //             docURL: "",
+        //         };
 
-                let propertyImages = [];
-                propertyImages = [...unitDetails?.propertyImageList];
-                propertyImages?.push(newImage);
-                console.log(propertyImages)
-                setUnitDetails((prevData) =>
-                ({
-                    ...prevData,
-                    propertyImageList: propertyImages,
+        //         let propertyImages = [];
+        //         propertyImages = [...unitDetails?.propertyImagesList];
+        //         propertyImages?.push(newImage);
+        //         console.log(propertyImages)
+        //         setUnitDetails((prevData) =>
+        //         ({
+        //             ...prevData,
+        //             propertyImagesList: propertyImages,
+        //         })
+        //         );
+        //     };
+        //     reader.readAsDataURL(file);
+        // }
+        const files = Array.from(e.target.files);
+        if (docDescription === 'floorPlan') {
+            // fileInputRef.current.value = "";
+        } else {
+            // fileInputRef1.current.value = "";
+        }
+        if (files.length > 0) {
+            let formData = new FormData();
+            const maxSizeInBytes = 15 * 1024 * 1024; // 10MB
+            Array.from(files).map((file) => {
+                if (file.size > maxSizeInBytes) {
+                    showErrorToast('File must be less than 15MB...')
+                    return;
+                }
+            })
+            let fileList = []
+            for (let i = 0; i < files.length; i++) {
+                fileList.push(files[i])
+                formData.append('file', files[i]);
+            }
+            formData.append('id', '0')
+            formData.append('enumType', 'PROJECT_IMAGES');
+            uploadImage(formData)
+                .then((response) => {
+                    if (response.data.status === 200) {
+                        console.log(response.data.resourceData)
+                        if (docDescription === 'images') {
+                            let projectImage = [...unitDetails?.propertyImagesList];
+                            for (let i = 0; i < response.data.resourceData.length; i++) {
+                                projectImage.push(response.data.resourceData[i])
+                            }
+                            console.log(projectImage)
+                            setUnitDetails((prevData) => ({
+                                ...prevData,
+                                propertyImagesList: [...projectImage],
+                            }));
+                        } else {
+                            let floorPlanList = [...unitDetails?.floorPlan];
+                            for (let i = 0; i < response.data.resourceData.length; i++) {
+                                floorPlanList.push(response.data.resourceData[i])
+                            }
+                            console.log(floorPlanList)
+                            setUnitDetails((prevData) => ({
+                                ...prevData,
+                                floorPlan: [...floorPlanList],
+                            }));
+                        }
+                        showSuccessToast(response.data.customMessage)
+                    }
                 })
-                );
-            };
-            reader.readAsDataURL(file);
+                .catch((error) => {
+                    // setLoading(false);
+                });
         }
     };
 
-    const handleDeletePropertyImage = (propertyIndex, docDescription) => {
-
-
+    const handleDeleteImage = (index, description) => {
+        setUnitDetails((prevData) => ({
+            ...prevData,
+            propertyImagesList: prevData.propertyImagesList.filter((_, i) => i !== index)
+        }));
     };
 
     useEffect(() => {
         console.log(props)
-        let unitFields = UnitPostingFields.unitPostingFieldsObj[subProjectDetails?.subPostType][subProjectDetails?.subPostType === 'Tower' ? "BHK" : "villas"]?.fields;
+        let unitFields = UnitPostingFields.unitPostingFieldsObj[subProjectDetails?.propertyType][props?.property?.propertySubType ? props?.property?.propertySubType : "Apartment"]?.fields;
         console.log(unitFields);
         setUnitFieldsList([...unitFields]);
+        if (props?.builderId !== null && props?.projectId !== null) {
+            setUnitDetails((prevData) => ({ ...prevData, builderId: props?.builderId, builderProjectId: props?.projectId }))
+        }
+        if (editUnit) {
+            setUnitDetails((prevData) => ({ ...prevData, propertyImagesList: props?.property?.propertyImagesList }))
+        }
     }, []);
+
+    const saveBuilderSubProjectUnit = async () => {
+        const response = await saveBuilderSubProjectUnits(unitDetails);
+        console.log(response)
+        let unitInfo = {...unitDetails};
+        unitInfo.propertyId = response?.data?.resourceData;
+        setUnitDetails((prevData) => ({ ...prevData, propertyId: response?.data?.resourceData }));
+        fetchUnitDetails(unitInfo);
+    }
 
     return (
         <>
             <div className='d-flex mt-3 ' style={{ backgroundColor: '#E5E7E9', border: '1px solid #DED6D9', borderRadius: '5px', width: '100%' }}>
                 <Row className='UnitformContainer row mt-3' style={{ width: '100%' }} >
                     <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
-                        <Text text={'Configuration'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
+                        <Text text={'Property Type'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
                         <TextField
                             select
-                            name="numberOfRooms"
+                            name="propertyType"
                             className="unitTextFieldInput w-100"
-                            onChange={(e) => handleConfigurationChange(e)}
-                            value={unitDetails.configuration || ""} // Ensure value is valid
+                            onChange={(e) => setUnitDetails((prevData) => ({ ...prevData, propertyType: e.target.value }))}
+                            value={unitDetails.propertyType || ""} // Ensure value is valid
+                        >
+                            <MenuItem value="" disabled>
+                                Select
+                            </MenuItem>
+                            <MenuItem key="Residential" value="Residential">
+                                Residential
+                            </MenuItem>,
+                            <MenuItem key="Commercial" value="Commercial">
+                                Commercial
+                            </MenuItem>
+                        </TextField>
+                    </Col>
+                    <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
+                        <Text text={'Property SubType'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
+                        <TextField
+                            select
+                            name="propertySubType"
+                            className="unitTextFieldInput w-100"
+                            onChange={(e) => {
+                                setUnitDetails((prevData) => ({ ...prevData, propertySubType: e.target.value }));
+                                let unitFields = UnitPostingFields.unitPostingFieldsObj[subProjectDetails?.propertyType][e.target.value]?.fields;
+                                console.log(unitFields);
+                                setUnitFieldsList([...unitFields]);
+                            }
+                            }
+                            value={unitDetails.propertySubType || ""} // Ensure value is valid
                         >
                             <MenuItem value="" disabled>
                                 Select
                             </MenuItem>
                             {subProjectDetails.subPostType === "Tower"
                                 ? [
-                                    <MenuItem key="2 BHK" value="2 BHK">
-                                        2 BHK
+                                    <MenuItem key="Apartment" value="Apartment">
+                                        Apartment
                                     </MenuItem>,
-                                    <MenuItem key="3 BHK" value="3 BHK">
-                                        3 BHK
+                                    <MenuItem key="Independent House / Bungalow" value="Independent House / Bungalow">
+                                        Independent House / Bungalow
                                     </MenuItem>,
-                                    <MenuItem key="4 BHK" value="4 BHK">
-                                        4 BHK
+                                    <MenuItem key="Office" value="Office">
+                                        Office
+                                    </MenuItem>,
+                                    <MenuItem key="Shop" value="Shop">
+                                        Shop
+                                    </MenuItem>,
+                                    <MenuItem key="Restaurant" value="Restaurant">
+                                        Restaurant
+                                    </MenuItem>,
+                                    <MenuItem key="Plot" value="Plot">
+                                        Plot
                                     </MenuItem>,
                                 ]
                                 : [
-                                    <MenuItem key="villas" value="villas">
-                                        Villas
+                                    <MenuItem key="Apartment" value="Apartment">
+                                        Apartment
                                     </MenuItem>,
-                                    <MenuItem key="plots" value="plots">
-                                        Plots
+                                    <MenuItem key="Independent House / Bungalow" value="Independent House / Bungalow">
+                                        Independent House / Bungalow
                                     </MenuItem>,
-                                    <MenuItem key="office" value="office">
+                                    <MenuItem key="Plot" value="Plot">
+                                        Plot
+                                    </MenuItem>,
+                                    <MenuItem key="Office" value="Office">
                                         Office
+                                    </MenuItem>,
+                                    <MenuItem key="Shop" value="Shop">
+                                        Shop
+                                    </MenuItem>,
+                                    <MenuItem key="Restaurant" value="Restaurant">
+                                        Restaurant
                                     </MenuItem>,
                                 ]}
                         </TextField>
                     </Col>
-                    {unitFieldsList.includes('BHK') ?
+                    {unitFieldsList.includes('numberOfRooms') ?
                         <>
                             <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
                                 <Text text={'BHK'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
@@ -149,13 +285,30 @@ const Units = (props) => {
                                     onChange={(e) => {
                                         setUnitDetails((prevData) => ({
                                             ...prevData,
-                                            numberOfRooms: e.target.value,
+                                            numberOfRooms: e.target.value?.split(' ')[0],
+                                            compositionType: e.target.value?.split(' ')[1],
                                         }));
                                     }}
-                                    value={unitDetails.numberOfRooms || ""} // Ensure value is valid
+                                    value={
+                                        unitDetails.numberOfRooms 
+                                            ? `${unitDetails.numberOfRooms} ${unitDetails.compositionType || ''}`.trim() 
+                                            : ""
+                                    } 
                                 >
                                     <MenuItem value="" disabled>
                                         Select
+                                    </MenuItem>
+                                    <MenuItem key="1" value="1 R">
+                                        1 R
+                                    </MenuItem>
+                                    <MenuItem key="1" value="1 RK">
+                                        1 RK
+                                    </MenuItem>
+                                    <MenuItem key="1" value="1 BHK">
+                                        1 BHK
+                                    </MenuItem>
+                                    <MenuItem key="2" value="2 BHK">
+                                        2 BHK
                                     </MenuItem>
                                     <MenuItem key="3" value="3 BHK">
                                         3 BHK
@@ -179,13 +332,17 @@ const Units = (props) => {
                                 <Text text={'Total Units'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
 
                                 <TextField
-                                    className="unitTextFieldInput w-100"
                                     type='number'
-                                    name='totalProjectUnits'
+                                    className="unitTextFieldInput w-100"
+                                    name='totalUnits'
+                                    inputProps={{ min: 0 }}
                                     onChange={(e) => {
-                                        setUnitDetails({ totalProjectUnits: e.target.value })
+                                        setUnitDetails((prevData) => ({
+                                            ...prevData, // Preserve existing values
+                                            totalUnits: e.target.value,
+                                        }));
                                     }}
-                                    value={unitDetails.totalProjectUnits || ""}
+                                    value={unitDetails.totalUnits || ""}
                                 />
                             </Col>
                         </>
@@ -198,11 +355,12 @@ const Units = (props) => {
                                     className="unitTextFieldInput w-100"
                                     type="number"
                                     name="minCarpetArea"
-                                    value={unitDetails.minBuiltUpArea || ""}
+                                    inputProps={{ min: 0 }}
+                                    value={unitDetails.minArea || ""}
                                     onChange={(e) => {
                                         setUnitDetails((prevData) => ({
                                             ...prevData,
-                                            minBuiltUpArea: e.target.value,
+                                            minArea: e.target.value,
                                         }));
                                     }}
                                     InputProps={{
@@ -212,6 +370,7 @@ const Units = (props) => {
                                                     select
                                                     name="builtUpAreaMeasurementUnitEnteredByUser"
                                                     className="unitTextFieldInput"
+                                                    disabled
                                                     onChange={(e) => {
                                                         setUnitDetails((prevData) => ({
                                                             ...prevData,
@@ -248,11 +407,12 @@ const Units = (props) => {
                                     className="unitTextFieldInput w-100"
                                     type="number"
                                     name="maxBuiltUpArea"
-                                    value={unitDetails.maxBuiltUpArea || ""}
+                                    inputProps={{ min: 0 }}
+                                    value={unitDetails.maxArea || ""}
                                     onChange={(e) => {
                                         setUnitDetails((prevData) => ({
                                             ...prevData,
-                                            maxBuiltUpArea: e.target.value,
+                                            maxArea: e.target.value,
                                         }));
                                     }}
                                     InputProps={{
@@ -262,6 +422,7 @@ const Units = (props) => {
                                                     select
                                                     name="builtUpAreaMeasurementUnitEnteredByUser"
                                                     className="unitTextFieldInput"
+                                                    disabled
                                                     onChange={(e) => {
                                                         setUnitDetails((prevData) => ({
                                                             ...prevData,
@@ -297,12 +458,13 @@ const Units = (props) => {
                                 <TextField
                                     className="unitTextFieldInput w-100"
                                     type="number"
+                                    inputProps={{ min: 0 }}
                                     name="minPlotSize"
-                                    value={unitDetails.minPlotSize || ""}
+                                    value={unitDetails.minArea || ""}
                                     onChange={(e) => {
                                         setUnitDetails((prevData) => ({
                                             ...prevData,
-                                            minPlotSize: e.target.value,
+                                            minArea: e.target.value,
                                         }));
                                     }}
                                     InputProps={{
@@ -312,6 +474,7 @@ const Units = (props) => {
                                                     select
                                                     name="plotAreaMeasurementUnitEnteredByUser"
                                                     className="unitTextFieldInput"
+                                                    disabled
                                                     onChange={(e) => {
                                                         setUnitDetails((prevData) => ({
                                                             ...prevData,
@@ -348,11 +511,12 @@ const Units = (props) => {
                                     className="unitTextFieldInput w-100"
                                     type="number"
                                     name="maxPlotSize"
-                                    value={unitDetails.maxPlotSize || ""}
+                                    inputProps={{ min: 0 }}
+                                    value={unitDetails.maxArea || ""}
                                     onChange={(e) => {
                                         setUnitDetails((prevData) => ({
                                             ...prevData,
-                                            maxPlotSize: e.target.value,
+                                            maxArea: e.target.value,
                                         }));
                                     }}
                                     InputProps={{
@@ -362,6 +526,7 @@ const Units = (props) => {
                                                     select
                                                     name="plotAreaMeasurementUnitEnteredByUser"
                                                     className="unitTextFieldInput"
+                                                    disabled
                                                     onChange={(e) => {
                                                         setUnitDetails((prevData) => ({
                                                             ...prevData,
@@ -397,12 +562,13 @@ const Units = (props) => {
                                 <TextField
                                     className="unitTextFieldInput w-100"
                                     type="number"
-                                    name="minCarpetArea"
-                                    value={unitDetails.minCarpetArea || ""}
+                                    name="minArea"
+                                    inputProps={{ min: 0 }}
+                                    value={unitDetails.minArea || ""}
                                     onChange={(e) => {
                                         setUnitDetails((prevData) => ({
                                             ...prevData,
-                                            minCarpetArea: e.target.value,
+                                            minArea: e.target.value,
                                         }));
                                     }}
                                     InputProps={{
@@ -412,13 +578,14 @@ const Units = (props) => {
                                                     select
                                                     name="carpetAreaMeasurementUnitEnteredByUser"
                                                     className="unitTextFieldInput"
+                                                    disabled
                                                     onChange={(e) => {
                                                         setUnitDetails((prevData) => ({
                                                             ...prevData,
                                                             carpetAreaMeasurementUnitEnteredByUser: e.target.value,
                                                         }));
                                                     }}
-                                                    value={unitDetails.carpetAreaMeasurementUnitEnteredByUser || ""}
+                                                    value={unitDetails.carpetAreaMeasurementUnitEnteredByUser || "Sq. Ft."}
                                                 >
                                                     <MenuItem value="" disabled>
                                                         Select
@@ -447,12 +614,13 @@ const Units = (props) => {
                                 <TextField
                                     className="unitTextFieldInput w-100"
                                     type="number"
-                                    name="maxCarpetArea"
-                                    value={unitDetails.maxCarpetArea || ""}
+                                    name="maxArea"
+                                    inputProps={{ min: 0 }}
+                                    value={unitDetails.maxArea || ""}
                                     onChange={(e) => {
                                         setUnitDetails((prevData) => ({
                                             ...prevData,
-                                            maxCarpetArea: e.target.value,
+                                            maxArea: e.target.value,
                                         }));
                                     }}
                                     InputProps={{
@@ -468,7 +636,7 @@ const Units = (props) => {
                                                             carpetAreaMeasurementUnitEnteredByUser: e.target.value,
                                                         }));
                                                     }}
-                                                    value={unitDetails.carpetAreaMeasurementUnitEnteredByUser || ""}
+                                                    value={unitDetails.carpetAreaMeasurementUnitEnteredByUser || "Sq. Ft."}
                                                 >
                                                     <MenuItem value="" disabled>
                                                         Select
@@ -518,14 +686,12 @@ const Units = (props) => {
                         : null}
                     {unitFieldsList.includes('floorPlan') ?
                         <>
-                            {imageFields.map((field, index) => (
+                            {/* {imageFields.map((field, index) => (
 
                                 <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} key={index} >
                                     <Form.Group controlId={field.docName}>
                                         <Text text={field.docName} style={{ fontSize: '14px', fontWeight: '700' }} />
 
-                                        {/* Hidden File Input */}
-                                        <Form.Control
                                             type="file"
                                             name={field.docName}
                                             onChange={(e) => handleFileChange(e, field.docName)}
@@ -533,21 +699,19 @@ const Units = (props) => {
                                             id={`file-input-${field.docName}`}
                                         />
 
-                                        {/* Custom File Input Label */}
                                         <label
                                             htmlFor={`file-input-${field.docName}`}
-                                            style={{ display: "flex", alignItems: "center", gap: "4px", cursor: "pointer", marginRight: '20%', width:'100%' }}
+                                            style={{ display: "flex", alignItems: "center", gap: "4px", cursor: "pointer", marginRight: '20%', width: '100%' }}
                                         >
-                                            <div className='d-flex px-2 w-100 py-1' style={{border: '2px solid #9BA5AD', borderRadius: '4px', backgroundColor: 'white'}}>
+                                            <div className='d-flex px-2 w-100 py-1' style={{ border: '2px solid #9BA5AD', borderRadius: '4px', backgroundColor: 'white' }}>
                                                 <TiCameraOutline className='mt-1' />&nbsp;&nbsp;
-                                                <Text text={'Browse'} style={{ fontSize: '14px', fontWeight: '500', color:'#949494' }} />
-                                                
+                                                <Text text={'Browse'} style={{ fontSize: '14px', fontWeight: '500', color: '#949494' }} />
+
                                             </div>
                                         </label>
 
-                                        {/* Image List Display */}
-                                        {unitDetails.propertyImageList && unitDetails.propertyImageList.length > 0 ? (
-                                            unitDetails.propertyImageList
+                                        {unitDetails.propertyImagesList && unitDetails.propertyImagesList.length > 0 ? (
+                                            unitDetails.propertyImagesList
                                                 .filter(image => image.docDescription === field.docName)
                                                 .map((image, imgIndex) => (
                                                     <div key={imgIndex} className="d-flex align-items-center">
@@ -583,10 +747,140 @@ const Units = (props) => {
 
 
                                 </Col>
-                            ))}
+                            ))} */}
+                            <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
+                                <Form.Group
+                                    controlId="formProjectLayout"
+                                    className="formProjectLayout"
+                                >
+                                    {/* <span>Floor Plan Images</span> */}
+                                    <div className="image-upload mt-2">
+                                        <label htmlFor="upload-project-layout" className="upload-label">
+                                            <TiCameraOutline className="camera-icon" />
+                                            <input
+                                                id="upload-project-layout"
+                                                type="file"
+                                                className="upload-input"
+                                                accept="image/*"
+                                                multiple
+                                                onChange={(e) => handleFileChange(e, "floorPlan")}
+                                                ref={fileInputRef}
+                                            />
+                                            <span>Upload Floor Plan</span>
+                                        </label>
+                                        <div className="d-flex flex-wrap mt-2 justify-content-center">
+                                            {unitDetails?.floorPlan
+                                                ?.map((image, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="project-images mt-3"
+                                                        style={{
+                                                            position: "relative",
+                                                            marginRight: "10px",
+                                                        }}
+                                                    >
+                                                        <img
+                                                            src={
+                                                                image
+                                                            }
+                                                            alt={""} // Ensure alt text is appropriate for accessibility
+                                                            className="img-fluid"
+                                                            style={{ maxWidth: "70px", maxHeight: '70px' }}
+                                                        />
+                                                        <RxCross2
+                                                            className="delete-icon"
+                                                            onClick={() =>
+                                                                handleDeleteImage(index, "upload image")
+                                                            }
+                                                            style={{
+                                                                position: "absolute",
+                                                                top: "-5px",
+                                                                right: "-4px",
+                                                                cursor: "pointer",
+                                                                color: "#fff",
+                                                                background: "#ff0000",
+                                                                borderRadius: "50%",
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ))}
+                                        </div>
+                                        <Form.Text className="text-muted">
+                                            File should be 5MB(max) in png, jpg, etc.
+                                        </Form.Text>
+                                    </div>
+                                </Form.Group>
+                            </Col>
                         </>
                         : null}
-                    {unitFieldsList.includes('comments') ?
+                    {unitFieldsList.includes('images') ?
+                        <>
+                            <Col xs={12} sm={6} md={4} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
+                                <Form.Group
+                                    controlId="formProjectLayout"
+                                    className="formProjectLayout"
+                                >
+                                    {/* <span>Unit Images</span> */}
+                                    <div className="image-upload mt-2">
+                                        <label htmlFor="upload-property-image" className="upload-label">
+                                            <TiCameraOutline className="camera-icon" />
+                                            <input
+                                                id="upload-property-image"
+                                                type="file"
+                                                className="upload-input"
+                                                accept="image/*"
+                                                multiple
+                                                onChange={(e) => handleFileChange(e, 'images')}
+                                                ref={fileInputRef}
+                                            />
+                                            <span>Upload Property Images</span>
+                                        </label>
+                                        <div className="d-flex flex-wrap mt-2 justify-content-center">
+                                            {unitDetails?.propertyImagesList
+                                                ?.map((image, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="project-images mt-3"
+                                                        style={{
+                                                            position: "relative",
+                                                            marginRight: "10px",
+                                                        }}
+                                                    >
+                                                        <img
+                                                            src={
+                                                                image
+                                                            }
+                                                            alt={""} // Ensure alt text is appropriate for accessibility
+                                                            className="img-fluid"
+                                                            style={{ maxWidth: "70px", maxHeight: '70px' }}
+                                                        />
+                                                        <RxCross2
+                                                            className="delete-icon"
+                                                            onClick={() =>
+                                                                handleDeleteImage(index, "upload image")
+                                                            }
+                                                            style={{
+                                                                position: "absolute",
+                                                                top: "-5px",
+                                                                right: "-4px",
+                                                                cursor: "pointer",
+                                                                color: "#fff",
+                                                                background: "#ff0000",
+                                                                borderRadius: "50%",
+                                                            }}
+                                                        />
+                                                    </div>
+                                                ))}
+                                        </div>
+                                        <Form.Text className="text-muted">
+                                            File should be 5MB(max) in png, jpg, etc.
+                                        </Form.Text>
+                                    </div>
+                                </Form.Group>
+                            </Col>
+                        </>
+                        : null}
+                    {/* {unitFieldsList.includes('comments') ?
                         <>
                             <Col lg={12} className="flex-item mb-3" style={{ paddingLeft: '20px', paddingRight: '20px' }}>
 
@@ -603,7 +897,10 @@ const Units = (props) => {
                                 />
                             </Col>
                         </>
-                        : null}
+                        : null} */}
+                    <div style={{ alignItems: 'end' }}>
+                        <Buttons className="mt-2" name={editUnit ? "Save" : "Add Unit"} varient="primary" onClick={() => { saveBuilderSubProjectUnit(); }} />
+                    </div>
                 </Row>
                 <div className="close-col align-items-center justify-content-center" >
                     <img src={closeBtn}
@@ -611,10 +908,12 @@ const Units = (props) => {
                             color: "#FF1919",
                             cursor: "pointer",
                         }}
-                        onClick={() => { console.log(unitIndex); handleRemoveUnit(props.unitIndex) }} // Call the remove function
+                        onClick={() => {
+                            handleRemoveUnit(props.unitIndex);
+                        }} // Call the remove function
                     />
                 </div>
-            </div>
+            </div >
             <Modal
                 show={showImageModal}
                 onHide={() => setImageShowModal(false)}

@@ -5,6 +5,7 @@ import Text from '../../../../../shared/Text/Text';
 import MapComponent from "../../../../../shared/Map/MapComponent";
 import Buttons from '../../../../../shared/Buttons/Buttons';
 import AddNewProjectPost from '../../AddNewProjectPost/AddNewProjectPost';
+import { formateDate } from '../../../../../common/helpers/Utils';
 
 const ProjectDetails = (props) => {
     const {handleProjectEdit} = props;
@@ -49,33 +50,33 @@ const ProjectDetails = (props) => {
                             </div>
                             <div className='mt-2'>
                                 <Text text={"Total Tower / Plotted Planned"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.totalTowers} style={{ fontSize: '14px', fontWeight: '500' }} />
+                                <Text text={projectDetails?.totalTowers || '0'} style={{ fontSize: '14px', fontWeight: '500' }} />
                             </div>
                             <div className='mt-2'>
                                 <Text text={"Total Area to Develop"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.totalAreaToDevelop + "Sq.Ft."} style={{ fontSize: '14px', fontWeight: '500' }} />
+                                <Text text={(projectDetails?.totalAreaToDevelop || '0') + "Sq.Ft."} style={{ fontSize: '14px', fontWeight: '500' }} />
                             </div>
                             <div className='mt-2'>
                                 <Text text={"Possession"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.possessionFrom + " - " + projectDetails?.possessionTo} style={{ fontSize: '14px', fontWeight: '500' }} />
+                                <Text text={formateDate(projectDetails?.possessionFrom, "MMM, YYYY") + " - " + formateDate(projectDetails?.possessionTo, "MMM, YYYY")} style={{ fontSize: '14px', fontWeight: '500' }} />
                             </div>
                             <div className='mt-2'>
                                 <Text text={"Location"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.projectAddress} style={{ fontSize: '14px', fontWeight: '500' }} />
+                                <Text text={projectDetails?.projectAddress || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
                             </div>
                         </Col>
                         <Col lg={6}>
                             <div className='mt-3'>
                                 <Text text={"General Amenities"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.projectAmenities} style={{ fontSize: '14px', fontWeight: '500' }} />
+                                <Text text={projectDetails?.projectAmenities || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
                             </div>
                             <div className='mt-2'>
                                 <Text text={"Land Area"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.landArea + "Acre"} style={{ fontSize: '14px', fontWeight: '500' }} />
+                                <Text text={(projectDetails?.landArea || '0') + "Acre"} style={{ fontSize: '14px', fontWeight: '500' }} />
                             </div>
                             <div className='mt-2'>
                                 <Text text={"Open Area "} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.openAreaPercent + "%"} style={{ fontSize: '14px', fontWeight: '500' }} />
+                                <Text text={(projectDetails?.openAreaPercent || '0') + "%"} style={{ fontSize: '14px', fontWeight: '500' }} />
                             </div>
                         </Col>
                     </Row>
@@ -98,7 +99,7 @@ const ProjectDetails = (props) => {
             <div>
                 <div className='mt-2 mb-3'>
                     <Text text={"Project & Property Description"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                    <Text text={projectDetails?.propertyDescription} style={{ fontSize: '14px', fontWeight: '500' }} />
+                    <Text text={projectDetails?.propertyDescription || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
                 </div>
             </div>
             <div className='justify-self-end mb-2' >

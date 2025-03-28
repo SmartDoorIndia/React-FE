@@ -1,8 +1,9 @@
 const UnitPostingFields = {
     unitPostingFieldsObj : {
         "Tower": {
-            "BHK": {
+            "Apartment": {
                 "fields": [
+                    "numberOfRooms",
                     "totalUnits",
                     "minSize",
                     "maxSize",
@@ -12,17 +13,17 @@ const UnitPostingFields = {
                     "images",
                     "comments"
                 ]
-            }
-        },
-        "Plotted": {
-            "villas": {
+            },
+            "Independent House / Bungalow": {
                 "fields": [
-                    "BHK",
+                    "numerOfRooms",
                     "totalUnits",
-                    "minBuiltUpArea",
-                    "maxBuiltUpArea",
-                    "minPlotSize",
-                    "maxPlotSize",
+                    // "minBuiltUpArea",
+                    // "maxBuiltUpArea",
+                    // "minPlotSize",
+                    // "maxPlotSize",
+                    "minSize",
+                    "maxSize",
                     "minPrice",
                     "maxPrice",
                     "floorPlan",
@@ -30,30 +31,151 @@ const UnitPostingFields = {
                     "comments",
                 ]
             },
-            "plots": {
+            "Plot": {
                 "fields": [
                     "totalUnits",
-                    "minPlotSize",
-                    "maxPlotSize",
+                    // "minPlotSize",
+                    // "maxPlotSize",
+                    "minSize",
+                    "maxSize",
                     "minPrice",
                     "maxPrice",
                     "floorPlan",
                     "comments",
                 ]
             },
-            "office": {
+            "Office": {
                 "fields": [
                     "type",
                     "totalUnits",
-                    "minBuiltUpArea",
-                    "maxBuiltUpArea",
+                    // "minBuiltUpArea",
+                    // "maxBuiltUpArea",
+                    "minSize",
+                    "maxSize",
                     "minPrice",
                     "maxPrice",
                     "floorPlan",
                     "images",
                     "comments",
                 ]
-            }
+            },
+            "Shop": {
+                "fields": [
+                    "totalUnits",
+                    // "minBuiltUpArea",
+                    // "maxBuiltUpArea",
+                    "minSize",
+                    "maxSize",
+                    "minPrice",
+                    "maxPrice",
+                    "floorPlan",
+                    "images",
+                    "comments",
+                ]
+            },
+            "Restaurant": {
+                "fields": [
+                    "totalUnits",
+                    // "minBuiltUpArea",
+                    // "maxBuiltUpArea",
+                    "minSize",
+                    "maxSize",
+                    "minPrice",
+                    "maxPrice",
+                    "floorPlan",
+                    "images",
+                    "comments",
+                ]
+            },
+        },
+        "Plotted": {
+            "Apartment": {
+                "fields": [
+                    "numberOfRooms",
+                    "totalUnits",
+                    "minSize",
+                    "maxSize",
+                    "minPrice",
+                    "maxPrice",
+                    "floorPlan",
+                    "images",
+                    "comments"
+                ]
+            },
+            "Independent House / Bungalow": {
+                "fields": [
+                    "numerOfRooms",
+                    "totalUnits",
+                    // "minBuiltUpArea",
+                    // "maxBuiltUpArea",
+                    // "minPlotSize",
+                    // "maxPlotSize",
+                    "minSize",
+                    "maxSize",
+                    "minPrice",
+                    "maxPrice",
+                    "floorPlan",
+                    "images",
+                    "comments",
+                ]
+            },
+            "Plot": {
+                "fields": [
+                    "totalUnits",
+                    // "minPlotSize",
+                    // "maxPlotSize",
+                    "minSize",
+                    "maxSize",
+                    "minPrice",
+                    "maxPrice",
+                    "floorPlan",
+                    "comments",
+                ]
+            },
+            "Office": {
+                "fields": [
+                    "type",
+                    "totalUnits",
+                    // "minBuiltUpArea",
+                    // "maxBuiltUpArea",
+                    "minSize",
+                    "maxSize",
+                    "minPrice",
+                    "maxPrice",
+                    "floorPlan",
+                    "images",
+                    "comments",
+                ]
+            },
+            "Shop": {
+                "fields": [
+                    "totalUnits",
+                    // "minBuiltUpArea",
+                    // "maxBuiltUpArea",
+                    "minSize",
+                    "maxSize",
+                    "minPrice",
+                    "maxPrice",
+                    "floorPlan",
+                    "images",
+                    "comments",
+                ]
+            },
+            "Restaurant": {
+                "fields": [
+                    "totalUnits",
+                    // "minBuiltUpArea",
+                    // "maxBuiltUpArea",
+                    "minSize",
+                    "maxSize",
+                    "minPrice",
+                    "maxPrice",
+                    "floorPlan",
+                    "images",
+                    "comments",
+                ]
+            },
+
         }
     }
 }
