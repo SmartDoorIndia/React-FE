@@ -33,25 +33,24 @@ export default class AsNavFor extends Component {
 
   componentDidUpdate(prevProps) {
     const { imagesArr, videosArr } = this.props;
-
-    // Check if imagesArr or videosArr have changed before updating the state
+  
     if (prevProps.imagesArr !== imagesArr || prevProps.videosArr !== videosArr) {
-      let videoIdList = [];
-      videosArr?.forEach(element => {
+      let videoIdList = videosArr?.map(element => {
         if (element.docURL !== null) {
           const videoId = getYouTubeVideoId(element.docURL);
-          videoIdList.push({ docURL: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` });
+          return { docURL: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` };
         }
-      });
-
-      // Only update state if imageArray is different from the current state
-      const updatedImageArray = [...imagesArr, ...videoIdList];
+        return null;
+      }).filter(Boolean); // Remove null values
+  
+      // Ensure no duplicate images are added
+      const updatedImageArray = [...new Set([...imagesArr, ...videoIdList])];
+  
       if (JSON.stringify(this.state.imageArray) !== JSON.stringify(updatedImageArray)) {
         this.setState({ imageArray: updatedImageArray });
       }
     }
   }
-
 
   handleThumbnailClick = (index) => {
 

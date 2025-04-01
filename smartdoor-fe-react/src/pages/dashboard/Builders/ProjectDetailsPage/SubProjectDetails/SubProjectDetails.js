@@ -133,12 +133,12 @@ const SubProjectDetails = (props) => {
                         <Text text={subProjectDetails?.projectAmenities} style={{ fontSize: '14px', fontWeight: '500' }} />
                     </Col>
                 </Row> */}
-                <Row>
+                {/* <Row>
                     <Col lg={12} className='mt-3' >
                         <Text text={'Property Description'} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
                         <Text text={subProjectDetails?.projectDescription || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
                     </Col>
-                </Row>
+                </Row> */}
                 <div style={{ justifySelf: 'end' }}>
                     <Buttons name="Edit Tower" varient="primary" onClick={() => { setEditTowerFlag(true) }} />
                 </div>

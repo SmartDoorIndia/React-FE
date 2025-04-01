@@ -3232,6 +3232,18 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  getLeadForBuilder: {
+    url: "/admin/builder/getLeadForBuilder/:builderId?fromDate=:fromDate&toDate=:toDate",
+    method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 

@@ -12,6 +12,7 @@ import closeBtn from '../../../../assets/images/closeBtn.png';
 import { fetchBuilderProjectById } from '../../../../common/redux/actions';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const ProjectPosting = (props) => {
     const [projectDetails, setProjectDetails] = useState({
@@ -20,10 +21,11 @@ const ProjectPosting = (props) => {
     const [subProjectList, setSubProjectList] = useState([]);
     const [projectId, setBuilderProjectId] = useState(props?.location?.state?.projectId || null);
     const builderId = props?.location?.state?.builderId;
+    const history = useHistory();
 
     useEffect(() => {
         // console.log(props?.location?.state?.projectId)
-        
+
     }, [projectId, builderId]);
 
     const addMoreTower = () => {
@@ -114,7 +116,7 @@ const ProjectPosting = (props) => {
                                     backgroundColor: "#F8F3F5",
                                     borderColor: "#DED6D9",
                                 }}
-                                disabled={false}
+                                disabled={projectId !== null ? false : true}
                                 onClick={() => { addMoreTower() }} // Bind this function to handle the click
                             >
                                 <div
@@ -139,16 +141,17 @@ const ProjectPosting = (props) => {
                     </Row>
                 </div>
 
-                <div className="projectDetailFormActions pb-4">
+                <div className="projectDetailFormActions pb-4 justify-content-start">
                     <button
                         type="submit"
                         // disabled={this.state.disableSubmit}
                         id="submit-team-member-button"
-                        className=" btn-small cancel-btn"
+                        className=" btn-small cancel-btn w-25"
+                        onClick={() => { history.push(-1) }}
                     >
                         Cancel
                     </button>
-                    <button
+                    {/* <button
                         type=""
                         // disabled={this.state.disableSubmit}
                         id="cancel-team-member-button"
@@ -164,7 +167,7 @@ const ProjectPosting = (props) => {
                         className=" btn-small submit-btn"
                     >
                         Save & Publish
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </>

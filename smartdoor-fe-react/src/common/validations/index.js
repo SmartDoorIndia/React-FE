@@ -1487,3 +1487,39 @@ export const validateSubProjectDetails = (data) => {
     isValid: isEmpty(errors)
   }
 }
+
+export const validateSubProjectUnit = (data) => {
+  let errors = {};
+
+  if(isBlank(data?.propertyType)) {
+    errors.propertyType = true;
+  }
+  if(Number(data?.propertySubType) < 0) {
+    errors.propertySubType = true;
+  }
+  if(data?.propertySubType === 'Apartment') {
+    if(Number(data?.numberOfRooms) < 0) {
+      errors.numberOfRooms = true;
+    }
+  }
+  if(Number(data?.totalUnits) < 0) {
+    errors.totalUnits = true;
+  }
+  if(Number(data?.minArea) < 0) {
+    errors.minArea = true;
+  }
+  if(Number(data?.maxArea) < 0) {
+    errors.maxArea = true;
+  }
+  if(Number(data?.minPrice) < 0) {
+    errors.minPrice = true;
+  }
+  if(Number(data?.maxPrice) < 0) {
+    errors.maxPrice = true;
+  }
+  
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}

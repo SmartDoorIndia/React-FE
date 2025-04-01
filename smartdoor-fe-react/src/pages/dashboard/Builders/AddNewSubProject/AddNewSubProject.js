@@ -452,7 +452,9 @@ const AddNewSubProject = (props) => {
       let units = [...data?.properties];
       units[units.length - 1] = unitDetails;
       setData((prevData) => ({ ...prevData, properties: [...units] }));
-      updateSubProject(data);
+      if(editTower) {
+         updateSubProject(data);
+      }
    }
 
    return (
@@ -625,9 +627,9 @@ const AddNewSubProject = (props) => {
                                  onChange={(e) => handleSelectChange(e)}
                                  error={error?.amenities}
                               >
-                                 <MenuItem value="" >
+                                 {/* <MenuItem value="" >
                                     Separate Amenities (Not compulsory)
-                                 </MenuItem>
+                                 </MenuItem> */}
                                  {defaultAmenities?.map(
                                     (amenity, index) => (
                                        <MenuItem key={index} value={amenity}>
@@ -1020,7 +1022,7 @@ const AddNewSubProject = (props) => {
                                  (property, propertyIndex) => (
                                     <>
                                        <Units
-                                          builderId={props?.builderId}
+                                          builderId={data?.builderId}
                                           projectId={data?.projectId}
                                           subProjectDetails={data}
                                           handleRemoveUnit={handleRemoveUnit}

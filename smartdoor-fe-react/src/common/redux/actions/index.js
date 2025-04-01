@@ -2302,3 +2302,8 @@ export const fetchBuilderProjectById = async (data) => {
   return response;
 }
 
+export const getLeadForBuilder = async (data) => {
+  const response = await mainApiService("getLeadForBuilder", data);
+  return response
+}
+

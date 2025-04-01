@@ -99,7 +99,7 @@ const ProjectDetails = (props) => {
             <div>
                 <div className='mt-2 mb-3'>
                     <Text text={"Project & Property Description"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                    <Text text={projectDetails?.propertyDescription || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
+                    <Text text={projectDetails?.projectDescription || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
                 </div>
             </div>
             <div className='justify-self-end mb-2' >

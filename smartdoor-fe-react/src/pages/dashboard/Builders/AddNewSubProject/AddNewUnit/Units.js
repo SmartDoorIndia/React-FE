@@ -11,6 +11,7 @@ import './AddNewUnit.scss';
 import { saveBuilderSubProjectUnits, uploadImage } from '../../../../../common/redux/actions';
 import { showErrorToast, showSuccessToast } from '../../../../../common/helpers/Utils';
 import Buttons from '../../../../../shared/Buttons/Buttons';
+import { validateSubProjectUnit } from '../../../../../common/validations';
 
 const Units = (props) => {
     const { handleRemoveUnit, unitIndex, builderId, projectId, fetchUnitDetails, editUnit, closeUnitTab } = props;
@@ -181,12 +182,19 @@ const Units = (props) => {
     }, []);
 
     const saveBuilderSubProjectUnit = async () => {
-        const response = await saveBuilderSubProjectUnits(unitDetails);
-        console.log(response)
-        let unitInfo = {...unitDetails};
-        unitInfo.propertyId = response?.data?.resourceData;
-        setUnitDetails((prevData) => ({ ...prevData, propertyId: response?.data?.resourceData }));
-        fetchUnitDetails(unitInfo);
+        const valid = await validateSubProjectUnit(unitDetails);
+        if (valid.isValid) {
+            const response = await saveBuilderSubProjectUnits(unitDetails);
+            console.log(response)
+            let unitInfo = { ...unitDetails };
+            unitInfo.propertyId = response?.data?.resourceData;
+            setUnitDetails((prevData) => ({ ...prevData, propertyId: response?.data?.resourceData }));
+            fetchUnitDetails(unitInfo);
+        }
+        else {
+            showErrorToast("Please fill up unit details...");
+            return null;
+        }
     }
 
     return (
@@ -285,41 +293,39 @@ const Units = (props) => {
                                     onChange={(e) => {
                                         setUnitDetails((prevData) => ({
                                             ...prevData,
-                                            numberOfRooms: e.target.value?.split(' ')[0],
-                                            compositionType: e.target.value?.split(' ')[1],
+                                            numberOfRooms: e.target.value,
+                                            compositionType: "BHK",
                                         }));
                                     }}
                                     value={
-                                        unitDetails.numberOfRooms 
-                                            ? `${unitDetails.numberOfRooms} ${unitDetails.compositionType || ''}`.trim() 
-                                            : ""
-                                    } 
+                                        unitDetails.numberOfRooms
+                                    }
                                 >
                                     <MenuItem value="" disabled>
                                         Select
                                     </MenuItem>
-                                    <MenuItem key="1" value="1 R">
+                                    {/* <MenuItem key="1" value="1 R">
                                         1 R
                                     </MenuItem>
                                     <MenuItem key="1" value="1 RK">
                                         1 RK
-                                    </MenuItem>
-                                    <MenuItem key="1" value="1 BHK">
+                                    </MenuItem> */}
+                                    <MenuItem key="1" value="1">
                                         1 BHK
                                     </MenuItem>
-                                    <MenuItem key="2" value="2 BHK">
+                                    <MenuItem key="2" value="2">
                                         2 BHK
                                     </MenuItem>
-                                    <MenuItem key="3" value="3 BHK">
+                                    <MenuItem key="3" value="3">
                                         3 BHK
                                     </MenuItem>
-                                    <MenuItem key="4" value="4 BHK">
+                                    <MenuItem key="4" value="4">
                                         4 BHK
                                     </MenuItem>
-                                    <MenuItem key="5" value="5 BHK">
+                                    <MenuItem key="5" value="5">
                                         5 BHK
                                     </MenuItem>
-                                    <MenuItem key="6" value="6 BHK">
+                                    <MenuItem key="6" value="6">
                                         6 BHK
                                     </MenuItem>
                                 </TextField>

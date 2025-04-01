@@ -114,9 +114,19 @@ const BuilderList = () => {
         //     id: 9
         // },
         {
+            name: "Status",
+            selector: ((row) => row.status),
+            sortable: false,
+            center: true,
+            maxWidth: "150px",
+            style: { padding: "0 !important" },
+            cell: ({ status }) => <span>{status !== null ? handleStatusElement(status) : 'N/A'}</span>,
+            id: 6
+        },
+        {
             name: "Action",
             selector: ((row) => row.action),
-            sortable: true,
+            sortable: false,
             center: true,
             maxWidth: "100px",
             style: { padding: "0 !important" },

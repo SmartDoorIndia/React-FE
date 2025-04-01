@@ -9,17 +9,22 @@ import insta from "../../../../../assets/svg/socialmedia/insta.svg";
 import whatsapp from "../../../../../assets/svg/socialmedia/whatsapp.svg";
 import "./BuilderDetails.scss";
 import Text from "../../../../../shared/Text/Text";
-import { getBuilderById } from "../../../../../common/redux/actions";
+import { getBuilderById, getLeadForBuilder } from "../../../../../common/redux/actions";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import NoImage from "../../../../../assets/images/sd-faded.png";
+import { TextField } from "@mui/material";
+import Buttons from "../../../../../shared/Buttons/Buttons";
+import { saveAs } from "file-saver";
+import { showErrorToast } from "../../../../../common/helpers/Utils";
 
 const BuilderDetails = (props) => {
 
    const history = useHistory();
    const [builderDetails, setBuilderDetails] = useState({});
+   const [fromDate, setFromDate] = useState(new Date().toISOString().split("T")[0]);
+   const [toDate, setToDate] = useState(new Date().toISOString().split("T")[0]);
 
    useEffect(() => {
-      console.log(props)
       getBuilderById({ builderId: props.builderId })
          .then((response) => {
             // console.log(response)
@@ -27,6 +32,34 @@ const BuilderDetails = (props) => {
          });
 
    }, []);
+
+   const downloadCSV = async () => {
+      const response = await getLeadForBuilder({builderId: props?.builderId, fromDate: fromDate, toDate: toDate});
+      console.log(response);
+      let data = response?.data?.resourceData
+      if (!data || data.length === 0) {
+         console.warn("No data available to download");
+         showErrorToast("No data available to download");
+         return;
+      }
+
+      // Extract headers from the first object
+      const headers = Object.keys(data[0]).join(",") + "\n";
+
+      // Convert each object to a CSV row
+      const rows = data.map(row =>
+         Object.values(row).map(value => `"${value}"`).join(",")
+      ).join("\n"); 
+
+      // Combine headers and rows
+      const csvContent = headers + rows;
+
+      // Create a Blob with CSV content
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+      // Trigger file download
+      saveAs(blob, "resource_data.csv");
+   };
 
    return (
       <Container className="builderpropertydetail-container">
@@ -48,7 +81,7 @@ const BuilderDetails = (props) => {
                         borderColor: "#DED6D9",
                      }}
                      onClick={() => {
-                        history.push("/admin/builders/builder-profile", {builderDetails: builderDetails})
+                        history.push("/admin/builders/builder-profile", { builderDetails: builderDetails })
                      }}
                   >
                      <div
@@ -110,10 +143,10 @@ const BuilderDetails = (props) => {
                   </Row>
                   <Row style={{ gap: "10px" }}>
                      <a href="#">
-                        <Image src={facebook} onClick={() => {window.open(builderDetails?.facebookUrl, '_blank')}} />
+                        <Image src={facebook} onClick={() => { window.open(builderDetails?.facebookUrl, '_blank') }} />
                      </a>
                      <a href="#">
-                        <Image src={insta} onClick={() => {window.open(builderDetails?.instaUrl, '_blank')}} />
+                        <Image src={insta} onClick={() => { window.open(builderDetails?.instaUrl, '_blank') }} />
                      </a>
                      <a href="#">
                         <Image src={whatsapp} />
@@ -123,7 +156,7 @@ const BuilderDetails = (props) => {
             </Row>
 
             <hr />
-            
+
             {builderDetails?.directors?.length > 0 && (
                <Row className="px-4 py-2 builderpropertydetail2">
                   {builderDetails?.directors?.map((director, index) => (
@@ -136,7 +169,7 @@ const BuilderDetails = (props) => {
                         </Col>
                      </>
                   ))}
-               <hr />
+                  <hr />
                </Row>
             )}
 
@@ -156,6 +189,37 @@ const BuilderDetails = (props) => {
                </Col>
             </Row>
          </Card>
+         <div className="bg-white mt-3 mb-3">
+            <Row className="bg-white py-3">
+               <Col lg={4}>
+                  <TextField
+                     className="w-100"
+                     type="date"
+                     label="From Date"
+                     name="fromDate"
+                     value={fromDate}
+                     onChange={(e) => { setFromDate(e.target.value) }}
+                  />
+               </Col>
+               <Col lg={4}>
+                  <TextField
+                     className="w-100"
+                     type="date"
+                     label="To Date"
+                     name="toDate"
+                     value={toDate}
+                     onChange={(e) => { setToDate(e.target.value) }}
+                  />
+               </Col>
+               <Col lg={3}>
+                  <Buttons
+                     className="mt-2"
+                     name="Generate lead"
+                     onClick={() => {downloadCSV();}}
+                  />
+               </Col>
+            </Row>
+         </div>
       </Container>
    );
 };

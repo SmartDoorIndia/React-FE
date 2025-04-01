@@ -38,6 +38,7 @@ const AddNewProjectPost = (props) => {
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
+   const [saveProjectFlag, setSaveProjectFlag] = useState(true);
    const [data, setData] = useState({
       builderId: builderId,
       projectId: projectId || null,
@@ -285,6 +286,7 @@ const AddNewProjectPost = (props) => {
                if (props?.editProject) {
                   showEditProject();
                } else {
+                  setSaveProjectFlag(false)
                   fetchProjectId(response?.data?.resourceData);
                }
             } else {
@@ -661,7 +663,7 @@ const AddNewProjectPost = (props) => {
                               id='projectName'
                               value={data?.projectName}
                               onChange={(e) => { setData({ ...data, projectName: e?.target.value }) }}
-                              error={error.projectName}
+                              error={error?.projectName}
                            />
                         </Col>
                         <Col lg="6">
@@ -710,7 +712,7 @@ const AddNewProjectPost = (props) => {
                               id='totalTowers'
                               value={data?.totalTowers}
                               onChange={(e) => { setData({ ...data, totalTowers: e?.target.value }) }}
-                              error={error.totalTowers}
+                              error={error?.totalTowers}
                            />
                         </Col>
                         <Col lg={6} className="">
@@ -722,7 +724,7 @@ const AddNewProjectPost = (props) => {
                               inputProps={{ min: 0 }}
                               value={data?.landArea}
                               onChange={(e) => { setData({ ...data, landArea: e?.target.value }) }}
-                              error={error.landArea}
+                              error={error?.landArea}
                               InputProps={{
                                  endAdornment: <>
                                     <InputAdornment position="end" sx={{ marginLeft: "-40px" }} >
@@ -746,7 +748,7 @@ const AddNewProjectPost = (props) => {
                               id='totalAreaToDevelop'
                               value={data?.totalAreaToDevelop}
                               onChange={(e) => { setData({ ...data, totalAreaToDevelop: e?.target.value }) }}
-                              error={error.totalAreaToDevelop}
+                              error={error?.totalAreaToDevelop}
                               InputProps={{
                                  endAdornment: <>
                                     <InputAdornment position="end" sx={{ marginLeft: "-55px" }} >
@@ -768,7 +770,7 @@ const AddNewProjectPost = (props) => {
                               id='openAreaPerc'
                               value={data?.openAreaPerc}
                               onChange={(e) => { setData({ ...data, openAreaPerc: e?.target.value }) }}
-                              error={error.openAreaPerc}
+                              error={error?.openAreaPerc}
                               InputProps={{
                                  endAdornment: <>
                                     <InputAdornment position="end" sx={{ marginLeft: "-40px" }} >
@@ -1091,34 +1093,36 @@ const AddNewProjectPost = (props) => {
                                        />
                                     </div>
                                  ))} */}
-                              <div
-                                 className="project-images mt-3"
-                                 style={{ position: "relative", marginRight: "10px" }}
-                              >
-                                 <img
-                                    src={
-                                       data?.brochureUrl
-                                    }
-                                    alt={""} // Ensure alt text is appropriate for accessibility
-                                    className="img-fluid"
-                                    style={{ maxWidth: "115px" }}
-                                 />
-                                 <RxCross2
-                                    className="delete-icon"
-                                    onClick={() =>
-                                       handleDeleteImage(null, "brochureUrl")
-                                    }
-                                    style={{
-                                       position: "absolute",
-                                       top: "-5px",
-                                       right: "-4px",
-                                       cursor: "pointer",
-                                       color: "#fff",
-                                       background: "#ff0000",
-                                       borderRadius: "50%",
-                                    }}
-                                 />
-                              </div>
+                              {data?.brochureUrl !== null && data?.brochureUrl?.length !== 0 ?
+                                 <div
+                                    className="project-images mt-3"
+                                    style={{ position: "relative", marginRight: "10px" }}
+                                 >
+                                    <img
+                                       src={
+                                          data?.brochureUrl
+                                       }
+                                       alt={""} // Ensure alt text is appropriate for accessibility
+                                       className="img-fluid"
+                                       style={{ maxWidth: "115px" }}
+                                    />
+                                    <RxCross2
+                                       className="delete-icon"
+                                       onClick={() =>
+                                          handleDeleteImage(null, "brochureUrl")
+                                       }
+                                       style={{
+                                          position: "absolute",
+                                          top: "-5px",
+                                          right: "-4px",
+                                          cursor: "pointer",
+                                          color: "#fff",
+                                          background: "#ff0000",
+                                          borderRadius: "50%",
+                                       }}
+                                    />
+                                 </div>
+                                 : null}
                            </div>
                            <Form.Text className="text-muted">
                               File should be 5MB(max) in png, jpg, etc.
@@ -1252,7 +1256,7 @@ const AddNewProjectPost = (props) => {
                      id="submit-team-member-button"
                      className=" btn-small cancel-btn"
                      onClick={() => {
-                        if(props?.editProject) {
+                        if (props?.editProject) {
                            toggleEdit();
                         } else {
                            history.push(-1);
@@ -1265,6 +1269,7 @@ const AddNewProjectPost = (props) => {
                      type="submit"
                      // disabled={this.state.disableSubmit}
                      id="cancel-team-member-button"
+                     disabled={props?.editProject ? false : !saveProjectFlag}
                      className=" btn-small submit-btn"
                      onClick={() => { handleSubmit(); }}
                   >
