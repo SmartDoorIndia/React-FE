@@ -661,6 +661,8 @@ const AddNewProjectPost = (props) => {
                               className="mt-4 w-100 textFieldInput"
                               label='Project Name'
                               id='projectName'
+                              autoComplete="off"
+                              inputProps={{ autoComplete: "off" }}
                               value={data?.projectName}
                               onChange={(e) => { setData({ ...data, projectName: e?.target.value }) }}
                               error={error?.projectName}
@@ -707,7 +709,8 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 mt-4 textFieldInput"
                               type="number"
-                              inputProps={{ min: 0 }}
+                              autoComplete="off"
+                              inputProps={{ min: 0, autoComplete: "off" }}
                               label='Total Tower / Plotted Planned'
                               id='totalTowers'
                               value={data?.totalTowers}
@@ -721,7 +724,8 @@ const AddNewProjectPost = (props) => {
                               type="number"
                               label='Land Area'
                               id='landArea'
-                              inputProps={{ min: 0 }}
+                              autoComplete="off"
+                              inputProps={{ min: 0, autoComplete: "off" }}
                               value={data?.landArea}
                               onChange={(e) => { setData({ ...data, landArea: e?.target.value }) }}
                               error={error?.landArea}
@@ -743,9 +747,10 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 textFieldInput"
                               type="number"
-                              inputProps={{ min: 0 }}
+                              inputProps={{ min: 0, autoComplete: "off" }}
                               label='Total Area to Develop'
                               id='totalAreaToDevelop'
+                              autoComplete="off"
                               value={data?.totalAreaToDevelop}
                               onChange={(e) => { setData({ ...data, totalAreaToDevelop: e?.target.value }) }}
                               error={error?.totalAreaToDevelop}
@@ -765,8 +770,9 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 textFieldInput"
                               type="number"
-                              inputProps={{ min: 0 }}
+                              inputProps={{ min: 0, autoComplete: "off" }}
                               label='Open Area'
+                              autoComplete="off"
                               id='openAreaPerc'
                               value={data?.openAreaPerc}
                               onChange={(e) => { setData({ ...data, openAreaPerc: e?.target.value }) }}
@@ -922,6 +928,8 @@ const AddNewProjectPost = (props) => {
                      <TextField
                         id={'contactName'}
                         type="text"
+                        autoComplete="off"
+                        inputProps={{ autoComplete: "off" }}
                         className="textFieldInput w-100"
                         label="Contact Person Name"
                         value={data?.contactPersonName}
@@ -932,7 +940,8 @@ const AddNewProjectPost = (props) => {
                      <TextField
                         id={'contactNumber'}
                         type="number"
-                        inputProps={{ min: 0 }}
+                        autoComplete="off"
+                        inputProps={{ min: 0, autoComplete: "off" }}
                         className="textFieldInput w-100"
                         label="Phone Number"
                         value={data?.contactPersonNumber}
@@ -946,9 +955,10 @@ const AddNewProjectPost = (props) => {
                      <TextField
                         id={'reraNumber'}
                         type="text"
-                        inputProps={{ min: 0 }}
+                        inputProps={{ min: 0, autoComplete: "off" }}
                         className="textFieldInput w-100"
                         label="Rera Number"
+                        autoComplete="off"
                         value={data?.reraNumber}
                         onChange={(e) => {
                            setData({ ...data, reraNumber: e?.target?.value })
@@ -960,6 +970,9 @@ const AddNewProjectPost = (props) => {
                         id="projectDescription"
                         className="textFieldInput w-100"
                         type="text"
+                        autoComplete="off"
+                        inputProps={{ autoComplete: "off" }}
+
                         label="Project Description"
                         value={data?.projectDescription}
                         onChange={(e) => { setData({ ...data, projectDescription: e?.target.value }) }}

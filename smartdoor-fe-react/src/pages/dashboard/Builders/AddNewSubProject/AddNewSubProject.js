@@ -499,6 +499,7 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Tower Name"
                                  name="projectName"
+                                 autoComplete="off"
                                  value={data.projectName}
                                  onChange={handleInputChange}
                                  error={error?.projectName}
@@ -510,6 +511,7 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Rera Number"
                                  name="reraNumber"
+                                 autoComplete="off"
                                  value={data.reraNumber}
                                  onChange={handleInputChange}
                                  error={error?.reraNumber}
@@ -524,6 +526,7 @@ const AddNewSubProject = (props) => {
                                  label="Total Area To Develop"
                                  name="totalAreaToDevelop"
                                  inputProps={{ min: 0 }}
+                                 autoComplete="off"
                                  value={data.totalAreaToDevelop}
                                  onChange={handleInputChange}
                                  error={error?.totalAreaToDevelop}
@@ -572,6 +575,7 @@ const AddNewSubProject = (props) => {
                                     type="number"
                                     inputProps={{ min: 0 }}
                                     label="Tower Floors"
+                                    autoComplete="off"
                                     name="totalFloors"
                                     value={data.totalFloors}
                                     onChange={handleInputChange}
@@ -588,6 +592,7 @@ const AddNewSubProject = (props) => {
                                     label="Units Per Floor"
                                     name="unitsPerFloor"
                                     value={data.unitsPerFloor}
+                                    autoComplete="off"
                                     onChange={handleInputChange}
                                     error={error?.unitsPerFloor}
                                  />
@@ -600,6 +605,7 @@ const AddNewSubProject = (props) => {
                                  label="Highlights / USP"
                                  name="highlightsOrUsp"
                                  value={data.highlightsOrUsp}
+                                 autoComplete="off"
                                  onChange={handleInputChange}
                                  error={error?.highlightsOrUsp}
                               />
@@ -647,6 +653,7 @@ const AddNewSubProject = (props) => {
                                  label="Contact Person Name"
                                  name="contactPersonName"
                                  value={data.contactPersonName}
+                                 autoComplete="off"
                                  onChange={handleInputChange}
                                  error={error?.contactPersonName}
                               />
@@ -658,6 +665,7 @@ const AddNewSubProject = (props) => {
                                  label="Contact Person Mobile Number"
                                  name="contactPersonNumber"
                                  value={data.contactPersonNumber}
+                                 autoComplete="off"
                                  onChange={handleInputChange}
                                  error={error?.contactPersonNumber}
                               />
