@@ -34,7 +34,7 @@ const BuilderDetails = (props) => {
    }, []);
 
    const downloadCSV = async () => {
-      const response = await getLeadForBuilder({builderId: props?.builderId, fromDate: fromDate, toDate: toDate});
+      const response = await getLeadForBuilder({ builderId: props?.builderId, fromDate: fromDate, toDate: toDate });
       console.log(response);
       let data = response?.data?.resourceData
       if (!data || data.length === 0) {
@@ -49,7 +49,7 @@ const BuilderDetails = (props) => {
       // Convert each object to a CSV row
       const rows = data.map(row =>
          Object.values(row).map(value => `"${value}"`).join(",")
-      ).join("\n"); 
+      ).join("\n");
 
       // Combine headers and rows
       const csvContent = headers + rows;
@@ -58,7 +58,7 @@ const BuilderDetails = (props) => {
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
 
       // Trigger file download
-      saveAs(blob, "resource_data.csv");
+      saveAs(blob, "LeadGeneration.csv");
    };
 
    return (
@@ -215,7 +215,14 @@ const BuilderDetails = (props) => {
                   <Buttons
                      className="mt-2"
                      name="Generate lead"
-                     onClick={() => {downloadCSV();}}
+                     onClick={() => {
+                        if (fromDate <= toDate) {
+                           downloadCSV();
+                        } else {
+                           showErrorToast("Enter valid date range...")
+                           return null;
+                        }
+                     }}
                   />
                </Col>
             </Row>

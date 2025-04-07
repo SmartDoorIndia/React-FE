@@ -55,6 +55,11 @@ const ProjectDetailsPage = (props) => {
         setAddTowerFlag(true);
     }
 
+    const updateSubProjectList = (subProjectData) => {
+        setAddTowerFlag(false);
+        subProjectList.push(subProjectData);
+    }
+
     return (
         <>
             {loading ?
@@ -145,7 +150,7 @@ const ProjectDetailsPage = (props) => {
                                 </div>
                             </AccordionSummary>
                             <AccordionDetails sx={{ border: 'solid 1px #DED6D9', borderRadius: '6px' }}>
-                                <AddNewSubProject projectId={props?.location?.state?.projectId} builderId={props?.location?.state?.builderId} />
+                                <AddNewSubProject projectId={props?.location?.state?.projectId} builderId={props?.location?.state?.builderId} updateSubProjectList={updateSubProjectList} newTowerinExisting={true} />
                             </AccordionDetails>
                         </Accordion>
                     </>

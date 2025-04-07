@@ -1343,6 +1343,9 @@ export const validateBuilderDetails = (data) => {
   if(isBlank(data.companyLogoImageUrl)) {
     errors.companyLogoImageUrl = true;
   }
+  if((data?.companyLogoImageUrl?.length < 0)) {
+    errors.companyLogoImageUrl = true;
+  }
   if(isBlank(data.companyEmail)) {
     errors.companyEmail = true;
   }
@@ -1395,6 +1398,10 @@ export const validateProjectDetails = (data) => {
   }
   if(isBlank(data?.possessionTo)) {
     errors.possessionTo = true;
+  }
+  if(data?.possessionTo < data?.possessionFrom) {
+    errors.possessionTo = true;
+    errors.possessionFrom = true;
   }
   if(isBlank(data?.projectDescription)) {
     errors.projectDescription = true;

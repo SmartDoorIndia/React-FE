@@ -2239,7 +2239,7 @@ export const saveBuilderSubProjectUnits = async (data) => {
 export const createBuilderProfileDetail = async (data) => {
   const response = await mainApiService("createBuilderProfileDetail", data);
   if (response.data && response.data.status === 200) {
-    showSuccessToast("Profile created successfully.");
+    showSuccessToast(response?.data?.customMessage);
   } else if (response.data && response.data.status === 409)
     showErrorToast("Builder already exist.");
   else if (response.data && response.data.status !== 409 && response.data.error) {

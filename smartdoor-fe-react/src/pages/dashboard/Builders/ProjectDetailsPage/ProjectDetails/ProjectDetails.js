@@ -68,7 +68,7 @@ const ProjectDetails = (props) => {
                         <Col lg={6}>
                             <div className='mt-3'>
                                 <Text text={"General Amenities"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.projectAmenities || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
+                                <Text text={projectDetails?.projectAmenities?.join(", ") || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
                             </div>
                             <div className='mt-2'>
                                 <Text text={"Land Area"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
@@ -119,4 +119,4 @@ const ProjectDetails = (props) => {
     )
 }
 
-export default ProjectDetails
+export default ProjectDetails;

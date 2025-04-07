@@ -23,9 +23,10 @@ import Units from "./AddNewUnit/Units";
 import { saveBuilderProject, saveBuilderSubProject, uploadImage } from "../../../../common/redux/actions";
 import { validateProjectDetails, validateSubProjectDetails } from "../../../../common/validations";
 import Buttons from "../../../../shared/Buttons/Buttons";
+import POSTING_CONSTANTS from "../../../../common/helpers/POSTING_CONSTANTS";
 
 const AddNewSubProject = (props) => {
-   const { updateSubProject, builderId, editTower, toggleEditTower } = props
+   const { updateSubProject, builderId, editTower, toggleEditTower, updateSubProjectList } = props
    const [show, setShow] = useState(false);
    const [imageCategory, setImageCategory] = useState("Interior");
    const [selectedImages, setSelectedImages] = useState([]);
@@ -44,6 +45,7 @@ const AddNewSubProject = (props) => {
    const [currentUnitIndex, setCurrentUnitIndex] = useState(0);
    const [selectedType, setSelectedType] = useState([]);
    const auth = getLocalStorage("authData");
+   const [saveSubProjectFlag, setSaveSubProjectFlag] = useState(true);
    const [data, setData] = useState({
       builderId: props?.builderId,
       parentProjectId: props.projectId,
@@ -423,14 +425,17 @@ const AddNewSubProject = (props) => {
 
          if (valid.isValid) {
             const response = await saveBuilderSubProject(submissionData);
-
+            setSaveSubProjectFlag(false)
             if (response?.data) {
                // history.push(-1);
                // fetchProjectId(response?.data?.resourceData);
                if (editTower) {
                   updateSubProject(data);
                } else {
-                  setData((prevData) => ({...prevData, projectId: response?.data?.resourceData}))
+                  setData((prevData) => ({ ...prevData, projectId: response?.data?.resourceData }))
+                  let subProjectData = { ...data }
+                  subProjectData.projectId = response?.data?.resourceData;
+                  // updateSubProjectList(subProjectData)
                }
             } else {
                const responseError = response?.data?.error || "Unknown error occurred";
@@ -448,11 +453,11 @@ const AddNewSubProject = (props) => {
 
    const handleFetchUnit = (unitDetails) => {
       console.log("", unitDetails)
-      setShowMoreUnits(false);
       let units = [...data?.properties];
       units[units.length - 1] = unitDetails;
       setData((prevData) => ({ ...prevData, properties: [...units] }));
-      if(editTower) {
+      if (editTower) {
+         setShowMoreUnits(false);
          updateSubProject(data);
       }
    }
@@ -470,6 +475,7 @@ const AddNewSubProject = (props) => {
                                  className="w-100 textFieldInput"
                                  select
                                  name="propertyType"
+                                 required={true}
                                  value={data.propertyType}
                                  onChange={handleSubPostChange}
                                  label={"Property Type"}
@@ -499,6 +505,7 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Tower Name"
                                  name="projectName"
+                                 required={true}
                                  autoComplete="off"
                                  value={data.projectName}
                                  onChange={handleInputChange}
@@ -511,6 +518,7 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Rera Number"
                                  name="reraNumber"
+                                 required={true}
                                  autoComplete="off"
                                  value={data.reraNumber}
                                  onChange={handleInputChange}
@@ -525,6 +533,7 @@ const AddNewSubProject = (props) => {
                                  type="number"
                                  label="Total Area To Develop"
                                  name="totalAreaToDevelop"
+                                 required={true}
                                  inputProps={{ min: 0 }}
                                  autoComplete="off"
                                  value={data.totalAreaToDevelop}
@@ -537,6 +546,7 @@ const AddNewSubProject = (props) => {
                                              className="textFieldInput w-100"
                                              name="totalAreaMetrics"
                                              select
+                                             disabled
                                              value={data.totalAreaMetrics}
                                              onChange={(e) => {
                                                 setData((prevData) => ({
@@ -577,6 +587,7 @@ const AddNewSubProject = (props) => {
                                     label="Tower Floors"
                                     autoComplete="off"
                                     name="totalFloors"
+                                    required={true}
                                     value={data.totalFloors}
                                     onChange={handleInputChange}
                                     error={error?.totalFloors}
@@ -591,6 +602,7 @@ const AddNewSubProject = (props) => {
                                     type="text"
                                     label="Units Per Floor"
                                     name="unitsPerFloor"
+                                    required={true}
                                     value={data.unitsPerFloor}
                                     autoComplete="off"
                                     onChange={handleInputChange}
@@ -604,6 +616,7 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Highlights / USP"
                                  name="highlightsOrUsp"
+                                 required={true}
                                  value={data.highlightsOrUsp}
                                  autoComplete="off"
                                  onChange={handleInputChange}
@@ -616,6 +629,7 @@ const AddNewSubProject = (props) => {
                                  select
                                  label="Amenities"
                                  name="selectedAmenity"
+                                 required={true}
                                  sx={{
                                     ".MuiInputBase-root": {
                                        display: "flex",
@@ -636,7 +650,7 @@ const AddNewSubProject = (props) => {
                                  {/* <MenuItem value="" >
                                     Separate Amenities (Not compulsory)
                                  </MenuItem> */}
-                                 {defaultAmenities?.map(
+                                 {POSTING_CONSTANTS.GeneralAmenities?.map(
                                     (amenity, index) => (
                                        <MenuItem key={index} value={amenity}>
                                           <Checkbox checked={data?.amenities?.includes(amenity)} />
@@ -652,6 +666,7 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Contact Person Name"
                                  name="contactPersonName"
+                                 required={true}
                                  value={data.contactPersonName}
                                  autoComplete="off"
                                  onChange={handleInputChange}
@@ -664,6 +679,7 @@ const AddNewSubProject = (props) => {
                                  type="text"
                                  label="Contact Person Mobile Number"
                                  name="contactPersonNumber"
+                                 required={true}
                                  value={data.contactPersonNumber}
                                  autoComplete="off"
                                  onChange={handleInputChange}
@@ -679,8 +695,9 @@ const AddNewSubProject = (props) => {
                                     <TextField
                                        className="w-100 textFieldInput"
                                        select
-                                       label="Month"
+                                       label="Month *"
                                        name="month"
+                                       required={true}
                                        value={monthYearFrom.month}
                                        onChange={handleFromMonthChange}
                                        sx={{
@@ -710,8 +727,9 @@ const AddNewSubProject = (props) => {
                                     <TextField
                                        className="w-100 textFieldInput"
                                        select
-                                       label="Year"
+                                       label="Year *"
                                        name="year"
+                                       required={true}
                                        value={monthYearFrom.year}
                                        onChange={handleFromYearChange}
                                        sx={{
@@ -745,8 +763,9 @@ const AddNewSubProject = (props) => {
                                     <TextField
                                        className="w-100 textFieldInput"
                                        select
-                                       label="Month"
+                                       label="Month *"
                                        name="month"
+                                       required={true}
                                        value={monthYearTo.month}
                                        onChange={handleToMonthChange}
                                        sx={{
@@ -776,8 +795,9 @@ const AddNewSubProject = (props) => {
                                     <TextField
                                        className="w-100 textFieldInput"
                                        select
-                                       label="Year"
+                                       label="Year *"
                                        name="year"
+                                       required={true}
                                        value={monthYearTo.year}
                                        onChange={handleToYearChange}
                                        sx={{
@@ -791,14 +811,13 @@ const AddNewSubProject = (props) => {
                                        }}
                                     >
                                        <MenuItem value="">Select Year</MenuItem>
-                                       {Array.from(
-                                          { length: 101 },
-                                          (_, index) => (currentYear + 20) - index
-                                       ).map((year) => (
-                                          <MenuItem key={year} value={year}>
-                                             {year}
-                                          </MenuItem>
-                                       ))}
+                                       {Array.from({ length: 41 }, (_, index) => currentYear + 20 - index).map(
+                                          (year) => (
+                                             <MenuItem    key={year} value={year}>
+                                                {year}
+                                             </MenuItem>
+                                          )
+                                       )}
                                     </TextField>
                                  </Col>
                               </Row>
@@ -811,7 +830,7 @@ const AddNewSubProject = (props) => {
                                  controlId="formProjectImages"
                                  className="formProjectImages"
                               >
-                                 <span>Upload project images</span>
+                                 <span>Upload project images *</span>
                                  <div className="image-upload mt-2 ">
                                     <label
                                        className="upload-label"
@@ -843,13 +862,14 @@ const AddNewSubProject = (props) => {
                                                       style={{ position: "relative" }}
                                                    >
                                                       <img
-                                                         src={image.docURL}
+                                                         src={image}
                                                          alt={
                                                             image.docDescription || image.docName
                                                          } // Use description or name as alt text
                                                          className="img-fluid"
                                                          style={{
-                                                            maxWidth: "100px",
+                                                            width: '100px',
+                                                            height: '100px',
                                                             borderRadius: "4px",
                                                          }}
                                                       />
@@ -1006,26 +1026,28 @@ const AddNewSubProject = (props) => {
                                  <Buttons name={"Cancel"} varient="secondary" onClick={() => { toggleEditTower() }} /> &nbsp;&nbsp;
                               </>
                            )}
-                           <Buttons name={editTower ? "Save" : "Add Tower"} varient="primary" onClick={() => { saveSubProjectDetails(); }} />
+                           {saveSubProjectFlag ?
+                              <Buttons name={editTower ? "Save" : "Add Tower"} varient="primary" onClick={() => { saveSubProjectDetails(); }} />
+                              : null}
                         </div>
                         <hr className="p-0 w-100" />
                         {/* Tower */}
 
-                        <div>
-                           <Text
-                              text="Unit(s)"
-                              style={{
-                                 fontSize: "16px",
-                                 fontWeight: "700",
-                                 lineHeight: "21.86px",
-                                 letterSpacing: "-0.02em",
-                                 textAlign: "left",
-                              }}
-                           />
-                        </div>
 
                         {showMoreUnits ?
                            <>
+                              <div>
+                                 <Text
+                                    text="Unit(s)"
+                                    style={{
+                                       fontSize: "16px",
+                                       fontWeight: "700",
+                                       lineHeight: "21.86px",
+                                       letterSpacing: "-0.02em",
+                                       textAlign: "left",
+                                    }}
+                                 />
+                              </div>
                               {data.properties.map(
                                  (property, propertyIndex) => (
                                     <>
@@ -1053,11 +1075,11 @@ const AddNewSubProject = (props) => {
                                        borderColor: "#DED6D9",
                                     }}
                                     onClick={() => {
-                                       if (data.propertyType !== null && data.propertyType.length !== 0) {
+                                       if (data.propertyType !== null && data.propertyType.length !== 0 && data.projectId !== null) {
                                           setShowMoreUnits(true);
                                           handleAddMoreUnit();
                                        } else {
-                                          showErrorToast("Please select property type...")
+                                          showErrorToast("Please save tower details above...")
                                           return 0;
                                        }
                                     }}
@@ -1077,6 +1099,11 @@ const AddNewSubProject = (props) => {
                                        style={{ fontSize: "12px", color: "#BE1452" }}
                                     />
                                  </Button>
+                              </>
+                              : null}
+                           {!editTower && props?.newTowerinExisting ?
+                              <>
+                                 <Buttons name={"Done"} varient="primary" onClick={() => { updateSubProjectList(data) }} />
                               </>
                               : null}
                         </div>

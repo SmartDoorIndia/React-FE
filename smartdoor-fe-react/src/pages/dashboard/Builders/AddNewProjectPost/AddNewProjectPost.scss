@@ -2,14 +2,14 @@
 
 .add-new-project-post {
    .textFieldInput .MuiInputBase-root.MuiOutlinedInput-root {
-      min-width: 100%;
+      width: 100%;
       border-radius: 10px; /* Example customization */
       background-color: white;
    }
    
    /* Customize the input inside the TextField */
    .textFieldInput .MuiInputBase-input {
-      min-width: 100%;
+      width: 100%;
       border-radius: 10px; /* Rounder corners */
       height: 18px !important;
       background-color: white;

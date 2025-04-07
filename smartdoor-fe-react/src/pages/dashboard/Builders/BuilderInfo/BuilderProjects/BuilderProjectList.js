@@ -38,10 +38,10 @@ const BuilderProjectList = (props) => {
    useEffect(async () => {
       const response = await fetchProjectIdList({ builderId: props?.builderId });
       console.log(provideAuth().userData);
+      setLoading(true)
       if (response.status === 200) {
-         setLoading(true)
+         setLoading(false);
          if (response?.data?.resourceData?.length > 0) {
-            setLoading(false);
             setBuilderProjectList(response?.data?.resourceData)
          }
       }
@@ -106,6 +106,7 @@ const BuilderProjectList = (props) => {
          name: "Address",
          selector: (row) => row?.projectAddress || 'N/A',
          center: true,
+         wrap: true,
          minWidth: "120px",
       },
       {
@@ -212,9 +213,9 @@ const BuilderProjectList = (props) => {
                         <tbody>
                            <tr>
                               <td>{subProject.reraNumber}</td>
-                              <td>{subProject?.totalAreaToDevelop}</td>
-                              <td>{subProject?.totalFloors}</td>
-                              <td>{subProject?.contactNumber}</td>
+                              <td>{subProject?.totalAreaToDevelop || '0'}</td>
+                              <td>{subProject?.totalFloors || '0'}</td>
+                              <td>{subProject?.contactNumber || '0'}</td>
                            </tr>
                         </tbody>
                      </table>
@@ -231,9 +232,9 @@ const BuilderProjectList = (props) => {
                                     <td>{property.compositionType}</td>
                                     <td>{formatDate(property.possessionFrom, "MMM YYYY")} - {formatDate(property.possessionTo, "MMM YYYY")}</td>
                                     <td>{property.reraNumber}</td>
-                                    <td>{property.totalFloors + " Total Floors"}</td>
-                                    <td>{property.totalUnits + " Total Units"}</td>
-                                    <td>{property.unitsPerFloor + " Units Per Floor"}</td>
+                                    <td>{(property.totalFloors || '0') + " Total Floors"}</td>
+                                    <td>{(property.totalUnits || '0') + " Total Units"}</td>
+                                    <td>{(property.unitsPerFloor || '0') + " Units Per Floor"}</td>
                                  </tr>
                               ))
                            ) : (
@@ -331,20 +332,20 @@ const BuilderProjectList = (props) => {
                      columns={columns}
                      progressPending={loading}
                      progressComponent={ProgressComponent}
-                     pagination
-                     paginationComponent={PaginationComponent}
-                     paginationServer
-                     paginationRowsPerPageOptions={[8, 16, 24, 32]} // Rows per page options
-                     paginationPerPage={8} // Default rows per page
-                     perPageOptions={[8, 16, 24, 32]} // Per-page options
-                     onChangePage={handlePageChange}
+                     // pagination
+                     // paginationComponent={PaginationComponent}
+                     // paginationServer
+                     // paginationRowsPerPageOptions={[8, 16, 24, 32]} // Rows per page options
+                     // paginationPerPage={8} // Default rows per page
+                     // perPageOptions={[8, 16, 24, 32]} // Per-page options
+                     // onChangePage={handlePageChange}
+                     // onChangeRowsPerPage={handleRowsPerPageChange}
                      expandableRows
                      expandableRowsComponent={({ data }) => (
                         <ExpandedRowComponent projectDetails={builderProjectDetails[data.projectId] || {}} />
                      )}
                      expandableRowExpanded={(row) => row.projectId === expandedProjectId}
                      onRowExpandToggled={handleExpandRow}
-                     onChangeRowsPerPage={handleRowsPerPageChange}
                      subHeaderComponent={subHeaderComponentMemo}
                      persistTableHead="true"
                      filterComponent={subHeaderComponentMemo}

@@ -16,7 +16,7 @@ const BuilderList = () => {
 
     const tableRef = useRef();
     const history = useHistory();
-    
+
     const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
     const [filterText, setFilterText] = React.useState("");
     const [builderList, setBuilderList] = useState([]);
@@ -30,7 +30,7 @@ const BuilderList = () => {
             center: false,
             minWidth: "150px",
             style: { paddingLeft: "2% !important" },
-            cell: ({ brandName }) => <span>{brandName || ""}</span>,
+            cell: ({ brandName }) => <span>{brandName || "N/A"}</span>,
             id: 1
         },
         {
@@ -40,7 +40,7 @@ const BuilderList = () => {
             center: false,
             maxWidth: "150px",
             style: { paddingLeft: "2% !important" },
-            cell: ({ contactPersonName }) => <span>{contactPersonName || ""}</span>,
+            cell: ({ contactPersonName }) => <span>{contactPersonName || "N/A"}</span>,
             id: 2
         },
         {
@@ -50,7 +50,7 @@ const BuilderList = () => {
             center: true,
             maxWidth: "150px",
             style: { padding: "0 !important" },
-            cell: ({ mobileNumber }) => <span>{mobileNumber || ""}</span>,
+            cell: ({ mobileNumber }) => <span>{mobileNumber || "N/A"}</span>,
             id: 3
         },
         {
@@ -60,7 +60,7 @@ const BuilderList = () => {
             center: true,
             maxWidth: "150px",
             style: { padding: "0 !important" },
-            cell: ({ totalProjectCount }) => <span>{totalProjectCount || ""}</span>,
+            cell: ({ totalProjectCount }) => <span>{totalProjectCount || "0"}</span>,
             id: 4
         },
         {
@@ -70,7 +70,7 @@ const BuilderList = () => {
             center: true,
             maxWidth: "150px",
             style: { padding: "0 !important" },
-            cell: ({ last_updated }) => <span>{`${formateDate(last_updated, "MMM DD, YYYY")}` || ""}</span>,
+            cell: ({ last_updated }) => <span>{`${formateDate(last_updated, "MMM DD, YYYY")}` || "N/A"}</span>,
             id: 5
         },
         {
@@ -80,7 +80,7 @@ const BuilderList = () => {
             center: true,
             maxWidth: "150px",
             style: { padding: "0 !important" },
-            cell: ({ leads }) => <span>{leads || ""}</span>,
+            cell: ({ leads }) => <span>{leads || "0"}</span>,
             id: 6
         },
         // {
@@ -113,16 +113,16 @@ const BuilderList = () => {
         //     cell: ({ reviewProjects }) => <span>{reviewProjects}</span>,
         //     id: 9
         // },
-        {
-            name: "Status",
-            selector: ((row) => row.status),
-            sortable: false,
-            center: true,
-            maxWidth: "150px",
-            style: { padding: "0 !important" },
-            cell: ({ status }) => <span>{status !== null ? handleStatusElement(status) : 'N/A'}</span>,
-            id: 6
-        },
+        // {
+        //     name: "Status",
+        //     selector: ((row) => row.status),
+        //     sortable: false,
+        //     center: true,
+        //     maxWidth: "150px",
+        //     style: { padding: "0 !important" },
+        //     cell: ({ status }) => <span>{status !== null ? handleStatusElement(status) : 'N/A'}</span>,
+        //     id: 6
+        // },
         {
             name: "Action",
             selector: ((row) => row.action),
@@ -138,7 +138,7 @@ const BuilderList = () => {
                                 <Link
                                     to={{
                                         pathname: "/admin/builders/builder-details",
-                                        state: {builderId: builderId},
+                                        state: { builderId: builderId },
                                     }}
                                 >
                                     <Image name="editIcon" src={contentIcon} />
@@ -184,7 +184,15 @@ const BuilderList = () => {
 
         return (
             <SearchInput
-                onFilter={(e) => setFilterText(e.target.value)}
+                onFilter={(e) => {
+                    setFilterText(e.target.value);
+                    getBuilderList({ searchStr: e.target.value })
+                        .then((response) => {
+                            setLoading(false)
+                            console.log(response)
+                            setBuilderList([...response.data.resourceData]);
+                        })
+                }}
                 onClear={() => handleClear}
                 filterText={filterText}
                 placeholder="Search owner name/mobile No."
@@ -194,13 +202,13 @@ const BuilderList = () => {
 
     useEffect(() => {
         setLoading(true)
-        getBuilderList({searchStr: filterText})
-        .then((response) => {
-            setLoading(false)
-            console.log(response)
-            setBuilderList([...response.data.resourceData]);
-        })
-    },[]);
+        getBuilderList({ searchStr: filterText })
+            .then((response) => {
+                setLoading(false)
+                console.log(response)
+                setBuilderList([...response.data.resourceData]);
+            })
+    }, []);
 
     return (
         <>
@@ -220,17 +228,18 @@ const BuilderList = () => {
                     <DataTableComponent ref={tableRef}
                         data={builderList}
                         columns={builderColumns}
-                          progressPending={loading}
+                        progressPending={loading}
                         progressComponent={ProgressComponent}
-                        paginationComponent={PaginationComponent}
-                        paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                        paginationPerPage={recordsPerPage}
-                        currentPage={currentPage}
-                        onChangePage={handlePageChange}
-                        onChangeRowsPerPage={handleRowsPerPageChange}
-                        perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                        // paginationComponent={PaginationComponent}
+                        // paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                        // paginationPerPage={recordsPerPage}
+                        // currentPage={currentPage}
+                        // onChangePage={handlePageChange}
+                        // onChangeRowsPerPage={handleRowsPerPageChange}
+                        // perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
                         filterText={filterText}
-                        paginationServer={true}
+                        paginationServer={false}
+                        pagination={false}
                         subHeaderComponent={subHeaderComponentMemo}
                         persistTableHead
                         filterComponent={subHeaderComponentMemo}

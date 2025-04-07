@@ -25,8 +25,9 @@ import { Box, Checkbox, Divider, InputAdornment, ListItemText, MenuItem, TextFie
 import AutoCompleteTextField from "../../../../shared/Inputs/AutoComplete/textField";
 import { geocodeByAddress, geocodeByLatLng } from "react-google-places-autocomplete";
 import Buttons from "../../../../shared/Buttons/Buttons";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { validateProjectDetails } from "../../../../common/validations";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import POSTING_CONSTANTS from "../../../../common/helpers/POSTING_CONSTANTS";
 
 const AddNewProjectPost = (props) => {
    const { fetchProjectId, projectId, builderId, showEditProject, toggleEdit } = props
@@ -190,7 +191,11 @@ const AddNewProjectPost = (props) => {
                         brochureUrl: response.data.resourceData[0],
                      }));
                   }
-                  showSuccessToast(response.data.customMessage)
+                  if (description === 'PROJECT_LAYOUT') {
+                     showSuccessToast("Brochure uploaded successfully...")
+                  } else {
+                     showSuccessToast(response.data.customMessage)
+                  }
                }
             })
             .catch((error) => {
@@ -453,11 +458,11 @@ const AddNewProjectPost = (props) => {
          state: '',
          country: ''
       }
-      m_address = mapAddressComponents(e?.location?.address_components);
-      if (m_address.sublocality_level_1.length !== 0 && m_address.locality.length !== 0 && m_address.administrative_area_level_3.length !== 0 && m_address.state.length !== 0) {
+      m_address = await mapAddressComponents(e?.location?.address_components);
+      if (m_address?.sublocality_level_1?.length !== 0 && m_address?.locality?.length !== 0 && m_address?.administrative_area_level_3?.length !== 0 && m_address?.state?.length !== 0) {
          newData.city = m_address.locality;
          newData.locality = m_address.sublocality_level_1;
-         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + m_address.postal_code;
+         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + ' ' + m_address.postal_code;
          newData.zipCode = m_address.postal_code;
          newData.state = m_address.state;
          newData.country = m_address.country;
@@ -487,7 +492,8 @@ const AddNewProjectPost = (props) => {
       newData.longitude = e?.lng;
 
       // Update the state once
-      setData(newData);
+      // setData(newData);
+      setData((prevData) => ({ ...prevData, projectAddress: newData.projectAddress, locality: e.location, city: newData.city, state: m_address.state, latitude: newData.latitude, longitude: newData.longitude, cityLat: newData.cityLat, cityLong: newData.cityLong }))
    }
 
    const handleCurrentLocation = async (latLng) => {
@@ -498,7 +504,7 @@ const AddNewProjectPost = (props) => {
       if (m_address?.sublocality_level_1.length !== 0 && m_address?.locality.length !== 0 && m_address?.administrative_area_level_3.length !== 0 && m_address?.state.length !== 0) {
          newData.city = m_address?.locality;
          newData.locality = m_address?.sublocality_level_1;
-         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + m_address.postal_code;
+         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + ' ' + m_address.postal_code;
          newData.zipCode = m_address?.postal_code;
          newData.state = m_address?.state;
          newData.country = m_address?.country;
@@ -549,7 +555,7 @@ const AddNewProjectPost = (props) => {
       if (m_address.sublocality_level_1.length !== 0 && m_address.locality.length !== 0 && m_address.administrative_area_level_3.length !== 0 && m_address.state.length !== 0) {
          newData.city = m_address.locality;
          newData.locality = m_address.sublocality_level_1;
-         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + m_address.postal_code;
+         newData.projectAddress = m_address.sublocality_level_1 + ", " + m_address.locality + ", " + m_address.state + ", " + m_address.country + ' ' + m_address.postal_code;
          newData.zipCode = m_address.postal_code;
          newData.state = m_address.state;
          newData.country = m_address.country;
@@ -579,7 +585,7 @@ const AddNewProjectPost = (props) => {
       newData.latitude = e?.latlng?.lat;
       newData.longitude = e?.latlng?.lng;
       console.log(newData)
-      setData((prevData) => ({ ...prevData, locality: e.location, city: newData.city, state: m_address.state, latitude: newData.latitude, longitude: newData.longitude, cityLat: newData.cityLat, cityLong: newData.cityLong }))
+      setData((prevData) => ({ ...prevData, projectAddress: newData.projectAddress, locality: e.location, city: newData.city, state: m_address.state, latitude: newData.latitude, longitude: newData.longitude, cityLat: newData.cityLat, cityLong: newData.cityLong }))
       // setAddressDetails(newData);
    }
 
@@ -606,7 +612,7 @@ const AddNewProjectPost = (props) => {
                               currentLocFlag={true}
                               label=""
                               cityLatLng={null}
-                              placeholder="Select  location of property"
+                              placeholder="Select  location of property *"
                               id="PropertyCityAutoComplete"
                               onSelectOption={(e) => { handleSelectLocalityOption(e) }}
                               onInputChange={(value) =>
@@ -661,6 +667,7 @@ const AddNewProjectPost = (props) => {
                               className="mt-4 w-100 textFieldInput"
                               label='Project Name'
                               id='projectName'
+                              required={true}
                               autoComplete="off"
                               inputProps={{ autoComplete: "off" }}
                               value={data?.projectName}
@@ -674,6 +681,7 @@ const AddNewProjectPost = (props) => {
                               className="mt-4 w-100 textFieldInput p-0"
                               label="General Amenities"
                               id="projectAmenities"
+                              required={true}
                               name="projectAmenities"
                               value={data?.projectAmenities}
                               onChange={handleCheckboxChange}
@@ -695,7 +703,7 @@ const AddNewProjectPost = (props) => {
                                  },
                               }}
                            >
-                              {defaultAmenities?.map((amenity, index) => (
+                              {POSTING_CONSTANTS.GeneralAmenities?.map((amenity, index) => (
                                  <MenuItem key={index} value={amenity}>
                                     <Checkbox checked={data?.projectAmenities?.includes(amenity)} />
                                     <ListItemText primary={amenity} />
@@ -709,6 +717,7 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 mt-4 textFieldInput"
                               type="number"
+                              required={true}
                               autoComplete="off"
                               inputProps={{ min: 0, autoComplete: "off" }}
                               label='Total Tower / Plotted Planned'
@@ -722,6 +731,7 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 mt-4 textFieldInput"
                               type="number"
+                              required={true}
                               label='Land Area'
                               id='landArea'
                               autoComplete="off"
@@ -747,6 +757,7 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 textFieldInput"
                               type="number"
+                              required={true}
                               inputProps={{ min: 0, autoComplete: "off" }}
                               label='Total Area to Develop'
                               id='totalAreaToDevelop'
@@ -759,7 +770,7 @@ const AddNewProjectPost = (props) => {
                                     <InputAdornment position="end" sx={{ marginLeft: "-55px" }} >
                                        <Box display="flex" alignItems="center">
                                           <Divider orientation="vertical" flexItem sx={{ height: 45, marginLeft: -1 }} /> &nbsp;
-                                          Sq. Mt.
+                                          Sq. Ft.
                                        </Box>
                                     </InputAdornment>
                                  </>
@@ -770,7 +781,8 @@ const AddNewProjectPost = (props) => {
                            <TextField
                               className="w-100 textFieldInput"
                               type="number"
-                              inputProps={{ min: 0, autoComplete: "off" }}
+                              required={true}
+                              inputProps={{ min: 0, max: 100, autoComplete: "off" }}
                               label='Open Area'
                               autoComplete="off"
                               id='openAreaPerc'
@@ -801,9 +813,11 @@ const AddNewProjectPost = (props) => {
                                     as="select"
                                     aria-label="Month"
                                     name="month"
+                                    required={true}
                                     className="custom-dropdown" // Add your custom class if needed
                                     value={monthYearFrom.month} // Preselect the month from parsed value
                                     onChange={handleFromMonthChange}
+                                    // error={error?.possessionFrom}
                                  >
                                     <option value="">Select Month</option>
                                     {Array.from({ length: 12 }, (_, index) => (
@@ -823,9 +837,11 @@ const AddNewProjectPost = (props) => {
                                  <Form.Control
                                     as="select"
                                     aria-label="Year"
+                                    required={true}
                                     name="year" // Set name for the year select
                                     value={monthYearFrom.year} // Preselect the year from parsed value
                                     onChange={handleFromYearChange}
+                                    // error={error?.possessionFrom}
                                  >
                                     <option value="">Select Year</option>
                                     {Array.from(
@@ -851,6 +867,7 @@ const AddNewProjectPost = (props) => {
                                     as="select"
                                     name="month" // Set name for the month select
                                     aria-label="Month"
+                                    required={true}
                                     value={monthYearTo.month} // Preselect the month from parsed value
                                     onChange={handleToMonthChange}
                                  >
@@ -872,19 +889,19 @@ const AddNewProjectPost = (props) => {
                                  <Form.Control
                                     as="select"
                                     aria-label="Year"
+                                    required={true}
                                     name="year" // Set name for the year select
                                     value={monthYearTo.year} // Preselect the year from parsed value
                                     onChange={handleToYearChange}
                                  >
                                     <option value="">Select Year</option>
-                                    {Array.from(
-                                       { length: 101 },
-                                       (_, index) => currentYear - index
-                                    ).map((year) => (
-                                       <option key={year} value={year}>
-                                          {year}
-                                       </option>
-                                    ))}
+                                    {Array.from({ length: 41 }, (_, index) => currentYear + 20 - index).map(
+                                       (year) => (
+                                          <option key={year} value={year}>
+                                             {year}
+                                          </option>
+                                       )
+                                    )}
                                  </Form.Control>
                               </Col>
                            </Form.Group>
@@ -928,6 +945,7 @@ const AddNewProjectPost = (props) => {
                      <TextField
                         id={'contactName'}
                         type="text"
+                        required={true}
                         autoComplete="off"
                         inputProps={{ autoComplete: "off" }}
                         className="textFieldInput w-100"
@@ -940,6 +958,7 @@ const AddNewProjectPost = (props) => {
                      <TextField
                         id={'contactNumber'}
                         type="number"
+                        required={true}
                         autoComplete="off"
                         inputProps={{ min: 0, autoComplete: "off" }}
                         className="textFieldInput w-100"
@@ -955,6 +974,7 @@ const AddNewProjectPost = (props) => {
                      <TextField
                         id={'reraNumber'}
                         type="text"
+                        required={true}
                         inputProps={{ min: 0, autoComplete: "off" }}
                         className="textFieldInput w-100"
                         label="Rera Number"
@@ -970,6 +990,7 @@ const AddNewProjectPost = (props) => {
                         id="projectDescription"
                         className="textFieldInput w-100"
                         type="text"
+                        required={true}
                         autoComplete="off"
                         inputProps={{ autoComplete: "off" }}
 
@@ -986,7 +1007,7 @@ const AddNewProjectPost = (props) => {
                         controlId="formProjectImages"
                         className="mb-4 formProjectImages"
                      >
-                        <span>Upload Image</span>
+                        <span>Upload Project Images*</span>
                         <div className="image-upload mt-2">
                            <label htmlFor="upload-project-image" className="upload-label">
                               <TiCameraOutline className="camera-icon" />
@@ -1020,7 +1041,7 @@ const AddNewProjectPost = (props) => {
                                           }
                                           alt={image.docDescription || image.docName} // Ensure alt text is appropriate for accessibility
                                           className="img-fluid"
-                                          style={{ maxWidth: "115px" }}
+                                          style={{ width: '100px', height: '100px' }}
                                        />
                                        <RxCross2
                                           className="delete-icon"
@@ -1054,7 +1075,7 @@ const AddNewProjectPost = (props) => {
                         controlId="formProjectLayout"
                         className="mb-4 formProjectLayout"
                      >
-                        <span>Brochure URL</span>
+                        <span>Brochure URL *</span>
 
                         <div className="image-upload mt-2">
                            <label htmlFor="upload-project-layout" className="upload-label">
@@ -1063,8 +1084,8 @@ const AddNewProjectPost = (props) => {
                                  id="upload-project-layout"
                                  type="file"
                                  className="upload-input"
-                                 accept="image/*"
-                                 multiple
+                                 accept="application/pdf"
+                                 multiple={false}
                                  onChange={(e) => handleFileChange(e, "PROJECT_LAYOUT")}
                                  ref={fileInputRef1}
                               />
@@ -1111,14 +1132,15 @@ const AddNewProjectPost = (props) => {
                                     className="project-images mt-3"
                                     style={{ position: "relative", marginRight: "10px" }}
                                  >
-                                    <img
+                                    {/* <img
                                        src={
                                           data?.brochureUrl
                                        }
-                                       alt={""} // Ensure alt text is appropriate for accessibility
+                                       alt={"Brochure Url"} // Ensure alt text is appropriate for accessibility
                                        className="img-fluid"
                                        style={{ maxWidth: "115px" }}
-                                    />
+                                    /> */}
+                                    <Text text={"Brochure URL"} style={{ fontSize: '14px', fontWeight: '600' }} />
                                     <RxCross2
                                        className="delete-icon"
                                        onClick={() =>
@@ -1127,7 +1149,7 @@ const AddNewProjectPost = (props) => {
                                        style={{
                                           position: "absolute",
                                           top: "-5px",
-                                          right: "-4px",
+                                          right: "-15px",
                                           cursor: "pointer",
                                           color: "#fff",
                                           background: "#ff0000",
@@ -1138,7 +1160,7 @@ const AddNewProjectPost = (props) => {
                                  : null}
                            </div>
                            <Form.Text className="text-muted">
-                              File should be 5MB(max) in png, jpg, etc.
+                              File should be 15MB(max) in pdf.
                            </Form.Text>
                         </div>
                      </Form.Group>
@@ -1149,7 +1171,7 @@ const AddNewProjectPost = (props) => {
                         controlId="formProjectVideo"
                         className="mb-4 video-upload-container formProjectVideo"
                      >
-                        <span>Add project video</span>
+                        <span>Add project video *</span>
 
                         <div className="input-plus-icon mt-2 d-flex flex-column align-items-start">
                            <div
@@ -1235,7 +1257,7 @@ const AddNewProjectPost = (props) => {
                                           />
                                           <RxCross2
                                              className="delete-icon"
-                                             onClick={() => handleDeleteVideo()}
+                                             onClick={() => clearInput()}
                                              style={{
                                                 position: "absolute",
                                                 top: "-10px",
@@ -1255,7 +1277,7 @@ const AddNewProjectPost = (props) => {
                            </Row>
 
                            <Form.Text className="text-muted">
-                              Paste the link of the video (YouTube, Vimeo, etc.)
+                              Paste the link of the video (YouTube, etc.)
                            </Form.Text>
                         </div>
                      </Form.Group>
@@ -1272,22 +1294,24 @@ const AddNewProjectPost = (props) => {
                         if (props?.editProject) {
                            toggleEdit();
                         } else {
-                           history.push(-1);
+                           history?.goBack();
                         }
                      }}
                   >
                      Cancel
                   </button>
-                  <button
-                     type="submit"
-                     // disabled={this.state.disableSubmit}
-                     id="cancel-team-member-button"
-                     disabled={props?.editProject ? false : !saveProjectFlag}
-                     className=" btn-small submit-btn"
-                     onClick={() => { handleSubmit(); }}
-                  >
-                     {props?.editProject === true ? "Save" : "Save & Add Tower/Plotted"}
-                  </button>
+                  {saveProjectFlag ?
+                     <button
+                        type="submit"
+                        // disabled={this.state.disableSubmit}
+                        id="cancel-team-member-button"
+                        disabled={!saveProjectFlag}
+                        className=" btn-small submit-btn"
+                        onClick={() => { handleSubmit(); }}
+                     >
+                        {props?.editProject === true ? "Save" : "Save & Add Tower/Plotted"}
+                     </button>
+                     : null}
                </div>
                {/* </form> */}
             </div>

@@ -22,12 +22,10 @@ const BuilderProfileDetails = (props) => {
    const {
       auth: { userData },
    } = useUserContext();
-   const storedBuilderId = getLocalStorage("authData").builderId; // Get builderId from authData
-   const builderId = localStorage.getItem("builderId") || storedBuilderId;
-   const [approvalBadgeVisible, setApprovalBadgeVisible] = useState(false);
+   const builderId = props?.location?.state?.builderDetails?.builderId || null;
    const userId = getLocalStorage("authData").userid;
    const [isChecked, setIsChecked] = useState(false); // Set to checked by default
-   const [isFormValid, setIsFormValid] = useState(false);
+   const [isFormValid, setIsFormValid] = useState(builderId !== null ? true : false);
    const [isApproved, setIsApproved] = useState(false);
    const [showModal, setShowModal] = useState(false);
    const fileInputRef = useRef(null); // Create a ref for the file input
@@ -61,7 +59,7 @@ const BuilderProfileDetails = (props) => {
          setIsApproved(false);
       }
       console.log("BuilderDetails: ", props)
-      if(props?.location?.state?.builderDetails) {
+      if (props?.location?.state?.builderDetails) {
          setData(props?.location?.state?.builderDetails)
       }
    }, []);
@@ -74,28 +72,46 @@ const BuilderProfileDetails = (props) => {
          companyGST,
          companyAddress,
          contactNumber,
+         companyLogoImageUrl,
          directors
       } = data;
       const areFirstTwoDirectorsValid = directors[0]?.directorName?.trim()?.length !== 0 && directors[1]?.directorName?.trim()?.length !== 0;
       console.log(isChecked)
       const checked = isChecked || isCheck
-      const isValid =
-      brandName?.trim()?.length !== 0 &&
-      companyName?.trim()?.length !== 0 &&
-      companyEmail?.trim()?.length !== 0 &&
-      companyGST?.trim()?.length !== 0 &&
-      companyAddress?.trim()?.length !== 0 &&
-      isCheck &&
-      contactNumber?.trim()?.length === 10 &&
-      areFirstTwoDirectorsValid;
-      console.log("isvalid", isValid);
-      setIsFormValid(isValid);
+      if (builderId !== null) {
+         const isValid =
+            !!brandName?.trim() &&
+            !!companyName?.trim() &&
+            !!companyEmail?.trim() &&
+            !!companyGST?.trim() &&
+            !!companyAddress?.trim() &&
+            !!companyLogoImageUrl?.trim() &&
+            String(contactNumber).trim().length === 10 &&
+            areFirstTwoDirectorsValid === true;
+
+         console.log("isvalid", isValid);
+         setIsFormValid(isValid);
+      } else {
+         const isValid =
+            !!brandName?.trim() &&
+            !!companyName?.trim() &&
+            !!companyEmail?.trim() &&
+            !!companyGST?.trim() &&
+            !!companyAddress?.trim() &&
+            !!companyLogoImageUrl?.trim() &&
+            isCheck === true &&
+            String(contactNumber).trim().length === 10 &&
+            areFirstTwoDirectorsValid === true;
+
+         console.log("isvalid", isValid);
+         setIsFormValid(isValid);
+      }
    };
 
    const _getBuilderById = useCallback(() => {
       if (!builderId) return;
       setLoading(true);
-      getBuilderById({ builderId: builderId})
+      getBuilderById({ builderId: builderId })
          .then((response) => {
             if (response?.data) {
                const { resourceData, error: responseError } = response.data;
@@ -143,14 +159,14 @@ const BuilderProfileDetails = (props) => {
 
          setData((prevData) => {
             const newDirectors = [...prevData.directors];
-            newDirectors[directorIndex] = {directorId: null , directorName: value}; // Update the specific director field
+            newDirectors[directorIndex] = { directorId: null, directorName: value }; // Update the specific director field
 
             return {
                ...prevData,
                directors: newDirectors, // Set the updated directors array back into data
             };
          });
-         if(value?.trim()?.length === 0) {
+         if (value?.trim()?.length === 0) {
             setData((prevData) => {
                const directorList = [...prevData.directors];
                directorList.pop();
@@ -160,21 +176,21 @@ const BuilderProfileDetails = (props) => {
                }
             })
          }
-         validateForm();
+         validateForm(isChecked);
       } else if (id === ("whatsappNumber")) {
          const mobileNum = handlePhoneChange(event);
          setData((prevData) => ({ ...prevData, [id]: mobileNum }));
-         validateForm();
+         validateForm(isChecked);
       }
       else if (id === ("contactNumber")) {
          const mobileNum = handlePhoneChange(event);
          setData((prevData) => ({ ...prevData, [id]: mobileNum }));
-         validateForm();
+         validateForm(isChecked);
       }
       else {
          // Update other fields in data (not directors array)
          setData((prevData) => ({ ...prevData, [id]: value }));
-         validateForm();
+         validateForm(isChecked);
       }
    };
 
@@ -222,8 +238,6 @@ const BuilderProfileDetails = (props) => {
          // const newUrl = currentUrl.replace(/\/\d+$/, "");
          // window.history.replaceState({}, "", newUrl);
          history.goBack();
-         localStorage.removeItem("builderId");
-         localStorage.removeItem("builderProfileApproved");
       } catch (error) {
          showErrorToast("Error submitting form. Please try again.");
          console.error("Error submitting builder profile:", error);
@@ -285,7 +299,7 @@ const BuilderProfileDetails = (props) => {
                                     <span className="pt-3">
                                        {data.companyLogoImageUrl
                                           ? "Change logo"
-                                          : "Upload logo"}
+                                          : "Upload logo *"}
                                     </span>
                                     <input
                                        id="upload-input upload-logo"
@@ -332,6 +346,7 @@ const BuilderProfileDetails = (props) => {
                                        id={'brandName'}
                                        className="textFieldInput w-100"
                                        type="text"
+                                       required={true}
                                        // maxLength={35}
                                        label={"Brand Name"}
                                        onInput={(e) => handleChange(e)}
@@ -343,6 +358,7 @@ const BuilderProfileDetails = (props) => {
                                        id={'companyName'}
                                        className="textFieldInput w-100"
                                        type="text"
+                                       required={true}
                                        maxLength={35}
                                        label={"Company Name"}
                                        value={data.companyName}
@@ -355,6 +371,7 @@ const BuilderProfileDetails = (props) => {
                                     <TextField
                                        id={'companyEmail'}
                                        type="email"
+                                       required={true}
                                        className="textFieldInput w-100"
                                        error={error?.email}
                                        label={'Company Email'}
@@ -366,6 +383,7 @@ const BuilderProfileDetails = (props) => {
                                     <TextField
                                        id={'companyGST'}
                                        type="text"
+                                       required={true}
                                        className="textFieldInput w-100"
                                        label="Company GST"
                                        value={data.companyGST}
@@ -381,6 +399,7 @@ const BuilderProfileDetails = (props) => {
                               <TextField
                                  id={'companyAddress'}
                                  type="text"
+                                 required={true}
                                  className="textFieldInput w-100"
                                  label="Address"
                                  value={data.companyAddress}
@@ -398,7 +417,7 @@ const BuilderProfileDetails = (props) => {
                                        id={`directorName${index + 1}`}
                                        type="text"
                                        className="textFieldInput w-100"
-                                       label={`Director Name ${index + 1} ${index > 1 ? "(Optional)" : ""}`}
+                                       label={`Director Name ${index + 1} ${index > 1 ? "(Optional)" : "*"}`}
                                        value={data.directors[index]?.directorName || ""}
                                        onInput={(e) => handleChange(e)}
                                     />
@@ -409,6 +428,7 @@ const BuilderProfileDetails = (props) => {
                               <TextField
                                  id={'facebookUrl'}
                                  type="text"
+                                 required={true}
                                  placeholder="www.facebook.com/accountname"
                                  className="textFieldInput w-100"
                                  label="Facebook URL"
@@ -420,6 +440,7 @@ const BuilderProfileDetails = (props) => {
                               <TextField
                                  id={'instaUrl'}
                                  type="text"
+                                 required={true}
                                  placeholder="www.instagram.com/accountname"
                                  className="textFieldInput w-100"
                                  label="Instagram URL"
@@ -434,6 +455,7 @@ const BuilderProfileDetails = (props) => {
                               <TextField
                                  id={'whatsappNumber'}
                                  type="number"
+                                 required={true}
                                  inputProps={{ min: 0 }}
                                  className="textFieldInput w-100"
                                  label="Whatsapp Business Number"
@@ -445,6 +467,7 @@ const BuilderProfileDetails = (props) => {
                               <TextField
                                  id={'contactName'}
                                  type="text"
+                                 required={true}
                                  className="textFieldInput w-100"
                                  label="Contact Person Name"
                                  value={data.contactName}
@@ -455,6 +478,7 @@ const BuilderProfileDetails = (props) => {
                               <TextField
                                  id={'contactNumber'}
                                  type="number"
+                                 required={true}
                                  inputProps={{ min: 0 }}
                                  className="textFieldInput w-100"
                                  label="Phone Number"
@@ -464,18 +488,20 @@ const BuilderProfileDetails = (props) => {
                            </Col>
                         </Row>
                      </div>
-                     <Row>
-                        <Col lg="12">
-                           <Form.Check
-                              type="checkbox"
-                              id="custom-checkbox"
-                              label="I declare that I represent the above details to be true and as my own organisation and SmartDoor may take requisite action if any detail is found to be untrue."
-                              checked={isChecked}
-                              onChange={(e) => {setIsChecked(e.target.checked); validateForm(e.target.checked)}}
-                              className="custom-checkbox"
-                           />
-                        </Col>
-                     </Row>
+                     {builderId === null ?
+                        <Row>
+                           <Col lg="12">
+                              <Form.Check
+                                 type="checkbox"
+                                 id="custom-checkbox"
+                                 label="I declare that I represent the above details to be true and as my own organisation and SmartDoor may take requisite action if any detail is found to be untrue."
+                                 checked={isChecked}
+                                 onChange={(e) => { setIsChecked(e.target.checked); validateForm(e.target.checked) }}
+                                 className="custom-checkbox"
+                              />
+                           </Col>
+                        </Row>
+                        : null}
                      <Row>
                         <Col lg="3">
                            <button
@@ -485,7 +511,7 @@ const BuilderProfileDetails = (props) => {
                               id="submit-team-member-button"
                               disabled={!isFormValid} // Button disabled until all fields are filled
                            >
-                              Submit
+                              {props?.location?.state?.builderDetails?.builderId ? "Save" : "Submit"}
                            </button>
                         </Col>
                      </Row>
