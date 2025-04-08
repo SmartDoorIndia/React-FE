@@ -1,6 +1,6 @@
 /** @format */
 
-import { useContext, createContext, useState } from 'react';
+import { useContext, createContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
@@ -19,7 +19,7 @@ export const AuthProvider = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [ auth, setIsAuth ] = useState(provideAuth());
+  const [auth, setIsAuth] = useState(null);
 
   const logoutUser = () => {
     disconnectSocket();
@@ -34,9 +34,21 @@ export const AuthProvider = (props) => {
     history.push('/admin');
   };
 
+  useEffect(() => {
+    const authenticatedUser = provideAuth();
+    setIsAuth(authenticatedUser);
+    if (!authenticatedUser.isAuth) {
+      history.push('/builder/login'); // Redirect before rendering anything
+    }
+  }, []);
+
+  if (auth === null) {
+    return <div>Loading...</div>; // Prevents flashing the wrong page
+  }
+
   return (
     <UserContext.Provider
-      value={ { isAuth: auth.isAuth, logoutUser, auth, loginUser, userData: auth.userData } }>
+      value={{ isAuth: auth.isAuth, logoutUser, auth, loginUser, userData: auth.userData }}>
       {props.children}
     </UserContext.Provider>
   );

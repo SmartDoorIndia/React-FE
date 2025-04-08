@@ -180,7 +180,7 @@ const Units = (props) => {
 
     useEffect(() => {
         console.log(props)
-        let unitFields = UnitPostingFields.unitPostingFieldsObj[subProjectDetails?.propertyType][props?.property?.propertySubType ? props?.property?.propertySubType : "Apartment"]?.fields;
+        let unitFields = UnitPostingFields.unitPostingFieldsObj[subProjectDetails?.propertyType ? subProjectDetails?.propertyType : 'Residential'][props?.property?.propertySubType ? props?.property?.propertySubType : "Apartment"]?.fields;
         console.log(unitFields);
         setUnitFieldsList([...unitFields]);
         if (props?.builderId !== null && props?.projectId !== null) {

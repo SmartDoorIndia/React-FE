@@ -66,6 +66,7 @@ const BuilderList = React.lazy(() => import('./Builders/BuilderList/BuilderList'
 const BuilderProfileDetails = React.lazy(() => import('./Builders/BuilderProfileDetails/BuilderProfileDetails'))
 const BuilderInfo = React.lazy(() => import('./Builders/BuilderInfo/BuilderInfo'));
 const AddNewProjectPost = React.lazy(() => import('./Builders/AddNewProjectPost/AddNewProjectPost'));
+const BuilderProjectList = React.lazy(() => import('./Builders/BuilderInfo/BuilderProjects/BuilderProjectList'));
 // const ProjectPostingDetails = React.lazy(() => import('./Builders/ProjectPostingDetails/ProjectPostingDetails'));
 const ProjectPosting = React.lazy(() => import('./Builders/ProjectPosting/ProjectPosting'));
 const ProjectDetailsPage = React.lazy(() => import('./Builders/ProjectDetailsPage/ProjectDetailsPage'));
@@ -1310,7 +1311,24 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: BuilderList
-  }
+  },
+  
+  {
+    path: '/admin/builder-profile',
+    name: 'Builder Profile',
+    bradcrumb: false,
+    excat: true,
+    component: BuilderProfileDetails
+  },
+
+  {
+    path: '/admin/builder-projects',
+    name: 'Builder Projects',
+    bradcrumb: false,
+    excat: true,
+    component: BuilderProjectList
+  },
+
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

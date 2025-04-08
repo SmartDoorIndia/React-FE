@@ -39,7 +39,7 @@ const AddNewProjectPost = (props) => {
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
-   const [saveProjectFlag, setSaveProjectFlag] = useState(true);
+   const [saveProjectFlag, setSaveProjectFlag] = useState(false);
    const [data, setData] = useState({
       builderId: builderId,
       projectId: projectId || null,
@@ -272,41 +272,41 @@ const AddNewProjectPost = (props) => {
    };
 
    const handleSubmit = async () => {
-      console.log(data)
-      // e.preventDefault();
+      console.log(data);
+   
+      // Disable the button before submitting
+      setSaveProjectFlag(true);
+   
       try {
-         const submissionData = {
-            ...data,
-         };
-
+         const submissionData = { ...data };
+   
          const valid = await validateProjectDetails(submissionData);
          setError(valid.errors);
          console.log(valid);
-
+   
          if (valid.isValid) {
             const response = await saveBuilderProject(submissionData, projectId !== null ? true : false);
 
             if (response?.data) {
-               // history.push(-1);
                if (props?.editProject) {
                   showEditProject();
                } else {
-                  setSaveProjectFlag(false)
                   fetchProjectId(response?.data?.resourceData);
                }
             } else {
                const responseError = response?.data?.error || "Unknown error occurred";
-               // setError(responseError);
                console.error("Error in response:", responseError);
             }
          } else {
-            return null;
+            setSaveProjectFlag(false); // Re-enable the button if validation fails
+            return;
          }
       } catch (error) {
          console.error("Error submitting builder project:", error);
-         // setError("An unexpected error occurred. Please try again.");
+         setSaveProjectFlag(false); // Re-enable the button if an error occurs
       }
    };
+   
 
    const approveBuilderProject = async (e) => {
       e.preventDefault();

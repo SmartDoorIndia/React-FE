@@ -10,6 +10,7 @@ import BuilderDashboard from '../pages/BuilderDashboard';
 import { FallBackLoader } from '../common/helpers/Loader';
 import { useUserContext } from '../common/helpers/Auth';
 import Otp from '../pages/otp';
+import BuilderLogin from '../pages/login/BuilderLogin';
 // import Otp from '../pages/otp';
 
 const SmartDoorViewRoute = () => {
@@ -31,8 +32,8 @@ const SmartDoorViewRoute = () => {
               <>
                 <PublicRoute path="/otp" component={ Otp } />
                 <PublicRoute path="/login" component={ Login } />
-                {/* <PublicRoute path="/builder/login" component={BuilderLogin} /> */}
-                <Redirect from="*" to="/login" />
+                <PublicRoute path="/builder/login" component={BuilderLogin} />
+                {/* <Redirect from="*" to="/login" /> */}
               </>
             )}
       </Switch>

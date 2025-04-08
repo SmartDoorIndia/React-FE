@@ -12,7 +12,7 @@ import Text from "../../../../../shared/Text/Text";
 import { getBuilderById, getLeadForBuilder } from "../../../../../common/redux/actions";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import NoImage from "../../../../../assets/images/sd-faded.png";
-import { TextField } from "@mui/material";
+import { TextField, Tooltip } from "@mui/material";
 import Buttons from "../../../../../shared/Buttons/Buttons";
 import { saveAs } from "file-saver";
 import { showErrorToast } from "../../../../../common/helpers/Utils";
@@ -72,35 +72,39 @@ const BuilderDetails = (props) => {
                   </p>
                </div>
                <div className="text-end">
-                  <Button
-                     className="d-flex px-2 ml-3"
-                     style={{
-                        color: "#BE1452",
-                        backgroundColor: "#F8F3F5",
-                        borderColor: "#DED6D9",
-                     }}
-                     onClick={() => {
-                        history.push("/admin/builders/builder-profile", { builderDetails: builderDetails })
-                     }}
+                  <Tooltip
+                     placement="top-start" style={{ width: '100%' }} title={props?.builderDetails?.status !== 'Approved' && props?.builderDetails?.status !== 'Rejected' ? "Builder Profile cannot be edited" : "Edit Profile"}
                   >
-                     <div
+                     <Button
+                        className="d-flex px-2 ml-3"
                         style={{
-                           width: "20px",
-                           height: "20px",
-                           display: "flex",
-                           alignItems: "center",
-                           justifyContent: "center",
+                           color: "#BE1452",
+                           backgroundColor: "#F8F3F5",
+                           borderColor: "#DED6D9",
+                        }}
+                        disabled={props?.builderDetails?.status !== 'Approved' && props?.builderDetails?.status !== 'Rejected' ? true : false}
+                        onClick={() => {
+                           history.push("/admin/builders/builder-profile", { builderDetails: builderDetails })
                         }}
                      >
-                        <Image src={pencilIcon} />
-                     </div>
-                     <Text
-                        text={"Edit Profile"}
-                        fontWeight="bold"
-                        style={{ fontSize: "12px", color: "#BE1452" }}
-                     />
-                  </Button>
-                  {/* </a> */}
+                        <div
+                           style={{
+                              width: "20px",
+                              height: "20px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                           }}
+                        >
+                           <Image src={pencilIcon} />
+                        </div>
+                        <Text
+                           text={"Edit Profile"}
+                           fontWeight="bold"
+                           style={{ fontSize: "12px", color: "#BE1452" }}
+                        />
+                     </Button>
+                  </Tooltip>
                </div>
             </Row>
 
@@ -110,7 +114,7 @@ const BuilderDetails = (props) => {
                      src={builderDetails?.companyLogoImageUrl || NoImage}
                      alt="Company Logo"
                      className="img-fluid rounded"
-                     style={{width: '150px', height:'150px'}}
+                     style={{ width: '150px', height: '150px' }}
                   />
                </Col>
 

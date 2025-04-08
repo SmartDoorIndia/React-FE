@@ -21,6 +21,7 @@ import Text from "../../../../../shared/Text/Text";
 import { provideAuth } from "../../../../../common/helpers/Auth";
 import { da } from "date-fns/locale";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Tooltip } from "@mui/material";
 
 const BuilderProjectList = (props) => {
    const { fetchBuilderProjectList } = props;
@@ -191,10 +192,10 @@ const BuilderProjectList = (props) => {
       return (
          <div>
             {expandLoading ?
-            <>
-               <TableLoader className="justify-content-center" />
-            </>
-            : null}
+               <>
+                  <TableLoader className="justify-content-center" />
+               </>
+               : null}
             {builderProjectDetails?.subProjectList?.map((subProject) => (
                <>
                   <div style={{ backgroundColor: '#F3ECEC' }}>
@@ -290,40 +291,44 @@ const BuilderProjectList = (props) => {
    return (
       <>
          <div className="builderProperties">
-
             <div className="tableBox">
                <div className="d-flex flex-md-column flex-xl-row justify-content-xl-end align-items-center tableHeading">
                   <div className="locationSelect d-flex justify-content-end align-items-center w-100">
                      {/* {subHeaderComponentMemo} */}
-                     <a style={{ textDecoration: "none" }}>
-                        <Button
-                           className="d-flex py-1 ml-3"
-                           style={{
-                              color: "#BE1452",
-                              backgroundColor: "#F8F3F5",
-                              borderColor: "#DED6D9",
-                           }}
-                           onClick={() => { history.push("/admin/builders/builder-details/add-new-project", { builderId: props?.builderId, editProject: false }) }}
-                        >
-                           <div
+                     <Tooltip
+                        placement="top-start" style={{ width: '100%' }} title={props?.builderDetails?.status !== 'Approved' ? "Builder Profile is not approved" : "Add new Project"}
+                     >
+                        <a style={{ textDecoration: "none" }}>
+                           <Button
+                              className="d-flex py-1 ml-3"
+                              disabled={props?.builderDetails?.status !== 'Approved' ? true : false}
                               style={{
-                                 width: "20px",
-                                 height: "20px",
-                                 display: "flex",
-                                 alignItems: "center",
-                                 justifyContent: "center",
+                                 color: "#BE1452",
+                                 backgroundColor: "#F8F3F5",
+                                 borderColor: "#DED6D9",
                               }}
+                              onClick={() => { history.push("/admin/builders/builder-details/add-new-project", { builderId: props?.builderId, editProject: false }) }}
                            >
-                              {" "}
-                              <Image src={addIcon} style={{ width: "10px" }} />
-                           </div>
-                           <Text
-                              text={"Add New Posting"}
-                              fontWeight="bold"
-                              style={{ fontSize: "12px", color: "#BE1452" }}
-                           />
-                        </Button>
-                     </a>
+                              <div
+                                 style={{
+                                    width: "20px",
+                                    height: "20px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                 }}
+                              >
+                                 {" "}
+                                 <Image src={addIcon} style={{ width: "10px" }} />
+                              </div>
+                              <Text
+                                 text={"Add New Project"}
+                                 fontWeight="bold"
+                                 style={{ fontSize: "12px", color: "#BE1452" }}
+                              />
+                           </Button>
+                        </a>
+                     </Tooltip>
                   </div>
                </div>{" "}
                <div className="ProjectPostingTableWrapper">
@@ -340,12 +345,12 @@ const BuilderProjectList = (props) => {
                      // perPageOptions={[8, 16, 24, 32]} // Per-page options
                      // onChangePage={handlePageChange}
                      // onChangeRowsPerPage={handleRowsPerPageChange}
-                     // expandableRows
-                     // expandableRowsComponent={({ data }) => (
-                     //    <ExpandedRowComponent projectDetails={builderProjectDetails[data.projectId] || {}} />
-                     // )}
-                     // expandableRowExpanded={(row) => row.projectId === expandedProjectId}
-                     // onRowExpandToggled={handleExpandRow}
+                     expandableRows
+                     expandableRowsComponent={({ data }) => (
+                        <ExpandedRowComponent projectDetails={builderProjectDetails[data.projectId] || {}} />
+                     )}
+                     expandableRowExpanded={(row) => row.projectId === expandedProjectId}
+                     onRowExpandToggled={handleExpandRow}
                      pagination={false}
                      subHeaderComponent={subHeaderComponentMemo}
                      persistTableHead="true"

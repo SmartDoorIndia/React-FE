@@ -449,6 +449,32 @@ const Nav = () => {
                         </Link>
                      </>
                      : null}
+                  {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'Consumer' || userData.roleName === 'Broker' || userData.roleName === 'BUILDER_MAIN_USER' ?
+                     <>
+                        <Link
+                           to="/admin/builder-profile"
+                           className={`nav-link ${pathname.includes("/admin/builder-profile") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/builder-profile") ? borkerIcon : dashboard}
+                           />
+                           Builder Profile
+                        </Link>
+                        <Link
+                           to="/admin/builder-projects"
+                           className={`nav-link ${pathname.includes("/admin/builder-projects") ? "nav-active" : ""
+                              }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/builder-projects") ? borkerIcon : dashboard}
+                           />
+                           Builder Projects
+                        </Link>
+                     </>
+                     : null}
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>
