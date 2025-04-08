@@ -284,7 +284,7 @@ const AddNewProjectPost = (props) => {
          console.log(valid);
 
          if (valid.isValid) {
-            const response = await saveBuilderProject(submissionData);
+            const response = await saveBuilderProject(submissionData, projectId !== null ? true : false);
 
             if (response?.data) {
                // history.push(-1);
@@ -817,7 +817,7 @@ const AddNewProjectPost = (props) => {
                                     className="custom-dropdown" // Add your custom class if needed
                                     value={monthYearFrom.month} // Preselect the month from parsed value
                                     onChange={handleFromMonthChange}
-                                    // error={error?.possessionFrom}
+                                 // error={error?.possessionFrom}
                                  >
                                     <option value="">Select Month</option>
                                     {Array.from({ length: 12 }, (_, index) => (
@@ -841,7 +841,7 @@ const AddNewProjectPost = (props) => {
                                     name="year" // Set name for the year select
                                     value={monthYearFrom.year} // Preselect the year from parsed value
                                     onChange={handleFromYearChange}
-                                    // error={error?.possessionFrom}
+                                 // error={error?.possessionFrom}
                                  >
                                     <option value="">Select Year</option>
                                     {Array.from(
@@ -1086,8 +1086,8 @@ const AddNewProjectPost = (props) => {
                                  className="upload-input"
                                  accept="application/pdf"
                                  multiple={false}
-                                 onChange={(e) => handleFileChange(e, "PROJECT_LAYOUT")}
-                                 ref={fileInputRef1}
+                                 onChange={(e) => { handleFileChange(e, "PROJECT_LAYOUT"); e.target.value = null; }}
+                              // ref={fileInputRef1}
                               />
                               <span>Upload Brochure URL</span>
                            </label>
@@ -1294,7 +1294,7 @@ const AddNewProjectPost = (props) => {
                         if (props?.editProject) {
                            toggleEdit();
                         } else {
-                           history?.goBack();
+                           history.goBack();
                         }
                      }}
                   >

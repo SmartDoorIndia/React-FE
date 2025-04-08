@@ -138,7 +138,7 @@ const BuilderList = () => {
                                 <Link
                                     to={{
                                         pathname: "/admin/builders/builder-details",
-                                        state: { builderId: builderId },
+                                        state: { builderId: builderId, builderDetails: row },
                                     }}
                                 >
                                     <Image name="editIcon" src={contentIcon} />
@@ -216,7 +216,7 @@ const BuilderList = () => {
                 <div className="align-items-center tableHeading">
                     <div className="d-flex justify-content-end">
                         <div className="locationSelect d-flex">
-                            {subHeaderComponentMemo}
+                            {/* {subHeaderComponentMemo} */}
                             <Button className="d-flex py-1" style={{ color: '#BE1452', backgroundColor: '#F8F3F5', borderColor: '#DED6D9' }}
                                 onClick={() => { history.push('/admin/builders/builder-profile'); }} >
                                 <Text text={' + Add New Builder'} fontWeight='bold' style={{ fontSize: '12px', color: '#BE1452' }} />

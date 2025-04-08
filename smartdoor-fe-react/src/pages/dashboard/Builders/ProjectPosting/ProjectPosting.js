@@ -147,7 +147,7 @@ const ProjectPosting = (props) => {
                         // disabled={this.state.disableSubmit}
                         id="submit-team-member-button"
                         className=" btn-small cancel-btn w-25"
-                        onClick={() => { history.push(-1) }}
+                        onClick={() => { history.goBack() }}
                     >
                         Cancel
                     </button>

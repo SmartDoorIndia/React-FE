@@ -72,7 +72,6 @@ const BuilderDetails = (props) => {
                   </p>
                </div>
                <div className="text-end">
-                  {/* <a href="/builder/Project-details" style={{ textDecoration: "none" }}> */}
                   <Button
                      className="d-flex px-2 ml-3"
                      style={{
@@ -111,6 +110,7 @@ const BuilderDetails = (props) => {
                      src={builderDetails?.companyLogoImageUrl || NoImage}
                      alt="Company Logo"
                      className="img-fluid rounded"
+                     style={{width: '150px', height:'150px'}}
                   />
                </Col>
 

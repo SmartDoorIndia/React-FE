@@ -296,7 +296,10 @@ const AddNewSubProject = (props) => {
       console.log(props?.projectId)
       console.log(props?.builderId)
       if (props?.editTower === true) {
-         setData({ ...props?.subProjectDetails, builderId: props?.builderId, parentProjectId: props?.parentProjectId })
+         setData({
+            ...props?.subProjectDetails, builderId: props?.builderId, parentProjectId: props?.parentProjectId,
+            totalAreaMetrics: 'Sq. Ft.'
+         })
          const possessionFrom = props?.subProjectDetails?.possessionFrom;
          const date = new Date(possessionFrom);
 
@@ -313,7 +316,8 @@ const AddNewSubProject = (props) => {
          })
          setData((prevData) => ({
             ...prevData, contactPersonName: props?.subProjectDetails?.contactName,
-            contactPersonNumber: props?.subProjectDetails?.contactNumber, highlightsOrUsp: props?.subProjectDetails?.highlights
+            contactPersonNumber: props?.subProjectDetails?.contactNumber, highlightsOrUsp: props?.subProjectDetails?.highlights,
+            totalAreaMetrics: 'Sq. Ft.'
          }))
          // let projectImageList = props?.subProjectDetails?.projectImages;
          // let imageList = []
@@ -424,7 +428,7 @@ const AddNewSubProject = (props) => {
          console.log(valid);
 
          if (valid.isValid) {
-            const response = await saveBuilderSubProject(submissionData);
+            const response = await saveBuilderSubProject(submissionData, editTower ? true : false);
             setSaveSubProjectFlag(false)
             if (response?.data) {
                // history.push(-1);
@@ -432,10 +436,17 @@ const AddNewSubProject = (props) => {
                if (editTower) {
                   updateSubProject(data);
                } else {
-                  setData((prevData) => ({ ...prevData, projectId: response?.data?.resourceData }))
+                  setData((prevData) => ({
+                     ...prevData, projectId: response?.data?.resourceData,
+                     contactName: data?.contactPersonName, contactNumber: data?.contactPersonNumber,
+                     highlights: data?.highlightsOrUsp
+                  }))
                   let subProjectData = { ...data }
                   subProjectData.projectId = response?.data?.resourceData;
-                  // updateSubProjectList(subProjectData)
+                  subProjectData.contactName = data?.contactPersonName;
+                  subProjectData.contactNumber = data?.contactPersonNumber;
+                  subProjectData.highlights = data?.highlightsOrUsp
+                  // updateSubProjectList(subProjectData) 
                }
             } else {
                const responseError = response?.data?.error || "Unknown error occurred";
@@ -813,7 +824,7 @@ const AddNewSubProject = (props) => {
                                        <MenuItem value="">Select Year</MenuItem>
                                        {Array.from({ length: 41 }, (_, index) => currentYear + 20 - index).map(
                                           (year) => (
-                                             <MenuItem    key={year} value={year}>
+                                             <MenuItem key={year} value={year}>
                                                 {year}
                                              </MenuItem>
                                           )
@@ -830,7 +841,7 @@ const AddNewSubProject = (props) => {
                                  controlId="formProjectImages"
                                  className="formProjectImages"
                               >
-                                 <span>Upload project images *</span>
+                                 <span>Upload sub project images *</span>
                                  <div className="image-upload mt-2 ">
                                     <label
                                        className="upload-label"
@@ -1252,7 +1263,7 @@ const AddNewSubProject = (props) => {
                            id="upload-project-image"
                            type="file"
                            className="upload-input"
-                           accept="image/*"
+                           accept=".jpg,.jpeg,.png"
                            multiple
                            onChange={handleProjectImagesChange}
                            ref={fileInputRef}

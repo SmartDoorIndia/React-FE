@@ -1104,7 +1104,7 @@ export const validatePricing = (data, pricingList, propertyCategory, openForBrok
       }
     }
   }
-  if(openForBrokerFlag === true) {
+  if (openForBrokerFlag === true) {
     if (isBlank(data.brokerageType)) {
       errors.brokerageType = true;
     }
@@ -1328,45 +1328,45 @@ export const validateNewCity = (data) => {
 export const validateBuilderDetails = (data) => {
   let errors = {};
 
-  if(isBlank(data.brandName)) {
+  if (isBlank(data.brandName)) {
     errors.brandName = true;
   }
-  if(isBlank(data.companyName)) {
+  if (isBlank(data.companyName)) {
     errors.companyName = true;
   }
-  if(isBlank(data.companyAddress)) {
+  if (isBlank(data.companyAddress)) {
     errors.companyAddress = true;
   }
-  if(isBlank(data.companyGst)) {
+  if (isBlank(data.companyGst)) {
     errors.companyGst = true;
   }
-  if(isBlank(data.companyLogoImageUrl)) {
+  if (isBlank(data.companyLogoImageUrl)) {
     errors.companyLogoImageUrl = true;
   }
-  if((data?.companyLogoImageUrl?.length < 0)) {
+  if ((data?.companyLogoImageUrl?.length < 0)) {
     errors.companyLogoImageUrl = true;
   }
-  if(isBlank(data.companyEmail)) {
+  if (isBlank(data.companyEmail)) {
     errors.companyEmail = true;
   }
-  if(isBlank(data.facebookUrl)) {
+  if (isBlank(data.facebookUrl)) {
     errors.facebookUrl = true;
   }
-  if(isBlank(data.whatsappNumber)) {
+  if (isBlank(data.whatsappNumber)) {
     errors.whatsappNumber = true;
   }
-  if(isBlank(data.instaUrl)) {
+  if (isBlank(data.instaUrl)) {
     errors.instaUrl = true;
   }
-  if(isBlank(data.contactName)) {
+  if (isBlank(data.contactName)) {
     errors.contactName = true;
   }
-  if(isBlank(data.contactNumber)) {
+  if (isBlank(data.contactNumber)) {
     errors.contactNumber = true;
-  } else if(data?.contactNumber?.length !== 10) {
+  } else if (data?.contactNumber?.length !== 10) {
     errors.contactNumber = true;
   }
-  if(data?.directors?.length <= 2) {
+  if (data?.directors?.length <= 2) {
     errors.directors = true;
   }
   return {
@@ -1378,60 +1378,60 @@ export const validateBuilderDetails = (data) => {
 export const validateProjectDetails = (data) => {
   let errors = {};
 
-  if(isBlank(data?.projectName)) {
+  if (isBlank(data?.projectName)) {
     errors.projectName = true;
   }
-  if(Number(data?.totalTowers) < 0) {
+  if (Number(data?.totalTowers) < 0) {
     errors.totalTowers = true;
   }
-  if(Number(data?.landArea) < 0) {
+  if (Number(data?.landArea) < 0) {
     errors.landArea = true;
   }
-  if(Number(data?.totalAreaToDevelop) < 0) {
+  if (Number(data?.totalAreaToDevelop) < 0) {
     errors.totalAreaToDevelop = true;
   }
-  if(Number(data?.openAreaPerc) < 0) {
+  if (Number(data?.openAreaPerc) < 0) {
     errors.openAreaPerc = true;
   }
-  if(isBlank(data?.possessionFrom)) {
+  if (isBlank(data?.possessionFrom)) {
     errors.possessionFrom = true;
   }
-  if(isBlank(data?.possessionTo)) {
+  if (isBlank(data?.possessionTo)) {
     errors.possessionTo = true;
   }
-  if(data?.possessionTo < data?.possessionFrom) {
+  if (data?.possessionTo < data?.possessionFrom) {
     errors.possessionTo = true;
     errors.possessionFrom = true;
   }
-  if(isBlank(data?.projectDescription)) {
+  if (isBlank(data?.projectDescription)) {
     errors.projectDescription = true;
   }
-  if((data?.projectAmenities?.length) < 0) {
+  if ((data?.projectAmenities?.length) < 0) {
     errors.projectAmenities = true;
   }
-  if(isBlank(data?.projectAddress)) {
+  if (isBlank(data?.projectAddress)) {
     errors.projectAddress = true;
   }
-  if(isBlank(data?.reraNumber)) {
+  if (isBlank(data?.reraNumber)) {
     errors.reraNumber = true;
   }
-  if(isBlank(data?.contactPersonName)) {
+  if (isBlank(data?.contactPersonName)) {
     errors.contactPersonName = true;
   }
-  if(isBlank(data?.contactPersonNumber)) {
+  if (isBlank(data?.contactPersonNumber)) {
     errors.contactPersonNumber = true;
   } else {
-    if(data?.contactPersonNumber?.length !== 10) {
+    if (data?.contactPersonNumber?.length !== 10) {
       errors.contactPersonNumber = true;
     }
   }
-  if((data?.projectImages?.length) < 0) {
+  if ((data?.projectImages?.length) < 0) {
     errors.projectImages = true;
   }
-  if(isBlank(data?.projectVideoUrl)) {
+  if (isBlank(data?.projectVideoUrl)) {
     errors.projectVideoUrl = true;
   }
-  if((data?.brochureUrl?.length) < 0) {
+  if ((data?.brochureUrl?.length) < 0) {
     errors.brochureUrl = true;
   }
   return {
@@ -1443,44 +1443,56 @@ export const validateProjectDetails = (data) => {
 export const validateSubProjectDetails = (data) => {
   let errors = {};
 
-  if(isBlank(data?.projectName)) {
+  if (isBlank(data?.projectName)) {
     errors.projectName = true;
   }
-  if(Number(data?.totalTowers) < 0) {
+  if (Number(data?.totalTowers) < 0) {
     errors.totalTowers = true;
   }
-  if(Number(data?.totalAreaToDevelop) < 0) {
+  if (Number(data?.totalAreaToDevelop) < 0) {
     errors.totalAreaToDevelop = true;
   }
-  if(isBlank(data?.possessionFrom)) {
+  if (isBlank(data?.possessionFrom)) {
     errors.possessionFrom = true;
   }
-  if(isBlank(data?.possessionTo)) {
+  if (isBlank(data?.possessionTo)) {
     errors.possessionTo = true;
   }
-  if(isBlank(data?.highlightsOrUsp)) {
+  if (data?.possessionTo < data?.possessionFrom) {
+    errors.possessionTo = true;
+    errors.possessionFrom = true;
+  }
+  if (isBlank(data?.highlightsOrUsp)) {
     errors.highlightsOrUsp = true;
   }
-  if((data?.amenities?.length) < 0) {
+  if ((data?.amenities?.length) < 0) {
     errors.amenities = true;
   }
   // if(isBlank(data?.projectAddress)) {
   //   errors.projectAddress = true;
   // }
-  if(isBlank(data?.reraNumber)) {
+  if (isBlank(data?.reraNumber)) {
     errors.reraNumber = true;
   }
-  if(isBlank(data?.contactPersonName)) {
+  if (isBlank(data?.contactPersonName)) {
     errors.contactPersonName = true;
   }
-  if(isBlank(data?.contactPersonNumber)) {
+  if (isBlank(data?.contactPersonNumber)) {
     errors.contactPersonNumber = true;
   } else {
-    if(data?.contactPersonNumber?.length !== 10) {
+    if (data?.contactPersonNumber?.length !== 10) {
       errors.contactPersonNumber = true;
     }
   }
-  if((data?.projectImages?.length) < 0) {
+  if (data?.propertyType === 'Tower') {
+    if (Number(data?.totalFloors) < 0) {
+      errors.totalFloors = true;
+    }
+    if (Number(data?.unitsPerFloor) < 0) {
+      errors.unitsPerFloor = true;
+    }
+  }
+  if ((data?.projectImages?.length) <= 0) {
     errors.projectImages = true;
   }
   // if(isBlank(data?.projectVideoUrl)) {
@@ -1498,33 +1510,33 @@ export const validateSubProjectDetails = (data) => {
 export const validateSubProjectUnit = (data) => {
   let errors = {};
 
-  if(isBlank(data?.propertyType)) {
+  if (isBlank(data?.propertyType)) {
     errors.propertyType = true;
   }
-  if(Number(data?.propertySubType) < 0) {
+  if (Number(data?.propertySubType) < 0) {
     errors.propertySubType = true;
   }
-  if(data?.propertySubType === 'Apartment') {
-    if(Number(data?.numberOfRooms) < 0) {
+  if (data?.propertySubType === 'Apartment') {
+    if (Number(data?.numberOfRooms) < 0) {
       errors.numberOfRooms = true;
     }
   }
-  if(Number(data?.totalUnits) < 0) {
+  if (Number(data?.totalUnits) < 0) {
     errors.totalUnits = true;
   }
-  if(Number(data?.minArea) < 0) {
+  if (Number(data?.minArea) < 0) {
     errors.minArea = true;
   }
-  if(Number(data?.maxArea) < 0) {
+  if (Number(data?.maxArea) < 0) {
     errors.maxArea = true;
   }
-  if(Number(data?.minPrice) < 0) {
+  if (Number(data?.minPrice) < 0) {
     errors.minPrice = true;
   }
-  if(Number(data?.maxPrice) < 0) {
+  if (Number(data?.maxPrice) < 0) {
     errors.maxPrice = true;
   }
-  
+
   return {
     errors,
     isValid: isEmpty(errors)

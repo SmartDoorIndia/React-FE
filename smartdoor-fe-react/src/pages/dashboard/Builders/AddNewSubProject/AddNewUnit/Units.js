@@ -107,10 +107,19 @@ const Units = (props) => {
         //     reader.readAsDataURL(file);
         // }
         const files = Array.from(e.target.files);
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+        const validFiles = files.filter(file => allowedTypes.includes(file.type));
+
+        if (validFiles.length !== files.length) {
+            showErrorToast('Only JPG and PNG images are allowed');
+            return;
+        }
+
         if (docDescription === 'floorPlan') {
-            // fileInputRef.current.value = "";
+            fileInputRef.current.value = "";
         } else {
-            // fileInputRef1.current.value = "";
+            fileInputRef1.current.value = "";
         }
         if (files.length > 0) {
             let formData = new FormData();
@@ -629,7 +638,6 @@ const Units = (props) => {
                                         className="unitTextFieldInput w-100"
                                         type="number"
                                         name="maxArea"
-                                        disabled
                                         required={true}
                                         inputProps={{ min: 0 }}
                                         value={unitDetails.maxArea || ""}
@@ -652,6 +660,7 @@ const Units = (props) => {
                                                                 carpetAreaMeasurementUnitEnteredByUser: e.target.value,
                                                             }));
                                                         }}
+                                                        disabled
                                                         value={unitDetails.carpetAreaMeasurementUnitEnteredByUser || "Sq. Ft."}
                                                     >
                                                         <MenuItem value="" disabled>
@@ -771,13 +780,13 @@ const Units = (props) => {
                                     >
                                         {/* <span>Floor Plan Images</span> */}
                                         <div className="image-upload mt-2">
-                                            <label htmlFor="upload-project-layout" className="upload-label">
+                                            <label htmlFor="upload-project-layout" className="upload-label" onClick={() => fileInputRef.current?.click()}>
                                                 <TiCameraOutline className="camera-icon" />
                                                 <input
-                                                    id="upload-project-layout"
+                                                    name="upload-project-layout"
                                                     type="file"
                                                     className="upload-input"
-                                                    accept="image/*"
+                                                    accept=".jpg,.jpeg,.png"
                                                     multiple
                                                     onChange={(e) => handleFileChange(e, "floorPlan")}
                                                     ref={fileInputRef}
@@ -838,16 +847,16 @@ const Units = (props) => {
                                     >
                                         {/* <span>Unit Images</span> */}
                                         <div className="image-upload mt-2">
-                                            <label htmlFor="upload-property-image" className="upload-label">
+                                            <label htmlFor="upload-property-image" className="upload-label" onClick={() => fileInputRef1.current?.click()}>
                                                 <TiCameraOutline className="camera-icon" />
                                                 <input
-                                                    id="upload-property-image"
+                                                    name="upload-property-image"
                                                     type="file"
                                                     className="upload-input"
-                                                    accept="image/*"
+                                                    accept=".jpg,.jpeg,.png"
                                                     multiple
                                                     onChange={(e) => handleFileChange(e, 'images')}
-                                                    ref={fileInputRef}
+                                                    ref={fileInputRef1}
                                                 />
                                                 <span>Upload Property Images *</span>
                                             </label>

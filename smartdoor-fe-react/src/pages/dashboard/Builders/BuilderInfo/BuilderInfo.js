@@ -1,15 +1,27 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import BuilderProjectList from './BuilderProjects/BuilderProjectList';
 import BuilderDetails from './BuilderDetails/BuilderDetails';
 import Buttons from '../../../../shared/Buttons/Buttons';
 import { Button, Row } from 'react-bootstrap';
 import Text from '../../../../shared/Text/Text';
+import { getBuilderById } from '../../../../common/redux/actions';
 
 const BuilderInfo = (props) => {
 
     const [projectFlag, setProjectFlag] = useState(true);
     const [detailsFlag, setDetailsFlag] = useState(false);
-    // console.log(props)
+    const [builderDetails, setBuilderDetails] = useState({});
+
+    console.log(props)
+
+    useEffect(() => {
+        getBuilderById({ builderId: props?.location?.state?.builderId })
+            .then((response) => {
+                // console.log(response)
+                setBuilderDetails(response?.data?.resourceData);
+            });
+    }, []);
+
     return (
         <>
             <div className='d-flex mb-2'>
@@ -23,33 +35,23 @@ const BuilderInfo = (props) => {
                     name='Details'
                     style={{ color: detailsFlag ? '#252525' : '#BCBCBC', backgroundColor: 'unset', borderBottomColor: '#BE1452', borderBottomWidth: detailsFlag ? 'thick' : '0', fontWeight: 'bolder' }}
                     onClick={() => { setDetailsFlag(true); setProjectFlag(false) }}></Buttons>
-                    <div className='me-3 w-100' style={{justifyItems: 'end'}}>
-                        <Button
-                            className="d-flex px-2 ml-3"
-                            style={{
-                                color: "#949494",
-                                backgroundColor: "#FFF",
-                                borderColor: "#DED6D9",
-                            }}
-                        >
-                            <Text
-                                text={"In-Active"}
-                                fontWeight="bold"
-                                style={{ fontSize: "12px", color: "#949494" }}
-                            />
-                        </Button>
-                    </div>
+
+                <Buttons
+                    name={builderDetails?.status}
+                    varient="secondary"
+                    style={{}}
+                />
             </div>
 
             {projectFlag ?
                 <>
-                    <BuilderProjectList builderId = {props?.location?.state?.builderId} />
+                    <BuilderProjectList builderId={props?.location?.state?.builderId} builderDetails={builderDetails} />
                 </>
                 :
                 null}
             {detailsFlag ?
                 <>
-                    <BuilderDetails builderId = {props?.location?.state?.builderId} />
+                    <BuilderDetails builderId={props?.location?.state?.builderId} />
                 </>
                 :
                 null}

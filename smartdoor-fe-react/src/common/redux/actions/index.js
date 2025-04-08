@@ -2200,10 +2200,10 @@ export const approveBuilderProfile = async (data) => {
   return response;
 };
 
-export const saveBuilderProject = async (data) => {
+export const saveBuilderProject = async (data, editProject) => {
   const response = await mainApiService("saveBuilderProject", data);
   if (response.data && response.data.status === 200) {
-    showSuccessToast("Project created successfully.");
+    showSuccessToast(editProject ? "Project edited successfully." : "Project created successfully.");
   } else if (response.data && response.data.status === 409)
     showErrorToast("Project already exist.");
   else if (response.data && response.data.status !== 409 && response.data.error) {
@@ -2212,10 +2212,10 @@ export const saveBuilderProject = async (data) => {
   return response;
 };
 
-export const saveBuilderSubProject = async (data) => {
+export const saveBuilderSubProject = async (data, editTower) => {
   const response = await mainApiService("saveBuilderSubProject", data);
   if (response.data && response.data.status === 200) {
-    showSuccessToast("Sub Project created successfully.");
+    showSuccessToast(editTower ? "Sub Project edited successfully." : "Sub Project created successfully.");
   } else if (response.data && response.data.status === 409)
     showErrorToast("Sub Project already exist.");
   else if (response.data && response.data.status !== 409 && response.data.error) {
@@ -2227,7 +2227,7 @@ export const saveBuilderSubProject = async (data) => {
 export const saveBuilderSubProjectUnits = async (data) => {
   const response = await mainApiService("saveBuilderSubProjectUnits", data);
   if (response.data && response.data.status === 200) {
-    showSuccessToast("Sub Project unit created successfully.");
+    showSuccessToast("Sub Project Unit details saved successfully.");
   } else if (response.data && response.data.status === 409)
     showErrorToast("Sub Project already exist.");
   else if (response.data && response.data.status !== 409 && response.data.error) {

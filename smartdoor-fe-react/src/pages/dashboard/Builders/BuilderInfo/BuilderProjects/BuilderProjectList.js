@@ -36,8 +36,8 @@ const BuilderProjectList = (props) => {
    const history = useHistory();
 
    useEffect(async () => {
+      console.log(props)
       const response = await fetchProjectIdList({ builderId: props?.builderId });
-      console.log(provideAuth().userData);
       setLoading(true)
       if (response.status === 200) {
          setLoading(false);
@@ -109,20 +109,20 @@ const BuilderProjectList = (props) => {
          wrap: true,
          minWidth: "120px",
       },
-      {
-         name: "# of Towers / Plotted",
-         selector: (row) => 'N/A',
-         sortable: false,
-         center: true,
-         maxWidth: "160px",
-      },
-      {
-         name: "# of Units",
-         selector: (row) => 'N/A',
-         center: true,
-         minWidth: "150px",
-         maxWidth: "150px",
-      },
+      // {
+      //    name: "# of Towers / Plotted",
+      //    selector: (row) => 'N/A',
+      //    sortable: false,
+      //    center: true,
+      //    maxWidth: "160px",
+      // },
+      // {
+      //    name: "# of Units",
+      //    selector: (row) => 'N/A',
+      //    center: true,
+      //    minWidth: "150px",
+      //    maxWidth: "150px",
+      // },
       // {
       //    name: "Pending Approval",
       //    selector: (row) => row.contactPersonNumber,
@@ -220,7 +220,7 @@ const BuilderProjectList = (props) => {
                         </tbody>
                      </table>
                   </div>
-                  <Text className="ml-3" text={"Units Available"} style={{ fontSize: '14px', fontWeight: '700' }} />
+                  {/* <Text className="ml-3" text={"Units Available"} style={{ fontSize: '14px', fontWeight: '700' }} />
                   <table className="table ml-5" style={{ tableLayout: "fixed", width: "90%" }}>
                      <tbody>
                         {(() => {
@@ -229,7 +229,7 @@ const BuilderProjectList = (props) => {
                            return filteredProperties.length > 0 ? (
                               filteredProperties.map((property, index) => (
                                  <tr key={index} style={{ borderBottom: "1px solid #DED6D9" }}>
-                                    <td>{property.compositionType}</td>
+                                    <td>{property.compositionType || property?.propertySubType}</td>
                                     <td>{formatDate(property.possessionFrom, "MMM YYYY")} - {formatDate(property.possessionTo, "MMM YYYY")}</td>
                                     <td>{property.reraNumber}</td>
                                     <td>{(property.totalFloors || '0') + " Total Floors"}</td>
@@ -247,7 +247,7 @@ const BuilderProjectList = (props) => {
                         })()}
 
                      </tbody>
-                  </table>
+                  </table> */}
                </>
             ))}
          </div>
@@ -294,7 +294,7 @@ const BuilderProjectList = (props) => {
             <div className="tableBox">
                <div className="d-flex flex-md-column flex-xl-row justify-content-xl-end align-items-center tableHeading">
                   <div className="locationSelect d-flex justify-content-end align-items-center w-100">
-                     {subHeaderComponentMemo}
+                     {/* {subHeaderComponentMemo} */}
                      <a style={{ textDecoration: "none" }}>
                         <Button
                            className="d-flex py-1 ml-3"
@@ -340,12 +340,13 @@ const BuilderProjectList = (props) => {
                      // perPageOptions={[8, 16, 24, 32]} // Per-page options
                      // onChangePage={handlePageChange}
                      // onChangeRowsPerPage={handleRowsPerPageChange}
-                     expandableRows
-                     expandableRowsComponent={({ data }) => (
-                        <ExpandedRowComponent projectDetails={builderProjectDetails[data.projectId] || {}} />
-                     )}
-                     expandableRowExpanded={(row) => row.projectId === expandedProjectId}
-                     onRowExpandToggled={handleExpandRow}
+                     // expandableRows
+                     // expandableRowsComponent={({ data }) => (
+                     //    <ExpandedRowComponent projectDetails={builderProjectDetails[data.projectId] || {}} />
+                     // )}
+                     // expandableRowExpanded={(row) => row.projectId === expandedProjectId}
+                     // onRowExpandToggled={handleExpandRow}
+                     pagination={false}
                      subHeaderComponent={subHeaderComponentMemo}
                      persistTableHead="true"
                      filterComponent={subHeaderComponentMemo}
