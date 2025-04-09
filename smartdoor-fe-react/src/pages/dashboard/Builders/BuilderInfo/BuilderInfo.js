@@ -36,11 +36,11 @@ const BuilderInfo = (props) => {
                     style={{ color: detailsFlag ? '#252525' : '#BCBCBC', backgroundColor: 'unset', borderBottomColor: '#BE1452', borderBottomWidth: detailsFlag ? 'thick' : '0', fontWeight: 'bolder' }}
                     onClick={() => { setDetailsFlag(true); setProjectFlag(false) }}></Buttons>
 
-                <Buttons
+                {/* <Buttons
                     name={builderDetails?.status}
                     varient="secondary"
                     style={{}}
-                />
+                /> */}
             </div>
 
             {projectFlag ?

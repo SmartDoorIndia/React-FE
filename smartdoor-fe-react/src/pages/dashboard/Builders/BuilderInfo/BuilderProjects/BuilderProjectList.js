@@ -340,12 +340,12 @@ const BuilderProjectList = (props) => {
                      // perPageOptions={[8, 16, 24, 32]} // Per-page options
                      // onChangePage={handlePageChange}
                      // onChangeRowsPerPage={handleRowsPerPageChange}
-                     // expandableRows
-                     // expandableRowsComponent={({ data }) => (
-                     //    <ExpandedRowComponent projectDetails={builderProjectDetails[data.projectId] || {}} />
-                     // )}
-                     // expandableRowExpanded={(row) => row.projectId === expandedProjectId}
-                     // onRowExpandToggled={handleExpandRow}
+                     expandableRows
+                     expandableRowsComponent={({ data }) => (
+                        <ExpandedRowComponent projectDetails={builderProjectDetails[data.projectId] || {}} />
+                     )}
+                     expandableRowExpanded={(row) => row.projectId === expandedProjectId}
+                     onRowExpandToggled={handleExpandRow}
                      pagination={false}
                      subHeaderComponent={subHeaderComponentMemo}
                      persistTableHead="true"

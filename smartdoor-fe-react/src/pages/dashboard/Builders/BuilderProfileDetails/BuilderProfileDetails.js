@@ -262,7 +262,7 @@ const BuilderProfileDetails = (props) => {
    return (
       <div className="profile-page">
          <div className="container-fluid content">
-            {builderId ? (
+            {/* {builderId ? (
                isApproved ? (
                   <span
                      style={{
@@ -279,7 +279,7 @@ const BuilderProfileDetails = (props) => {
                      Under Review
                   </Button>
                )
-            ) : null}
+            ) : null} */}
             <div className="form-container">
                <form noValidate onSubmit={handleSubmit} autoComplete="off">
                   <div className="newEntry">
@@ -351,6 +351,7 @@ const BuilderProfileDetails = (props) => {
                                        label={"Brand Name"}
                                        onInput={(e) => handleChange(e)}
                                        value={data.brandName}
+                                       error={error?.brandName}
                                     />
                                  </Col>
                                  <Col lg="5">
@@ -363,6 +364,7 @@ const BuilderProfileDetails = (props) => {
                                        label={"Company Name"}
                                        value={data.companyName}
                                        onInput={(e) => handleChange(e)}
+                                       error={error?.companyName}
                                     />
                                  </Col>
                               </Row>
@@ -373,10 +375,10 @@ const BuilderProfileDetails = (props) => {
                                        type="email"
                                        required={true}
                                        className="textFieldInput w-100"
-                                       error={error?.email}
                                        label={'Company Email'}
                                        value={data.companyEmail}
                                        onInput={(e) => handleChange(e)}
+                                       error={error?.companyEmail}
                                     />
                                  </Col>
                                  <Col lg="5">
@@ -388,6 +390,7 @@ const BuilderProfileDetails = (props) => {
                                        label="Company GST"
                                        value={data.companyGST}
                                        onInput={(e) => handleChange(e)}
+                                       error={error?.companyGST}
                                     />
                                  </Col>
                               </Row>
@@ -404,6 +407,7 @@ const BuilderProfileDetails = (props) => {
                                  label="Address"
                                  value={data.companyAddress}
                                  onInput={(e) => handleChange(e)}
+                                 error={error?.companyAddress}
                               />
                            </Col>
                         </Row>
@@ -434,13 +438,14 @@ const BuilderProfileDetails = (props) => {
                                  label="Facebook URL"
                                  value={data.facebookUrl}
                                  onInput={(e) => handleChange(e)}
+                                 error={error?.facebookUrl}
                               />
                            </Col>
                            <Col lg="4" className="mt-3">
                               <TextField
                                  id={'instaUrl'}
                                  type="text"
-                                 required={true}
+                                 // required={true}
                                  placeholder="www.instagram.com/accountname"
                                  className="textFieldInput w-100"
                                  label="Instagram URL"
@@ -461,6 +466,7 @@ const BuilderProfileDetails = (props) => {
                                  label="Whatsapp Business Number"
                                  value={data.whatsappNumber}
                                  onChange={(e) => handleChange(e)}
+                                 error={error?.whatsappNumber}
                               />
                            </Col>
                            <Col lg="4">
@@ -472,6 +478,7 @@ const BuilderProfileDetails = (props) => {
                                  label="Contact Person Name"
                                  value={data.contactName}
                                  onInput={(e) => handleChange(e)}
+                                 error={error?.contactName}
                               />
                            </Col>
                            <Col lg="4">
@@ -484,6 +491,7 @@ const BuilderProfileDetails = (props) => {
                                  label="Phone Number"
                                  value={data.contactNumber}
                                  onChange={(e) => handleChange(e)}
+                                 error={error?.contactNumber}
                               />
                            </Col>
                         </Row>
