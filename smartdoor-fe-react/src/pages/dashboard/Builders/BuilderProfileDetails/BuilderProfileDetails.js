@@ -11,19 +11,22 @@ import {
    createBuilderProfileDetail,
    approveBuilderProfile,
 } from "../../../../common/redux/actions"; // Ensure correct imports
-import { showSuccessToast, showErrorToast, getLocalStorage, handlePhoneChange } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
+import {
+   showSuccessToast,
+   showErrorToast,
+   getLocalStorage,
+   handlePhoneChange,
+   setLocalStorage,
+} from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
 import CONSTANTS from "../../../../common/helpers/Constants";
 import { TextField } from "@mui/material";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { validateBuilderDetails } from "../../../../common/validations";
 
-
 const BuilderProfileDetails = (props) => {
-   const {
-      auth: { userData },
-   } = useUserContext();
-   const builderId = props?.location?.state?.builderDetails?.builderId || null;
+   const userData = getLocalStorage("authData");
    const userId = getLocalStorage("authData").userid;
+   const builderId = props?.location?.state?.builderDetails?.builderId || null;
    const [isChecked, setIsChecked] = useState(false); // Set to checked by default
    const [isFormValid, setIsFormValid] = useState(builderId !== null ? true : false);
    const [isApproved, setIsApproved] = useState(false);
@@ -31,24 +34,26 @@ const BuilderProfileDetails = (props) => {
    const fileInputRef = useRef(null); // Create a ref for the file input
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
-   const [data, setData] = useState({
-      contactNumber: "",
-      companyName: "",
-      brandName: "",
-      companyAddress: "",
-      companyEmail: "",
-      companyGST: "",
-      builderLogoS3ImageUrl: "",
-      companyLogoImageUrl: "",
-      builderCoinbalance: 0.0,
-      directors: [],
-      facebookUrl: "",
-      instaUrl: "",
-      whatsappNumber: "",
-      contactNumber: "",
-      contactName: "",
-      builderProfileComplete: true,
-   } || props?.location?.state?.builderDetails);
+   const [data, setData] = useState(
+      {
+         contactNumber: "",
+         companyName: "",
+         brandName: "",
+         companyAddress: "",
+         companyEmail: "",
+         companyGST: "",
+         builderLogoS3ImageUrl: "",
+         companyLogoImageUrl: "",
+         builderCoinbalance: 0.0,
+         directors: [],
+         facebookUrl: "",
+         instaUrl: "",
+         whatsappNumber: "",
+         contactNumber: "",
+         contactName: "",
+         builderProfileComplete: true,
+      } || props?.location?.state?.builderDetails
+   );
    const history = useHistory();
 
    useEffect(() => {
@@ -58,9 +63,9 @@ const BuilderProfileDetails = (props) => {
       } else {
          setIsApproved(false);
       }
-      console.log("BuilderDetails: ", props)
+      console.log("BuilderDetails: ", props);
       if (props?.location?.state?.builderDetails) {
-         setData(props?.location?.state?.builderDetails)
+         setData(props?.location?.state?.builderDetails);
       }
    }, []);
 
@@ -73,11 +78,13 @@ const BuilderProfileDetails = (props) => {
          companyAddress,
          contactNumber,
          companyLogoImageUrl,
-         directors
+         directors,
       } = data;
-      const areFirstTwoDirectorsValid = directors[0]?.directorName?.trim()?.length !== 0 && directors[1]?.directorName?.trim()?.length !== 0;
-      console.log(isChecked)
-      const checked = isChecked || isCheck
+      const areFirstTwoDirectorsValid =
+         directors[0]?.directorName?.trim()?.length !== 0 &&
+         directors[1]?.directorName?.trim()?.length !== 0;
+      console.log(isChecked);
+      const checked = isChecked || isCheck;
       if (builderId !== null) {
          const isValid =
             !!brandName?.trim() &&
@@ -109,14 +116,18 @@ const BuilderProfileDetails = (props) => {
    };
 
    const _getBuilderById = useCallback(() => {
-      if (!builderId) return;
+      if (userData.roleId !== 19 && userData.roleId !== 1 && userData.roleId !== 22) {
+         if (!builderId) return;
+      }
       setLoading(true);
-      getBuilderById({ builderId: builderId })
+      getBuilderById({ builderId: userData.roleId === 19 || userData.roleId === 1 ? 0 : builderId })
          .then((response) => {
-            if (response?.data) {
+            if (response?.status === 200) {
                const { resourceData, error: responseError } = response.data;
                setData(resourceData);
+               setLocalStorage("builderData", resourceData);
                setIsChecked(true);
+               setIsFormValid(true)
                if (responseError) setError(responseError);
             }
             setLoading(false);
@@ -172,22 +183,20 @@ const BuilderProfileDetails = (props) => {
                directorList.pop();
                return {
                   ...prevData,
-                  directors: directorList
-               }
-            })
+                  directors: directorList,
+               };
+            });
          }
          validateForm(isChecked);
-      } else if (id === ("whatsappNumber")) {
+      } else if (id === "whatsappNumber") {
          const mobileNum = handlePhoneChange(event);
          setData((prevData) => ({ ...prevData, [id]: mobileNum }));
          validateForm(isChecked);
-      }
-      else if (id === ("contactNumber")) {
+      } else if (id === "contactNumber") {
          const mobileNum = handlePhoneChange(event);
          setData((prevData) => ({ ...prevData, [id]: mobileNum }));
          validateForm(isChecked);
-      }
-      else {
+      } else {
          // Update other fields in data (not directors array)
          setData((prevData) => ({ ...prevData, [id]: value }));
          validateForm(isChecked);
@@ -255,31 +264,13 @@ const BuilderProfileDetails = (props) => {
 
    const handleCheckboxChange = async (event) => {
       await setIsChecked(event.target.checked);
-      console.log(event.target.checked)
+      console.log(event.target.checked);
       validateForm();
    };
 
    return (
       <div className="profile-page">
          <div className="container-fluid content">
-            {builderId ? (
-               isApproved ? (
-                  <span
-                     style={{
-                        color: "White",
-                        backgroundColor: "green",
-                        padding: "5px 10px",
-                        borderRadius: "5px",
-                     }}
-                  >
-                     Approved
-                  </span>
-               ) : (
-                  <Button variant="warning" onClick={callApproveBuilderProfile}>
-                     Under Review
-                  </Button>
-               )
-            ) : null}
             <div className="form-container">
                <form noValidate onSubmit={handleSubmit} autoComplete="off">
                   <div className="newEntry">
@@ -290,16 +281,32 @@ const BuilderProfileDetails = (props) => {
                               Dedupe on company brand name to identify impersonation and call on
                               7767811351 to address the same
                            </p>
+                           {data?.status === "UNDER_REVIEW" ? (
+                              <>
+                                 <p className="info-text">
+                                    Your profile is currently under reviewed by SmartDoor Admin
+                                 </p>
+                              </>
+                           ) : null}
+                           {data?.status === "On Hold" ? (
+                              <>
+                                 <p className="info-text">
+                                    Your profile is currently On Hold by SmartDoor Admin
+                                 </p>
+                              </>
+                           ) : null}
                         </div>
                         <Row className="pb-4">
                            <Col lg="2">
                               <div className="image-upload builderProfileImage">
-                                 <label htmlFor="upload-input" className="upload-label" onClick={() => fileInputRef.current?.click()}>
+                                 <label
+                                    htmlFor="upload-input"
+                                    className="upload-label"
+                                    onClick={() => fileInputRef.current?.click()}
+                                 >
                                     <TiCameraOutline className="camera-icon" />
                                     <span className="pt-3">
-                                       {data.companyLogoImageUrl
-                                          ? "Change logo"
-                                          : "Upload logo *"}
+                                       {data?.companyLogoImageUrl ? "Change logo" : "Upload logo *"}
                                     </span>
                                     <input
                                        id="upload-input upload-logo"
@@ -308,13 +315,19 @@ const BuilderProfileDetails = (props) => {
                                        accept="image/*"
                                        onChange={handleLogoUpload}
                                        ref={fileInputRef}
+                                       disabled={
+                                          data?.status === "UNDER_REVIEW" ||
+                                          data?.status === "On Hold"
+                                             ? true
+                                             : false
+                                       }
                                     />
 
                                     {/* Displaying the uploaded image */}
-                                    {data.companyLogoImageUrl && (
+                                    {data?.companyLogoImageUrl && (
                                        <div className="image-preview">
                                           <img
-                                             src={data.companyLogoImageUrl}
+                                             src={data?.companyLogoImageUrl}
                                              alt="Builder Logo"
                                              id="builder-logo"
                                              className="preview-img"
@@ -343,19 +356,25 @@ const BuilderProfileDetails = (props) => {
                               <Row className="pb-3">
                                  <Col lg="5">
                                     <TextField
-                                       id={'brandName'}
+                                       id={"brandName"}
                                        className="textFieldInput w-100"
                                        type="text"
                                        required={true}
                                        // maxLength={35}
                                        label={"Brand Name"}
                                        onInput={(e) => handleChange(e)}
-                                       value={data.brandName}
+                                       value={data?.brandName}
+                                       disabled={
+                                          data?.status === "UNDER_REVIEW" ||
+                                          data?.status === "On Hold"
+                                             ? true
+                                             : false
+                                       }
                                     />
                                  </Col>
                                  <Col lg="5">
                                     <TextField
-                                       id={'companyName'}
+                                       id={"companyName"}
                                        className="textFieldInput w-100"
                                        type="text"
                                        required={true}
@@ -363,31 +382,49 @@ const BuilderProfileDetails = (props) => {
                                        label={"Company Name"}
                                        value={data.companyName}
                                        onInput={(e) => handleChange(e)}
+                                       disabled={
+                                          data?.status === "UNDER_REVIEW" ||
+                                          data?.status === "On Hold"
+                                             ? true
+                                             : false
+                                       }
                                     />
                                  </Col>
                               </Row>
                               <Row>
                                  <Col lg="5">
                                     <TextField
-                                       id={'companyEmail'}
+                                       id={"companyEmail"}
                                        type="email"
                                        required={true}
                                        className="textFieldInput w-100"
                                        error={error?.email}
-                                       label={'Company Email'}
+                                       label={"Company Email"}
                                        value={data.companyEmail}
                                        onInput={(e) => handleChange(e)}
+                                       disabled={
+                                          data?.status === "UNDER_REVIEW" ||
+                                          data?.status === "On Hold"
+                                             ? true
+                                             : false
+                                       }
                                     />
                                  </Col>
                                  <Col lg="5">
                                     <TextField
-                                       id={'companyGST'}
+                                       id={"companyGST"}
                                        type="text"
                                        required={true}
                                        className="textFieldInput w-100"
                                        label="Company GST"
                                        value={data.companyGST}
                                        onInput={(e) => handleChange(e)}
+                                       disabled={
+                                          data?.status === "UNDER_REVIEW" ||
+                                          data?.status === "On Hold"
+                                             ? true
+                                             : false
+                                       }
                                     />
                                  </Col>
                               </Row>
@@ -397,13 +434,18 @@ const BuilderProfileDetails = (props) => {
                         <Row className="align-items-center mb-3">
                            <Col lg="12">
                               <TextField
-                                 id={'companyAddress'}
+                                 id={"companyAddress"}
                                  type="text"
                                  required={true}
                                  className="textFieldInput w-100"
                                  label="Address"
                                  value={data.companyAddress}
                                  onInput={(e) => handleChange(e)}
+                                 disabled={
+                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                       ? true
+                                       : false
+                                 }
                               />
                            </Col>
                         </Row>
@@ -417,16 +459,24 @@ const BuilderProfileDetails = (props) => {
                                        id={`directorName${index + 1}`}
                                        type="text"
                                        className="textFieldInput w-100"
-                                       label={`Director Name ${index + 1} ${index > 1 ? "(Optional)" : "*"}`}
+                                       label={`Director Name ${index + 1} ${
+                                          index > 1 ? "(Optional)" : "*"
+                                       }`}
                                        value={data.directors[index]?.directorName || ""}
                                        onInput={(e) => handleChange(e)}
+                                       disabled={
+                                          data?.status === "UNDER_REVIEW" ||
+                                          data?.status === "On Hold"
+                                             ? true
+                                             : false
+                                       }
                                     />
                                  </Col>
                               ))}
 
                            <Col lg="4" className="mt-3">
                               <TextField
-                                 id={'facebookUrl'}
+                                 id={"facebookUrl"}
                                  type="text"
                                  required={true}
                                  placeholder="www.facebook.com/accountname"
@@ -434,11 +484,16 @@ const BuilderProfileDetails = (props) => {
                                  label="Facebook URL"
                                  value={data.facebookUrl}
                                  onInput={(e) => handleChange(e)}
+                                 disabled={
+                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                       ? true
+                                       : false
+                                 }
                               />
                            </Col>
                            <Col lg="4" className="mt-3">
                               <TextField
-                                 id={'instaUrl'}
+                                 id={"instaUrl"}
                                  type="text"
                                  required={true}
                                  placeholder="www.instagram.com/accountname"
@@ -446,6 +501,11 @@ const BuilderProfileDetails = (props) => {
                                  label="Instagram URL"
                                  value={data.instaUrl}
                                  onInput={(e) => handleChange(e)}
+                                 disabled={
+                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                       ? true
+                                       : false
+                                 }
                               />
                            </Col>
                         </Row>
@@ -453,7 +513,7 @@ const BuilderProfileDetails = (props) => {
                         <Row className="align-items-center mt-3">
                            <Col lg="4">
                               <TextField
-                                 id={'whatsappNumber'}
+                                 id={"whatsappNumber"}
                                  type="number"
                                  required={true}
                                  inputProps={{ min: 0 }}
@@ -461,22 +521,32 @@ const BuilderProfileDetails = (props) => {
                                  label="Whatsapp Business Number"
                                  value={data.whatsappNumber}
                                  onChange={(e) => handleChange(e)}
+                                 disabled={
+                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                       ? true
+                                       : false
+                                 }
                               />
                            </Col>
                            <Col lg="4">
                               <TextField
-                                 id={'contactName'}
+                                 id={"contactName"}
                                  type="text"
                                  required={true}
                                  className="textFieldInput w-100"
                                  label="Contact Person Name"
                                  value={data.contactName}
                                  onInput={(e) => handleChange(e)}
+                                 disabled={
+                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                       ? true
+                                       : false
+                                 }
                               />
                            </Col>
                            <Col lg="4">
                               <TextField
-                                 id={'contactNumber'}
+                                 id={"contactNumber"}
                                  type="number"
                                  required={true}
                                  inputProps={{ min: 0 }}
@@ -484,11 +554,12 @@ const BuilderProfileDetails = (props) => {
                                  label="Phone Number"
                                  value={data.contactNumber}
                                  onChange={(e) => handleChange(e)}
+                                 disabled={data?.status === "UNDER_REVIEW" ? true : false}
                               />
                            </Col>
                         </Row>
                      </div>
-                     {builderId === null ?
+                     {builderId === null ? (
                         <Row>
                            <Col lg="12">
                               <Form.Check
@@ -496,22 +567,33 @@ const BuilderProfileDetails = (props) => {
                                  id="custom-checkbox"
                                  label="I declare that I represent the above details to be true and as my own organisation and SmartDoor may take requisite action if any detail is found to be untrue."
                                  checked={isChecked}
-                                 onChange={(e) => { setIsChecked(e.target.checked); validateForm(e.target.checked) }}
+                                 onChange={(e) => {
+                                    setIsChecked(e.target.checked);
+                                    validateForm(e.target.checked);
+                                 }}
                                  className="custom-checkbox"
+                                 disabled={
+                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                       ? true
+                                       : false
+                                 }
                               />
                            </Col>
                         </Row>
-                        : null}
+                     ) : null}
                      <Row>
                         <Col lg="3">
                            <button
-
                               type="submit"
-                              className={isFormValid ? "btn-small submit-btn" : "btn-small disabled-btn"}
+                              className={
+                                 isFormValid ? "btn-small submit-btn" : "btn-small disabled-btn"
+                              }
                               id="submit-team-member-button"
                               disabled={!isFormValid} // Button disabled until all fields are filled
                            >
-                              {props?.location?.state?.builderDetails?.builderId ? "Save" : "Submit"}
+                              {props?.location?.state?.builderDetails?.builderId
+                                 ? "Save"
+                                 : "Submit"}
                            </button>
                         </Col>
                      </Row>

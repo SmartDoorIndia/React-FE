@@ -18,7 +18,10 @@ const DashboardRoute = () => {
     }
     else if(userData.roleId === 18) {
       return ('/admin/executive/properties')
-    } else {
+    } else if((userData.roleId === 19) || (userData.roleId === 1) || (userData.roleId === 22)) {
+      return ('/admin/builder-profile')
+    } 
+    else {
       return ('/admin/execution');
     }
   });

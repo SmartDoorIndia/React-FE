@@ -46,9 +46,10 @@ const Nav = () => {
          setIsOpen(false);
       } else {
          setIsActive(false);
-         setIsOpen(false)
+         setIsOpen(false);
       }
    }, [pathname]);
+   console.log(userData)
 
    function checkNavActive() {
       setIsOpen(!isOpen);
@@ -61,13 +62,19 @@ const Nav = () => {
    return (
       <div className="mainMenu">
          <ReactBoostrap.Navbar expand="lg">
-            <ReactBoostrap.Navbar.Brand href={userData.roleName === 'SUPER ADMIN' ? "/admin/execution" : ''}>
+            <ReactBoostrap.Navbar.Brand
+               href={userData.roleName === "SUPER ADMIN" ? "/admin/execution" : ""}
+            >
                <Image name="Logo" src={sideLogo} />
             </ReactBoostrap.Navbar.Brand>
             <ReactBoostrap.Navbar.Toggle aria-controls="basic-navbar-nav" />
             <ReactBoostrap.Navbar.Collapse id="basic-navbar-nav">
                <ReactBoostrap.Nav className="mr-auto">
-                  {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'INSTALLATION ADMIN' || userData.roleName === 'TRANSACTION ADMIN' || userData.roleName === 'FINANCE ADMIN' || userData.roleName === 'HELP DESK ADMIN' ?
+                  {userData.roleName === "SUPER ADMIN" ||
+                  userData.roleName === "INSTALLATION ADMIN" ||
+                  userData.roleName === "TRANSACTION ADMIN" ||
+                  userData.roleName === "FINANCE ADMIN" ||
+                  userData.roleName === "HELP DESK ADMIN" ? (
                      <ReactBoostrap.NavDropdown
                         show={isOpen}
                         onClick={() => {
@@ -86,69 +93,89 @@ const Nav = () => {
                         Society Sales Team
                      </Link> */}
                         <>
-                           {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'INSTALLATION ADMIN' ?
+                           {userData.roleName === "SUPER ADMIN" ||
+                           userData.roleName === "INSTALLATION ADMIN" ? (
                               <Link
                                  to="/admin/execution"
-                                 className={`dropdown-item  ${pathname.includes("execution") ? "active" : ""
-                                    }`}
+                                 className={`dropdown-item  ${
+                                    pathname.includes("execution") ? "active" : ""
+                                 }`}
                               >
                                  Installation Team
                               </Link>
-                              : null}
-                           {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'HELP DESK ADMIN' ?
+                           ) : null}
+                           {userData.roleName === "SUPER ADMIN" ||
+                           userData.roleName === "HELP DESK ADMIN" ? (
                               <Link
                                  to="/admin/helpdesk"
-                                 className={`dropdown-item  ${pathname.includes("helpdesk") ? "active" : ""
-                                    }`}
+                                 className={`dropdown-item  ${
+                                    pathname.includes("helpdesk") ? "active" : ""
+                                 }`}
                               >
                                  Helpdesk Team
                               </Link>
-                              : null}
-                           {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'FINANCE ADMIN' ?
+                           ) : null}
+                           {userData.roleName === "SUPER ADMIN" ||
+                           userData.roleName === "FINANCE ADMIN" ? (
                               <Link
                                  to="/admin/finance"
-                                 className={`dropdown-item  ${pathname.includes("finance") ? "active" : ""}`}
+                                 className={`dropdown-item  ${
+                                    pathname.includes("finance") ? "active" : ""
+                                 }`}
                               >
                                  Finance Team
                               </Link>
-                              : null}
-                           {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'TRANSACTION  ADMIN' ?
+                           ) : null}
+                           {userData.roleName === "SUPER ADMIN" ||
+                           userData.roleName === "TRANSACTION  ADMIN" ? (
                               <Link
                                  to="/admin/transaction"
-                                 className={`dropdown-item  ${pathname.includes("/transaction") && !pathname.includes("transactions")
-                                    ? "active"
-                                    : ""
-                                    }`}
+                                 className={`dropdown-item  ${
+                                    pathname.includes("/transaction") &&
+                                    !pathname.includes("transactions")
+                                       ? "active"
+                                       : ""
+                                 }`}
                               >
                                  Transaction Team
                               </Link>
-                              : null}
+                           ) : null}
                         </>
                      </ReactBoostrap.NavDropdown>
-                     : null}
+                  ) : null}
 
                   {userData.roleName === "SUPER ADMIN" && (
                      <>
                         <Link
                            to="/admin/property"
-                           className={`nav-link ${pathname.includes("/admin/property") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/property") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
-                              src={pathname.includes("/admin/property") ? propertyActive : houseIcon}
+                              src={
+                                 pathname.includes("/admin/property") ? propertyActive : houseIcon
+                              }
                            />
                            Properties
                         </Link>
 
                         <Link
                            to="/admin/deleted-unlisted-property"
-                           className={`nav-link ${pathname.includes("/admin/deleted-unlisted-property") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/deleted-unlisted-property")
+                                 ? "nav-active"
+                                 : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
-                              src={pathname.includes("/admin/deleted-unlisted-property") ? propertyActive : houseIcon}
+                              src={
+                                 pathname.includes("/admin/deleted-unlisted-property")
+                                    ? propertyActive
+                                    : houseIcon
+                              }
                            />
                            Deleted/ Unlisted Properties
                         </Link>
@@ -166,12 +193,14 @@ const Nav = () => {
                         </Link> */}
                      </>
                   )}
-                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "CONSUMER ADMIN") && (
+                  {(userData.roleName === "SUPER ADMIN" ||
+                     userData.roleName === "CONSUMER ADMIN") && (
                      <>
                         <Link
                            to="/admin/consumer-management"
-                           className={`nav-link ${pathname.includes("consumer-management") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("consumer-management") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="user"
@@ -185,8 +214,9 @@ const Nav = () => {
                      <>
                         <Link
                            to="/admin/user-management"
-                           className={`nav-link ${pathname.includes("user-management") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("user-management") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="teamGroup"
@@ -200,8 +230,9 @@ const Nav = () => {
                      <>
                         <Link
                            to="/admin/nonsdproperty"
-                           className={`nav-link ${pathname.includes("nonsdproperty") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("nonsdproperty") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
@@ -219,8 +250,9 @@ const Nav = () => {
                      <>
                         <Link
                            to="/admin/addPlans"
-                           className={`nav-link ${pathname.includes("addPlans") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("addPlans") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="teamGroup"
@@ -234,12 +266,12 @@ const Nav = () => {
                         </Link>
                      </>
                   )}
-                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "BROKER ADMIN") && (
+                  {(userData.roleName === "SUPER ADMIN" ||
+                     userData.roleName === "BROKER ADMIN") && (
                      <>
                         <Link
                            to="/admin/broker"
-                           className={`nav-link ${pathname.includes("broker") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${pathname.includes("broker") ? "nav-active" : ""}`}
                         >
                            <Image
                               name="houseIcon"
@@ -249,12 +281,14 @@ const Nav = () => {
                         </Link>
                      </>
                   )}
-                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "CORPORATE ADMIN") && (
+                  {(userData.roleName === "SUPER ADMIN" ||
+                     userData.roleName === "CORPORATE ADMIN") && (
                      <>
                         <Link
                            to="/admin/corporate"
-                           className={`nav-link ${pathname.includes("/admin/corporate") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/corporate") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="borkerIcon"
@@ -268,23 +302,23 @@ const Nav = () => {
                      <>
                         <Link
                            to="/admin/static-mobile-numbers"
-                           className={`nav-link ${pathname.includes("static-mobile-numbers") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("static-mobile-numbers") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="teamGroup"
                               src={
-                                 pathname.includes("static-mobile-numbers")
-                                    ? borkerIcon
-                                    : dashboard
+                                 pathname.includes("static-mobile-numbers") ? borkerIcon : dashboard
                               }
                            />
                            Static Mobile Numbers
                         </Link>
                         <Link
                            to="/admin/smartdoor-cities"
-                           className={`nav-link ${pathname.includes("smartdoor-cities") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("smartdoor-cities") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="teamGroup"
@@ -302,8 +336,9 @@ const Nav = () => {
                      <>
                         <Link
                            to="/admin/featured-videos"
-                           className={`nav-link ${pathname.includes("featured-videos") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("featured-videos") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="teamGroup"
@@ -317,34 +352,46 @@ const Nav = () => {
                         </Link>
                         <Link
                            to="/admin/marketingAgency"
-                           className={`nav-link ${pathname.includes("/admin/marketingAgency") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/marketingAgency") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
-                              src={pathname.includes("/admin/marketingAgency") ? borkerIcon : dashboard}
+                              src={
+                                 pathname.includes("/admin/marketingAgency")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
                            />
                            Marketing Agency
                         </Link>
                      </>
                   )}
-                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") && (
+                  {(userData.roleName === "SUPER ADMIN" ||
+                     userData.roleName === "INSTALLATION ADMIN") && (
                      <>
                         <Link
                            to="/admin/batteryLevelCheck"
-                           className={`nav-link ${pathname.includes("/admin/batteryLevelCheck") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/batteryLevelCheck") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
-                              src={pathname.includes("/admin/batteryLevelCheck") ? borkerIcon : dashboard}
+                              src={
+                                 pathname.includes("/admin/batteryLevelCheck")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
                            />
                            Battery Level Check
                         </Link>
                         <Link
                            to="/admin/hub-list"
-                           className={`nav-link ${pathname.includes("/admin/hub-list") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/hub-list") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
@@ -354,8 +401,9 @@ const Nav = () => {
                         </Link>
                         <Link
                            to="/admin/kit-list"
-                           className={`nav-link ${pathname.includes("/admin/kit-list") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/kit-list") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
@@ -365,12 +413,14 @@ const Nav = () => {
                         </Link>
                      </>
                   )}
-                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "BUILDER ADMIN") && (
+                  {(userData.roleName === "SUPER ADMIN" ||
+                     userData.roleName === "BUILDER ADMIN") && (
                      <>
                         <Link
                            to="/admin/builders"
-                           className={`nav-link ${pathname.includes("/admin/builders") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/builders") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
@@ -381,61 +431,53 @@ const Nav = () => {
                      </>
                   )}
 
-                  {userData.roleName === 'MARKETING ADMIN' ?
+                  {userData.roleName === "MARKETING ADMIN" ? (
                      <>
                         <Link
                            to="/admin/agencyProperties"
-                           className={`nav-link ${pathname.includes("agencyProperties") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("agencyProperties") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="teamGroup"
-                              src={
-                                 pathname.includes("agencyProperties")
-                                    ? borkerIcon
-                                    : dashboard
-                              }
+                              src={pathname.includes("agencyProperties") ? borkerIcon : dashboard}
                            />
                            Agency Properties
                         </Link>
                         <Link
                            to="/admin/agencyCustomers"
-                           className={`nav-link ${pathname.includes("agencyCustomers") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("agencyCustomers") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="teamGroup"
-                              src={
-                                 pathname.includes("agencyCustomers")
-                                    ? borkerIcon
-                                    : dashboard
-                              }
+                              src={pathname.includes("agencyCustomers") ? borkerIcon : dashboard}
                            />
                            Agency Customers
                         </Link>
                         <Link
                            to="/admin/executives"
-                           className={`nav-link ${pathname.includes("executives") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("executives") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="teamGroup"
-                              src={
-                                 pathname.includes("executives")
-                                    ? borkerIcon
-                                    : dashboard
-                              }
+                              src={pathname.includes("executives") ? borkerIcon : dashboard}
                            />
                            Agency Executives
                         </Link>
                      </>
-                     : null}
-                  {userData.roleName === 'MARKETING EXECUTIVE' ?
+                  ) : null}
+                  {userData.roleName === "MARKETING EXECUTIVE" ? (
                      <>
                         <Link
                            to="/admin/executive/properties"
-                           className={`nav-link ${pathname.includes("executive/properties") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("executive/properties") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="teamGroup"
@@ -448,33 +490,45 @@ const Nav = () => {
                            Executive Property
                         </Link>
                      </>
-                     : null}
-                  {userData.roleName === 'SUPER ADMIN' || userData.roleName === 'Consumer' || userData.roleName === 'Broker' || userData.roleName === 'BUILDER_MAIN_USER' ?
+                  ) : null}
+                  {((userData.roleName === "CONSUMER") ||
+                     (userData.roleName === "BROKER") ||
+                     (userData.roleName === "BUILDER_MAIN_USER")) && (
                      <>
                         <Link
                            to="/admin/builder-profile"
-                           className={`nav-link ${pathname.includes("/admin/builder-profile") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/builder-profile") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
-                              src={pathname.includes("/admin/builder-profile") ? borkerIcon : dashboard}
+                              src={
+                                 pathname.includes("/admin/builder-profile")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
                            />
                            Builder Profile
                         </Link>
                         <Link
                            to="/admin/builder-projects"
-                           className={`nav-link ${pathname.includes("/admin/builder-projects") ? "nav-active" : ""
-                              }`}
+                           className={`nav-link ${
+                              pathname.includes("/admin/builder-projects") ? "nav-active" : ""
+                           }`}
                         >
                            <Image
                               name="houseIcon"
-                              src={pathname.includes("/admin/builder-projects") ? borkerIcon : dashboard}
+                              src={
+                                 pathname.includes("/admin/builder-projects")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
                            />
                            Builder Projects
                         </Link>
                      </>
-                     : null}
+                  )}
                </ReactBoostrap.Nav>
             </ReactBoostrap.Navbar.Collapse>
          </ReactBoostrap.Navbar>

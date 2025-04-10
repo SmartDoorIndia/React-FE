@@ -10,7 +10,7 @@ import addIcon from "../../../../../assets/svg/add.svg";
 import { connect } from "react-redux";
 import { useState } from "react";
 import DataTableComponent from "../../../../../shared/DataTable/DataTable";
-import { formateDate, ToolTip } from "../../../../../common/helpers/Utils";
+import { formateDate, getLocalStorage, ToolTip } from "../../../../../common/helpers/Utils";
 import {
    fetchProjectIdList,
    fetchBuilderProjectList,
@@ -22,6 +22,7 @@ import { provideAuth } from "../../../../../common/helpers/Auth";
 import { da } from "date-fns/locale";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Tooltip } from "@mui/material";
+import build from "react-multiselect-dropdown-bootstrap";
 
 const BuilderProjectList = (props) => {
    const { fetchBuilderProjectList } = props;
@@ -35,15 +36,19 @@ const BuilderProjectList = (props) => {
    const [loading, setLoading] = useState(false);
    const [expandLoading, setExpandLoading] = useState(false);
    const history = useHistory();
+   const builderData = getLocalStorage("builderData");
+   const builderStatus = props?.builderDetails?.status || builderData?.status || null;
 
    useEffect(async () => {
-      console.log(props)
-      const response = await fetchProjectIdList({ builderId: props?.builderId });
-      setLoading(true)
+      console.log(builderData);
+      setLoading(true);
+      const response = await fetchProjectIdList({
+         builderId: props?.builderId || builderData?.builderId,
+      });
+      setLoading(false);
       if (response.status === 200) {
-         setLoading(false);
          if (response?.data?.resourceData?.length > 0) {
-            setBuilderProjectList(response?.data?.resourceData)
+            setBuilderProjectList(response?.data?.resourceData);
          }
       }
    }, [fetchProjectIdList]);
@@ -97,7 +102,7 @@ const BuilderProjectList = (props) => {
    const columns = [
       {
          name: "Project Name",
-         selector: (row) => row?.projectName || 'N/A',
+         selector: (row) => row?.projectName || "N/A",
          center: true,
          sortable: true,
          minWidth: "200px",
@@ -105,7 +110,7 @@ const BuilderProjectList = (props) => {
       },
       {
          name: "Address",
-         selector: (row) => row?.projectAddress || 'N/A',
+         selector: (row) => row?.projectAddress || "N/A",
          center: true,
          wrap: true,
          minWidth: "120px",
@@ -170,9 +175,12 @@ const BuilderProjectList = (props) => {
 
                            // setBuilderProjectDetails(
                            //    response?.data?.resourceData
-                           // ); 
+                           // );
                            console.log(row);
-                           history.push("/admin/builders/builder-details/project-details", { projectId: row?.projectId, builderId: props?.builderId })
+                           history.push("/admin/builders/builder-details/project-details", {
+                              projectId: row?.projectId,
+                              builderId: props?.builderId || builderData?.builderId,
+                           });
                         }}
                         className="action-link btn"
                      >
@@ -185,38 +193,67 @@ const BuilderProjectList = (props) => {
       },
    ];
 
-   const subColumns = [
-
-   ]
+   const subColumns = [];
    const ExpandedRowComponent = ({ data }) => {
       return (
          <div>
-            {expandLoading ?
+            {expandLoading ? (
                <>
                   <TableLoader className="justify-content-center" />
                </>
-               : null}
+            ) : null}
             {builderProjectDetails?.subProjectList?.map((subProject) => (
                <>
-                  <div style={{ backgroundColor: '#F3ECEC' }}>
+                  <div style={{ backgroundColor: "#F3ECEC" }}>
+                     <Text
+                        className="ml-3"
+                        text={subProject?.projectName}
+                        style={{ fontSize: "16px", fontWeight: "700" }}
+                     />
 
-                     <Text className="ml-3" text={subProject?.projectName} style={{ fontSize: '16px', fontWeight: '700' }} />
-
-                     <table className="table ml-5" style={{ tableLayout: "fixed", width: "90%", alignContent: 'center', backgroundColor: '#F3ECEC' }}>
+                     <table
+                        className="table ml-5"
+                        style={{
+                           tableLayout: "fixed",
+                           width: "90%",
+                           alignContent: "center",
+                           backgroundColor: "#F3ECEC",
+                        }}
+                     >
                         <thead>
                            <tr style={{ borderBottom: "1px solid #DED6D9" }}>
-                              <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Rera Number</th>
-                              <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Total Area To Develop</th>
-                              <th className="text-start" style={{ width: "10%", textAlign: 'left', }}>Total Floors</th>
-                              <th className="text-start" style={{ width: "15%", textAlign: 'left', }}>Contact Person Mobile Number</th>
+                              <th
+                                 className="text-start"
+                                 style={{ width: "15%", textAlign: "left" }}
+                              >
+                                 Rera Number
+                              </th>
+                              <th
+                                 className="text-start"
+                                 style={{ width: "15%", textAlign: "left" }}
+                              >
+                                 Total Area To Develop
+                              </th>
+                              <th
+                                 className="text-start"
+                                 style={{ width: "10%", textAlign: "left" }}
+                              >
+                                 Total Floors
+                              </th>
+                              <th
+                                 className="text-start"
+                                 style={{ width: "15%", textAlign: "left" }}
+                              >
+                                 Contact Person Mobile Number
+                              </th>
                            </tr>
                         </thead>
                         <tbody>
                            <tr>
                               <td>{subProject.reraNumber}</td>
-                              <td>{subProject?.totalAreaToDevelop || '0'}</td>
-                              <td>{subProject?.totalFloors || '0'}</td>
-                              <td>{subProject?.contactNumber || '0'}</td>
+                              <td>{subProject?.totalAreaToDevelop || "0"}</td>
+                              <td>{subProject?.totalFloors || "0"}</td>
+                              <td>{subProject?.contactNumber || "0"}</td>
                            </tr>
                         </tbody>
                      </table>
@@ -269,13 +306,11 @@ const BuilderProjectList = (props) => {
             setExpandLoading(true);
             const response = await fetchBuilderProjectById({
                projectId: project?.projectId,
-               builderId: props?.builderId
+               builderId: props?.builderId || builderData?.builderId,
             });
             setExpandLoading(false);
 
-            setBuilderProjectDetails(
-               response?.data?.resourceData
-            );
+            setBuilderProjectDetails(response?.data?.resourceData);
 
             // Set only the current project as expanded (collapse others)
             setExpandedProjectId(project.projectId);
@@ -287,7 +322,6 @@ const BuilderProjectList = (props) => {
       }
    };
 
-
    return (
       <>
          <div className="builderProperties">
@@ -296,18 +330,29 @@ const BuilderProjectList = (props) => {
                   <div className="locationSelect d-flex justify-content-end align-items-center w-100">
                      {/* {subHeaderComponentMemo} */}
                      <Tooltip
-                        placement="top-start" style={{ width: '100%' }} title={props?.builderDetails?.status !== 'Approved' ? "Builder Profile is not approved" : "Add new Project"}
+                        placement="top-start"
+                        style={{ width: "100%" }}
+                        title={
+                           builderStatus !== "APPROVED"
+                              ? "Builder Profile is not approved"
+                              : "Add new Project"
+                        }
                      >
                         <a style={{ textDecoration: "none" }}>
                            <Button
                               className="d-flex py-1 ml-3"
-                              disabled={props?.builderDetails?.status !== 'Approved' ? true : false}
+                              disabled={builderStatus !== "APPROVED" ? true : false}
                               style={{
                                  color: "#BE1452",
                                  backgroundColor: "#F8F3F5",
                                  borderColor: "#DED6D9",
                               }}
-                              onClick={() => { history.push("/admin/builders/builder-details/add-new-project", { builderId: props?.builderId, editProject: false }) }}
+                              onClick={() => {
+                                 history.push("/admin/builders/builder-details/add-new-project", {
+                                    builderId: props?.builderId || builderData?.builderId,
+                                    editProject: false,
+                                 });
+                              }}
                            >
                               <div
                                  style={{
@@ -347,7 +392,9 @@ const BuilderProjectList = (props) => {
                      // onChangeRowsPerPage={handleRowsPerPageChange}
                      expandableRows
                      expandableRowsComponent={({ data }) => (
-                        <ExpandedRowComponent projectDetails={builderProjectDetails[data.projectId] || {}} />
+                        <ExpandedRowComponent
+                           projectDetails={builderProjectDetails[data.projectId] || {}}
+                        />
                      )}
                      expandableRowExpanded={(row) => row.projectId === expandedProjectId}
                      onRowExpandToggled={handleExpandRow}
@@ -363,9 +410,7 @@ const BuilderProjectList = (props) => {
       </>
    );
 };
-const mapStateToProps = ({ }) => ({
-
-});
+const mapStateToProps = ({}) => ({});
 const actions = {
    fetchProjectIdList,
    fetchBuilderProjectList,
