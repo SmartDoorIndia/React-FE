@@ -2254,6 +2254,12 @@ export const getBuilderById = async (data) => {
   return response;
 };
 
+export const setBuilderStatus = async (data) => {
+  const response = await mainApiService("setBuilderStatus", data);
+  console.log("--->", response);
+  return response;
+};
+
 export const getBuilderProjectById = async (data) => {
   const response = await mainApiService("getBuilderProjectById", data);
   return response;
@@ -2307,3 +2313,7 @@ export const getLeadForBuilder = async (data) => {
   return response
 }
 
+export const setProjectStatus = async (data) => {
+  const response = await mainApiService("setProjectStatus", data);
+  return response
+}

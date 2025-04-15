@@ -10,7 +10,12 @@ import addIcon from "../../../../../assets/svg/add.svg";
 import { connect } from "react-redux";
 import { useState } from "react";
 import DataTableComponent from "../../../../../shared/DataTable/DataTable";
-import { formateDate, getLocalStorage, ToolTip } from "../../../../../common/helpers/Utils";
+import {
+   formateDate,
+   getLocalStorage,
+   handleStatusElement,
+   ToolTip,
+} from "../../../../../common/helpers/Utils";
 import {
    fetchProjectIdList,
    fetchBuilderProjectList,
@@ -137,14 +142,15 @@ const BuilderProjectList = (props) => {
       //    minWidth: "145px",
       //    maxWidth: "150px",
       // },
-      // {
-      //    name: "Status",
-      //    selector: (row) => row.contactPersonNumber,
-      //    //  sortable: true,
-      //    center: true,
-      //    minWidth: "145px",
-      //    maxWidth: "150px",
-      // },
+      {
+         name: "Status",
+         selector: (row) => row?.status || 'N/A',
+         //  sortable: true,
+         center: true,
+         minWidth: "145px",
+         maxWidth: "150px",
+         cell: ({ status }) => handleStatusElement(status),
+      },
 
       {
          name: "Action",

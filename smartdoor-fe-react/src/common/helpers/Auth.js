@@ -23,9 +23,15 @@ export const AuthProvider = (props) => {
 
   const logoutUser = () => {
     disconnectSocket();
-    clearLocalStorage();
+    const userData = getLocalStorage('authData');
+    if(userData?.roleId === 22 || userData?.roleId === 19 || userData?.roleId === 1) {
+      clearLocalStorage();
+      history?.push('/builder/login');
+    } else {
+      clearLocalStorage();
+      history?.push('/login');
+    }
     setIsAuth({ isAuth: false, userData: null });
-    history.push('/login');
     dispatch({ type: USER_LOGOUT });
   };
 
@@ -55,10 +61,10 @@ export const AuthProvider = (props) => {
 };
 
 // Used to logout user.
-export const logoutUser = () => {
-  disconnectSocket();
-  clearLocalStorage();
-};
+// export const logoutUser = () => {
+//   disconnectSocket();
+//   clearLocalStorage();
+// };
 
 // Used to Auth the user.
 export const provideAuth = () => {

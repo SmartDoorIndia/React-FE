@@ -63,7 +63,7 @@ const Nav = () => {
       <div className="mainMenu">
          <ReactBoostrap.Navbar expand="lg">
             <ReactBoostrap.Navbar.Brand
-               href={userData.roleName === "SUPER ADMIN" ? "/admin/execution" : ""}
+               href={userData?.roleName === "SUPER ADMIN" ? "/admin/execution" : ""}
             >
                <Image name="Logo" src={sideLogo} />
             </ReactBoostrap.Navbar.Brand>

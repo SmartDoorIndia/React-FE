@@ -39,7 +39,7 @@ const AddNewProjectPost = (props) => {
    const [monthYearTo, setMonthYearTo] = useState({ month: "", year: "" });
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState(null);
-   const [saveProjectFlag, setSaveProjectFlag] = useState(false);
+   const [saveProjectFlag, setSaveProjectFlag] = useState(true);
    const [data, setData] = useState({
       builderId: builderId,
       projectId: projectId || null,
@@ -288,6 +288,7 @@ const AddNewProjectPost = (props) => {
             const response = await saveBuilderProject(submissionData, projectId !== null ? true : false);
 
             if (response?.data) {
+               setSaveProjectFlag(false);
                if (props?.editProject) {
                   showEditProject();
                } else {
@@ -298,7 +299,7 @@ const AddNewProjectPost = (props) => {
                console.error("Error in response:", responseError);
             }
          } else {
-            setSaveProjectFlag(false); // Re-enable the button if validation fails
+            setSaveProjectFlag(true); // Re-enable the button if validation fails
             return;
          }
       } catch (error) {

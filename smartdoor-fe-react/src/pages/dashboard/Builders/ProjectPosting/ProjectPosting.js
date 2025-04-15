@@ -13,6 +13,7 @@ import { fetchBuilderProjectById } from '../../../../common/redux/actions';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { getLocalStorage } from '../../../../common/helpers/Utils';
 
 const ProjectPosting = (props) => {
     const [projectDetails, setProjectDetails] = useState({
@@ -22,6 +23,7 @@ const ProjectPosting = (props) => {
     const [projectId, setBuilderProjectId] = useState(props?.location?.state?.projectId || null);
     const builderId = props?.location?.state?.builderId;
     const history = useHistory();
+    const userData = getLocalStorage("authData");
 
     useEffect(() => {
         // console.log(props?.location?.state?.projectId)
@@ -44,6 +46,9 @@ const ProjectPosting = (props) => {
     const getProjectId = (projectId) => {
         console.log(projectId)
         setBuilderProjectId(projectId)
+        if((userData?.roleId === 19) || (userData?.roleId === 1) || userData?.roleId === 22) {
+            history.goBack();
+        }
     }
 
     return (

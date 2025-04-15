@@ -3142,10 +3142,23 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
-
+  
   getBuilderById: {
-    url: "admin/builder/getBuilderDetails/:builderId",
+    url: "admin/builder/getBuilderDetails/:builderId/:userId",
     method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  setBuilderStatus: {
+    url: "/admin/builder/updateBuilderStatus",
+    method: "POST",
     data: {
     },
     headers: {
@@ -3235,6 +3248,18 @@ export const ApiJson = {
   getLeadForBuilder: {
     url: "/admin/builder/getLeadForBuilder/:builderId?fromDate=:fromDate&toDate=:toDate",
     method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  setProjectStatus: {
+    url: "/admin/builder/updateBuilderProjectStatus",
+    method: "POST",
     data: {
     },
     headers: {

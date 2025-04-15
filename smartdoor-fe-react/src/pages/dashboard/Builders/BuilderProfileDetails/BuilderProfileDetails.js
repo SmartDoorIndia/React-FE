@@ -120,14 +120,23 @@ const BuilderProfileDetails = (props) => {
          if (!builderId) return;
       }
       setLoading(true);
-      getBuilderById({ builderId: userData.roleId === 19 || userData.roleId === 1 ? 0 : builderId })
+      getBuilderById({
+         builderId:
+            userData.roleId === 19 || userData.roleId === 1 || userData.roleId !== 22
+               ? 0
+               : builderId,
+         userId:
+            userData.roleId === 19 || userData.roleId === 1 || userData.roleId !== 22
+               ? userData?.userid
+               : 0,
+      })
          .then((response) => {
             if (response?.status === 200) {
                const { resourceData, error: responseError } = response.data;
                setData(resourceData);
                setLocalStorage("builderData", resourceData);
                setIsChecked(true);
-               setIsFormValid(true)
+               setIsFormValid(true);
                if (responseError) setError(responseError);
             }
             setLoading(false);
@@ -225,28 +234,34 @@ const BuilderProfileDetails = (props) => {
       setLoading(true);
       validateBuilderDetails(data);
       try {
-         console.log("Data being submitted:", data);
-
-         const response = await createBuilderProfileDetail(data);
+         let reqData = { ...data };
+         if(reqData?.builderId === 0) {
+            reqData.builderId = null;
+         }
+         const response = await createBuilderProfileDetail(reqData);
          console.log("API Response:", response);
-         setData({
-            brandName: "",
-            companyName: "",
-            companyEmail: "",
-            companyGST: "",
-            companyAddress: "",
-            // usersName: "",
-            contactNumber: "",
-            directors: ["", "", "", ""],
-         });
+         if (response?.status === 200) {
+            // setData({
+            //    brandName: "",
+            //    companyName: "",
+            //    companyEmail: "",
+            //    companyGST: "",
+            //    companyAddress: "",
+            //    // usersName: "",
+            //    contactNumber: "",
+            //    directors: ["", "", "", ""],
+            // });
 
-         setIsChecked(false);
-         setIsFormValid(false);
-         setIsApproved(false);
-         // const currentUrl = window.location.pathname;
-         // const newUrl = currentUrl.replace(/\/\d+$/, "");
-         // window.history.replaceState({}, "", newUrl);
-         history.goBack();
+            setIsChecked(false);
+            setIsFormValid(false);
+            setIsApproved(false);
+            if (userData?.roleName === "SUPER ADMIN") {
+               history.goBack();
+            } else {
+               setData((prevData) => ({ ...prevData, status: "UNDER_REVIEW" }));
+               setShowModal(true);
+            }
+         }
       } catch (error) {
          showErrorToast("Error submitting form. Please try again.");
          console.error("Error submitting builder profile:", error);
@@ -288,7 +303,12 @@ const BuilderProfileDetails = (props) => {
                                  </p>
                               </>
                            ) : null}
-                           {data?.status === "On Hold" ? (
+                           {data?.status === "REJECTED" ? (
+                              <>
+                                 <p className="info-text">Your profile has been rejected because of {data?.rejectionComment}</p>
+                              </>
+                           ) : null}
+                           {data?.status === "ON_HOLD" ? (
                               <>
                                  <p className="info-text">
                                     Your profile is currently On Hold by SmartDoor Admin
@@ -317,7 +337,7 @@ const BuilderProfileDetails = (props) => {
                                        ref={fileInputRef}
                                        disabled={
                                           data?.status === "UNDER_REVIEW" ||
-                                          data?.status === "On Hold"
+                                          data?.status === "ON_HOLD"
                                              ? true
                                              : false
                                        }
@@ -366,7 +386,7 @@ const BuilderProfileDetails = (props) => {
                                        value={data?.brandName}
                                        disabled={
                                           data?.status === "UNDER_REVIEW" ||
-                                          data?.status === "On Hold"
+                                          data?.status === "ON_HOLD"
                                              ? true
                                              : false
                                        }
@@ -384,7 +404,7 @@ const BuilderProfileDetails = (props) => {
                                        onInput={(e) => handleChange(e)}
                                        disabled={
                                           data?.status === "UNDER_REVIEW" ||
-                                          data?.status === "On Hold"
+                                          data?.status === "ON_HOLD"
                                              ? true
                                              : false
                                        }
@@ -404,7 +424,7 @@ const BuilderProfileDetails = (props) => {
                                        onInput={(e) => handleChange(e)}
                                        disabled={
                                           data?.status === "UNDER_REVIEW" ||
-                                          data?.status === "On Hold"
+                                          data?.status === "ON_HOLD"
                                              ? true
                                              : false
                                        }
@@ -421,7 +441,7 @@ const BuilderProfileDetails = (props) => {
                                        onInput={(e) => handleChange(e)}
                                        disabled={
                                           data?.status === "UNDER_REVIEW" ||
-                                          data?.status === "On Hold"
+                                          data?.status === "ON_HOLD"
                                              ? true
                                              : false
                                        }
@@ -442,7 +462,7 @@ const BuilderProfileDetails = (props) => {
                                  value={data.companyAddress}
                                  onInput={(e) => handleChange(e)}
                                  disabled={
-                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                    data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
                                        ? true
                                        : false
                                  }
@@ -466,7 +486,7 @@ const BuilderProfileDetails = (props) => {
                                        onInput={(e) => handleChange(e)}
                                        disabled={
                                           data?.status === "UNDER_REVIEW" ||
-                                          data?.status === "On Hold"
+                                          data?.status === "ON_HOLD"
                                              ? true
                                              : false
                                        }
@@ -485,7 +505,7 @@ const BuilderProfileDetails = (props) => {
                                  value={data.facebookUrl}
                                  onInput={(e) => handleChange(e)}
                                  disabled={
-                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                    data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
                                        ? true
                                        : false
                                  }
@@ -502,7 +522,7 @@ const BuilderProfileDetails = (props) => {
                                  value={data.instaUrl}
                                  onInput={(e) => handleChange(e)}
                                  disabled={
-                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                    data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
                                        ? true
                                        : false
                                  }
@@ -522,7 +542,7 @@ const BuilderProfileDetails = (props) => {
                                  value={data.whatsappNumber}
                                  onChange={(e) => handleChange(e)}
                                  disabled={
-                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                    data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
                                        ? true
                                        : false
                                  }
@@ -538,7 +558,7 @@ const BuilderProfileDetails = (props) => {
                                  value={data.contactName}
                                  onInput={(e) => handleChange(e)}
                                  disabled={
-                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                    data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
                                        ? true
                                        : false
                                  }
@@ -573,7 +593,7 @@ const BuilderProfileDetails = (props) => {
                                  }}
                                  className="custom-checkbox"
                                  disabled={
-                                    data?.status === "UNDER_REVIEW" || data?.status === "On Hold"
+                                    data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
                                        ? true
                                        : false
                                  }
@@ -582,20 +602,26 @@ const BuilderProfileDetails = (props) => {
                         </Row>
                      ) : null}
                      <Row>
-                        <Col lg="3">
-                           <button
-                              type="submit"
-                              className={
-                                 isFormValid ? "btn-small submit-btn" : "btn-small disabled-btn"
-                              }
-                              id="submit-team-member-button"
-                              disabled={!isFormValid} // Button disabled until all fields are filled
-                           >
-                              {props?.location?.state?.builderDetails?.builderId
-                                 ? "Save"
-                                 : "Submit"}
-                           </button>
-                        </Col>
+                        {data?.status !== "UNDER_REVIEW" && data?.status !== "ON_HOLD" ? (
+                           <>
+                              <Col lg="3">
+                                 <button
+                                    type="submit"
+                                    className={
+                                       isFormValid
+                                          ? "btn-small submit-btn"
+                                          : "btn-small disabled-btn"
+                                    }
+                                    id="submit-team-member-button"
+                                    disabled={!isFormValid} // Button disabled until all fields are filled
+                                 >
+                                    {props?.location?.state?.builderDetails?.builderId
+                                       ? "Save"
+                                       : "Submit"}
+                                 </button>
+                              </Col>
+                           </>
+                        ) : null}
                      </Row>
                   </div>
                </form>
@@ -613,8 +639,7 @@ const BuilderProfileDetails = (props) => {
                      Account Approval
                   </Modal.Title>
                   <Modal.Body>
-                     Your request for Builder profile has been sent to the SmartDoor Admin. We will
-                     sent you the updates to your registered email address.
+                     Your request for Builder profile has been sent to the SmartDoor Admin.
                      <Row className="ModalActions">
                         <Col lg="6">
                            <button

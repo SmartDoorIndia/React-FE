@@ -93,16 +93,16 @@ const BuilderList = () => {
         //     cell: ({ plan }) => <span>{plan || ""}</span>,
         //     id: 7
         // },
-        // {
-        //     name: "Status",
-        //     selector: ((row) => row.status),
-        //     sortable: true,
-        //     center: true,
-        //     maxWidth: "120px",
-        //     style: { padding: "0 !important" },
-        //     cell: ({ status }) => <span>{handleStatusElement(status)}</span>,
-        //     id: 8
-        // },
+        {
+            name: "Status",
+            selector: ((row) => row.status),
+            sortable: true,
+            center: true,
+            maxWidth: "120px",
+            style: { padding: "0 !important" },
+            cell: ({ status }) => <span>{handleStatusElement(status)}</span>,
+            id: 8
+        },
         // {
         //     name: "Projects to review",
         //     selector: ((row) => row.reviewProjects),
@@ -130,7 +130,7 @@ const BuilderList = () => {
             center: true,
             maxWidth: "100px",
             style: { padding: "0 !important" },
-            cell: ({ row, builderId }) => (
+            cell: ({ row, builderId, userId }) => (
                 <>
                     <div className="action">
                         <ToolTip position="left" name="View Details">
@@ -138,7 +138,7 @@ const BuilderList = () => {
                                 <Link
                                     to={{
                                         pathname: "/admin/builders/builder-details",
-                                        state: { builderId: builderId, builderDetails: row },
+                                        state: { builderId: builderId, userId: userId, builderDetails: row },
                                     }}
                                 >
                                     <Image name="editIcon" src={contentIcon} />

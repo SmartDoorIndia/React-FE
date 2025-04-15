@@ -1,122 +1,212 @@
-import React, { useState } from 'react'
-import { Col, Row } from 'react-bootstrap';
+/** @format */
+
+import React, { useState } from "react";
+import { Col, Row } from "react-bootstrap";
 import ImageSliderComponent from "../../../../../shared/ImageSliderComp/ImageSliderComponent";
-import Text from '../../../../../shared/Text/Text';
+import Text from "../../../../../shared/Text/Text";
 import MapComponent from "../../../../../shared/Map/MapComponent";
-import Buttons from '../../../../../shared/Buttons/Buttons';
-import AddNewProjectPost from '../../AddNewProjectPost/AddNewProjectPost';
-import { formateDate } from '../../../../../common/helpers/Utils';
+import Buttons from "../../../../../shared/Buttons/Buttons";
+import AddNewProjectPost from "../../AddNewProjectPost/AddNewProjectPost";
+import { formateDate } from "../../../../../common/helpers/Utils";
+import { Tooltip } from "@mui/material";
 
 const ProjectDetails = (props) => {
-    const {handleProjectEdit} = props;
-    const projectDetails = (props?.projectDetails);
-    const [editProjectFlag, setEditProjectFlag] = useState(false);
+   const { handleProjectEdit } = props;
+   const projectDetails = props?.projectDetails;
+   const [editProjectFlag, setEditProjectFlag] = useState(false);
 
-    console.log(props)
+   console.log(props);
 
-    const handleShowProjectPost = () => {
-        console.log("Calling parent function..."); // Debugging
-        setEditProjectFlag(false);
-        handleProjectEdit();  // This calls the function in the parent component
-    };
-      
-    const toggleEditProject = () => {
-        setEditProjectFlag(false);
-    }
+   const handleShowProjectPost = () => {
+      console.log("Calling parent function..."); // Debugging
+      setEditProjectFlag(false);
+      handleProjectEdit(); // This calls the function in the parent component
+   };
 
-    return (
-        <>
-            <Row>
-                <Col lg={7}>
-                    <div className="d-none d-md-block">
-                        {projectDetails?.projectImages?.length > 0 ? (
-                            <ImageSliderComponent
-                                imagesArr={projectDetails?.projectImages || []}
-                                videosArr={[]}
-                                imageLoader={false}
-                                smartdoorProperty={false}
-                            />
-                        ) : (
-                            <ImageSliderComponent />
-                        )}
-                    </div>
-                </Col>
-                <Col lg={5}>
-                    <Row>
-                        <Col lg={6}>
-                            <div className='mt-3'>
-                                <Text text={"Project Name"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.projectName} style={{ fontSize: '14px', fontWeight: '500' }} />
-                            </div>
-                            <div className='mt-2'>
-                                <Text text={"Total Tower / Plotted Planned"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.totalTowers || '0'} style={{ fontSize: '14px', fontWeight: '500' }} />
-                            </div>
-                            <div className='mt-2'>
-                                <Text text={"Total Area to Develop"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={(projectDetails?.totalAreaToDevelop || '0') + "Sq.Ft."} style={{ fontSize: '14px', fontWeight: '500' }} />
-                            </div>
-                            <div className='mt-2'>
-                                <Text text={"Possession"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={formateDate(projectDetails?.possessionFrom, "MMM, YYYY") + " - " + formateDate(projectDetails?.possessionTo, "MMM, YYYY")} style={{ fontSize: '14px', fontWeight: '500' }} />
-                            </div>
-                            <div className='mt-2'>
-                                <Text text={"Location"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.projectAddress || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
-                            </div>
-                        </Col>
-                        <Col lg={6}>
-                            <div className='mt-3'>
-                                <Text text={"General Amenities"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={projectDetails?.projectAmenities?.join(", ") || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
-                            </div>
-                            <div className='mt-2'>
-                                <Text text={"Land Area"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={(projectDetails?.landArea || '0') + "Acre"} style={{ fontSize: '14px', fontWeight: '500' }} />
-                            </div>
-                            <div className='mt-2'>
-                                <Text text={"Open Area "} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                                <Text text={(projectDetails?.openAreaPercent || '0') + "%"} style={{ fontSize: '14px', fontWeight: '500' }} />
-                            </div>
-                        </Col>
-                    </Row>
-                    <div style={{ height: '120px', width: '90%', position: 'relative', borderRadius: '5px' }}>
-                        <MapComponent
-                            p_lat={projectDetails?.latitude}
-                            p_lng={projectDetails?.longitude}
-                            draggable={false}
-                            height='120px'
-                            style={{
-                                height: "120px",
-                                width: "90%",
-                                borderRadius: "5px",
-                            }}
+   const toggleEditProject = () => {
+      setEditProjectFlag(false);
+   };
+
+   return (
+      <>
+         <Row>
+            <Col lg={7}>
+               <div className="d-none d-md-block">
+                  {projectDetails?.projectImages?.length > 0 ? (
+                     <ImageSliderComponent
+                        imagesArr={projectDetails?.projectImages || []}
+                        videosArr={[]}
+                        imageLoader={false}
+                        smartdoorProperty={false}
+                     />
+                  ) : (
+                     <ImageSliderComponent />
+                  )}
+               </div>
+            </Col>
+            <Col lg={5}>
+               <Row>
+                  <Col lg={6}>
+                     <div className="mt-3">
+                        <Text
+                           text={"Project Name"}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
                         />
-                    </div>
-                </Col>
-            </Row>
-            <hr />
-            <div>
-                <div className='mt-2 mb-3'>
-                    <Text text={"Project & Property Description"} style={{ fontSize: '12px', fontWeight: '500', color: '#949494' }} />
-                    <Text text={projectDetails?.projectDescription || 'N/A'} style={{ fontSize: '14px', fontWeight: '500' }} />
-                </div>
+                        <Text
+                           text={projectDetails?.projectName}
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </div>
+                     <div className="mt-2">
+                        <Text
+                           text={"Total Tower / Plotted Planned"}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+                        />
+                        <Text
+                           text={projectDetails?.totalTowers || "0"}
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </div>
+                     <div className="mt-2">
+                        <Text
+                           text={"Total Area to Develop"}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+                        />
+                        <Text
+                           text={(projectDetails?.totalAreaToDevelop || "0") + "Sq.Ft."}
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </div>
+                     <div className="mt-2">
+                        <Text
+                           text={"Possession"}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+                        />
+                        <Text
+                           text={
+                              formateDate(projectDetails?.possessionFrom, "MMM, YYYY") +
+                              " - " +
+                              formateDate(projectDetails?.possessionTo, "MMM, YYYY")
+                           }
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </div>
+                     <div className="mt-2">
+                        <Text
+                           text={"Location"}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+                        />
+                        <Text
+                           text={projectDetails?.projectAddress || "N/A"}
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </div>
+                  </Col>
+                  <Col lg={6}>
+                     <div className="mt-3">
+                        <Text
+                           text={"General Amenities"}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+                        />
+                        <Text
+                           text={projectDetails?.projectAmenities?.join(", ") || "N/A"}
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </div>
+                     <div className="mt-2">
+                        <Text
+                           text={"Land Area"}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+                        />
+                        <Text
+                           text={(projectDetails?.landArea || "0") + "Acre"}
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </div>
+                     <div className="mt-2">
+                        <Text
+                           text={"Open Area "}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+                        />
+                        <Text
+                           text={(projectDetails?.openAreaPercent || "0") + "%"}
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </div>
+                  </Col>
+               </Row>
+               <div
+                  style={{
+                     height: "120px",
+                     width: "90%",
+                     position: "relative",
+                     borderRadius: "5px",
+                  }}
+               >
+                  <MapComponent
+                     p_lat={projectDetails?.latitude}
+                     p_lng={projectDetails?.longitude}
+                     draggable={false}
+                     height="120px"
+                     style={{
+                        height: "120px",
+                        width: "90%",
+                        borderRadius: "5px",
+                     }}
+                  />
+               </div>
+            </Col>
+         </Row>
+         <hr />
+         <div>
+            <div className="mt-2 mb-3">
+               <Text
+                  text={"Project & Property Description"}
+                  style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+               />
+               <Text
+                  text={projectDetails?.projectDescription || "N/A"}
+                  style={{ fontSize: "14px", fontWeight: "500" }}
+               />
             </div>
-            <div className='justify-self-end mb-2' >
-                <Buttons name="Edit" onClick={() => { setEditProjectFlag(true); }} />
-            </div>
-            {editProjectFlag &&
-                <>
-                    <AddNewProjectPost 
-                    projectDetails={projectDetails} 
-                    editProject={true} 
-                    toggleEdit={toggleEditProject}
-                    builderId={props?.builderId}
-                    showEditProject={handleShowProjectPost} />
-                </>
-            }
-        </>
-    )
-}
+         </div>
+         <div className="justify-self-end mb-2">
+            <Tooltip
+               placement="top-end"
+               // style={{ width: "100%" }}
+               title={
+                  projectDetails?.status === "UNDER_REVIEW" || projectDetails?.status === "ON_HOLD"
+                     ? "Project cannot be edited"
+                     : "Edit Project"
+               }
+            >
+               <Buttons
+                  name="Edit"
+                  disabled={
+                     projectDetails?.status === "UNDER_REVIEW" ||
+                     projectDetails?.status === "ON_HOLD"
+                        ? true
+                        : false
+                  }
+                  onClick={() => {
+                     setEditProjectFlag(true);
+                  }}
+               />
+            </Tooltip>
+         </div>
+         {editProjectFlag && (
+            <>
+               <AddNewProjectPost
+                  projectDetails={projectDetails}
+                  editProject={true}
+                  toggleEdit={toggleEditProject}
+                  builderId={props?.builderId}
+                  showEditProject={handleShowProjectPost}
+               />
+            </>
+         )}
+      </>
+   );
+};
 
 export default ProjectDetails;
