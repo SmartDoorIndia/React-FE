@@ -1,44 +1,46 @@
 /** @format */
 
-import { Suspense } from 'react';
-import { Switch, Redirect, Route } from 'react-router-dom';
+import { Suspense } from "react";
+import { Switch, Redirect, Route } from "react-router-dom";
 
-import PublicRoute from './PublicRoute';
-import Login from '../pages/login';
-import Dashboard from '../pages/dashboard';
-import BuilderDashboard from '../pages/BuilderDashboard';
-import { FallBackLoader } from '../common/helpers/Loader';
-import { useUserContext } from '../common/helpers/Auth';
-import Otp from '../pages/otp';
-import BuilderLogin from '../pages/login/BuilderLogin';
+import PublicRoute from "./PublicRoute";
+import Login from "../pages/login";
+import Dashboard from "../pages/dashboard";
+import BuilderDashboard from "../pages/BuilderDashboard";
+import { FallBackLoader } from "../common/helpers/Loader";
+import { useUserContext } from "../common/helpers/Auth";
+import Otp from "../pages/otp";
+import BuilderLogin from "../pages/login/BuilderLogin";
+import Signup from "../pages/SignUp/SignUp";
 // import Otp from '../pages/otp';
 
 const SmartDoorViewRoute = () => {
-  const { isAuth } = useUserContext();
+   const { isAuth } = useUserContext();
 
-  return (
-    <Suspense fallback={ <FallBackLoader /> }>
-      <Switch>
-        {isAuth ? (
-          <>
-            <Route path="/admin" name="Admin Dashboard" component={ Dashboard } />
-            <Route path="/builder" name="Builder Dashboard" component={ BuilderDashboard } />
-            <Route exact path={ [ '/', '/login' ] }>
-              {' '}
-              <Redirect to="/admin" />{' '}
-            </Route>
-          </>
+   return (
+      <Suspense fallback={<FallBackLoader />}>
+         <Switch>
+            {isAuth ? (
+               <>
+                  <Route path="/admin" name="Admin Dashboard" component={Dashboard} />
+                  <Route path="/builder" name="Builder Dashboard" component={BuilderDashboard} />
+                  <Route path="/sign-up" name="SignUp" component={Signup} />
+                  <Route exact path={["/", "/login"]}>
+                     {" "}
+                     <Redirect to="/admin" />{" "}
+                  </Route>
+               </>
             ) : (
-              <>
-                <PublicRoute path="/otp" component={ Otp } />
-                <PublicRoute path="/login" component={ Login } />
-                <PublicRoute path="/builder/login" component={BuilderLogin} />
-                {/* <Redirect from="*" to="/login" /> */}
-              </>
+               <>
+                  <PublicRoute path="/otp" component={Otp} />
+                  <PublicRoute path="/login" component={Login} />
+                  <PublicRoute path="/builder/login" component={BuilderLogin} />
+                  {/* <Redirect from="*" to="/login" /> */}
+               </>
             )}
-      </Switch>
-    </Suspense>
-  );
+         </Switch>
+      </Suspense>
+   );
 };
 
 export default SmartDoorViewRoute;
