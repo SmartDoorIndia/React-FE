@@ -54,7 +54,7 @@ const ProjectPosting = (props) => {
     return (
         <>
             <div style={{ overflowX: 'hidden' }} >
-                <Accordion defaultExpanded={false} className='mb-3' style={{ boxShadow: 'none' }} >
+                <Accordion defaultExpanded={true} className='mb-3' style={{ boxShadow: 'none' }} >
                     <AccordionSummary
                         expandIcon={<img src={ExpandIcon} alt='' />}
                         aria-controls="panel1-content"

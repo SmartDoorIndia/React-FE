@@ -19,7 +19,12 @@ import NoImage from "../../../../../assets/images/sd-faded.png";
 import { TextField, Tooltip } from "@mui/material";
 import Buttons from "../../../../../shared/Buttons/Buttons";
 import { saveAs } from "file-saver";
-import { getLocalStorage, showErrorToast, showSuccessToast } from "../../../../../common/helpers/Utils";
+import {
+   getLocalStorage,
+   showErrorToast,
+   showSuccessToast,
+} from "../../../../../common/helpers/Utils";
+import { FallBackLoader } from "../../../../../common/helpers/Loader";
 
 const BuilderDetails = (props) => {
    const history = useHistory();
@@ -28,23 +33,28 @@ const BuilderDetails = (props) => {
    const [toDate, setToDate] = useState(new Date().toISOString().split("T")[0]);
    const [rejectModal, setRejectModal] = useState(false);
    const [rejectionComment, setRejectComment] = useState("");
-   const userData = getLocalStorage('authData');
+   const userData = getLocalStorage("authData");
+   const [loading, setLoading] = useState(false);
 
    useEffect(() => {
       console.log(props);
+      setLoading(true);
       getBuilderById({ builderId: props.builderId, userId: props?.userId }).then((response) => {
          // console.log(response)
+         setLoading(false);
          setBuilderDetails(response?.data?.resourceData);
       });
    }, []);
 
    const downloadCSV = async () => {
+      setLoading(true);
       const response = await getLeadForBuilder({
          builderId: props?.builderId,
          fromDate: fromDate,
          toDate: toDate,
       });
       console.log(response);
+      setLoading(false);
       let data = response?.data?.resourceData;
       if (!data || data.length === 0) {
          console.warn("No data available to download");
@@ -75,27 +85,26 @@ const BuilderDetails = (props) => {
    };
 
    const changeBuilderStatus = async (status, comment) => {
+      setLoading(true);
       const response = await setBuilderStatus({
          builderId: props?.builderId,
          userId: props?.userId,
          status: status,
          rejectionComment: comment,
-         adminId: userData?.userid
+         adminId: userData?.userid,
       });
-      if(response?.status === 200) {
-         if(status === 'ON_HOLD') {
+      setLoading(false);
+      if (response?.status === 200) {
+         if (status === "ON_HOLD") {
             showSuccessToast("Builder profile set on hold");
-         }
-         else if(status === 'RESTORE') {
+         } else if (status === "RESTORE") {
             showSuccessToast("Builder profile restored successfully");
-         }
-         else if(status === 'APPROVED') {
+         } else if (status === "APPROVED") {
             showSuccessToast("Builder profile approved successfully");
-         }
-         else if(status === 'REJECTED') {
+         } else if (status === "REJECTED") {
             showSuccessToast("Builder profile rejected successfully");
          }
-         setRejectModal(false)
+         setRejectModal(false);
          getBuilderById({ builderId: props.builderId, userId: props?.userId }).then((response) => {
             // console.log(response)
             setBuilderDetails(response?.data?.resourceData);
@@ -106,7 +115,55 @@ const BuilderDetails = (props) => {
 
    return (
       <>
+         {loading ? (
+            <>
+               <FallBackLoader />
+            </>
+         ) : null}
          <Container className="builderpropertydetail-container">
+            <div style={{ justifySelf: "end" }}>
+               {builderDetails?.status === "UNDER_REVIEW" ? (
+                  <>
+                     <Buttons
+                        className="mb-3 align-self-end"
+                        name="APPROVE"
+                        onClick={() => {
+                           changeBuilderStatus("APPROVED", "");
+                        }}
+                     ></Buttons>{" "}
+                     &nbsp;&nbsp;
+                     <Buttons
+                        className="mb-3 align-self-end"
+                        name="REJECT"
+                        onClick={() => {
+                           setRejectModal(true);
+                        }}
+                     ></Buttons>
+                  </>
+               ) : null}
+               {builderDetails?.status === "APPROVED" ? (
+                  <>
+                     <Buttons
+                        className="mb-3 align-self-end"
+                        name="ON HOLD"
+                        onClick={() => {
+                           changeBuilderStatus("ON_HOLD", "");
+                        }}
+                     ></Buttons>
+                  </>
+               ) : null}
+               {builderDetails?.status === "ON_HOLD" ? (
+                  <>
+                     <Buttons
+                        className="mb-3 align-self-end"
+                        name="RESTORE"
+                        onClick={() => {
+                           changeBuilderStatus("RESTORE", "");
+                        }}
+                     ></Buttons>
+                  </>
+               ) : null}
+            </div>
             <Card className="shadow-sm">
                <Row className="justify-content-between pt-4 pb-2 px-5">
                   <div className="mb-3">
@@ -116,52 +173,12 @@ const BuilderDetails = (props) => {
                      </p>
                   </div>
                   <div className="text-end">
-                     {builderDetails?.status === "UNDER_REVIEW" ? (
-                        <>
-                           <Buttons
-                              // type="success"
-                              name="APPROVE"
-                              onClick={() => {
-                                 changeBuilderStatus("APPROVED", "");
-                              }}
-                           ></Buttons> &nbsp;&nbsp;
-                           <Buttons
-                              // type="danger"
-                              name="REJECT"
-                              onClick={() => {
-                                 setRejectModal(true);
-                              }}
-                           ></Buttons>
-                        </>
-                     ) : null}
-                     {builderDetails?.status === "APPROVED" ? (
-                        <>
-                           <Buttons
-                              // type="success"
-                              name="ON HOLD"
-                              onClick={() => {
-                                 changeBuilderStatus("ON_HOLD", "");
-                              }}
-                           ></Buttons>
-                        </>
-                     ) : null}
-                     {builderDetails?.status === "ON_HOLD" ? (
-                        <>
-                           <Buttons
-                              // type="success"
-                              name="RESTORE"
-                              onClick={() => {
-                                 changeBuilderStatus("RESTORE", "");
-                              }}
-                           ></Buttons>
-                        </>
-                     ) : null}
                      <Tooltip
                         placement="top-start"
                         style={{ width: "100%" }}
                         title={
-                           props?.builderDetails?.status !== "Approved" &&
-                           props?.builderDetails?.status !== "Rejected"
+                           (builderDetails?.status !== "APPROVED") &&
+                           (builderDetails?.status !== "REJECTED")
                               ? "Builder Profile cannot be edited"
                               : "Edit Profile"
                         }
@@ -174,8 +191,8 @@ const BuilderDetails = (props) => {
                               borderColor: "#DED6D9",
                            }}
                            disabled={
-                              props?.builderDetails?.status !== "Approved" &&
-                              props?.builderDetails?.status !== "Rejected"
+                              builderDetails?.status !== "APPROVED" &&
+                              builderDetails?.status !== "REJECTED"
                                  ? true
                                  : false
                            }
@@ -241,22 +258,24 @@ const BuilderDetails = (props) => {
                         </div>
                      </Row>
                      <Row style={{ gap: "10px" }}>
-                        <a href="#">
-                           <Image
-                              src={facebook}
-                              onClick={() => {
-                                 window.open(builderDetails?.facebookUrl, "_blank");
-                              }}
-                           />
-                        </a>
-                        <a href="#">
-                           <Image
-                              src={insta}
-                              onClick={() => {
-                                 window.open(builderDetails?.instaUrl, "_blank");
-                              }}
-                           />
-                        </a>
+                        <Image
+                           src={facebook}
+                           alt="Facebook"
+                           style={{ cursor: "pointer" }}
+                           onClick={(e) => {
+                              e.stopPropagation(); // prevents parent routing triggers
+                              window.open(builderDetails?.facebookUrl, "_blank");
+                           }}
+                        />
+                        <Image
+                           src={insta}
+                           alt="Instagram"
+                           style={{ cursor: "pointer" }}
+                           onClick={(e) => {
+                              e.stopPropagation(); // prevents parent routing triggers
+                              window.open(builderDetails?.instaUrl, "_blank");
+                           }}
+                        />
                         <a href="#">
                            <Image src={whatsapp} />
                         </a>
@@ -339,7 +358,6 @@ const BuilderDetails = (props) => {
                   </Col>
                </Row>
             </div>
-            
          </Container>
          <Modal
             show={rejectModal}
@@ -362,7 +380,7 @@ const BuilderDetails = (props) => {
             <Modal.Footer>
                <Buttons
                   varient="primary"
-                  name="Sumbit"
+                  name="Submit"
                   onClick={() => {
                      changeBuilderStatus("REJECTED", rejectionComment);
                   }}

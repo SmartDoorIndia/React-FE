@@ -24,20 +24,27 @@ export const AuthProvider = (props) => {
   const logoutUser = () => {
     disconnectSocket();
     const userData = getLocalStorage('authData');
-    if(userData?.roleId === 22 || userData?.roleId === 19 || userData?.roleId === 1) {
-      clearLocalStorage();
-      history?.push('/builder/login');
-    } else {
-      clearLocalStorage();
-      history?.push('/login');
-    }
     setIsAuth({ isAuth: false, userData: null });
     dispatch({ type: USER_LOGOUT });
+    // if(userData?.roleId === 22 || userData?.roleId === 19 || userData?.roleId === 1) {
+    //   clearLocalStorage();
+    //   history?.push('/builder/login');
+    // } else {
+    //   clearLocalStorage();
+    //   history?.push('/login');
+    // }
+    clearLocalStorage();
+      history?.push('/builder/login');
   };
 
   const loginUser = () => {
     setIsAuth(provideAuth());
     history.push('/admin');
+  };
+
+  const storeUserInfo = async () => {
+    await setIsAuth(provideAuth());
+    history.push('/sign-up');
   };
 
   useEffect(() => {
@@ -54,7 +61,7 @@ export const AuthProvider = (props) => {
 
   return (
     <UserContext.Provider
-      value={{ isAuth: auth.isAuth, logoutUser, auth, loginUser, userData: auth.userData }}>
+      value={{ isAuth: auth.isAuth, logoutUser, auth, loginUser, storeUserInfo, userData: auth.userData }}>
       {props.children}
     </UserContext.Provider>
   );

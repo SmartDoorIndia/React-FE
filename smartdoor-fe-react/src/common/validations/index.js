@@ -1349,15 +1349,15 @@ export const validateBuilderDetails = (data) => {
   if (isBlank(data.companyEmail)) {
     errors.companyEmail = true;
   }
-  if (isBlank(data.facebookUrl)) {
-    errors.facebookUrl = true;
-  }
+  // if (isBlank(data.facebookUrl)) {
+  //   errors.facebookUrl = true;
+  // }
   if (isBlank(data.whatsappNumber)) {
     errors.whatsappNumber = true;
   }
-  if (isBlank(data.instaUrl)) {
-    errors.instaUrl = true;
-  }
+  // if (isBlank(data.instaUrl)) {
+  //   errors.instaUrl = true;
+  // }
   if (isBlank(data.contactName)) {
     errors.contactName = true;
   }

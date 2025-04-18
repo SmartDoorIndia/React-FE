@@ -68,7 +68,8 @@ const ProjectDetailsPage = (props) => {
       subProjectList.push(subProjectData);
    };
 
-   const changeBuilderStatus = async (status, comment) => {
+   const changeBuilderProjectStatus = async (status, comment) => {
+      setLoading(true);
       const response = await setProjectStatus({
          builderId: props?.location?.state?.builderId,
          projectId: props?.location?.state?.projectId,
@@ -77,6 +78,7 @@ const ProjectDetailsPage = (props) => {
          rejectionComment: comment,
          //  adminId: userData?.userid,
       });
+      setLoading(false);
       if (response?.status === 200) {
          if (status === "ON_HOLD") {
             showSuccessToast("Project set on hold");
@@ -120,7 +122,7 @@ const ProjectDetailsPage = (props) => {
                            name="APPROVE"
                            className="mb-3"
                            onClick={() => {
-                              changeBuilderStatus("APPROVED", "");
+                              changeBuilderProjectStatus("APPROVED", "");
                            }}
                         ></Buttons>{" "}
                         &nbsp;&nbsp;
@@ -141,7 +143,7 @@ const ProjectDetailsPage = (props) => {
                            name="ON HOLD"
                            className="mb-3"
                            onClick={() => {
-                              changeBuilderStatus("ON_HOLD", "");
+                              changeBuilderProjectStatus("ON_HOLD", "");
                            }}
                         ></Buttons>
                      </>
@@ -153,7 +155,7 @@ const ProjectDetailsPage = (props) => {
                            name="RESTORE"
                            className="mb-3"
                            onClick={() => {
-                              changeBuilderStatus("RESTORE", "");
+                              changeBuilderProjectStatus("RESTORE", "");
                            }}
                         ></Buttons>
                      </>
@@ -172,6 +174,14 @@ const ProjectDetailsPage = (props) => {
                <>
                   <Text
                      text={"Project is under reviewed. Project Edit and add/edit tower is disabled."}
+                     style={{fontSize: '14px', fontWeight: '600' }}
+                  />
+               </>
+            ) : null}
+            {projectDetails?.builderProjectSearchDto[0]?.status === "REJECTED" ? (
+               <>
+                  <Text
+                     text={"Project is rejected due to " + projectDetails?.builderProjectSearchDto[0]?.rejectionComment}
                      style={{fontSize: '14px', fontWeight: '600' }}
                   />
                </>
@@ -384,7 +394,7 @@ const ProjectDetailsPage = (props) => {
                   varient="primary"
                   name="Sumbit"
                   onClick={() => {
-                     changeBuilderStatus("REJECTED", rejectionComment);
+                     changeBuilderProjectStatus("REJECTED", rejectionComment);
                   }}
                />
             </Modal.Footer>

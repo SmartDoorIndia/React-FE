@@ -493,7 +493,8 @@ const Nav = () => {
                   ) : null}
                   {((userData.roleName === "CONSUMER") ||
                      (userData.roleName === "BROKER") ||
-                     (userData.roleName === "BUILDER_MAIN_USER")) && (
+                     (userData.roleName === "BUILDER_MAIN_USER") || 
+                     (userData.roleId === 1)) && (
                      <>
                         <Link
                            to="/admin/builder-profile"

@@ -38,6 +38,21 @@ export const actionGetOtp = (data) => async (dispatch) => {
   return response;
 };
 
+export const actionGetOtpForNewUser = (data) => async (dispatch) => {
+  const response = await mainApiService('getOtpForNew', data);
+  if (response.data.access_token) {
+    setLocalStorage('authData', response.data);
+  }
+  dispatch({ type: Actions.ADMIN_AUTH_OTP_DATA, data: response.data });
+  return response;
+};
+
+//Action to enter new user info
+export const actionSignUpNewUser = async (data) => {
+  const response = await mainApiService('signUpNewUser', data);
+  return response;
+}
+
 // Action to Get society Leades data
 export const getSocietyLeadsData = (data) => async (dispatch) => {
   dispatch({ type: Actions.SALES_LEADS_DATATABLE_LOADING, data: {} });

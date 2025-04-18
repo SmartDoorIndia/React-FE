@@ -70,6 +70,7 @@ const BuilderProjectList = React.lazy(() => import('./Builders/BuilderInfo/Build
 // const ProjectPostingDetails = React.lazy(() => import('./Builders/ProjectPostingDetails/ProjectPostingDetails'));
 const ProjectPosting = React.lazy(() => import('./Builders/ProjectPosting/ProjectPosting'));
 const ProjectDetailsPage = React.lazy(() => import('./Builders/ProjectDetailsPage/ProjectDetailsPage'));
+const SignUp = React.lazy(() => import('../SignUp/SignUp'));
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -1329,6 +1330,13 @@ const routeData = [
     component: BuilderProjectList
   },
 
+  {
+    path: '/sign-up',
+    name: '',
+    bradcrumb: false,
+    excat: true,
+    component: SignUp
+  },
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

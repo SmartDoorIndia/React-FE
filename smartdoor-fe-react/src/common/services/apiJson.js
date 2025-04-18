@@ -27,6 +27,26 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  getOtpForNew: {
+    url: '/consumer/user/verifyUser/:mobileNumber/:otp/1?deviceId=4343&deviceType=crome&appName=admin',
+    method: 'POST',
+    data: {},
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  signUpNewUser: {
+    url: 'consumer/user/createProfile',
+    method: 'POST',
+    data: {},
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
   // getSocietyLeads: {
   //   url: 'admin/sales/getSocietyLeads?city=:city&records=:records&pageNumber=:pageNumber',
   //   method: 'GET',

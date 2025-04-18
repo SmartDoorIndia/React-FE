@@ -8,8 +8,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faInstagram, faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { useDispatch } from "react-redux";
 import { validateLogin } from "../../common/validations/ValidationLogin";
-import { actionGetOtp, actionLogin } from "../../common/redux/actions";
-import { setLocalStorage, showErrorToast, showSuccessToast, stringToBase64 } from "../../common/helpers/Utils";
+import { actionGetOtp, actionLogin, actionGetOtpForNewUser } from "../../common/redux/actions";
+import {
+   setLocalStorage,
+   showErrorToast,
+   showSuccessToast,
+   stringToBase64,
+} from "../../common/helpers/Utils";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import "./BuilderLogin.scss";
 import Logo from "../../assets/images/smartdoor-logo.svg";
@@ -37,17 +42,18 @@ const BuilderLogin = (props) => {
       otp4: "",
       disable: true,
    });
-   let userExists = false;
    const [count, setCount] = useState(60);
-   const { loginUser } = useUserContext();
+   const { loginUser, storeUserInfo } = useUserContext();
+   const [userExists, setUserExists] = useState(false);
+   const timerRef = useRef(null); // Store interval ID
+   const isMountedRef = useRef(true);
 
    const handleOtp1Change = (e) => {
       setLoginData({
-         ...loginData, otp1: e,
-         disable: !(e && loginData.otp2 && loginData.otp3 && loginData.otp4)
+         ...loginData,
+         otp1: e,
+         disable: !(e && loginData.otp2 && loginData.otp3 && loginData.otp4),
       });
-      // const otpValue = loginData.otp1 + loginData.otp2 + loginData.otp3 + loginData.otp4
-      console.log(userExists);
       console.log(userNumber);
       console.log(e, "gggggggggggggggggggggg");
       // if(otpValue.length<0){
@@ -60,8 +66,9 @@ const BuilderLogin = (props) => {
 
    const handleOtp2Change = (e) => {
       setLoginData({
-         ...loginData, otp2: e,
-         disable: !(loginData.otp1 && e && loginData.otp3 && loginData.otp4)
+         ...loginData,
+         otp2: e,
+         disable: !(loginData.otp1 && e && loginData.otp3 && loginData.otp4),
       });
       const otpValue = loginData.otp1 + loginData.otp2 + loginData.otp3 + loginData.otp4;
 
@@ -75,8 +82,9 @@ const BuilderLogin = (props) => {
 
    const handleOtp3Change = (e) => {
       setLoginData({
-         ...loginData, otp3: e,
-         disable: !(loginData.otp1 && loginData.otp2 && e && loginData.otp4)
+         ...loginData,
+         otp3: e,
+         disable: !(loginData.otp1 && loginData.otp2 && e && loginData.otp4),
       });
       const otpValue = loginData.otp1 + loginData.otp2 + loginData.otp3 + loginData.otp4;
 
@@ -90,8 +98,9 @@ const BuilderLogin = (props) => {
 
    const handleOtp4Change = (e) => {
       setLoginData({
-         ...loginData, otp4: e,
-         disable: !(loginData.otp1 && loginData.otp2 && loginData.otp3 && e)
+         ...loginData,
+         otp4: e,
+         disable: !(loginData.otp1 && loginData.otp2 && loginData.otp3 && e),
       });
       const otpValue = loginData.otp1 + loginData.otp2 + loginData.otp3 + loginData.otp4;
 
@@ -108,27 +117,27 @@ const BuilderLogin = (props) => {
          otp4: "",
          disable: true,
       });
-      setButtonDisable(true)
-      props.actionGetOtp({ mobile: userNumber })
+      setButtonDisable(true);
+      props
+         .actionGetOtp({ mobile: userNumber })
          .then((response) => {
-            setButtonDisable(false)
+            setButtonDisable(false);
             if (response.data.status === 200) {
-               showSuccessToast('OTP sent successfully')
-               num1.current.focus()
-               setCount(60)
+               showSuccessToast("OTP sent successfully");
+               num1.current.focus();
+               setCount(60);
                setTimer();
             }
          })
          .catch((error) => {
-            setButtonDisable(false)
-            console.log(error)
-         })
+            setButtonDisable(false);
+            console.log(error);
+         });
    };
 
    useEffect(() => {
-      // Cleanup function
       return () => {
-         // Logic to cancel async tasks or API calls can go here if needed
+         if (timerRef?.current) clearInterval(timerRef?.current);
       };
    }, []);
 
@@ -147,34 +156,45 @@ const BuilderLogin = (props) => {
    };
 
    const setTimer = useCallback(() => {
-      const timer = setInterval(() => {
-         setCount(prevCount => {
-            if (prevCount <= 0) {
-               clearInterval(timer); // Stop the timer when count reaches 0
+      // Clear any existing timer before starting a new one
+      if (timerRef.current) clearInterval(timerRef.current);
+
+      setCount(60); // reset timer
+
+      timerRef.current = setInterval(() => {
+         // Do not run setState if unmounted
+         if (!isMountedRef.current) return;
+
+         setCount((prevCount) => {
+            if (prevCount <= 1) {
+               clearInterval(timerRef.current);
                return 0;
             }
             return prevCount - 1;
          });
       }, 1000);
-   }, []); // No dependency needed
+   }, []);
 
    const handleArrowClick = () => {
-      props.actionGetOtp({ mobile: userNumber })
+      props
+         .actionGetOtp({ mobile: userNumber })
          .then((response) => {
             // setButtonDisable(false)
             if (Object.keys(response.data).length === 0) {
-               showErrorToast("Unable to generate OTP")
+               showErrorToast("Unable to generate OTP");
             }
-            if (response.data.status === 200) {
+            if (response?.status === 200) {
                setShowOTP(true);
-               showSuccessToast('OTP sent successfully')
+               setUserExists(response?.data?.resourceData);
+               showSuccessToast("OTP sent successfully");
+            } else {
+               showErrorToast(response.data.message);
             }
-            showErrorToast(response.data.message)
          })
          .catch((error) => {
-            setButtonDisable(false)
-            console.log(error)
-         })
+            setButtonDisable(false);
+            console.log(error);
+         });
       setShowOTP(true);
       setTimer();
    };
@@ -182,52 +202,79 @@ const BuilderLogin = (props) => {
    const validateForm = (event) => {
       event.preventDefault();
       handleSubmit();
-   }
+   };
 
    const handleSubmit = () => {
-      const otpValue = loginData.otp1 + loginData.otp2 + loginData.otp3 + loginData.otp4
+      const otpValue = loginData.otp1 + loginData.otp2 + loginData.otp3 + loginData.otp4;
       console.log("otpValue@@@@:", otpValue);
-      console.log((otpValue).length, "loginDataaaaaaaaaaaaaaaaaaaaaaaaa");
+      console.log(otpValue.length, "loginDataaaaaaaaaaaaaaaaaaaaaaaaa");
       if (otpValue.length !== 4) {
-         showErrorToast("Enter a valid otp")
-      } else handleLogin(otpValue)
-   }
+         showErrorToast("Enter a valid otp");
+      } else handleLogin(otpValue);
+   };
 
    const handleLogin = async (otpValue) => {
       console.log("otpValue:", otpValue);
-      setButtonDisable(true)
+      setButtonDisable(true);
       const passwordToBase64 = stringToBase64(otpValue);
-      props.actionLogin({ username: userNumber, password: passwordToBase64 })
-         .then((response) => {
-            setButtonDisable(false)
-            if (response.data) {
-               if (response.data.access_token) loginUser();
-               setLoginData({
-                  value: "",
-                  otp1: "",
-                  otp2: "",
-                  otp3: "",
-                  otp4: "",
-                  disable: true
-               })
-               num1.current.focus()
-            }
-         })
-         .catch((error) => {
-            setButtonDisable(false)
-            console.log(error)
-         })
-   }
+      if (userExists) {
+         await props
+            .actionLogin({ username: userNumber, password: passwordToBase64 })
+            .then((response) => {
+               setButtonDisable(false);
+               if (response.data) {
+                  if (response.data.access_token) loginUser();
+                  setLoginData({
+                     value: "",
+                     otp1: "",
+                     otp2: "",
+                     otp3: "",
+                     otp4: "",
+                     disable: true,
+                  });
+                  num1.current.focus();
+               }
+            })
+            .catch((error) => {
+               setButtonDisable(false);
+               console.log(error);
+            });
+      } else {
+         await props
+            .actionGetOtpForNewUser({ mobileNumber: userNumber, otp: otpValue })
+            .then((response) => {
+               setButtonDisable(false);
+               if (response.data) {
+                  if (response.data.access_token) storeUserInfo();
+               }
+            })
+            .catch((error) => {
+               setButtonDisable(false);
+               console.log(error);
+            });
+      }
+   };
 
    return (
       <div className="builder-login">
          <div className="container">
+            {/* <div className="justify-self-end" style={{ justifySelf: "end" }}>
+               <button
+                  type="submit"
+                  className={`submit-button clickable w-auto`}
+                  onClick={() => {
+                     window.open("/login", "_blank");
+                  }}
+               >
+                  Sign In as Admin
+               </button>
+            </div> */}
             <div className="row d-flex justify-content-center">
                <div className="col-md-6 d-flex justify-content-center">
                   <div className="login-box">
                      <img src={Logo} alt="SmartDoor Logo" className="logo" />
                      <h2>Welcome</h2>
-                     <p>Builder Sign In</p>
+                     <p>Sign In</p>
 
                      <div className="d-flex flex-column " style={{ gap: "30px" }}>
                         <form noValidate onSubmit={validateMobileNumber} autoComplete="off">
@@ -252,10 +299,11 @@ const BuilderLogin = (props) => {
                               <label htmlFor="phone-number">Phone Number</label>
                               <FontAwesomeIcon
                                  icon={faArrowRight}
-                                 type='submit'
+                                 type="submit"
                                  onClick={handleArrowClick}
-                                 className={`input-icon ${userNumber.length === 10 ? "clickable" : "disabled"
-                                    }`}
+                                 className={`input-icon ${
+                                    userNumber.length === 10 ? "clickable" : "disabled"
+                                 }`}
                                  style={{
                                     cursor: userNumber.length === 10 ? "pointer" : "not-allowed",
                                     opacity: userNumber.length === 10 ? 1 : 0.5,
@@ -265,7 +313,7 @@ const BuilderLogin = (props) => {
                         </form>
                         {error.userNumber && <p className="error-text">{error.userNumber}</p>}
 
-                        {showOTP ?
+                        {showOTP ? (
                            <>
                               <form noValidate onSubmit={validateForm} autoComplete="off">
                                  <div className="d-flex justify-content-center mt-4">
@@ -340,8 +388,15 @@ const BuilderLogin = (props) => {
                                     </Form.Group>
                                  </div>
                                  <div className="resend-container">
-                                    {count === 0 ?
-                                       <span className="Resend-otp-btn mt-2" onClick={handleResendOtp} style={{ cursor: 'pointer' }} >Resend otp</span> :
+                                    {count === 0 ? (
+                                       <span
+                                          className="Resend-otp-btn mt-2"
+                                          onClick={handleResendOtp}
+                                          style={{ cursor: "pointer" }}
+                                       >
+                                          Resend otp
+                                       </span>
+                                    ) : (
                                        <>
                                           <Text
                                              text="Didn’t received yet?"
@@ -361,18 +416,21 @@ const BuilderLogin = (props) => {
                                              color="gray"
                                              className="fs-14 countdown"
                                           />
-                                       </>}
+                                       </>
+                                    )}
                                  </div>
                                  <button
                                     type="submit"
-                                    className={`submit-button ${loginData.disable || buttonDisable ? 'disabled' : 'clickable'}`}
+                                    className={`submit-button ${
+                                       loginData.disable || buttonDisable ? "disabled" : "clickable"
+                                    }`}
                                     disabled={loginData.disable || buttonDisable}
                                  >
                                     Sign In
                                  </button>
                               </form>
                            </>
-                           : null}
+                        ) : null}
                         <div className="social-icons">
                            <a href="#">
                               {" "}
@@ -401,7 +459,9 @@ const mapStateToProps = ({ otp }) => ({
 
 const actions = {
    // BuilderGetOtp,
-   actionGetOtp, actionLogin
+   actionGetOtp,
+   actionLogin,
+   actionGetOtpForNewUser,
 };
 
 const withConnect = connect(mapStateToProps, actions);
