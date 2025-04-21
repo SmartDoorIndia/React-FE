@@ -20,13 +20,17 @@ import addIcon from "../../../../assets/svg/add.svg";
 import CONSTANTS from "../../../../common/helpers/Constants";
 import { Checkbox, InputAdornment, ListItemText, MenuItem, TextField } from "@mui/material";
 import Units from "./AddNewUnit/Units";
-import { saveBuilderProject, saveBuilderSubProject, uploadImage } from "../../../../common/redux/actions";
+import {
+   saveBuilderProject,
+   saveBuilderSubProject,
+   uploadImage,
+} from "../../../../common/redux/actions";
 import { validateProjectDetails, validateSubProjectDetails } from "../../../../common/validations";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import POSTING_CONSTANTS from "../../../../common/helpers/POSTING_CONSTANTS";
 
 const AddNewSubProject = (props) => {
-   const { updateSubProject, builderId, editTower, toggleEditTower, updateSubProjectList } = props
+   const { updateSubProject, builderId, editTower, toggleEditTower, updateSubProjectList } = props;
    const [show, setShow] = useState(false);
    const [imageCategory, setImageCategory] = useState("Interior");
    const [selectedImages, setSelectedImages] = useState([]);
@@ -53,18 +57,18 @@ const AddNewSubProject = (props) => {
       propertyType: "",
       projectName: "",
       reraNumber: "",
-      totalAreaToDevelop: null,
+      totalAreaToDevelop: '',
       totalAreaMetrics: "Sq. Ft.",
       highlightsOrUsp: "",
       contactPersonName: "",
       contactPersonNumber: "",
       possessionFrom: "",
       possessionTo: "",
-      totalFloors: null,
-      unitsPerFloor: null,
+      totalFloors: '',
+      unitsPerFloor: '',
       amenities: [],
       properties: [],
-      projectVideoUrl: '',
+      projectVideoUrl: "",
       projectImages: [],
    });
 
@@ -137,21 +141,21 @@ const AddNewSubProject = (props) => {
          const maxSizeInBytes = 15 * 1024 * 1024; // 10MB
          Array.from(files).map((file) => {
             if (file.size > maxSizeInBytes) {
-               showErrorToast('File must be less than 15MB...')
+               showErrorToast("File must be less than 15MB...");
                return;
             }
-         })
-         let fileList = []
+         });
+         let fileList = [];
          for (let i = 0; i < files.length; i++) {
-            fileList.push(files[i])
-            formData.append('file', files[i]);
+            fileList.push(files[i]);
+            formData.append("file", files[i]);
          }
-         formData.append('id', '0')
-         formData.append('enumType', 'PROJECT_IMAGES');
+         formData.append("id", "0");
+         formData.append("enumType", "PROJECT_IMAGES");
          uploadImage(formData)
             .then((response) => {
                if (response.data.status === 200) {
-                  console.log(response.data.resourceData)
+                  console.log(response.data.resourceData);
                   let projectImage = [...data?.projectImages];
                   for (let i = 0; i < response.data.resourceData.length; i++) {
                      // projectImage.push({
@@ -161,14 +165,14 @@ const AddNewSubProject = (props) => {
                      //    docOrderInFrontendView: i,
                      //    docURL: response.data.resourceData[i],
                      // });
-                     projectImage.push(response.data.resourceData[i])
+                     projectImage.push(response.data.resourceData[i]);
                   }
-                  console.log(projectImage)
+                  console.log(projectImage);
                   setData((prevData) => ({
                      ...prevData,
                      projectImages: [...projectImage],
                   }));
-                  showSuccessToast(response.data.customMessage)
+                  showSuccessToast(response.data.customMessage);
                }
             })
             .catch((error) => {
@@ -204,11 +208,7 @@ const AddNewSubProject = (props) => {
          projectImages: prevData.projectImages
             .filter((image) => image.docDescription === description)
             .filter((_, i) => i !== index) // Remove only the image from the relevant category
-            .concat(
-               prevData.projectImages.filter(
-                  (image) => image.docDescription !== description
-               )
-            ),
+            .concat(prevData.projectImages.filter((image) => image.docDescription !== description)),
       }));
    };
 
@@ -260,7 +260,7 @@ const AddNewSubProject = (props) => {
       setData((prevData) => {
          return {
             ...prevData,
-            projectVideoUrl: '',
+            projectVideoUrl: "",
          };
       });
    };
@@ -284,41 +284,45 @@ const AddNewSubProject = (props) => {
 
    const handleSubPostChange = (e) => {
       const value = e.target.value;
-      console.log(e)
+      console.log(e);
       setData((prevData) => ({
          ...prevData,
          propertyType: value,
-         properties: []
+         properties: [],
       }));
    };
 
    useEffect(() => {
-      console.log(props?.projectId)
-      console.log(props?.builderId)
+      console.log(props?.projectId);
+      console.log(props?.builderId);
       if (props?.editTower === true) {
          setData({
-            ...props?.subProjectDetails, builderId: props?.builderId, parentProjectId: props?.parentProjectId,
-            totalAreaMetrics: 'Sq. Ft.'
-         })
+            ...props?.subProjectDetails,
+            builderId: props?.builderId,
+            parentProjectId: props?.parentProjectId,
+            totalAreaMetrics: "Sq. Ft.",
+         });
          const possessionFrom = props?.subProjectDetails?.possessionFrom;
          const date = new Date(possessionFrom);
 
          setMonthYearFrom({
             month: String(date.getMonth() + 1).padStart(2, "0"),
-            year: date.getFullYear()
+            year: date.getFullYear(),
          });
 
          const possessionTo = props?.subProjectDetails?.possessionTo;
          const dateTo = new Date(possessionTo);
          setMonthYearTo({
             month: String(dateTo.getMonth() + 1).padStart(2, "0"),
-            year: dateTo.getFullYear()
-         })
+            year: dateTo.getFullYear(),
+         });
          setData((prevData) => ({
-            ...prevData, contactPersonName: props?.subProjectDetails?.contactName,
-            contactPersonNumber: props?.subProjectDetails?.contactNumber, highlightsOrUsp: props?.subProjectDetails?.highlights,
-            totalAreaMetrics: 'Sq. Ft.'
-         }))
+            ...prevData,
+            contactPersonName: props?.subProjectDetails?.contactName,
+            contactPersonNumber: props?.subProjectDetails?.contactNumber,
+            highlightsOrUsp: props?.subProjectDetails?.highlights,
+            totalAreaMetrics: "Sq. Ft.",
+         }));
          // let projectImageList = props?.subProjectDetails?.projectImages;
          // let imageList = []
          // projectImageList.forEach((image, index) => {
@@ -336,7 +340,7 @@ const AddNewSubProject = (props) => {
          //    setData((prevData) => ({ ...prevData, projectAmenities: [] }))
          // }
       }
-   }, [])
+   }, []);
 
    useEffect(() => {
       if (monthYearFrom.month && monthYearFrom.year) {
@@ -385,13 +389,12 @@ const AddNewSubProject = (props) => {
    };
 
    const handleRemoveUnit = (index) => {
-
       let units = data.properties;
       units.splice(index);
       setData((prevData) => ({
          ...prevData,
-         properties: units
-      }))
+         properties: units,
+      }));
    };
 
    const handleAddMoreUnit = () => {
@@ -409,14 +412,14 @@ const AddNewSubProject = (props) => {
       units.push(newUnit);
       setData((prevState) => ({
          ...prevState,
-         properties: units
+         properties: units,
       }));
       setCurrentUnitIndex((prevIndex) => prevIndex + 1);
-      console.log(data)
+      console.log(data);
    };
 
    const saveSubProjectDetails = async () => {
-      console.log(data)
+      console.log(data);
       // e.preventDefault();
       try {
          const submissionData = {
@@ -429,7 +432,7 @@ const AddNewSubProject = (props) => {
 
          if (valid.isValid) {
             const response = await saveBuilderSubProject(submissionData, editTower ? true : false);
-            setSaveSubProjectFlag(false)
+            setSaveSubProjectFlag(false);
             if (response?.data) {
                // history.push(-1);
                // fetchProjectId(response?.data?.resourceData);
@@ -437,16 +440,18 @@ const AddNewSubProject = (props) => {
                   updateSubProject(data);
                } else {
                   setData((prevData) => ({
-                     ...prevData, projectId: response?.data?.resourceData,
-                     contactName: data?.contactPersonName, contactNumber: data?.contactPersonNumber,
-                     highlights: data?.highlightsOrUsp
-                  }))
-                  let subProjectData = { ...data }
+                     ...prevData,
+                     projectId: response?.data?.resourceData,
+                     contactName: data?.contactPersonName,
+                     contactNumber: data?.contactPersonNumber,
+                     highlights: data?.highlightsOrUsp,
+                  }));
+                  let subProjectData = { ...data };
                   subProjectData.projectId = response?.data?.resourceData;
                   subProjectData.contactName = data?.contactPersonName;
                   subProjectData.contactNumber = data?.contactPersonNumber;
-                  subProjectData.highlights = data?.highlightsOrUsp
-                  // updateSubProjectList(subProjectData) 
+                  subProjectData.highlights = data?.highlightsOrUsp;
+                  // updateSubProjectList(subProjectData)
                }
             } else {
                const responseError = response?.data?.error || "Unknown error occurred";
@@ -460,10 +465,10 @@ const AddNewSubProject = (props) => {
          console.error("Error submitting builder project:", error);
          // setError("An unexpected error occurred. Please try again.");
       }
-   }
+   };
 
    const handleFetchUnit = (unitDetails) => {
-      console.log("", unitDetails)
+      console.log("", unitDetails);
       let units = [...data?.properties];
       units[units.length - 1] = unitDetails;
       setData((prevData) => ({ ...prevData, properties: [...units] }));
@@ -471,12 +476,12 @@ const AddNewSubProject = (props) => {
          setShowMoreUnits(false);
          updateSubProject(data);
       }
-   }
+   };
 
    return (
       <>
-         <div className="" style={{ backgroundColor: editTower ? 'whitesmoke' : 'white' }}>
-            <div className="builderProjectDetails" >
+         <div className="" style={{ backgroundColor: editTower ? "whitesmoke" : "white" }}>
+            <div className="builderProjectDetails">
                <div className="">
                   <div className="mt-2 ">
                      <div className="p-3">
@@ -497,16 +502,20 @@ const AddNewSubProject = (props) => {
                                        overflow: "hidden",
                                        // minHeight: "54px",
                                        maxHeight: "52px",
-                                       borderTopLeftRadius: '0px',
-                                       borderTopRightRadius: '0px',
-                                       width: "100% !important"
+                                       borderTopLeftRadius: "0px",
+                                       borderTopRightRadius: "0px",
+                                       width: "100% !important",
                                     },
                                  }}
                                  error={error?.propertyType}
                               >
-                                 <MenuItem value={""} disabled>Select</MenuItem>
+                                 <MenuItem value={""} disabled>
+                                    Select
+                                 </MenuItem>
                                  {defaultSubpost.map((subPost, index) => (
-                                    <MenuItem key={index} value={subPost}>{subPost}</MenuItem>
+                                    <MenuItem key={index} value={subPost}>
+                                       {subPost}
+                                    </MenuItem>
                                  ))}
                               </TextField>
                            </Col>
@@ -537,7 +546,7 @@ const AddNewSubProject = (props) => {
                               />
                            </Col>
                         </Row>
-                        <Row >
+                        <Row>
                            <Col lg={4} className="mt-4">
                               <TextField
                                  className="w-100 textFieldInput"
@@ -545,56 +554,60 @@ const AddNewSubProject = (props) => {
                                  label="Total Area To Develop"
                                  name="totalAreaToDevelop"
                                  required={true}
-                                 inputProps={{ min: 0 }}
+                                 inputProps={{ min: 0, max: 999999999 }}
                                  autoComplete="off"
                                  value={data.totalAreaToDevelop}
                                  onChange={handleInputChange}
                                  error={error?.totalAreaToDevelop}
                                  InputProps={{
-                                    endAdornment: <>
-                                       <InputAdornment position="end" sx={{ marginLeft: "-97px" }} >
-                                          <TextField
-                                             className="textFieldInput w-100"
-                                             name="totalAreaMetrics"
-                                             select
-                                             disabled
-                                             value={data.totalAreaMetrics}
-                                             onChange={(e) => {
-                                                setData((prevData) => ({
-                                                   ...prevData,
-                                                   totalAreaMetrics:
-                                                      e.target.value,
-                                                }));
-                                             }}
-                                             sx={{
-                                                ".MuiInputBase-root": {
-                                                   display: "flex",
-                                                   flexWrap: "wrap",
-                                                   overflow: "hidden",
-                                                   // minHeight: "54px",
-                                                   maxHeight: "52px",
-                                                   borderTopLeftRadius: '0px',
-                                                   borderTopRightRadius: '0px',
-                                                   width: "100% !important"
-                                                },
-                                             }}
+                                    endAdornment: (
+                                       <>
+                                          <InputAdornment
+                                             position="end"
+                                             sx={{ marginLeft: "-120px" }}
                                           >
-                                             {measurementUnits.map((element) => (
-                                                <MenuItem key={element} value={element}>{element}</MenuItem>
-                                             ))}
-                                          </TextField>
-                                       </InputAdornment>
-                                    </>,
+                                             <TextField
+                                                className="textFieldInput w-100"
+                                                name="totalAreaMetrics"
+                                                select
+                                                disabled
+                                                value={data.totalAreaMetrics}
+                                                onChange={(e) => {
+                                                   setData((prevData) => ({
+                                                      ...prevData,
+                                                      totalAreaMetrics: e.target.value,
+                                                   }));
+                                                }}
+                                                sx={{
+                                                   ".MuiInputBase-root": {
+                                                      display: "flex",
+                                                      flexWrap: "wrap",
+                                                      overflow: "hidden",
+                                                      maxHeight: "52px",
+                                                      borderTopLeftRadius: "0px",
+                                                      borderTopRightRadius: "0px",
+                                                      width: "100% !important",
+                                                   },
+                                                }}
+                                             >
+                                                {measurementUnits.map((element) => (
+                                                   <MenuItem key={element} value={element}>
+                                                      {element}
+                                                   </MenuItem>
+                                                ))}
+                                             </TextField>
+                                          </InputAdornment>
+                                       </>
+                                    ),
                                  }}
-                              >
-                              </TextField>
+                              ></TextField>
                            </Col>
-                           {data.propertyType === 'Tower' ?
+                           {data.propertyType === "Tower" ? (
                               <Col lg={4} className="mt-4">
                                  <TextField
                                     className="w-100 textFieldInput"
                                     type="number"
-                                    inputProps={{ min: 0 }}
+                                    inputProps={{ min: 0, max: 99999 }}
                                     label="Tower Floors"
                                     autoComplete="off"
                                     name="totalFloors"
@@ -604,9 +617,8 @@ const AddNewSubProject = (props) => {
                                     error={error?.totalFloors}
                                  />
                               </Col>
-                              : null
-                           }
-                           {data.propertyType === 'Tower' ?
+                           ) : null}
+                           {data.propertyType === "Tower" ? (
                               <Col lg={4} className="mt-4">
                                  <TextField
                                     className="w-100 textFieldInput"
@@ -614,13 +626,14 @@ const AddNewSubProject = (props) => {
                                     label="Units Per Floor"
                                     name="unitsPerFloor"
                                     required={true}
+                                    inputProps={{ min: 0, max: 99999 }}
                                     value={data.unitsPerFloor}
                                     autoComplete="off"
                                     onChange={handleInputChange}
                                     error={error?.unitsPerFloor}
                                  />
                               </Col>
-                              : null}
+                           ) : null}
                            <Col lg={8} className="mt-4">
                               <TextField
                                  className="w-100 textFieldInput"
@@ -652,7 +665,7 @@ const AddNewSubProject = (props) => {
                                  }}
                                  SelectProps={{
                                     multiple: true,
-                                    renderValue: (selected) => selected.join(", ")
+                                    renderValue: (selected) => selected.join(", "),
                                  }}
                                  value={data.amenities}
                                  onChange={(e) => handleSelectChange(e)}
@@ -661,14 +674,12 @@ const AddNewSubProject = (props) => {
                                  {/* <MenuItem value="" >
                                     Separate Amenities (Not compulsory)
                                  </MenuItem> */}
-                                 {POSTING_CONSTANTS.GeneralAmenities?.map(
-                                    (amenity, index) => (
-                                       <MenuItem key={index} value={amenity}>
-                                          <Checkbox checked={data?.amenities?.includes(amenity)} />
-                                          <ListItemText primary={amenity} />
-                                       </MenuItem>
-                                    )
-                                 )}
+                                 {POSTING_CONSTANTS.GeneralAmenities?.map((amenity, index) => (
+                                    <MenuItem key={index} value={amenity}>
+                                       <Checkbox checked={data?.amenities?.includes(amenity)} />
+                                       <ListItemText primary={amenity} />
+                                    </MenuItem>
+                                 ))}
                               </TextField>
                            </Col>
                            <Col lg={4} className="mt-4">
@@ -720,6 +731,7 @@ const AddNewSubProject = (props) => {
                                              maxHeight: "52px",
                                           },
                                        }}
+                                       error={monthYearFrom.month ? false : error?.possessionFrom}
                                     >
                                        <MenuItem value="">Select Month</MenuItem>
                                        {Array.from({ length: 12 }, (_, index) => (
@@ -752,11 +764,12 @@ const AddNewSubProject = (props) => {
                                              maxHeight: "52px",
                                           },
                                        }}
+                                       error={monthYearFrom.year ? false : error?.possessionFrom}
                                     >
                                        <MenuItem value="">Select Year</MenuItem>
                                        {Array.from(
                                           { length: 101 },
-                                          (_, index) => (currentYear + 20) - index
+                                          (_, index) => currentYear + 20 - index
                                        ).map((year) => (
                                           <MenuItem key={year} value={year}>
                                              {year}
@@ -788,6 +801,7 @@ const AddNewSubProject = (props) => {
                                              maxHeight: "52px",
                                           },
                                        }}
+                                       error={monthYearTo.month ? false : error?.possessionTo}
                                     >
                                        <MenuItem value="">Select Month</MenuItem>
                                        {Array.from({ length: 12 }, (_, index) => (
@@ -820,15 +834,17 @@ const AddNewSubProject = (props) => {
                                              maxHeight: "52px",
                                           },
                                        }}
+                                       error={monthYearTo.year ? false : error?.possessionTo}
                                     >
                                        <MenuItem value="">Select Year</MenuItem>
-                                       {Array.from({ length: 41 }, (_, index) => currentYear + 20 - index).map(
-                                          (year) => (
-                                             <MenuItem key={year} value={year}>
-                                                {year}
-                                             </MenuItem>
-                                          )
-                                       )}
+                                       {Array.from(
+                                          { length: 41 },
+                                          (_, index) => currentYear + 20 - index
+                                       ).map((year) => (
+                                          <MenuItem key={year} value={year}>
+                                             {year}
+                                          </MenuItem>
+                                       ))}
                                     </TextField>
                                  </Col>
                               </Row>
@@ -849,82 +865,87 @@ const AddNewSubProject = (props) => {
                                        style={{ cursor: "pointer" }}
                                     >
                                        <TiCameraOutline className="camera-icon" />
-                                       <span className="py-1" style={{ fontSize: '14px' }}>Upload Images</span>
+                                       <span className="py-1" style={{ fontSize: "14px" }}>
+                                          Upload Images
+                                       </span>
                                     </label>
                                  </div>
 
                                  {/* Display Image Previews */}
                                  {(data?.projectImages?.length > 0 ||
                                     imagePreviews?.length > 0) && (
-                                       <Row className="mt-2">
-                                          {/* Combine and map images from both sources */}
-                                          {[
-                                             ...(data?.projectImages || []),
-                                             ...(imagePreviews || []),
-                                          ].map((image, index) => {
-                                             return (
-                                                <Col
-                                                   lg="4"
-                                                   key={index}
-                                                   className="project-images mr-3"
+                                    <Row className="mt-2">
+                                       {/* Combine and map images from both sources */}
+                                       {[
+                                          ...(data?.projectImages || []),
+                                          ...(imagePreviews || []),
+                                       ].map((image, index) => {
+                                          return (
+                                             <Col
+                                                lg="4"
+                                                key={index}
+                                                className="project-images mr-3"
+                                             >
+                                                <div
+                                                   className="image-preview-container"
+                                                   style={{ position: "relative" }}
                                                 >
+                                                   <img
+                                                      src={image}
+                                                      alt={image.docDescription || image.docName} // Use description or name as alt text
+                                                      className="img-fluid"
+                                                      style={{
+                                                         width: "100px",
+                                                         height: "100px",
+                                                         borderRadius: "4px",
+                                                      }}
+                                                   />
                                                    <div
-                                                      className="image-preview-container"
-                                                      style={{ position: "relative" }}
+                                                      style={{
+                                                         color: "#949494",
+                                                         padding: "2px 5px",
+                                                         borderRadius: "4px",
+                                                         fontSize: "12px",
+                                                         fontWeight: 500,
+                                                         lineHeight: "13.66px",
+                                                         letterSpacing: "-0.02em",
+                                                         textAlign: "center",
+                                                         marginLeft: "20px",
+                                                      }}
                                                    >
-                                                      <img
-                                                         src={image}
-                                                         alt={
-                                                            image.docDescription || image.docName
-                                                         } // Use description or name as alt text
-                                                         className="img-fluid"
-                                                         style={{
-                                                            width: '100px',
-                                                            height: '100px',
-                                                            borderRadius: "4px",
-                                                         }}
-                                                      />
-                                                      <div
-                                                         style={{
-                                                            color: "#949494",
-                                                            padding: "2px 5px",
-                                                            borderRadius: "4px",
-                                                            fontSize: "12px",
-                                                            fontWeight: 500,
-                                                            lineHeight: "13.66px",
-                                                            letterSpacing: "-0.02em",
-                                                            textAlign: "center",
-                                                            marginLeft: "20px",
-                                                         }}
-                                                      >
-                                                         {image.docDescription || image.docName}{" "}
-                                                         {/* Display the image description */}
-                                                      </div>
-                                                      <RxCross2
-                                                         className="delete-icon"
-                                                         onClick={() =>
-                                                            handleDeleteProjectImage(
-                                                               index,
-                                                               image.docDescription
-                                                            )
-                                                         }
-                                                         style={{
-                                                            position: "absolute",
-                                                            top: "-5px",
-                                                            right: "-39px",
-                                                            cursor: "pointer",
-                                                            color: "#fff",
-                                                            background: "#ff0000",
-                                                            borderRadius: "50%",
-                                                         }}
-                                                      />
+                                                      {image.docDescription || image.docName}{" "}
+                                                      {/* Display the image description */}
                                                    </div>
-                                                </Col>
-                                             );
-                                          })}
-                                       </Row>
-                                    )}
+                                                   <RxCross2
+                                                      className="delete-icon"
+                                                      onClick={() =>
+                                                         handleDeleteProjectImage(
+                                                            index,
+                                                            image.docDescription
+                                                         )
+                                                      }
+                                                      style={{
+                                                         position: "absolute",
+                                                         top: "-5px",
+                                                         right: "-39px",
+                                                         cursor: "pointer",
+                                                         color: "#fff",
+                                                         background: "#ff0000",
+                                                         borderRadius: "50%",
+                                                      }}
+                                                   />
+                                                </div>
+                                             </Col>
+                                          );
+                                       })}
+                                    </Row>
+                                 )}
                               </Form.Group>
+                              {error?.projectImages ? (
+                                 <Form.Text className="text-danger" style={{fontSize: '13px'}}>
+                                    Please add tower images
+                                 </Form.Text>
+                              ) : null}
                               <Form.Text className="text-muted">
                                  File should be 5MB (max) in png, jpg, etc.
                               </Form.Text>
@@ -1029,23 +1050,34 @@ const AddNewSubProject = (props) => {
                                  </div>
                               </Form.Group>
                            </Col> */}
-
                         </Row>
-                        <div style={{ justifySelf: 'end' }}>
+                        <div style={{ justifySelf: "end" }}>
                            {editTower && (
                               <>
-                                 <Buttons name={"Cancel"} varient="secondary" onClick={() => { toggleEditTower() }} /> &nbsp;&nbsp;
+                                 <Buttons
+                                    name={"Cancel"}
+                                    varient="secondary"
+                                    onClick={() => {
+                                       toggleEditTower();
+                                    }}
+                                 />{" "}
+                                 &nbsp;&nbsp;
                               </>
                            )}
-                           {saveSubProjectFlag ?
-                              <Buttons name={editTower ? "Save" : "Add Tower"} varient="primary" onClick={() => { saveSubProjectDetails(); }} />
-                              : null}
+                           {saveSubProjectFlag ? (
+                              <Buttons
+                                 name={editTower ? "Save" : "Add Tower"}
+                                 varient="primary"
+                                 onClick={() => {
+                                    saveSubProjectDetails();
+                                 }}
+                              />
+                           ) : null}
                         </div>
                         <hr className="p-0 w-100" />
                         {/* Tower */}
 
-
-                        {showMoreUnits ?
+                        {showMoreUnits ? (
                            <>
                               <div>
                                  <Text
@@ -1059,24 +1091,23 @@ const AddNewSubProject = (props) => {
                                     }}
                                  />
                               </div>
-                              {data.properties.map(
-                                 (property, propertyIndex) => (
-                                    <>
-                                       <Units
-                                          builderId={data?.builderId}
-                                          projectId={data?.projectId}
-                                          subProjectDetails={data}
-                                          handleRemoveUnit={handleRemoveUnit}
-                                          unitIndex={propertyIndex}
-                                          fetchUnitDetails={handleFetchUnit} />
-                                    </>
-                                 ))}
+                              {data.properties.map((property, propertyIndex) => (
+                                 <>
+                                    <Units
+                                       builderId={data?.builderId}
+                                       projectId={data?.projectId}
+                                       subProjectDetails={data}
+                                       handleRemoveUnit={handleRemoveUnit}
+                                       unitIndex={propertyIndex}
+                                       fetchUnitDetails={handleFetchUnit}
+                                    />
+                                 </>
+                              ))}
                            </>
-                           : null
-                        }
+                        ) : null}
 
                         <div>
-                           {editTower !== true ?
+                           {editTower !== true ? (
                               <>
                                  <Button
                                     className="d-flex mb-2 mt-3"
@@ -1086,11 +1117,15 @@ const AddNewSubProject = (props) => {
                                        borderColor: "#DED6D9",
                                     }}
                                     onClick={() => {
-                                       if (data.propertyType !== null && data.propertyType.length !== 0 && data.projectId !== null) {
+                                       if (
+                                          data.propertyType !== null &&
+                                          data.propertyType.length !== 0 &&
+                                          data.projectId !== null
+                                       ) {
                                           setShowMoreUnits(true);
                                           handleAddMoreUnit();
                                        } else {
-                                          showErrorToast("Please save tower details above...")
+                                          showErrorToast("Please save tower details above...");
                                           return 0;
                                        }
                                     }}
@@ -1102,7 +1137,10 @@ const AddNewSubProject = (props) => {
                                           justifyContent: "center",
                                        }}
                                     >
-                                       <Image src={addIcon} style={{ width: "14px", height: '14px' }} />
+                                       <Image
+                                          src={addIcon}
+                                          style={{ width: "14px", height: "14px" }}
+                                       />
                                     </div>
                                     <Text
                                        text={"Add More Unit"}
@@ -1111,23 +1149,25 @@ const AddNewSubProject = (props) => {
                                     />
                                  </Button>
                               </>
-                              : null}
-                           {!editTower && props?.newTowerinExisting ?
+                           ) : null}
+                           {!editTower && props?.newTowerinExisting ? (
                               <>
-                                 <Buttons name={"Done"} varient="primary" onClick={() => { updateSubProjectList(data) }} />
+                                 <Buttons
+                                    name={"Done"}
+                                    varient="primary"
+                                    onClick={() => {
+                                       updateSubProjectList(data);
+                                    }}
+                                 />
                               </>
-                              : null}
+                           ) : null}
                         </div>
                      </div>
                   </div>
                </div>
             </div>
          </div>
-         <Modal
-            show={showModal}
-            onHide={() => setShowModal(false)}
-            centered
-         >
+         <Modal show={showModal} onHide={() => setShowModal(false)} centered>
             <Modal.Body style={{ position: "relative" }}>
                <div>
                   <Text
@@ -1176,14 +1216,8 @@ const AddNewSubProject = (props) => {
                )}
             </Modal.Body>
          </Modal>
-         <Modal
-            show={showImageModal}
-            onHide={() => setImageShowModal(false)}
-            centered
-         >
-            <Modal.Body
-               style={{ position: "relative" }}
-            >
+         <Modal show={showImageModal} onHide={() => setImageShowModal(false)} centered>
+            <Modal.Body style={{ position: "relative" }}>
                <h4
                   style={{
                      fontSize: "24px",
@@ -1199,9 +1233,7 @@ const AddNewSubProject = (props) => {
 
                <RxCross2
                   className="delete-icon"
-                  onClick={() =>
-                     setImageShowModal(false)
-                  }
+                  onClick={() => setImageShowModal(false)}
                   style={{
                      position: "absolute",
                      top: "-11px",
@@ -1218,22 +1250,13 @@ const AddNewSubProject = (props) => {
                {selectedImageSrc && (
                   <img
                      src={selectedImageSrc}
-                     alt={
-                        selectedImageSrc
-                           ? "Image"
-                           : ""
-                     }
+                     alt={selectedImageSrc ? "Image" : ""}
                      className="img-fluid"
                   />
                )}
             </Modal.Body>
          </Modal>
-         <Modal
-            show={show}
-            onHide={handleClose}
-            centered
-            className="ImageModal"
-         >
+         <Modal show={show} onHide={handleClose} centered className="ImageModal">
             <Modal.Body>
                <div>
                   <h4>Upload Image</h4>
@@ -1253,10 +1276,7 @@ const AddNewSubProject = (props) => {
                   </Form.Group>
 
                   {/* Image Upload */}
-                  <Form.Group
-                     controlId="formProjectImages"
-                     className="uploadProjectImageModal"
-                  >
+                  <Form.Group controlId="formProjectImages" className="uploadProjectImageModal">
                      <label htmlFor="" className="upload-label">
                         <TiCameraOutline className="camera-icon" />
                         <input
@@ -1281,21 +1301,11 @@ const AddNewSubProject = (props) => {
                      </label>
 
                      <Row className="d-flex justify-content-center align-items-center interior-exterior">
-                        <Col
-                           lg="6"
-                           style={{ minHeight: "100px" }}
-                           className="image-column"
-                        >
+                        <Col lg="6" style={{ minHeight: "100px" }} className="image-column">
                            <h6>Interior</h6>
-                           <ul
-                              className="mt-3 pl-1"
-                              style={{ listStyle: "none", padding: 0 }}
-                           >
+                           <ul className="mt-3 pl-1" style={{ listStyle: "none", padding: 0 }}>
                               {data?.projectImages
-                                 ?.filter(
-                                    (image) =>
-                                       image.docDescription === "Interior"
-                                 )
+                                 ?.filter((image) => image.docDescription === "Interior")
                                  ?.map((image, index) => (
                                     <li
                                        key={index}
@@ -1307,10 +1317,7 @@ const AddNewSubProject = (props) => {
                                        <FaTimes
                                           className="delete-icon"
                                           onClick={() =>
-                                             handleDeleteSelectedImage(
-                                                index,
-                                                "Interior"
-                                             )
+                                             handleDeleteSelectedImage(index, "Interior")
                                           } // Pass docDescription here
                                           // Pass index and docDescription here
                                           style={{
@@ -1321,29 +1328,17 @@ const AddNewSubProject = (props) => {
                                              color: "#ff0000",
                                           }}
                                        />
-                                       <span style={{ marginLeft: "13px" }}>
-                                          {image.docName}
-                                       </span>
+                                       <span style={{ marginLeft: "13px" }}>{image.docName}</span>
                                     </li>
                                  ))}
                            </ul>
                         </Col>
 
-                        <Col
-                           lg="6"
-                           style={{ minHeight: "100px" }}
-                           className="image-column"
-                        >
+                        <Col lg="6" style={{ minHeight: "100px" }} className="image-column">
                            <h6>Exterior</h6>
-                           <ul
-                              className="mt-3 pl-1"
-                              style={{ listStyle: "none", padding: 0 }}
-                           >
+                           <ul className="mt-3 pl-1" style={{ listStyle: "none", padding: 0 }}>
                               {data?.projectImages
-                                 ?.filter(
-                                    (image) =>
-                                       image.docDescription === "Exterior"
-                                 )
+                                 ?.filter((image) => image.docDescription === "Exterior")
                                  ?.map((image, index) => (
                                     <li
                                        key={index}
@@ -1355,10 +1350,7 @@ const AddNewSubProject = (props) => {
                                        <FaTimes
                                           className="delete-icon"
                                           onClick={() =>
-                                             handleDeleteSelectedImage(
-                                                index,
-                                                "Exterior"
-                                             )
+                                             handleDeleteSelectedImage(index, "Exterior")
                                           }
                                           // Pass index and docDescription here
                                           style={{
@@ -1369,9 +1361,7 @@ const AddNewSubProject = (props) => {
                                              color: "#ff0000",
                                           }}
                                        />
-                                       <span style={{ marginLeft: "13px" }}>
-                                          {image.docName}
-                                       </span>{" "}
+                                       <span style={{ marginLeft: "13px" }}>{image.docName}</span>{" "}
                                     </li>
                                  ))}
                            </ul>
@@ -1383,11 +1373,7 @@ const AddNewSubProject = (props) => {
                {/* Modal Action Buttons */}
                <Row className="projectDetailModalActions">
                   <Col lg="6">
-                     <button
-                        type="button"
-                        className="btn-small cancel-btn"
-                        onClick={handleClose}
-                     >
+                     <button type="button" className="btn-small cancel-btn" onClick={handleClose}>
                         Cancel
                      </button>
                   </Col>

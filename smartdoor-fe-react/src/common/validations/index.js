@@ -1337,8 +1337,8 @@ export const validateBuilderDetails = (data) => {
   if (isBlank(data.companyAddress)) {
     errors.companyAddress = true;
   }
-  if (isBlank(data.companyGst)) {
-    errors.companyGst = true;
+  if (isBlank(data.companyGST)) {
+    errors.companyGST = true;
   }
   if (isBlank(data.companyLogoImageUrl)) {
     errors.companyLogoImageUrl = true;
@@ -1366,9 +1366,22 @@ export const validateBuilderDetails = (data) => {
   } else if (data?.contactNumber?.length !== 10) {
     errors.contactNumber = true;
   }
-  if (data?.directors?.length <= 2) {
-    errors.directors = true;
+  // if (data?.directors?.length < 2) {
+  //   errors.directors = true;
+  // }
+  let directors = [];
+  if(isBlank(data?.directors[0]?.directorName)) {
+    directors[0] = true;
   }
+  if(isBlank(data?.directors[1]?.directorName)) {
+    directors[1] = true;
+  }
+  // directors[2] = false;
+  // directors[3] = false;
+  if(directors.length !== 0) {
+    errors.directors = directors;
+  }
+
   return {
     errors,
     isValid: isEmpty(errors)
@@ -1381,16 +1394,28 @@ export const validateProjectDetails = (data) => {
   if (isBlank(data?.projectName)) {
     errors.projectName = true;
   }
-  if (Number(data?.totalTowers) < 0) {
+  if (isBlank(data?.totalTowers)) {
     errors.totalTowers = true;
   }
-  if (Number(data?.landArea) < 0) {
+  if ((Number(data?.totalTowers) < 0) || (Number(data?.totalTowers) > 99999)) {
+    errors.totalTowers = true;
+  }
+  if (isBlank(data?.landArea)) {
     errors.landArea = true;
   }
-  if (Number(data?.totalAreaToDevelop) < 0) {
+  if ((Number(data?.landArea) < 0) || (Number(data?.landArea) > 99999)) {
+    errors.landArea = true;
+  }
+  if (isBlank(data?.totalAreaToDevelop)) {
     errors.totalAreaToDevelop = true;
   }
-  if (Number(data?.openAreaPerc) < 0) {
+  if ((Number(data?.totalAreaToDevelop) < 0) || (Number(data?.totalAreaToDevelop) > 999999999)) {
+    errors.totalAreaToDevelop = true;
+  }
+  if (isBlank(data?.openAreaPerc)) {
+    errors.openAreaPerc = true;
+  }
+  if ((Number(data?.openAreaPerc) < 0)) {
     errors.openAreaPerc = true;
   }
   if (isBlank(data?.possessionFrom)) {
@@ -1406,7 +1431,7 @@ export const validateProjectDetails = (data) => {
   if (isBlank(data?.projectDescription)) {
     errors.projectDescription = true;
   }
-  if ((data?.projectAmenities?.length) < 0) {
+  if ((data?.projectAmenities?.length) <= 0) {
     errors.projectAmenities = true;
   }
   if (isBlank(data?.projectAddress)) {
@@ -1443,13 +1468,19 @@ export const validateProjectDetails = (data) => {
 export const validateSubProjectDetails = (data) => {
   let errors = {};
 
+  if (isBlank(data?.propertyType)) {
+    errors.propertyType = true;
+  }
   if (isBlank(data?.projectName)) {
     errors.projectName = true;
   }
-  if (Number(data?.totalTowers) < 0) {
-    errors.totalTowers = true;
+  // if ((Number(data?.totalTowers) < 0)  || (Number(data?.totalTowers) > 999999999)) {
+  //   errors.totalTowers = true;
+  // }
+  if (isBlank(data?.totalAreaToDevelop)) {
+    errors.totalAreaToDevelop = true;
   }
-  if (Number(data?.totalAreaToDevelop) < 0) {
+  if ((Number(data?.totalAreaToDevelop) < 0) || (Number(data?.totalAreaToDevelop) > 999999999)) {
     errors.totalAreaToDevelop = true;
   }
   if (isBlank(data?.possessionFrom)) {
@@ -1465,7 +1496,7 @@ export const validateSubProjectDetails = (data) => {
   if (isBlank(data?.highlightsOrUsp)) {
     errors.highlightsOrUsp = true;
   }
-  if ((data?.amenities?.length) < 0) {
+  if ((data?.amenities?.length) <= 0) {
     errors.amenities = true;
   }
   // if(isBlank(data?.projectAddress)) {
@@ -1485,10 +1516,16 @@ export const validateSubProjectDetails = (data) => {
     }
   }
   if (data?.propertyType === 'Tower') {
-    if (Number(data?.totalFloors) < 0) {
+    if (isBlank(data?.totalFloors)) {
       errors.totalFloors = true;
     }
-    if (Number(data?.unitsPerFloor) < 0) {
+    if ((Number(data?.totalFloors) < 0) || (Number(data?.totalFloors) > 9999)) {
+      errors.totalFloors = true;
+    }
+    if (isBlank(data?.unitsPerFloor)) {
+      errors.unitsPerFloor = true;
+    }
+    if ((Number(data?.unitsPerFloor) < 0) || (Number(data?.unitsPerFloor) > 9999)) {
       errors.unitsPerFloor = true;
     }
   }
@@ -1513,21 +1550,21 @@ export const validateSubProjectUnit = (data) => {
   if (isBlank(data?.propertyType)) {
     errors.propertyType = true;
   }
-  if (Number(data?.propertySubType) < 0) {
-    errors.propertySubType = true;
-  }
+  // if (Number(data?.propertySubType) < 0) {
+  //   errors.propertySubType = true;
+  // }
   if (data?.propertySubType === 'Apartment') {
-    if (Number(data?.numberOfRooms) < 0) {
+    if (Number(data?.numberOfRooms) <= 0) {
       errors.numberOfRooms = true;
     }
   }
-  if (Number(data?.totalUnits) < 0) {
+  if (Number(data?.totalUnits) <= 0) {
     errors.totalUnits = true;
   }
-  if (Number(data?.minArea) < 0) {
+  if (Number(data?.minArea) <= 0) {
     errors.minArea = true;
   }
-  if (Number(data?.maxArea) < 0) {
+  if (Number(data?.maxArea) <= 0) {
     errors.maxArea = true;
   }
   if (Number(data?.minPrice) < 0) {

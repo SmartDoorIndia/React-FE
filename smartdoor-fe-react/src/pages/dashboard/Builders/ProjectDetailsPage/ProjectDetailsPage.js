@@ -13,7 +13,7 @@ import { Button, Col, Modal, Row } from "react-bootstrap";
 import AddNewSubProject from "../AddNewSubProject/AddNewSubProject";
 import { FallBackLoader } from "../../../../common/helpers/Loader";
 import Buttons from "../../../../shared/Buttons/Buttons";
-import { getLocalStorage, showSuccessToast } from "../../../../common/helpers/Utils";
+import { getLocalStorage, showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 
 const ProjectDetailsPage = (props) => {
    const [projectDetails, setProjectDetails] = useState({
@@ -70,6 +70,13 @@ const ProjectDetailsPage = (props) => {
 
    const changeBuilderProjectStatus = async (status, comment) => {
       setLoading(true);
+      if (status === "REJECTED") {
+         if (comment?.trim()?.length === 0 || comment === null) {
+            showErrorToast("Please enter rejection comment");
+            setLoading(false)
+            return null;
+         }
+      }
       const response = await setProjectStatus({
          builderId: props?.location?.state?.builderId,
          projectId: props?.location?.state?.projectId,
@@ -166,23 +173,28 @@ const ProjectDetailsPage = (props) => {
                <>
                   <Text
                      text={"Project is on hold. Project Edit and add/edit tower is disabled."}
-                     style={{fontSize: '14px', fontWeight: '600' }}
+                     style={{ fontSize: "14px", fontWeight: "600" }}
                   />
                </>
             ) : null}
             {projectDetails?.builderProjectSearchDto[0]?.status === "UNDER_REVIEW" ? (
                <>
                   <Text
-                     text={"Project is under reviewed. Project Edit and add/edit tower is disabled."}
-                     style={{fontSize: '14px', fontWeight: '600' }}
+                     text={
+                        "Project is under reviewed. Project Edit and add/edit tower is disabled."
+                     }
+                     style={{ fontSize: "14px", fontWeight: "600" }}
                   />
                </>
             ) : null}
             {projectDetails?.builderProjectSearchDto[0]?.status === "REJECTED" ? (
                <>
                   <Text
-                     text={"Project is rejected due to " + projectDetails?.builderProjectSearchDto[0]?.rejectionComment}
-                     style={{fontSize: '14px', fontWeight: '600' }}
+                     text={
+                        "Project is rejected due to " +
+                        projectDetails?.builderProjectSearchDto[0]?.rejectionComment
+                     }
+                     style={{ fontSize: "14px", fontWeight: "600" }}
                   />
                </>
             ) : null}
@@ -392,7 +404,7 @@ const ProjectDetailsPage = (props) => {
             <Modal.Footer>
                <Buttons
                   varient="primary"
-                  name="Sumbit"
+                  name="Submit"
                   onClick={() => {
                      changeBuilderProjectStatus("REJECTED", rejectionComment);
                   }}

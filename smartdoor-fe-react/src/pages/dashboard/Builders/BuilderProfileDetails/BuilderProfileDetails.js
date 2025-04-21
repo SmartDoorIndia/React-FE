@@ -2,25 +2,17 @@
 // API integration on line 66, 123 and 137
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import "./BuilderProfileDetails.scss";
-import Text from "../../../../shared/Text/Text";
 import { TiCameraOutline } from "react-icons/ti";
-import { Row, Col, Form, Button, Modal } from "react-bootstrap"; // Ensure you have react-bootstrap installed
-import { useUserContext } from "../../../../common/helpers/Auth";
+import { Row, Col, Form, Modal } from "react-bootstrap"; // Ensure you have react-bootstrap installed
+import { getBuilderById, createBuilderProfileDetail } from "../../../../common/redux/actions"; // Ensure correct imports
 import {
-   getBuilderById,
-   createBuilderProfileDetail,
-   approveBuilderProfile,
-} from "../../../../common/redux/actions"; // Ensure correct imports
-import {
-   showSuccessToast,
    showErrorToast,
    getLocalStorage,
    handlePhoneChange,
    setLocalStorage,
 } from "../../../../common/helpers/Utils"; // Utility for displaying toast messages
-import CONSTANTS from "../../../../common/helpers/Constants";
 import { TextField } from "@mui/material";
-import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { validateBuilderDetails } from "../../../../common/validations";
 
 const BuilderProfileDetails = (props) => {
@@ -93,7 +85,7 @@ const BuilderProfileDetails = (props) => {
             !!companyGST?.trim() &&
             !!companyAddress?.trim() &&
             !!companyLogoImageUrl?.trim() &&
-            String(contactNumber).trim().length === 10 &&
+            // String(contactNumber).trim().length === 10 &&
             areFirstTwoDirectorsValid === true;
 
          console.log("isvalid", isValid);
@@ -107,7 +99,7 @@ const BuilderProfileDetails = (props) => {
             !!companyAddress?.trim() &&
             !!companyLogoImageUrl?.trim() &&
             isCheck === true &&
-            String(contactNumber).trim().length === 10 &&
+            // String(contactNumber).trim().length === 10 &&
             areFirstTwoDirectorsValid === true;
 
          console.log("isvalid", isValid);
@@ -137,13 +129,13 @@ const BuilderProfileDetails = (props) => {
                setLocalStorage("builderData", resourceData);
                setIsChecked(true);
                setIsFormValid(true);
-               if (responseError) setError(responseError);
+               // if (responseError) setError(responseError);
             }
             setLoading(false);
          })
          .catch((error) => {
             setLoading(false);
-            setError(error);
+            // setError(error);
             console.log("Error fetching builder data:", error);
          });
    }, [builderId]);
@@ -153,25 +145,7 @@ const BuilderProfileDetails = (props) => {
       _getBuilderById();
    }, []);
 
-   const callApproveBuilderProfile = async () => {
-      if (!isApproved) {
-         try {
-            const response = await approveBuilderProfile({ builderId, userId });
-            if (response.status === 200) {
-               setIsApproved(true); // Set approval to true
-               localStorage.setItem("builderProfileApproved", "true"); // Update local storage
-               showSuccessToast("Builder profile approved successfully.");
-            }
-         } catch (error) {
-            console.error("Error approving builder profile:", error);
-            showErrorToast("Error approving profile. Please try again.");
-         }
-      } else {
-         showErrorToast("Builder profile is already approved.");
-      }
-   };
-
-   const handleChange = (event) => {
+   const handleChange = async (event) => {
       const { id, value } = event.target;
 
       if (id.startsWith("directorName")) {
@@ -179,7 +153,13 @@ const BuilderProfileDetails = (props) => {
 
          setData((prevData) => {
             const newDirectors = [...prevData.directors];
-            newDirectors[directorIndex] = { directorId: null, directorName: value }; // Update the specific director field
+            newDirectors[directorIndex] = {
+               directorId:
+                  newDirectors[directorIndex]?.directorId !== null
+                     ? newDirectors[directorIndex]?.directorId
+                     : null,
+               directorName: value,
+            }; // Update the specific director field
 
             return {
                ...prevData,
@@ -199,15 +179,15 @@ const BuilderProfileDetails = (props) => {
          validateForm(isChecked);
       } else if (id === "whatsappNumber") {
          const mobileNum = handlePhoneChange(event);
-         setData((prevData) => ({ ...prevData, [id]: mobileNum }));
+         await setData((prevData) => ({ ...prevData, whatsappNumber: mobileNum }));
          validateForm(isChecked);
       } else if (id === "contactNumber") {
          const mobileNum = handlePhoneChange(event);
-         setData((prevData) => ({ ...prevData, [id]: mobileNum }));
+         await setData((prevData) => ({ ...prevData, contactNumber: mobileNum }));
          validateForm(isChecked);
       } else {
          // Update other fields in data (not directors array)
-         setData((prevData) => ({ ...prevData, [id]: value }));
+         await setData((prevData) => ({ ...prevData, [id]: value }));
          validateForm(isChecked);
       }
    };
@@ -232,10 +212,14 @@ const BuilderProfileDetails = (props) => {
    const handleSubmit = async (e) => {
       e.preventDefault();
       setLoading(true);
-      validateBuilderDetails(data);
+      const valid = await validateBuilderDetails(data);
+      setError(valid.errors);
+      if (!valid.isValid) {
+         return null;
+      }
       try {
          let reqData = { ...data };
-         if(reqData?.builderId === 0) {
+         if (reqData?.builderId === 0) {
             reqData.builderId = null;
          }
          const response = await createBuilderProfileDetail(reqData);
@@ -272,16 +256,15 @@ const BuilderProfileDetails = (props) => {
 
    const handleCloseModal = () => setShowModal(false);
 
-   if (error) return <div>Error: {error.message || "Failed to load builder details"}</div>; // Show error message
    const isBase64Image = (base64) => {
       return typeof base64 === "string" && base64.startsWith("data:image/png;base64,");
    };
 
-   const handleCheckboxChange = async (event) => {
-      await setIsChecked(event.target.checked);
-      console.log(event.target.checked);
-      validateForm();
-   };
+   // const handleCheckboxChange = async (event) => {
+   //    await setIsChecked(event.target.checked);
+   //    console.log(event.target.checked);
+   //    validateForm();
+   // };
 
    return (
       <div className="profile-page">
@@ -305,7 +288,10 @@ const BuilderProfileDetails = (props) => {
                            ) : null}
                            {data?.status === "REJECTED" ? (
                               <>
-                                 <p className="info-text">Your profile has been rejected because of {data?.rejectionComment}</p>
+                                 <p className="info-text">
+                                    Your profile has been rejected because of{" "}
+                                    {data?.rejectionComment}
+                                 </p>
                               </>
                            ) : null}
                            {data?.status === "ON_HOLD" ? (
@@ -390,6 +376,7 @@ const BuilderProfileDetails = (props) => {
                                              ? true
                                              : false
                                        }
+                                       error={error?.brandName}
                                     />
                                  </Col>
                                  <Col lg="5">
@@ -408,6 +395,7 @@ const BuilderProfileDetails = (props) => {
                                              ? true
                                              : false
                                        }
+                                       error={error?.companyName}
                                     />
                                  </Col>
                               </Row>
@@ -418,7 +406,6 @@ const BuilderProfileDetails = (props) => {
                                        type="email"
                                        required={true}
                                        className="textFieldInput w-100"
-                                       error={error?.email}
                                        label={"Company Email"}
                                        value={data.companyEmail}
                                        onInput={(e) => handleChange(e)}
@@ -428,6 +415,7 @@ const BuilderProfileDetails = (props) => {
                                              ? true
                                              : false
                                        }
+                                       error={error?.companyEmail}
                                     />
                                  </Col>
                                  <Col lg="5">
@@ -445,6 +433,7 @@ const BuilderProfileDetails = (props) => {
                                              ? true
                                              : false
                                        }
+                                       error={error?.companyGST}
                                     />
                                  </Col>
                               </Row>
@@ -466,6 +455,7 @@ const BuilderProfileDetails = (props) => {
                                        ? true
                                        : false
                                  }
+                                 error={error?.companyAddress}
                               />
                            </Col>
                         </Row>
@@ -490,6 +480,7 @@ const BuilderProfileDetails = (props) => {
                                              ? true
                                              : false
                                        }
+									   error={error?.directors ? error?.directors[index] : false}
                                     />
                                  </Col>
                               ))}
@@ -498,7 +489,7 @@ const BuilderProfileDetails = (props) => {
                               <TextField
                                  id={"facebookUrl"}
                                  type="text"
-                                 required={true}
+                                 // required={true}
                                  placeholder="www.facebook.com/accountname"
                                  className="textFieldInput w-100"
                                  label="Facebook URL"
@@ -515,7 +506,7 @@ const BuilderProfileDetails = (props) => {
                               <TextField
                                  id={"instaUrl"}
                                  type="text"
-                                 required={true}
+                                 // required={true}
                                  placeholder="www.instagram.com/accountname"
                                  className="textFieldInput w-100"
                                  label="Instagram URL"
@@ -546,6 +537,7 @@ const BuilderProfileDetails = (props) => {
                                        ? true
                                        : false
                                  }
+                                 error={error?.whatsappNumber}
                               />
                            </Col>
                            <Col lg="4">
@@ -562,6 +554,7 @@ const BuilderProfileDetails = (props) => {
                                        ? true
                                        : false
                                  }
+                                 error={error?.contactName}
                               />
                            </Col>
                            <Col lg="4">
@@ -574,7 +567,12 @@ const BuilderProfileDetails = (props) => {
                                  label="Phone Number"
                                  value={data.contactNumber}
                                  onChange={(e) => handleChange(e)}
-                                 disabled={data?.status === "UNDER_REVIEW" ? true : false}
+                                 disabled={
+                                    data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
+                                       ? true
+                                       : false
+                                 }
+                                 error={error?.contactNumber}
                               />
                            </Col>
                         </Row>

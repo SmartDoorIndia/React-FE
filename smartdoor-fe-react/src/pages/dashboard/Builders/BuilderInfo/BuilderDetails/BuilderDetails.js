@@ -86,6 +86,13 @@ const BuilderDetails = (props) => {
 
    const changeBuilderStatus = async (status, comment) => {
       setLoading(true);
+      if(status === 'REJECTED') {
+         if(comment?.trim()?.length === 0 || comment === null) {
+            showErrorToast("Please enter rejection comment");
+            setLoading(false);
+            return null;
+         }
+      }
       const response = await setBuilderStatus({
          builderId: props?.builderId,
          userId: props?.userId,

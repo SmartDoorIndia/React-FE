@@ -28,15 +28,15 @@ const Units = (props) => {
         propertyId: null,
         propertyType: '',
         propertySubType: '',
-        numberOfRooms: '',
+        numberOfRooms: 0,
         compositionType: '',
-        totalUnits: '',
+        totalUnits: 0,
         minBuiltUpArea: '',
         maxBuiltUpArea: '',
         minPlotSize: '',
         maxPlotSize: '',
-        minArea: '',
-        maxArea: '',
+        minArea: 0,
+        maxArea: 0,
         minPrice: 1000000,
         maxPrice: 10000000,
         floorPlan: [],
@@ -54,6 +54,7 @@ const Units = (props) => {
     const fileInputRef = useRef();
     const fileInputRef1 = useRef();
     const [addUnitFlag, setAddUnitFlag] = useState(true);
+    const [error, setError] = useState({});
 
     const handleConfigurationChange = (e) => {
         if (subProjectDetails.subPostType === 'Tower') {
@@ -193,6 +194,7 @@ const Units = (props) => {
 
     const saveBuilderSubProjectUnit = async () => {
         const valid = await validateSubProjectUnit(unitDetails);
+        setError(valid.errors);
         if (valid.isValid) {
             const response = await saveBuilderSubProjectUnits(unitDetails);
             setAddUnitFlag(false)
@@ -222,6 +224,7 @@ const Units = (props) => {
                                 className="unitTextFieldInput w-100"
                                 onChange={(e) => setUnitDetails((prevData) => ({ ...prevData, propertyType: e.target.value }))}
                                 value={unitDetails.propertyType || ""} // Ensure value is valid
+                                error={error?.propertyType}
                             >
                                 <MenuItem value="" disabled>
                                     Select
@@ -249,6 +252,7 @@ const Units = (props) => {
                                 }
                                 }
                                 value={unitDetails.propertySubType || ""} // Ensure value is valid
+                                error={error?.propertySubType}
                             >
                                 <MenuItem value="" disabled>
                                     Select
@@ -315,6 +319,7 @@ const Units = (props) => {
                                         value={
                                             unitDetails.numberOfRooms
                                         }
+                                        error={error?.numberOfRooms}
                                     >
                                         <MenuItem value="" disabled>
                                             Select
@@ -365,6 +370,7 @@ const Units = (props) => {
                                             }));
                                         }}
                                         value={unitDetails.totalUnits || ""}
+                                        error={error?.totalUnits}
                                     />
                                 </Col>
                             </>
@@ -626,6 +632,7 @@ const Units = (props) => {
                                                 </InputAdornment>
                                             ),
                                         }}
+                                        error={error?.minArea}
                                     />
                                 </Col>
                             </>
@@ -679,6 +686,7 @@ const Units = (props) => {
                                                 </InputAdornment>
                                             ),
                                         }}
+                                        error={error?.maxArea}
                                     />
                                 </Col>
                             </>

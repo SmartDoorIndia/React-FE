@@ -20,6 +20,7 @@ import {
    fetchProjectIdList,
    fetchBuilderProjectList,
    fetchBuilderProjectById,
+   getBuilderById,
 } from "../../../../../common/redux/actions";
 import { FallBackLoader, TableLoader } from "../../../../../common/helpers/Loader";
 import Text from "../../../../../shared/Text/Text";
@@ -42,11 +43,17 @@ const BuilderProjectList = (props) => {
    const [expandLoading, setExpandLoading] = useState(false);
    const history = useHistory();
    const builderData = getLocalStorage("builderData");
-   const builderStatus = props?.builderDetails?.status || builderData?.status || null;
+   const [builderStatus, setBuilderStatus] = useState(props?.builderDetails?.status || builderData?.status || null);
 
    useEffect(async () => {
-      console.log(builderData);
+      console.log(props?.builderDetails);
       setLoading(true);
+      if(props?.builderDetails !== null && props?.builderDetails !== undefined) {
+         getBuilderById({ builderId: props.builderId, userId: props?.userId }).then((response) => {
+            console.log(response)
+            setBuilderStatus(response?.data?.resourceData?.status);
+         });
+      }
       const response = await fetchProjectIdList({
          builderId: props?.builderId || builderData?.builderId,
       });

@@ -23,6 +23,10 @@ const BuilderInfo = (props) => {
       });
    }, []);
 
+   const updateBuilderStatus = () => {
+
+   }
+
    return (
       <>
          <div className="d-flex mb-2">
@@ -65,6 +69,7 @@ const BuilderInfo = (props) => {
             <>
                <BuilderProjectList
                   builderId={props?.location?.state?.builderId}
+                  userId={props?.location?.state?.userId}
                   builderDetails={builderDetails}
                />
             </>

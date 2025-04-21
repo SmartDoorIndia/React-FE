@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { formateDate, handleStatusElement, ToolTip } from '../../../../common/helpers/Utils'
+import { formateDate, getLocalStorage, handleStatusElement, ToolTip } from '../../../../common/helpers/Utils'
 import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import contentIcon from '../../../../assets/images/content-ico.png';
 import Image from '../../../../shared/Image/Image';
@@ -21,6 +21,7 @@ const BuilderList = () => {
     const [filterText, setFilterText] = React.useState("");
     const [builderList, setBuilderList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const userData = getLocalStorage("authData");
 
     const builderColumns = [
         {
@@ -201,6 +202,9 @@ const BuilderList = () => {
     }, [filterText, resetPaginationToggle]);
 
     useEffect(() => {
+        if(!userData?.roleName === 'SUPER ADMIN') {
+            history.push("/builder/login");
+        }
         setLoading(true)
         getBuilderList({ searchStr: filterText })
             .then((response) => {
