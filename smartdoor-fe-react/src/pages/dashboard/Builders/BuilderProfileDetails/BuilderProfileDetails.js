@@ -73,8 +73,7 @@ const BuilderProfileDetails = (props) => {
          directors,
       } = data;
       const areFirstTwoDirectorsValid =
-         directors[0]?.directorName?.trim()?.length !== 0 &&
-         directors[1]?.directorName?.trim()?.length !== 0;
+         directors[0]?.directorName?.trim()?.length !== 0 ? true : false;
       console.log(isChecked);
       const checked = isChecked || isCheck;
       if (builderId !== null) {
@@ -82,7 +81,7 @@ const BuilderProfileDetails = (props) => {
             !!brandName?.trim() &&
             !!companyName?.trim() &&
             !!companyEmail?.trim() &&
-            !!companyGST?.trim() &&
+            // !!companyGST?.trim() &&
             !!companyAddress?.trim() &&
             !!companyLogoImageUrl?.trim() &&
             // String(contactNumber).trim().length === 10 &&
@@ -95,7 +94,7 @@ const BuilderProfileDetails = (props) => {
             !!brandName?.trim() &&
             !!companyName?.trim() &&
             !!companyEmail?.trim() &&
-            !!companyGST?.trim() &&
+            // !!companyGST?.trim() &&
             !!companyAddress?.trim() &&
             !!companyLogoImageUrl?.trim() &&
             isCheck === true &&
@@ -288,7 +287,7 @@ const BuilderProfileDetails = (props) => {
                            ) : null}
                            {data?.status === "REJECTED" ? (
                               <>
-                                 <p className="info-text">
+                                 <p className="info-text" style={{fontSize:'16px', color:'red'}}>
                                     Your profile has been rejected because of{" "}
                                     {data?.rejectionComment}
                                  </p>
@@ -296,8 +295,17 @@ const BuilderProfileDetails = (props) => {
                            ) : null}
                            {data?.status === "ON_HOLD" ? (
                               <>
-                                 <p className="info-text">
+                                 <p className="info-text" style={{fontSize:'16px', color:'red'}}>
                                     Your profile is currently On Hold by SmartDoor Admin
+                                 </p>
+                              </>
+                           ) : null}
+                           {data?.status === "APPROVED" ? (
+                              <>
+                                 <p className="info-text" style={{fontSize:'18px', color:'green'}}>
+                                    Your profile has been approved by Smartdoor Admin. You can now
+                                    add new projects. Please resubmit your profile if you need to
+                                    update any existing information.
                                  </p>
                               </>
                            ) : null}
@@ -422,7 +430,7 @@ const BuilderProfileDetails = (props) => {
                                     <TextField
                                        id={"companyGST"}
                                        type="text"
-                                       required={true}
+                                       // required={true}
                                        className="textFieldInput w-100"
                                        label="Company GST"
                                        value={data.companyGST}
@@ -433,7 +441,7 @@ const BuilderProfileDetails = (props) => {
                                              ? true
                                              : false
                                        }
-                                       error={error?.companyGST}
+                                       // error={error?.companyGST}
                                     />
                                  </Col>
                               </Row>
@@ -470,7 +478,7 @@ const BuilderProfileDetails = (props) => {
                                        type="text"
                                        className="textFieldInput w-100"
                                        label={`Director Name ${index + 1} ${
-                                          index > 1 ? "(Optional)" : "*"
+                                          index !== 0 ? "(Optional)" : "*"
                                        }`}
                                        value={data.directors[index]?.directorName || ""}
                                        onInput={(e) => handleChange(e)}
@@ -480,7 +488,7 @@ const BuilderProfileDetails = (props) => {
                                              ? true
                                              : false
                                        }
-									   error={error?.directors ? error?.directors[index] : false}
+                                       error={error?.directors ? error?.directors[index] : false}
                                     />
                                  </Col>
                               ))}

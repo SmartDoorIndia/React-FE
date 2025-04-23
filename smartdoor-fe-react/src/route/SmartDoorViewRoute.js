@@ -23,7 +23,7 @@ const SmartDoorViewRoute = () => {
             {isAuth ? (
                <>
                   <Route path="/admin" name="Admin Dashboard" component={Dashboard} />
-                  <Route path="/builder" name="Builder Dashboard" component={BuilderDashboard} />
+                  {/* <Route path="/builder" name="Builder Dashboard" component={BuilderDashboard} /> */}
                   <Route path="/sign-up" name="SignUp" component={Signup} />
                   <Route exact path={["/", "/login"]}>
                      {" "}

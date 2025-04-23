@@ -855,7 +855,7 @@ const AddNewProjectPost = (props) => {
                               inputProps={{ min: 0, max: 9999999, autoComplete: "off" }}
                               value={data?.landArea}
                               onChange={(e) => {
-                                 setData({ ...data, landArea: e?.target.value });
+                                 setData({ ...data, landArea: Number(e?.target.value) });
                               }}
                               InputProps={{
                                  endAdornment: (
@@ -889,7 +889,7 @@ const AddNewProjectPost = (props) => {
                               autoComplete="off"
                               value={data?.totalAreaToDevelop}
                               onChange={(e) => {
-                                 setData({ ...data, totalAreaToDevelop: e?.target.value });
+                                 setData({ ...data, totalAreaToDevelop: Number(e?.target.value) });
                               }}
                               error={error?.totalAreaToDevelop}
                               InputProps={{
@@ -921,7 +921,7 @@ const AddNewProjectPost = (props) => {
                               id="openAreaPerc"
                               value={data?.openAreaPerc}
                               onChange={(e) => {
-                                 setData({ ...data, openAreaPerc: e?.target.value });
+                                 setData({ ...data, openAreaPerc: (e?.target.value) });
                               }}
                               error={error?.openAreaPerc}
                               InputProps={{
@@ -1192,7 +1192,7 @@ const AddNewProjectPost = (props) => {
                                  onChange={(e) => handleFileChange(e, "PROJECT_IMAGES")}
                                  ref={fileInputRef}
                               />
-                              <span>Upload Images</span>
+                              <span>Upload Images only</span>
                            </label>
 
                            {/* Display the list of uploaded images */}
@@ -1339,7 +1339,7 @@ const AddNewProjectPost = (props) => {
                         controlId="formProjectVideo"
                         className="mb-4 video-upload-container formProjectVideo"
                      >
-                        <span>Add project video *</span>
+                        <span>Add project video</span>
 
                         <div className="input-plus-icon mt-2 d-flex flex-column align-items-start">
                            <div className="d-flex" style={{ position: "relative", width: "100%" }}>

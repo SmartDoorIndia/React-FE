@@ -185,6 +185,7 @@ const BuilderLogin = (props) => {
             }
             if (response?.status === 200) {
                setShowOTP(true);
+               setTimer();
                setUserExists(response?.data?.resourceData);
                showSuccessToast("OTP sent successfully");
             } else {
@@ -195,8 +196,7 @@ const BuilderLogin = (props) => {
             setButtonDisable(false);
             console.log(error);
          });
-      setShowOTP(true);
-      setTimer();
+      // setShowOTP(true);
    };
 
    const validateForm = (event) => {
@@ -246,6 +246,8 @@ const BuilderLogin = (props) => {
                setButtonDisable(false);
                if (response.data) {
                   if (response.data.access_token) storeUserInfo();
+               } else if (response?.status === 500) {
+                  showErrorToast(response?.data?.message);
                }
             })
             .catch((error) => {
@@ -432,21 +434,58 @@ const BuilderLogin = (props) => {
                            </>
                         ) : null}
                         <div className="social-icons">
-                           <a href="#">
+                           <a
+                              onClick={() => {
+                                 window.open(
+                                    "https://www.facebook.com/profile.php?id=100094630133513",
+                                    "_blank"
+                                 );
+                              }}
+                           >
                               {" "}
                               <FontAwesomeIcon icon={faFacebookF} />{" "}
                            </a>
-                           <a href="#">
+                           <a
+                              onClick={() => {
+                                 window.open(
+                                    "https://www.instagram.com/smart_door_official/",
+                                    "_blank"
+                                 );
+                              }}
+                           >
                               <FontAwesomeIcon icon={faInstagram} />
                            </a>
-                           <a href="#">
+                           {/* <a href="#">
                               <FontAwesomeIcon icon={faTwitter} />
-                           </a>
+                           </a> */}
                         </div>
                      </div>
                   </div>
                </div>
-               <div className="col-md-6"></div>
+               {/* <div className="col-md-6"></div> */}
+               <div className="col-md-6 d-flex justify-content-center align-items-center">
+                  <ul className="" style={{ fontSize: "20px", fontWeight: "700", color: "white" }}>
+                     <li>
+                        Boost the sales of your project by posting the same on our platform for free
+                        of next 6 months
+                     </li>
+                     <li>
+                        Get live feed / recordings of all visitors to your sample property on your
+                        mobile in form the videos and phone number for package of Rs.20,000/-
+                        upfront
+                     </li>
+                     <li>
+                        Offer the USP of free sale or rent (conditions apply) of the property
+                        supported by SmartDoor to your customers, in case you choose SmartDoor for
+                        your properties.
+                     </li>
+                     <li>
+                        Put on sale any residual property you might be having in your earlier
+                        projects and showcase the same on SmartDoor app without spending any cost of
+                        sales resources and your total control and monitoring.
+                     </li>
+                  </ul>
+               </div>
             </div>
          </div>
       </div>

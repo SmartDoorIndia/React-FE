@@ -866,7 +866,7 @@ const AddNewSubProject = (props) => {
                                     >
                                        <TiCameraOutline className="camera-icon" />
                                        <span className="py-1" style={{ fontSize: "14px" }}>
-                                          Upload Images
+                                          Upload Tower Images only
                                        </span>
                                     </label>
                                  </div>
@@ -1066,7 +1066,7 @@ const AddNewSubProject = (props) => {
                            )}
                            {saveSubProjectFlag ? (
                               <Buttons
-                                 name={editTower ? "Save" : "Add Tower"}
+                                 name={editTower ? "Save" : "Save Tower"}
                                  varient="primary"
                                  onClick={() => {
                                     saveSubProjectDetails();

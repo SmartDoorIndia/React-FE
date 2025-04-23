@@ -1337,9 +1337,9 @@ export const validateBuilderDetails = (data) => {
   if (isBlank(data.companyAddress)) {
     errors.companyAddress = true;
   }
-  if (isBlank(data.companyGST)) {
-    errors.companyGST = true;
-  }
+  // if (isBlank(data.companyGST)) {
+  //   errors.companyGST = true;
+  // }
   if (isBlank(data.companyLogoImageUrl)) {
     errors.companyLogoImageUrl = true;
   }
@@ -1353,6 +1353,8 @@ export const validateBuilderDetails = (data) => {
   //   errors.facebookUrl = true;
   // }
   if (isBlank(data.whatsappNumber)) {
+    errors.whatsappNumber = true;
+  } else if (data?.whatsappNumber?.length !== 10) {
     errors.whatsappNumber = true;
   }
   // if (isBlank(data.instaUrl)) {
@@ -1373,9 +1375,9 @@ export const validateBuilderDetails = (data) => {
   if(isBlank(data?.directors[0]?.directorName)) {
     directors[0] = true;
   }
-  if(isBlank(data?.directors[1]?.directorName)) {
-    directors[1] = true;
-  }
+  // if(isBlank(data?.directors[1]?.directorName)) {
+  //   directors[1] = true;
+  // }
   // directors[2] = false;
   // directors[3] = false;
   if(directors.length !== 0) {
@@ -1453,9 +1455,9 @@ export const validateProjectDetails = (data) => {
   if ((data?.projectImages?.length) < 0) {
     errors.projectImages = true;
   }
-  if (isBlank(data?.projectVideoUrl)) {
-    errors.projectVideoUrl = true;
-  }
+  // if (isBlank(data?.projectVideoUrl)) {
+  //   errors.projectVideoUrl = true;
+  // }
   if ((data?.brochureUrl?.length) < 0) {
     errors.brochureUrl = true;
   }
@@ -1550,10 +1552,9 @@ export const validateSubProjectUnit = (data) => {
   if (isBlank(data?.propertyType)) {
     errors.propertyType = true;
   }
-  // if (Number(data?.propertySubType) < 0) {
-  //   errors.propertySubType = true;
-  // }
-  if (data?.propertySubType === 'Apartment') {
+  if (isBlank(data?.propertySubType)) {
+    errors.propertySubType = true;
+  } else if (data?.propertySubType === 'Apartment') {
     if (Number(data?.numberOfRooms) <= 0) {
       errors.numberOfRooms = true;
     }

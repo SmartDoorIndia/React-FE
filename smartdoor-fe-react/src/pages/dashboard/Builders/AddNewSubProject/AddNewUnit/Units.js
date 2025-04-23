@@ -37,8 +37,8 @@ const Units = (props) => {
         maxPlotSize: '',
         minArea: 0,
         maxArea: 0,
-        minPrice: 1000000,
-        maxPrice: 10000000,
+        minPrice: 0,
+        maxPrice: 0,
         floorPlan: [],
         propertyImagesList: []
     })
@@ -188,18 +188,21 @@ const Units = (props) => {
             setUnitDetails((prevData) => ({ ...prevData, builderId: props?.builderId, builderProjectId: props?.projectId }))
         }
         if (editUnit) {
-            setUnitDetails((prevData) => ({ ...prevData, propertyImagesList: props?.property?.propertyImagesList }))
+            setUnitDetails((prevData) => ({ ...prevData, propertyImagesList: props?.property?.propertyImagesList, minPrice: unitDetails.minPrice / 100000, maxPrice: unitDetails.maxPrice / 100000,  }))
         }
     }, []);
 
     const saveBuilderSubProjectUnit = async () => {
-        const valid = await validateSubProjectUnit(unitDetails);
+        let unitDetail = {...unitDetails};
+        unitDetail.minPrice = Number(unitDetails.minPrice * 100000);
+        unitDetail.maxPrice = Number(unitDetails.maxPrice * 100000);
+        const valid = await validateSubProjectUnit(unitDetail);
         setError(valid.errors);
         if (valid.isValid) {
-            const response = await saveBuilderSubProjectUnits(unitDetails);
+            const response = await saveBuilderSubProjectUnits(unitDetail);
             setAddUnitFlag(false)
             console.log(response)
-            let unitInfo = { ...unitDetails };
+            let unitInfo = { ...unitDetail };
             unitInfo.propertyId = response?.data?.resourceData;
             setUnitDetails((prevData) => ({ ...prevData, propertyId: response?.data?.resourceData }));
             fetchUnitDetails(unitInfo);
@@ -355,7 +358,7 @@ const Units = (props) => {
                         {unitFieldsList.includes('totalUnits') ?
                             <>
                                 <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
-                                    <Text text={'Total Units'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
+                                    <Text text={'Total Available Units'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
 
                                     <TextField
                                         type='number'
@@ -693,7 +696,7 @@ const Units = (props) => {
                             : null}
                         {unitFieldsList.includes('minPrice') && unitFieldsList.includes('maxPrice') ?
                             <>
-                                <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
+                                {/* <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
                                     <Text text={'Price Range *'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
                                     <Text text={'₹' + unitDetails.minPrice + ' - ' + unitDetails.maxPrice} style={{ fontSize: '13px', fontWeight: '500' }} ></Text>
                                     <Slider
@@ -714,6 +717,56 @@ const Units = (props) => {
                                         style={{ color: "#BE1452" }}
                                     />
 
+                                </Col> */}
+                                <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
+                                    <Text text={'Min Price'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
+                                    <TextField
+                                        className="unitTextFieldInput w-100"
+                                        type="number"
+                                        name="minPrice"
+                                        required={true}
+                                        inputProps={{ min: 0 }}
+                                        value={unitDetails.minPrice || ""}
+                                        onChange={(e) => {
+                                            setUnitDetails((prevData) => ({
+                                                ...prevData,
+                                                minPrice: Number(e.target.value),
+                                            }));
+                                        }}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end" style={{ marginRight: '-2%' }}>
+                                                    Lacs
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                        error={error?.minPrice}
+                                    />
+                                </Col>
+                                <Col xs={12} sm={6} md={3} style={{ paddingLeft: '20px', paddingRight: "20px" }} >
+                                    <Text text={'Max Price'} style={{ fontSize: '14px', fontWeight: '700' }} ></Text>
+                                    <TextField
+                                        className="unitTextFieldInput w-100"
+                                        type="number"
+                                        name="maxPrice"
+                                        required={true}
+                                        inputProps={{ min: 0 }}
+                                        value={unitDetails.maxPrice || ""}
+                                        onChange={(e) => {
+                                            setUnitDetails((prevData) => ({
+                                                ...prevData,
+                                                maxPrice: Number(e.target.value),
+                                            }));
+                                        }}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <InputAdornment position="end" style={{ marginRight: '-2%' }}>
+                                                    Lacs
+                                                </InputAdornment>
+                                            ),
+                                        }}
+                                        error={error?.maxPrice}
+                                    />
                                 </Col>
                             </>
                             : null}
@@ -799,7 +852,7 @@ const Units = (props) => {
                                                     onChange={(e) => handleFileChange(e, "floorPlan")}
                                                     ref={fileInputRef}
                                                 />
-                                                <span>Upload Floor Plan *</span>
+                                                <span>Upload Floor Plan only*</span>
                                             </label>
                                             <div className="d-flex flex-wrap mt-2 justify-content-center">
                                                 {unitDetails?.floorPlan
@@ -866,7 +919,7 @@ const Units = (props) => {
                                                     onChange={(e) => handleFileChange(e, 'images')}
                                                     ref={fileInputRef1}
                                                 />
-                                                <span>Upload Property Images *</span>
+                                                <span>Upload Property Images only *</span>
                                             </label>
                                             <div className="d-flex flex-wrap mt-2 justify-content-center">
                                                 {unitDetails?.propertyImagesList
@@ -934,7 +987,7 @@ const Units = (props) => {
                     </Row>
                     {addUnitFlag ?
                         <div style={{ justifySelf: 'end' }}>
-                            <Buttons className="mt-2 mb-3 mr-3" name={editUnit ? "Save" : "Add Unit"} varient="primary" onClick={() => { saveBuilderSubProjectUnit(); }} />
+                            <Buttons className="mt-2 mb-3 mr-3" name={editUnit ? "Save" : "Save Unit"} varient="primary" onClick={() => { saveBuilderSubProjectUnit(); }} />
                         </div>
                         : null}
                 </div>

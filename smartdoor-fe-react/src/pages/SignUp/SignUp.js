@@ -19,10 +19,24 @@ const Signup = () => {
    const [imagePreview, setImagePreview] = useState(null);
    const userData = getLocalStorage("authData");
    const history = useHistory();
-   console.log(userData)
+   console.log(userData);
    useEffect(() => {
-      console.log(userData)
-   },[])
+      console.log(userData);
+   }, []);
+
+   useEffect(() => {
+      const handlePopState = (event) => {
+         window.history.pushState(null, "", window.location.href);
+      };
+
+      window.history.pushState(null, "", window.location.href);
+      window.addEventListener("popstate", handlePopState);
+
+      return () => {
+         window.removeEventListener("popstate", handlePopState);
+      };
+   }, []);
+
    const handleChange = (e) => {
       const { name, value } = e.target;
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -46,7 +60,7 @@ const Signup = () => {
 
       // You can now send `formData` to your API
       console.log("Signup Data:", formData);
-      if(formData.fullName === null || formData.fullName.length === 0) {
+      if (formData.fullName === null || formData.fullName.length === 0) {
          showErrorToast("Please enter full name...");
          return null;
       }
