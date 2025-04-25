@@ -101,26 +101,30 @@ const SubProjectDetails = (props) => {
                      style={{ fontSize: "14px", fontWeight: "500" }}
                   />
                </Col>
-               <Col lg={3} className="mt-3">
-                  <Text
-                     text={"Total Floors"}
-                     style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
-                  />
-                  <Text
-                     text={subProjectDetails?.totalFloors || "0"}
-                     style={{ fontSize: "14px", fontWeight: "500" }}
-                  />
-               </Col>
-               <Col lg={3} className="mt-3">
-                  <Text
-                     text={"Units per Floor"}
-                     style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
-                  />
-                  <Text
-                     text={subProjectDetails?.unitsPerFloor || "0"}
-                     style={{ fontSize: "14px", fontWeight: "500" }}
-                  />
-               </Col>
+               {subProjectDetails?.propertyType === "Tower" ? (
+                  <>
+                     <Col lg={3} className="mt-3">
+                        <Text
+                           text={"Total Floors"}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+                        />
+                        <Text
+                           text={subProjectDetails?.totalFloors || "0"}
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </Col>
+                     <Col lg={3} className="mt-3">
+                        <Text
+                           text={"Units per Floor"}
+                           style={{ fontSize: "12px", fontWeight: "500", color: "#949494" }}
+                        />
+                        <Text
+                           text={subProjectDetails?.unitsPerFloor || "0"}
+                           style={{ fontSize: "14px", fontWeight: "500" }}
+                        />
+                     </Col>
+                  </>
+               ) : null}
                <Col lg={3} className="mt-3">
                   <Text
                      text={"Contact Person Name"}
@@ -323,12 +327,12 @@ const SubProjectDetails = (props) => {
                      <Buttons
                         name="Edit Unit"
                         disabled={
-                            props?.projectStatus === "UNDER_REVIEW" ||
-                            props?.projectStatus === "REJECTED" ||
-                            props?.projectStatus === "ON_HOLD"
-                               ? true
-                               : false
-                         }
+                           props?.projectStatus === "UNDER_REVIEW" ||
+                           props?.projectStatus === "REJECTED" ||
+                           props?.projectStatus === "ON_HOLD"
+                              ? true
+                              : false
+                        }
                         varient="primary"
                         onClick={() => {
                            setEditUnitFlag(true);
@@ -386,12 +390,12 @@ const SubProjectDetails = (props) => {
                   }
                }}
                disabled={
-                props?.projectStatus === "UNDER_REVIEW" ||
-                props?.projectStatus === "REJECTED" ||
-                props?.projectStatus === "ON_HOLD"
-                   ? true
-                   : false
-             }
+                  props?.projectStatus === "UNDER_REVIEW" ||
+                  props?.projectStatus === "REJECTED" ||
+                  props?.projectStatus === "ON_HOLD"
+                     ? true
+                     : false
+               }
             >
                {/* <div className='py-0'
                         style={{

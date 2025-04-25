@@ -30,7 +30,7 @@ import Buttons from "../../../../shared/Buttons/Buttons";
 import POSTING_CONSTANTS from "../../../../common/helpers/POSTING_CONSTANTS";
 
 const AddNewSubProject = (props) => {
-   const { updateSubProject, builderId, editTower, toggleEditTower, updateSubProjectList } = props;
+   const { updateSubProject, builderId, editTower, toggleEditTower, updateSubProjectList, projectDetails } = props;
    const [show, setShow] = useState(false);
    const [imageCategory, setImageCategory] = useState("Interior");
    const [selectedImages, setSelectedImages] = useState([]);
@@ -56,12 +56,12 @@ const AddNewSubProject = (props) => {
       projectId: null,
       propertyType: "",
       projectName: "",
-      reraNumber: "",
+      reraNumber: projectDetails?.builderProjectSearchDto[0]?.reraNumber || "",
       totalAreaToDevelop: '',
       totalAreaMetrics: "Sq. Ft.",
       highlightsOrUsp: "",
-      contactPersonName: "",
-      contactPersonNumber: "",
+      contactPersonName: projectDetails?.builderProjectSearchDto[0]?.contactPersonName || "",
+      contactPersonNumber: projectDetails?.builderProjectSearchDto[0]?.contactPersonNumber || "",
       possessionFrom: "",
       possessionTo: "",
       totalFloors: '',
@@ -295,6 +295,7 @@ const AddNewSubProject = (props) => {
    useEffect(() => {
       console.log(props?.projectId);
       console.log(props?.builderId);
+      console.log(props);
       if (props?.editTower === true) {
          setData({
             ...props?.subProjectDetails,
@@ -339,6 +340,27 @@ const AddNewSubProject = (props) => {
          // if (props?.projectDetails?.projectAmenities === null) {
          //    setData((prevData) => ({ ...prevData, projectAmenities: [] }))
          // }
+      }
+      if(projectDetails?.builderProjectSearchDto[0]?.totalTowers === 1) {
+         setData((prevData) => ({...prevData, totalAreaToDevelop : projectDetails?.builderProjectSearchDto[0]?.totalAreaToDevelop,
+            amenities: projectDetails?.builderProjectSearchDto[0]?.projectAmenities,
+            possessionFrom: projectDetails?.builderProjectSearchDto[0]?.possessionFrom,
+            possessionTo: projectDetails?.builderProjectSearchDto[0]?.possessionTo
+         }))
+         const possessionFrom = projectDetails?.builderProjectSearchDto[0]?.possessionFrom;
+         const date = new Date(possessionFrom);
+
+         setMonthYearFrom({
+            month: String(date.getMonth() + 1).padStart(2, "0"),
+            year: date.getFullYear(),
+         });
+
+         const possessionTo = projectDetails?.builderProjectSearchDto[0]?.possessionTo;
+         const dateTo = new Date(possessionTo);
+         setMonthYearTo({
+            month: String(dateTo.getMonth() + 1).padStart(2, "0"),
+            year: dateTo.getFullYear(),
+         });
       }
    }, []);
 

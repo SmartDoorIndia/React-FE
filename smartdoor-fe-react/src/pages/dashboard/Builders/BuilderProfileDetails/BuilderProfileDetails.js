@@ -183,7 +183,22 @@ const BuilderProfileDetails = (props) => {
       } else if (id === "contactNumber") {
          const mobileNum = handlePhoneChange(event);
          await setData((prevData) => ({ ...prevData, contactNumber: mobileNum }));
+         if(mobileNum?.length === 10 && data?.whatsappNumber?.length === 0) {
+            await setData((prevData) => ({ ...prevData, whatsappNumber: mobileNum }));
+         }
          validateForm(isChecked);
+      } else if(id === "instaUrl") {
+         if(value?.includes("https://")) {
+            await setData((prevData) => ({ ...prevData, instaUrl: value }));
+         } else {
+            await setData((prevData) => ({ ...prevData, instaUrl: "https://" + value }));
+         }
+      } else if(id === "facebookUrl") {
+         if(value?.includes("https://")) {
+            await setData((prevData) => ({ ...prevData, facebookUrl: value }));
+         } else {
+            await setData((prevData) => ({ ...prevData, facebookUrl: "https://" + value }));
+         }
       } else {
          // Update other fields in data (not directors array)
          await setData((prevData) => ({ ...prevData, [id]: value }));

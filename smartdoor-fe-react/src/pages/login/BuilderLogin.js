@@ -246,7 +246,7 @@ const BuilderLogin = (props) => {
                setButtonDisable(false);
                if (response.data) {
                   if (response.data.access_token) storeUserInfo();
-               } else if (response?.status === 500) {
+               } else if (response?.data?.status === 500) {
                   showErrorToast(response?.data?.message);
                }
             })

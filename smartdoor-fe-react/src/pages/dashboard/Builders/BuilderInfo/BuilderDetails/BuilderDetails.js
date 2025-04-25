@@ -184,8 +184,7 @@ const BuilderDetails = (props) => {
                         placement="top-start"
                         style={{ width: "100%" }}
                         title={
-                           (builderDetails?.status !== "APPROVED") &&
-                           (builderDetails?.status !== "REJECTED")
+                           (builderDetails?.status !== "APPROVED")
                               ? "Builder Profile cannot be edited"
                               : "Edit Profile"
                         }
@@ -198,8 +197,7 @@ const BuilderDetails = (props) => {
                               borderColor: "#DED6D9",
                            }}
                            disabled={
-                              builderDetails?.status !== "APPROVED" &&
-                              builderDetails?.status !== "REJECTED"
+                              builderDetails?.status !== "APPROVED"
                                  ? true
                                  : false
                            }

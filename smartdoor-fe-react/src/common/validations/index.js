@@ -1558,6 +1558,9 @@ export const validateSubProjectUnit = (data) => {
     if (Number(data?.numberOfRooms) <= 0) {
       errors.numberOfRooms = true;
     }
+    if (isBlank(data?.numberOfRooms)) {
+      errors.numberOfRooms = true;
+    }
   }
   if (Number(data?.totalUnits) <= 0) {
     errors.totalUnits = true;
@@ -1568,13 +1571,35 @@ export const validateSubProjectUnit = (data) => {
   if (Number(data?.maxArea) <= 0) {
     errors.maxArea = true;
   }
+  if(Number(data?.minArea) > Number(data?.maxArea)) {
+    errors.minArea = true;
+    errors.maxArea = true;
+  }
   if (Number(data?.minPrice) < 0) {
+    errors.minPrice = true;
+  }
+  if (isBlank(data?.minPrice)) {
     errors.minPrice = true;
   }
   if (Number(data?.maxPrice) < 0) {
     errors.maxPrice = true;
   }
-
+  if (isBlank(data?.maxPrice)) {
+    errors.maxPrice = true;
+  }
+  if(Number(data?.minPrice) > Number(data?.maxPrice)) {
+    errors.minPrice = true;
+    errors.maxPrice = true;
+  }
+  if(data?.propertySubType !== 'Plot') {
+    if(data?.propertyImagesList?.length <= 0) {
+      errors.propertyImagesList = true;
+    }
+  }
+  
+  if(data?.floorPlan?.length <= 0) {
+    errors.floorPlan = true;
+  }
   return {
     errors,
     isValid: isEmpty(errors)

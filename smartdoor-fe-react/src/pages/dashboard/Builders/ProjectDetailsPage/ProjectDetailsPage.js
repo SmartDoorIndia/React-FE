@@ -276,6 +276,7 @@ const ProjectDetailsPage = (props) => {
                      <AccordionDetails sx={{ border: "solid 1px #DED6D9", borderRadius: "6px" }}>
                         <SubProjectDetails
                            subProjectDetails={subProject}
+                           projectDetails={projectDetails}
                            builderId={props?.location?.state?.builderId}
                            parentProjectId={props?.location?.state?.projectId}
                            projectStatus={projectDetails?.builderProjectSearchDto[0]?.status}
@@ -330,6 +331,7 @@ const ProjectDetailsPage = (props) => {
                         <AddNewSubProject
                            projectId={props?.location?.state?.projectId}
                            builderId={props?.location?.state?.builderId}
+                           projectDetails={projectDetails}
                            updateSubProjectList={updateSubProjectList}
                            newTowerinExisting={true}
                         />

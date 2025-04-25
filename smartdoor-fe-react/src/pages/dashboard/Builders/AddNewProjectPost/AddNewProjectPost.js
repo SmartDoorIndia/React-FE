@@ -30,9 +30,14 @@ import {
    Box,
    Checkbox,
    Divider,
+   FormControl,
+   FormControlLabel,
+   FormLabel,
    InputAdornment,
    ListItemText,
    MenuItem,
+   Radio,
+   RadioGroup,
    TextField,
 } from "@mui/material";
 import AutoCompleteTextField from "../../../../shared/Inputs/AutoComplete/textField";
@@ -58,10 +63,10 @@ const AddNewProjectPost = (props) => {
       projectId: projectId || null,
       userId: null,
       projectName: "",
-      totalTowers: '',
-      landArea: '',
-      totalAreaToDevelop: '',
-      openAreaPerc: '',
+      totalTowers: "",
+      landArea: "",
+      totalAreaToDevelop: "",
+      openAreaPerc: "",
       possessionFrom: "",
       possessionTo: "",
       projectDescription: "",
@@ -80,6 +85,8 @@ const AddNewProjectPost = (props) => {
       projectVideoUrl: "",
       brochureUrl: "",
       reraNumber: "",
+      separateAddress: "",
+      stageOfProject: "Ready",
    });
    const defaultAmenities = [
       "Common Guest",
@@ -767,6 +774,23 @@ const AddNewProjectPost = (props) => {
                               : "Location not available"}
                         </div>
                      </div>
+                     <div>
+                        <TextField
+                           className="mt-4 w-100 textFieldInput"
+                           label="Separate Address (Optional)"
+                           id="separateAddress"
+                           multiline={true}
+                           rows={4}
+                           aria-expanded={true}
+                           fullWidth
+                           autoComplete="off"
+                           inputProps={{ autoComplete: "off" }}
+                           value={data?.separateAddress}
+                           onChange={(e) => {
+                              setData({ ...data, separateAddress: e?.target.value });
+                           }}
+                        />
+                     </div>
                   </Col>
                   <Col
                      lg={7}
@@ -921,7 +945,7 @@ const AddNewProjectPost = (props) => {
                               id="openAreaPerc"
                               value={data?.openAreaPerc}
                               onChange={(e) => {
-                                 setData({ ...data, openAreaPerc: (e?.target.value) });
+                                 setData({ ...data, openAreaPerc: e?.target.value });
                               }}
                               error={error?.openAreaPerc}
                               InputProps={{
@@ -943,134 +967,233 @@ const AddNewProjectPost = (props) => {
                            />
                         </Col>
                      </Row>
-                     <Row className="date-container">
-                        {/* Possession From */}
-                        <Col lg={6}>
-                           <Text text="Possession from" />
-                           <Form.Group as={Row} controlId="monthYearFrom">
-                              <Col sm="6">
-                                 <Form.Label>Month</Form.Label>
-                                 <Form.Control
-                                    as="select"
-                                    aria-label="Month"
-                                    name="month"
-                                    required={true}
-                                    className="custom-dropdown" // Add your custom class if needed
-                                    value={monthYearFrom.month} // Preselect the month from parsed value
-                                    onChange={handleFromMonthChange}
-                                    isInvalid={
-                                       monthYearFrom.month !== null ? false : error?.possessionFrom
+                     <Row>
+                        <Col lg={12}>
+                           <Text
+                              text="Stage Of Project"
+                              style={{ fontSize: "14px", fontWeight: "500" }}
+                           />
+                           <FormControl>
+                              <RadioGroup
+                                 row
+                                 aria-labelledby="demo-radio-buttons-group-label"
+                                 defaultValue={data?.stageOfProject}
+                                 onChange={(e) => {
+                                    setData((prevData) => ({
+                                       ...prevData,
+                                       stageOfProject: e.target.value,
+                                    }));
+                                 }}
+                                 name="radio-buttons-group"
+                              >
+                                 <FormControlLabel
+                                    value="Ready"
+                                    control={
+                                       <Radio
+                                          sx={{
+                                             color: "#BE1452", // default color
+                                             "&.Mui-checked": {
+                                                color: "#BE1452", // checked color
+                                             },
+                                          }}
+                                       />
                                     }
-                                 >
-                                    <option value="">Select Month</option>
-                                    {Array.from({ length: 12 }, (_, index) => (
-                                       <option
-                                          key={index}
-                                          value={String(index + 1).padStart(2, "0")} // Pad month with 0
-                                       >
-                                          {new Date(0, index).toLocaleString("default", {
-                                             month: "long",
-                                          })}
-                                       </option>
-                                    ))}
-                                 </Form.Control>
-                                 {!monthYearFrom.month ? <>
-                                    <Text text={"Please enter month"} style={{fontSize: '13px', fontWeight: '600', color: 'red'}} />
-                                 </> : null}
-                              </Col>
-                              <Col sm="6">
-                                 <Form.Label>Year</Form.Label>
-                                 <Form.Control
-                                    as="select"
-                                    aria-label="Year"
-                                    required={true}
-                                    name="year" // Set name for the year select
-                                    value={monthYearFrom.year} // Preselect the year from parsed value
-                                    onChange={handleFromYearChange}
-                                    isInvalid={
-                                       monthYearFrom.year !== null ? false : error?.possessionFrom
+                                    label="Ready"
+                                 />
+                                 <FormControlLabel
+                                    value="Under Construction"
+                                    control={
+                                       <Radio
+                                          sx={{
+                                             color: "#BE1452",
+                                             "&.Mui-checked": {
+                                                color: "#BE1452",
+                                             },
+                                          }}
+                                       />
                                     }
-                                 >
-                                    <option value="">Select Year</option>
-                                    {Array.from(
-                                       { length: 101 },
-                                       (_, index) => currentYear - index
-                                    ).map((year) => (
-                                       <option key={year} value={year}>
-                                          {year}
-                                       </option>
-                                    ))}
-                                 </Form.Control>
-                                 {!monthYearFrom.year ? <>
-                                    <Text text={"Please enter year"} style={{fontSize: '13px', fontWeight: '600', color: 'red'}} />
-                                 </> : null}
-                              </Col>
-                           </Form.Group>
-                        </Col>
-
-                        {/* Possession To */}
-                        <Col lg={6}>
-                           <Text text="Possession to" />
-                           <Form.Group as={Row} controlId="monthYearTo">
-                              <Col sm="6">
-                                 <Form.Label>Month</Form.Label>
-                                 <Form.Control
-                                    as="select"
-                                    name="month" // Set name for the month select
-                                    aria-label="Month"
-                                    required={true}
-                                    value={monthYearTo.month} // Preselect the month from parsed value
-                                    onChange={handleToMonthChange}
-                                    isInvalid={
-                                       monthYearTo?.month !== null ? false : error?.possessionTo
-                                    }
-                                 >
-                                    <option value="">Select Month</option>
-                                    {Array.from({ length: 12 }, (_, index) => (
-                                       <option
-                                          key={index}
-                                          value={String(index + 1).padStart(2, "0")}
-                                       >
-                                          {new Date(0, index).toLocaleString("default", {
-                                             month: "long",
-                                          })}
-                                       </option>
-                                    ))}
-                                 </Form.Control>
-                                 {!monthYearTo.month ? <>
-                                    <Text text={"Please enter month"} style={{fontSize: '13px', fontWeight: '600', color: 'red'}} />
-                                 </> : null}
-                              </Col>
-                              <Col sm="6">
-                                 <Form.Label>Year</Form.Label>
-                                 <Form.Control
-                                    as="select"
-                                    aria-label="Year"
-                                    required={true}
-                                    name="year" // Set name for the year select
-                                    value={monthYearTo.year} // Preselect the year from parsed value
-                                    onChange={handleToYearChange}
-                                    isInvalid={
-                                       monthYearTo?.year !== null ? false : error?.possessionTo
-                                    }
-                                 >
-                                    <option value="">Select Year</option>
-                                    {Array.from(
-                                       { length: 41 },
-                                       (_, index) => currentYear + 20 - index
-                                    ).map((year) => (
-                                       <option key={year} value={year}>
-                                          {year}
-                                       </option>
-                                    ))}
-                                 </Form.Control>
-                                 {!monthYearTo.year  ?<>
-                                    <Text text={"Please enter year"} style={{fontSize: '13px', fontWeight: '600', color: 'red'}} />
-                                 </> : null}
-                              </Col>
-                           </Form.Group>
+                                    label="Under Construction"
+                                 />
+                              </RadioGroup>
+                           </FormControl>
                         </Col>
                      </Row>
+                     {data?.stageOfProject === "Under Construction" ? (
+                        <>
+                           <Row className="date-container">
+                              {/* Possession From */}
+                              <Col lg={6}>
+                                 <Text text="Possession from" />
+                                 <Form.Group as={Row} controlId="monthYearFrom">
+                                    <Col sm="6">
+                                       <Form.Label>Month</Form.Label>
+                                       <Form.Control
+                                          as="select"
+                                          aria-label="Month"
+                                          name="month"
+                                          required={true}
+                                          className="custom-dropdown" // Add your custom class if needed
+                                          value={monthYearFrom.month} // Preselect the month from parsed value
+                                          onChange={handleFromMonthChange}
+                                          isInvalid={
+                                             monthYearFrom.month !== null
+                                                ? false
+                                                : error?.possessionFrom
+                                          }
+                                       >
+                                          <option value="">Select Month</option>
+                                          {Array.from({ length: 12 }, (_, index) => (
+                                             <option
+                                                key={index}
+                                                value={String(index + 1).padStart(2, "0")} // Pad month with 0
+                                             >
+                                                {new Date(0, index).toLocaleString("default", {
+                                                   month: "long",
+                                                })}
+                                             </option>
+                                          ))}
+                                       </Form.Control>
+                                       {!monthYearFrom.month ? (
+                                          <>
+                                             <Text
+                                                text={"Please enter month"}
+                                                style={{
+                                                   fontSize: "13px",
+                                                   fontWeight: "600",
+                                                   color: "red",
+                                                }}
+                                             />
+                                          </>
+                                       ) : null}
+                                    </Col>
+                                    <Col sm="6">
+                                       <Form.Label>Year</Form.Label>
+                                       <Form.Control
+                                          as="select"
+                                          aria-label="Year"
+                                          required={true}
+                                          name="year" // Set name for the year select
+                                          value={monthYearFrom.year} // Preselect the year from parsed value
+                                          onChange={handleFromYearChange}
+                                          isInvalid={
+                                             monthYearFrom.year !== null
+                                                ? false
+                                                : error?.possessionFrom
+                                          }
+                                       >
+                                          <option value="">Select Year</option>
+                                          {Array.from(
+                                             { length: 101 },
+                                             (_, index) => currentYear - index
+                                          ).map((year) => (
+                                             <option key={year} value={year}>
+                                                {year}
+                                             </option>
+                                          ))}
+                                       </Form.Control>
+                                       {!monthYearFrom.year ? (
+                                          <>
+                                             <Text
+                                                text={"Please enter year"}
+                                                style={{
+                                                   fontSize: "13px",
+                                                   fontWeight: "600",
+                                                   color: "red",
+                                                }}
+                                             />
+                                          </>
+                                       ) : null}
+                                    </Col>
+                                 </Form.Group>
+                              </Col>
+
+                              {/* Possession To */}
+                              <Col lg={6}>
+                                 <Text text="Possession to" />
+                                 <Form.Group as={Row} controlId="monthYearTo">
+                                    <Col sm="6">
+                                       <Form.Label>Month</Form.Label>
+                                       <Form.Control
+                                          as="select"
+                                          name="month" // Set name for the month select
+                                          aria-label="Month"
+                                          required={true}
+                                          value={monthYearTo.month} // Preselect the month from parsed value
+                                          onChange={handleToMonthChange}
+                                          isInvalid={
+                                             monthYearTo?.month !== null
+                                                ? false
+                                                : error?.possessionTo
+                                          }
+                                       >
+                                          <option value="">Select Month</option>
+                                          {Array.from({ length: 12 }, (_, index) => (
+                                             <option
+                                                key={index}
+                                                value={String(index + 1).padStart(2, "0")}
+                                             >
+                                                {new Date(0, index).toLocaleString("default", {
+                                                   month: "long",
+                                                })}
+                                             </option>
+                                          ))}
+                                       </Form.Control>
+                                       {!monthYearTo.month ? (
+                                          <>
+                                             <Text
+                                                text={"Please enter month"}
+                                                style={{
+                                                   fontSize: "13px",
+                                                   fontWeight: "600",
+                                                   color: "red",
+                                                }}
+                                             />
+                                          </>
+                                       ) : null}
+                                    </Col>
+                                    <Col sm="6">
+                                       <Form.Label>Year</Form.Label>
+                                       <Form.Control
+                                          as="select"
+                                          aria-label="Year"
+                                          required={true}
+                                          name="year" // Set name for the year select
+                                          value={monthYearTo.year} // Preselect the year from parsed value
+                                          onChange={handleToYearChange}
+                                          isInvalid={
+                                             monthYearTo?.year !== null
+                                                ? false
+                                                : error?.possessionTo
+                                          }
+                                       >
+                                          <option value="">Select Year</option>
+                                          {Array.from(
+                                             { length: 41 },
+                                             (_, index) => currentYear + 20 - index
+                                          ).map((year) => (
+                                             <option key={year} value={year}>
+                                                {year}
+                                             </option>
+                                          ))}
+                                       </Form.Control>
+                                       {!monthYearTo.year ? (
+                                          <>
+                                             <Text
+                                                text={"Please enter year"}
+                                                style={{
+                                                   fontSize: "13px",
+                                                   fontWeight: "600",
+                                                   color: "red",
+                                                }}
+                                             />
+                                          </>
+                                       ) : null}
+                                    </Col>
+                                 </Form.Group>
+                              </Col>
+                           </Row>
+                        </>
+                     ) : null}
                      <Row className="mt-4">
                         <Col lg={4}>
                            <TextField

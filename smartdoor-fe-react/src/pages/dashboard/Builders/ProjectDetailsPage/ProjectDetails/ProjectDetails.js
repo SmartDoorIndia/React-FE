@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Col, Row } from "react-bootstrap";
-import ImageSliderComponent from "../../../../../shared/ImageSliderComp/ImageSliderComponent";
+import ImageSliderComponent from "../../../../../shared/ImageSlider/ImageSliderComponent";
 import Text from "../../../../../shared/Text/Text";
 import MapComponent from "../../../../../shared/Map/MapComponent";
 import Buttons from "../../../../../shared/Buttons/Buttons";
