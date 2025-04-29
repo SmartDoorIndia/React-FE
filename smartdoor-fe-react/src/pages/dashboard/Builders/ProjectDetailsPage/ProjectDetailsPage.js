@@ -68,6 +68,10 @@ const ProjectDetailsPage = (props) => {
       subProjectList.push(subProjectData);
    };
 
+   const closeNewTower = () => {
+      setAddTowerFlag(false);
+   }
+
    const changeBuilderProjectStatus = async (status, comment) => {
       setLoading(true);
       if (status === "REJECTED") {
@@ -333,6 +337,7 @@ const ProjectDetailsPage = (props) => {
                            builderId={props?.location?.state?.builderId}
                            projectDetails={projectDetails}
                            updateSubProjectList={updateSubProjectList}
+                           closeNewTowerForm={closeNewTower}
                            newTowerinExisting={true}
                         />
                      </AccordionDetails>

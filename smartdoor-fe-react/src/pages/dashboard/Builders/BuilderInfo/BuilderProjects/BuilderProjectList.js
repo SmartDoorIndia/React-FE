@@ -11,7 +11,6 @@ import { connect } from "react-redux";
 import { useState } from "react";
 import DataTableComponent from "../../../../../shared/DataTable/DataTable";
 import {
-   formateDate,
    getLocalStorage,
    handleStatusElement,
    ToolTip,
@@ -22,13 +21,12 @@ import {
    fetchBuilderProjectById,
    getBuilderById,
 } from "../../../../../common/redux/actions";
-import { FallBackLoader, TableLoader } from "../../../../../common/helpers/Loader";
+import { TableLoader } from "../../../../../common/helpers/Loader";
 import Text from "../../../../../shared/Text/Text";
-import { provideAuth } from "../../../../../common/helpers/Auth";
-import { da } from "date-fns/locale";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Tooltip } from "@mui/material";
-import build from "react-multiselect-dropdown-bootstrap";
+import doubleDown from "../../../../../assets/images/double-down.png";
+import doubleUp from "../../../../../assets/images/double-up.png";
 
 const BuilderProjectList = (props) => {
    const { fetchBuilderProjectList } = props;
@@ -416,6 +414,7 @@ const BuilderProjectList = (props) => {
                      persistTableHead="true"
                      filterComponent={subHeaderComponentMemo}
                      keyField="id"
+                     // expandableIcon={doubleUp}
                   ></DataTableComponent>
                </div>
             </div>

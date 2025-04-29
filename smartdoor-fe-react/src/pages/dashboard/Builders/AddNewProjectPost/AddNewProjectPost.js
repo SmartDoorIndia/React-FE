@@ -87,6 +87,7 @@ const AddNewProjectPost = (props) => {
       reraNumber: "",
       separateAddress: "",
       stageOfProject: "Ready",
+      landAreaMeasurementUnit: "Acre",
    });
    const defaultAmenities = [
       "Common Guest",
@@ -699,6 +700,23 @@ const AddNewProjectPost = (props) => {
       // setAddressDetails(newData);
    };
 
+   const handleUnitChange = (newUnit) => {
+      const convertArea = (area, currentUnit) => {
+         if (currentUnit === "Acre" && newUnit === "Sq.Mt.") {
+            return (parseFloat(area) * 4046.8564224).toFixed(2);
+         } else if (currentUnit === "Sq.Mt." && newUnit === "Acre") {
+            return (parseFloat(area) * 0.0002471054).toFixed(2);
+         }
+         return area;
+      };
+
+      setData((prevData) => ({
+         ...prevData,
+         landArea: convertArea(prevData.landArea, prevData.landAreaMeasurementUnit),
+         landAreaMeasurementUnit: newUnit,
+      }));
+   };
+
    return (
       <div
          className="add-new-project-post mb-3"
@@ -881,19 +899,47 @@ const AddNewProjectPost = (props) => {
                               onChange={(e) => {
                                  setData({ ...data, landArea: Number(e?.target.value) });
                               }}
+                              // InputProps={{
+                              //    endAdornment: (
+                              //       <>
+                              //          <InputAdornment position="end" sx={{ marginLeft: "-60px" }}>
+                              //             <Box display="flex" alignItems="center">
+                              //                <Divider
+                              //                   orientation="vertical"
+                              //                   flexItem
+                              //                   sx={{ height: 45, marginLeft: -1 }}
+                              //                />{" "}
+                              //                &nbsp; Acre
+                              //             </Box>
+                              //          </InputAdornment>
+                              //       </>
+                              //    ),
+                              // }}
                               InputProps={{
                                  endAdornment: (
                                     <>
-                                       <InputAdornment position="end" sx={{ marginLeft: "-60px" }}>
-                                          <Box display="flex" alignItems="center">
-                                             <Divider
-                                                orientation="vertical"
-                                                flexItem
-                                                sx={{ height: 45, marginLeft: -1 }}
-                                             />{" "}
-                                             &nbsp; Acre
-                                          </Box>
-                                       </InputAdornment>
+                                       <TextField
+                                          className="w-100 p-0 me-5 textFieldInput"
+                                          select
+                                          onChange={(e) => {
+                                             handleUnitChange(e?.target?.value);
+                                          }}
+                                          InputProps={{
+                                             style: {
+                                                border: "unset",
+                                                paddingRight: "0%",
+                                                marginLeft: "15%",
+                                             },
+                                          }}
+                                          value={data?.landAreaMeasurementUnit}
+                                       >
+                                          <MenuItem key={"Acre"} value={"Acre"}>
+                                             Acre
+                                          </MenuItem>
+                                          <MenuItem key={"Sq.Mt."} value={"Sq.Mt."}>
+                                             Sq.Mt
+                                          </MenuItem>
+                                       </TextField>
                                     </>
                                  ),
                               }}

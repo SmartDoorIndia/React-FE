@@ -18,7 +18,17 @@ import { RxCross2 } from "react-icons/rx";
 import { PiPlayCircleLight } from "react-icons/pi";
 import addIcon from "../../../../assets/svg/add.svg";
 import CONSTANTS from "../../../../common/helpers/Constants";
-import { Checkbox, InputAdornment, ListItemText, MenuItem, TextField } from "@mui/material";
+import {
+   Checkbox,
+   FormControl,
+   FormControlLabel,
+   InputAdornment,
+   ListItemText,
+   MenuItem,
+   Radio,
+   RadioGroup,
+   TextField,
+} from "@mui/material";
 import Units from "./AddNewUnit/Units";
 import {
    saveBuilderProject,
@@ -30,7 +40,15 @@ import Buttons from "../../../../shared/Buttons/Buttons";
 import POSTING_CONSTANTS from "../../../../common/helpers/POSTING_CONSTANTS";
 
 const AddNewSubProject = (props) => {
-   const { updateSubProject, builderId, editTower, toggleEditTower, updateSubProjectList, projectDetails } = props;
+   const {
+      updateSubProject,
+      builderId,
+      editTower,
+      toggleEditTower,
+      updateSubProjectList,
+      closeNewTowerForm,
+      projectDetails,
+   } = props;
    const [show, setShow] = useState(false);
    const [imageCategory, setImageCategory] = useState("Interior");
    const [selectedImages, setSelectedImages] = useState([]);
@@ -57,15 +75,15 @@ const AddNewSubProject = (props) => {
       propertyType: "",
       projectName: "",
       reraNumber: projectDetails?.builderProjectSearchDto[0]?.reraNumber || "",
-      totalAreaToDevelop: '',
+      totalAreaToDevelop: "",
       totalAreaMetrics: "Sq. Ft.",
       highlightsOrUsp: "",
       contactPersonName: projectDetails?.builderProjectSearchDto[0]?.contactPersonName || "",
       contactPersonNumber: projectDetails?.builderProjectSearchDto[0]?.contactPersonNumber || "",
       possessionFrom: "",
       possessionTo: "",
-      totalFloors: '',
-      unitsPerFloor: '',
+      totalFloors: "",
+      unitsPerFloor: "",
       amenities: [],
       properties: [],
       projectVideoUrl: "",
@@ -341,12 +359,14 @@ const AddNewSubProject = (props) => {
          //    setData((prevData) => ({ ...prevData, projectAmenities: [] }))
          // }
       }
-      if(projectDetails?.builderProjectSearchDto[0]?.totalTowers === 1) {
-         setData((prevData) => ({...prevData, totalAreaToDevelop : projectDetails?.builderProjectSearchDto[0]?.totalAreaToDevelop,
+      if (projectDetails?.builderProjectSearchDto[0]?.totalTowers === 1) {
+         setData((prevData) => ({
+            ...prevData,
+            totalAreaToDevelop: projectDetails?.builderProjectSearchDto[0]?.totalAreaToDevelop,
             amenities: projectDetails?.builderProjectSearchDto[0]?.projectAmenities,
             possessionFrom: projectDetails?.builderProjectSearchDto[0]?.possessionFrom,
-            possessionTo: projectDetails?.builderProjectSearchDto[0]?.possessionTo
-         }))
+            possessionTo: projectDetails?.builderProjectSearchDto[0]?.possessionTo,
+         }));
          const possessionFrom = projectDetails?.builderProjectSearchDto[0]?.possessionFrom;
          const date = new Date(possessionFrom);
 
@@ -586,7 +606,7 @@ const AddNewSubProject = (props) => {
                                        <>
                                           <InputAdornment
                                              position="end"
-                                             sx={{ marginLeft: "-120px" }}
+                                             // sx={{ marginLeft: "-120px" }}
                                           >
                                              <TextField
                                                 className="textFieldInput w-100"
@@ -605,10 +625,12 @@ const AddNewSubProject = (props) => {
                                                       display: "flex",
                                                       flexWrap: "wrap",
                                                       overflow: "hidden",
-                                                      maxHeight: "52px",
+                                                      maxHeight: "54px",
                                                       borderTopLeftRadius: "0px",
                                                       borderTopRightRadius: "0px",
                                                       width: "100% !important",
+                                                      paddingRight: "30px",
+                                                      marginLeft: "15%",
                                                    },
                                                 }}
                                              >
@@ -731,147 +753,206 @@ const AddNewSubProject = (props) => {
                               />
                            </Col>
                         </Row>
-                        <Row className="date-container mt-4">
-                           <Col lg={4}>
-                              <Text text="Possession from" />
-                              <Row className="mt-4">
-                                 <Col sm="6">
-                                    <TextField
-                                       className="w-100 textFieldInput"
-                                       select
-                                       label="Month *"
-                                       name="month"
-                                       required={true}
-                                       value={monthYearFrom.month}
-                                       onChange={handleFromMonthChange}
-                                       sx={{
-                                          ".MuiInputBase-root": {
-                                             display: "flex",
-                                             flexWrap: "wrap",
-                                             overflow: "hidden",
-                                             // minHeight: "54px",
-                                             maxHeight: "52px",
-                                          },
-                                       }}
-                                       error={monthYearFrom.month ? false : error?.possessionFrom}
-                                    >
-                                       <MenuItem value="">Select Month</MenuItem>
-                                       {Array.from({ length: 12 }, (_, index) => (
-                                          <MenuItem
-                                             key={index}
-                                             value={String(index + 1).padStart(2, "0")}
-                                          >
-                                             {new Date(0, index).toLocaleString("default", {
-                                                month: "long",
-                                             })}
-                                          </MenuItem>
-                                       ))}
-                                    </TextField>
-                                 </Col>
-                                 <Col sm="6">
-                                    <TextField
-                                       className="w-100 textFieldInput"
-                                       select
-                                       label="Year *"
-                                       name="year"
-                                       required={true}
-                                       value={monthYearFrom.year}
-                                       onChange={handleFromYearChange}
-                                       sx={{
-                                          ".MuiInputBase-root": {
-                                             display: "flex",
-                                             flexWrap: "wrap",
-                                             overflow: "hidden",
-                                             // minHeight: "54px",
-                                             maxHeight: "52px",
-                                          },
-                                       }}
-                                       error={monthYearFrom.year ? false : error?.possessionFrom}
-                                    >
-                                       <MenuItem value="">Select Year</MenuItem>
-                                       {Array.from(
-                                          { length: 101 },
-                                          (_, index) => currentYear + 20 - index
-                                       ).map((year) => (
-                                          <MenuItem key={year} value={year}>
-                                             {year}
-                                          </MenuItem>
-                                       ))}
-                                    </TextField>
-                                 </Col>
-                              </Row>
-                           </Col>
-
-                           <Col lg="4">
-                              <Text text="Possession to" />
-                              <Row className="mt-4">
-                                 <Col sm="6">
-                                    <TextField
-                                       className="w-100 textFieldInput"
-                                       select
-                                       label="Month *"
-                                       name="month"
-                                       required={true}
-                                       value={monthYearTo.month}
-                                       onChange={handleToMonthChange}
-                                       sx={{
-                                          ".MuiInputBase-root": {
-                                             display: "flex",
-                                             flexWrap: "wrap",
-                                             overflow: "hidden",
-                                             // minHeight: "54px",
-                                             maxHeight: "52px",
-                                          },
-                                       }}
-                                       error={monthYearTo.month ? false : error?.possessionTo}
-                                    >
-                                       <MenuItem value="">Select Month</MenuItem>
-                                       {Array.from({ length: 12 }, (_, index) => (
-                                          <MenuItem
-                                             key={index}
-                                             value={String(index + 1).padStart(2, "0")}
-                                          >
-                                             {new Date(0, index).toLocaleString("default", {
-                                                month: "long",
-                                             })}
-                                          </MenuItem>
-                                       ))}
-                                    </TextField>
-                                 </Col>
-                                 <Col sm="6">
-                                    <TextField
-                                       className="w-100 textFieldInput"
-                                       select
-                                       label="Year *"
-                                       name="year"
-                                       required={true}
-                                       value={monthYearTo.year}
-                                       onChange={handleToYearChange}
-                                       sx={{
-                                          ".MuiInputBase-root": {
-                                             display: "flex",
-                                             flexWrap: "wrap",
-                                             overflow: "hidden",
-                                             // minHeight: "54px",
-                                             maxHeight: "52px",
-                                          },
-                                       }}
-                                       error={monthYearTo.year ? false : error?.possessionTo}
-                                    >
-                                       <MenuItem value="">Select Year</MenuItem>
-                                       {Array.from(
-                                          { length: 41 },
-                                          (_, index) => currentYear + 20 - index
-                                       ).map((year) => (
-                                          <MenuItem key={year} value={year}>
-                                             {year}
-                                          </MenuItem>
-                                       ))}
-                                    </TextField>
-                                 </Col>
-                              </Row>
+                        <Row className="mt-4">
+                           <Col lg={6}>
+                              <Text
+                                 text="Stage Of Project"
+                                 style={{ fontSize: "14px", fontWeight: "500" }}
+                              />
+                              <FormControl>
+                                 <RadioGroup
+                                    row
+                                    aria-labelledby="demo-radio-buttons-group-label"
+                                    defaultValue={data?.stageOfProject}
+                                    onChange={(e) => {
+                                       setData((prevData) => ({
+                                          ...prevData,
+                                          stageOfProject: e.target.value,
+                                       }));
+                                    }}
+                                    name="radio-buttons-group"
+                                 >
+                                    <FormControlLabel
+                                       value="Ready"
+                                       control={
+                                          <Radio
+                                             sx={{
+                                                color: "#BE1452", // default color
+                                                "&.Mui-checked": {
+                                                   color: "#BE1452", // checked color
+                                                },
+                                             }}
+                                          />
+                                       }
+                                       label="Ready"
+                                    />
+                                    <FormControlLabel
+                                       value="Under Construction"
+                                       control={
+                                          <Radio
+                                             sx={{
+                                                color: "#BE1452",
+                                                "&.Mui-checked": {
+                                                   color: "#BE1452",
+                                                },
+                                             }}
+                                          />
+                                       }
+                                       label="Under Construction"
+                                    />
+                                 </RadioGroup>
+                              </FormControl>
                            </Col>
                         </Row>
+                        {data?.stageOfProject === "Under Construction" ? (
+                           <>
+                              <Row className="date-container mt-0">
+                                 <Col lg={4}>
+                                    <Text text="Possession from" />
+                                    <Row className="mt-4">
+                                       <Col sm="6">
+                                          <TextField
+                                             className="w-100 textFieldInput"
+                                             select
+                                             label="Month *"
+                                             name="month"
+                                             required={true}
+                                             value={monthYearFrom.month}
+                                             onChange={handleFromMonthChange}
+                                             sx={{
+                                                ".MuiInputBase-root": {
+                                                   display: "flex",
+                                                   flexWrap: "wrap",
+                                                   overflow: "hidden",
+                                                   // minHeight: "54px",
+                                                   maxHeight: "52px",
+                                                },
+                                             }}
+                                             error={
+                                                monthYearFrom.month ? false : error?.possessionFrom
+                                             }
+                                          >
+                                             <MenuItem value="">Select Month</MenuItem>
+                                             {Array.from({ length: 12 }, (_, index) => (
+                                                <MenuItem
+                                                   key={index}
+                                                   value={String(index + 1).padStart(2, "0")}
+                                                >
+                                                   {new Date(0, index).toLocaleString("default", {
+                                                      month: "long",
+                                                   })}
+                                                </MenuItem>
+                                             ))}
+                                          </TextField>
+                                       </Col>
+                                       <Col sm="6">
+                                          <TextField
+                                             className="w-100 textFieldInput"
+                                             select
+                                             label="Year *"
+                                             name="year"
+                                             required={true}
+                                             value={monthYearFrom.year}
+                                             onChange={handleFromYearChange}
+                                             sx={{
+                                                ".MuiInputBase-root": {
+                                                   display: "flex",
+                                                   flexWrap: "wrap",
+                                                   overflow: "hidden",
+                                                   // minHeight: "54px",
+                                                   maxHeight: "52px",
+                                                },
+                                             }}
+                                             error={
+                                                monthYearFrom.year ? false : error?.possessionFrom
+                                             }
+                                          >
+                                             <MenuItem value="">Select Year</MenuItem>
+                                             {Array.from(
+                                                { length: 101 },
+                                                (_, index) => currentYear + 20 - index
+                                             ).map((year) => (
+                                                <MenuItem key={year} value={year}>
+                                                   {year}
+                                                </MenuItem>
+                                             ))}
+                                          </TextField>
+                                       </Col>
+                                    </Row>
+                                 </Col>
+
+                                 <Col lg="4">
+                                    <Text text="Possession to" />
+                                    <Row className="mt-4">
+                                       <Col sm="6">
+                                          <TextField
+                                             className="w-100 textFieldInput"
+                                             select
+                                             label="Month *"
+                                             name="month"
+                                             required={true}
+                                             value={monthYearTo.month}
+                                             onChange={handleToMonthChange}
+                                             sx={{
+                                                ".MuiInputBase-root": {
+                                                   display: "flex",
+                                                   flexWrap: "wrap",
+                                                   overflow: "hidden",
+                                                   // minHeight: "54px",
+                                                   maxHeight: "52px",
+                                                },
+                                             }}
+                                             error={monthYearTo.month ? false : error?.possessionTo}
+                                          >
+                                             <MenuItem value="">Select Month</MenuItem>
+                                             {Array.from({ length: 12 }, (_, index) => (
+                                                <MenuItem
+                                                   key={index}
+                                                   value={String(index + 1).padStart(2, "0")}
+                                                >
+                                                   {new Date(0, index).toLocaleString("default", {
+                                                      month: "long",
+                                                   })}
+                                                </MenuItem>
+                                             ))}
+                                          </TextField>
+                                       </Col>
+                                       <Col sm="6">
+                                          <TextField
+                                             className="w-100 textFieldInput"
+                                             select
+                                             label="Year *"
+                                             name="year"
+                                             required={true}
+                                             value={monthYearTo.year}
+                                             onChange={handleToYearChange}
+                                             sx={{
+                                                ".MuiInputBase-root": {
+                                                   display: "flex",
+                                                   flexWrap: "wrap",
+                                                   overflow: "hidden",
+                                                   // minHeight: "54px",
+                                                   maxHeight: "52px",
+                                                },
+                                             }}
+                                             error={monthYearTo.year ? false : error?.possessionTo}
+                                          >
+                                             <MenuItem value="">Select Year</MenuItem>
+                                             {Array.from(
+                                                { length: 41 },
+                                                (_, index) => currentYear + 20 - index
+                                             ).map((year) => (
+                                                <MenuItem key={year} value={year}>
+                                                   {year}
+                                                </MenuItem>
+                                             ))}
+                                          </TextField>
+                                       </Col>
+                                    </Row>
+                                 </Col>
+                              </Row>
+                           </>
+                        ) : null}
 
                         <Row className="imageUploadRow mt-4">
                            <Col lg={4}>
@@ -964,7 +1045,7 @@ const AddNewSubProject = (props) => {
                                  )}
                               </Form.Group>
                               {error?.projectImages ? (
-                                 <Form.Text className="text-danger" style={{fontSize: '13px'}}>
+                                 <Form.Text className="text-danger" style={{ fontSize: "13px" }}>
                                     Please add tower images
                                  </Form.Text>
                               ) : null}
@@ -1174,6 +1255,14 @@ const AddNewSubProject = (props) => {
                            ) : null}
                            {!editTower && props?.newTowerinExisting ? (
                               <>
+                                 <Buttons
+                                    name={"Cancel"}
+                                    varient="secondary"
+                                    onClick={() => {
+                                       closeNewTowerForm();
+                                    }}
+                                 />{" "}
+                                 &nbsp;&nbsp;
                                  <Buttons
                                     name={"Done"}
                                     varient="primary"
