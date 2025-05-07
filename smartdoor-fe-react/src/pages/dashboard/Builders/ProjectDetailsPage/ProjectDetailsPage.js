@@ -60,6 +60,12 @@ const ProjectDetailsPage = (props) => {
    }, [projectDetails, props?.builderId]);
 
    const addMoreTower = () => {
+      // if(projectDetails?.builderProjectSearchDto[0]?.totalTowers > subProjectList?.length) {
+      //    setAddTowerFlag(true);
+      // } else {
+      //    showErrorToast("Please update total tower number...");
+      //    return null;
+      // }
       setAddTowerFlag(true);
    };
 

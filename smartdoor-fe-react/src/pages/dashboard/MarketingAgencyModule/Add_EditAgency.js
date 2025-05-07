@@ -16,7 +16,7 @@ const Add_EditAgency = (props) => {
     const [agencyDetails, setAgencyDetails] = useState(props.location.state?.agencyDetails || {
         agencyId: 0,
         agencyName: '',
-        location: '',
+        agencyLocation: '',
         contactName: '',
         contactNumber: null,
         contactEmail: ''
@@ -27,10 +27,10 @@ const Add_EditAgency = (props) => {
 
     useEffect(() => {
         console.log("Add")
-        // if(props.location.state.agencyDetails !== undefined) {
-        //     setAgencyDetails(props.location.state.agencyDetails)
-        //     console.log(props.location.state.agencyDetails)
-        // }
+        if(props.location.state.agencyDetails !== undefined) {
+            setAgencyDetails((prevData) => ({...prevData, agencyLocation : props.location.state.agencyDetails?.location}))
+            console.log(props.location.state.agencyDetails)
+        }
     }, []);
 
     const validateAgencyDetail = async () => {
@@ -102,11 +102,11 @@ const Add_EditAgency = (props) => {
                                         cityLatLng={null}
                                         placeholder="Enter City"
                                         id="AgencyCityAutoComplete"
-                                        onSelectOption={(e) => { setAgencyDetails({ ...agencyDetails, location: e.location }); console.log(e) }}
-                                        onInputChange={(value) => { setAgencyDetails({ ...agencyDetails, location: value }); }
+                                        onSelectOption={(e) => { setAgencyDetails({ ...agencyDetails, agencyLocation: e.location }); console.log(e) }}
+                                        onInputChange={(value) => { setAgencyDetails({ ...agencyDetails, agencyLocation: value }); }
                                         }
                                         predictionType="city"
-                                        customValue={agencyDetails?.location}
+                                        customValue={agencyDetails?.agencyLocation}
                                     />
                                     <Text
                                         color="dangerText"

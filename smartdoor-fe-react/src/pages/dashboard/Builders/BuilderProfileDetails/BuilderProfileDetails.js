@@ -183,18 +183,18 @@ const BuilderProfileDetails = (props) => {
       } else if (id === "contactNumber") {
          const mobileNum = handlePhoneChange(event);
          await setData((prevData) => ({ ...prevData, contactNumber: mobileNum }));
-         if(mobileNum?.length === 10 && data?.whatsappNumber?.length === 0) {
+         if (mobileNum?.length === 10 && data?.whatsappNumber?.length === 0) {
             await setData((prevData) => ({ ...prevData, whatsappNumber: mobileNum }));
          }
          validateForm(isChecked);
-      } else if(id === "instaUrl") {
-         if(value?.includes("https://")) {
+      } else if (id === "instaUrl") {
+         if (value?.includes("https://")) {
             await setData((prevData) => ({ ...prevData, instaUrl: value }));
          } else {
             await setData((prevData) => ({ ...prevData, instaUrl: "https://" + value }));
          }
-      } else if(id === "facebookUrl") {
-         if(value?.includes("https://")) {
+      } else if (id === "facebookUrl") {
+         if (value?.includes("https://")) {
             await setData((prevData) => ({ ...prevData, facebookUrl: value }));
          } else {
             await setData((prevData) => ({ ...prevData, facebookUrl: "https://" + value }));
@@ -302,7 +302,10 @@ const BuilderProfileDetails = (props) => {
                            ) : null}
                            {data?.status === "REJECTED" ? (
                               <>
-                                 <p className="info-text" style={{fontSize:'16px', color:'red'}}>
+                                 <p
+                                    className="info-text"
+                                    style={{ fontSize: "16px", color: "red" }}
+                                 >
                                     Your profile has been rejected because of{" "}
                                     {data?.rejectionComment}
                                  </p>
@@ -310,14 +313,20 @@ const BuilderProfileDetails = (props) => {
                            ) : null}
                            {data?.status === "ON_HOLD" ? (
                               <>
-                                 <p className="info-text" style={{fontSize:'16px', color:'red'}}>
+                                 <p
+                                    className="info-text"
+                                    style={{ fontSize: "16px", color: "red" }}
+                                 >
                                     Your profile is currently On Hold by SmartDoor Admin
                                  </p>
                               </>
                            ) : null}
                            {data?.status === "APPROVED" ? (
                               <>
-                                 <p className="info-text" style={{fontSize:'18px', color:'green'}}>
+                                 <p
+                                    className="info-text"
+                                    style={{ fontSize: "18px", color: "green" }}
+                                 >
                                     Your profile has been approved by Smartdoor Admin. You can now
                                     add new projects. Please resubmit your profile if you need to
                                     update any existing information.
@@ -547,20 +556,20 @@ const BuilderProfileDetails = (props) => {
                         <Row className="align-items-center mt-3">
                            <Col lg="4">
                               <TextField
-                                 id={"whatsappNumber"}
+                                 id={"contactNumber"}
                                  type="number"
                                  required={true}
                                  inputProps={{ min: 0 }}
                                  className="textFieldInput w-100"
-                                 label="Whatsapp Business Number"
-                                 value={data.whatsappNumber}
+                                 label="Phone Number"
+                                 value={data.contactNumber}
                                  onChange={(e) => handleChange(e)}
                                  disabled={
                                     data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
                                        ? true
                                        : false
                                  }
-                                 error={error?.whatsappNumber}
+                                 error={error?.contactNumber}
                               />
                            </Col>
                            <Col lg="4">
@@ -582,20 +591,20 @@ const BuilderProfileDetails = (props) => {
                            </Col>
                            <Col lg="4">
                               <TextField
-                                 id={"contactNumber"}
+                                 id={"whatsappNumber"}
                                  type="number"
                                  required={true}
                                  inputProps={{ min: 0 }}
                                  className="textFieldInput w-100"
-                                 label="Phone Number"
-                                 value={data.contactNumber}
+                                 label="Whatsapp Business Number"
+                                 value={data.whatsappNumber}
                                  onChange={(e) => handleChange(e)}
                                  disabled={
                                     data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
                                        ? true
                                        : false
                                  }
-                                 error={error?.contactNumber}
+                                 error={error?.whatsappNumber}
                               />
                            </Col>
                         </Row>

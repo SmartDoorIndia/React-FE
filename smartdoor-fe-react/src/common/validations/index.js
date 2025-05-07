@@ -688,12 +688,12 @@ export const validateAgencyDetails = (data) => {
   } else {
     errors.agencyName = ValidationMessages.fieldRequired.required;
   }
-  if (!isBlank(data.location)) {
-    if (data.location?.trim() === '' || data.location === null) {
-      errors.location = ValidationMessages.fieldRequired.required;
+  if (!isBlank(data.agencyLocation)) {
+    if (data.agencyLocation?.trim() === '' || data.agencyLocation === null) {
+      errors.agencyLocation = ValidationMessages.fieldRequired.required;
     }
   } else {
-    errors.location = ValidationMessages.fieldRequired.required;
+    errors.agencyLocation = ValidationMessages.fieldRequired.required;
   }
   if (!isBlank(data.contactName)) {
     if (data.contactName?.trim() === '' || data.contactName === null) {
