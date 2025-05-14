@@ -256,8 +256,9 @@ const BuilderProfileDetails = (props) => {
             if (userData?.roleName === "SUPER ADMIN") {
                history.goBack();
             } else {
-               setData((prevData) => ({ ...prevData, status: "UNDER_REVIEW" }));
+               setData((prevData) => ({ ...prevData, status: "UNDER_REVIEW", builderId: 0 }));
                setShowModal(true);
+               setLocalStorage("builderData", data);
             }
          }
       } catch (error) {

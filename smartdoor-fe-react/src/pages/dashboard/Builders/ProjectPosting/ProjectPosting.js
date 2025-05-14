@@ -47,7 +47,10 @@ const ProjectPosting = (props) => {
         console.log(projectId)
         setBuilderProjectId(projectId)
         if((userData?.roleId === 19) || (userData?.roleId === 1) || userData?.roleId === 22) {
-            history.goBack();
+            history.push('/admin/builders/builder-details/project-details', {
+                projectId: projectId,
+                builderId: builderId,
+             });
         }
     }
 

@@ -213,7 +213,7 @@ const SubProjectDetails = (props) => {
                   name="Edit Tower"
                   disabled={
                      props?.projectStatus === "UNDER_REVIEW" ||
-                     props?.projectStatus === "REJECTED" ||
+                     // props?.projectStatus === "REJECTED" ||
                      props?.projectStatus === "ON_HOLD"
                         ? true
                         : false
@@ -328,7 +328,7 @@ const SubProjectDetails = (props) => {
                         name="Edit Unit"
                         disabled={
                            props?.projectStatus === "UNDER_REVIEW" ||
-                           props?.projectStatus === "REJECTED" ||
+                           // props?.projectStatus === "REJECTED" ||
                            props?.projectStatus === "ON_HOLD"
                               ? true
                               : false
@@ -390,7 +390,7 @@ const SubProjectDetails = (props) => {
                   }
                }}
                disabled={
-                  props?.projectStatus === "UNDER_REVIEW" ||
+                  // props?.projectStatus === "UNDER_REVIEW" ||
                   props?.projectStatus === "REJECTED" ||
                   props?.projectStatus === "ON_HOLD"
                      ? true

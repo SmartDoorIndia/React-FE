@@ -792,7 +792,7 @@ const AddNewProjectPost = (props) => {
                               : "Location not available"}
                         </div>
                      </div>
-                     <div>
+                     {/* <div>
                         <TextField
                            className="mt-4 w-100 textFieldInput"
                            label="Separate Address (Optional)"
@@ -808,7 +808,7 @@ const AddNewProjectPost = (props) => {
                               setData({ ...data, separateAddress: e?.target.value });
                            }}
                         />
-                     </div>
+                     </div> */}
                   </Col>
                   <Col
                      lg={7}
@@ -899,50 +899,50 @@ const AddNewProjectPost = (props) => {
                               onChange={(e) => {
                                  setData({ ...data, landArea: Number(e?.target.value) });
                               }}
-                              // InputProps={{
-                              //    endAdornment: (
-                              //       <>
-                              //          <InputAdornment position="end" sx={{ marginLeft: "-60px" }}>
-                              //             <Box display="flex" alignItems="center">
-                              //                <Divider
-                              //                   orientation="vertical"
-                              //                   flexItem
-                              //                   sx={{ height: 45, marginLeft: -1 }}
-                              //                />{" "}
-                              //                &nbsp; Acre
-                              //             </Box>
-                              //          </InputAdornment>
-                              //       </>
-                              //    ),
-                              // }}
                               InputProps={{
                                  endAdornment: (
                                     <>
-                                       <TextField
-                                          className="w-100 p-0 me-5 textFieldInput"
-                                          select
-                                          onChange={(e) => {
-                                             handleUnitChange(e?.target?.value);
-                                          }}
-                                          InputProps={{
-                                             style: {
-                                                border: "unset",
-                                                paddingRight: "0%",
-                                                marginLeft: "15%",
-                                             },
-                                          }}
-                                          value={data?.landAreaMeasurementUnit}
-                                       >
-                                          <MenuItem key={"Acre"} value={"Acre"}>
-                                             Acre
-                                          </MenuItem>
-                                          <MenuItem key={"Sq.Mt."} value={"Sq.Mt."}>
-                                             Sq.Mt
-                                          </MenuItem>
-                                       </TextField>
+                                       <InputAdornment position="end" sx={{ marginLeft: "-60px" }}>
+                                          <Box display="flex" alignItems="center">
+                                             <Divider
+                                                orientation="vertical"
+                                                flexItem
+                                                sx={{ height: 45, marginLeft: -1 }}
+                                             />{" "}
+                                             &nbsp; Acre
+                                          </Box>
+                                       </InputAdornment>
                                     </>
                                  ),
                               }}
+                              // InputProps={{
+                              //    endAdornment: (
+                              //       <>
+                              //          <TextField
+                              //             className="w-100 p-0 me-5 textFieldInput"
+                              //             select
+                              //             onChange={(e) => {
+                              //                handleUnitChange(e?.target?.value);
+                              //             }}
+                              //             InputProps={{
+                              //                style: {
+                              //                   border: "unset",
+                              //                   paddingRight: "0%",
+                              //                   marginLeft: "15%",
+                              //                },
+                              //             }}
+                              //             value={data?.landAreaMeasurementUnit}
+                              //          >
+                              //             <MenuItem key={"Acre"} value={"Acre"}>
+                              //                Acre
+                              //             </MenuItem>
+                              //             <MenuItem key={"Sq.Mt."} value={"Sq.Mt."}>
+                              //                Sq.Mt
+                              //             </MenuItem>
+                              //          </TextField>
+                              //       </>
+                              //    ),
+                              // }}
                               error={error?.landArea}
                            />
                         </Col>
@@ -1013,7 +1013,7 @@ const AddNewProjectPost = (props) => {
                            />
                         </Col>
                      </Row>
-                     <Row>
+                     {/* <Row>
                         <Col lg={12}>
                            <Text
                               text="Stage Of Project"
@@ -1063,9 +1063,9 @@ const AddNewProjectPost = (props) => {
                               </RadioGroup>
                            </FormControl>
                         </Col>
-                     </Row>
-                     {data?.stageOfProject === "Under Construction" ? (
-                        <>
+                     </Row> */}
+                     {/* {data?.stageOfProject === "Under Construction" ? (
+                        <> */}
                            <Row className="date-container">
                               {/* Possession From */}
                               <Col lg={6}>
@@ -1238,8 +1238,8 @@ const AddNewProjectPost = (props) => {
                                  </Form.Group>
                               </Col>
                            </Row>
-                        </>
-                     ) : null}
+                        {/* </>
+                     ) : null} */}
                      <Row className="mt-4">
                         <Col lg={4}>
                            <TextField

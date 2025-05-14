@@ -44,7 +44,7 @@ const BuilderProjectList = (props) => {
    const [builderStatus, setBuilderStatus] = useState(props?.builderDetails?.status || builderData?.status || null);
 
    useEffect(async () => {
-      console.log(props?.builderDetails);
+      console.log(builderData);
       setLoading(true);
       if(props?.builderDetails !== null && props?.builderDetails !== undefined) {
          getBuilderById({ builderId: props.builderId, userId: props?.userId }).then((response) => {
@@ -344,7 +344,7 @@ const BuilderProjectList = (props) => {
                         placement="top-start"
                         style={{ width: "100%" }}
                         title={
-                           builderStatus !== "APPROVED"
+                           builderStatus !== "APPROVED" && builderStatus !== "UNDER_REVIEW"
                               ? "Builder Profile is not approved"
                               : "Add new Project"
                         }
@@ -352,7 +352,7 @@ const BuilderProjectList = (props) => {
                         <a style={{ textDecoration: "none" }}>
                            <Button
                               className="d-flex py-1 ml-3"
-                              disabled={builderStatus !== "APPROVED" ? true : false}
+                              disabled={builderStatus !== "APPROVED" && builderStatus !== "UNDER_REVIEW" ? true : false}
                               style={{
                                  color: "#BE1452",
                                  backgroundColor: "#F8F3F5",

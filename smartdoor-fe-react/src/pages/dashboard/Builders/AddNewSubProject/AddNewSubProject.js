@@ -753,7 +753,7 @@ const AddNewSubProject = (props) => {
                               />
                            </Col>
                         </Row>
-                        <Row className="mt-4">
+                        {/* <Row className="mt-4">
                            <Col lg={6}>
                               <Text
                                  text="Stage Of Project"
@@ -803,9 +803,9 @@ const AddNewSubProject = (props) => {
                                  </RadioGroup>
                               </FormControl>
                            </Col>
-                        </Row>
-                        {data?.stageOfProject === "Under Construction" ? (
-                           <>
+                        </Row> */}
+                        {/* {data?.stageOfProject === "Under Construction" ? (
+                           <> */}
                               <Row className="date-container mt-0">
                                  <Col lg={4}>
                                     <Text text="Possession from" />
@@ -951,8 +951,8 @@ const AddNewSubProject = (props) => {
                                     </Row>
                                  </Col>
                               </Row>
-                           </>
-                        ) : null}
+                           {/* </>
+                        ) : null} */}
 
                         <Row className="imageUploadRow mt-4">
                            <Col lg={4}>

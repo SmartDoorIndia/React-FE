@@ -60,12 +60,12 @@ const ProjectDetailsPage = (props) => {
    }, [projectDetails, props?.builderId]);
 
    const addMoreTower = () => {
-      // if(projectDetails?.builderProjectSearchDto[0]?.totalTowers > subProjectList?.length) {
-      //    setAddTowerFlag(true);
-      // } else {
-      //    showErrorToast("Please update total tower number...");
-      //    return null;
-      // }
+      if(projectDetails?.builderProjectSearchDto[0]?.totalTowers > subProjectList?.length) {
+         setAddTowerFlag(true);
+      } else {
+         showErrorToast("Please update total tower number...");
+         return null;
+      }
       setAddTowerFlag(true);
    };
 
@@ -191,7 +191,7 @@ const ProjectDetailsPage = (props) => {
                <>
                   <Text
                      text={
-                        "Project is under reviewed. Project Edit and add/edit tower is disabled."
+                        "Project is under reviewed."
                      }
                      style={{ fontSize: "14px", fontWeight: "600" }}
                   />
@@ -361,7 +361,7 @@ const ProjectDetailsPage = (props) => {
                            borderColor: "#DED6D9",
                         }}
                         disabled={
-                           projectDetails?.builderProjectSearchDto[0]?.status === "UNDER_REVIEW" ||
+                           // projectDetails?.builderProjectSearchDto[0]?.status === "UNDER_REVIEW" ||
                            projectDetails?.builderProjectSearchDto[0]?.status === "REJECTED" ||
                            projectDetails?.builderProjectSearchDto[0]?.status === "ON_HOLD"
                               ? true
