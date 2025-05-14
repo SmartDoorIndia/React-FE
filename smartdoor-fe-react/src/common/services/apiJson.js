@@ -3289,6 +3289,18 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  fetchContactLeadList: {
+    url: "/admin/user/getContactLeadList",
+    method: "POST",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 

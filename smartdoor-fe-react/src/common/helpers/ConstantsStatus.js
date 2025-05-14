@@ -18,7 +18,8 @@ const CONSTANTS_STATUS = {
     monthList : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     brokerStatus: [ "APPROVED", "REJECTED", "ON_HOLD", "PENDING_APPROVAL", "EXPIRED" ],
     brokerPostedProperty: ["PUBLISHED", "UNDER REVIEW" , "PENDING" , "QUERY" , "UNINSTALLED/SOLD" , "REJECTED"],
-    permissionList: ['Smart Door Posting', 'Non Smart Door Posting']
+    permissionList: ['Smart Door Posting', 'Non Smart Door Posting'],
+    leadStatusList : ['INITIATED', 'COMPLETED', 'DELETED']
  };
  
  export default CONSTANTS_STATUS;

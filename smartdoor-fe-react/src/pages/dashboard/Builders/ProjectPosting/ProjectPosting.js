@@ -109,7 +109,7 @@ const ProjectPosting = (props) => {
                                 </div>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <AddNewSubProject projectId={projectId} builderId={builderId} />
+                                <AddNewSubProject projectId={projectId} builderId={builderId} newTowerinExisting={true} />
                             </AccordionDetails>
                         </Accordion>
                     </>

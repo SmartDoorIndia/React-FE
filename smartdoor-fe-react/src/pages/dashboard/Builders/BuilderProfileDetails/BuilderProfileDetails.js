@@ -257,8 +257,11 @@ const BuilderProfileDetails = (props) => {
                history.goBack();
             } else {
                setData((prevData) => ({ ...prevData, status: "UNDER_REVIEW", builderId: 0 }));
+               let builderData = {...data};
+               builderData.status = 'UNDER_REVIEW';
+               builderData.builderId = 0;
                setShowModal(true);
-               setLocalStorage("builderData", data);
+               setLocalStorage("builderData", builderData);
             }
          }
       } catch (error) {

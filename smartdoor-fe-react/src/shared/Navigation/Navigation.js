@@ -226,6 +226,22 @@ const Nav = () => {
                         </Link>
                      </>
                   )}
+                  {userData.roleName === "SUPER ADMIN" && (
+                     <>
+                        <Link
+                           to="/admin/contact-leads"
+                           className={`nav-link ${
+                              pathname.includes("contact-leads") ? "nav-active" : ""
+                           }`}
+                        >
+                           <Image
+                              name="teamGroup"
+                              src={pathname.includes("contact-leads") ? brokerActive : dashboard}
+                           />
+                           Contact Leads
+                        </Link>
+                     </>
+                  )}
                   {(userData.roleName === "SUPER ADMIN" || userData.roleName === "NONSD ADMIN") && (
                      <>
                         <Link

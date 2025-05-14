@@ -2332,3 +2332,8 @@ export const setProjectStatus = async (data) => {
   const response = await mainApiService("setProjectStatus", data);
   return response
 }
+
+export const fetchContactLeadList = async (data) => {
+  const response = await mainApiService("fetchContactLeadList", data);
+  return response
+}
