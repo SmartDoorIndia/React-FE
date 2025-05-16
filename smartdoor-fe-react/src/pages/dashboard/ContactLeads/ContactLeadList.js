@@ -2,15 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "../../../shared/Image";
-import { showErrorToast, ToolTip } from "../../../common/helpers/Utils";
+import {
+   handleStatusElement,
+   showErrorToast,
+   showSuccessToast,
+   ToolTip,
+} from "../../../common/helpers/Utils";
 import Text from "../../../shared/Text/Text";
 import contentIco from "../../../assets/images/content-ico.png";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import "./ContactLeads.scss";
-import { fetchContactLeadList } from "../../../common/redux/actions";
-import { Form } from "react-bootstrap";
+import { changeContactLeadStatus, fetchContactLeadList } from "../../../common/redux/actions";
+import { Col, Form, FormControl, Modal } from "react-bootstrap";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
 import Buttons from "../../../shared/Buttons/Buttons";
+import pencilIcon from "../../../assets/svg/pencilIcon.svg";
+import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 
 const ContactLeadList = () => {
    const [leadList, setLeadList] = useState([]);
@@ -18,6 +25,9 @@ const ContactLeadList = () => {
    const [leadType, setLeadType] = useState("");
    const [startDate, setStartDate] = useState("");
    const [endDate, setEndDate] = useState("");
+   const [loading, setLoading] = useState(false);
+   const [showStatusModal, setShowStatusModal] = useState(false);
+   const [selectedLead, setSelectedLead] = useState({});
 
    const leadColumn = [
       {
@@ -25,7 +35,7 @@ const ContactLeadList = () => {
          selector: (row) => row.srNo,
          sortable: false,
          center: false,
-         maxWidth: "150px",
+         minWidth: "80px",
          cell: ({ srNo }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={srNo}>
                <Text size="Small" color="secondryColor elipsis-text" text={srNo} />
@@ -38,7 +48,7 @@ const ContactLeadList = () => {
          selector: (row) => row.name,
          sortable: false,
          center: false,
-         maxWidth: "150px",
+         maxWidth: "180px",
          cell: ({ name }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={name}>
                <Text size="Small" color="secondryColor elipsis-text" text={name} />
@@ -50,8 +60,8 @@ const ContactLeadList = () => {
          name: "Mobile",
          selector: (row) => row.mobile,
          sortable: false,
-         center: false,
-         maxWidth: "150px",
+         center: true,
+         maxWidth: "180px",
          cell: ({ mobile }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={mobile}>
                <Text size="Small" color="secondryColor elipsis-text" text={mobile} />
@@ -63,8 +73,8 @@ const ContactLeadList = () => {
          name: "City",
          selector: (row) => row.city,
          sortable: false,
-         center: false,
-         maxWidth: "150px",
+         center: true,
+         maxWidth: "180px",
          cell: ({ city }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={city}>
                <Text size="Small" color="secondryColor elipsis-text" text={city} />
@@ -76,41 +86,67 @@ const ContactLeadList = () => {
          name: "Status",
          selector: (row) => row.status,
          sortable: false,
-         center: false,
-         maxWidth: "150px",
+         center: true,
+         maxWidth: "180px",
          cell: ({ status }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={status}>
-               <Text size="Small" color="secondryColor elipsis-text" text={status} />
+               {handleStatusElement(status)}
             </ToolTip>
          ),
          id: 5,
       },
       {
          name: "Action",
-         selector: (row) => row.action,
+         selector: "lead",
          sortable: false,
-         center: false,
+         center: true,
          maxWidth: "150px",
-         cell: ({ row, srNo }) => (
+         cell: (lead) => (
             <div className="action">
                <ToolTip position="left" name="View Details">
-                  <span>
-                     <Image name="editIcon" src={contentIco} />
+                  <span
+                     className=""
+                     onClick={() => {
+                        setShowStatusModal(true);
+                        console.log(lead);
+                        setSelectedLead(lead);
+                     }}
+                  >
+                     <Image name="pencilIcon" src={contentIco} />
                   </span>
                </ToolTip>
             </div>
          ),
          id: 6,
       },
+      // {
+      //    name: "Action",
+      //    selector: (row) => row.action,
+      //    sortable: false,
+      //    center: false,
+      //    maxWidth: "150px",
+      //    cell: ({ row, srNo }) => (
+      //       <div className="action">
+      //          <ToolTip position="left" name="View Details">
+      //             <span>
+      //                <Image name="editIcon" src={contentIco} />
+      //             </span>
+      //          </ToolTip>
+      //       </div>
+      //    ),
+      //    id: 7,
+      // },
    ];
 
-   const getLeadList = () => {
-      const response = fetchContactLeadList({
-         status: "",
+   const getLeadList = async () => {
+      setLoading(true);
+      const response = await fetchContactLeadList({
+         status: status,
          leadType: "",
-         startDate: "",
-         endDate: "",
+         startDate: startDate + startDate ? " 00:00:00" : "",
+         endDate: endDate + endDate ? " 24:00:00" : "",
       });
+      setLoading(false);
       if (response?.status === 200) {
          setLeadList(response?.data?.resourceData);
       }
@@ -133,6 +169,20 @@ const ContactLeadList = () => {
       } else {
          showErrorToast("Please enter start date and end date or set both empty");
          return false;
+      }
+   };
+
+   const changeLeadStatus = async (leadStatus) => {
+      const response = await changeContactLeadStatus({
+         srNo: selectedLead?.srNo,
+         status: leadStatus,
+      });
+      if (response?.status === 200) {
+         showSuccessToast("Lead status updated successfully...");
+         setShowStatusModal(false);
+         getLeadList();
+      } else {
+         showErrorToast("Please try again...");
       }
    };
 
@@ -189,7 +239,8 @@ const ContactLeadList = () => {
                               setEndDate(e.target.value);
                            }}
                         />
-                     </Form.Group> &nbsp;&nbsp;&nbsp;&nbsp;
+                     </Form.Group>{" "}
+                     &nbsp;&nbsp;&nbsp;&nbsp;
                      <Buttons
                         name="Search"
                         varient="primary"
@@ -208,6 +259,7 @@ const ContactLeadList = () => {
             </div>
             <DataTableComponent
                className="contactLeadsTableWrapper"
+               progressPending={loading}
                columns={leadColumn}
                data={leadList}
                persistTableHead={true}
@@ -215,6 +267,195 @@ const ContactLeadList = () => {
                pagination={"off"}
             />
          </div>
+         <Modal
+            size="md"
+            show={showStatusModal}
+            onHide={() => {
+               setShowStatusModal(false);
+            }}
+            centered
+         >
+            <Modal.Header className="text-center">
+               <Text text="Lead Details" style={{ fontSize: "16px", fontWeight: "600" }} />
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  size='small'
+                  varient="secondary"
+                  onClick={() => {
+                     setShowStatusModal(false);
+                  }}
+               ></Buttons>
+            </Modal.Header>
+            <Modal.Body>
+               <div className="d-flex">
+                  <Col lg="4">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text="Name :"
+                        style={{ fontSize: "14px", fontWeight: "600" }}
+                     />
+                  </Col>
+                  <Col lg="8">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text={selectedLead?.name === null ? "-" : selectedLead?.name}
+                        style={{ fontSize: "14px", fontWeight: "500" }}
+                     />
+                  </Col>
+               </div>
+               <div className="d-flex">
+                  <Col lg="4">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text="Mobile :"
+                        style={{ fontSize: "14px", fontWeight: "600" }}
+                     />
+                  </Col>
+                  <Col lg="4">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text={selectedLead?.mobile === null ? "-" : selectedLead?.mobile}
+                        style={{ fontSize: "14px", fontWeight: "500" }}
+                     />
+                  </Col>
+               </div>
+               <div className="d-flex">
+                  <Col lg="4">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text="Email :"
+                        style={{ fontSize: "14px", fontWeight: "600" }}
+                     />
+                  </Col>
+                  <Col lg="4">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text={selectedLead?.email === null ? "-" : selectedLead?.email}
+                        style={{ fontSize: "14px", fontWeight: "500" }}
+                     />
+                  </Col>
+               </div>
+               <div className="d-flex">
+                  <Col lg="4">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text="City :"
+                        style={{ fontSize: "14px", fontWeight: "600" }}
+                     />
+                  </Col>
+                  <Col lg="8">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text={selectedLead?.city === null ? "-" : selectedLead?.city}
+                        style={{ fontSize: "14px", fontWeight: "500" }}
+                     />
+                  </Col>
+               </div>
+               <div className="d-flex">
+                  <Col lg="4">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text="Date:"
+                        style={{ fontSize: "14px", fontWeight: "600" }}
+                     />
+                  </Col>
+                  <Col lg="8">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text={
+                           selectedLead?.generatedDate === null ? "-" : selectedLead?.generatedDate
+                        }
+                        style={{ fontSize: "14px", fontWeight: "500" }}
+                     />
+                  </Col>
+               </div>
+               <div className="d-flex">
+                  <Col lg="4">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text="Message :"
+                        style={{ fontSize: "14px", fontWeight: "600" }}
+                     />
+                  </Col>
+                  <Col lg="8">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text={selectedLead?.message === null ? "-" : selectedLead?.message}
+                        style={{ fontSize: "14px", fontWeight: "500" }}
+                     />
+                  </Col>
+               </div>
+               {selectedLead?.status === "INITIATED" ? (
+                  <>
+                     <div>
+                        {/* <Text
+                           size="regular"
+                           fontWeight=""
+                           color="secondryColor"
+                           className="text-start"
+                           text="Change Lead Status :"
+                        /> */}
+                     </div>
+                     <div className="d-flex mt-2">
+                        <Buttons
+                           className='p-0 px-2'
+                           size="medium"
+                           name="Mark as Complete"
+                           onClick={() => {
+                              changeLeadStatus("COMPLETED");
+                           }}
+                        />{" "}
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <Buttons
+                           className='p-0 px-2'
+                           size="medium"
+                           name="Delete"
+                           onClick={() => {
+                              changeLeadStatus("DELETED");
+                           }}
+                        />{" "}
+                     </div>
+                  </>
+               ) : null}
+            </Modal.Body>
+         </Modal>
       </>
    );
 };

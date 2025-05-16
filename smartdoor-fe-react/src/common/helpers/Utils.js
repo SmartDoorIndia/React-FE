@@ -178,7 +178,7 @@ export function handleStatusElement(status) {
         className="tagSuccess defaultTag ml-2 "
       />
     );
-  } else if (['PENDING', 'Pending', 'ASSIGNED', 'UNDER REVIEW', 'Will decide later', 'Make an offer'].includes(status)) {
+  } else if (['PENDING', 'Pending', 'ASSIGNED', 'UNDER REVIEW', 'Will decide later', 'Make an offer', 'INITIATED'].includes(status)) {
     return (
       <Text
         size="xSmall"
@@ -189,7 +189,7 @@ export function handleStatusElement(status) {
       />
     );
   } else if (
-    ['CANCELLED', 'PROBLEM', 'NOT INTERESTED', 'ON HOLD', 'REJECTED', 'CLOSED', 'FAILED', 'NOT_ACCEPTED', 'DISCARDED', 'NOT VISITED', 'No, does not look interesting', 'Closed', 'Rejected'].includes(status)
+    ['CANCELLED', 'PROBLEM', 'NOT INTERESTED', 'ON HOLD', 'REJECTED', 'CLOSED', 'FAILED', 'NOT_ACCEPTED', 'DISCARDED', 'NOT VISITED', 'No, does not look interesting', 'Closed', 'Rejected', 'DELETED'].includes(status)
   ) {
     return (
       <Text

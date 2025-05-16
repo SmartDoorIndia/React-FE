@@ -2337,3 +2337,8 @@ export const fetchContactLeadList = async (data) => {
   const response = await mainApiService("fetchContactLeadList", data);
   return response
 }
+
+export const changeContactLeadStatus = async (data) => {
+  const response = await mainApiService("changeLeadStatus", data);
+  return response
+}

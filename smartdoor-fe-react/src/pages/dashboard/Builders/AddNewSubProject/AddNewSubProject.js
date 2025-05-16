@@ -1264,6 +1264,7 @@ const AddNewSubProject = (props) => {
                            {!editTower && props?.newTowerinExisting ? (
                               <>
                                  <Buttons
+                                    disabled={!saveSubProjectFlag}
                                     name={"Cancel"}
                                     varient="secondary"
                                     onClick={() => {

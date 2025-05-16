@@ -3301,6 +3301,18 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  changeLeadStatus: {
+    url: "/admin/user/changeContactLeadStatus/:srNo/:status",
+    method: "POST",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 
