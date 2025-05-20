@@ -148,7 +148,7 @@ const ContactLeadList = () => {
       });
       setLoading(false);
       if (response?.status === 200) {
-         setLeadList(response?.data?.resourceData);
+         setLeadList([...response?.data?.resourceData]);
       }
    };
 

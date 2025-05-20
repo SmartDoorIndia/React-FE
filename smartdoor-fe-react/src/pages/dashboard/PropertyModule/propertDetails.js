@@ -7,8 +7,8 @@ import ImageSliderComponent from "./ImageSliderComponent";
 import Buttons from "../../../shared/Buttons/Buttons";
 import userImg from "../../../assets/svg/avatar_sml.svg";
 import mailIcon from "../../../assets/images/mail-icon.svg";
-import LockClose from "../../../assets/svg/LockClose.svg"
-import LockOpen from "../../../assets/svg/LockOpen.svg"
+import LockClose from "../../../assets/svg/LockClose.svg";
+import LockOpen from "../../../assets/svg/LockOpen.svg";
 import {
    getPropertyDetails,
    getPropertyAnalyticsByPropertyId,
@@ -29,9 +29,9 @@ import {
    getAllDeletedProperties,
    getAllProperties,
    getNonSDProperties,
-   approveProperty
+   approveProperty,
 } from "../../../common/redux/actions";
-import * as Actions from '../../../common/redux/types';
+import * as Actions from "../../../common/redux/types";
 import MapComponent from "../../../shared/Map/MapComponent";
 import Loader from "../../../common/helpers/Loader";
 import { Link } from "react-router-dom";
@@ -58,19 +58,28 @@ import TimeStampAlgo from "../../../camera-related/timeMilis";
 import QrModal from "../../../shared/Modal/QrModal/QrModal";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Switch } from "@mui/material";
-import reviewIcon from "../../../assets/svg/reviewIcon.svg"
+import reviewIcon from "../../../assets/svg/reviewIcon.svg";
 import { getLocalStorage } from "../../../common/helpers/Utils";
 import PostingFields from "../../../common/helpers/PostingFields";
 // import videojs from 'video.js';
 // import 'video.js/dist/video-js.css';
 // import 'videojs-flash';
-import { ReactFlvPlayer } from 'react-flv-player';
+import { ReactFlvPlayer } from "react-flv-player";
 
 // const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
 const PropertyDetails = (props) => {
-   const { getPropertyAnalyticsByPropertyId, propertyAnalyticsData, module, getAllDeletedProperties, deletedPropertyData,
-      getAllProperties, allPropertyData, getNonSDProperties, allNonSDProperties } = props;
+   const {
+      getPropertyAnalyticsByPropertyId,
+      propertyAnalyticsData,
+      module,
+      getAllDeletedProperties,
+      deletedPropertyData,
+      getAllProperties,
+      allPropertyData,
+      getNonSDProperties,
+      allNonSDProperties,
+   } = props;
    const propertyId = props.location.state ? props.location.state.propertyId || "" : "";
    const userId = props.location.state ? props.location.state.userId || "" : "";
    const menuName = props.location.state ? props.location.state.menuName || "" : "";
@@ -95,16 +104,16 @@ const PropertyDetails = (props) => {
    // });
    const [imageLoader, setImageLoader] = useState(false);
    const [censorData, setCensorData] = useState({});
-   const [smartdoorBattery, setSmartdoorBattery] = useState('');
-   const [smartlockAdminPassCode, setSmartlockAdminPassCode] = useState('');
+   const [smartdoorBattery, setSmartdoorBattery] = useState("");
+   const [smartlockAdminPassCode, setSmartlockAdminPassCode] = useState("");
    const [door_status, setDoor_status] = useState("");
    const [censorBattery_status, setCensorBattery_status] = useState("");
    const [smartLockData, setSmartLockData] = useState("");
-   const [qrData, setQrData] = useState({})
-   const [showQr, setShowQr] = useState(false)
-   const [currentPlanData, setCurrentPlanData] = useState({})
-   const [upgradePlanData, setUpgradePlanData] = useState([])
-   const [visitorReviewList, setVisitorReviewList] = useState([])
+   const [qrData, setQrData] = useState({});
+   const [showQr, setShowQr] = useState(false);
+   const [currentPlanData, setCurrentPlanData] = useState({});
+   const [upgradePlanData, setUpgradePlanData] = useState([]);
+   const [visitorReviewList, setVisitorReviewList] = useState([]);
    const userData = getLocalStorage("authData");
    const dispatch = useDispatch();
    const [specList, setSpecList] = useState([]);
@@ -183,19 +192,17 @@ const PropertyDetails = (props) => {
    const _getSmartLockData = useCallback(async () => {
       try {
          const result_data = await getSmartLockData({ id: propertyId });
-         console.log(result_data)
+         console.log(result_data);
          if (result_data.data.status === 200 && result_data.data.resourceData) {
             console.log("result_data.data.resourceData:", result_data.data.resourceData);
             setSmartdoorBattery(result_data?.data?.resourceData?.lockPowerPercentage);
             setSmartlockAdminPassCode(result_data?.data?.resourceData?.smartlockAdminPasscode);
             setSmartLockData(result_data?.data?.resourceData);
-            console.log(result_data?.data?.resourceData?.lockPowerPercentage)
-            setShowQr(true)
+            console.log(result_data?.data?.resourceData?.lockPowerPercentage);
+            setShowQr(true);
             setTimeout(() => {
                console.log("smart lock data after update", smartLockData);
             }, 3000);
-
-
          }
       } catch (err) {
          showErrorToast("Unexpected Error.");
@@ -214,27 +221,59 @@ const PropertyDetails = (props) => {
                   setpropertyData(response.data.resourceData);
                   setOwnerId(response.data.resourceData.miscellaneousDetails.postedById);
                   setOwnerName(response.data.resourceData.miscellaneousDetails.ownerName);
-                  setVisitorReviewList(response.data.resourceData.visitorReviewList)
+                  setVisitorReviewList(response.data.resourceData.visitorReviewList);
                   _getSmartLockData({ propertyId });
-                  dispatch({ type: Actions.BASIC_DETAILS_SUCCESS, data: response.data.resourceData.basicDetails })
-                  dispatch({ type: Actions.ADDRESS_DETAILS_SUCCESS, data: response.data.resourceData.address })
-                  dispatch({ type: Actions.SPEC_DETAILS_SUCCESS, data: response.data.resourceData.specs })
-                  dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: response.data.resourceData.pricing })
-                  dispatch({ type: Actions.UPLOAD_IMAGES_SUCCESS, data: response.data.resourceData.uploads })
-                  dispatch({ type: Actions.TERMS_CONDITIONS_SUCCESS, data: response.data.resourceData.terms })
+                  dispatch({
+                     type: Actions.BASIC_DETAILS_SUCCESS,
+                     data: response.data.resourceData.basicDetails,
+                  });
+                  dispatch({
+                     type: Actions.ADDRESS_DETAILS_SUCCESS,
+                     data: response.data.resourceData.address,
+                  });
+                  dispatch({
+                     type: Actions.SPEC_DETAILS_SUCCESS,
+                     data: response.data.resourceData.specs,
+                  });
+                  dispatch({
+                     type: Actions.PRICING_DETAILS_SUCCESS,
+                     data: response.data.resourceData.pricing,
+                  });
+                  dispatch({
+                     type: Actions.UPLOAD_IMAGES_SUCCESS,
+                     data: response.data.resourceData.uploads,
+                  });
+                  dispatch({
+                     type: Actions.TERMS_CONDITIONS_SUCCESS,
+                     data: response.data.resourceData.terms,
+                  });
                   if (Object.keys(response.data.resourceData.basicDetails)?.length !== 0) {
                      let speclist = [];
                      let fields = response.data.resourceData.basicDetails;
-                     if (fields?.propertyType === 'Residential') {
-                        if (fields?.propertySubType === 'PG/Co-iving') {
-                           speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
-                           console.log("specs=> ", PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs)
+                     if (fields?.propertyType === "Residential") {
+                        if (fields?.propertySubType === "PG/Co-iving") {
+                           speclist =
+                              PostingFields.postingFieldsObject[fields.propertyCategory][
+                                 fields.stageOfProperty
+                              ][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs;
+                           console.log(
+                              "specs=> ",
+                              PostingFields.postingFieldsObject[fields.propertyCategory][
+                                 fields.stageOfProperty
+                              ][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
+                           );
                         } else {
-                           speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType][fields.propertySubType].Specs
+                           speclist =
+                              PostingFields.postingFieldsObject[fields.propertyCategory][
+                                 fields.stageOfProperty
+                              ][fields.propertyType][fields.propertySubType].Specs;
                         }
-                     } else if (fields?.propertyType === 'Commercial') {
-                        speclist = PostingFields.postingFieldsObject[fields.propertyCategory][fields.stageOfProperty][fields.propertyType].Specs
-                        console.log("speclist", speclist)
+                     } else if (fields?.propertyType === "Commercial") {
+                        speclist =
+                           PostingFields.postingFieldsObject[fields.propertyCategory][
+                              fields.stageOfProperty
+                           ][fields.propertyType].Specs;
+                        console.log("speclist", speclist);
                      }
                      setSpecList(speclist);
                   }
@@ -252,26 +291,21 @@ const PropertyDetails = (props) => {
 
    console.log("propertyData=> ", propertyData);
 
-
-
-
-   const _getPropertyPlanDetailsById = useCallback(
-      () => {
-         getPropertyPlanDetails({ propertyId: propertyId })
-            .then((response) => {
-               if (response.data) {
-                  if (response.data.resourceData && response.data.status === 200) {
-                     console.log(response.data.resourceData)
-                     setCurrentPlanData(response?.data?.resourceData?.currentPlanData)
-                     setUpgradePlanData(response?.data?.resourceData?.upgradePlanData)
-                  }
+   const _getPropertyPlanDetailsById = useCallback(() => {
+      getPropertyPlanDetails({ propertyId: propertyId })
+         .then((response) => {
+            if (response.data) {
+               if (response.data.resourceData && response.data.status === 200) {
+                  console.log(response.data.resourceData);
+                  setCurrentPlanData(response?.data?.resourceData?.currentPlanData);
+                  setUpgradePlanData(response?.data?.resourceData?.upgradePlanData);
                }
-            })
-            .catch((error) => {
-               console.log("error", error);
-            });
-      }
-   )
+            }
+         })
+         .catch((error) => {
+            console.log("error", error);
+         });
+   });
    console.log("censor data:", censorData);
    console.log("smart lock data", smartLockData);
 
@@ -388,7 +422,6 @@ const PropertyDetails = (props) => {
       }
    };
 
-
    // const handleViewRecording = async () => {
    //    try {
    //       const result = await getCameraDevice({ propertyid: propertyId });
@@ -401,8 +434,6 @@ const PropertyDetails = (props) => {
    //       console.log("err:", err);
    //    }
    // };
-
-
 
    const fileUpload = (event) => {
       // if (event.target.files && event.target.files[0]) {
@@ -517,17 +548,17 @@ const PropertyDetails = (props) => {
             const maxSizeInBytes = 15 * 1024 * 1024; // 10MB
             Array.from(event.target.files).map((file) => {
                if (file.size > maxSizeInBytes) {
-                  showErrorToast('File must be less than 15MB...')
+                  showErrorToast("File must be less than 15MB...");
                   return;
                }
-            })
-            let fileList = []
+            });
+            let fileList = [];
             for (let i = 0; i < event.target.files.length; i++) {
-               fileList.push(event.target.files[i])
-               formData.append('file', event.target.files[i]);
+               fileList.push(event.target.files[i]);
+               formData.append("file", event.target.files[i]);
             }
-            formData.append('id', propertyData.smartdoorPropertyId);
-            formData.append('enumType', 'PROPERTY_IMAGES');
+            formData.append("id", propertyData.smartdoorPropertyId);
+            formData.append("enumType", "PROPERTY_IMAGES");
             uploadImage(formData)
                .then((response) => {
                   setImageLoader(true);
@@ -545,9 +576,7 @@ const PropertyDetails = (props) => {
                         propertyDocs: [],
                         propertyImage: property_image,
                      };
-                     addImage(
-                        image_data
-                     )
+                     addImage(image_data)
                         .then((response) => {
                            setLoading(false);
                            setImageLoader(false);
@@ -563,7 +592,7 @@ const PropertyDetails = (props) => {
                            setLoading(false);
                            console.log("error", error);
                         });
-                     showSuccessToast(response.data.customMessage)
+                     showSuccessToast(response.data.customMessage);
                   }
                })
                .catch((error) => {
@@ -582,22 +611,21 @@ const PropertyDetails = (props) => {
          // accessToken: slData.accessToken,
          // lockId: slData.lockId,
          // lockmac: slData.lockmac,
-         propertyId: slData.propertyId
-      }
+         propertyId: slData.propertyId,
+      };
       setQrData(data, () => {
          console.log(qrData, "QR data");
       });
-      setShowQrModal(true)
-   }
+      setShowQrModal(true);
+   };
    const handleCloseQrModal = () => {
-      setShowQrModal(false)
-   }
+      setShowQrModal(false);
+   };
 
    useEffect(() => {
       _getPropertyDetails();
       getPropertyAnalyticsByPropertyId({ propertyId: propertyId });
       _getPropertyPlanDetailsById();
-
    }, [propertyId, _getPropertyDetails, getPropertyAnalyticsByPropertyId]);
 
    const handleClose = () => setShow(false);
@@ -678,69 +706,71 @@ const PropertyDetails = (props) => {
       let map = {
          propertyId: propertyId,
          userId: ownerId,
-         consumer_requested: false
-      }
+         consumer_requested: false,
+      };
       const response = await remoteUnlock(map);
       if (response?.status === 200) {
-         setRemoteUnlockresponse(response.data.resourceData)
-         remoteUnlockShow()
+         setRemoteUnlockresponse(response.data.resourceData);
+         remoteUnlockShow();
       } else {
-         setRemoteUnlockresponse(response?.data)
-         setRemoteUnlockErr(true)
+         setRemoteUnlockresponse(response?.data);
+         setRemoteUnlockErr(true);
       }
-   }
+   };
 
    const remoteUnlockShow = () => {
-      setShowRemoteUnlockModal(true)
-   }
+      setShowRemoteUnlockModal(true);
+   };
    const remoteUnlockHide = () => {
-      setShowRemoteUnlockModal(false)
-   }
+      setShowRemoteUnlockModal(false);
+   };
    const remoteOTPShow = () => {
-      setShowRemoteOTPModal(true)
-   }
+      setShowRemoteOTPModal(true);
+   };
    const remoteOTPHide = () => {
-      setShowRemoteOTPModal(false)
-   }
+      setShowRemoteOTPModal(false);
+   };
    const remoteOtp = async () => {
       let map = {
          propertyId: propertyId,
          userId: ownerId,
-         consumer_requested: false
-      }
+         consumer_requested: false,
+      };
       const response = await remoteOTP(map);
       if (response?.status === 200) {
-         setRemoteOTPresponse(response.data.resourceData)
-         remoteOTPShow()
+         setRemoteOTPresponse(response.data.resourceData);
+         remoteOTPShow();
       } else {
-         setRemoteOTPresponse(response?.data)
-         setRemoteOTPErr(true)
+         setRemoteOTPresponse(response?.data);
+         setRemoteOTPErr(true);
       }
-   }
+   };
    let deletedList = [];
    let PropertyList = [];
 
    const handleDelete = async () => {
-      const response = await deletePropertyById({ propertyId })
+      const response = await deletePropertyById({ propertyId });
       if (response?.data?.status === 200) {
          showSuccessToast("Property deleted successfully");
          await getAllDeletedProperties({
-            city: '',
-            zipcode: '',
-            location: '',
+            city: "",
+            zipcode: "",
+            location: "",
             pageSize: 8,
             pageNo: 1,
             userId: userData.userid,
-            searchString: '',
+            searchString: "",
             propertyId: null,
-            fromDate: '',
-            toDate: '',
-            defaultSort: false, defaultSortId: 'propertyId', defaultSortFieldId: 1
+            fromDate: "",
+            toDate: "",
+            defaultSort: false,
+            defaultSortId: "propertyId",
+            defaultSortFieldId: 1,
          });
          await getNonSDProperties({
             city: allNonSDProperties?.data?.city,
-            zipcode: '',
-            location: '',
+            zipcode: "",
+            location: "",
             pageSize: allNonSDProperties?.data?.rowsPerPage,
             pageNo: allNonSDProperties?.data?.currentPage,
             userId: userData.userid,
@@ -748,21 +778,21 @@ const PropertyDetails = (props) => {
             propertyId: allNonSDProperties?.data?.propertyId,
             fromDate: allNonSDProperties?.data?.fromDate,
             toDate: allNonSDProperties?.data?.toDate,
-            defaultSort: allNonSDProperties?.data?.defaultSort, defaultSortId: allNonSDProperties?.data?.defaultSortId, defaultSortFieldId: allNonSDProperties?.data?.defaultSortFieldId
-         })
-            .then((response) => {
-               setConfirmHideModal(false);
-               console.log(response)
-               PropertyList = response?.data?.resourceData
-            });
-         if (menuName === 'NonSDProperties') {
+            defaultSort: allNonSDProperties?.data?.defaultSort,
+            defaultSortId: allNonSDProperties?.data?.defaultSortId,
+            defaultSortFieldId: allNonSDProperties?.data?.defaultSortFieldId,
+         }).then((response) => {
+            setConfirmHideModal(false);
+            console.log(response);
+            PropertyList = response?.data?.resourceData;
+         });
+         if (menuName === "NonSDProperties") {
             handleSortedData();
-
          }
          await getAllProperties({
             city: allPropertyData?.data?.city,
-            zipcode: '',
-            location: '',
+            zipcode: "",
+            location: "",
             pageSize: allPropertyData?.data?.rowsPerPage,
             pageNo: allPropertyData?.data?.currentPage,
             userId: userData.userid,
@@ -772,35 +802,34 @@ const PropertyDetails = (props) => {
             propertyStatus: allPropertyData?.data?.propertyStatus,
             fromDate: allPropertyData?.data?.fromDate,
             toDate: allPropertyData?.data?.toDate,
-            defaultSort: allPropertyData?.data?.defaultSort, defaultSortId: allPropertyData?.data?.defaultSortId, defaultSortFieldId: allPropertyData?.data?.defaultSortFieldId
-         })
-            .then((response) => {
-               console.log(response)
-               PropertyList = response?.data?.resourceData
-            });
-         if (menuName === 'Properties') {
+            defaultSort: allPropertyData?.data?.defaultSort,
+            defaultSortId: allPropertyData?.data?.defaultSortId,
+            defaultSortFieldId: allPropertyData?.data?.defaultSortFieldId,
+         }).then((response) => {
+            console.log(response);
+            PropertyList = response?.data?.resourceData;
+         });
+         if (menuName === "Properties") {
             handleSortedData();
-
          }
       } else {
          showErrorToast("Property deletion failed");
       }
-   }
-
+   };
 
    const handleRestore = async () => {
-      const response = await restorePropertyById({ propertyId })
+      const response = await restorePropertyById({ propertyId });
       if (response?.data?.status === 200) {
-         let type = null
-         if (deletedPropertyData?.data?.smartLockProperty === 'SMARTDOOR') {
-            type = true
-         } else if (deletedPropertyData?.data?.smartLockProperty === 'NON SMARTDOOR') {
-            type = false
+         let type = null;
+         if (deletedPropertyData?.data?.smartLockProperty === "SMARTDOOR") {
+            type = true;
+         } else if (deletedPropertyData?.data?.smartLockProperty === "NON SMARTDOOR") {
+            type = false;
          }
          await getAllDeletedProperties({
             city: deletedPropertyData?.data?.city,
-            zipcode: '',
-            location: '',
+            zipcode: "",
+            location: "",
             pageSize: deletedPropertyData?.data?.rowsPerPage,
             pageNo: deletedPropertyData?.data?.currentPage,
             userId: userData.userid,
@@ -810,39 +839,44 @@ const PropertyDetails = (props) => {
             propertyStatus: deletedPropertyData?.data?.propertyStatus,
             fromDate: deletedPropertyData?.data?.fromDate,
             toDate: deletedPropertyData?.data?.toDate,
-            defaultSort: deletedPropertyData?.data?.defaultSort, defaultSortId: deletedPropertyData?.data?.defaultSortId, defaultSortFieldId: deletedPropertyData?.data?.defaultSortFieldId
-         })
-            .then((response) => {
-               console.log(response)
-               deletedList = response.data.resourceData
-            });
+            defaultSort: deletedPropertyData?.data?.defaultSort,
+            defaultSortId: deletedPropertyData?.data?.defaultSortId,
+            defaultSortFieldId: deletedPropertyData?.data?.defaultSortFieldId,
+         }).then((response) => {
+            console.log(response);
+            deletedList = response.data.resourceData;
+         });
          await getNonSDProperties({
-            city: '',
-            zipcode: '',
-            location: '',
+            city: "",
+            zipcode: "",
+            location: "",
             pageSize: 8,
             pageNo: 1,
             userId: userData.userid,
-            searchString: '',
+            searchString: "",
             searchString: null,
-            fromDate: '',
-            toDate: '',
-            defaultSort: false, defaultSortId: 'propertyId', defaultSortFieldId: 1
+            fromDate: "",
+            toDate: "",
+            defaultSort: false,
+            defaultSortId: "propertyId",
+            defaultSortFieldId: 1,
          });
          await getAllProperties({
-            city: '',
-            zipcode: '',
-            location: '',
+            city: "",
+            zipcode: "",
+            location: "",
             pageSize: 8,
             pageNo: 1,
             userId: userData.userid,
-            searchString: '',
+            searchString: "",
             propertyId: null,
             smartLockProperty: null,
             propertyStatus: null,
-            fromDate: '',
-            toDate: '',
-            defaultSort: false, defaultSortId: 'propertyId', defaultSortFieldId: 1
+            fromDate: "",
+            toDate: "",
+            defaultSort: false,
+            defaultSortId: "propertyId",
+            defaultSortFieldId: 1,
          });
          showSuccessToast("Property restored successfully");
          handleSortedData();
@@ -852,32 +886,27 @@ const PropertyDetails = (props) => {
       } else {
          showErrorToast("Property restored failed");
       }
-   }
+   };
 
    const handleBackButton = () => {
-      if (localStorage.getItem('autoRefresh') === 'Yes') {
-         if (menuName === 'Properties') {
-            history.push('/admin/property')
+      if (localStorage.getItem("autoRefresh") === "Yes") {
+         if (menuName === "Properties") {
+            history.push("/admin/property");
+         } else if (menuName === "NonSDProperties") {
+            history.push("/admin/nonsdproperty");
+         } else if (menuName === "DeletedProperties") {
+            history.push("/admin/deleted-unlisted-property");
          }
-         else if (menuName === 'NonSDProperties') {
-            history.push('/admin/nonsdproperty')
-         }
-         else if (menuName === 'DeletedProperties') {
-            history.push('/admin/deleted-unlisted-property')
-         }
-      }
-      else if (localStorage.getItem('autoRefresh') === 'No') {
-         if (menuName === 'Properties') {
-            history.push('/admin/property')
-         }
-         else if (menuName === 'NonSDProperties') {
-            history.push('/admin/nonsdproperty')
-         }
-         else if (menuName === 'DeletedProperties') {
-            history.push('/admin/deleted-unlisted-property')
+      } else if (localStorage.getItem("autoRefresh") === "No") {
+         if (menuName === "Properties") {
+            history.push("/admin/property");
+         } else if (menuName === "NonSDProperties") {
+            history.push("/admin/nonsdproperty");
+         } else if (menuName === "DeletedProperties") {
+            history.push("/admin/deleted-unlisted-property");
          }
       }
-   }
+   };
 
    const handleApproveProperty = () => {
       if (propertyData.smartdoorPropertyId) {
@@ -886,18 +915,18 @@ const PropertyDetails = (props) => {
                if (response.data && response.status === 200) {
                   _getPropertyDetails();
                   let type = null;
-                  if (allPropertyData?.data?.smartLockProperty === 'SMARTDOOR') {
+                  if (allPropertyData?.data?.smartLockProperty === "SMARTDOOR") {
                      type = true;
-                  } else if (allPropertyData?.data?.smartLockProperty === 'NON SMARTDOOR') {
+                  } else if (allPropertyData?.data?.smartLockProperty === "NON SMARTDOOR") {
                      type = false;
                   } else {
-                     type = null
+                     type = null;
                   }
-                  if (menuName === 'NonSDProperties') {
+                  if (menuName === "NonSDProperties") {
                      getNonSDProperties({
                         city: allNonSDProperties?.data?.city,
-                        zipcode: '',
-                        location: '',
+                        zipcode: "",
+                        location: "",
                         pageSize: allNonSDProperties?.data?.rowsPerPage,
                         pageNo: allNonSDProperties?.data?.currentPage,
                         userId: userData.userid,
@@ -905,18 +934,18 @@ const PropertyDetails = (props) => {
                         propertyId: allNonSDProperties?.data?.propertyId,
                         fromDate: allNonSDProperties?.data?.fromDate,
                         toDate: allNonSDProperties?.data?.toDate,
-                        defaultSort: allNonSDProperties?.data?.defaultSort, defaultSortId: allNonSDProperties?.data?.defaultSortId, defaultSortFieldId: allNonSDProperties?.data?.defaultSortFieldId
+                        defaultSort: allNonSDProperties?.data?.defaultSort,
+                        defaultSortId: allNonSDProperties?.data?.defaultSortId,
+                        defaultSortFieldId: allNonSDProperties?.data?.defaultSortFieldId,
                      }).then((response) => {
-                        console.log(response)
-                        PropertyList = response.data.resourceData
+                        console.log(response);
+                        PropertyList = response.data.resourceData;
                      });
-                  }
-
-                  else if (menuName === 'Properties') {
+                  } else if (menuName === "Properties") {
                      getAllProperties({
                         city: allPropertyData?.data?.city,
-                        zipcode: '',
-                        location: '',
+                        zipcode: "",
+                        location: "",
                         pageSize: allPropertyData?.data?.rowsPerPage,
                         pageNo: allPropertyData?.data?.currentPage,
                         userId: userData.userid,
@@ -926,10 +955,12 @@ const PropertyDetails = (props) => {
                         propertyStatus: allPropertyData?.data?.propertyStatus,
                         fromDate: allPropertyData?.data?.fromDate,
                         toDate: allPropertyData?.data?.toDate,
-                        defaultSort: allPropertyData?.data?.defaultSort, defaultSortId: allPropertyData?.data?.defaultSortId, defaultSortFieldId: allPropertyData?.data?.defaultSortFieldId
+                        defaultSort: allPropertyData?.data?.defaultSort,
+                        defaultSortId: allPropertyData?.data?.defaultSortId,
+                        defaultSortFieldId: allPropertyData?.data?.defaultSortFieldId,
                      }).then((response) => {
-                        console.log(response)
-                        PropertyList = response.data.resourceData
+                        console.log(response);
+                        PropertyList = response.data.resourceData;
                      });
                   }
                   handleSortedData(false);
@@ -939,30 +970,27 @@ const PropertyDetails = (props) => {
                console.log(err);
             });
       }
-   }
+   };
 
    const handleSortedData = (isGoBack) => {
       let filteredItems = [];
-      if (menuName === 'Properties') {
-         filteredItems = [...PropertyList]
-      }
-      else if (menuName === 'NonSDProperties') {
-         filteredItems = [...PropertyList]
-      }
-      else if (menuName === 'DeletedProperties') {
-         filteredItems = [...deletedList]
+      if (menuName === "Properties") {
+         filteredItems = [...PropertyList];
+      } else if (menuName === "NonSDProperties") {
+         filteredItems = [...PropertyList];
+      } else if (menuName === "DeletedProperties") {
+         filteredItems = [...deletedList];
       }
       const sorted = [...filteredItems].sort((a, b) => {
-         if (props.location?.state?.defaultSortId === 'propertyId') {
+         if (props.location?.state?.defaultSortId === "propertyId") {
             if (props.location?.state?.defaultSort === true) {
-               return a['propertyId'] - b['propertyId']; // Example sorting logic
+               return a["propertyId"] - b["propertyId"]; // Example sorting logic
             } else {
-               return b['propertyId'] - a['propertyId']; // Example sorting logic for descending order
+               return b["propertyId"] - a["propertyId"]; // Example sorting logic for descending order
             }
-         }
-         else if (props.location?.state?.defaultSortId === 'postedDate') {
-            const dateA = new Date(a['postedDate']);
-            const dateB = new Date(b['postedDate']);
+         } else if (props.location?.state?.defaultSortId === "postedDate") {
+            const dateA = new Date(a["postedDate"]);
+            const dateB = new Date(b["postedDate"]);
 
             if (props.location?.state?.defaultSort === true) {
                return dateA - dateB;
@@ -972,31 +1000,77 @@ const PropertyDetails = (props) => {
          }
       });
       console.log(sorted);
-      filteredItems = [...sorted]
-      if (menuName === 'Properties') {
+      filteredItems = [...sorted];
+      if (menuName === "Properties") {
          dispatch({
             type: Actions.PROPERTY_MODULE_SUCCESS,
-            data: { propertyData: [...sorted], records: allPropertyData?.data?.records, currentPage: allPropertyData?.data?.currentPage, rowsPerPage: allPropertyData?.data?.rowsPerPage, searchStr: allPropertyData?.data?.searchStr, propertyId: allPropertyData?.data?.propertyId, city: allPropertyData?.data?.city, location: allPropertyData?.data?.location, smartLockProperty: allPropertyData?.data?.smartLockProperty, propertyStatus: allPropertyData?.data?.propertyStatus, fromDate: allPropertyData?.data?.fromDate, toDate: allPropertyData?.data?.toDate, defaultSort: allPropertyData?.data?.defaultSort, defaultSortId: allPropertyData?.data?.defaultSortId }
+            data: {
+               propertyData: [...sorted],
+               records: allPropertyData?.data?.records,
+               currentPage: allPropertyData?.data?.currentPage,
+               rowsPerPage: allPropertyData?.data?.rowsPerPage,
+               searchStr: allPropertyData?.data?.searchStr,
+               propertyId: allPropertyData?.data?.propertyId,
+               city: allPropertyData?.data?.city,
+               location: allPropertyData?.data?.location,
+               smartLockProperty: allPropertyData?.data?.smartLockProperty,
+               propertyStatus: allPropertyData?.data?.propertyStatus,
+               fromDate: allPropertyData?.data?.fromDate,
+               toDate: allPropertyData?.data?.toDate,
+               defaultSort: allPropertyData?.data?.defaultSort,
+               defaultSortId: allPropertyData?.data?.defaultSortId,
+            },
          });
          if (isGoBack !== false) {
-            history.push("/admin/property", { defaultSort: props.location.state.defaultSort, defaultSortId: props.location.state.defaultSortId })
+            history.push("/admin/property", {
+               defaultSort: props.location.state.defaultSort,
+               defaultSortId: props.location.state.defaultSortId,
+            });
          }
-      }
-      else if (menuName === 'NonSDProperties') {
+      } else if (menuName === "NonSDProperties") {
          dispatch({
             type: Actions.NON_SD_PROPERTIES_SUCCESS,
-            data: { propertyData: [...sorted], records: allNonSDProperties?.data?.records, currentPage: allNonSDProperties?.data?.currentPage, rowsPerPage: allNonSDProperties?.data?.rowsPerPage, searchStr: allNonSDProperties?.data?.searchStr, propertyId: allNonSDProperties?.data?.propertyId, city: allNonSDProperties?.data?.city, location: allNonSDProperties?.data?.location, smartLockProperty: allNonSDProperties?.data?.smartLockProperty, propertyStatus: allNonSDProperties?.data?.propertyStatus, fromDate: allNonSDProperties?.data?.fromDate, toDate: allNonSDProperties?.data?.toDate, defaultSort: allNonSDProperties?.data?.defaultSort, defaultSortId: allNonSDProperties?.data?.defaultSortId }
+            data: {
+               propertyData: [...sorted],
+               records: allNonSDProperties?.data?.records,
+               currentPage: allNonSDProperties?.data?.currentPage,
+               rowsPerPage: allNonSDProperties?.data?.rowsPerPage,
+               searchStr: allNonSDProperties?.data?.searchStr,
+               propertyId: allNonSDProperties?.data?.propertyId,
+               city: allNonSDProperties?.data?.city,
+               location: allNonSDProperties?.data?.location,
+               smartLockProperty: allNonSDProperties?.data?.smartLockProperty,
+               propertyStatus: allNonSDProperties?.data?.propertyStatus,
+               fromDate: allNonSDProperties?.data?.fromDate,
+               toDate: allNonSDProperties?.data?.toDate,
+               defaultSort: allNonSDProperties?.data?.defaultSort,
+               defaultSortId: allNonSDProperties?.data?.defaultSortId,
+            },
          });
          if (isGoBack !== false) {
-            history.push("/admin/nonsdproperty")
+            history.push("/admin/nonsdproperty");
          }
-      }
-      else if (menuName === 'DeletedProperties') {
+      } else if (menuName === "DeletedProperties") {
          dispatch({
             type: Actions.DELETED_PROPERTY_DATA_SUCCESS,
-            data: { propertyData: [...sorted], records: deletedPropertyData?.data?.records, currentPage: deletedPropertyData?.data?.currentPage, rowsPerPage: deletedPropertyData?.data?.rowsPerPage, searchStr: deletedPropertyData?.data?.searchStr, propertyId: deletedPropertyData?.data?.propertyId, city: deletedPropertyData?.data?.city, location: deletedPropertyData?.data?.location, smartLockProperty: deletedPropertyData?.data?.smartLockProperty, propertyStatus: deletedPropertyData?.data?.propertyStatus, fromDate: deletedPropertyData?.data?.fromDate, toDate: deletedPropertyData?.data?.toDate, defaultSort: props.location?.state?.defaultSort, defaultSortId: props.location?.state?.defaultSortId }
+            data: {
+               propertyData: [...sorted],
+               records: deletedPropertyData?.data?.records,
+               currentPage: deletedPropertyData?.data?.currentPage,
+               rowsPerPage: deletedPropertyData?.data?.rowsPerPage,
+               searchStr: deletedPropertyData?.data?.searchStr,
+               propertyId: deletedPropertyData?.data?.propertyId,
+               city: deletedPropertyData?.data?.city,
+               location: deletedPropertyData?.data?.location,
+               smartLockProperty: deletedPropertyData?.data?.smartLockProperty,
+               propertyStatus: deletedPropertyData?.data?.propertyStatus,
+               fromDate: deletedPropertyData?.data?.fromDate,
+               toDate: deletedPropertyData?.data?.toDate,
+               defaultSort: props.location?.state?.defaultSort,
+               defaultSortId: props.location?.state?.defaultSortId,
+            },
          });
-         history.push('/admin/deleted-unlisted-property')
+         history.push("/admin/deleted-unlisted-property");
       }
    };
 
@@ -1004,10 +1078,19 @@ const PropertyDetails = (props) => {
       <>
          {Object.keys(propertyData).length > 0 ? (
             <>
-               {menuName !== "" ?
-                  <Buttons type="button" size={"medium"} color={"secondary"} varient="disable" name='Back' onClick={() => { handleBackButton() }}></Buttons>
-                  : null}
-               <div className="container" style={{ height: '84vh', overflowY: 'auto' }}>
+               {menuName !== "" ? (
+                  <Buttons
+                     type="button"
+                     size={"medium"}
+                     color={"secondary"}
+                     varient="disable"
+                     name="Back"
+                     onClick={() => {
+                        handleBackButton();
+                     }}
+                  ></Buttons>
+               ) : null}
+               <div className="container" style={{ height: "84vh", overflowY: "auto" }}>
                   <Row>
                      <Col md={8}>
                         {propertyData.uploads?.propertyImages?.length > 0 ? (
@@ -1018,7 +1101,10 @@ const PropertyDetails = (props) => {
                               imageLoader={imageLoader}
                            />
                         ) : (
-                           <ImageSliderComponent fileUpload={fileUpload} imageLoader={imageLoader} />
+                           <ImageSliderComponent
+                              fileUpload={fileUpload}
+                              imageLoader={imageLoader}
+                           />
                         )}
                         <div className="my-0 pb-3 border-bottom">
                            <h5 className="d-flex justify-content-between font-weight-bold mb-0">
@@ -1027,8 +1113,13 @@ const PropertyDetails = (props) => {
                                     size="large"
                                     fontWeight="mediumbold"
                                     color="secondry-color"
-                                    text={`Flat/House  ${propertyData.address.houseNumber || "-"}, ${propertyData.address.towerName ? `${propertyData.address.towerName},` : ""
-                                       } ${propertyData.address.otherSociety}`}
+                                    text={`Flat/House  ${
+                                       propertyData.address.houseNumber || "-"
+                                    }, ${
+                                       propertyData.address.towerName
+                                          ? `${propertyData.address.towerName},`
+                                          : ""
+                                    } ${propertyData.address.otherSociety}`}
                                  />
                                  <Text
                                     className="fw500"
@@ -1044,9 +1135,11 @@ const PropertyDetails = (props) => {
                                     size="large"
                                     fontWeight="mediumbold"
                                     color="secondry-color"
-                                    text={propertyData.basicDetails?.propertyCategory === "Selling"
-                                       ? `${setPrice(propertyData.pricing?.propertyRate)}`
-                                       : `${setPrice(propertyData.pricing?.propertyRate)}/month`}
+                                    text={
+                                       propertyData.basicDetails?.propertyCategory === "Selling"
+                                          ? `${setPrice(propertyData.pricing?.propertyRate)}`
+                                          : `${setPrice(propertyData.pricing?.propertyRate)}/month`
+                                    }
                                  />
                                  <Text
                                     className="fw500"
@@ -1072,14 +1165,13 @@ const PropertyDetails = (props) => {
                            <Loader />
                         ) : (
                            <div className="bg-white rounded px-3 py-3 border">
-                              {!propertyData.uninstallationDone ?
+                              {!propertyData.uninstallationDone ? (
                                  <div className="statusDiv">
                                     {/* { propertyData?.cameraPlan? */}
                                     {/* {propertyAnalyticsData?.basicPlan ? '' :   */}
 
                                     {/* }  */}
                                     {propertyData.basicDetails.propertyType === "Commercial" ? (
-
                                        <div className="lock-div">
                                           {showCameraButton()}
                                           <div className="lockIcon">
@@ -1088,7 +1180,11 @@ const PropertyDetails = (props) => {
                                           {/* <div>
                                        Smartlock Power % : {smartdoorBattery}%
                                     </div> */}
-                                          {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData.miscellaneousDetails?.deleted === false && propertyData.miscellaneousDetails.status === "UNDER REVIEW" ?
+                                          {propertyData.miscellaneousDetails?.smartLockProperty ===
+                                             true &&
+                                          propertyData.miscellaneousDetails?.deleted === false &&
+                                          propertyData.miscellaneousDetails.status ===
+                                             "UNDER REVIEW" ? (
                                              <>
                                                 <Text
                                                    className=" mt-2"
@@ -1118,13 +1214,12 @@ const PropertyDetails = (props) => {
                                                    color="primaryColor"
                                                    text={`Camera ID: ${cameraData[0]?.uuId}`}
                                                 />
-
-                                             </> : null
-                                          }
+                                             </>
+                                          ) : null}
                                           {propertyData.basicPlan ? null : (
                                              <>
                                                 {door_status ? (
-                                                   <div style={{ "display": "flex" }}>
+                                                   <div style={{ display: "flex" }}>
                                                       {/* <Text
                                                 
                                                 className=" mt-2"
@@ -1134,11 +1229,18 @@ const PropertyDetails = (props) => {
                                                 text={`Door Status: ${door_status}`}
                                              /> */}
 
-                                                      {door_status === "Open" ?
-                                                         <img className="LockIconOpen" src={LockOpen} />
-
-                                                         : <img className="LockIconClose" onClick={() => doorClose(smartLockData)} src={LockClose} />
-                                                      }
+                                                      {door_status === "Open" ? (
+                                                         <img
+                                                            className="LockIconOpen"
+                                                            src={LockOpen}
+                                                         />
+                                                      ) : (
+                                                         <img
+                                                            className="LockIconClose"
+                                                            onClick={() => doorClose(smartLockData)}
+                                                            src={LockClose}
+                                                         />
+                                                      )}
 
                                                       {/* <Buttons
                                              onClick={() => doorClose(smartLockData)}
@@ -1163,7 +1265,10 @@ const PropertyDetails = (props) => {
                                           )}
                                        </div>
                                     ) : null}
-                                 </div> : ''}
+                                 </div>
+                              ) : (
+                                 ""
+                              )}
 
                               {showCameraDD ? (
                                  <select
@@ -1178,11 +1283,12 @@ const PropertyDetails = (props) => {
                                     <option selected>Select camera</option>
                                     {cameraData.length
                                        ? cameraData.map((cItem, cIndx) => {
-                                          return (
-                                             <option value={cItem.uuId} key={cIndx}>{`camera ${cIndx + 1
-                                                } (${cItem.nickName})`}</option>
-                                          );
-                                       })
+                                            return (
+                                               <option value={cItem.uuId} key={cIndx}>{`camera ${
+                                                  cIndx + 1
+                                               } (${cItem.nickName})`}</option>
+                                            );
+                                         })
                                        : ""}
                                  </select>
                               ) : (
@@ -1200,22 +1306,29 @@ const PropertyDetails = (props) => {
                               className="mt-2 mb-2" />  */}
                               {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
                               <div className="d-flex justify-content-end">
-
-                                 {userData.roleName === 'SUPER ADMIN' && propertyData.miscellaneousDetails.status === 'UNDER REVIEW' && propertyData.miscellaneousDetails.smartLockProperty === false && propertyData?.miscellaneousDetails?.deleted === false ?
-
+                                 {userData.roleName === "SUPER ADMIN" &&
+                                 propertyData.miscellaneousDetails.status === "UNDER REVIEW" &&
+                                 propertyData.miscellaneousDetails.smartLockProperty === false &&
+                                 propertyData?.miscellaneousDetails?.deleted === false ? (
                                     <>
                                        <Buttons
                                           name="Approve"
                                           varient="primary"
                                           size="xSmall"
-                                          style={{ width: "100px", height: "28px", textAlign: "center" }}
+                                          style={{
+                                             width: "100px",
+                                             height: "28px",
+                                             textAlign: "center",
+                                          }}
                                           color="white"
                                           onClick={() => {
                                              handleApproveProperty();
                                           }}
-                                       /> &nbsp; &nbsp;
-                                    </> : null}
-                                 {userData.roleName === 'SUPER ADMIN' ?
+                                       />{" "}
+                                       &nbsp; &nbsp;
+                                    </>
+                                 ) : null}
+                                 {userData.roleName === "SUPER ADMIN" ? (
                                     <Link
                                        to={{
                                           pathname: "/admin/chat-history",
@@ -1223,22 +1336,23 @@ const PropertyDetails = (props) => {
                                              userId: userData.userid,
                                              ownerId: ownerId,
                                              ownerName: ownerName,
-                                             roleId: propertyData?.ownerRoleId
+                                             roleId: propertyData?.ownerRoleId,
                                           },
                                        }}
                                     >
                                        <Buttons
-                                          style={{ float: 'left' }}
+                                          style={{ float: "left" }}
                                           name="Chat"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
-                                          className=" mb-2" />
+                                          className=" mb-2"
+                                       />
                                     </Link>
-                                    : null}
+                                 ) : null}
                               </div>
                               <div className="d-flex mt-2">
-                                 {propertyData.miscellaneousDetails?.smartLockProperty === true ?
+                                 {propertyData.miscellaneousDetails?.smartLockProperty === true ? (
                                     <>
                                        <Buttons
                                           onClick={() => qrGenerator(smartLockData)}
@@ -1246,11 +1360,15 @@ const PropertyDetails = (props) => {
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
-                                          className="mt-2 mb-2" /> &nbsp;&nbsp;
+                                          className="mt-2 mb-2"
+                                       />{" "}
+                                       &nbsp;&nbsp;
                                     </>
-                                    : null}
+                                 ) : null}
 
-                                 {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData.miscellaneousDetails?.deleted === false && userData.roleName === 'SUPER ADMIN' ?
+                                 {propertyData.miscellaneousDetails?.smartLockProperty === true &&
+                                 propertyData.miscellaneousDetails?.deleted === false &&
+                                 userData.roleName === "SUPER ADMIN" ? (
                                     <>
                                        <Link
                                           to={{
@@ -1258,126 +1376,181 @@ const PropertyDetails = (props) => {
                                              state: {
                                                 propertyId: propertyData.smartdoorPropertyId,
                                                 smartLockData: smartLockData,
-                                                propertyDocsResp:
-                                                   propertyData.uploads,
-                                                userId: userId
+                                                propertyDocsResp: propertyData.uploads,
+                                                userId: userId,
                                              },
                                           }}
                                        >
                                           <Buttons
-                                             style={{ float: 'right' }}
+                                             style={{ float: "right" }}
                                              name="Show Device Data"
                                              varient="primary"
                                              size="xSmall"
                                              color="white"
-                                             className="mt-2 mb-2" />
+                                             className="mt-2 mb-2"
+                                          />
                                        </Link>
                                     </>
-                                    : null}
+                                 ) : null}
                               </div>
 
                               <div className="d-flex mt-2">
-
-                                 {propertyData.miscellaneousDetails?.smartLockProperty === true && propertyData?.miscellaneousDetails?.deleted === false && userData.roleName === 'SUPER ADMIN' ? (
-
+                                 {propertyData.miscellaneousDetails?.smartLockProperty === true &&
+                                 propertyData?.miscellaneousDetails?.deleted === false &&
+                                 userData.roleName === "SUPER ADMIN" ? (
                                     <>
                                        <Buttons
-                                          style={{ float: 'right' }}
+                                          style={{ float: "right" }}
                                           name="Remote Unlock"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
                                           className="mt-2 mb-2"
-                                          onClick={() => { remoteUnLock() }} /> &nbsp; &nbsp;
+                                          onClick={() => {
+                                             remoteUnLock();
+                                          }}
+                                       />{" "}
+                                       &nbsp; &nbsp;
                                        <Buttons
-                                          style={{ float: 'right' }}
+                                          style={{ float: "right" }}
                                           name="Remote OTP"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
                                           className="mt-2 mb-2"
-                                          onClick={() => { remoteOtp() }} />
+                                          onClick={() => {
+                                             remoteOtp();
+                                          }}
+                                       />
                                     </>
-                                 ) : (null)}
+                                 ) : null}
                               </div>
                               <div className="d-flex mt-2">
-                                 {userData.roleName === 'SUPER ADMIN' ?
+                                 {userData.roleName === "SUPER ADMIN" ? (
                                     <>
                                        <Buttons
-                                          style={{ float: 'left' }}
+                                          style={{ float: "left" }}
                                           name="Edit Property"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2"
                                           onClick={() => {
-                                             localStorage.setItem('autoRefresh', 'Yes')
-                                             let miscellaneousDetailsDto = propertyData.miscellaneousDetails;
-                                             if (propertyData.miscellaneousDetails.status !== null) {
+                                             localStorage.setItem("autoRefresh", "Yes");
+                                             let miscellaneousDetailsDto =
+                                                propertyData.miscellaneousDetails;
+                                             if (
+                                                propertyData.miscellaneousDetails.status !== null
+                                             ) {
                                                 miscellaneousDetailsDto.draft = false;
                                              }
-                                             history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: miscellaneousDetailsDto })
-                                          }} /> &nbsp; &nbsp;
-
+                                             history.push(
+                                                "/admin/property/property-details/EditPost",
+                                                {
+                                                   existingDetails: {
+                                                      propertyId: propertyData.smartdoorPropertyId,
+                                                      saveFlag: true,
+                                                   },
+                                                   miscellaneousDetails: miscellaneousDetailsDto,
+                                                }
+                                             );
+                                          }}
+                                       />{" "}
+                                       &nbsp; &nbsp;
                                     </>
-                                    : null}
-                                 {userData.roleName === 'MARKETING EXECUTIVE' && propertyData.miscellaneousDetails.status !== 'APPROVED' ?
+                                 ) : null}
+                                 {userData.roleName === "MARKETING EXECUTIVE" &&
+                                 propertyData.miscellaneousDetails.status !== "APPROVED" ? (
                                     <>
                                        <Buttons
-                                          style={{ float: 'left' }}
+                                          style={{ float: "left" }}
                                           name="Edit Property"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2"
                                           onClick={() => {
-                                             localStorage.setItem('autoRefresh', 'Yes')
-                                             let miscellaneousDetailsDto = propertyData.miscellaneousDetails;
-                                             if (propertyData.miscellaneousDetails.status !== null) {
+                                             localStorage.setItem("autoRefresh", "Yes");
+                                             let miscellaneousDetailsDto =
+                                                propertyData.miscellaneousDetails;
+                                             if (
+                                                propertyData.miscellaneousDetails.status !== null
+                                             ) {
                                                 miscellaneousDetailsDto.draft = false;
                                              }
-                                             history.push('/admin/property/property-details/EditPost', { existingDetails: { propertyId: propertyData.smartdoorPropertyId, saveFlag: true }, miscellaneousDetails: miscellaneousDetailsDto })
-                                          }} /> &nbsp; &nbsp;
-
+                                             history.push(
+                                                "/admin/property/property-details/EditPost",
+                                                {
+                                                   existingDetails: {
+                                                      propertyId: propertyData.smartdoorPropertyId,
+                                                      saveFlag: true,
+                                                   },
+                                                   miscellaneousDetails: miscellaneousDetailsDto,
+                                                }
+                                             );
+                                          }}
+                                       />{" "}
+                                       &nbsp; &nbsp;
                                     </>
-                                    : null}
-                                 {isDeleted === false && userData.roleName === 'MARKETING EXECUTIVE' && propertyData.miscellaneousDetails.status !== 'APPROVED' ?
+                                 ) : null}
+                                 {isDeleted === false &&
+                                 userData.roleName === "MARKETING EXECUTIVE" &&
+                                 propertyData.miscellaneousDetails.status !== "APPROVED" ? (
                                     <>
                                        <Buttons
-                                          style={{ float: 'left' }}
+                                          style={{ float: "left" }}
                                           name="Hide"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2 bg-danger"
-                                          onClick={() => { setConfirmHideModal(true) }} /> &nbsp; &nbsp;
-                                    </> : <></>}
-                                 {isDeleted === false && userData.roleName === 'SUPER ADMIN' ?
+                                          onClick={() => {
+                                             setConfirmHideModal(true);
+                                          }}
+                                       />{" "}
+                                       &nbsp; &nbsp;
+                                    </>
+                                 ) : (
+                                    <></>
+                                 )}
+                                 {isDeleted === false && userData.roleName === "SUPER ADMIN" ? (
                                     <>
                                        <Buttons
-                                          style={{ float: 'left' }}
+                                          style={{ float: "left" }}
                                           name="Hide"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2 bg-danger"
-                                          onClick={() => { setConfirmHideModal(true) }} /> &nbsp; &nbsp;
-                                    </> : <></>}
+                                          onClick={() => {
+                                             setConfirmHideModal(true);
+                                          }}
+                                       />{" "}
+                                       &nbsp; &nbsp;
+                                    </>
+                                 ) : (
+                                    <></>
+                                 )}
                               </div>
                               <div>
-                                 {isDeleted === true && userData.roleName === 'SUPER ADMIN' ?
+                                 {isDeleted === true && userData.roleName === "SUPER ADMIN" ? (
                                     <>
                                        <Buttons
-                                          style={{ float: 'left' }}
+                                          style={{ float: "left" }}
                                           name="Restore"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
                                           className=" mb-2 bg-danger"
-                                          onClick={() => { handleRestore() }} />
-                                    </> : <></>}
+                                          onClick={() => {
+                                             handleRestore();
+                                          }}
+                                       />
+                                    </>
+                                 ) : (
+                                    <></>
+                                 )}
                               </div>
-
 
                               <Text
                                  className="fw500 mt-5"
@@ -1428,9 +1601,11 @@ const PropertyDetails = (props) => {
                                     text={
                                        propertyAnalyticsData.data.registerdOn === null
                                           ? "Published On: - "
-                                          : `Published On: ${formateDate(propertyAnalyticsData.data.registerdOn) ||
-                                          "-"
-                                          }`
+                                          : `Published On: ${
+                                               formateDate(
+                                                  propertyAnalyticsData.data.registerdOn
+                                               ) || "-"
+                                            }`
                                     }
                                  />
                               </div>
@@ -1441,7 +1616,6 @@ const PropertyDetails = (props) => {
                                  <tbody>
                                     <tr>
                                        <td className="pl-0 ">
-
                                           <Text
                                              size="xSmall"
                                              fontWeight="fw500"
@@ -1456,7 +1630,6 @@ const PropertyDetails = (props) => {
                                           />
                                        </td>
                                        <td className="p-2">
-
                                           <Text
                                              size="xSmall"
                                              fontWeight="fw500"
@@ -1471,8 +1644,6 @@ const PropertyDetails = (props) => {
                                           />
                                        </td>
                                        <td className="p-2">
-
-
                                           <Text
                                              size="xSmall"
                                              fontWeight="fw500"
@@ -1489,8 +1660,6 @@ const PropertyDetails = (props) => {
                                     </tr>
                                     <tr>
                                        <td className="pl-0">
-
-
                                           <Text
                                              size="xSmall"
                                              fontWeight="fw500"
@@ -1505,8 +1674,6 @@ const PropertyDetails = (props) => {
                                           />
                                        </td>
                                        <td className="p-2">
-
-
                                           <Text
                                              size="xSmall"
                                              fontWeight="fw500"
@@ -1520,9 +1687,7 @@ const PropertyDetails = (props) => {
                                              text={propertyAnalyticsData.data.dealCancelled}
                                           />
                                        </td>
-                                       <td className="p-2">
-
-                                       </td>
+                                       <td className="p-2"></td>
                                     </tr>
                                  </tbody>
                               </table>
@@ -1548,24 +1713,33 @@ const PropertyDetails = (props) => {
                                           />
                                        </div>
                                        <div className="flex-1 align-items-center ml-2 ownerdetail">
-
                                           <ToolTip
                                              position="top"
-                                             name={propertyData.miscellaneousDetails.ownerName || propertyData.miscellaneousDetails.postedByName}
+                                             name={
+                                                propertyData.miscellaneousDetails.ownerName ||
+                                                propertyData.miscellaneousDetails.postedByName
+                                             }
                                           >
                                              <Text
                                                 size="Small"
                                                 fontWeight="mediumbold"
                                                 className="userName"
                                                 color="secondry-color"
-                                                text={propertyData.miscellaneousDetails.ownerName || propertyData.miscellaneousDetails.postedByName}
+                                                text={
+                                                   propertyData.miscellaneousDetails.ownerName ||
+                                                   propertyData.miscellaneousDetails.postedByName
+                                                }
                                              />
                                           </ToolTip>
                                           <Text
                                              className="fw500 wordWrap"
                                              size="xSmall"
                                              color="secondry-color"
-                                             text={propertyData.miscellaneousDetails.ownerMobileNumber || propertyData.miscellaneousDetails.postedByMobile}
+                                             text={
+                                                propertyData.miscellaneousDetails
+                                                   .ownerMobileNumber ||
+                                                propertyData.miscellaneousDetails.postedByMobile
+                                             }
                                           />
                                        </div>
                                     </div>
@@ -1575,7 +1749,9 @@ const PropertyDetails = (props) => {
                                           <Buttons
                                              onClick={() => setShowMsgModal(true)}
                                              disabled={
-                                                propertyData.miscellaneousDetails.ownerAvailable ? true : false
+                                                propertyData.miscellaneousDetails.ownerAvailable
+                                                   ? true
+                                                   : false
                                              }
                                              name="Owner"
                                              varient="primary"
@@ -1592,7 +1768,8 @@ const PropertyDetails = (props) => {
                                           {propertyData?.miscellaneousDetails.ownerAvailable ? (
                                              <img
                                                 className={
-                                                   "doc docOwner" + propertyData?.miscellaneousDetails.ownerAvailable
+                                                   "doc docOwner" +
+                                                   propertyData?.miscellaneousDetails.ownerAvailable
                                                       ? "doc docOwner disabled-icon"
                                                       : ""
                                                 }
@@ -1605,9 +1782,8 @@ const PropertyDetails = (props) => {
                                                    pathname: "/admin/property/property-documents",
                                                    state: {
                                                       propertyId: propertyData.smartdoorPropertyId,
-                                                      propertyDocsResp:
-                                                         propertyData.uploads,
-                                                      userId: userId
+                                                      propertyDocsResp: propertyData.uploads,
+                                                      userId: userId,
                                                    },
                                                 }}
                                              >
@@ -1820,7 +1996,7 @@ const PropertyDetails = (props) => {
                               {/* second Row */}
 
                               <tr>
-                                 {specList.includes('Carpet area/built-up area') ?
+                                 {specList.includes("Carpet area/built-up area") ? (
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -1835,11 +2011,16 @@ const PropertyDetails = (props) => {
                                           text={
                                              propertyData.specs?.carpetArea === null
                                                 ? "-"
-                                                : (propertyData.specs?.carpetArea + " " + propertyData.specs?.carpetAreaMeasurementUnit)
+                                                : propertyData.specs?.carpetArea +
+                                                  " " +
+                                                  propertyData.specs?.carpetAreaMeasurementUnit
                                           }
                                        />
-                                    </td> : ""}
-                                 {specList.includes('Carpet area/built-up area') ?
+                                    </td>
+                                 ) : (
+                                    ""
+                                 )}
+                                 {specList.includes("Carpet area/built-up area") ? (
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -1854,11 +2035,16 @@ const PropertyDetails = (props) => {
                                           text={
                                              propertyData.specs?.builtUpArea === null
                                                 ? "-"
-                                                : (propertyData.specs?.builtUpArea + " " + propertyData.specs?.builtUpAreaMeasurementUnit)
+                                                : propertyData.specs?.builtUpArea +
+                                                  " " +
+                                                  propertyData.specs?.builtUpAreaMeasurementUnit
                                           }
                                        />
-                                    </td> : ""}
-                                 {specList.includes('Plot area') ?
+                                    </td>
+                                 ) : (
+                                    ""
+                                 )}
+                                 {specList.includes("Plot area") ? (
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -1873,11 +2059,16 @@ const PropertyDetails = (props) => {
                                           text={
                                              propertyData.specs?.plotArea === null
                                                 ? "-"
-                                                : (propertyData.specs?.plotArea + " " + propertyData.specs?.plotAreaMeasurementUnit)
+                                                : propertyData.specs?.plotArea +
+                                                  " " +
+                                                  propertyData.specs?.plotAreaMeasurementUnit
                                           }
                                        />
-                                    </td> : ""}
-                                 {specList.includes('Open area') ?
+                                    </td>
+                                 ) : (
+                                    ""
+                                 )}
+                                 {specList.includes("Open area") ? (
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -1889,12 +2080,19 @@ const PropertyDetails = (props) => {
                                           size="Small"
                                           fontWeight="semibold"
                                           color="secondryColor"
-                                          text={propertyData.specs?.openArea === null
-                                             ? "-"
-                                             : propertyData.specs?.openArea + " " + propertyData.specs?.openAreaMeasurementUnit}
+                                          text={
+                                             propertyData.specs?.openArea === null
+                                                ? "-"
+                                                : propertyData.specs?.openArea +
+                                                  " " +
+                                                  propertyData.specs?.openAreaMeasurementUnit
+                                          }
                                        />
-                                    </td> : ""}
-                                 {specList.includes('Loading factor') ?
+                                    </td>
+                                 ) : (
+                                    ""
+                                 )}
+                                 {specList.includes("Loading factor") ? (
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -1906,11 +2104,16 @@ const PropertyDetails = (props) => {
                                           size="Small"
                                           fontWeight="semibold"
                                           color="secondryColor"
-                                          text={propertyData.specs?.loadingFactorInPercent === null
-                                             ? "-"
-                                             : propertyData.specs?.loadingFactorInPercent + "%"}
+                                          text={
+                                             propertyData.specs?.loadingFactorInPercent === null
+                                                ? "-"
+                                                : propertyData.specs?.loadingFactorInPercent + "%"
+                                          }
                                        />
-                                    </td> : ""}
+                                    </td>
+                                 ) : (
+                                    ""
+                                 )}
                               </tr>
 
                               {showMore ? (
@@ -1959,9 +2162,10 @@ const PropertyDetails = (props) => {
                                           color="secondryColor"
                                           text={"Brokerage Value"}
                                        />
-                                       {propertyData?.pricing?.brokerageType !== null ?
+                                       {propertyData?.pricing?.brokerageType !== null ? (
                                           <>
-                                             {propertyData?.pricing?.brokerageType === 'BrokerageAbsoluteValue' ?
+                                             {propertyData?.pricing?.brokerageType ===
+                                             "BrokerageAbsoluteValue" ? (
                                                 <Text
                                                    size="Small"
                                                    fontWeight="semibold"
@@ -1972,44 +2176,47 @@ const PropertyDetails = (props) => {
                                                          : "-"
                                                    }
                                                 />
-                                                : null}
-                                             {propertyData?.pricing?.brokerageType === 'BrokerageMonths' ?
+                                             ) : null}
+                                             {propertyData?.pricing?.brokerageType ===
+                                             "BrokerageMonths" ? (
                                                 <Text
                                                    size="Small"
                                                    fontWeight="semibold"
                                                    color="secondryColor"
                                                    text={
                                                       propertyData?.pricing?.brokerageValue
-                                                         ? (propertyData?.pricing?.brokerageValue + 'months of monthly rent')
+                                                         ? propertyData?.pricing?.brokerageValue +
+                                                           "months of monthly rent"
                                                          : "-"
                                                    }
                                                 />
-                                                : null}
-                                             {propertyData?.pricing?.brokerageType === 'BrokeragePercentage' ?
+                                             ) : null}
+                                             {propertyData?.pricing?.brokerageType ===
+                                             "BrokeragePercentage" ? (
                                                 <Text
                                                    size="Small"
                                                    fontWeight="semibold"
                                                    color="secondryColor"
                                                    text={
                                                       propertyData?.pricing?.brokerageValue
-                                                         ? (propertyData?.pricing?.brokerageValue + '% of property price')
+                                                         ? propertyData?.pricing?.brokerageValue +
+                                                           "% of property price"
                                                          : "-"
                                                    }
                                                 />
-                                                : null}
+                                             ) : null}
                                           </>
-                                          :
+                                       ) : (
                                           <Text
                                              size="Small"
                                              fontWeight="semibold"
                                              color="secondryColor"
-                                             text={
-                                                "N/A"
-                                             }
-                                          />}
+                                             text={"N/A"}
+                                          />
+                                       )}
                                     </td>
 
-                                    {specList.includes('Reserved car parkings') ?
+                                    {specList.includes("Reserved car parkings") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2027,8 +2234,11 @@ const PropertyDetails = (props) => {
                                                    : "-"
                                              }
                                           />
-                                       </td> : ""}
-                                    {specList.includes('Reserved two wheeler parkings') ?
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
+                                    {specList.includes("Reserved two wheeler parkings") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2046,14 +2256,17 @@ const PropertyDetails = (props) => {
                                                    : "-"
                                              }
                                           />
-                                       </td> : ""}
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
                                  </tr>
                               ) : null}
 
                               {/* forth row */}
                               {showMore ? (
                                  <tr>
-                                    {specList.includes('BHK') ?
+                                    {specList.includes("BHK") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2067,8 +2280,11 @@ const PropertyDetails = (props) => {
                                              color="secondryColor"
                                              text={propertyData.specs?.numberOfRooms || "-"}
                                           />
-                                       </td> : ""}
-                                    {specList.includes('Number of washrooms') ?
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
+                                    {specList.includes("Number of washrooms") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2082,8 +2298,11 @@ const PropertyDetails = (props) => {
                                              color="secondryColor"
                                              text={propertyData.specs?.numberOfBaths || "-"}
                                           />
-                                       </td> : ""}
-                                    {specList.includes('Entrance facing') ?
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
+                                    {specList.includes("Entrance facing") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2101,8 +2320,11 @@ const PropertyDetails = (props) => {
                                                    : "-"
                                              }
                                           />
-                                       </td> : ""}
-                                    {specList.includes('Overlooking') ?
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
+                                    {specList.includes("Overlooking") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2116,17 +2338,22 @@ const PropertyDetails = (props) => {
                                              color="secondryColor"
                                              text={
                                                 propertyData.specs?.propertyOverlookings
-                                                   ? propertyData.specs?.propertyOverlookings.join(', ')
+                                                   ? propertyData.specs?.propertyOverlookings.join(
+                                                        ", "
+                                                     )
                                                    : "-"
                                              }
                                           />
-                                       </td> : ""}
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
                                  </tr>
                               ) : null}
                               {/* fifth row */}
                               {showMore ? (
                                  <tr>
-                                    {specList.includes('Number of balconies') ?
+                                    {specList.includes("Number of balconies") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2140,8 +2367,13 @@ const PropertyDetails = (props) => {
                                              color="secondryColor"
                                              text={propertyData?.specs?.numberOfBalconies || "-"}
                                           />
-                                       </td> : ""}
-                                    {specList.includes('General amenities' || 'Internal amenities') ?
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
+                                    {specList.includes(
+                                       "General amenities" || "Internal amenities"
+                                    ) ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2153,16 +2385,30 @@ const PropertyDetails = (props) => {
                                              size="Small"
                                              fontWeight="semibold"
                                              color="secondryColor"
-                                             text={propertyData.specs?.internalAmenities.length !== 0 || propertyData.specs?.generalAmenities.length !== 0 || propertyData.specs?.commercialGeneralAmenities.length !== 0 ?
-                                                propertyData.specs?.internalAmenities + ", " + propertyData.specs?.generalAmenities + ", " + propertyData.specs?.commercialGeneralAmenities : '-'}
+                                             text={
+                                                propertyData.specs?.internalAmenities.length !==
+                                                   0 ||
+                                                propertyData.specs?.generalAmenities.length !== 0 ||
+                                                propertyData.specs?.commercialGeneralAmenities
+                                                   .length !== 0
+                                                   ? propertyData.specs?.internalAmenities +
+                                                     ", " +
+                                                     propertyData.specs?.generalAmenities +
+                                                     ", " +
+                                                     propertyData.specs?.commercialGeneralAmenities
+                                                   : "-"
+                                             }
                                           />
-                                       </td> : "-"}
+                                       </td>
+                                    ) : (
+                                       "-"
+                                    )}
                                  </tr>
                               ) : null}
                               {showMore ? (
                                  // Sixth Row
                                  <tr>
-                                    {specList.includes('Preferred for') ? (
+                                    {specList.includes("Preferred for") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2177,8 +2423,10 @@ const PropertyDetails = (props) => {
                                              text={propertyData.pricing.preferredFor || "-"}
                                           />
                                        </td>
-                                    ) : ""}
-                                    {specList.includes('Purpose') ? (
+                                    ) : (
+                                       ""
+                                    )}
+                                    {specList.includes("Purpose") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2190,7 +2438,11 @@ const PropertyDetails = (props) => {
                                              size="Small"
                                              fontWeight="semibold"
                                              color="secondryColor"
-                                             text={propertyData.specs?.purposes ? propertyData.specs.purposes.join(', ') : "-"}
+                                             text={
+                                                propertyData.specs?.purposes
+                                                   ? propertyData.specs.purposes.join(", ")
+                                                   : "-"
+                                             }
                                           />
                                        </td>
                                     ) : null}
@@ -2199,7 +2451,7 @@ const PropertyDetails = (props) => {
                               {showMore ? (
                                  //  Seventh Row
                                  <tr>
-                                    {specList.includes('Maintenance') ?
+                                    {specList.includes("Maintenance") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2211,13 +2463,16 @@ const PropertyDetails = (props) => {
                                              size="Small"
                                              fontWeight="semibold"
                                              color="secondryColor"
-                                             text={propertyData.specs?.maintenanceCharge === null
-                                                ? "-"
-                                                :
-                                                propertyData.specs.maintenanceCharge}
+                                             text={
+                                                propertyData.specs?.maintenanceCharge === null
+                                                   ? "-"
+                                                   : propertyData.specs.maintenanceCharge
+                                             }
                                           />
-                                       </td> : ""}
-
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
                                  </tr>
                               ) : null}
                               {showMore ? (
@@ -2259,7 +2514,7 @@ const PropertyDetails = (props) => {
                                           }
                                        />
                                     </td>
-                                    {specList.includes('Type of lease:') ?
+                                    {specList.includes("Type of lease:") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2271,15 +2526,18 @@ const PropertyDetails = (props) => {
                                              size="Small"
                                              fontWeight="semibold"
                                              color="secondryColor"
-                                             text={propertyData.pricing?.leaseType || '-'}
+                                             text={propertyData.pricing?.leaseType || "-"}
                                           />
-                                       </td> : ""}
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
                                  </tr>
                               ) : null}
                               {showMore ? (
                                  //  Nineth Row
                                  <tr>
-                                    {specList.includes('Furnishing type' || 'Unit furnishing') ?
+                                    {specList.includes("Furnishing type" || "Unit furnishing") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2287,21 +2545,27 @@ const PropertyDetails = (props) => {
                                              color="secondryColor"
                                              text={"Furnishing"}
                                           />
-                                          {propertyData.basicDetails?.propertyCategory === "Commercial" ?
-                                             (<Text
+                                          {propertyData.basicDetails?.propertyCategory ===
+                                          "Commercial" ? (
+                                             <Text
                                                 size="Small"
                                                 fontWeight="semibold"
                                                 color="secondryColor"
-                                                text={propertyData.specs?.unitFurnishing || "-"} />) :
-                                             (<Text
+                                                text={propertyData.specs?.unitFurnishing || "-"}
+                                             />
+                                          ) : (
+                                             <Text
                                                 size="Small"
                                                 fontWeight="semibold"
                                                 color="secondryColor"
                                                 text={propertyData.specs?.furnishing || "-"}
-                                             />)
-                                          }
-                                       </td> : ""}
-                                    {specList.includes('Furnishing description') ?
+                                             />
+                                          )}
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
+                                    {specList.includes("Furnishing description") ? (
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2313,16 +2577,14 @@ const PropertyDetails = (props) => {
                                              size="Small"
                                              fontWeight="semibold"
                                              color="secondryColor"
-                                             text={
-                                                propertyData.specs.furnishingDescription || "-"
-                                             }
+                                             text={propertyData.specs.furnishingDescription || "-"}
                                           />
-                                       </td> : ""}
-
-
+                                       </td>
+                                    ) : (
+                                       ""
+                                    )}
                                  </tr>
                               ) : null}
-
                            </table>
                            {showMore ? (
                               <div className="ml-2">
@@ -2336,11 +2598,12 @@ const PropertyDetails = (props) => {
                                     size="Small"
                                     fontWeight="semibold"
                                     color="secondryColor"
-                                    text={
-                                       propertyData.specs?.propertyDescription || "-"
-                                    }
+                                    text={propertyData.specs?.propertyDescription || "-"}
                                  />
-                              </div>) : ""}
+                              </div>
+                           ) : (
+                              ""
+                           )}
                         </div>
                         <div
                            onClick={() => setShowMore(!showMore)}
@@ -2434,7 +2697,10 @@ const PropertyDetails = (props) => {
                                  color="secondryColor"
                                  text={currentPlanData.autoRenewStatus ? "YES" : "NO"}
                               /> */}
-                                 <Switch checked={currentPlanData.autoRenewStatus ? true : false} color="warning" />
+                                 <Switch
+                                    checked={currentPlanData.autoRenewStatus ? true : false}
+                                    color="warning"
+                                 />
                               </td>
                               <td className="p-2">
                                  <Text
@@ -2477,101 +2743,106 @@ const PropertyDetails = (props) => {
                            color="secondryColor"
                            text="Previous Plan details"
                         />
-                        {upgradePlanData?.length > 0 ? <>
-                           {upgradePlanData?.map((planData) => (
-                              <table className="w-100 bg-white">
-                                 <tr>
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text="Plan Name"
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={planData.planName}
-                                       />
-                                    </td>
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text="Current Plan Start Date"
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={planData.currentPlanStartDate}
-                                       />
-                                    </td>
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text="Current Plan Expiry Date"
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={planData.expiryDate}
-                                       />
-                                    </td>
-                                 </tr>
-                                 <tr>
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text="Auto Renew Status"
-                                       />
-                                       {/* <Text
+                        {upgradePlanData?.length > 0 ? (
+                           <>
+                              {upgradePlanData?.map((planData) => (
+                                 <table className="w-100 bg-white">
+                                    <tr>
+                                       <td className="p-2">
+                                          <Text
+                                             size="xSmall"
+                                             fontWeight="bold"
+                                             color="secondryColor"
+                                             text="Plan Name"
+                                          />
+                                          <Text
+                                             size="Small"
+                                             fontWeight="semibold"
+                                             color="secondryColor"
+                                             text={planData.planName}
+                                          />
+                                       </td>
+                                       <td className="p-2">
+                                          <Text
+                                             size="xSmall"
+                                             fontWeight="bold"
+                                             color="secondryColor"
+                                             text="Current Plan Start Date"
+                                          />
+                                          <Text
+                                             size="Small"
+                                             fontWeight="semibold"
+                                             color="secondryColor"
+                                             text={planData.currentPlanStartDate}
+                                          />
+                                       </td>
+                                       <td className="p-2">
+                                          <Text
+                                             size="xSmall"
+                                             fontWeight="bold"
+                                             color="secondryColor"
+                                             text="Current Plan Expiry Date"
+                                          />
+                                          <Text
+                                             size="Small"
+                                             fontWeight="semibold"
+                                             color="secondryColor"
+                                             text={planData.expiryDate}
+                                          />
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td className="p-2">
+                                          <Text
+                                             size="xSmall"
+                                             fontWeight="bold"
+                                             color="secondryColor"
+                                             text="Auto Renew Status"
+                                          />
+                                          {/* <Text
                                        size="Small"
                                        fontWeight="semibold"
                                        color="secondryColor"
                                        text={currentPlanData.autoRenewStatus ? "YES" : "NO"}
                                     /> */}
-                                       <Switch checked={planData.autoRenewStatus ? true : false} color="warning" />
-                                    </td>
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text="Plan Start Date"
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={planData.planStartDate}
-                                       />
-                                    </td>
-                                    <td className="p-2">
-                                       <Text
-                                          size="xSmall"
-                                          fontWeight="bold"
-                                          color="secondryColor"
-                                          text="Security Deposit"
-                                       />
-                                       <Text
-                                          size="Small"
-                                          fontWeight="semibold"
-                                          color="secondryColor"
-                                          text={planData.securitydeposite}
-                                       />
-                                    </td>
-                                 </tr>
-                              </table>
-                           ))}
-                        </> :
+                                          <Switch
+                                             checked={planData.autoRenewStatus ? true : false}
+                                             color="warning"
+                                          />
+                                       </td>
+                                       <td className="p-2">
+                                          <Text
+                                             size="xSmall"
+                                             fontWeight="bold"
+                                             color="secondryColor"
+                                             text="Plan Start Date"
+                                          />
+                                          <Text
+                                             size="Small"
+                                             fontWeight="semibold"
+                                             color="secondryColor"
+                                             text={planData.planStartDate}
+                                          />
+                                       </td>
+                                       <td className="p-2">
+                                          <Text
+                                             size="xSmall"
+                                             fontWeight="bold"
+                                             color="secondryColor"
+                                             text="Security Deposit"
+                                          />
+                                          <Text
+                                             size="Small"
+                                             fontWeight="semibold"
+                                             color="secondryColor"
+                                             text={planData.securitydeposite}
+                                          />
+                                       </td>
+                                    </tr>
+                                 </table>
+                              ))}
+                           </>
+                        ) : (
                            <>
                               <Row>
                                  <Col md={12} className="mb-3">
@@ -2583,7 +2854,8 @@ const PropertyDetails = (props) => {
                                     />
                                  </Col>
                               </Row>
-                           </>}
+                           </>
+                        )}
                      </Col>
                   </Row>
 
@@ -2593,54 +2865,65 @@ const PropertyDetails = (props) => {
                      color="secondryColor"
                      text="Visitor Reviews"
                   />
-                  {visitorReviewList?.length > 0 ?
+                  {visitorReviewList?.length > 0 ? (
                      <>
                         <div className="d-flex whiteBg">
-                           <Col lg='4'>
+                           <Col lg="4">
                               <Text
                                  fontSize="medium"
                                  fontWeight="bold"
-                                 style={{ fontSize: 'medium' }}
+                                 style={{ fontSize: "medium" }}
                                  color="secondryColor"
                                  text="Visitor Name"
                               />
                            </Col>
-                           <Col lg='4'>
+                           <Col lg="4">
                               <Text
                                  fontSize="medium"
                                  fontWeight="bold"
-                                 style={{ fontSize: 'medium' }}
+                                 style={{ fontSize: "medium" }}
                                  color="secondryColor"
                                  text="Visitor Reviews"
                               />
                            </Col>
-                           <Col lg='4'>
+                           <Col lg="4">
                               <Text
                                  fontSize="medium"
                                  fontWeight="bold"
-                                 style={{ fontSize: 'medium' }}
+                                 style={{ fontSize: "medium" }}
                                  color="secondryColor"
                                  text="Comments"
                               />
                            </Col>
                         </div>
-                        <div style={{ height: '20rem', overflowY: 'auto' }}>
+                        <div style={{ height: "20rem", overflowY: "auto" }}>
                            {visitorReviewList?.map((element) => (
-                              <div className="d-flex whiteBg" style={{ marginTop: '0px' }}>
-                                 <Col lg='4'>
+                              <div className="d-flex whiteBg" style={{ marginTop: "0px" }}>
+                                 <Col lg="4">
                                     <Text
                                        fontSize="medium"
                                        fontWeight=""
-                                       style={{ fontSize: 'medium' }}
+                                       style={{ fontSize: "medium" }}
                                        color="secondryColor"
                                        text={element.visitorName}
                                     />
                                  </Col>
-                                 <Col lg='4'>
+                                 <Col lg="4">
                                     {/* {visitorReviewList} */}
-                                    {Array.from({ length: Number(element.visitRating) }, (_, index) => (
-                                       <img src={reviewIcon} alt="" style={{ alignItems: 'center', width: 'fit-content', height: '25px' }}></img>
-                                    ))}
+                                    {Array.from(
+                                       { length: Number(element.visitRating) },
+                                       (_, index) => (
+                                          <img
+                                             src={reviewIcon}
+                                             alt=""
+                                             style={{
+                                                alignItems: "center",
+                                                width: "fit-content",
+                                                height: "25px",
+                                             }}
+                                          ></img>
+                                       )
+                                    )}
                                     {/* <Text
                                  fontSize="40px"
                                  fontWeight="bold"
@@ -2648,7 +2931,7 @@ const PropertyDetails = (props) => {
                                  text={element.visitRating}
                               /> */}
                                  </Col>
-                                 <Col lg='4'>
+                                 <Col lg="4">
                                     <Text
                                        fontSize="40px"
                                        fontWeight=""
@@ -2660,13 +2943,16 @@ const PropertyDetails = (props) => {
                            ))}
                         </div>
                      </>
-                     : <>
+                  ) : (
+                     <>
                         <Text
                            fontSize="40px"
                            fontWeight="bold"
                            color="secondryColor"
                            text={"No reviews"}
-                        /></>}
+                        />
+                     </>
+                  )}
 
                   {/* <div>
                      <Text
@@ -2719,11 +3005,11 @@ const PropertyDetails = (props) => {
                      // sendMsgHandler={sendMsgHandler}
                      ownerId={ownerId}
                      userId={userId}
-                  // modalData={modalData}
-                  // dataFrom="user_manage"
-                  // closeModal={closeModal}
-                  // history={{ goBack: closeModal }}
-                  // getAllUsers={getAllUsers}
+                     // modalData={modalData}
+                     // dataFrom="user_manage"
+                     // closeModal={closeModal}
+                     // history={{ goBack: closeModal }}
+                     // getAllUsers={getAllUsers}
                   />
 
                   <QrModal
@@ -2732,15 +3018,15 @@ const PropertyDetails = (props) => {
                      // handleShow={handleshowQrModal}
                      handleClose={handleCloseQrModal}
                      headerText="QR Code"
-                  // subHeaderText="Message"
-                  // sendMsgHandler={sendMsgHandler}
-                  // ownerId={ownerId}
-                  // userId={userId}
-                  // modalData={modalData}
-                  // dataFrom="user_manage"
-                  // closeModal={closeModal}
-                  // history={{ goBack: closeModal }}
-                  // getAllUsers={getAllUsers}
+                     // subHeaderText="Message"
+                     // sendMsgHandler={sendMsgHandler}
+                     // ownerId={ownerId}
+                     // userId={userId}
+                     // modalData={modalData}
+                     // dataFrom="user_manage"
+                     // closeModal={closeModal}
+                     // history={{ goBack: closeModal }}
+                     // getAllUsers={getAllUsers}
                   />
 
                   {/* <ModalComponent /> */}
@@ -2755,7 +3041,14 @@ const PropertyDetails = (props) => {
             </>
          ) : null}
 
-         <Modal show={showRemoteOTPModal} onHide={() => { remoteOTPHide() }} centered style={{ backgroundImage: 'unset' }}>
+         <Modal
+            show={showRemoteOTPModal}
+            onHide={() => {
+               remoteOTPHide();
+            }}
+            centered
+            style={{ backgroundImage: "unset" }}
+         >
             <Modal.Body>
                <div>
                   <Text
@@ -2763,20 +3056,23 @@ const PropertyDetails = (props) => {
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text="Remote OTP" />
+                     text="Remote OTP"
+                  />
 
                   <Text
                      size="regular"
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"OTP : " + remoteOTPResponse?.keyboardPwd} />
+                     text={"OTP : " + remoteOTPResponse?.keyboardPwd}
+                  />
                   <Text
                      size="regular"
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"KeyboardPwdId : " + remoteOTPResponse?.keyboardPwdId} />
+                     text={"KeyboardPwdId : " + remoteOTPResponse?.keyboardPwdId}
+                  />
 
                   <div className="text-center mt-5 mb-3">
                      <Buttons
@@ -2786,13 +3082,23 @@ const PropertyDetails = (props) => {
                         size="xSmall"
                         color="black"
                         className="mr-3"
-                        onClick={() => { remoteOTPHide() }} />
+                        onClick={() => {
+                           remoteOTPHide();
+                        }}
+                     />
                   </div>
                </div>
             </Modal.Body>
          </Modal>
 
-         <Modal show={remoteOTPErr} onHide={() => { setRemoteOTPErr(false) }} centered style={{ backgroundImage: 'unset' }}>
+         <Modal
+            show={remoteOTPErr}
+            onHide={() => {
+               setRemoteOTPErr(false);
+            }}
+            centered
+            style={{ backgroundImage: "unset" }}
+         >
             <Modal.Body>
                <div>
                   <Text
@@ -2800,14 +3106,16 @@ const PropertyDetails = (props) => {
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text="Remote OTP" />
+                     text="Remote OTP"
+                  />
 
                   <Text
                      size="regular"
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"Message : " + remoteOTPResponse?.message} />
+                     text={"Message : " + remoteOTPResponse?.message}
+                  />
 
                   <div className="text-center mt-5 mb-3">
                      <Buttons
@@ -2817,13 +3125,23 @@ const PropertyDetails = (props) => {
                         size="xSmall"
                         color="black"
                         className="mr-3"
-                        onClick={() => { setRemoteOTPErr(false) }} />
+                        onClick={() => {
+                           setRemoteOTPErr(false);
+                        }}
+                     />
                   </div>
                </div>
             </Modal.Body>
          </Modal>
 
-         <Modal show={showRemoteUnlockModal} onHide={() => { remoteUnlockHide() }} centered style={{ backgroundImage: 'unset' }}>
+         <Modal
+            show={showRemoteUnlockModal}
+            onHide={() => {
+               remoteUnlockHide();
+            }}
+            centered
+            style={{ backgroundImage: "unset" }}
+         >
             <Modal.Body>
                <div>
                   <Text
@@ -2831,20 +3149,23 @@ const PropertyDetails = (props) => {
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text="Remote Unlock" />
+                     text="Remote Unlock"
+                  />
 
                   <Text
                      size="regular"
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"Error Code : " + remoteUnlockResponse?.errcode} />
+                     text={"Error Code : " + remoteUnlockResponse?.errcode}
+                  />
                   <Text
                      size="regular"
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"Error Message : " + remoteUnlockResponse?.errmsg} />
+                     text={"Error Message : " + remoteUnlockResponse?.errmsg}
+                  />
 
                   <div className="text-center mt-5 mb-3">
                      <Buttons
@@ -2854,12 +3175,22 @@ const PropertyDetails = (props) => {
                         size="xSmall"
                         color="black"
                         className="mr-3"
-                        onClick={() => { remoteUnlockHide() }} />
+                        onClick={() => {
+                           remoteUnlockHide();
+                        }}
+                     />
                   </div>
                </div>
             </Modal.Body>
          </Modal>
-         <Modal show={remoteUnlockErr} onHide={() => { setRemoteUnlockErr(false) }} centered style={{ backgroundImage: 'unset' }}>
+         <Modal
+            show={remoteUnlockErr}
+            onHide={() => {
+               setRemoteUnlockErr(false);
+            }}
+            centered
+            style={{ backgroundImage: "unset" }}
+         >
             <Modal.Body>
                <div>
                   <Text
@@ -2867,14 +3198,16 @@ const PropertyDetails = (props) => {
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text="Remote Unlock" />
+                     text="Remote Unlock"
+                  />
 
                   <Text
                      size="regular"
                      fontWeight="bold"
                      color="secondryColor"
                      className="text-center"
-                     text={"Error Message : " + remoteUnlockResponse?.message} />
+                     text={"Error Message : " + remoteUnlockResponse?.message}
+                  />
 
                   <div className="text-center mt-5 mb-3">
                      <Buttons
@@ -2884,19 +3217,42 @@ const PropertyDetails = (props) => {
                         size="xSmall"
                         color="black"
                         className="mr-3"
-                        onClick={() => { setRemoteUnlockErr(false) }} />
+                        onClick={() => {
+                           setRemoteUnlockErr(false);
+                        }}
+                     />
                   </div>
                </div>
             </Modal.Body>
          </Modal>
-         <Modal show={confirmHideModal} onHide={() => { setConfirmHideModal(false) }} centered>
+         <Modal
+            show={confirmHideModal}
+            onHide={() => {
+               setConfirmHideModal(false);
+            }}
+            centered
+         >
             <Modal.Body>
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  size="small"
+                  varient="secondary"
+                  onClick={() => {
+                     setConfirmHideModal(false);
+                  }}
+               ></Buttons>
                <Text
                   size="regular"
                   fontWeight="bold"
                   color="secondryColor"
-                  className="text-center"
-                  text={propertyData?.miscellaneousDetails?.smartLockProperty === true ? 'Devices on this property will remain active. Are you sure you want to hide this property? ' : 'Are you sure you want to hide this property?'} />
+                  className="text-center mt-3"
+                  text={
+                     propertyData?.miscellaneousDetails?.smartLockProperty === true
+                        ? "Devices on this property will remain active. Are you sure you want to hide this property? "
+                        : "Are you sure you want to hide this property?"
+                  }
+               />
 
                <div className="d-flex justify-content-center mt-5 mb-3">
                   <Buttons
@@ -2906,7 +3262,10 @@ const PropertyDetails = (props) => {
                      // size="xSmall"
                      color="black"
                      className="mr-3"
-                     onClick={() => { setConfirmHideModal(false); }} />
+                     onClick={() => {
+                        setConfirmHideModal(false);
+                     }}
+                  />
 
                   <Buttons
                      name="Confirm"
@@ -2915,7 +3274,10 @@ const PropertyDetails = (props) => {
                      // size="xSmall"
                      color="black"
                      className="mr-3"
-                     onClick={() => { handleDelete(); }} />
+                     onClick={() => {
+                        handleDelete();
+                     }}
+                  />
                </div>
             </Modal.Body>
          </Modal>
@@ -2923,18 +3285,23 @@ const PropertyDetails = (props) => {
    );
 };
 
-const mapStateToProps = ({ propertyAnalyticsData, deletedPropertyData, allPropertyData, allNonSDProperties }) => ({
+const mapStateToProps = ({
    propertyAnalyticsData,
    deletedPropertyData,
    allPropertyData,
-   allNonSDProperties
+   allNonSDProperties,
+}) => ({
+   propertyAnalyticsData,
+   deletedPropertyData,
+   allPropertyData,
+   allNonSDProperties,
 });
 
 const actions = {
    getPropertyAnalyticsByPropertyId,
    getAllDeletedProperties,
    getAllProperties,
-   getNonSDProperties
+   getNonSDProperties,
 };
 
 const withConnect = connect(mapStateToProps, actions);
