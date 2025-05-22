@@ -1,8 +1,9 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "../../../shared/Image";
 import {
+   formateDateTime,
    handleStatusElement,
    showErrorToast,
    showSuccessToast,
@@ -17,7 +18,8 @@ import { Col, Form, FormControl, Modal } from "react-bootstrap";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
 import Buttons from "../../../shared/Buttons/Buttons";
 import pencilIcon from "../../../assets/svg/pencilIcon.svg";
-import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import { FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material";
+import { isEmpty } from "validator";
 
 const ContactLeadList = () => {
    const [leadList, setLeadList] = useState([]);
@@ -28,6 +30,8 @@ const ContactLeadList = () => {
    const [loading, setLoading] = useState(false);
    const [showStatusModal, setShowStatusModal] = useState(false);
    const [selectedLead, setSelectedLead] = useState({});
+   const [remark, setRemark] = useState("");
+   const [remarkError, setRemarkError] = useState(false);
 
    const leadColumn = [
       {
@@ -143,8 +147,8 @@ const ContactLeadList = () => {
       const response = await fetchContactLeadList({
          status: status,
          leadType: "",
-         startDate: startDate + startDate ? " 00:00:00" : "",
-         endDate: endDate + endDate ? " 24:00:00" : "",
+         startDate: startDate ? startDate + " 00:00:00" : "",
+         endDate: endDate ? endDate + " 24:00:00" : "",
       });
       setLoading(false);
       if (response?.status === 200) {
@@ -176,6 +180,7 @@ const ContactLeadList = () => {
       const response = await changeContactLeadStatus({
          srNo: selectedLead?.srNo,
          status: leadStatus,
+         remark: remark
       });
       if (response?.status === 200) {
          showSuccessToast("Lead status updated successfully...");
@@ -394,7 +399,7 @@ const ContactLeadList = () => {
                         color="secondryColor"
                         className="text-start"
                         text={
-                           selectedLead?.generatedDate === null ? "-" : selectedLead?.generatedDate
+                           selectedLead?.generatedDate === null ? "-" : formateDateTime(selectedLead?.generatedDate, "DD-MM-YYYY hh:mm:ss a")
                         }
                         style={{ fontSize: "14px", fontWeight: "500" }}
                      />
@@ -424,6 +429,7 @@ const ContactLeadList = () => {
                </div>
                {selectedLead?.status === "INITIATED" ? (
                   <>
+                     <hr />
                      <div>
                         {/* <Text
                            size="regular"
@@ -433,13 +439,30 @@ const ContactLeadList = () => {
                            text="Change Lead Status :"
                         /> */}
                      </div>
+                     <TextField
+                        label="Remark"
+                        placeholder="Add Remark"
+                        className="textFieldInput w-100"
+                        type="text"
+                        required={true}
+                        multiline={true}
+                        value={remark}
+                        onChange={(e) => {setRemark(e.target.value)}}
+                        inputProps={{ maxLength: 100 }} 
+                        error={remarkError}
+                        />
                      <div className="d-flex mt-2">
                         <Buttons
                            className='p-0 px-2'
                            size="medium"
                            name="Mark as Complete"
                            onClick={() => {
-                              changeLeadStatus("COMPLETED");
+                              if(isEmpty(remark)) {
+                                 setRemarkError(true)
+                                 return null;
+                              } else {
+                                 changeLeadStatus("COMPLETED");
+                              }
                            }}
                         />{" "}
                         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -448,7 +471,12 @@ const ContactLeadList = () => {
                            size="medium"
                            name="Delete"
                            onClick={() => {
-                              changeLeadStatus("DELETED");
+                              if(isEmpty(remark)) {
+                                 setRemarkError(true)
+                                 return null;
+                              } else {
+                                 changeLeadStatus("DELETED");
+                              }
                            }}
                         />{" "}
                      </div>
