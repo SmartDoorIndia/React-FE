@@ -180,12 +180,13 @@ const ContactLeadList = () => {
       const response = await changeContactLeadStatus({
          srNo: selectedLead?.srNo,
          status: leadStatus,
-         remark: remark
+         remark: remark,
       });
       if (response?.status === 200) {
          showSuccessToast("Lead status updated successfully...");
          setShowStatusModal(false);
          getLeadList();
+         setRemark("");
       } else {
          showErrorToast("Please try again...");
       }
@@ -285,7 +286,7 @@ const ContactLeadList = () => {
                <Buttons
                   style={{ float: "right" }}
                   name="X"
-                  size='small'
+                  size="small"
                   varient="secondary"
                   onClick={() => {
                      setShowStatusModal(false);
@@ -388,7 +389,7 @@ const ContactLeadList = () => {
                         fontWeight=""
                         color="secondryColor"
                         className="text-start"
-                        text="Date:"
+                        text="Generated Date:"
                         style={{ fontSize: "14px", fontWeight: "600" }}
                      />
                   </Col>
@@ -399,7 +400,12 @@ const ContactLeadList = () => {
                         color="secondryColor"
                         className="text-start"
                         text={
-                           selectedLead?.generatedDate === null ? "-" : formateDateTime(selectedLead?.generatedDate, "DD-MM-YYYY hh:mm:ss a")
+                           selectedLead?.generatedDate === null
+                              ? "-"
+                              : formateDateTime(
+                                   selectedLead?.generatedDate,
+                                   "DD-MM-YYYY hh:mm:ss a"
+                                )
                         }
                         style={{ fontSize: "14px", fontWeight: "500" }}
                      />
@@ -423,7 +429,41 @@ const ContactLeadList = () => {
                         color="secondryColor"
                         className="text-start"
                         text={selectedLead?.message === null ? "-" : selectedLead?.message}
-                        style={{ fontSize: "14px", fontWeight: "500" }}
+                        style={{
+                           fontSize: "14px",
+                           fontWeight: "500",
+                           whiteSpace: "pre-wrap", // allows line breaks
+                           wordWrap: "break-word", // breaks long words
+                           overflowWrap: "break-word",
+                        }}
+                     />
+                  </Col>
+               </div>
+               <div className="d-flex">
+                  <Col lg="4">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text="Remark :"
+                        style={{ fontSize: "14px", fontWeight: "600" }}
+                     />
+                  </Col>
+                  <Col lg="8">
+                     <Text
+                        size="regular"
+                        fontWeight=""
+                        color="secondryColor"
+                        className="text-start"
+                        text={selectedLead?.remark === null ? "-" : selectedLead?.remark}
+                        style={{
+                           fontSize: "14px",
+                           fontWeight: "500",
+                           whiteSpace: "pre-wrap", // allows line breaks
+                           wordWrap: "break-word", // breaks long words
+                           overflowWrap: "break-word",
+                        }}
                      />
                   </Col>
                </div>
@@ -447,18 +487,20 @@ const ContactLeadList = () => {
                         required={true}
                         multiline={true}
                         value={remark}
-                        onChange={(e) => {setRemark(e.target.value)}}
-                        inputProps={{ maxLength: 100 }} 
+                        onChange={(e) => {
+                           setRemark(e.target.value);
+                        }}
+                        inputProps={{ maxLength: 100 }}
                         error={remarkError}
-                        />
+                     />
                      <div className="d-flex mt-2">
                         <Buttons
-                           className='p-0 px-2'
+                           className="p-0 px-2"
                            size="medium"
                            name="Mark as Complete"
                            onClick={() => {
-                              if(isEmpty(remark)) {
-                                 setRemarkError(true)
+                              if (isEmpty(remark)) {
+                                 setRemarkError(true);
                                  return null;
                               } else {
                                  changeLeadStatus("COMPLETED");
@@ -467,16 +509,17 @@ const ContactLeadList = () => {
                         />{" "}
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <Buttons
-                           className='p-0 px-2'
+                           className="p-0 px-2"
                            size="medium"
                            name="Delete"
                            onClick={() => {
-                              if(isEmpty(remark)) {
-                                 setRemarkError(true)
-                                 return null;
-                              } else {
-                                 changeLeadStatus("DELETED");
-                              }
+                              // if (isEmpty(remark)) {
+                              //    setRemarkError(true);
+                              //    return null;
+                              // } else {
+                              //    changeLeadStatus("DELETED");
+                              // }
+                              changeLeadStatus("DELETED");
                            }}
                         />{" "}
                      </div>
