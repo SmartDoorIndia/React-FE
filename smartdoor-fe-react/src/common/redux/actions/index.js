@@ -2342,3 +2342,13 @@ export const changeContactLeadStatus = async (data) => {
   const response = await mainApiService("changeLeadStatus", data);
   return response
 }
+
+export const fetchLoanLeadList = async (data) => {
+  const response = await mainApiService("fetchLoanLeadList", data);
+  return response
+}
+
+export const changeLoanLeadStatus = async (data) => {
+  const response = await mainApiService("changeLoanLeadStatus", data);
+  return response
+}

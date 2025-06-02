@@ -72,6 +72,7 @@ const ProjectPosting = React.lazy(() => import('./Builders/ProjectPosting/Projec
 const ProjectDetailsPage = React.lazy(() => import('./Builders/ProjectDetailsPage/ProjectDetailsPage'));
 const SignUp = React.lazy(() => import('../SignUp/SignUp'));
 const ContactLeadList = React.lazy(() => import('./ContactLeads/ContactLeadList'));
+const LoanLeads = React.lazy(() => import('./HomeLoanLeads/LoanLeads'));
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -1345,6 +1346,14 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: ContactLeadList
+  },
+
+  {
+    path: '/admin/loan-leads',
+    name: 'Home Loan Leads',
+    bradcrumb: false,
+    excat: true,
+    component: LoanLeads
   }
   // {
   //   path: '/admin/execution/installation-detail/property-details',

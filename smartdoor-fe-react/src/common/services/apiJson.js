@@ -3313,6 +3313,30 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  fetchLoanLeadList: {
+    url: "/admin/admin/getPropertyLoanLeadList",
+    method: "POST",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  changeLoanLeadStatus: {
+    url: "admin/admin/changePropertyLoanLeadStatus/:srNo/:status",
+    method: "POST",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 

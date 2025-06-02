@@ -1,7 +1,10 @@
 /** @format */
 
-import React, { useEffect, useRef, useState } from "react";
-import Image from "../../../shared/Image";
+import React, { useEffect, useState } from "react";
+import DataTableComponent from "../../../../src/shared/DataTable/DataTable";
+import { changeLoanLeadStatus, fetchLoanLeadList } from "../../../common/redux/actions";
+import { Col, Form, Modal } from "react-bootstrap";
+import Buttons from "../../../shared/Buttons/Buttons";
 import {
    formateDateTime,
    handleStatusElement,
@@ -9,79 +12,73 @@ import {
    showSuccessToast,
    ToolTip,
 } from "../../../common/helpers/Utils";
+import contentIco from "../../../assets/images/content-ico.svg";
+import Image from "../../../shared/Image";
 import Text from "../../../shared/Text/Text";
-import contentIco from "../../../assets/images/content-ico.png";
-import DataTableComponent from "../../../shared/DataTable/DataTable";
-import "./ContactLeads.scss";
-import { changeContactLeadStatus, fetchContactLeadList } from "../../../common/redux/actions";
-import { Col, Form, FormControl, Modal } from "react-bootstrap";
-import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
-import Buttons from "../../../shared/Buttons/Buttons";
-import pencilIcon from "../../../assets/svg/pencilIcon.svg";
-import { FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material";
-import { isEmpty } from "validator";
+import { TextField } from "@mui/material";
+import { saveAs } from "file-saver";
+import "./LoanLeads.scss";
 
-const ContactLeadList = () => {
-   const [leadList, setLeadList] = useState([]);
-   const [status, setStatus] = useState("");
-   const [leadType, setLeadType] = useState("");
+const LoanLeads = () => {
+   const [loanLeadList, setLoanLeadList] = useState([]);
    const [startDate, setStartDate] = useState("");
    const [endDate, setEndDate] = useState("");
    const [loading, setLoading] = useState(false);
    const [showStatusModal, setShowStatusModal] = useState(false);
    const [selectedLead, setSelectedLead] = useState({});
-   const [remark, setRemark] = useState("");
-   const [remarkError, setRemarkError] = useState(false);
+   const [showDateRangeModal, setShowDateRangeModal] = useState(false);
+   const [fromDate, setFromDate] = useState("");
+   const [toDate, setToDate] = useState("");
 
-   const leadColumn = [
+   const loanLeadColumn = [
       {
          name: "Sr.No.",
-         selector: (row) => row.srNo,
+         selector: (row) => row.loanEnquiryNumber,
          sortable: false,
          center: false,
          minWidth: "80px",
-         cell: ({ srNo }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={srNo}>
-               <Text size="Small" color="secondryColor elipsis-text" text={srNo} />
+         cell: ({ loanEnquiryNumber }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={loanEnquiryNumber}>
+               <Text size="Small" color="secondryColor elipsis-text" text={loanEnquiryNumber} />
             </ToolTip>
          ),
          id: 1,
       },
       {
          name: "Name",
-         selector: (row) => row.name,
+         selector: (row) => row.fullName,
          sortable: false,
          center: false,
          maxWidth: "180px",
-         cell: ({ name }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={name}>
-               <Text size="Small" color="secondryColor elipsis-text" text={name} />
+         cell: ({ fullName }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={fullName}>
+               <Text size="Small" color="secondryColor elipsis-text" text={fullName} />
             </ToolTip>
          ),
          id: 2,
       },
       {
          name: "Mobile",
-         selector: (row) => row.mobile,
+         selector: (row) => row.contactNo,
          sortable: false,
          center: true,
          maxWidth: "180px",
-         cell: ({ mobile }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={mobile}>
-               <Text size="Small" color="secondryColor elipsis-text" text={mobile} />
+         cell: ({ contactNo }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={contactNo}>
+               <Text size="Small" color="secondryColor elipsis-text" text={contactNo} />
             </ToolTip>
          ),
          id: 3,
       },
       {
-         name: "City",
-         selector: (row) => row.city,
+         name: "Loan Amt",
+         selector: (row) => row.loanAmount,
          sortable: false,
          center: true,
          maxWidth: "180px",
-         cell: ({ city }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={city}>
-               <Text size="Small" color="secondryColor elipsis-text" text={city} />
+         cell: ({ loanAmount }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={loanAmount}>
+               <Text size="Small" color="secondryColor elipsis-text" text={loanAmount} />
             </ToolTip>
          ),
          id: 4,
@@ -123,42 +120,21 @@ const ContactLeadList = () => {
          ),
          id: 6,
       },
-      // {
-      //    name: "Action",
-      //    selector: (row) => row.action,
-      //    sortable: false,
-      //    center: false,
-      //    maxWidth: "150px",
-      //    cell: ({ row, srNo }) => (
-      //       <div className="action">
-      //          <ToolTip position="left" name="View Details">
-      //             <span>
-      //                <Image name="editIcon" src={contentIco} />
-      //             </span>
-      //          </ToolTip>
-      //       </div>
-      //    ),
-      //    id: 7,
-      // },
    ];
 
-   const getLeadList = async () => {
+   const fetchLoanList = async () => {
       setLoading(true);
-      const response = await fetchContactLeadList({
-         status: status,
-         leadType: "",
-         startDate: startDate ? startDate + " 00:00:00" : "",
-         endDate: endDate ? endDate + " 24:00:00" : "",
+      const response = await fetchLoanLeadList({
+         startDate: startDate ? startDate + " 00:00:00" : startDate,
+         endDate: endDate ? endDate + " 23:59:59" : endDate,
+         // pageNo: 1,
+         // pageSize: 8,
       });
       setLoading(false);
       if (response?.status === 200) {
-         setLeadList([...response?.data?.resourceData]);
+         setLoanLeadList([...response?.data?.resourceData]);
       }
    };
-
-   useEffect(() => {
-      getLeadList();
-   }, []);
 
    const validateDates = () => {
       if ((startDate === null && endDate === null) || (startDate === "" && endDate === "")) {
@@ -176,20 +152,56 @@ const ContactLeadList = () => {
       }
    };
 
+   useEffect(() => {
+      fetchLoanList();
+   }, []);
+
    const changeLeadStatus = async (leadStatus) => {
-      const response = await changeContactLeadStatus({
-         srNo: selectedLead?.srNo,
+      const response = await changeLoanLeadStatus({
+         srNo: selectedLead?.loanEnquiryNumber,
          status: leadStatus,
-         remark: remark,
       });
       if (response?.status === 200) {
          showSuccessToast("Lead status updated successfully...");
          setShowStatusModal(false);
-         getLeadList();
-         setRemark("");
+         fetchLoanList();
       } else {
          showErrorToast("Please try again...");
       }
+   };
+
+   const downloadLead = async () => {
+      const response = await fetchLoanLeadList({
+         startDate: fromDate ? fromDate + " 00:00:00" : fromDate,
+         endDate: toDate ? toDate + " 24:00:00" : toDate,
+      });
+      let data = response?.data?.resourceData;
+      if (!data || data.length === 0) {
+         console.warn("No data available to download");
+         showErrorToast("No data available to download");
+         return;
+      }
+
+      // Extract headers from the first object
+      const headers = Object.keys(data[0]).join(",") + "\n";
+
+      // Convert each object to a CSV row
+      const rows = data
+         .map((row) =>
+            Object.values(row)
+               .map((value) => `"${value}"`)
+               .join(",")
+         )
+         .join("\n");
+
+      // Combine headers and rows
+      const csvContent = headers + rows;
+
+      // Create a Blob with CSV content
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+      // Trigger file download
+      saveAs(blob, "LeadGeneration.csv");
    };
 
    return (
@@ -198,25 +210,6 @@ const ContactLeadList = () => {
             <div className="align-items-center tableHeading">
                <div className="d-flex justify-content-between">
                   <div className="locationSelect d-flex">
-                     <Form.Group controlId="exampleForm.SelectCustom">
-                        <Form.Control
-                           as="select"
-                           onChange={(e) => {
-                              setStatus(e.target.value);
-                           }}
-                           value={status}
-                        >
-                           <option value="">Select Status</option>
-                           {CONSTANTS_STATUS.leadStatusList.length > 0
-                              ? CONSTANTS_STATUS.leadStatusList?.map((status) => (
-                                   <option key={status} value={status}>
-                                      {status}
-                                   </option>
-                                ))
-                              : null}
-                        </Form.Control>
-                     </Form.Group>
-                     &nbsp;&nbsp;&nbsp;&nbsp;
                      <Form.Group controlId="exampleForm.SelectCustom">
                         {/* <Form.Label>From Date</Form.Label> */}
                         <Form.Control
@@ -257,7 +250,18 @@ const ContactLeadList = () => {
                            if (!validateDates()) {
                               return null;
                            }
-                           await getLeadList();
+                           await fetchLoanList();
+                        }}
+                     />
+                     &nbsp;&nbsp;&nbsp;&nbsp;
+                     <Buttons
+                        name="Download Leads"
+                        varient="primary"
+                        size="Small"
+                        color="white"
+                        style={{ height: "40px !important" }}
+                        onClick={async () => {
+                           setShowDateRangeModal(true);
                         }}
                      />
                   </div>
@@ -266,8 +270,8 @@ const ContactLeadList = () => {
             <DataTableComponent
                className="contactLeadsTableWrapper"
                progressPending={loading}
-               columns={leadColumn}
-               data={leadList}
+               data={loanLeadList}
+               columns={loanLeadColumn}
                persistTableHead={true}
                paginationServer={false}
                pagination={"off"}
@@ -311,7 +315,7 @@ const ContactLeadList = () => {
                         fontWeight=""
                         color="secondryColor"
                         className="text-start"
-                        text={selectedLead?.name === null ? "-" : selectedLead?.name}
+                        text={selectedLead?.fullName === null ? "-" : selectedLead?.fullName}
                         style={{
                            fontSize: "14px",
                            fontWeight: "500",
@@ -339,7 +343,7 @@ const ContactLeadList = () => {
                         fontWeight=""
                         color="secondryColor"
                         className="text-start"
-                        text={selectedLead?.mobile === null ? "-" : selectedLead?.mobile}
+                        text={selectedLead?.contactNo === null ? "-" : selectedLead?.contactNo}
                         style={{
                            fontSize: "14px",
                            fontWeight: "500",
@@ -367,7 +371,7 @@ const ContactLeadList = () => {
                         fontWeight=""
                         color="secondryColor"
                         className="text-start"
-                        text={selectedLead?.email === null ? "-" : selectedLead?.email}
+                        text={selectedLead?.emailId === null ? "-" : selectedLead?.emailId}
                         style={{
                            fontSize: "14px",
                            fontWeight: "500",
@@ -386,13 +390,7 @@ const ContactLeadList = () => {
                         color="secondryColor"
                         className="text-start"
                         text="City :"
-                        style={{
-                           fontSize: "14px",
-                           fontWeight: "600",
-                           whiteSpace: "pre-wrap", // allows line breaks
-                           wordWrap: "break-word", // breaks long words
-                           overflowWrap: "break-word",
-                        }}
+                        style={{ fontSize: "14px", fontWeight: "600" }}
                      />
                   </Col>
                   <Col lg="8">
@@ -401,7 +399,11 @@ const ContactLeadList = () => {
                         fontWeight=""
                         color="secondryColor"
                         className="text-start"
-                        text={selectedLead?.city === null ? "-" : selectedLead?.city}
+                        text={
+                           selectedLead?.propertyAddress === null
+                              ? "-"
+                              : selectedLead?.propertyAddress
+                        }
                         style={{
                            fontSize: "14px",
                            fontWeight: "500",
@@ -420,13 +422,7 @@ const ContactLeadList = () => {
                         color="secondryColor"
                         className="text-start"
                         text="Generated Date:"
-                        style={{
-                           fontSize: "14px",
-                           fontWeight: "600",
-                           whiteSpace: "pre-wrap", // allows line breaks
-                           wordWrap: "break-word", // breaks long words
-                           overflowWrap: "break-word",
-                        }}
+                        style={{ fontSize: "14px", fontWeight: "600" }}
                      />
                   </Col>
                   <Col lg="8">
@@ -460,7 +456,7 @@ const ContactLeadList = () => {
                         fontWeight=""
                         color="secondryColor"
                         className="text-start"
-                        text="Message :"
+                        text="Loan Amount :"
                         style={{ fontSize: "14px", fontWeight: "600" }}
                      />
                   </Col>
@@ -470,35 +466,7 @@ const ContactLeadList = () => {
                         fontWeight=""
                         color="secondryColor"
                         className="text-start"
-                        text={selectedLead?.message === null ? "-" : selectedLead?.message}
-                        style={{
-                           fontSize: "14px",
-                           fontWeight: "500",
-                           whiteSpace: "pre-wrap", // allows line breaks
-                           wordWrap: "break-word", // breaks long words
-                           overflowWrap: "break-word",
-                        }}
-                     />
-                  </Col>
-               </div>
-               <div className="d-flex">
-                  <Col lg="4">
-                     <Text
-                        size="regular"
-                        fontWeight=""
-                        color="secondryColor"
-                        className="text-start"
-                        text="Remark :"
-                        style={{ fontSize: "14px", fontWeight: "600" }}
-                     />
-                  </Col>
-                  <Col lg="8">
-                     <Text
-                        size="regular"
-                        fontWeight=""
-                        color="secondryColor"
-                        className="text-start"
-                        text={selectedLead?.remark === null ? "-" : selectedLead?.remark}
+                        text={selectedLead?.loanAmount === null ? "-" : selectedLead?.loanAmount}
                         style={{
                            fontSize: "14px",
                            fontWeight: "500",
@@ -512,41 +480,13 @@ const ContactLeadList = () => {
                {selectedLead?.status === "INITIATED" ? (
                   <>
                      <hr />
-                     <div>
-                        {/* <Text
-                           size="regular"
-                           fontWeight=""
-                           color="secondryColor"
-                           className="text-start"
-                           text="Change Lead Status :"
-                        /> */}
-                     </div>
-                     <TextField
-                        label="Remark"
-                        placeholder="Add Remark"
-                        className="textFieldInput w-100"
-                        type="text"
-                        required={true}
-                        multiline={true}
-                        value={remark}
-                        onChange={(e) => {
-                           setRemark(e.target.value);
-                        }}
-                        inputProps={{ maxLength: 100 }}
-                        error={remarkError}
-                     />
                      <div className="d-flex mt-2">
                         <Buttons
                            className="p-0 px-2"
                            size="medium"
                            name="Mark as Complete"
                            onClick={() => {
-                              if (isEmpty(remark)) {
-                                 setRemarkError(true);
-                                 return null;
-                              } else {
-                                 changeLeadStatus("COMPLETED");
-                              }
+                              changeLeadStatus("COMPLETED");
                            }}
                         />{" "}
                         &nbsp;&nbsp;&nbsp;&nbsp;
@@ -555,12 +495,6 @@ const ContactLeadList = () => {
                            size="medium"
                            name="Delete"
                            onClick={() => {
-                              // if (isEmpty(remark)) {
-                              //    setRemarkError(true);
-                              //    return null;
-                              // } else {
-                              //    changeLeadStatus("DELETED");
-                              // }
                               changeLeadStatus("DELETED");
                            }}
                         />{" "}
@@ -569,8 +503,70 @@ const ContactLeadList = () => {
                ) : null}
             </Modal.Body>
          </Modal>
+
+         <Modal
+            show={showDateRangeModal}
+            onHide={() => {
+               setShowDateRangeModal(false);
+            }}
+            centered
+         >
+            <Modal.Header className="text-center">
+               <Text text="Select Date Range" style={{ fontSize: "16px", fontWeight: "600" }} />
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  size="small"
+                  varient="secondary"
+                  onClick={() => {
+                     setShowDateRangeModal(false);
+                  }}
+               ></Buttons>
+            </Modal.Header>
+            <Modal.Body>
+               <div className="locationSelect d-flex">
+                  <TextField
+                     type="date"
+                     className="w-100"
+                     max={new Date().toISOString().split("T")[0]}
+                     placeholder="Start Date"
+                     value={fromDate}
+                     onChange={(e) => {
+                        console.log(e.target.value);
+                        setFromDate(e.target.value);
+                     }}
+                  />
+                  &nbsp;&nbsp; &nbsp;&nbsp;
+                  <TextField
+                     type="date"
+                     className="w-100"
+                     max={new Date().toISOString().split("T")[0]}
+                     placeholder="End Date"
+                     value={toDate}
+                     onChange={(e) => {
+                        console.log(e.target.value);
+                        setToDate(e.target.value);
+                     }}
+                  />
+               </div>
+               <div className="text-center">
+                  <Buttons
+                     className="mt-2"
+                     name="Download"
+                     varient="primary"
+                     size="Small"
+                     color="white"
+                     style={{ height: "40px !important" }}
+                     onClick={async () => {
+                        downloadLead();
+                        setShowDateRangeModal(true);
+                     }}
+                  />
+               </div>
+            </Modal.Body>
+         </Modal>
       </>
    );
 };
 
-export default ContactLeadList;
+export default LoanLeads;
