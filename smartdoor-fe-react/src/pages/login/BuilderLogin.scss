@@ -10,10 +10,16 @@
    background-size: 100% 100%;
    background-position: center;
    background-repeat: no-repeat;
-   align-items: flex-start;
-   flex-direction: column;
-   height: 100vh;
-   justify-content: end;
+   // align-items: flex-start;
+   // flex-direction: column;
+   height: fit-content;
+   object-fit: contain;
+   // overflow: scroll;
+   // justify-content: end;
+   
+   .container {
+      margin: 4.25rem;
+   }
 
    .login-box {
       background: white;
@@ -264,6 +270,22 @@
       transition: 300ms ease all;
       background-color: $background-color_1;
       padding: 0 2px;
+   }
+}
+@media screen and (min-width : 2560px) {
+   .builder-login{
+      justify-content: center;
+      .container {
+         margin: 20rem;
+         scale: 1.5;
+      }
+   }
+}
+@media screen and (max-width : 425px) {
+   .builder-login{
+      .container {
+         margin: 0rem;
+      }
    }
 }
 .submit-button {

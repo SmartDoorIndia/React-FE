@@ -1022,7 +1022,7 @@ const ConsumerManagement = (props) => {
                         text="Aadhar Image" />
                       {selectedConsumer.kycDetail !== null ?
                         <>
-                          <img alt='' src={selectedConsumer.kycDetail}></img>
+                          <img alt='' src={selectedConsumer.kycDetail} style={{height: '200px', width: '200px'}} ></img>
                         </> :
                         <Text
                           size="20px"

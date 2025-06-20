@@ -272,7 +272,7 @@ const BuilderLogin = (props) => {
                </button>
             </div> */}
             <div className="row d-flex justify-content-center">
-               <div className="col-md-6 d-flex justify-content-center">
+               <div className="col-md-6 col-xs-12 d-flex justify-content-center">
                   <div className="login-box">
                      <img src={Logo} alt="SmartDoor Logo" className="logo" />
                      <h2>Welcome</h2>
@@ -463,7 +463,7 @@ const BuilderLogin = (props) => {
                   </div>
                </div>
                {/* <div className="col-md-6"></div> */}
-               <div className="col-md-6 d-flex justify-content-center align-items-center">
+               <div className="col-md-6 col-xs-12 d-flex justify-content-center align-items-center">
                   <ul className="" style={{ fontSize: "20px", fontWeight: "700", color: "white" }}>
                      <li>
                         Boost the sales of your project by posting the same on our platform for free
