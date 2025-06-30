@@ -60,8 +60,8 @@ const BrokerApprovedDetail = React.lazy(() => import('./Broker/BrokerApprovedDet
 const BrokerDetail = React.lazy(() => import('./Broker/BrokerDetails'));
 const BatteryLvlChk = React.lazy(() => import('./BatteryLevelCheck/BatteryLvlChk'));
 const HubList = React.lazy(() => import('./Hub/HubList'));
-const KitList = React.lazy(() => import('./Kits/KitList'));
-const KitDevices = React.lazy(() => import('./Kits/KitDevices'));
+const Kits = React.lazy(() => import('./KitLists/Kits'));
+const KitDevices = React.lazy(() => import('./KitLists/Kits/KitDevices'));
 const BuilderList = React.lazy(() => import('./Builders/BuilderList/BuilderList'));
 const BuilderProfileDetails = React.lazy(() => import('./Builders/BuilderProfileDetails/BuilderProfileDetails'))
 const BuilderInfo = React.lazy(() => import('./Builders/BuilderInfo/BuilderInfo'));
@@ -1273,7 +1273,7 @@ const routeData = [
     name: 'Kit List',
     bradcrumb: false,
     excat: true,
-    component: KitList
+    component: Kits
   },
 
   {

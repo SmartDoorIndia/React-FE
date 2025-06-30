@@ -1019,7 +1019,7 @@ const ConsumerManagement = (props) => {
                         fontWeight="smbold"
                         color="secondryColor"
                         className="mt-1"
-                        text="Aadhar Image" />
+                        text="KYC Image" />
                       {selectedConsumer.kycDetail !== null ?
                         <>
                           <img alt='' src={selectedConsumer.kycDetail} style={{height: '200px', width: '200px'}} ></img>
@@ -1045,8 +1045,6 @@ const ConsumerManagement = (props) => {
                       />
                     </div> :
                     null}
-
-
                 </Col>
               </Row>
             </div>

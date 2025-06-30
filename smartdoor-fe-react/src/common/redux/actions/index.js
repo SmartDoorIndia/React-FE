@@ -2166,11 +2166,33 @@ export const getCorporatePlanList = async (data) => {
 
 export const getKitList = (data) => async (dispatch) => {
   dispatch({ type: Actions.KIT_LIST_LOADING, data: {} });
-  const response = await mainApiService('getKitHubList', data);
+  const response = await mainApiService('getInstalledKitList', data);
   if (response.status === 200 && response.data.resourceData) {
     dispatch({ type: Actions.KIT_LIST_SUCCESS, data: { kitList: response?.data?.resourceData } });
   } else {
     dispatch({ type: Actions.KIT_LIST_ERROR, data: response.data });
+  }
+  return response;
+}
+
+export const getUnInstalledKitList = (data) => async (dispatch) => {
+  dispatch({ type: Actions.UNINSTALLED_KIT_LIST_LOADING, data: {} });
+  const response = await mainApiService('getUnInstalledKitList', data);
+  if (response.status === 200 && response.data.resourceData) {
+    dispatch({ type: Actions.UNINSTALLED_KIT_LIST_SUCCESS, data: { kitList: response?.data?.resourceData } });
+  } else {
+    dispatch({ type: Actions.UNINSTALLED_KIT_LIST_ERROR, data: response.data });
+  }
+  return response;
+}
+
+export const getUnAssignedKitList = (data) => async (dispatch) => {
+  dispatch({ type: Actions.UNASSIGNED_KIT_LIST_LOADING, data: {} });
+  const response = await mainApiService('getUnAssignedKitList', data);
+  if (response.status === 200 && response.data.resourceData) {
+    dispatch({ type: Actions.UNASSIGNED_KIT_LIST_SUCCESS, data: { kitList: response?.data?.resourceData } });
+  } else {
+    dispatch({ type: Actions.UNASSIGNED_KIT_LIST_ERROR, data: response.data });
   }
   return response;
 }

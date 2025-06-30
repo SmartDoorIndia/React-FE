@@ -3083,6 +3083,42 @@ export const ApiJson = {
     showErrorMessage: true,
   },
 
+  getInstalledKitList: {
+    url: "/smartlock/smartlock/getInstalledKitList",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  
+  getUnInstalledKitList: {
+    url: "/smartlock/smartlock/getUnInstalledKitList",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
+  getUnAssignedKitList: {
+    url: "/smartlock/smartlock/getUnAssignedKitList",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
   getKitDevices: {
     url: "/smartlock/smartlock/getKItDeviceData/:kitid",
     method: "GET",

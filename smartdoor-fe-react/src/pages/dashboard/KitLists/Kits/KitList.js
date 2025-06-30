@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { getHubList, getKitList } from "../../../common/redux/actions";
+import { getHubList, getKitList } from "../../../../common/redux/actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { Form } from "react-bootstrap";
 import './KitList.scss';
-import { ToolTip } from "../../../common/helpers/Utils";
-import Text from "../../../shared/Text/Text";
-import Image from "../../../shared/Image";
-import contentIco from '../../../assets/images/content-ico.svg';
-import DataTableComponent from '../../../shared/DataTable/DataTable';
-import { TableLoader } from "../../../common/helpers/Loader";
-import Pagination from "../../../shared/DataTable/Pagination";
+import { ToolTip } from "../../../../common/helpers/Utils";
+import Text from "../../../../shared/Text/Text";
+import Image from "../../../../shared/Image";
+import contentIco from '../../../../assets/images/content-ico.svg';
+import DataTableComponent from '../../../../shared/DataTable/DataTable';
+import { TableLoader } from "../../../../common/helpers/Loader";
+import Pagination from "../../../../shared/DataTable/Pagination";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
+import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 
 const KitList = (props) => {
     const { allHubList, getHubList, allKitList, getKitList } = props;
@@ -128,26 +128,29 @@ const KitList = (props) => {
         <>
             <div className="tableBox ">
                 <div className="align-items-center tableHeading">
-                    <div className="locationSelect justify-content-end d-flex mt-2">
-                        {subHeaderComponentMemo}
-                        <Form.Group controlId="exampleForm.SelectCustom">
-                            <Form.Control
-                                as="select"
-                                onChange={(e) => {
-                                    setHub(e.target.value)
-                                }}
-                                value={hub}
-                            >
-                                <option value="">Select Hub</option>
-                                {allHubList?.data?.hubList?.length > 0
-                                    ? allHubList?.data?.hubList?.map((hub) => (
-                                        <option key={hub.hubName} value={hub.hubName}>
-                                            {hub.hubName}
-                                        </option>
-                                    ))
-                                    : null}
-                            </Form.Control>
-                        </Form.Group>
+                    <div className="locationSelect d-flex mt-2" style={{fontSize:'20px', fontWeight:'800' }} >
+                        <Text text="Installed Kits" style={{fontSize:'20px', fontWeight:'800'}} ></Text>
+                        <div className="d-flex">
+                            {subHeaderComponentMemo}
+                            <Form.Group controlId="exampleForm.SelectCustom">
+                                <Form.Control
+                                    as="select"
+                                    onChange={(e) => {
+                                        setHub(e.target.value)
+                                    }}
+                                    value={hub}
+                                >
+                                    <option value="">Select Hub</option>
+                                    {allHubList?.data?.hubList?.length > 0
+                                        ? allHubList?.data?.hubList?.map((hub) => (
+                                            <option key={hub.hubName} value={hub.hubName}>
+                                                {hub.hubName}
+                                            </option>
+                                        ))
+                                        : null}
+                                </Form.Control>
+                            </Form.Group>
+                        </div>
                     </div>
                 </div>
                 <div className="kitListTableWrapper" >

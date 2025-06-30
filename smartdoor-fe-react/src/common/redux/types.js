@@ -372,6 +372,14 @@ export const KIT_LIST_SUCCESS = 'src/pages/Dashboard/kitList/Success';
 export const KIT_LIST_ERROR = 'src/pages/Dashboard/kitList/Error';
 export const KIT_LIST_LOADING = 'src/pages/Dashboar/kitList/Loading';
 
+export const UNINSTALLED_KIT_LIST_SUCCESS = 'src/pages/Dashboard/UnInstalledKitList/Success';
+export const UNINSTALLED_KIT_LIST_ERROR = 'src/pages/Dashboard/UnInstalledKitList/Error';
+export const UNINSTALLED_KIT_LIST_LOADING = 'src/pages/Dashboar/UnInstalledKitList/Loading';
+
+export const UNASSIGNED_KIT_LIST_SUCCESS = 'src/pages/Dashboard/UnAssignedKitList/Success';
+export const UNASSIGNED_KIT_LIST_ERROR = 'src/pages/Dashboard/UnAssignedKitList/Error';
+export const UNASSIGNED_KIT_LIST_LOADING = 'src/pages/Dashboar/UnAssignedKitList/Loading';
+
 export const BUILDER_PROJECT_LIST_SUCCESS = 'src/pages/Dashboard/builderProjectList/Success';
 export const BUILDER_PROJECT_LIST_ERROR = 'src/pages/Dashboard/builderProjectList/Error';
 export const BUILDER_PROJECT_LIST_LOADING = 'src/pages/Dashboar/builderProjectList/Loading';

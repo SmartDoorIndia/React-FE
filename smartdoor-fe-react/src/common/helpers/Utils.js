@@ -964,3 +964,19 @@ export const getYouTubeVideoId = (url) => {
     return null; // Invalid YouTube URL
   }
 };
+
+export const getKYCMethod = (kyvMethod) => {
+  switch (kyvMethod) {
+    case "AADHAR_OTP":
+      return "AADHAR OTP"
+      
+    case "AADHAR_DIGILOCKER":
+      return "AADHAR DIGILOCKER"
+      
+    case "MOBILE_OTP_CELLULAR":
+      return "MOBILE OTP CELLULAR"
+  
+    default:
+      break;
+  }
+}

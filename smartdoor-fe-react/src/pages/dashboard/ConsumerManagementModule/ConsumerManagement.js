@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import contentIco from "../../../assets/images/content-ico.svg";
 import { getAllConsumers } from "../../../common/redux/actions";
 import { connect, useDispatch, useSelector } from "react-redux";
-import { ToolTip, handleStatusElement, getLocalStorage } from "../../../common/helpers/Utils";
+import { ToolTip, handleStatusElement, getLocalStorage, getKYCMethod } from "../../../common/helpers/Utils";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import Form from "react-bootstrap/Form";
 import Pagination from "../../../shared/DataTable/Pagination";
@@ -191,11 +191,11 @@ const ConsumerManagement = (props) => {
 	  },
 	  {
 		 name: "KYC Status",
-		 selector: (row) => row.kycverified,
+		 selector: (row) => row.isKYCVerified,
 		 sortable: false,
 		 center: true,
 		 minWidth: "130px",
-		 cell: ({ kycverified }) => kycstatus(kycverified),
+		 cell: ({ isKYCVerified }) => kycstatus(isKYCVerified),
 	  },
 	  {
 		 name: "Action",
@@ -474,7 +474,7 @@ const ConsumerManagement = (props) => {
 				  size="regular"
 				  fontWeight="bold"
 				  color="secondryColor"
-				  className="text-center"
+				  className="text-center ms-3"
 				  text="Consumer Details"
 			   />
 			   <Buttons
@@ -490,18 +490,20 @@ const ConsumerManagement = (props) => {
 			<Modal.Body>
 			   <div className="d-flex">
 				  <Col lg="4">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px"
+			,			fontWeight:"bold"}}
 						color="secondryColor"
 						className="text-start"
 						text="Karza name :"
 					 />
 				  </Col>
 				  <Col lg="8">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px",
+						fontWeight:""}}
 						color="secondryColor"
 						className="text-start"
 						text={
@@ -512,18 +514,20 @@ const ConsumerManagement = (props) => {
 			   </div>
 			   <div className="d-flex">
 				  <Col lg="4">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px"
+			,			fontWeight:"bold"}}
 						color="secondryColor"
 						className="text-start"
 						text="Gender :"
 					 />
 				  </Col>
 				  <Col lg="4">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px",
+						fontWeight:""}}
 						color="secondryColor"
 						className="text-start"
 						text={selectedConsumer.gender === null ? "-" : selectedConsumer.gender}
@@ -532,18 +536,20 @@ const ConsumerManagement = (props) => {
 			   </div>
 			   <div className="d-flex">
 				  <Col lg="4">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px"
+			,			fontWeight:"bold"}}
 						color="secondryColor"
 						className="text-start"
 						text="Date Of Birth :"
 					 />
 				  </Col>
 				  <Col lg="4">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px",
+						fontWeight:""}}
 						color="secondryColor"
 						className="text-start"
 						text={selectedConsumer.dob === null ? "-" : selectedConsumer.dob}
@@ -552,18 +558,20 @@ const ConsumerManagement = (props) => {
 			   </div>
 			   <div className="d-flex">
 				  <Col lg="4">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px"
+			,			fontWeight:"bold"}}
 						color="secondryColor"
 						className="text-start"
 						text="Email :"
 					 />
 				  </Col>
 				  <Col lg="8">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px",
+						fontWeight:""}}
 						color="secondryColor"
 						className="text-start"
 						text={selectedConsumer.email === null ? "-" : selectedConsumer.email}
@@ -572,36 +580,61 @@ const ConsumerManagement = (props) => {
 			   </div>
 			   <div className="d-flex">
 				  <Col lg="4">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px"
+			,			fontWeight:"bold"}}
 						color="secondryColor"
 						className="text-start"
 						text="Address :"
 					 />
 				  </Col>
 				  <Col lg="8">
-					 <Text
-						size="regular"
-						fontWeight=""
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px",
+						fontWeight:""}}
 						color="secondryColor"
 						className="text-start"
 						text={selectedConsumer.address === null ? "-" : selectedConsumer.address}
 					 />
 				  </Col>
 			   </div>
+			   <div className="d-flex">
+				  <Col lg="4">
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px"
+			,			fontWeight:"bold"}}
+						color="secondryColor"
+						className="text-start"
+						text="KYC Method :"
+					 />
+				  </Col>
+				  <Col lg="8">
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px",
+						fontWeight:""}}
+						color="secondryColor"
+						className="text-start"
+						text={selectedConsumer.kycMethod === null ? "-" : getKYCMethod(selectedConsumer.kycMethod)}
+					 />
+				  </Col>
+			   </div>
 			   <div>
-				  <Text
-					 size="regular"
-					 fontWeight=""
+				  <Text 
+				  	size="regular"
+					 style ={{fontSize:"14px",
+					 fontWeight:"bold"}}
 					 color="secondryColor"
 					 className="text-center mt-3"
-					 text="Aadhar Image"
+					 text="KYC Image"
 				  />
 				  {selectedConsumer.kycDetail !== null ? (
 					 <>
 						<div className="d-flex justify-content-center">
-						   <img src={selectedConsumer.kycDetail} alt=""></img>
+						   <img src={selectedConsumer.kycDetail} alt="" style={{height: '200px', width: '200px'}} ></img>
 						</div>
 					 </>
 				  ) : (

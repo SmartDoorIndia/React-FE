@@ -1,16 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
-import { editKitDevices, getCameraTypes, getCorporatePlanList, getHubList, getKitDevices } from "../../../common/redux/actions";
+import { editKitDevices, getCameraTypes, getCorporatePlanList, getHubList, getKitDevices } from "../../../../common/redux/actions";
 import './KitList.scss';
-import Buttons from "../../../shared/Buttons/Buttons";
-import Loader from "../../../common/helpers/Loader";
-import Text from "../../../shared/Text/Text";
-import ListingDataTable from "../../../shared/DataTable/ListingDataTable";
-import { showErrorToast, showSuccessToast } from "../../../common/helpers/Utils";
+import Buttons from "../../../../shared/Buttons/Buttons";
+import Text from "../../../../shared/Text/Text";
+import ListingDataTable from "../../../../shared/DataTable/ListingDataTable";
+import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import { Card, Modal } from "react-bootstrap";
 import { Checkbox, MenuItem, TextField } from "@mui/material";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import TextArea from "../../../shared/Inputs/TextArea/TextArea";
+import TextArea from "../../../../shared/Inputs/TextArea/TextArea";
 
 const KitDevices = (props) => {
     const { allHubList, getHubList } = props;
