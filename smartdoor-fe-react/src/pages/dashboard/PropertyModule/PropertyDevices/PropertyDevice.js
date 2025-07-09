@@ -739,7 +739,7 @@ const PropertyDevice = (props) => {
                             id="uuId"
                             error={error.uuId}
                             contentEditable={true}
-                            disabled={showEditCameraData ? true : false}
+                            // disabled={showEditCameraData ? true : false}
                             label="UUID"
                             onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, uuId: e.target.value })) }}
                             value={selectedCameraData?.uuId}
@@ -748,7 +748,7 @@ const PropertyDevice = (props) => {
                             className='col-4 px-1 mt-3'
                             id="propertyId"
                             contentEditable={false}
-                            disabled={showEditCameraData ? true : false}
+                            // disabled={showEditCameraData ? true : false}
                             label="Property Id"
                             value={selectedCameraData?.propertyId}
                         />
@@ -764,7 +764,7 @@ const PropertyDevice = (props) => {
                             className='col-4 px-1 mt-3'
                             id="userName"
                             contentEditable={true}
-                            disabled={showEditCameraData ? true : false}
+                            // disabled={showEditCameraData ? true : false}
                             error={error.userName}
                             type="text"
                             label="userName"
@@ -775,7 +775,7 @@ const PropertyDevice = (props) => {
                             className='col-4 px-1 mt-3'
                             id="password"
                             contentEditable={true}
-                            disabled={showEditCameraData ? true : false}
+                            // disabled={showEditCameraData ? true : false}
                             error={error.password}
                             type="text"
                             label="Password"
@@ -787,7 +787,7 @@ const PropertyDevice = (props) => {
                             id="cameraType"
                             select
                             error={error.cameraType}
-                            disabled={showEditCameraData ? true : false}
+                            // disabled={showEditCameraData ? true : false}
                             label="Camera Type"
                             onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraType: e.target.value })) }}
                             value={selectedCameraData?.cameraType}
@@ -801,7 +801,7 @@ const PropertyDevice = (props) => {
                             id="nickName"
                             contentEditable={true}
                             error={error.nickName}
-                            disabled={showEditCameraData ? true : false}
+                            // disabled={showEditCameraData ? true : false}
                             type="text"
                             label="Nick Name"
                             onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, nickName: e.target.value })) }}
@@ -812,7 +812,7 @@ const PropertyDevice = (props) => {
                             id="endPointType"
                             select
                             error={error.endpointType}
-                            disabled={showEditCameraData ? true : false}
+                            // disabled={showEditCameraData ? true : false}
                             label="EndPoint Type"
                             onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, endpointType: e.target.value })) }}
                             value={selectedCameraData?.endpointType}
@@ -843,7 +843,13 @@ const PropertyDevice = (props) => {
                                         onClick={() => { editCameraDetails(showEditCameraData ? false : true); }} />
                                 }
                             </>
-                            : null}
+                            : <Buttons
+                                        name={showEditCameraData ? "Save" : "Add Camera Data"}
+                                        varient="primary"
+                                        size="xSmall"
+                                        color="white"
+                                        className="mt-2 mb-2 p-3"
+                                        onClick={() => { editCameraDetails(showEditCameraData ? false : true); }} />}
                     </div>
                 </Modal.Body>
             </Modal>

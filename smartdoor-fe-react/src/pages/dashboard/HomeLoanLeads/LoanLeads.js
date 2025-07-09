@@ -389,7 +389,7 @@ const LoanLeads = () => {
                         fontWeight=""
                         color="secondryColor"
                         className="text-start"
-                        text="City :"
+                        text="Address :"
                         style={{ fontSize: "14px", fontWeight: "600" }}
                      />
                   </Col>

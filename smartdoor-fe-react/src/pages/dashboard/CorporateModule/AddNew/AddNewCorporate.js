@@ -16,6 +16,7 @@ import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Uti
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import Loader from "../../../../common/helpers/Loader";
+import { Scale } from "devextreme-react/circular-gauge";
 
 const AddNewCorporate = (props) => {
    const { getHubList, allHubList } = props;
@@ -637,9 +638,9 @@ const AddNewCorporate = (props) => {
                         ))}
                      </TextField>
                   </Col>
-                  <Col lg='8' style={{ paddingInlineEnd: '0%' }}>
+                  <Col lg='6' style={{ paddingInlineEnd: '0%' }}>
                      <TextField
-                        className="w-90 mt-2"
+                        className="w-100 mt-2"
                         label='Email'
                         multiline
                         maxRows={3}
@@ -647,26 +648,26 @@ const AddNewCorporate = (props) => {
                         onChange={(e) => { setEmailList(e.target.value); }}>
                      </TextField>
                   </Col>
+                  <Col lg={2} className="">
+                     <Buttons size='small' className='mt-4 py-1' disabled={!addNewUserFlag && corporateId !== null ? false : true} name='Assign Email List' varient='primary'
+                        onClick={async () => {
+                           // if (emailList.trim().length === 0) {
+                           //    showErrorToast("Please enter valid email list....")
+                           //    return null;
+                           // }
+                           await setCorporateEmailList({ corporateId: corporateId, hubId: selectedHub, emailList: emailList })
+                              .then((response) => {
+                                 if (response.status === 200) {
+                                    setSelectedHub('');
+                                    setEmailList('')
+                                    showSuccessToast("Email list set successfully...");
+                                 } else {
+                                    showErrorToast("Please try again...");
+                                 }
+                              });
+                        }} style={{ Scale: '1.3' }} ></Buttons>
+                  </Col>
                </Row>
-               <div className="mt-2 mr-5">
-                  <Buttons size='small' disabled={!addNewUserFlag && corporateId !== null ? false : true} name='Done' varient='primary' className='col-1 py-2'
-                     onClick={async () => {
-                        if (emailList.trim().length === 0) {
-                           showErrorToast("Please enter valid email list....")
-                           return null;
-                        }
-                        await setCorporateEmailList({ corporateId: corporateId, hubId: selectedHub, emailList: emailList })
-                           .then((response) => {
-                              if (response.status === 200) {
-                                 setSelectedHub('');
-                                 setEmailList('')
-                                 showSuccessToast("Email list set successfully...");
-                              } else {
-                                 showErrorToast("Please try again...");
-                              }
-                           });
-                     }} style={{ float: 'right' }} ></Buttons>
-               </div>
             </div>
             <hr className="mt-5" />
             <div className="d-flex ml-3 mb-2">
