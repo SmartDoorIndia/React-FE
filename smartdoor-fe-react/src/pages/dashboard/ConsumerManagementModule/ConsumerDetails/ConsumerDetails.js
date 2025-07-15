@@ -954,7 +954,7 @@ const ConsumerManagement = (props) => {
                         size="Small"
                         fontWeight="smbold"
                         color="secondryColor"
-                        text="Karza Name"
+                        text="KYC Name"
                         className="mt-1"
                       />
                       <Text
@@ -1018,11 +1018,11 @@ const ConsumerManagement = (props) => {
                         size="Small"
                         fontWeight="smbold"
                         color="secondryColor"
-                        className="mt-1"
+                        className="mt-1 p-0"
                         text="KYC Image" />
                       {selectedConsumer.kycDetail !== null ?
                         <>
-                          <img alt='' src={selectedConsumer.kycDetail} style={{height: '200px', width: '200px'}} ></img>
+                          <img alt='' src={selectedConsumer.kycDetail} style={{height: '200px', width: '200px', marginInlineEnd:'2rem'}} ></img>
                         </> :
                         <Text
                           size="20px"

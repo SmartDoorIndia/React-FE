@@ -191,11 +191,11 @@ const ConsumerManagement = (props) => {
 	  },
 	  {
 		 name: "KYC Status",
-		 selector: (row) => row.isKYCVerified,
+		 selector: (row) => row.kycverified,
 		 sortable: false,
 		 center: true,
 		 minWidth: "130px",
-		 cell: ({ isKYCVerified }) => kycstatus(isKYCVerified),
+		 cell: ({ kycverified }) => kycstatus(kycverified),
 	  },
 	  {
 		 name: "Action",
@@ -496,7 +496,7 @@ const ConsumerManagement = (props) => {
 			,			fontWeight:"bold"}}
 						color="secondryColor"
 						className="text-start"
-						text="Karza name :"
+						text="KYC name :"
 					 />
 				  </Col>
 				  <Col lg="8">

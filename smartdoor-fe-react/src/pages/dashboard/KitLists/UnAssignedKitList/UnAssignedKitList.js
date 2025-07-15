@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getHubList, getUnInstalledKitList } from "../../../../common/redux/actions";
+import { getHubList, getUnAssignedKitList } from "../../../../common/redux/actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { Form } from "react-bootstrap";
@@ -15,7 +15,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 
 const UnAssignedKitList = (props) => {
-    const { allHubList, getHubList, unInstalledKits, getUnInstalledKitList } = props;
+    const { allHubList, getHubList, UnAssignedKits, getUnAssignedKitList } = props;
     const [hub, setHub] = useState('');
     const history = useHistory();
 
@@ -108,14 +108,14 @@ const UnAssignedKitList = (props) => {
 
     useEffect(() => {
         getHubList();
-        getUnInstalledKitList();
+        getUnAssignedKitList();
     }, []);
 
     const showData = () => {
-        if (!unInstalledKits?.data?.kitList?.length) {
+        if (!UnAssignedKits?.data?.kitList?.length) {
             return [];
         }
-        const filteredItems = unInstalledKits?.data?.kitList?.filter((element) => {
+        const filteredItems = UnAssignedKits?.data?.kitList?.filter((element) => {
             const matchesHub = hub ? element.hubname?.trim().toLowerCase() === hub?.trim().toLowerCase() : true;
             const matchesKitId = filterText ? element.kitId === Number(filterText) : true;
             return matchesHub && matchesKitId;
@@ -156,7 +156,7 @@ const UnAssignedKitList = (props) => {
                     <DataTableComponent
                         data={showData()}
                         columns={kitColumns}
-                        progressPending={unInstalledKits?.isLoading}
+                        progressPending={UnAssignedKits?.isLoading}
                         progressComponent={ProgressComponent}
                         // paginationComponent={PaginationComponent}
                         // paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
@@ -174,10 +174,10 @@ const UnAssignedKitList = (props) => {
     );
 }
 
-const mapStateToProps = ({ allHubList, unInstalledKits }) => ({ allHubList, unInstalledKits });
+const mapStateToProps = ({ allHubList, UnAssignedKits }) => ({ allHubList, UnAssignedKits });
 const actions = {
     getHubList,
-    getUnInstalledKitList
+    getUnAssignedKitList
 }
 
 export default compose(connect(mapStateToProps, actions))(UnAssignedKitList);

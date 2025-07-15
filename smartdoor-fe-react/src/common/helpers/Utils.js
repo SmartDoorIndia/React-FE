@@ -125,7 +125,7 @@ export const removeLocalStorage = (key) => {
 export const clearLocalStorage = () => {
   localStorage.clear();
 };
-
+ 
 export const generateRandomString = (strLength = 8) => {
   let text = '';
   const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789=@#$%&=';

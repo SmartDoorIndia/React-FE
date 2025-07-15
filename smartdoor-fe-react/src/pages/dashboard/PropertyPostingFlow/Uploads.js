@@ -277,8 +277,8 @@ const Uploads = (props) => {
                         <Text text={'Upload property images'} fontWeight={'bold'} style={{ fontSize: '16px' }} />
                         <span>
                             <Text text={'Capture or choose from gallery. File should be in png, jpg, etc.'} fontWeight={'500'} style={{ fontSize: '12px', color: '#949494' }} />
-                            <Text text={'Please upload at-least 2 exterior image'} fontWeight={'500'} style={{ fontSize: '12px', color: '#A11447' }} />
-                            <Text text={'Please upload minimum 3 property images'} fontWeight={'500'} style={{ fontSize: '12px', color: '#A11447' }} />
+                            {/* <Text text={'Please upload at-least 2 exterior image'} fontWeight={'500'} style={{ fontSize: '12px', color: '#A11447' }} /> */}
+                            <Text text={'Please upload minimum 3 exterior images'} fontWeight={'500'} style={{ fontSize: '12px', color: '#A11447' }} />
                         </span>
                         <Button className="w-50" style={{ color: '#949494', borderStyle: 'dotted', borderColor: 'GrayText', borderWidth: '2px', backgroundColor: 'unset' }}
                             onClick={() => { fileInputRef.current?.click() }}>

@@ -48,6 +48,15 @@ const BuilderLogin = (props) => {
    const timerRef = useRef(null); // Store interval ID
    const isMountedRef = useRef(true);
 
+   useEffect(() => {
+      isMountedRef.current = true;
+
+      return () => {
+         isMountedRef.current = false;
+         if (timerRef?.current) clearInterval(timerRef?.current);
+      };
+   }, []);
+
    const handleOtp1Change = (e) => {
       setLoginData({
          ...loginData,
@@ -124,7 +133,7 @@ const BuilderLogin = (props) => {
             setButtonDisable(false);
             if (response.data.status === 200) {
                showSuccessToast("OTP sent successfully");
-               num1.current.focus();
+               if (isMountedRef?.current && num1?.current) num1?.current?.focus();
                setCount(60);
                setTimer();
             }
@@ -163,7 +172,7 @@ const BuilderLogin = (props) => {
 
       timerRef.current = setInterval(() => {
          // Do not run setState if unmounted
-         if (!isMountedRef.current) return;
+         if (!isMountedRef?.current) return;
 
          setCount((prevCount) => {
             if (prevCount <= 1) {
@@ -220,19 +229,25 @@ const BuilderLogin = (props) => {
       if (userExists) {
          await props
             .actionLogin({ username: userNumber, password: passwordToBase64 })
-            .then((response) => {
+            .then(async (response) => {
                setButtonDisable(false);
                if (response.data) {
-                  if (response.data.access_token) loginUser();
-                  setLoginData({
+                  if (response.data.access_token) {
+                     setLocalStorage("authData", response.data);
+                     loginUser();
+                  } 
+                  setLoginData((prevData) => ({
+                     ...prevData,
                      value: "",
                      otp1: "",
                      otp2: "",
                      otp3: "",
                      otp4: "",
                      disable: true,
-                  });
-                  num1.current.focus();
+                  }));
+                  if (isMountedRef?.current && num1?.current) {
+                     num1?.current?.focus();
+                  }
                }
             })
             .catch((error) => {
