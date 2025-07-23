@@ -256,10 +256,10 @@ const BuilderProfileDetails = (props) => {
             if (userData?.roleName === "SUPER ADMIN") {
                history.goBack();
             } else {
-               setData((prevData) => ({ ...prevData, status: "UNDER_REVIEW", builderId: 0 }));
+               setData((prevData) => ({ ...prevData, status: "UNDER_REVIEW", builderId: response?.data?.resourceData }));
                let builderData = {...data};
                builderData.status = 'UNDER_REVIEW';
-               builderData.builderId = 0;
+               builderData.builderId = response?.data?.resourceData;
                setShowModal(true);
                setLocalStorage("builderData", builderData);
             }
