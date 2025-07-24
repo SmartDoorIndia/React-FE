@@ -14,6 +14,7 @@ import {
 import { TextField } from "@mui/material";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { validateBuilderDetails } from "../../../../common/validations";
+import Text from "../../../../shared/Text/Text";
 
 const BuilderProfileDetails = (props) => {
    const userData = getLocalStorage("authData");
@@ -125,7 +126,8 @@ const BuilderProfileDetails = (props) => {
             if (response?.status === 200) {
                const { resourceData, error: responseError } = response.data;
                setData(resourceData);
-               setLocalStorage("builderData", resourceData);
+               const { companyLogoImageUrl, ...restData } = resourceData;
+               setLocalStorage("builderData", restData);
                setIsChecked(true);
                setIsFormValid(true);
                // if (responseError) setError(responseError);
@@ -208,7 +210,16 @@ const BuilderProfileDetails = (props) => {
 
    const handleLogoUpload = (e) => {
       const file = e.target.files[0];
+      console.log(file);
       if (file) {
+         const maxSizeInMB = 3;
+         const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+
+         if (file.size > maxSizeInBytes) {
+            showErrorToast("Image size must be upto 3MB")
+            fileInputRef.current.value = null; // Clear input if needed
+            return;
+         }
          const reader = new FileReader();
          reader.onloadend = () => {
             setData((prevData) => ({
@@ -256,9 +267,13 @@ const BuilderProfileDetails = (props) => {
             if (userData?.roleName === "SUPER ADMIN") {
                history.goBack();
             } else {
-               setData((prevData) => ({ ...prevData, status: "UNDER_REVIEW", builderId: response?.data?.resourceData }));
-               let builderData = {...data};
-               builderData.status = 'UNDER_REVIEW';
+               setData((prevData) => ({
+                  ...prevData,
+                  status: "UNDER_REVIEW",
+                  builderId: response?.data?.resourceData,
+               }));
+               let builderData = { ...data };
+               builderData.status = "UNDER_REVIEW";
                builderData.builderId = response?.data?.resourceData;
                setShowModal(true);
                setLocalStorage("builderData", builderData);
@@ -389,6 +404,9 @@ const BuilderProfileDetails = (props) => {
                                           </div>
                                        )} */}
                                  </label>
+                                 <div className="text-start" >
+                                    <Text text="Image size must be upto 3MB" style={{fontSize: '12px', color:'red', textAlign: 'start'}} />
+                                 </div>
                               </div>
                            </Col>
 

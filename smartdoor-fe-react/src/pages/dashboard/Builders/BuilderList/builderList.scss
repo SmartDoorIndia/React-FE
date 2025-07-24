@@ -299,6 +299,11 @@
                // text-align: center;
             }
          }
+         &:nth-child(8) {
+            &:first-child {
+               text-align: center;
+            }
+          }
       }
       // &:active {
       //     background-color: aqua;
