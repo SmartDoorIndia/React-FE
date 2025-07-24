@@ -84,52 +84,22 @@ const BuilderList = () => {
             cell: ({ leads }) => <span>{leads || "0"}</span>,
             id: 6
         },
-        // {
-        //     name: "Plan",
-        //     selector: ((row) => row.plan),
-        //     sortable: true,
-        //     center: true,
-        //     maxWidth: "180px",
-        //     style: { padding: "0 !important" },
-        //     cell: ({ plan }) => <span>{plan || ""}</span>,
-        //     id: 7
-        // },
         {
             name: "Status",
             selector: ((row) => row.status),
             sortable: true,
             center: true,
-            maxWidth: "120px",
+            maxWidth: "150px",
             style: { padding: "0 !important" },
             cell: ({ status }) => <span>{handleStatusElement(status)}</span>,
-            id: 8
+            id: 7
         },
-        // {
-        //     name: "Projects to review",
-        //     selector: ((row) => row.reviewProjects),
-        //     sortable: true,
-        //     center: true,
-        //     maxWidth: "120px",
-        //     style: { padding: "0 !important" },
-        //     cell: ({ reviewProjects }) => <span>{reviewProjects}</span>,
-        //     id: 9
-        // },
-        // {
-        //     name: "Status",
-        //     selector: ((row) => row.status),
-        //     sortable: false,
-        //     center: true,
-        //     maxWidth: "150px",
-        //     style: { padding: "0 !important" },
-        //     cell: ({ status }) => <span>{status !== null ? handleStatusElement(status) : 'N/A'}</span>,
-        //     id: 6
-        // },
         {
             name: "Action",
             selector: ((row) => row.action),
             sortable: false,
             center: true,
-            maxWidth: "100px",
+            maxWidth: "150px",
             style: { padding: "0 !important" },
             cell: ({ row, builderId, userId }) => (
                 <>
@@ -149,7 +119,7 @@ const BuilderList = () => {
                     </div>
                 </>
             ),
-            id: 9
+            id: 8
         },
     ];
 

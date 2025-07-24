@@ -107,10 +107,10 @@ const BatteryLvlChk = (props) => {
                         paginationRowsPerPageOptions={[100, 200, 300]}
                         perPageOptions={[100, 200, 300]}
                         paginationPerPage={100}
-                        currentPage={currentPage}
-                        rowsPerPage={rowsPerPage}
-                        paginationServer={true}
-                        paginationComponent={PaginationComponent}
+                        // currentPage={currentPage}
+                        // rowsPerPage={rowsPerPage}
+                        paginationServer={false}
+                        // paginationComponent={PaginationComponent}
                     >
                     </DataTableComponent>
                 </div>
