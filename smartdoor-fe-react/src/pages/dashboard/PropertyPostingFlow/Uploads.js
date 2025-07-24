@@ -335,115 +335,256 @@ const Uploads = (props) => {
       }
    };
 
-    return (
-        <>
-            <div className="whiteBg mb-1">
-                <div className="d-flex">
-                    <Col lg='6'>
-                        <Text text={'Upload property images'} fontWeight={'bold'} style={{ fontSize: '16px' }} />
-                        <span>
-                            <Text text={'Capture or choose from gallery. File should be in png, jpg, etc.'} fontWeight={'500'} style={{ fontSize: '12px', color: '#949494' }} />
-                            {/* <Text text={'Please upload at-least 2 exterior image'} fontWeight={'500'} style={{ fontSize: '12px', color: '#A11447' }} /> */}
-                            <Text text={'Please upload minimum 3 exterior images'} fontWeight={'500'} style={{ fontSize: '12px', color: '#A11447' }} />
-                        </span>
-                        <Button className="w-50" style={{ color: '#949494', borderStyle: 'dotted', borderColor: 'GrayText', borderWidth: '2px', backgroundColor: 'unset' }}
-                            onClick={() => { fileInputRef.current?.click() }}>
-                            <div className="d-flex justify-content-center mt-1 mb-0  ">
-                                <Image src={cameraIcon}></Image>Upload Image</div></Button>
-                        <input
-                            hidden
-                            type="file"
-                            accept=".png, .jpg, .jpeg"
-                            multiple={true}
-                            ref={fileInputRef}
-                            onChange={(e) => {
-                                fileUpload(e);
-                            }}
-                        />
-                        <div className="d-flex mt-3" style={{ overflowX: 'scroll', flexWrap: 'wrap' }}>
-                            {imageArr.map((image, index) => (
-                                <>
-                                    <div key={editPropertyFlag ? image.docId : index} className="d-flex">
-                                        <img src={image?.docURL} alt="" style={{
-                                            border: '1px #DEDEDE solid', borderRadius: 8, height: '100px', width: '200px',
-                                            marginInlineEnd: '10px'
-                                        }} />
-                                        {/* <img className="me-3 mt-3" src={image.docURL} style={{ width: '150px', height: '100px', borderRadius: 8, border: '1px #9BA5AD solid' }}></img> */}
-                                        <TextField
-                                            style={{marginTop:'5%'}}
-                                            label='Image Desc.'
-                                            type="text"
-                                            value={image.docDescription}
-                                            onChange={(e) => {
-                                                const newDescription = e.target.value;
-                                                setImageArray(prevImageArr =>
-                                                    prevImageArr.map((img, idx) =>
-                                                        idx === index ? { ...img, docDescription: newDescription } : img
-                                            )
-                                        );
-                                    }}
-                                        />
-                                    <img className="mt-2" src={closeBtn} alt="" style={{ float: 'right', width: '15px', height: '15px', marginInlineStart: '0px' }} onClick={() => { deleteImageHandler(image.docId, index); }} />
-                                    </div> &nbsp; &nbsp; &nbsp; &nbsp;
-                                </>
-                            ))}
-                        </div>
-                    </Col>
-                    <Col lg='6'>
-                        <Text text={'Add property video'} fontWeight={'bold'} style={{ fontSize: '16px' }} />
-                        <Text text={'Paste the link of the video \(\Youtube, Vemio, etc.\)\
-                            Max 2 videos can be shared.'} fontWeight={'500'} style={{ fontSize: '12px', color: '#949494' }} />
-                        <div className="d-flex mt-2">
-                            <TextField
-                                className="col-10"
-                                type="text"
-                                InputProps={{
-                                    endAdornment: <>
-                                        <Image src={closeBtn} className='mt-3' style={{ scale: '1.5' }} onClick={() => { setVideoUrl1('') }} />
-                                    </>
-                                }}
-                                onChange={(e) => { setVideoUrl1(e.target.value) }}
-                                value={videoUrl1}
-                            ></TextField>
-                            {addNewVideoFlag === false ?
-                                <Buttons className='ml-3' name={'+'} style={{ fontSize: '12px', cursor:'pointer' }} onClick={() => { setAddNewVideoFlag(true) }} />
-                                : null}
-                        </div>
-                        {addNewVideoFlag ?
-                            <>
-                                <TextField
-                                    className="w-100 mt-2 col-10"
-                                    type="text"
-                                    InputProps={{
-                                        endAdornment: <>
-                                            <Image src={closeBtn} className='mt-3' style={{ scale: '1.5', cursor:'pointer' }} onClick={() => { setVideoUrl2('') }} />
-                                        </>
-                                    }}
-                                    onChange={(e) => { setVideoUrl2(e.target.value) }}
-                                    value={videoUrl2}
-                                ></TextField>
-                                <Buttons className='ml-3 mt-2 py-3' name={'X'} style={{ fontSize: '12px' }} onClick={() => { setAddNewVideoFlag(false); setVideoUrl2('') }} />
-                            </>
-                            : null}
-                    </Col>
-                </div>
-            </div>
-            {saveUploadFlag === false ?
-                <div className="d-flex">
-                    {!editPropertyFlag ?
+   return (
+      <>
+         <div className="whiteBg mb-1">
+            <div className="d-flex">
+               <Col lg="6">
+                  <Text
+                     text={"Upload property images"}
+                     fontWeight={"bold"}
+                     style={{ fontSize: "16px" }}
+                  />
+                  <span>
+                     <Text
+                        text={"Capture or choose from gallery. File should be in png, jpg, etc."}
+                        fontWeight={"500"}
+                        style={{ fontSize: "12px", color: "#949494" }}
+                     />
+                     {/* <Text text={'Please upload at-least 2 exterior image'} fontWeight={'500'} style={{ fontSize: '12px', color: '#A11447' }} /> */}
+                     <Text
+                        text={"Please upload minimum 3 exterior images"}
+                        fontWeight={"500"}
+                        style={{ fontSize: "12px", color: "#A11447" }}
+                     />
+                  </span>
+                  <Button
+                     className="w-50"
+                     style={{
+                        color: "#949494",
+                        borderStyle: "dotted",
+                        borderColor: "GrayText",
+                        borderWidth: "2px",
+                        backgroundColor: "unset",
+                     }}
+                     onClick={() => {
+                        fileInputRef.current?.click();
+                     }}
+                  >
+                     <div className="d-flex justify-content-center mt-1 mb-0  ">
+                        <Image src={cameraIcon}></Image>Upload Image
+                     </div>
+                  </Button>
+                  <input
+                     hidden
+                     type="file"
+                     accept=".png, .jpg, .jpeg"
+                     multiple={true}
+                     ref={fileInputRef}
+                     onChange={(e) => {
+                        fileUpload(e);
+                     }}
+                  />
+                  <div className="d-flex mt-3" style={{ overflowX: "hidden", flexWrap: "wrap" }}>
+                     {imageArr.map((image, index) => (
                         <>
-                            <Buttons className='p-2 px-4' name={editPropertyFlag ? 'Save' : 'Notify Customer'} onClick={() => { notifyUploads(false); }}></Buttons> &nbsp; &nbsp;
+                           <Row
+                              key={image.docURL}
+                              className="d-flex mt-3 mb-3"
+                              draggable
+                              onDragStart={(e) => handleDragStart(e, image.docURL)}
+                              onDragOver={(e) => handleDragOver(e)}
+                              onDrop={(e) => handleDrop(e, image.docURL)}
+                           >
+                              <Col lg="1" style={{alignSelf: "center"}}>
+                                 <img
+                                    className=""
+                                    src={equalIcon}
+                                    alt="close"
+                                    style={{ height: "40px", width: "40px", cursor: "move", scale: "2.5" }}
+                                 />
+                              </Col>
+                              <Col lg="11">
+                                 <div
+                                    key={editPropertyFlag ? image.docId : index}
+                                    className="d-flex"
+                                 >
+                                    <img
+                                       src={image?.docURL}
+                                       alt=""
+                                       style={{
+                                          border: "1px #DEDEDE solid",
+                                          borderRadius: 8,
+                                          height: "100px",
+                                          width: "200px",
+                                          marginInlineEnd: "10px",
+                                       }}
+                                    />
+                                    {/* <img className="me-3 mt-3" src={image.docURL} style={{ width: '150px', height: '100px', borderRadius: 8, border: '1px #9BA5AD solid' }}></img> */}
+                                    <TextField
+                                       style={{ marginTop: "5%" }}
+                                       label="Image Desc."
+                                       type="text"
+                                       value={image?.docDescription}
+                                       onChange={(e) => {
+                                          const newDescription = e.target.value;
+                                          setImageArray((prevImageArr) =>
+                                             prevImageArr.map((img, idx) =>
+                                                idx === index
+                                                   ? { ...img, docDescription: newDescription }
+                                                   : img
+                                             )
+                                          );
+                                       }}
+                                    />
+                                    <img
+                                       className="mt-2"
+                                       src={closeBtn}
+                                       alt=""
+                                       style={{
+                                          float: "right",
+                                          width: "15px",
+                                          height: "15px",
+                                          marginInlineStart: "0px",
+                                       }}
+                                       onClick={() => {
+                                          deleteImageHandler(image?.docId, index);
+                                       }}
+                                    />
+                                 </div>{" "}
+                                 &nbsp; &nbsp; &nbsp; &nbsp;
+                              </Col>
+                           </Row>
                         </>
-                        : null}
-                    <Buttons className='p-2 px-4' name='Next' onClick={() => { saveUploads(); }}></Buttons> &nbsp; &nbsp;
-                    {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
-                </div>
-                : null}
-        </>
-    );
-}
-const mapStateToProps = ({ basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages }) => ({
-    basicDetailFields, addressDetailFields, specDetailFields, pricingDetailFields, uploadImages
+                     ))}
+                  </div>
+               </Col>
+               <Col lg="6">
+                  <Text
+                     text={"Add property video"}
+                     fontWeight={"bold"}
+                     style={{ fontSize: "16px" }}
+                  />
+                  <Text
+                     text={
+                        "Paste the link of the video (Youtube, Vemio, etc.)\
+                            Max 2 videos can be shared."
+                     }
+                     fontWeight={"500"}
+                     style={{ fontSize: "12px", color: "#949494" }}
+                  />
+                  <div className="d-flex mt-2">
+                     <TextField
+                        className="col-10"
+                        type="text"
+                        InputProps={{
+                           endAdornment: (
+                              <>
+                                 <Image
+                                    src={closeBtn}
+                                    className="mt-3"
+                                    style={{ scale: "1.5" }}
+                                    onClick={() => {
+                                       setVideoUrl1("");
+                                    }}
+                                 />
+                              </>
+                           ),
+                        }}
+                        onChange={(e) => {
+                           setVideoUrl1(e.target.value);
+                        }}
+                        value={videoUrl1}
+                     ></TextField>
+                     {addNewVideoFlag === false ? (
+                        <Buttons
+                           className="ml-3"
+                           name={"+"}
+                           style={{ fontSize: "12px", cursor: "pointer" }}
+                           onClick={() => {
+                              setAddNewVideoFlag(true);
+                           }}
+                        />
+                     ) : null}
+                  </div>
+                  {addNewVideoFlag ? (
+                     <>
+                        <TextField
+                           className="w-100 mt-2 col-10"
+                           type="text"
+                           InputProps={{
+                              endAdornment: (
+                                 <>
+                                    <Image
+                                       src={closeBtn}
+                                       className="mt-3"
+                                       style={{ scale: "1.5", cursor: "pointer" }}
+                                       onClick={() => {
+                                          setVideoUrl2("");
+                                       }}
+                                    />
+                                 </>
+                              ),
+                           }}
+                           onChange={(e) => {
+                              setVideoUrl2(e.target.value);
+                           }}
+                           value={videoUrl2}
+                        ></TextField>
+                        <Buttons
+                           className="ml-3 mt-2 py-3"
+                           name={"X"}
+                           style={{ fontSize: "12px" }}
+                           onClick={() => {
+                              setAddNewVideoFlag(false);
+                              setVideoUrl2("");
+                           }}
+                        />
+                     </>
+                  ) : null}
+               </Col>
+            </div>
+         </div>
+         {saveUploadFlag === false ? (
+            <div className="d-flex">
+               {!editPropertyFlag ? (
+                  <>
+                     <Buttons
+                        className="p-2 px-4"
+                        name={editPropertyFlag ? "Save" : "Notify Customer"}
+                        onClick={() => {
+                           notifyUploads(false);
+                        }}
+                     ></Buttons>{" "}
+                     &nbsp; &nbsp;
+                  </>
+               ) : null}
+               <Buttons
+                  className="p-2 px-4"
+                  name="Next"
+                  onClick={() => {
+                     saveUploads();
+                  }}
+               ></Buttons>{" "}
+               &nbsp; &nbsp;
+               {/* <Buttons className='p-2 px-4' name='Cancel' ></Buttons> */}
+            </div>
+         ) : null}
+      </>
+   );
+};
+const mapStateToProps = ({
+   basicDetailFields,
+   addressDetailFields,
+   specDetailFields,
+   pricingDetailFields,
+   uploadImages,
+}) => ({
+   basicDetailFields,
+   addressDetailFields,
+   specDetailFields,
+   pricingDetailFields,
+   uploadImages,
 });
 
 const actions = {};
