@@ -25,6 +25,7 @@ const BuilderProfileDetails = (props) => {
    const [isApproved, setIsApproved] = useState(false);
    const [showModal, setShowModal] = useState(false);
    const fileInputRef = useRef(null); // Create a ref for the file input
+   const [maxSizeFlag, setMaxSizeFlag] = useState(false);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
    const [data, setData] = useState(
@@ -216,10 +217,12 @@ const BuilderProfileDetails = (props) => {
          const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
 
          if (file.size > maxSizeInBytes) {
-            showErrorToast("Image size must be upto 3MB")
+            showErrorToast("Image size must be upto 3MB");
             fileInputRef.current.value = null; // Clear input if needed
+            setMaxSizeFlag(true);
             return;
          }
+         setMaxSizeFlag(false);
          const reader = new FileReader();
          reader.onloadend = () => {
             setData((prevData) => ({
@@ -404,9 +407,18 @@ const BuilderProfileDetails = (props) => {
                                           </div>
                                        )} */}
                                  </label>
-                                 <div className="text-start" >
-                                    <Text text="Image size must be upto 3MB" style={{fontSize: '12px', color:'red', textAlign: 'start'}} />
-                                 </div>
+                                 {maxSizeFlag ? (
+                                    <div className="text-start">
+                                       <Text
+                                          text="Image size must be upto 3MB"
+                                          style={{
+                                             fontSize: "12px",
+                                             color: "red",
+                                             textAlign: "start",
+                                          }}
+                                       />
+                                    </div>
+                                 ) : null}
                               </div>
                            </Col>
 
@@ -692,6 +704,7 @@ const BuilderProfileDetails = (props) => {
                   </Modal.Title>
                   <Modal.Body>
                      Your request for Builder profile has been sent to the SmartDoor Admin.
+                     You can add new project from now.
                      <Row className="ModalActions">
                         <Col lg="6">
                            <button

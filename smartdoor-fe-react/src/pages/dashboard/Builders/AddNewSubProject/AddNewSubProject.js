@@ -314,7 +314,8 @@ const AddNewSubProject = (props) => {
    useEffect(() => {
       console.log(props?.projectId);
       console.log(props?.builderId);
-      console.log(props);setDoneBtnDisable(true)
+      console.log(props);
+      setDoneBtnDisable(true);
 
       if (props?.editTower === true) {
          setData({
@@ -605,6 +606,7 @@ const AddNewSubProject = (props) => {
                                  value={data.totalAreaToDevelop}
                                  onChange={handleInputChange}
                                  error={error?.totalAreaToDevelop}
+                                 InputLabelProps={{ shrink: true }}
                                  InputProps={{
                                     endAdornment: (
                                        <>
@@ -824,12 +826,19 @@ const AddNewSubProject = (props) => {
                                        value={monthYearFrom.month}
                                        onChange={handleFromMonthChange}
                                        sx={{
-                                          ".MuiInputBase-root": {
-                                             display: "flex",
-                                             flexWrap: "wrap",
-                                             overflow: "hidden",
-                                             // minHeight: "54px",
-                                             maxHeight: "52px",
+                                          "& .MuiInputBase-root": {
+                                             minHeight: "56px", // standard height for outlined input with label
+                                             alignItems: "center",
+                                          },
+                                          "& .MuiInputLabel-root": {
+                                             top: "0px", // adjust if needed
+                                             backgroundColor: "#fff", // to avoid text overlap
+                                             padding: "0 4px",
+                                          },
+                                          "& .MuiOutlinedInput-notchedOutline": {
+                                             legend: {
+                                                width: "auto", // ensures label doesn't overlap
+                                             },
                                           },
                                        }}
                                        error={monthYearFrom.month ? false : error?.possessionFrom}
@@ -857,12 +866,19 @@ const AddNewSubProject = (props) => {
                                        value={monthYearFrom.year}
                                        onChange={handleFromYearChange}
                                        sx={{
-                                          ".MuiInputBase-root": {
-                                             display: "flex",
-                                             flexWrap: "wrap",
-                                             overflow: "hidden",
-                                             // minHeight: "54px",
-                                             maxHeight: "52px",
+                                          "& .MuiInputBase-root": {
+                                             minHeight: "56px", // standard height for outlined input with label
+                                             alignItems: "center",
+                                          },
+                                          "& .MuiInputLabel-root": {
+                                             top: "0px", // adjust if needed
+                                             backgroundColor: "#fff", // to avoid text overlap
+                                             padding: "0 4px",
+                                          },
+                                          "& .MuiOutlinedInput-notchedOutline": {
+                                             legend: {
+                                                width: "auto", // ensures label doesn't overlap
+                                             },
                                           },
                                        }}
                                        error={monthYearFrom.year ? false : error?.possessionFrom}
@@ -894,12 +910,19 @@ const AddNewSubProject = (props) => {
                                        value={monthYearTo.month}
                                        onChange={handleToMonthChange}
                                        sx={{
-                                          ".MuiInputBase-root": {
-                                             display: "flex",
-                                             flexWrap: "wrap",
-                                             overflow: "hidden",
-                                             // minHeight: "54px",
-                                             maxHeight: "52px",
+                                          "& .MuiInputBase-root": {
+                                             minHeight: "56px", // standard height for outlined input with label
+                                             alignItems: "center",
+                                          },
+                                          "& .MuiInputLabel-root": {
+                                             top: "0px", // adjust if needed
+                                             backgroundColor: "#fff", // to avoid text overlap
+                                             padding: "0 4px",
+                                          },
+                                          "& .MuiOutlinedInput-notchedOutline": {
+                                             legend: {
+                                                width: "auto", // ensures label doesn't overlap
+                                             },
                                           },
                                        }}
                                        error={monthYearTo.month ? false : error?.possessionTo}
@@ -927,12 +950,19 @@ const AddNewSubProject = (props) => {
                                        value={monthYearTo.year}
                                        onChange={handleToYearChange}
                                        sx={{
-                                          ".MuiInputBase-root": {
-                                             display: "flex",
-                                             flexWrap: "wrap",
-                                             overflow: "hidden",
-                                             // minHeight: "54px",
-                                             maxHeight: "52px",
+                                          "& .MuiInputBase-root": {
+                                             minHeight: "56px", // standard height for outlined input with label
+                                             alignItems: "center",
+                                          },
+                                          "& .MuiInputLabel-root": {
+                                             top: "0px", // adjust if needed
+                                             backgroundColor: "#fff", // to avoid text overlap
+                                             padding: "0 4px",
+                                          },
+                                          "& .MuiOutlinedInput-notchedOutline": {
+                                             legend: {
+                                                width: "auto", // ensures label doesn't overlap
+                                             },
                                           },
                                        }}
                                        error={monthYearTo.year ? false : error?.possessionTo}
@@ -964,11 +994,25 @@ const AddNewSubProject = (props) => {
                                  <div className="image-upload mt-2 ">
                                     <label
                                        className="upload-label"
-                                       onClick={handleShow}
+                                       // onClick={handleShow}
                                        style={{ cursor: "pointer" }}
                                     >
+                                       <input
+                                          id="upload-project-image"
+                                          type="file"
+                                          className="upload-input"
+                                          accept=".jpg,.jpeg,.png"
+                                          multiple
+                                          onChange={handleProjectImagesChange}
+                                          ref={fileInputRef}
+                                          style={{ display: "none" }} // Hidden input
+                                          onClick={(e) => e.stopPropagation()} // Prevents the click from bubbling up
+                                       />
                                        <TiCameraOutline className="camera-icon" />
-                                       <span className="py-1" style={{ fontSize: "14px" }}>
+                                       <span className="py-1" style={{ fontSize: "14px" }} onClick={(e) => {
+                                             e.preventDefault(); // Prevent default action
+                                             fileInputRef.current.click(); // Programmatically trigger the file input click
+                                          }} >
                                           Upload Tower Images only
                                        </span>
                                     </label>
@@ -988,6 +1032,7 @@ const AddNewSubProject = (props) => {
                                                 lg="4"
                                                 key={index}
                                                 className="project-images mr-3"
+                                                style={{paddingRight:'0px'}}
                                              >
                                                 <div
                                                    className="image-preview-container"
@@ -1030,7 +1075,7 @@ const AddNewSubProject = (props) => {
                                                       style={{
                                                          position: "absolute",
                                                          top: "-5px",
-                                                         right: "-39px",
+                                                         right: "-20px",
                                                          cursor: "pointer",
                                                          color: "#fff",
                                                          background: "#ff0000",

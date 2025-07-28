@@ -46,6 +46,7 @@ import Buttons from "../../../../shared/Buttons/Buttons";
 import { validateProjectDetails } from "../../../../common/validations";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import POSTING_CONSTANTS from "../../../../common/helpers/POSTING_CONSTANTS";
+import docIcon from "../../../../assets/images/doc-icon.png";
 
 const AddNewProjectPost = (props) => {
    const { fetchProjectId, projectId, builderId, showEditProject, toggleEdit } = props;
@@ -962,6 +963,7 @@ const AddNewProjectPost = (props) => {
                                  setData({ ...data, totalAreaToDevelop: Number(e?.target.value) });
                               }}
                               error={error?.totalAreaToDevelop}
+                              InputLabelProps={{ shrink: true }} // <-- Keeps label floated
                               InputProps={{
                                  endAdornment: (
                                     <>
@@ -1099,7 +1101,7 @@ const AddNewProjectPost = (props) => {
                                              </option>
                                           ))}
                                        </Form.Control>
-                                       {!monthYearFrom.month ? (
+                                       {!monthYearFrom.month && error?.possessionFrom ? (
                                           <>
                                              <Text
                                                 text={"Please enter month"}
@@ -1137,7 +1139,7 @@ const AddNewProjectPost = (props) => {
                                              </option>
                                           ))}
                                        </Form.Control>
-                                       {!monthYearFrom.year ? (
+                                       {!monthYearFrom.year && error?.possessionFrom ? (
                                           <>
                                              <Text
                                                 text={"Please enter year"}
@@ -1184,7 +1186,7 @@ const AddNewProjectPost = (props) => {
                                              </option>
                                           ))}
                                        </Form.Control>
-                                       {!monthYearTo.month ? (
+                                       {!monthYearTo.month && error?.possessionTo ? (
                                           <>
                                              <Text
                                                 text={"Please enter month"}
@@ -1222,7 +1224,7 @@ const AddNewProjectPost = (props) => {
                                              </option>
                                           ))}
                                        </Form.Control>
-                                       {!monthYearTo.year ? (
+                                       {!monthYearTo.year && error?.possessionTo ? (
                                           <>
                                              <Text
                                                 text={"Please enter year"}
@@ -1427,7 +1429,7 @@ const AddNewProjectPost = (props) => {
                               />
                               <span>Upload Brochure URL</span>
                            </label>
-                           <div className="d-flex flex-wrap mt-2 justify-content-center">
+                           <div className=" flex-wrap mt-2 justify-content-center">
                               {/* {data?.projectImages
                                  ?.filter((image) => image.docDescription === "project layout")
                                  ?.map((image, index) => (
@@ -1464,36 +1466,44 @@ const AddNewProjectPost = (props) => {
                                     </div>
                                  ))} */}
                               {data?.brochureUrl !== null && data?.brochureUrl?.length !== 0 ? (
-                                 <div
-                                    className="project-images mt-3"
-                                    style={{ position: "relative", marginRight: "10px" }}
-                                 >
-                                    {/* <img
-                                       src={
-                                          data?.brochureUrl
-                                       }
-                                       alt={"Brochure Url"} // Ensure alt text is appropriate for accessibility
-                                       className="img-fluid"
-                                       style={{ maxWidth: "115px" }}
-                                    /> */}
+                                 <>
+                                    <div
+                                       className="project-images mt-3"
+                                       style={{ position: "relative", marginRight: "10px" }}
+                                    >
+                                       {/* <img
+                                          src={
+                                             data?.brochureUrl
+                                          }
+                                          alt={"Brochure Url"} // Ensure alt text is appropriate for accessibility
+                                          className="img-fluid"
+                                          style={{ maxWidth: "115px" }}
+                                       /> */}
+                                       <div>
+                                          <img src={docIcon} alt="" style={{height: '3rem', width:'3rem'}} onClick={() => {window.open(data.brochureUrl, "_blank")}} />
+                                          
+                                       </div>
+                                       <RxCross2
+                                          className="delete-icon"
+                                          onClick={() => handleDeleteImage(null, "brochureUrl")}
+                                          style={{
+                                             position: "absolute",
+                                             top: "-5px",
+                                             right: "150px",
+                                             cursor: "pointer",
+                                             color: "#fff",
+                                             background: "#ff0000",
+                                             borderRadius: "50%",
+                                          }}
+                                       />
+                                       
+                                    </div>
                                     <Text
-                                       text={"Brochure URL"}
-                                       style={{ fontSize: "14px", fontWeight: "600" }}
-                                    />
-                                    <RxCross2
-                                       className="delete-icon"
-                                       onClick={() => handleDeleteImage(null, "brochureUrl")}
-                                       style={{
-                                          position: "absolute",
-                                          top: "-5px",
-                                          right: "-15px",
-                                          cursor: "pointer",
-                                          color: "#fff",
-                                          background: "#ff0000",
-                                          borderRadius: "50%",
-                                       }}
-                                    />
-                                 </div>
+                                          text={"Brochure uploaded. Click the icon to view."}
+                                          style={{ fontSize: "12px", fontWeight: "500" }}
+                                       />
+                                 </>
+
                               ) : null}
                            </div>
                            <Form.Text className="text-muted">

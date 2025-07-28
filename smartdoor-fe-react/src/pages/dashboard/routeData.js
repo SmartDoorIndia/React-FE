@@ -67,6 +67,7 @@ const BuilderProfileDetails = React.lazy(() => import('./Builders/BuilderProfile
 const BuilderInfo = React.lazy(() => import('./Builders/BuilderInfo/BuilderInfo'));
 const AddNewProjectPost = React.lazy(() => import('./Builders/AddNewProjectPost/AddNewProjectPost'));
 const BuilderProjectList = React.lazy(() => import('./Builders/BuilderInfo/BuilderProjects/BuilderProjectList'));
+const BuilderLeads = React.lazy(() => import('./Builders/BuilderLeads/BuilderLeads'));
 // const ProjectPostingDetails = React.lazy(() => import('./Builders/ProjectPostingDetails/ProjectPostingDetails'));
 const ProjectPosting = React.lazy(() => import('./Builders/ProjectPosting/ProjectPosting'));
 const ProjectDetailsPage = React.lazy(() => import('./Builders/ProjectDetailsPage/ProjectDetailsPage'));
@@ -1330,6 +1331,14 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: BuilderProjectList
+  },
+
+  {
+    path: '/admin/builder-project-leads',
+    name: 'Download Builder Project Leads',
+    bradcrumb: false,
+    excat: true,
+    component: BuilderLeads
   },
 
   {
