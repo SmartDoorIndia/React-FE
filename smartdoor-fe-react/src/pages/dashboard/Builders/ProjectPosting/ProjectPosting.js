@@ -1,165 +1,231 @@
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
-import React, { memo, useEffect, useState } from 'react'
-import ExpandIcon from '../../../../assets/images/expandIcon.png';
-import AddNewProjectPost from '../AddNewProjectPost/AddNewProjectPost';
-import Text from '../../../../shared/Text/Text';
-import './ProjectPosting.scss';
-import AddNewSubProject from '../AddNewSubProject/AddNewSubProject';
-import { Button, Col, Row } from 'react-bootstrap';
-import Image from '../../../../shared/Image';
-import addIcon from '../../../../assets/svg/add.svg';
-import closeBtn from '../../../../assets/images/closeBtn.png';
-import { fetchBuilderProjectById } from '../../../../common/redux/actions';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { getLocalStorage } from '../../../../common/helpers/Utils';
+/** @format */
+
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import React, { memo, useEffect, useState } from "react";
+import ExpandIcon from "../../../../assets/images/expandIcon.png";
+import AddNewProjectPost from "../AddNewProjectPost/AddNewProjectPost";
+import Text from "../../../../shared/Text/Text";
+import "./ProjectPosting.scss";
+import AddNewSubProject from "../AddNewSubProject/AddNewSubProject";
+import { Button, Col, Row } from "react-bootstrap";
+import Image from "../../../../shared/Image";
+import addIcon from "../../../../assets/svg/add.svg";
+import closeBtn from "../../../../assets/images/closeBtn.png";
+import { fetchBuilderProjectById } from "../../../../common/redux/actions";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { getLocalStorage } from "../../../../common/helpers/Utils";
 
 const ProjectPosting = (props) => {
-    const [projectDetails, setProjectDetails] = useState({
-        builderProjectSearchDto: []
-    });
-    const [subProjectList, setSubProjectList] = useState([]);
-    const [projectId, setBuilderProjectId] = useState(props?.location?.state?.projectId || null);
-    const builderId = props?.location?.state?.builderId;
-    const history = useHistory();
-    const userData = getLocalStorage("authData");
+   const [projectDetails, setProjectDetails] = useState({
+      builderProjectSearchDto: [],
+   });
+   const [subProjectList, setSubProjectList] = useState([]);
+   const [projectId, setBuilderProjectId] = useState(props?.location?.state?.projectId || null);
+   const builderId = props?.location?.state?.builderId;
+   const history = useHistory();
+   const userData = getLocalStorage("authData");
 
-    useEffect(() => {
-        // console.log(props?.location?.state?.projectId)
+   useEffect(() => {
+      // console.log(props?.location?.state?.projectId)
+   }, [projectId, builderId]);
 
-    }, [projectId, builderId]);
+   const addMoreTower = () => {
+      const subProject1 = {};
+      let subProjectlist = subProjectList;
+      subProjectlist.push(subProject1);
+      setSubProjectList([...subProjectlist]);
+   };
 
-    const addMoreTower = () => {
-        const subProject1 = {};
-        let subProjectlist = subProjectList;
-        subProjectlist.push(subProject1);
-        setSubProjectList([...subProjectlist]);
-    }
+   const deleteTower = (index) => {
+      let subProjectlist = subProjectList;
+      subProjectlist.pop(index);
+      setSubProjectList([...subProjectlist]);
+   };
 
-    const deleteTower = (index) => {
-        let subProjectlist = subProjectList;
-        subProjectlist.pop(index);
-        setSubProjectList([...subProjectlist]);
-    }
+   const getProjectId = (projectId) => {
+      console.log(projectId);
+      setBuilderProjectId(projectId);
+      if (userData?.roleId === 19 || userData?.roleId === 1 || userData?.roleId === 22) {
+         history.push("/admin/builders/builder-details/project-details", {
+            projectId: projectId,
+            builderId: builderId,
+         });
+      }
+   };
 
-    const getProjectId = (projectId) => {
-        console.log(projectId)
-        setBuilderProjectId(projectId)
-        if((userData?.roleId === 19) || (userData?.roleId === 1) || userData?.roleId === 22) {
-            history.push('/admin/builders/builder-details/project-details', {
-                projectId: projectId,
-                builderId: builderId,
-             });
-        }
-    }
+   return (
+      <>
+         <div style={{ overflowX: "hidden" }}>
+            <div className="mt-2" style={{border: 'solid 0.5px red', padding: '0.5rem', borderRadius: '5px', backgroundColor: 'antiquewhite'}}>
+                <Text
+                text="- Enter Project details below."
+                style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+                />
+               <Text
+                  text="- Once you've completed the project details, please add towers and units."
+                  style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+               />
+               <Text
+                  text="- Your project will remain under review until it's approved by the admin. To be approved and made visible to customers, towers and units must be added."
+                  style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+               />
+            </div>
+            <Accordion defaultExpanded={true} className="mb-3" style={{ boxShadow: "none" }}>
+               <AccordionSummary
+                  expandIcon={<img src={ExpandIcon} alt="" />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                  sx={{
+                     backgroundColor: "#BE1452",
+                     borderRadius: "5px",
+                     "&.Mui-expanded": {
+                        minHeight: "42px",
+                        height: "42px",
+                     },
+                     height: "42px !important",
+                     boxShadow: "none",
+                  }}
+               >
+                  <Text
+                     className="page-title ml-3"
+                     text={"PROJECT DETAIL"}
+                     style={{ fontSize: "18px", fontWeight: "700", color: "white" }}
+                  ></Text>
+               </AccordionSummary>
+               <AccordionDetails>
+                  <AddNewProjectPost
+                     fetchProjectId={getProjectId}
+                     projectId={projectId}
+                     builderId={builderId}
+                  />
+               </AccordionDetails>
+            </Accordion>
 
-    return (
-        <>
-            <div style={{ overflowX: 'hidden' }} >
-                <Accordion defaultExpanded={true} className='mb-3' style={{ boxShadow: 'none' }} >
-                    <AccordionSummary
-                        expandIcon={<img src={ExpandIcon} alt='' />}
+            {/* {subProjectList.length === 0 ?
+                : null} */}
+            <Text
+               text="Please add towers and units for project. Click below button to add new tower."
+               style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+            />
+            {subProjectList.map((subProject, index) => (
+               <>
+                  <Accordion
+                     defaultExpanded={index === subProjectList.length - 1 ? true : false}
+                     style={{ boxShadow: "none" }}
+                  >
+                     <AccordionSummary
+                        expandIcon={<img src={ExpandIcon} alt="" />}
                         aria-controls="panel1-content"
                         id="panel1-header"
                         sx={{
-                            backgroundColor: '#BE1452',
-                            borderRadius: '5px',
-                            '&.Mui-expanded': {
-                                minHeight: '42px',
-                                height: '42px',
-                            },
-                            height: '42px !important',
-                            boxShadow: 'none'
+                           backgroundColor: "#E9E9E9",
+                           borderRadius: "5px",
+                           "&.Mui-expanded": {
+                              minHeight: "42px",
+                              height: "42px",
+                           },
+                           boxShadow: "none",
+                           height: "42px !important",
                         }}
-                    >
-                        <Text className="page-title ml-3" text={'PROJECT DETAIL'} style={{ fontSize: '18px', fontWeight: '700', color: 'white' }}></Text>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <AddNewProjectPost fetchProjectId={getProjectId} projectId={projectId} builderId={builderId} />
-                    </AccordionDetails>
-                </Accordion>
+                     >
+                        <div className="row col-12">
+                           <div className="col-4 d-flex">
+                              <Text
+                                 className="page-title"
+                                 text={"TOWER / PLOTTED"}
+                                 style={{ fontSize: "18px", fontWeight: "700", color: "black" }}
+                              ></Text>{" "}
+                              &nbsp;&nbsp;&nbsp;
+                              <Text
+                                 className="text-center"
+                                 text={index + 1}
+                                 style={{
+                                    fontSize: "18px",
+                                    fontWeight: "700",
+                                    color: "white",
+                                    backgroundColor: "#BE1452",
+                                    borderRadius: "4px",
+                                    width: "24px",
+                                    height: "24px",
+                                 }}
+                              />
+                           </div>
+                           <div className="col-8" style={{ textAlign: "end", paddingRight: "0%" }}>
+                              <img
+                                 src={closeBtn}
+                                 alt=""
+                                 onClick={() => {
+                                    deleteTower(index);
+                                 }}
+                              />
+                           </div>
+                        </div>
+                     </AccordionSummary>
+                     <AccordionDetails>
+                        <AddNewSubProject
+                           projectId={projectId}
+                           builderId={builderId}
+                           newTowerinExisting={true}
+                        />
+                     </AccordionDetails>
+                  </Accordion>
+               </>
+            ))}
+            <div>
+               <Row className="mt-3">
+                  <Col lg="3">
+                     <Button
+                        className="d-flex py-0 mb-2"
+                        style={{
+                           color: "#BE1452",
+                           backgroundColor: "#F8F3F5",
+                           borderColor: "#DED6D9",
+                        }}
+                        disabled={projectId !== null ? false : true}
+                        onClick={() => {
+                           addMoreTower();
+                        }} // Bind this function to handle the click
+                     >
+                        <div
+                           style={{
+                              width: "20px",
+                              height: "20px",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              marginTop: "3vh",
+                           }}
+                        >
+                           <Image
+                              src={addIcon}
+                              style={{ width: "15px", height: "15px", marginTop: "0%" }}
+                           />
+                        </div>
+                        <Text
+                           text={"Add More Tower / Plotted "}
+                           fontWeight="bold"
+                           style={{ fontSize: "12px", color: "#BE1452" }}
+                        />
+                     </Button>
+                  </Col>
+               </Row>
+            </div>
 
-                {subProjectList.map((subProject, index) => (
-                    <>
-                        <Accordion defaultExpanded={index === subProjectList.length - 1 ? true : false} style={{ boxShadow: 'none' }} >
-                            <AccordionSummary
-                                expandIcon={<img src={ExpandIcon} alt='' />}
-                                aria-controls="panel1-content"
-                                id="panel1-header"
-                                sx={{
-                                    backgroundColor: '#E9E9E9',
-                                    borderRadius: '5px',
-                                    '&.Mui-expanded': {
-                                        minHeight: '42px',
-                                        height: '42px',
-                                    },
-                                    boxShadow: 'none',
-                                    height: '42px !important'
-                                }}
-                            >
-                                <div className='row col-12'>
-                                    <div className='col-4 d-flex'>
-                                        <Text className="page-title" text={'TOWER / PLOTTED'} style={{ fontSize: '18px', fontWeight: '700', color: 'black' }}></Text> &nbsp;&nbsp;&nbsp;
-                                        <Text className="text-center" text={index + 1} style={{ fontSize: '18px', fontWeight: '700', color: 'white', backgroundColor: '#BE1452', borderRadius: '4px', width: '24px', height: '24px' }} />
-                                    </div>
-                                    <div className='col-8' style={{ textAlign: 'end', paddingRight: '0%' }} >
-                                        <img src={closeBtn} alt='' onClick={() => { deleteTower(index) }} />
-                                    </div>
-                                </div>
-                            </AccordionSummary>
-                            <AccordionDetails>
-                                <AddNewSubProject projectId={projectId} builderId={builderId} newTowerinExisting={true} />
-                            </AccordionDetails>
-                        </Accordion>
-                    </>
-                ))}
-                <div>
-                    <Row className='mt-3' >
-                        <Col lg="3">
-                            <Button
-                                className="d-flex py-0 mb-2"
-                                style={{
-                                    color: "#BE1452",
-                                    backgroundColor: "#F8F3F5",
-                                    borderColor: "#DED6D9",
-                                }}
-                                disabled={projectId !== null ? false : true}
-                                onClick={() => { addMoreTower() }} // Bind this function to handle the click
-                            >
-                                <div
-                                    style={{
-                                        width: "20px",
-                                        height: "20px",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        marginTop: "3vh"
-                                    }}
-                                >
-                                    <Image src={addIcon} style={{ width: "15px", height: '15px', marginTop: "0%" }} />
-                                </div>
-                                <Text
-                                    text={"Add More Tower / Plotted "}
-                                    fontWeight="bold"
-                                    style={{ fontSize: "12px", color: "#BE1452" }}
-                                />
-                            </Button>
-                        </Col>
-                    </Row>
-                </div>
-
-                <div className="projectDetailFormActions pb-4 justify-content-start">
-                    <button
-                        type="submit"
-                        // disabled={this.state.disableSubmit}
-                        id="submit-team-member-button"
-                        className=" btn-small cancel-btn w-25"
-                        onClick={() => { history.goBack() }}
-                    >
-                        Cancel
-                    </button>
-                    {/* <button
+            <div className="projectDetailFormActions pb-4 justify-content-start">
+               <button
+                  type="submit"
+                  // disabled={this.state.disableSubmit}
+                  id="submit-team-member-button"
+                  className=" btn-small cancel-btn w-25"
+                  onClick={() => {
+                     history.goBack();
+                  }}
+               >
+                  Cancel
+               </button>
+               {/* <button
                         type=""
                         // disabled={this.state.disableSubmit}
                         id="cancel-team-member-button"
@@ -176,18 +242,16 @@ const ProjectPosting = (props) => {
                     >
                         Save & Publish
                     </button> */}
-                </div>
             </div>
-        </>
-    )
-}
+         </div>
+      </>
+   );
+};
 
-const mapStateToProps = ({ }) => ({
-
-});
+const mapStateToProps = ({}) => ({});
 const actions = {
-    fetchBuilderProjectById,
+   fetchBuilderProjectById,
 };
 const withConnect = connect(mapStateToProps, actions);
 
-export default compose(withConnect, memo)(ProjectPosting)
+export default compose(withConnect, memo)(ProjectPosting);

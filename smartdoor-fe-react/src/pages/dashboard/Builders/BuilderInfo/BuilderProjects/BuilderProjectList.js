@@ -1,7 +1,7 @@
 /** @format */
 // Line 90 has the API integration
 import React, { useEffect, memo } from "react";
-import { Button, Image } from "react-bootstrap";
+import { Button, Image, Modal } from "react-bootstrap";
 import "./BuilderProjectList.scss";
 import SearchInput from "../../../../../shared/Inputs/SearchInput/SearchInput";
 import Pagination from "../../../../../shared/DataTable/Pagination";
@@ -27,6 +27,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Tooltip } from "@mui/material";
 import doubleDown from "../../../../../assets/images/double-down.png";
 import doubleUp from "../../../../../assets/images/double-up.png";
+import Buttons from "../../../../../shared/Buttons/Buttons";
 
 const BuilderProjectList = (props) => {
    const { fetchBuilderProjectList } = props;
@@ -42,6 +43,7 @@ const BuilderProjectList = (props) => {
    const history = useHistory();
    const builderData = getLocalStorage("builderData");
    const [builderStatus, setBuilderStatus] = useState(props?.builderDetails?.status || builderData?.status || null);
+   const [guideFlag, setGuideFlag] = useState(false);
 
    useEffect(async () => {
       console.log(builderData);
@@ -52,6 +54,11 @@ const BuilderProjectList = (props) => {
             setBuilderStatus(response?.data?.resourceData?.status);
          });
       }
+      const currentUrl = window.location.href;
+      if((builderData === null || builderData === undefined) && currentUrl?.endsWith("/admin/builder-projects")) {
+         setGuideFlag(true);
+      }
+      // setGuideFlag(true);
       const response = await fetchProjectIdList({
          builderId: props?.builderId || builderData?.builderId,
       });
@@ -419,6 +426,15 @@ const BuilderProjectList = (props) => {
                </div>
             </div>
          </div>
+         <Modal show={guideFlag} onHide={() => setGuideFlag(false)} centered backdrop="static" >
+            <Modal.Header style={{justifyContent:"end"}}>
+               <Buttons varient="secondary" name="X" onClick={() => {setGuideFlag(false)}} />
+            </Modal.Header>
+            <Modal.Body className="text-center">
+               <Text text="Please complete builder profile details from Builder Profile section to add new Project" style={{fontSize: '16px', fontWeight: '500'}} />
+               <Buttons name="Complete your Builder Profile" onClick={() => {history.push("/admin/builder-profile")}} />
+            </Modal.Body>
+         </Modal>
       </>
    );
 };

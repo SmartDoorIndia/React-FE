@@ -13,7 +13,7 @@ import { Button, Col, Modal, Row } from "react-bootstrap";
 import AddNewSubProject from "../AddNewSubProject/AddNewSubProject";
 import { FallBackLoader } from "../../../../common/helpers/Loader";
 import Buttons from "../../../../shared/Buttons/Buttons";
-import { getLocalStorage, showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
+import { getLocalStorage, showErrorToast, showSuccessToast, ToolTip } from "../../../../common/helpers/Utils";
 
 const ProjectDetailsPage = (props) => {
    const [projectDetails, setProjectDetails] = useState({
@@ -191,7 +191,7 @@ const ProjectDetailsPage = (props) => {
                <>
                   <Text
                      text={
-                        "Project is under reviewed."
+                        "Your project is currently under review and will be visible to customers once approved."
                      }
                      style={{ fontSize: "14px", fontWeight: "600" }}
                   />
@@ -208,6 +208,7 @@ const ProjectDetailsPage = (props) => {
                   />
                </>
             ) : null}
+            <Text text="To ensure your project listing becomes visible, please make sure to add towers and units if you haven’t already." style={{fontSize: '16px', fontWeight: '700', color: 'red'}} /> 
             <Accordion defaultExpanded={true} className="mb-3" style={{ boxShadow: "none" }}>
                <AccordionSummary
                   expandIcon={<img src={ExpandIcon} alt="" />}
@@ -238,6 +239,10 @@ const ProjectDetailsPage = (props) => {
                   />
                </AccordionDetails>
             </Accordion>
+            {/* {subProjectList.length === 0 ?
+                : null} */}
+            <Text text="Please add towers and units to your project if they haven’t been added yet." style={{fontSize: '16px', fontWeight: '700', color: 'red'}} /> 
+            <Text text="If you'd like to add a new tower, click the button below." style={{fontSize: '16px', fontWeight: '700', color: 'red'}} /> 
             {subProjectList?.map((subProject, index) => (
                <>
                   <Accordion
@@ -353,45 +358,50 @@ const ProjectDetailsPage = (props) => {
             <div>
                <Row className="mt-3">
                   <Col lg="3">
-                     <Button
-                        className="d-flex py-0 mb-2"
-                        style={{
-                           color: "#BE1452",
-                           backgroundColor: "#F8F3F5",
-                           borderColor: "#DED6D9",
-                        }}
-                        disabled={
-                           // projectDetails?.builderProjectSearchDto[0]?.status === "UNDER_REVIEW" ||
-                           projectDetails?.builderProjectSearchDto[0]?.status === "REJECTED" ||
+                     <ToolTip position="top" style={{ width: '100%' }} name={projectDetails?.builderProjectSearchDto[0]?.status === "REJECTED" ||
                            projectDetails?.builderProjectSearchDto[0]?.status === "ON_HOLD"
-                              ? true
-                              : false
-                        }
-                        onClick={() => {
-                           addMoreTower();
-                        }} // Bind this function to handle the click
-                     >
-                        <div
+                              ? "Cannot add tower beacuse project is either rejected or on hold."
+                              : "Add a new Tower or Plotted Unit"}>
+                        <Button
+                           className="d-flex py-0 mb-2"
                            style={{
-                              width: "20px",
-                              height: "20px",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              marginTop: "3vh",
+                              color: "#BE1452",
+                              backgroundColor: "#F8F3F5",
+                              borderColor: "#DED6D9",
                            }}
+                           disabled={
+                              // projectDetails?.builderProjectSearchDto[0]?.status === "UNDER_REVIEW" ||
+                              projectDetails?.builderProjectSearchDto[0]?.status === "REJECTED" ||
+                              projectDetails?.builderProjectSearchDto[0]?.status === "ON_HOLD"
+                                 ? true
+                                 : false
+                           }
+                           onClick={() => {
+                              addMoreTower();
+                           }} // Bind this function to handle the click
                         >
-                           <Image
-                              src={addIcon}
-                              style={{ width: "15px", height: "15px", marginTop: "0%" }}
+                           <div
+                              style={{
+                                 width: "20px",
+                                 height: "20px",
+                                 display: "flex",
+                                 alignItems: "center",
+                                 justifyContent: "center",
+                                 marginTop: "3vh",
+                              }}
+                           >
+                              <Image
+                                 src={addIcon}
+                                 style={{ width: "15px", height: "15px", marginTop: "0%" }}
+                              />
+                           </div>
+                           <Text
+                              text={"Add More Tower / Plotted "}
+                              fontWeight="bold"
+                              style={{ fontSize: "12px", color: "#BE1452" }}
                            />
-                        </div>
-                        <Text
-                           text={"Add More Tower / Plotted "}
-                           fontWeight="bold"
-                           style={{ fontSize: "12px", color: "#BE1452" }}
-                        />
-                     </Button>
+                        </Button>
+                     </ToolTip>
                   </Col>
                </Row>
             </div>

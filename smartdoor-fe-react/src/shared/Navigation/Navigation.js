@@ -560,6 +560,22 @@ const Nav = () => {
                            />
                            Builder Projects
                         </Link>
+                        <Link
+                           to="/admin/builder-project-leads"
+                           className={`nav-link ${
+                              pathname.includes("/admin/builder-project-leads") ? "nav-active" : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={
+                                 pathname.includes("/admin/builder-project-leads")
+                                    ? borkerIcon
+                                    : dashboard
+                              }
+                           />
+                           Builder Leads
+                        </Link>
                      </>
                   )}
                </ReactBoostrap.Nav>
