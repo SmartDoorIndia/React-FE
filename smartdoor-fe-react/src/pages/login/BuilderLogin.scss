@@ -1,21 +1,15 @@
 /** @format */
 
 .builder-login {
-   // display: flex;
-   // justify-content: center;
-   // align-items: center;
-   // height: 100vh;
-   background: url("../../assets/images/builderLogin-bg.jpg");
    display: flex;
+   align-items: center;
+   justify-content: center;
+   min-height: 100vh; // 👈 Ensures full viewport height
+   background: url("../../assets/images/builderLogin-bg.jpg");
    background-size: 100% 100%;
    background-position: center;
    background-repeat: no-repeat;
-   // align-items: flex-start;
-   // flex-direction: column;
-   height: fit-content;
-   object-fit: contain;
-   // overflow: scroll;
-   // justify-content: end;
+
    
    .container {
       margin: 4.25rem;

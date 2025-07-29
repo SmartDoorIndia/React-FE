@@ -157,13 +157,18 @@ const AddNewSubProject = (props) => {
       fileInputRef.current.value = "";
       if (files.length > 0) {
          let formData = new FormData();
-         const maxSizeInBytes = 15 * 1024 * 1024; // 10MB
-         Array.from(files).map((file) => {
-            if (file.size > maxSizeInBytes) {
-               showErrorToast("File must be less than 15MB...");
-               return;
-            }
-         });
+         const maxSizeInBytes = 5 * 1024 * 1024; // 10MB
+         // Array.from(files).map((file) => {
+         //    if (file.size > maxSizeInBytes) {
+         //       showErrorToast("File must be less than 5MB...");
+         //       return;
+         //    }
+         // });
+         const hasInvalidFile = files.some((file) => file.size > maxSizeInBytes);
+         if (hasInvalidFile) {
+            showErrorToast("Each file must be less than 5MB...");
+            return;
+         }
          let fileList = [];
          for (let i = 0; i < files.length; i++) {
             fileList.push(files[i]);
@@ -393,6 +398,11 @@ const AddNewSubProject = (props) => {
             ...prevData,
             possessionFrom: `${monthYearFrom.year}-${monthYearFrom.month}-01`, // Save in the desired format
          }));
+      } else if (!monthYearFrom.month && !monthYearFrom.year) {
+         setData((prevData) => ({
+            ...prevData,
+            possessionFrom: null,
+         }));
       }
    }, [monthYearFrom]);
 
@@ -401,6 +411,11 @@ const AddNewSubProject = (props) => {
          setData((prevData) => ({
             ...prevData,
             possessionTo: `${monthYearTo.year}-${monthYearTo.month}-01`, // Save in the desired format
+         }));
+      } else if (!monthYearTo.month && !monthYearTo.year) {
+         setData((prevData) => ({
+            ...prevData,
+            possessionTo: null,
          }));
       }
    }, [monthYearTo]);
@@ -841,7 +856,11 @@ const AddNewSubProject = (props) => {
                                              },
                                           },
                                        }}
-                                       error={monthYearFrom.month ? false : error?.possessionFrom}
+                                       error={
+                                          monthYearFrom.month && !error?.possessionFrom
+                                             ? false
+                                             : error?.possessionFrom
+                                       }
                                     >
                                        <MenuItem value="">Select Month</MenuItem>
                                        {Array.from({ length: 12 }, (_, index) => (
@@ -855,6 +874,18 @@ const AddNewSubProject = (props) => {
                                           </MenuItem>
                                        ))}
                                     </TextField>
+                                    {error?.possessionFrom ? (
+                                       <>
+                                          <Text
+                                             text={"enter valid possession range"}
+                                             style={{
+                                                fontSize: "13px",
+                                                fontWeight: "600",
+                                                color: "red",
+                                             }}
+                                          />
+                                       </>
+                                    ) : null}
                                  </Col>
                                  <Col sm="6">
                                     <TextField
@@ -881,7 +912,11 @@ const AddNewSubProject = (props) => {
                                              },
                                           },
                                        }}
-                                       error={monthYearFrom.year ? false : error?.possessionFrom}
+                                       error={
+                                          monthYearFrom.year && !error?.possessionFrom
+                                             ? false
+                                             : error?.possessionFrom
+                                       }
                                     >
                                        <MenuItem value="">Select Year</MenuItem>
                                        {Array.from(
@@ -925,7 +960,11 @@ const AddNewSubProject = (props) => {
                                              },
                                           },
                                        }}
-                                       error={monthYearTo.month ? false : error?.possessionTo}
+                                       error={
+                                          monthYearTo.month && !error?.possessionTo
+                                             ? false
+                                             : error?.possessionTo
+                                       }
                                     >
                                        <MenuItem value="">Select Month</MenuItem>
                                        {Array.from({ length: 12 }, (_, index) => (
@@ -939,6 +978,18 @@ const AddNewSubProject = (props) => {
                                           </MenuItem>
                                        ))}
                                     </TextField>
+                                    {error?.possessionTo ? (
+                                       <>
+                                          <Text
+                                             text={"enter valid possession range"}
+                                             style={{
+                                                fontSize: "13px",
+                                                fontWeight: "600",
+                                                color: "red",
+                                             }}
+                                          />
+                                       </>
+                                    ) : null}
                                  </Col>
                                  <Col sm="6">
                                     <TextField
@@ -965,7 +1016,11 @@ const AddNewSubProject = (props) => {
                                              },
                                           },
                                        }}
-                                       error={monthYearTo.year ? false : error?.possessionTo}
+                                       error={
+                                          monthYearTo.year && !error?.possessionTo
+                                             ? false
+                                             : error?.possessionTo
+                                       }
                                     >
                                        <MenuItem value="">Select Year</MenuItem>
                                        {Array.from(
@@ -984,7 +1039,7 @@ const AddNewSubProject = (props) => {
                         {/* </>
                         ) : null} */}
 
-                        <Row className="imageUploadRow mt-4">
+                        <Row className="imageUploadRow mt-5">
                            <Col lg={4}>
                               <Form.Group
                                  controlId="formProjectImages"
@@ -1009,10 +1064,14 @@ const AddNewSubProject = (props) => {
                                           onClick={(e) => e.stopPropagation()} // Prevents the click from bubbling up
                                        />
                                        <TiCameraOutline className="camera-icon" />
-                                       <span className="py-1" style={{ fontSize: "14px" }} onClick={(e) => {
+                                       <span
+                                          className="py-1"
+                                          style={{ fontSize: "14px" }}
+                                          onClick={(e) => {
                                              e.preventDefault(); // Prevent default action
                                              fileInputRef.current.click(); // Programmatically trigger the file input click
-                                          }} >
+                                          }}
+                                       >
                                           Upload Tower Images only
                                        </span>
                                     </label>
@@ -1032,7 +1091,7 @@ const AddNewSubProject = (props) => {
                                                 lg="4"
                                                 key={index}
                                                 className="project-images mr-3"
-                                                style={{paddingRight:'0px'}}
+                                                style={{ paddingRight: "0px" }}
                                              >
                                                 <div
                                                    className="image-preview-container"
@@ -1213,13 +1272,19 @@ const AddNewSubProject = (props) => {
                               </>
                            )}
                            {saveSubProjectFlag ? (
-                              <Buttons
-                                 name={editTower ? "Save" : "Save Tower"}
-                                 varient="primary"
-                                 onClick={() => {
-                                    saveSubProjectDetails();
-                                 }}
-                              />
+                              <>
+                                 <Buttons
+                                    name={editTower ? "Save" : "Save Tower"}
+                                    varient="primary"
+                                    onClick={() => {
+                                       saveSubProjectDetails();
+                                    }}
+                                 />
+                                 <Text
+                                    text="Please save the tower before adding units."
+                                    style={{ fontSize: "12px", fontWeight: "600", color: "red" }}
+                                 />
+                              </>
                            ) : null}
                         </div>
                         <hr className="p-0 w-100" />
@@ -1228,7 +1293,7 @@ const AddNewSubProject = (props) => {
                         {data.properties?.length === 0 ? (
                            <>
                               <Text
-                                 text={"Please add atleast one unit."}
+                                 text={"Please add at least one unit before proceeding."}
                                  style={{ fontSize: "13px", fontWeight: "600" }}
                               />
                            </>

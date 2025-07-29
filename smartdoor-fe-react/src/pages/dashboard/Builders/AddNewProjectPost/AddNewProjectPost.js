@@ -1131,8 +1131,8 @@ const AddNewProjectPost = (props) => {
                                        >
                                           <option value="">Select Year</option>
                                           {Array.from(
-                                             { length: 101 },
-                                             (_, index) => currentYear - index
+                                             { length: 5 },
+                                             (_, index) => currentYear + index
                                           ).map((year) => (
                                              <option key={year} value={year}>
                                                 {year}
@@ -1216,8 +1216,8 @@ const AddNewProjectPost = (props) => {
                                        >
                                           <option value="">Select Year</option>
                                           {Array.from(
-                                             { length: 41 },
-                                             (_, index) => currentYear + 20 - index
+                                             { length: 5 },
+                                             (_, index) => Number(monthYearFrom.year) + 5 - index
                                           ).map((year) => (
                                              <option key={year} value={year}>
                                                 {year}
