@@ -1491,7 +1491,9 @@ export const validateSubProjectDetails = (data) => {
   if (isBlank(data?.possessionTo)) {
     errors.possessionTo = true;
   }
-  if (data?.possessionTo < data?.possessionFrom) {
+  if (!isBlank(data?.possessionFrom) &&
+  !isBlank(data?.possessionTo) &&
+  new Date(data.possessionTo) < new Date(data.possessionFrom)) {
     errors.possessionTo = true;
     errors.possessionFrom = true;
   }
