@@ -13,7 +13,12 @@ import { Button, Col, Modal, Row } from "react-bootstrap";
 import AddNewSubProject from "../AddNewSubProject/AddNewSubProject";
 import { FallBackLoader } from "../../../../common/helpers/Loader";
 import Buttons from "../../../../shared/Buttons/Buttons";
-import { getLocalStorage, showErrorToast, showSuccessToast, ToolTip } from "../../../../common/helpers/Utils";
+import {
+   getLocalStorage,
+   showErrorToast,
+   showSuccessToast,
+   ToolTip,
+} from "../../../../common/helpers/Utils";
 
 const ProjectDetailsPage = (props) => {
    const [projectDetails, setProjectDetails] = useState({
@@ -60,7 +65,7 @@ const ProjectDetailsPage = (props) => {
    }, [projectDetails, props?.builderId]);
 
    const addMoreTower = () => {
-      if(projectDetails?.builderProjectSearchDto[0]?.totalTowers > subProjectList?.length) {
+      if (projectDetails?.builderProjectSearchDto[0]?.totalTowers > subProjectList?.length) {
          setAddTowerFlag(true);
       } else {
          showErrorToast("Please update total tower number...");
@@ -76,14 +81,14 @@ const ProjectDetailsPage = (props) => {
 
    const closeNewTower = () => {
       setAddTowerFlag(false);
-   }
+   };
 
    const changeBuilderProjectStatus = async (status, comment) => {
       setLoading(true);
       if (status === "REJECTED") {
          if (comment?.trim()?.length === 0 || comment === null) {
             showErrorToast("Please enter rejection comment");
-            setLoading(false)
+            setLoading(false);
             return null;
          }
       }
@@ -208,7 +213,12 @@ const ProjectDetailsPage = (props) => {
                   />
                </>
             ) : null}
-            <Text text="To ensure your project listing becomes visible, please make sure to add towers and units if you haven’t already." style={{fontSize: '16px', fontWeight: '700', color: 'red'}} /> 
+            {userData.roleName !== "SUPER ADMIN" ? (
+               <Text
+                  text="To ensure your project listing becomes visible, please make sure to add towers and units if you haven’t already."
+                  style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+               />
+            ) : null}
             <Accordion defaultExpanded={true} className="mb-3" style={{ boxShadow: "none" }}>
                <AccordionSummary
                   expandIcon={<img src={ExpandIcon} alt="" />}
@@ -241,8 +251,18 @@ const ProjectDetailsPage = (props) => {
             </Accordion>
             {/* {subProjectList.length === 0 ?
                 : null} */}
-            <Text text="Please add towers and units to your project if they haven’t been added yet." style={{fontSize: '16px', fontWeight: '700', color: 'red'}} /> 
-            <Text text="If you'd like to add a new tower, click the button below." style={{fontSize: '16px', fontWeight: '700', color: 'red'}} /> 
+            {userData.roleName !== "SUPER ADMIN" ? (
+               <>
+                  <Text
+                     text="Please add towers and units to your project if they haven’t been added yet."
+                     style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+                  />
+                  <Text
+                     text="If you'd like to add a new tower, click the button below."
+                     style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+                  />
+               </>
+            ) : null}
             {subProjectList?.map((subProject, index) => (
                <>
                   <Accordion
@@ -358,10 +378,16 @@ const ProjectDetailsPage = (props) => {
             <div>
                <Row className="mt-3">
                   <Col lg="3">
-                     <ToolTip position="top" style={{ width: '100%' }} name={projectDetails?.builderProjectSearchDto[0]?.status === "REJECTED" ||
+                     <ToolTip
+                        position="top"
+                        style={{ width: "100%" }}
+                        name={
+                           projectDetails?.builderProjectSearchDto[0]?.status === "REJECTED" ||
                            projectDetails?.builderProjectSearchDto[0]?.status === "ON_HOLD"
                               ? "Cannot add tower beacuse project is either rejected or on hold."
-                              : "Add a new Tower or Plotted Unit"}>
+                              : "Add a new Tower or Plotted Unit"
+                        }
+                     >
                         <Button
                            className="d-flex py-0 mb-2"
                            style={{

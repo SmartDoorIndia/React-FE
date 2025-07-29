@@ -1213,11 +1213,12 @@ const AddNewProjectPost = (props) => {
                                                 ? false
                                                 : error?.possessionTo
                                           }
+                                          disabled={!data.possessionFrom}
                                        >
                                           <option value="">Select Year</option>
                                           {Array.from(
-                                             { length: 5 },
-                                             (_, index) => Number(monthYearFrom.year) + 5 - index
+                                             { length: 10 },
+                                             (_, index) => (Number(monthYearFrom.year) - 1) + 10 - index
                                           ).map((year) => (
                                              <option key={year} value={year}>
                                                 {year}
@@ -1240,6 +1241,11 @@ const AddNewProjectPost = (props) => {
                                  </Form.Group>
                               </Col>
                            </Row>
+                           {!data.possessionFrom ?
+                              <div className="text-end">
+                                 <Text text={"Add possesion from first"} style={{fontSize: '12px', fontWeight: '500'}} />
+                              </div>
+                           : null}
                         {/* </>
                      ) : null} */}
                      <Row className="mt-4">
