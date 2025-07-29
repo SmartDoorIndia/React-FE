@@ -191,11 +191,11 @@ const ConsumerManagement = (props) => {
 	  },
 	  {
 		 name: "KYC Status",
-		 selector: (row) => row.kycverified,
+		 selector: (row) => row.isKYCVerified,
 		 sortable: false,
 		 center: true,
 		 minWidth: "130px",
-		 cell: ({ kycverified }) => kycstatus(kycverified),
+		 cell: ({ isKYCVerified }) => kycstatus(isKYCVerified),
 	  },
 	  {
 		 name: "Action",
@@ -228,11 +228,13 @@ const ConsumerManagement = (props) => {
 			<div
 			   className="action"
 			   onClick={() => {
-				  setConsumerInfoModal(true);
-				  setSelectedConsumer(row);
+					if(row.isKYCVerified) {
+						setConsumerInfoModal(true);
+						setSelectedConsumer(row);
+					}
 			   }}
 			>
-			   <ToolTip position="left" name="View KYC Details">
+			   <ToolTip position="left" name={row.isKYCVerified ? "View KYC Details" : "KYC pending"}>
 				  <span>
 					 <Image name="contentIco" src={contentIco} alt={"No image available"} />
 				  </span>

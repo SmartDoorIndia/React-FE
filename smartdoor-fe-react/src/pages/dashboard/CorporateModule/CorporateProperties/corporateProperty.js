@@ -89,7 +89,8 @@ const CorporateProperty = (props) => {
             selector: ((row) => row.userName),
             sortable: true,
             center: true,
-            maxWidth: "150px",
+            wrap: true,
+            minWidth: "180px",
             cell: ({ userName }) => (
                 <ToolTip position="top" style={{ width: '100%' }} name={userName}>
                     <Text size="Small" color="secondryColor elipsis-text" text={userName} />
