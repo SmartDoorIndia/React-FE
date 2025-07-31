@@ -188,7 +188,7 @@ const ProjectDetailsPage = (props) => {
                <>
                   <Text
                      text={"Project is on hold. Project Edit and add/edit tower is disabled."}
-                     style={{ fontSize: "14px", fontWeight: "600" }}
+                     style={{ fontSize: "14px", fontWeight: "600", color: '#BE1452' }}
                   />
                </>
             ) : null}
@@ -198,7 +198,7 @@ const ProjectDetailsPage = (props) => {
                      text={
                         "Your project is currently under review and will be visible to customers once approved."
                      }
-                     style={{ fontSize: "14px", fontWeight: "600" }}
+                     style={{ fontSize: "14px", fontWeight: "600", color: '#BE1452' }}
                   />
                </>
             ) : null}
@@ -209,14 +209,14 @@ const ProjectDetailsPage = (props) => {
                         "Project is rejected due to " +
                         projectDetails?.builderProjectSearchDto[0]?.rejectionComment
                      }
-                     style={{ fontSize: "14px", fontWeight: "600" }}
+                     style={{ fontSize: "14px", fontWeight: "600", color: '#BE1452' }}
                   />
                </>
             ) : null}
             {userData.roleName !== "SUPER ADMIN" ? (
                <Text
                   text="To ensure your project listing becomes visible, please make sure to add towers and units if you haven’t already."
-                  style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+                  style={{ fontSize: "16px", fontWeight: "700", color: "#BE1452" }}
                />
             ) : null}
             <Accordion defaultExpanded={true} className="mb-3" style={{ boxShadow: "none" }}>
@@ -255,11 +255,11 @@ const ProjectDetailsPage = (props) => {
                <>
                   <Text
                      text="Please add towers and units to your project if they haven’t been added yet."
-                     style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+                     style={{ fontSize: "16px", fontWeight: "700", color: "#BE1452" }}
                   />
                   <Text
                      text="If you'd like to add a new tower, click the button below."
-                     style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+                     style={{ fontSize: "16px", fontWeight: "700", color: "#BE1452" }}
                   />
                </>
             ) : null}

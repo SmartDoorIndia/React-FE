@@ -881,7 +881,7 @@ const AddNewSubProject = (props) => {
                                              style={{
                                                 fontSize: "13px",
                                                 fontWeight: "600",
-                                                color: "red",
+                                                color: "#BE1452",
                                              }}
                                           />
                                        </>
@@ -920,8 +920,8 @@ const AddNewSubProject = (props) => {
                                     >
                                        <MenuItem value="">Select Year</MenuItem>
                                        {Array.from(
-                                          { length: 101 },
-                                          (_, index) => currentYear + 20 - index
+                                          { length: 7 },
+                                          (_, index) => currentYear - 2 + index
                                        ).map((year) => (
                                           <MenuItem key={year} value={year}>
                                              {year}
@@ -965,6 +965,7 @@ const AddNewSubProject = (props) => {
                                              ? false
                                              : error?.possessionTo
                                        }
+                                       disabled={!data.possessionFrom}
                                     >
                                        <MenuItem value="">Select Month</MenuItem>
                                        {Array.from({ length: 12 }, (_, index) => (
@@ -985,7 +986,7 @@ const AddNewSubProject = (props) => {
                                              style={{
                                                 fontSize: "13px",
                                                 fontWeight: "600",
-                                                color: "red",
+                                                color: "#BE1452",
                                              }}
                                           />
                                        </>
@@ -1021,11 +1022,12 @@ const AddNewSubProject = (props) => {
                                              ? false
                                              : error?.possessionTo
                                        }
+                                       disabled={!data.possessionFrom}
                                     >
                                        <MenuItem value="">Select Year</MenuItem>
                                        {Array.from(
-                                          { length: 41 },
-                                          (_, index) => currentYear + 20 - index
+                                          { length: 10 },
+                                          (_, index) => Number(monthYearFrom.year) - 1 + 10 - index
                                        ).map((year) => (
                                           <MenuItem key={year} value={year}>
                                              {year}
@@ -1034,6 +1036,14 @@ const AddNewSubProject = (props) => {
                                     </TextField>
                                  </Col>
                               </Row>
+                              {!data?.possessionFrom && !error?.possessionFrom ? (
+                                 <div className="text-end">
+                                    <Text
+                                       text={"Add 'Possesion from' first"}
+                                       style={{ fontSize: "13px", fontWeight: "200", color: '#BE1452' }}
+                                    />
+                                 </div>
+                              ) : null}
                            </Col>
                         </Row>
                         {/* </>
@@ -1045,7 +1055,7 @@ const AddNewSubProject = (props) => {
                                  controlId="formProjectImages"
                                  className="formProjectImages"
                               >
-                                 <span>Upload sub project images *</span>
+                                 <span>Upload {data.propertyType === "Tower" ? "Tower" : (data.propertyType === "Plotted" ? "Plotted" : "Sub Project")} images *</span>
                                  <div className="image-upload mt-2 ">
                                     <label
                                        className="upload-label"
@@ -1072,7 +1082,7 @@ const AddNewSubProject = (props) => {
                                              fileInputRef.current.click(); // Programmatically trigger the file input click
                                           }}
                                        >
-                                          Upload Tower Images only
+                                          Upload {data.propertyType === "Tower" ? "Tower" : (data.propertyType === "Plotted" ? "Plotted" : "Sub Project")} Images only
                                        </span>
                                     </label>
                                  </div>
@@ -1282,7 +1292,7 @@ const AddNewSubProject = (props) => {
                                  />
                                  <Text
                                     text="Please save the tower before adding units."
-                                    style={{ fontSize: "12px", fontWeight: "600", color: "red" }}
+                                    style={{ fontSize: "13px", fontWeight: "600", color: "#BE1452" }}
                                  />
                               </>
                            ) : null}
@@ -1294,7 +1304,7 @@ const AddNewSubProject = (props) => {
                            <>
                               <Text
                                  text={"Please add at least one unit before proceeding."}
-                                 style={{ fontSize: "13px", fontWeight: "600" }}
+                                 style={{ fontSize: "13px", fontWeight: "600", color: '#BE1452' }}
                               />
                            </>
                         ) : null}

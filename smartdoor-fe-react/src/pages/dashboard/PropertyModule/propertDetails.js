@@ -1306,7 +1306,7 @@ const PropertyDetails = (props) => {
                               className="mt-2 mb-2" />  */}
                               {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
                               <div className="d-flex justify-content-end">
-                                 {userData.roleName === "SUPER ADMIN" &&
+                                 {(userData.roleName === "SUPER ADMIN" || userData.roleName === "SALES ADMIN") &&
                                  propertyData.miscellaneousDetails.status === "UNDER REVIEW" &&
                                  propertyData.miscellaneousDetails.smartLockProperty === false &&
                                  propertyData?.miscellaneousDetails?.deleted === false ? (
@@ -1683,7 +1683,7 @@ const PropertyDetails = (props) => {
                                           <Text
                                              size="Small"
                                              fontWeight="mediumbold"
-                                             color="secondry-color"
+                                             color="secondry-coFlor"
                                              text={propertyAnalyticsData.data.dealCancelled}
                                           />
                                        </td>

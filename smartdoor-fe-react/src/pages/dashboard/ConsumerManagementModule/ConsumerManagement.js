@@ -230,7 +230,10 @@ const ConsumerManagement = (props) => {
 			   onClick={() => {
 					if(row.isKYCVerified) {
 						setConsumerInfoModal(true);
-						setSelectedConsumer(row);
+						let silentKycData = JSON.parse(row.silentKycData);
+						let consumerDetails = {...row, silentKycData}
+						console.log(consumerDetails)
+						setSelectedConsumer(consumerDetails);
 					}
 			   }}
 			>
@@ -606,8 +609,8 @@ const ConsumerManagement = (props) => {
 				  <Col lg="4">
 					 <Text 
 					 	size="regular"
-						style ={{fontSize:"14px"
-			,			fontWeight:"bold"}}
+						style ={{fontSize:"14px",
+						fontWeight:"bold"}}
 						color="secondryColor"
 						className="text-start"
 						text="KYC Method :"
@@ -621,6 +624,28 @@ const ConsumerManagement = (props) => {
 						color="secondryColor"
 						className="text-start"
 						text={selectedConsumer.kycMethod === null ? "-" : getKYCMethod(selectedConsumer.kycMethod)}
+					 />
+				  </Col>
+			   </div>
+			   <div className="d-flex">
+				  <Col lg="4">
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px",
+						fontWeight:"bold"}}
+						color="secondryColor"
+						className="text-start"
+						text="Silent KYC Name :"
+					 />
+				  </Col>
+				  <Col lg="8">
+					 <Text 
+					 	size="regular"
+						style ={{fontSize:"14px",
+						fontWeight:""}}
+						color="secondryColor"
+						className="text-start"
+						text={selectedConsumer?.silentKycData === null ? "-" : (selectedConsumer?.silentKycData?.full_name ? selectedConsumer?.silentKycData?.full_name : "-" )}
 					 />
 				  </Col>
 			   </div>

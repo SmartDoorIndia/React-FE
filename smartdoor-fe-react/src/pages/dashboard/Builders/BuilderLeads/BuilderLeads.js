@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { getLeadForBuilder } from "../../../../common/redux/actions";
 import { Col, Modal, Row } from "react-bootstrap";
 import { TextField } from "@mui/material";
-import { getLocalStorage, showErrorToast } from "../../../../common/helpers/Utils";
+import { formateDate, formateDateTime, getLocalStorage, showErrorToast } from "../../../../common/helpers/Utils";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import { saveAs } from "file-saver";
 import Text from "../../../../shared/Text/Text";
@@ -45,19 +45,18 @@ const BuilderLeads = () => {
       }
 
       // Extract headers from the first object
-      const headers = Object.keys(data[0]).join(",") + "\n";
+      const headers = ["Project Name", "Search Date", "User Name", "User Mobile"];
 
-      // Convert each object to a CSV row
-      const rows = data
-         .map((row) =>
-            Object.values(row)
-               .map((value) => `"${value}"`)
-               .join(",")
-         )
-         .join("\n");
+      // Create CSV rows, skipping 'projectId'
+      const rows = data.map((row) => [
+         `"${row.projectName || ""}"`,
+         `"${formateDateTime(row.searchDate, "DD/MM/YYYY hh:mm a") || ""}"`,
+         `"${row.userName || ""}"`,
+         `"${row.userMobile || ""}"`,
+      ]);
 
-      // Combine headers and rows
-      const csvContent = headers + rows;
+      // Combine headers and rows into CSV string
+      const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
 
       // Create a Blob with CSV content
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -69,7 +68,8 @@ const BuilderLeads = () => {
       <>
          <div className="bg-white mt-3 mb-3">
             <div className="mt-3">
-               <Text className="p-2"
+               <Text
+                  className="p-2"
                   text="- Leads refer to users who viewed your project listings within the selected date range."
                   style={{ fontSize: "16px", fontWeight: "600" }}
                />
@@ -129,7 +129,7 @@ const BuilderLeads = () => {
             </Modal.Header>
             <Modal.Body className="text-center">
                <Text
-                  text="Please complete builder profile details from Builder Profile section to add new Project"
+                  text="Please complete builder profile details from Builder Profile section and add new projects to download project leads"
                   style={{ fontSize: "16px", fontWeight: "500" }}
                />
                <Buttons

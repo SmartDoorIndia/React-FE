@@ -20,6 +20,7 @@ import { TextField, Tooltip } from "@mui/material";
 import Buttons from "../../../../../shared/Buttons/Buttons";
 import { saveAs } from "file-saver";
 import {
+   formateDateTime,
    getLocalStorage,
    showErrorToast,
    showSuccessToast,
@@ -63,19 +64,18 @@ const BuilderDetails = (props) => {
       }
 
       // Extract headers from the first object
-      const headers = Object.keys(data[0]).join(",") + "\n";
+      const headers = ["Project Name", "Search Date", "User Name", "User Mobile"];
 
-      // Convert each object to a CSV row
-      const rows = data
-         .map((row) =>
-            Object.values(row)
-               .map((value) => `"${value}"`)
-               .join(",")
-         )
-         .join("\n");
+      // Create CSV rows, skipping 'projectId'
+      const rows = data.map((row) => [
+         `"${row.projectName || ""}"`,
+         `"${formateDateTime(row.searchDate, "DD/MM/YYYY hh:mm a") || ""}"`,
+         `"${row.userName || ""}"`,
+         `"${row.userMobile || ""}"`,
+      ]);
 
-      // Combine headers and rows
-      const csvContent = headers + rows;
+      // Combine headers and rows into CSV string
+      const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
 
       // Create a Blob with CSV content
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });

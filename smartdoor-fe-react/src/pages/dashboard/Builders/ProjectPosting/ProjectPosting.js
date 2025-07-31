@@ -57,19 +57,19 @@ const ProjectPosting = (props) => {
 
    return (
       <>
-         <div style={{ overflowX: "hidden" }}>
-            <div className="mt-2" style={{border: 'solid 0.5px red', padding: '0.5rem', borderRadius: '5px', backgroundColor: 'antiquewhite'}}>
+         <div className="mb-3" style={{ overflowX: "hidden" }}>
+            <div className="mt-2" style={{border: 'solid 0.5px #BE1452', padding: '0.5rem', borderRadius: '5px', backgroundColor: '#f0c4d454'}}>
                 <Text
                 text="- Enter Project details below."
-                style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+                style={{ fontSize: "16px", fontWeight: "700", color: "#BE1452" }}
                 />
                <Text
                   text="- Once you've completed the project details, please add towers and units."
-                  style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+                  style={{ fontSize: "16px", fontWeight: "700", color: "#BE1452" }}
                />
                <Text
                   text="- Your project will remain under review until it's approved by the admin. To be approved and made visible to customers, towers and units must be added."
-                  style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+                  style={{ fontSize: "16px", fontWeight: "700", color: "#BE1452" }}
                />
             </div>
             <Accordion defaultExpanded={true} className="mb-3" style={{ boxShadow: "none" }}>
@@ -107,7 +107,7 @@ const ProjectPosting = (props) => {
                 : null} */}
             <Text
                text="Please add towers and units for project. Click below button to add new tower."
-               style={{ fontSize: "16px", fontWeight: "700", color: "red" }}
+               style={{ fontSize: "16px", fontWeight: "700", color: "#BE1452" }}
             />
             {subProjectList.map((subProject, index) => (
                <>

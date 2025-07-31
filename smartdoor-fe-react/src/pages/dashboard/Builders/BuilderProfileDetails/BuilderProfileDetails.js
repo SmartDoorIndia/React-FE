@@ -413,7 +413,7 @@ const BuilderProfileDetails = (props) => {
                                           text="Image size must be upto 3MB"
                                           style={{
                                              fontSize: "12px",
-                                             color: "red",
+                                             color: "#BE1452",
                                              textAlign: "start",
                                           }}
                                        />
@@ -513,7 +513,7 @@ const BuilderProfileDetails = (props) => {
                                  type="text"
                                  required={true}
                                  className="textFieldInput w-100"
-                                 label="Address"
+                                 label="Corporate Address"
                                  value={data.companyAddress}
                                  onInput={(e) => handleChange(e)}
                                  disabled={

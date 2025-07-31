@@ -554,7 +554,7 @@ const AddNewProjectPost = (props) => {
       setData((prevData) => ({
          ...prevData,
          projectAddress: newData.projectAddress,
-         locality: e.location,
+         locality: e?.location?.formatted_address,
          city: newData.city,
          state: m_address.state,
          latitude: newData.latitude,
@@ -1131,8 +1131,8 @@ const AddNewProjectPost = (props) => {
                                        >
                                           <option value="">Select Year</option>
                                           {Array.from(
-                                             { length: 5 },
-                                             (_, index) => currentYear + index
+                                             { length: 7 },
+                                             (_, index) => (currentYear - 2) + index
                                           ).map((year) => (
                                              <option key={year} value={year}>
                                                 {year}
@@ -1173,6 +1173,7 @@ const AddNewProjectPost = (props) => {
                                                 ? false
                                                 : error?.possessionTo
                                           }
+                                          disabled={!data.possessionFrom}
                                        >
                                           <option value="">Select Month</option>
                                           {Array.from({ length: 12 }, (_, index) => (
@@ -1241,9 +1242,9 @@ const AddNewProjectPost = (props) => {
                                  </Form.Group>
                               </Col>
                            </Row>
-                           {!data.possessionFrom ?
+                           {!data?.possessionFrom && !error?.possessionFrom ?
                               <div className="text-end">
-                                 <Text text={"Add possesion from first"} style={{fontSize: '12px', fontWeight: '500'}} />
+                                 <Text text={"Add 'Possession from' first"} style={{fontSize: '12px', fontWeight: '500', color: '#BE1452'}} />
                               </div>
                            : null}
                         {/* </>
@@ -1506,7 +1507,7 @@ const AddNewProjectPost = (props) => {
                                     </div>
                                     <Text
                                           text={"Brochure uploaded. Click the icon to view."}
-                                          style={{ fontSize: "12px", fontWeight: "500" }}
+                                          style={{ fontSize: "12px", fontWeight: "500", color:'#BE1452' }}
                                        />
                                  </>
 

@@ -10,11 +10,7 @@ import addIcon from "../../../../../assets/svg/add.svg";
 import { connect } from "react-redux";
 import { useState } from "react";
 import DataTableComponent from "../../../../../shared/DataTable/DataTable";
-import {
-   getLocalStorage,
-   handleStatusElement,
-   ToolTip,
-} from "../../../../../common/helpers/Utils";
+import { getLocalStorage, handleStatusElement, ToolTip } from "../../../../../common/helpers/Utils";
 import {
    fetchProjectIdList,
    fetchBuilderProjectList,
@@ -42,20 +38,26 @@ const BuilderProjectList = (props) => {
    const [expandLoading, setExpandLoading] = useState(false);
    const history = useHistory();
    const builderData = getLocalStorage("builderData");
-   const [builderStatus, setBuilderStatus] = useState(props?.builderDetails?.status || builderData?.status || null);
+   const [builderStatus, setBuilderStatus] = useState(
+      props?.builderDetails?.status || builderData?.status || null
+   );
    const [guideFlag, setGuideFlag] = useState(false);
+   const userData = getLocalStorage("authData");
 
    useEffect(async () => {
       console.log(builderData);
       setLoading(true);
-      if(props?.builderDetails !== null && props?.builderDetails !== undefined) {
+      if (props?.builderDetails !== null && props?.builderDetails !== undefined) {
          getBuilderById({ builderId: props.builderId, userId: props?.userId }).then((response) => {
-            console.log(response)
+            console.log(response);
             setBuilderStatus(response?.data?.resourceData?.status);
          });
       }
       const currentUrl = window.location.href;
-      if((builderData === null || builderData === undefined) && currentUrl?.endsWith("/admin/builder-projects")) {
+      if (
+         (builderData === null || builderData === undefined) &&
+         currentUrl?.endsWith("/admin/builder-projects")
+      ) {
          setGuideFlag(true);
       }
       // setGuideFlag(true);
@@ -156,7 +158,7 @@ const BuilderProjectList = (props) => {
       // },
       {
          name: "Status",
-         selector: (row) => row?.status || 'N/A',
+         selector: (row) => row?.status || "N/A",
          //  sortable: true,
          center: true,
          minWidth: "145px",
@@ -344,56 +346,65 @@ const BuilderProjectList = (props) => {
       <>
          <div className="builderProperties">
             <div className="tableBox">
-               <div className="d-flex flex-md-column flex-xl-row justify-content-xl-end align-items-center tableHeading">
-                  <div className="locationSelect d-flex justify-content-end align-items-center w-100">
-                     {/* {subHeaderComponentMemo} */}
-                     <Tooltip
-                        placement="top-start"
-                        style={{ width: "100%" }}
-                        title={
-                           builderStatus !== "APPROVED" && builderStatus !== "UNDER_REVIEW"
-                              ? "Builder Profile is not approved"
-                              : "Add new Project"
-                        }
-                     >
-                        <a style={{ textDecoration: "none" }}>
-                           <Button
-                              className="d-flex py-1 ml-3"
-                              disabled={builderStatus !== "APPROVED" && builderStatus !== "UNDER_REVIEW" ? true : false}
-                              style={{
-                                 color: "#BE1452",
-                                 backgroundColor: "#F8F3F5",
-                                 borderColor: "#DED6D9",
-                              }}
-                              onClick={() => {
-                                 history.push("/admin/builders/builder-details/add-new-project", {
-                                    builderId: props?.builderId || builderData?.builderId,
-                                    editProject: false,
-                                 });
-                              }}
-                           >
-                              <div
+               {/* {subHeaderComponentMemo} */}
+               {userData?.roleName !== "SUPER ADMIN" ? (
+                  <div className="d-flex flex-md-column flex-xl-row justify-content-xl-end align-items-center tableHeading">
+                     <div className="locationSelect d-flex justify-content-end align-items-center w-100">
+                        <Tooltip
+                           placement="top-start"
+                           style={{ width: "100%" }}
+                           title={
+                              builderStatus !== "APPROVED" && builderStatus !== "UNDER_REVIEW"
+                                 ? "Builder Profile is not approved"
+                                 : "Add new Project"
+                           }
+                        >
+                           <a style={{ textDecoration: "none" }}>
+                              <Button
+                                 className="d-flex py-1 ml-3"
+                                 disabled={
+                                    builderStatus !== "APPROVED" && builderStatus !== "UNDER_REVIEW"
+                                       ? true
+                                       : false
+                                 }
                                  style={{
-                                    width: "20px",
-                                    height: "20px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
+                                    color: "#BE1452",
+                                    backgroundColor: "#F8F3F5",
+                                    borderColor: "#DED6D9",
+                                 }}
+                                 onClick={() => {
+                                    history.push(
+                                       "/admin/builders/builder-details/add-new-project",
+                                       {
+                                          builderId: props?.builderId || builderData?.builderId,
+                                          editProject: false,
+                                       }
+                                    );
                                  }}
                               >
-                                 {" "}
-                                 <Image src={addIcon} style={{ width: "10px" }} />
-                              </div>
-                              <Text
-                                 text={"Add New Project"}
-                                 fontWeight="bold"
-                                 style={{ fontSize: "12px", color: "#BE1452" }}
-                              />
-                           </Button>
-                        </a>
-                     </Tooltip>
+                                 <div
+                                    style={{
+                                       width: "20px",
+                                       height: "20px",
+                                       display: "flex",
+                                       alignItems: "center",
+                                       justifyContent: "center",
+                                    }}
+                                 >
+                                    {" "}
+                                    <Image src={addIcon} style={{ width: "10px" }} />
+                                 </div>
+                                 <Text
+                                    text={"Add New Project"}
+                                    fontWeight="bold"
+                                    style={{ fontSize: "12px", color: "#BE1452" }}
+                                 />
+                              </Button>
+                           </a>
+                        </Tooltip>
+                     </div>
                   </div>
-               </div>{" "}
+               ) : null}
                <div className="ProjectPostingTableWrapper">
                   <DataTableComponent
                      data={builderProjectList}
@@ -426,13 +437,27 @@ const BuilderProjectList = (props) => {
                </div>
             </div>
          </div>
-         <Modal show={guideFlag} onHide={() => setGuideFlag(false)} centered backdrop="static" >
-            <Modal.Header style={{justifyContent:"end"}}>
-               <Buttons varient="secondary" name="X" onClick={() => {setGuideFlag(false)}} />
+         <Modal show={guideFlag} onHide={() => setGuideFlag(false)} centered backdrop="static">
+            <Modal.Header style={{ justifyContent: "end" }}>
+               <Buttons
+                  varient="secondary"
+                  name="X"
+                  onClick={() => {
+                     setGuideFlag(false);
+                  }}
+               />
             </Modal.Header>
             <Modal.Body className="text-center">
-               <Text text="Please complete builder profile details from Builder Profile section to add new Project" style={{fontSize: '16px', fontWeight: '500'}} />
-               <Buttons name="Complete your Builder Profile" onClick={() => {history.push("/admin/builder-profile")}} />
+               <Text
+                  text="Please complete builder profile details from Builder Profile section to add new Project"
+                  style={{ fontSize: "16px", fontWeight: "500" }}
+               />
+               <Buttons
+                  name="Complete your Builder Profile"
+                  onClick={() => {
+                     history.push("/admin/builder-profile");
+                  }}
+               />
             </Modal.Body>
          </Modal>
       </>
