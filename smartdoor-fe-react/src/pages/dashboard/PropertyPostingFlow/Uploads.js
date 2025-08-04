@@ -122,6 +122,7 @@ const Uploads = (props) => {
                docName: "",
                docDescription: "",
                docURL: "",
+               docOrderInFrontendView: null,
             },
          ],
       };
@@ -219,11 +220,18 @@ const Uploads = (props) => {
          ];
       }
       if (isValid) {
+         let image_arr = imageArr.map((image, index) => ({
+            ...image,
+            docOrderInFrontendView: index + 1,
+         }));
+         setImageArray(image_arr);
+
+         setImageArray(image_arr);
          setSaveUploadFlag(true);
          saveUploadsFields({ saveFlag: true });
          dispatch({
             type: Actions.UPLOAD_IMAGES_SUCCESS,
-            data: { propertyImages: imageArr, propertyVideos: videoUrlObj },
+            data: { propertyImages: image_arr, propertyVideos: videoUrlObj },
          });
          if (editPropertyFlag) {
             notifyUploads(true);
@@ -265,6 +273,12 @@ const Uploads = (props) => {
          ];
       }
       if (isValid) {
+         let image_arr = imageArr.map((image, index) => ({
+            ...image,
+            docOrderInFrontendView: index + 1,
+         }));
+         setImageArray(image_arr);
+
          let pricingDetail = { ...pricingDetailFields?.data }; // Make a copy of pricingDetailFields.data
          if (
             basicDetailFields?.data.propertyCategory === "Selling" &&
@@ -315,7 +329,7 @@ const Uploads = (props) => {
             address: addressDetailFields?.data,
             specs: specDetailFields?.data,
             pricing: pricingDetail,
-            uploads: { propertyImages: imageArr, propertyVideos: videoUrlObj },
+            uploads: { propertyImages: image_arr, propertyVideos: videoUrlObj },
          };
          // setLoading(true)
          const response = await addBasicDetails(data);
@@ -325,7 +339,7 @@ const Uploads = (props) => {
             saveUploadsFields({ saveFlag: true });
             dispatch({
                type: Actions.UPLOAD_IMAGES_SUCCESS,
-               data: { propertyImages: imageArr, propertyVideos: videoUrlObj },
+               data: { propertyImages: image_arr, propertyVideos: videoUrlObj },
             });
             if (!loadNext) {
                showSuccessToast("Property Posted successfully");
@@ -396,12 +410,17 @@ const Uploads = (props) => {
                               onDragOver={(e) => handleDragOver(e)}
                               onDrop={(e) => handleDrop(e, image.docURL)}
                            >
-                              <Col lg="1" style={{alignSelf: "center"}}>
+                              <Col lg="1" style={{ alignSelf: "center" }}>
                                  <img
                                     className=""
                                     src={equalIcon}
                                     alt="close"
-                                    style={{ height: "40px", width: "40px", cursor: "move", scale: "2.5" }}
+                                    style={{
+                                       height: "40px",
+                                       width: "40px",
+                                       cursor: "move",
+                                       scale: "2.5",
+                                    }}
                                  />
                               </Col>
                               <Col lg="11">

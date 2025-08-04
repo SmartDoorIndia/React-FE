@@ -74,6 +74,7 @@ const ProjectDetailsPage = React.lazy(() => import('./Builders/ProjectDetailsPag
 const SignUp = React.lazy(() => import('../SignUp/SignUp'));
 const ContactLeadList = React.lazy(() => import('./ContactLeads/ContactLeadList'));
 const LoanLeads = React.lazy(() => import('./HomeLoanLeads/LoanLeads'));
+const TermsAndConditions = React.lazy(() => import('../../shared/TermsCOnditions/TermsAndConditions'));
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -1363,7 +1364,15 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: LoanLeads
-  }
+  }, 
+
+  {
+    path: '/admin/terms-and-conditions',
+    name: 'Terms and Conditions',
+    bradcrumb: false,
+    excat: true,
+    component: TermsAndConditions
+  }, 
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

@@ -15,6 +15,7 @@ import { TextField } from "@mui/material";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { validateBuilderDetails } from "../../../../common/validations";
 import Text from "../../../../shared/Text/Text";
+import Buttons from "../../../../shared/Buttons/Buttons";
 
 const BuilderProfileDetails = (props) => {
    const userData = getLocalStorage("authData");
@@ -644,26 +645,35 @@ const BuilderProfileDetails = (props) => {
                         </Row>
                      </div>
                      {builderId === null ? (
-                        <Row>
-                           <Col lg="12">
-                              <Form.Check
-                                 type="checkbox"
-                                 id="custom-checkbox"
-                                 label="I declare that I represent the above details to be true and as my own organisation and SmartDoor may take requisite action if any detail is found to be untrue."
-                                 checked={isChecked}
-                                 onChange={(e) => {
-                                    setIsChecked(e.target.checked);
-                                    validateForm(e.target.checked);
-                                 }}
-                                 className="custom-checkbox"
-                                 disabled={
-                                    data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
-                                       ? true
-                                       : false
-                                 }
+                        <>
+                           <div className="p-0">
+                              <Buttons
+                                 style={{ width: "fit-content", flexWrap: "break-word" }}
+                                 name="Click to view Terms and Conditions"
+                                 size="small"
                               />
-                           </Col>
-                        </Row>
+                           </div>
+                           <Row>
+                              <Col className="d-flex" lg="12">
+                                 <Form.Check
+                                    type="checkbox"
+                                    id="custom-checkbox"
+                                    label="I declare that I represent the above details to be true and as my own organisation and SmartDoor may take requisite action if any detail is found to be untrue."
+                                    checked={isChecked}
+                                    onChange={(e) => {
+                                       setIsChecked(e.target.checked);
+                                       validateForm(e.target.checked);
+                                    }}
+                                    className="custom-checkbox"
+                                    disabled={
+                                       data?.status === "UNDER_REVIEW" || data?.status === "ON_HOLD"
+                                          ? true
+                                          : false
+                                    }
+                                 />
+                              </Col>
+                           </Row>
+                        </>
                      ) : null}
                      <Row>
                         {data?.status !== "UNDER_REVIEW" && data?.status !== "ON_HOLD" ? (
@@ -703,8 +713,8 @@ const BuilderProfileDetails = (props) => {
                      Account Approval
                   </Modal.Title>
                   <Modal.Body>
-                     Your request for Builder profile has been sent to the SmartDoor Admin.
-                     You can add new project from now.
+                     Your request for Builder profile has been sent to the SmartDoor Admin. You can
+                     add new project from now.
                      <Row className="ModalActions">
                         <Col lg="6">
                            <button
