@@ -359,7 +359,7 @@ const BuilderProfileDetails = (props) => {
                         </div>
                         <Row className="pb-4">
                            <Col lg="2">
-                              <div className="image-upload builderProfileImage">
+                              <div className={(error?.companyLogoImageUrl ? "upload-error-label" : "upload-label") +  " builderProfileImage"}>
                                  <label
                                     htmlFor="upload-input"
                                     className="upload-label"
@@ -646,13 +646,14 @@ const BuilderProfileDetails = (props) => {
                      </div>
                      {builderId === null ? (
                         <>
-                           <div className="p-0">
+                           {/* <div className="p-0">
                               <Buttons
                                  style={{ width: "fit-content", flexWrap: "break-word" }}
                                  name="Click to view Terms and Conditions"
                                  size="small"
+                                 onClick ={() => {history.push("/admin/terms-and-conditions")}}
                               />
-                           </div>
+                           </div> */}
                            <Row>
                               <Col className="d-flex" lg="12">
                                  <Form.Check

@@ -136,6 +136,17 @@
       }
    }
 }
+
+.zero-projects {
+   min-height: 75vh;
+   width: 100%;
+   align-content: center;
+   align-items: center;
+   border: solid 1px #DED6D9;
+   background-color: #FFFFFF;
+   border-radius: 4px;
+}
+
 .builderProperties {
    .list-container {
       list-style: none; // Remove default bullet points
