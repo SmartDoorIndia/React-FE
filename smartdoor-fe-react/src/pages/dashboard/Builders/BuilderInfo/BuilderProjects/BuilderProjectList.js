@@ -17,7 +17,7 @@ import {
    fetchBuilderProjectById,
    getBuilderById,
 } from "../../../../../common/redux/actions";
-import { TableLoader } from "../../../../../common/helpers/Loader";
+import { FallBackLoader, TableLoader } from "../../../../../common/helpers/Loader";
 import Text from "../../../../../shared/Text/Text";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Tooltip } from "@mui/material";
@@ -345,6 +345,7 @@ const BuilderProjectList = (props) => {
    return (
       <>
          <div className="builderProperties">
+            {loading ? <FallBackLoader/> : null}
             {builderProjectList.length !== 0 ? (
                <>
                   <div className="tableBox">
@@ -447,7 +448,10 @@ const BuilderProjectList = (props) => {
                      {userData?.roleName !== "SUPER ADMIN" ? (
                         <div className="d-flex flex-md-column flex-xl-row justify-content-center align-items-center tableHeading">
                            <div className="text-center">
-                              <Text text="You haven’t added any property yet" style={{fontSize:"14px", fontWeight:"700"}} />
+                              <Text
+                                 text="You haven’t added any property yet"
+                                 style={{ fontSize: "14px", fontWeight: "700" }}
+                              />
                               <Tooltip
                                  placement="top-start"
                                  style={{ width: "100%" }}
@@ -504,7 +508,14 @@ const BuilderProjectList = (props) => {
                               </Tooltip>
                            </div>
                         </div>
-                     ) : null}
+                     ) : (
+                        <div className="text-center">
+                           <Text
+                              text="Projects not added by builder"
+                              style={{ fontSize: "14px", fontWeight: "700" }}
+                           />
+                        </div>
+                     )}
                   </div>
                </>
             )}

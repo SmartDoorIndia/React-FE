@@ -228,13 +228,13 @@ const ConsumerManagement = (props) => {
 			<div
 			   className="action"
 			   onClick={() => {
-					if(row.isKYCVerified) {
+					// if(row.isKYCVerified) {
 						setConsumerInfoModal(true);
 						let silentKycData = JSON.parse(row.silentKycData);
 						let consumerDetails = {...row, silentKycData}
 						console.log(consumerDetails)
 						setSelectedConsumer(consumerDetails);
-					}
+					// }
 			   }}
 			>
 			   <ToolTip position="left" name={row.isKYCVerified ? "View KYC Details" : "KYC pending"}>
