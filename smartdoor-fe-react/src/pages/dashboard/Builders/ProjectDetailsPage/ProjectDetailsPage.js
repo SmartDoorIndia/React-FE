@@ -19,6 +19,7 @@ import {
    showSuccessToast,
    ToolTip,
 } from "../../../../common/helpers/Utils";
+import ProjectPreview from "../ProjectPreview/ProjectPreview";
 
 const ProjectDetailsPage = (props) => {
    const [projectDetails, setProjectDetails] = useState({
@@ -29,10 +30,11 @@ const ProjectDetailsPage = (props) => {
    const [loading, setLoading] = useState(false);
    const [rejectModal, setRejectModal] = useState(false);
    const [rejectionComment, setRejectComment] = useState("");
+   const [previewModal, setPreviewModal] = useState(false);
    const userData = getLocalStorage("authData");
 
    useEffect(() => {
-      console.log(props?.location?.state?.projectId);
+      // console.log(props?.location?.state?.projectId);
       setLoading(true);
       fetchBuilderProjectById({
          projectId: props?.location?.state?.projectId,
@@ -48,8 +50,8 @@ const ProjectDetailsPage = (props) => {
    }, []);
 
    const handleShowProjectPost = useCallback(async () => {
-      console.log("handleShowProjectPost called in ProjectDetailsPage");
-      console.log(props);
+      // console.log("handleShowProjectPost called in ProjectDetailsPage");
+      // console.log(props);
       setLoading(true);
       const response = await fetchBuilderProjectById({
          projectId: props?.location?.state?.projectId,
@@ -77,6 +79,9 @@ const ProjectDetailsPage = (props) => {
    const updateSubProjectList = (subProjectData) => {
       setAddTowerFlag(false);
       subProjectList.push(subProjectData);
+      let projectInfo = { ...projectDetails };
+      projectInfo.subProjectList = [...subProjectList];
+      setProjectDetails((prevDetails) => ({ ...prevDetails, projectInfo }));
    };
 
    const closeNewTower = () => {
@@ -124,8 +129,16 @@ const ProjectDetailsPage = (props) => {
             }
          });
       }
-      console.log(response);
+      // console.log(response);
    };
+
+   const updateSubProjectData = (subProject) => {
+      const updatedList = subProjectList.map((project) =>
+         project?.projectId === subProject?.projectId ? subProject : project
+      );
+      setSubProjectList(updatedList);
+   };
+
    return (
       <>
          {loading ? (
@@ -188,7 +201,7 @@ const ProjectDetailsPage = (props) => {
                <>
                   <Text
                      text={"Project is on hold. Project Edit and add/edit tower is disabled."}
-                     style={{ fontSize: "14px", fontWeight: "600", color: '#BE1452' }}
+                     style={{ fontSize: "14px", fontWeight: "600", color: "#BE1452" }}
                   />
                </>
             ) : null}
@@ -198,7 +211,7 @@ const ProjectDetailsPage = (props) => {
                      text={
                         "Your project is currently under review and will be visible to customers once approved."
                      }
-                     style={{ fontSize: "14px", fontWeight: "600", color: '#BE1452' }}
+                     style={{ fontSize: "14px", fontWeight: "600", color: "#BE1452" }}
                   />
                </>
             ) : null}
@@ -209,7 +222,7 @@ const ProjectDetailsPage = (props) => {
                         "Project is rejected due to " +
                         projectDetails?.builderProjectSearchDto[0]?.rejectionComment
                      }
-                     style={{ fontSize: "14px", fontWeight: "600", color: '#BE1452' }}
+                     style={{ fontSize: "14px", fontWeight: "600", color: "#BE1452" }}
                   />
                </>
             ) : null}
@@ -315,6 +328,7 @@ const ProjectDetailsPage = (props) => {
                            builderId={props?.location?.state?.builderId}
                            parentProjectId={props?.location?.state?.projectId}
                            projectStatus={projectDetails?.builderProjectSearchDto[0]?.status}
+                           updateSubProjectData={updateSubProjectData}
                         />
                      </AccordionDetails>
                   </Accordion>
@@ -431,7 +445,27 @@ const ProjectDetailsPage = (props) => {
                   </Col>
                </Row>
             </div>
+            <div className="d-flex justify-content-end">
+               <Buttons
+                  name="Prieview Project"
+                  varient="primary"
+                  onClick={() => {
+                     setPreviewModal(true);
+                  }}
+               />
+            </div>
          </div>
+         <Modal
+            show={previewModal}
+            onHide={() => {
+               setPreviewModal(false);
+            }}
+            centered
+         >
+            <Modal.Body className="d-flex justify-content-center">
+               <ProjectPreview projectDetails={projectDetails} subProjectList={subProjectList} />
+            </Modal.Body>
+         </Modal>
          <Modal
             show={rejectModal}
             onHide={() => {

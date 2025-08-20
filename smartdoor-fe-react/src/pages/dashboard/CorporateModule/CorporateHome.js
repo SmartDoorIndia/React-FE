@@ -81,13 +81,13 @@ const CorporateHome = (props) => {
       },
       {
          name: "Active Posting(s)",
-         selector: ((row) => row.totalPostingCount),
+         selector: ((row) => row.activePostingCount),
          sortable: true,
          center: true,
          maxWidth: "150px",
-         cell: ({ totalPostingCount }) => (
-            <ToolTip position="top" style={{ width: '100%' }} name={totalPostingCount}>
-               <Text size="Small" color="secondryColor elipsis-text" text={totalPostingCount} />
+         cell: ({ activePostingCount }) => (
+            <ToolTip position="top" style={{ width: '100%' }} name={activePostingCount}>
+               <Text size="Small" color="secondryColor elipsis-text" text={activePostingCount} />
             </ToolTip>
          ),
          id: 5

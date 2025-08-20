@@ -1,193 +1,229 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { formateDate, getLocalStorage, handleStatusElement, ToolTip } from '../../../../common/helpers/Utils'
-import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min'
-import contentIcon from '../../../../assets/images/content-ico.png';
-import Image from '../../../../shared/Image/Image';
-import { TableLoader } from '../../../../common/helpers/Loader';
-import Pagination from '../../../../shared/DataTable/Pagination';
-import DataTableComponent from '../../../../shared/DataTable/DataTable';
-import SearchInput from '../../../../shared/Inputs/SearchInput/SearchInput';
-import './builderList.scss';
-import { Button } from 'react-bootstrap';
-import Text from '../../../../shared/Text/Text';
-import { getBuilderList } from '../../../../common/redux/actions';
+/** @format */
+
+import React, { useEffect, useRef, useState } from "react";
+import {
+   formateDate,
+   getLocalStorage,
+   handleStatusElement,
+   ToolTip,
+} from "../../../../common/helpers/Utils";
+import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import contentIcon from "../../../../assets/images/content-ico.png";
+import Image from "../../../../shared/Image/Image";
+import { TableLoader } from "../../../../common/helpers/Loader";
+import Pagination from "../../../../shared/DataTable/Pagination";
+import DataTableComponent from "../../../../shared/DataTable/DataTable";
+import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
+import "./builderList.scss";
+import { Button } from "react-bootstrap";
+import Text from "../../../../shared/Text/Text";
+import { getBuilderList } from "../../../../common/redux/actions";
 
 const BuilderList = () => {
+   const tableRef = useRef();
+   const history = useHistory();
 
-    const tableRef = useRef();
-    const history = useHistory();
+   const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
+   const [filterText, setFilterText] = React.useState("");
+   const [builderList, setBuilderList] = useState([]);
+   const [loading, setLoading] = useState(false);
+   const userData = getLocalStorage("authData");
 
-    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
-    const [filterText, setFilterText] = React.useState("");
-    const [builderList, setBuilderList] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const userData = getLocalStorage("authData");
+   const builderColumns = [
+      {
+         name: "Builders",
+         selector: (row) => row.brandName,
+         sortable: true,
+         center: false,
+         minWidth: "150px",
+         style: { paddingLeft: "2% !important" },
+         cell: ({ brandName, duplicate }) => <span className="d-flex">{brandName || "N/A"} &nbsp;&nbsp; {duplicate ? <Text className='px-1' text="D" 
+            style={{fontSize: '14px', fontWeight: '500', color: 'white', backgroundColor: '#FF0000', borderRadius: '50%' }} /> : ""}</span>,
+         id: 1,
+      },
+      {
+         name: "Contact Person",
+         selector: (row) => row.contactPersonName,
+         sortable: false,
+         center: false,
+         maxWidth: "150px",
+         style: { paddingLeft: "2% !important" },
+         cell: ({ contactPersonName }) => <span>{contactPersonName || "N/A"}</span>,
+         id: 2,
+      },
+      {
+         name: "Mobile Number",
+         selector: (row) => row.mobileNumber,
+         sortable: false,
+         center: true,
+         maxWidth: "150px",
+         style: { padding: "0 !important" },
+         cell: ({ mobileNumber }) => <span>{mobileNumber || "N/A"}</span>,
+         id: 3,
+      },
+      {
+         name: "Projects",
+         selector: (row) => row.totalProjectCount,
+         sortable: true,
+         center: true,
+         maxWidth: "150px",
+         style: { padding: "0 !important" },
+         cell: ({ totalProjectCount }) => <span>{totalProjectCount || "0"}</span>,
+         id: 4,
+      },
+      {
+         name: "last Updated On",
+         selector: (row) => row.last_updated,
+         sortable: false,
+         center: true,
+         maxWidth: "150px",
+         style: { padding: "0 !important" },
+         cell: ({ last_updated }) => (
+            <span>{`${formateDate(last_updated, "MMM DD, YYYY")}` || "N/A"}</span>
+         ),
+         id: 5,
+      },
+      {
+         name: "Created On",
+         selector: (row) => row.createdDate,
+         sortable: true,
+         center: true,
+         maxWidth: "150px",
+         style: { padding: "0 !important" },
+         cell: ({ createdDate }) => (
+            <span>{`${formateDate(createdDate, "MMM DD, YYYY")}` || "N/A"}</span>
+         ),
+         id: 5,
+      },
+      {
+         name: "Leads",
+         selector: (row) => row.leads,
+         sortable: true,
+         center: true,
+         maxWidth: "150px",
+         style: { padding: "0 !important" },
+         cell: ({ leads }) => <span>{leads || "0"}</span>,
+         id: 6,
+      },
+      {
+         name: "Status",
+         selector: (row) => row.status,
+         sortable: true,
+         center: true,
+         maxWidth: "150px",
+         style: { padding: "0 !important" },
+         cell: ({ status }) => <span>{handleStatusElement(status)}</span>,
+         id: 7,
+      },
+      {
+         name: "Action",
+         selector: (row) => row.action,
+         sortable: false,
+         center: true,
+         maxWidth: "150px",
+         style: { padding: "0 !important" },
+         cell: ({ row, builderId, userId }) => (
+            <>
+               <div className="action">
+                  <ToolTip position="left" name="View Details">
+                     <span>
+                        <Link
+                           to={{
+                              pathname: "/admin/builders/builder-details",
+                              state: { builderId: builderId, userId: userId, builderDetails: row },
+                           }}
+                        >
+                           <Image name="editIcon" src={contentIcon} />
+                        </Link>
+                     </span>
+                  </ToolTip>
+               </div>
+            </>
+         ),
+         id: 8,
+      },
+   ];
 
-    const builderColumns = [
-        {
-            name: "Builders",
-            selector: ((row) => row.brandName),
-            sortable: true,
-            center: false,
-            minWidth: "150px",
-            style: { paddingLeft: "2% !important" },
-            cell: ({ brandName }) => <span>{brandName || "N/A"}</span>,
-            id: 1
-        },
-        {
-            name: "Contact Person",
-            selector: ((row) => row.contactPersonName),
-            sortable: false,
-            center: false,
-            maxWidth: "150px",
-            style: { paddingLeft: "2% !important" },
-            cell: ({ contactPersonName }) => <span>{contactPersonName || "N/A"}</span>,
-            id: 2
-        },
-        {
-            name: "Mobile Number",
-            selector: ((row) => row.mobileNumber),
-            sortable: false,
-            center: true,
-            maxWidth: "150px",
-            style: { padding: "0 !important" },
-            cell: ({ mobileNumber }) => <span>{mobileNumber || "N/A"}</span>,
-            id: 3
-        },
-        {
-            name: "Projects",
-            selector: ((row) => row.totalProjectCount),
-            sortable: true,
-            center: true,
-            maxWidth: "150px",
-            style: { padding: "0 !important" },
-            cell: ({ totalProjectCount }) => <span>{totalProjectCount || "0"}</span>,
-            id: 4
-        },
-        {
-            name: "last Updated On",
-            selector: ((row) => row.last_updated),
-            sortable: false,
-            center: true,
-            maxWidth: "150px",
-            style: { padding: "0 !important" },
-            cell: ({ last_updated }) => <span>{`${formateDate(last_updated, "MMM DD, YYYY")}` || "N/A"}</span>,
-            id: 5
-        },
-        {
-            name: "Leads",
-            selector: ((row) => row.leads),
-            sortable: true,
-            center: true,
-            maxWidth: "150px",
-            style: { padding: "0 !important" },
-            cell: ({ leads }) => <span>{leads || "0"}</span>,
-            id: 6
-        },
-        {
-            name: "Status",
-            selector: ((row) => row.status),
-            sortable: true,
-            center: true,
-            maxWidth: "150px",
-            style: { padding: "0 !important" },
-            cell: ({ status }) => <span>{handleStatusElement(status)}</span>,
-            id: 7
-        },
-        {
-            name: "Action",
-            selector: ((row) => row.action),
-            sortable: false,
-            center: true,
-            maxWidth: "150px",
-            style: { padding: "0 !important" },
-            cell: ({ row, builderId, userId }) => (
-                <>
-                    <div className="action">
-                        <ToolTip position="left" name="View Details">
-                            <span>
-                                <Link
-                                    to={{
-                                        pathname: "/admin/builders/builder-details",
-                                        state: { builderId: builderId, userId: userId, builderDetails: row },
-                                    }}
-                                >
-                                    <Image name="editIcon" src={contentIcon} />
-                                </Link>
-                            </span>
-                        </ToolTip>
-                    </div>
-                </>
-            ),
-            id: 8
-        },
-    ];
+   const ProgressComponent = <TableLoader />;
+   const [currentPage, setCurrentPage] = useState(1);
+   const [rowsPerPage, setRowsPerPage] = useState(8);
+   const recordSize = 0;
+   console.log(recordSize);
+   let recordsPerPage = 0;
 
-    const ProgressComponent = <TableLoader />;
-    const [currentPage, setCurrentPage] = useState(1);
-    const [rowsPerPage, setRowsPerPage] = useState(8);
-    const recordSize = (0);
-    console.log(recordSize)
-    let recordsPerPage = 0
+   const handlePageChange = () => {};
+   const handleRowsPerPageChange = () => {};
 
-    const handlePageChange = () => { }
-    const handleRowsPerPageChange = () => { }
+   let PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
+      <Pagination
+         {...props}
+         rowCount={recordSize}
+         rowsPerPage={recordsPerPage}
+         onChangeRowsPerPage={handleRowsPerPageChange}
+         currentPage={currentPage}
+         onChangePage={handlePageChange}
+         paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+      />
+   );
 
-    let PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
-        <Pagination {...props}
-            rowCount={recordSize}
-            rowsPerPage={recordsPerPage}
-            onChangeRowsPerPage={handleRowsPerPageChange}
-            currentPage={currentPage}
-            onChangePage={handlePageChange}
-            paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-        />
-    );
+   const subHeaderComponentMemo = React.useMemo(() => {
+      const handleClear = () => {
+         if (filterText) {
+            setResetPaginationToggle(!resetPaginationToggle);
+            setFilterText("");
+         }
+      };
 
+      return (
+         <SearchInput
+            onFilter={(e) => {
+               setFilterText(e.target.value);
+               getBuilderList({ searchStr: e.target.value }).then((response) => {
+                  setLoading(false);
+                  console.log(response);
+                  setBuilderList([...response.data.resourceData]);
+               });
+            }}
+            onClear={() => handleClear}
+            filterText={filterText}
+            placeholder="Search owner name/mobile No."
+         />
+      );
+   }, [filterText, resetPaginationToggle]);
 
-    const subHeaderComponentMemo = React.useMemo(() => {
-        const handleClear = () => {
-            if (filterText) {
-                setResetPaginationToggle(!resetPaginationToggle);
-                setFilterText("");
-            }
-        };
+   const duplicateBuilderEntry = (builders) => {
+      const data = builders;
 
-        return (
-            <SearchInput
-                onFilter={(e) => {
-                    setFilterText(e.target.value);
-                    getBuilderList({ searchStr: e.target.value })
-                        .then((response) => {
-                            setLoading(false)
-                            console.log(response)
-                            setBuilderList([...response.data.resourceData]);
-                        })
-                }}
-                onClear={() => handleClear}
-                filterText={filterText}
-                placeholder="Search owner name/mobile No."
-            />
-        );
-    }, [filterText, resetPaginationToggle]);
+      const nameCount = data.reduce((acc, item) => {
+         const name = item.brandName?.trim().toLowerCase();
+         acc[name] = (acc[name] || 0) + 1;
+         return acc;
+      }, {});
 
-    useEffect(() => {
-        if(!userData?.roleName === 'SUPER ADMIN') {
-            history.push("/builder/login");
-        }
-        setLoading(true)
-        getBuilderList({ searchStr: filterText })
-            .then((response) => {
-                setLoading(false)
-                console.log(response)
-                setBuilderList([...response.data.resourceData]);
-            })
-    }, []);
+      const updatedData = data.map((item) => ({
+         ...item,
+         duplicate: nameCount[item.brandName?.trim().toLowerCase()] > 1,
+      }));
 
-    return (
-        <>
-            <div className="tableBox ">
-                {/* <div className="align-items-center tableHeading">
+      setBuilderList([...updatedData]);
+   };
+
+   useEffect(() => {
+      if (!userData?.roleName === "SUPER ADMIN") {
+         history.push("/builder/login");
+      }
+      setLoading(true);
+      getBuilderList({ searchStr: filterText }).then((response) => {
+         setLoading(false);
+         setBuilderList([...response.data.resourceData]);
+         duplicateBuilderEntry(response.data.resourceData);
+      });
+   }, []);
+
+   return (
+      <>
+         <div className="tableBox ">
+            {/* <div className="align-items-center tableHeading">
                     <div className="d-flex justify-content-end">
                         <div className="locationSelect d-flex">
                             {subHeaderComponentMemo}
@@ -198,34 +234,35 @@ const BuilderList = () => {
                         </div>
                     </div>
                 </div> */}
-                <div className="builderListTableWrapper">
-                    <DataTableComponent ref={tableRef}
-                        data={builderList}
-                        columns={builderColumns}
-                        progressPending={loading}
-                        progressComponent={ProgressComponent}
-                        // paginationComponent={PaginationComponent}
-                        // paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                        // paginationPerPage={recordsPerPage}
-                        // currentPage={currentPage}
-                        // onChangePage={handlePageChange}
-                        // onChangeRowsPerPage={handleRowsPerPageChange}
-                        // perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                        filterText={filterText}
-                        paginationServer={false}
-                        pagination={false}
-                        subHeaderComponent={subHeaderComponentMemo}
-                        persistTableHead
-                        filterComponent={subHeaderComponentMemo}
-                    // onSort={handleSortedData}
-                    //   defaultSort={defaultSort}
-                    //   defaultSortId={defaultSortId}
-                    //   defaultSortFieldId={defaultSortFieldId}
-                    />
-                </div>
+            <div className="builderListTableWrapper">
+               <DataTableComponent
+                  ref={tableRef}
+                  data={builderList}
+                  columns={builderColumns}
+                  progressPending={loading}
+                  progressComponent={ProgressComponent}
+                  // paginationComponent={PaginationComponent}
+                  // paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  // paginationPerPage={recordsPerPage}
+                  // currentPage={currentPage}
+                  // onChangePage={handlePageChange}
+                  // onChangeRowsPerPage={handleRowsPerPageChange}
+                  // perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  filterText={filterText}
+                  paginationServer={false}
+                  pagination={false}
+                  subHeaderComponent={subHeaderComponentMemo}
+                  persistTableHead
+                  filterComponent={subHeaderComponentMemo}
+                  // onSort={handleSortedData}
+                  //   defaultSort={defaultSort}
+                  //   defaultSortId={defaultSortId}
+                  //   defaultSortFieldId={defaultSortFieldId}
+               />
             </div>
-        </>
-    )
-}
+         </div>
+      </>
+   );
+};
 
-export default BuilderList
+export default BuilderList;

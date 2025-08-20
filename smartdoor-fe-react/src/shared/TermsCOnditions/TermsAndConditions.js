@@ -1,17 +1,13 @@
 /** @format */
 
-import React from "react";
 import Text from "../Text/Text";
-import Buttons from "../Buttons/Buttons";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const TermsAndConditions = () => {
-	const history = useHistory();
 
    return (
       <>
          <div>
-            <Text
+            {/* <Text
                className="py-1 px-3"
                text="<Back"
                style={{
@@ -26,7 +22,7 @@ const TermsAndConditions = () => {
                onClick={() => {history?.goBack();}}
             >
                {" "}
-            </Text>
+            </Text> */}
          </div>
          <ul>
             <li>

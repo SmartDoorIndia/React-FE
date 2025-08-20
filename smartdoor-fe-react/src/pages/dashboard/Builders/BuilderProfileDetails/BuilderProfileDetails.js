@@ -15,6 +15,7 @@ import { TextField } from "@mui/material";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { validateBuilderDetails } from "../../../../common/validations";
 import Text from "../../../../shared/Text/Text";
+import TermsAndConditions from "../../../../shared/TermsCOnditions/TermsAndConditions";
 import Buttons from "../../../../shared/Buttons/Buttons";
 
 const BuilderProfileDetails = (props) => {
@@ -25,6 +26,7 @@ const BuilderProfileDetails = (props) => {
    const [isFormValid, setIsFormValid] = useState(builderId !== null ? true : false);
    const [isApproved, setIsApproved] = useState(false);
    const [showModal, setShowModal] = useState(false);
+   const [showTermsModal, setShowTermsModal] = useState(false);
    const fileInputRef = useRef(null); // Create a ref for the file input
    const [maxSizeFlag, setMaxSizeFlag] = useState(false);
    const [loading, setLoading] = useState(true);
@@ -359,7 +361,13 @@ const BuilderProfileDetails = (props) => {
                         </div>
                         <Row className="pb-4">
                            <Col lg="2">
-                              <div className={(error?.companyLogoImageUrl ? "upload-error-label" : "upload-label") +  " builderProfileImage"}>
+                              <div
+                                 className={
+                                    (error?.companyLogoImageUrl
+                                       ? "upload-error-label"
+                                       : "upload-label") + " builderProfileImage"
+                                 }
+                              >
                                  <label
                                     htmlFor="upload-input"
                                     className="upload-label"
@@ -426,11 +434,11 @@ const BuilderProfileDetails = (props) => {
                            {/* Row 1 */}
 
                            <Col lg="10">
-                              <Row className="pb-3">
+                              <div className="d-flex" style={{ flexFlow: "wrap" }}>
                                  <Col lg="5">
                                     <TextField
                                        id={"brandName"}
-                                       className="textFieldInput w-100"
+                                       className="textFieldInput w-100 mb-3"
                                        type="text"
                                        required={true}
                                        // maxLength={35}
@@ -449,7 +457,7 @@ const BuilderProfileDetails = (props) => {
                                  <Col lg="5">
                                     <TextField
                                        id={"companyName"}
-                                       className="textFieldInput w-100"
+                                       className="textFieldInput w-100 mb-3"
                                        type="text"
                                        required={true}
                                        maxLength={35}
@@ -465,14 +473,12 @@ const BuilderProfileDetails = (props) => {
                                        error={error?.companyName}
                                     />
                                  </Col>
-                              </Row>
-                              <Row>
                                  <Col lg="5">
                                     <TextField
                                        id={"companyEmail"}
                                        type="email"
                                        required={true}
-                                       className="textFieldInput w-100"
+                                       className="textFieldInput w-100 mb-3"
                                        label={"Company Email"}
                                        value={data.companyEmail}
                                        onInput={(e) => handleChange(e)}
@@ -490,7 +496,7 @@ const BuilderProfileDetails = (props) => {
                                        id={"companyGST"}
                                        type="text"
                                        // required={true}
-                                       className="textFieldInput w-100"
+                                       className="textFieldInput w-100 mb-3"
                                        label="Company GST"
                                        value={data.companyGST}
                                        onInput={(e) => handleChange(e)}
@@ -503,7 +509,7 @@ const BuilderProfileDetails = (props) => {
                                        // error={error?.companyGST}
                                     />
                                  </Col>
-                              </Row>
+                              </div>
                               {/* Row 2 */}
                            </Col>
                         </Row>
@@ -589,7 +595,7 @@ const BuilderProfileDetails = (props) => {
                         </Row>
 
                         <Row className="align-items-center mt-3">
-                           <Col lg="4">
+                           <Col lg="4" className="mb-3">
                               <TextField
                                  id={"contactNumber"}
                                  type="number"
@@ -607,7 +613,7 @@ const BuilderProfileDetails = (props) => {
                                  error={error?.contactNumber}
                               />
                            </Col>
-                           <Col lg="4">
+                           <Col lg="4" className="mb-3">
                               <TextField
                                  id={"contactName"}
                                  type="text"
@@ -624,7 +630,7 @@ const BuilderProfileDetails = (props) => {
                                  error={error?.contactName}
                               />
                            </Col>
-                           <Col lg="4">
+                           <Col lg="4" className="mb-3">
                               <TextField
                                  id={"whatsappNumber"}
                                  type="number"
@@ -659,8 +665,30 @@ const BuilderProfileDetails = (props) => {
                                  <Form.Check
                                     type="checkbox"
                                     id="custom-checkbox"
-                                    label="I declare that I represent the above details to be true and as my own organisation and SmartDoor may take requisite action if any detail is found to be untrue."
+                                    label={
+                                       <span>
+                                          I declare that I represent the above details to be true
+                                          and as my own organisation and SmartDoor may take
+                                          requisite action if any detail is found to be untrue. I
+                                          agree to the{" "}
+                                          <span
+                                             style={{
+                                                fontSize: "10px",
+                                                fontWeight: "600",
+                                                color: "#BE1452",
+                                                cursor: "pointer",
+                                             }}
+                                             onClick={() =>
+                                                // history.push("/admin/terms-and-conditions")
+                                                setShowTermsModal(true)
+                                             }
+                                          >
+                                             terms and conditions
+                                          </span>
+                                       </span>
+                                    }
                                     checked={isChecked}
+                                    style={{ wordWrap: "break-word" }}
                                     onChange={(e) => {
                                        setIsChecked(e.target.checked);
                                        validateForm(e.target.checked);
@@ -700,7 +728,7 @@ const BuilderProfileDetails = (props) => {
                      </Row>
                   </div>
                </form>
-               <Modal show={showModal} onHide={handleCloseModal}>
+               <Modal show={showModal} onHide={handleCloseModal} centered >
                   <Modal.Title
                      style={{
                         fontSize: " 20px",
@@ -727,6 +755,39 @@ const BuilderProfileDetails = (props) => {
                            </button>
                         </Col>
                      </Row>
+                  </Modal.Body>
+               </Modal>
+               <Modal
+                  size="lg"
+                  show={showTermsModal}
+                  onHide={() => {
+                     setShowTermsModal(false);
+                  }}
+               >
+                  <Modal.Title
+                     style={{
+                        fontSize: " 20px",
+                        fontWeight: 700,
+                        lineHeight: "27.32px",
+                        letterSpacing: "-0.02em",
+                        textAlign: "left",
+                        padding: "20px 3px 1px 16px",
+                     }}
+                  >
+                     Terms and Conditions
+                  </Modal.Title>
+                  <Modal.Body>
+                        <TermsAndConditions />
+                        <div className="text-center">
+                           <Buttons
+                              type="button"
+                              varient="secondary"
+                              className="btn-small cancel-btn"
+                              onClick={() => {setShowTermsModal(false)}}
+                              name="Close"
+                           >
+                           </Buttons>
+                        </div>
                   </Modal.Body>
                </Modal>
             </div>

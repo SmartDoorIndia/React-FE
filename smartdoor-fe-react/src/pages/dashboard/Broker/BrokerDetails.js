@@ -292,10 +292,10 @@ const BrokerDetails = (props) => {
    const columns = [
       {
          name: "Posted On",
-         selector: 'postedOn',
+         selector: 'postedDate',
          sortable: true,
          center: true,
-         cell: ({ postedOn }) => (<span>{formateDate(postedOn)}</span>),
+         cell: ({ postedDate }) => (<span>{formateDate(postedDate)}</span>),
       },
       {
          name: "Posted for",

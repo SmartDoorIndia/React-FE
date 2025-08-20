@@ -57,7 +57,7 @@ const PropertyModule = (props) => {
    const userData = getLocalStorage("authData");
    const [p_state, setp_state] = useState(data.length !== 0 ? allPropertyData?.data?.pState : "");
    const [p_city, setp_City] = useState(data.length !== 0 ? allPropertyData?.data?.city : "");
-   const [p_location, setp_Location] = useState(data.length !== 0 ? allPropertyData?.data?.location : "");
+   const [address, setAddress] = useState(data.length !== 0 ? allPropertyData?.data?.location : "");
    const [locationsData, setLocationsData] = useState([]);
    const [zipCode, setzipCode] = useState("");
    // const history = useHistory();
@@ -323,13 +323,13 @@ const PropertyModule = (props) => {
          return null;
       }
       const regex = /([^,]+),\s*(\d{6})/;
-      const matches = p_location.match(regex);
+      const matches = address.match(regex);
       if (matches) {
          let zipcode = matches[2]
          getAllProperties({
             city: p_city,
             zipcode,
-            p_location,
+            address,
             pageSize: rowsPerPage,
             pageNo: newPage,
             userId: userData.userid,
@@ -375,7 +375,7 @@ const PropertyModule = (props) => {
          return null;
       }
       const regex = /([^,]+),\s*(\d{6})/;
-      const matches = p_location.match(regex);
+      const matches = address.match(regex);
       recordsPerPage = Number(newRowsPerPage)
       setRowsPerPage(Number(newRowsPerPage))
       if (matches) {
@@ -383,7 +383,7 @@ const PropertyModule = (props) => {
          getAllProperties({
             city: p_city,
             zipcode,
-            p_location,
+            address,
             pageSize: Number(newRowsPerPage),
             pageNo: currentPage,
             userId: userData.userid,
@@ -450,7 +450,7 @@ const PropertyModule = (props) => {
          getAllProperties({
             city: p_city,
             zipcode: '',
-            location: p_location,
+            location: address,
             pageSize: rowsPerPage,
             pageNo: currentPage,
             userId: userData.userid,
@@ -476,7 +476,7 @@ const PropertyModule = (props) => {
       const matches = data.match(regex);
       if (matches) {
          const location = matches[1].trim();
-         setp_Location(location);
+         setAddress(location);
          const zipcode = matches[2];
          setzipCode(zipcode);
       }
@@ -576,7 +576,7 @@ const PropertyModule = (props) => {
       
       dispatch({
          type: Actions.PROPERTY_MODULE_SUCCESS,
-         data: { propertyData: [...sorted], records: recordSize, currentPage: currentPage, rowsPerPage: rowsPerPage, searchStr: filterText, propertyId: propertyIdText, city: p_city, location: p_location, smartLockProperty: typeSelected, propertyStatus: statusSelected, fromDate: fromDate, toDate: toDate,  defaultSort: defaultSortFlag, defaultSortId: defaultSortId }
+         data: { propertyData: [...sorted], records: recordSize, currentPage: currentPage, rowsPerPage: rowsPerPage, searchStr: filterText, propertyId: propertyIdText, city: p_city, location: address, smartLockProperty: typeSelected, propertyStatus: statusSelected, fromDate: fromDate, toDate: toDate,  defaultSort: defaultSortFlag, defaultSortId: defaultSortId }
       });
       // showData();
    };
@@ -632,7 +632,7 @@ const PropertyModule = (props) => {
                            onChange={(e) => {
                               setLocationsData([]);
                               setp_City(e.target.value);
-                              setp_Location("");
+                              setAddress("");
                               _filterData(e.target.value, "");
                               // if (e.target.value.length) {
                               //    getLocationByCity({ city: e.target.value })
@@ -663,28 +663,29 @@ const PropertyModule = (props) => {
                               ))
                               : null}
                         </Form.Control>
-                     </Form.Group>
+                     </Form.Group> &nbsp;&nbsp;
                      {/* <Form.Label>Location:</Form.Label> */}
-                     {/* <Form.Group controlId="exampleForm.SelectCustom" className="loc-input">
+                     <Form.Group controlId="exampleForm.SelectCustom" className="loc-input">
                         <Form.Control
-                           as="select"
-                           value={p_location}
+                           type="text"
+                           placeholder="Location"
+                           value={address}
                            onChange={(e) => {
-                              _filterData(p_city, e.target.value);
-                              setp_Location(e.target.value);
+                              // _filterData(p_city, e.target.value);
+                              setAddress(e.target.value);
                            }}
                            className="locationWidth"
                         >
-                           <option value="">Select Location</option>
+                           {/* <option value="">Select Location</option>
                            {locationsData && locationsData.length
                               ? locationsData.map((_value, index) => (
                                  <option key={_value.pinCode} value={_value.location}>
                                     {_value.location}
                                  </option>
                               ))
-                              : null}
+                              : null} */}
                         </Form.Control>
-                     </Form.Group> */}
+                     </Form.Group>
                      {propertyType.length ? (
                         <Form.Group controlId="exampleForm.SelectCustom">
                            <Form.Control
@@ -779,7 +780,7 @@ const PropertyModule = (props) => {
                               type = false
                            }
                            const regex = /([^,]+),\s*(\d{6})/;
-                           const matches = p_location.match(regex);
+                           const matches = address.match(regex);
                            if (!validateDates()) {
                               return null;
                            }
@@ -789,7 +790,7 @@ const PropertyModule = (props) => {
                               pageSize: rowsPerPage,
                               pageNo: 1,
                               zipcode: zipCode ? zipCode : "",
-                              location: matches ? matches[1].trim() : "",
+                              location: address,
                               searchString: filterText,
                               propertyId: propertyIdText,
                               smartLockProperty: type,

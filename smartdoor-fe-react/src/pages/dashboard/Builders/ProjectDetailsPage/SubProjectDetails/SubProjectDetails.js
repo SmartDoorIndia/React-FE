@@ -1,16 +1,15 @@
 /** @format */
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Text from "../../../../../shared/Text/Text";
 import { Button, Col, Row } from "react-bootstrap";
 import Buttons from "../../../../../shared/Buttons/Buttons";
 import AddNewSubProject from "../../AddNewSubProject/AddNewSubProject";
 import { formateDate, setPrice, showErrorToast } from "../../../../../common/helpers/Utils";
 import Units from "../../AddNewSubProject/AddNewUnit/Units";
-import Image from "../../../../../shared/Image/Image";
-import addIcon from "../../../../../assets/svg/add.svg";
 
 const SubProjectDetails = (props) => {
+   const { updateSubProjectData } = props;
    const [subProjectDetails, setSubProjectDetails] = useState(props?.subProjectDetails);
    const [editTowerFlag, setEditTowerFlag] = useState(false);
    const [editUnitFlag, setEditUnitFlag] = useState(false);
@@ -20,6 +19,7 @@ const SubProjectDetails = (props) => {
    const updateSubProjectEdit = (subProject) => {
       setEditTowerFlag(false);
       setSubProjectDetails(subProject);
+      updateSubProjectData(subProject);
    };
 
    const toggleEditTowerFlag = () => {
@@ -27,17 +27,24 @@ const SubProjectDetails = (props) => {
    };
 
    const handleFetchUnit = (unitDetails) => {
-      console.log("", unitDetails);
+      // console.log("", unitDetails);
       let units = [...subProjectDetails?.properties];
       if (editUnitFlag) {
          units = units.map((unit) => (unit.propertyId === editPropertyId ? unitDetails : unit));
       } else {
          units.push(unitDetails);
       }
-      setSubProjectDetails((prevData) => ({ ...prevData, properties: [...units] }));
+      // setSubProjectDetails((prevData) => ({ ...prevData, properties: [...units] }));
       setShowMoreUnits(false);
       setEditUnitFlag(false);
       setEditPropertyId(null);
+      const updatedSubProject = {
+         ...subProjectDetails,
+         properties: [...units],
+      };
+
+      setSubProjectDetails(updatedSubProject); // update state
+      updateSubProjectData(updatedSubProject); // pass updated object
    };
 
    const handleRemoveUnit = () => {
@@ -391,8 +398,7 @@ const SubProjectDetails = (props) => {
                }}
                disabled={
                   // props?.projectStatus === "UNDER_REVIEW" ||
-                  props?.projectStatus === "REJECTED" ||
-                  props?.projectStatus === "ON_HOLD"
+                  props?.projectStatus === "REJECTED" || props?.projectStatus === "ON_HOLD"
                      ? true
                      : false
                }
