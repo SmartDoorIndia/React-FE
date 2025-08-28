@@ -447,7 +447,7 @@ const ProjectDetailsPage = (props) => {
             </div>
             <div className="d-flex justify-content-end">
                <Buttons
-                  name="Prieview Project"
+                  name="Preview Project"
                   varient="primary"
                   onClick={() => {
                      setPreviewModal(true);

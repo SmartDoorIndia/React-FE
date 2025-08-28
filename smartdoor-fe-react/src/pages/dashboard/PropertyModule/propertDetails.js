@@ -1764,7 +1764,7 @@ const PropertyDetails = (props) => {
                                        </span>
                                        {/* </ToolTip> */}
 
-                                       <ToolTip position="top" name="Property Document">
+                                       {/* <ToolTip position="top" name="Property Document">
                                           {propertyData?.miscellaneousDetails.ownerAvailable ? (
                                              <img
                                                 className={
@@ -1787,11 +1787,11 @@ const PropertyDetails = (props) => {
                                                    },
                                                 }}
                                              >
-                                                {/* <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " /> */}
+                                                 <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " />
                                                 <img className="doc docOwner" src={doc} alt="" />
                                              </Link>
                                           )}
-                                       </ToolTip>
+                                       </ToolTip> */}
                                     </div>
                                  </div>
                               </div>

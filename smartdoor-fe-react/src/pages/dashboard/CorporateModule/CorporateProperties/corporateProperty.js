@@ -147,7 +147,7 @@ const CorporateProperty = (props) => {
             maxWidth: "150px",
             cell: ({ status, isDeleted }) => <span>{status !== null && isDeleted !== true ? <>
                 {handleStatusElement(status)}
-            </> : <> {handleStatusElement('deleted')} </>}
+            </> : <> {handleStatusElement('delisted')} </>}
             </span>,
             id: 6
         },
