@@ -927,10 +927,10 @@ const ExecutionDashboard = (props) => {
           <div className='executionInstallationreqTableWrapper'>
             <DataTableComponent
               onChangePage={onChangePage}
-              data={installationReqData.data}
+              data={installationReqData.data?.list}
               columns={InstallationRequestsColumns}
               progressPending={installationReqData.isLoading}
-              paginationComponent={installationReqData?.data?.length ? PaginationComponent : null}
+              paginationComponent={installationReqData?.data?.list?.length ? PaginationComponent : null}
               progressComponent={ProgressComponent}
               onSort={(e) => { handleSortedData(e) }}
               defaultSort={defaultSort}

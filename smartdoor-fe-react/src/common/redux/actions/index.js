@@ -325,7 +325,7 @@ export const getInstallationRequest = (data) => async (dispatch) => {
     if (response.data && response.status === 200 && response.data.resourceData) {
       dispatch({
         type: Actions.EXCUTIVE_INSTALLATION_SUCCESS,
-        data: response.data.resourceData,
+        data: {list: response.data.resourceData, currentPage: data?.pageNo, rowsPerPage: data?.pageSize},
       });
     } else dispatch({ type: Actions.EXCUTIVE_INSTALLATION_ERROR, data: response.data });
   }
@@ -2287,13 +2287,11 @@ export const createBuilderProfileDetail = async (data) => {
 
 export const getBuilderById = async (data) => {
   const response = await mainApiService("getBuilderById", data);
-  console.log("--->", response);
   return response;
 };
 
 export const setBuilderStatus = async (data) => {
   const response = await mainApiService("setBuilderStatus", data);
-  console.log("--->", response);
   return response;
 };
 
@@ -2345,6 +2343,11 @@ export const fetchBuilderProjectById = async (data) => {
   return response;
 }
 
+export const fetchBuilderProjectByIdConsumer = async (data) => {
+  const response = await mainApiService("fetchBuilderProjectByIdConsumer", data);
+  return response;
+}
+
 export const getLeadForBuilder = async (data) => {
   const response = await mainApiService("getLeadForBuilder", data);
   return response
@@ -2373,4 +2376,23 @@ export const fetchLoanLeadList = async (data) => {
 export const changeLoanLeadStatus = async (data) => {
   const response = await mainApiService("changeLoanLeadStatus", data);
   return response
+}
+
+export const alertNotification = async (data) => {
+  const response = await mainApiService('alertNotifications', data);
+  return response;
+};
+
+export const getVisitMediaByCameraId = async (data) => {
+  const response = await mainApiService('getVisitMediaByCameraId', data);
+  let visitRecList = [...response.data.resourceData];
+  visitRecList.map((visitRec, index) => {
+    visitRec.id = index;
+  });
+  return visitRecList;
+}
+
+export const getMediaByCameraId = async (data) => {
+  const response = await mainApiService('getMediaByCameraId', data);
+  return response;
 }

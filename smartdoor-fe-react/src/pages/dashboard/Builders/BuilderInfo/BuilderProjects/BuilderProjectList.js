@@ -93,6 +93,7 @@ const BuilderProjectList = (props) => {
          onChangeRowsPerPage={handleRowsPerPageChange}
       />
    );
+   
    const PaginationActionButton = () => (
       <div className="d-flex justify-content-center tableBottom"></div>
    );

@@ -3264,6 +3264,19 @@ export const ApiJson = {
     showErrorMessage: true,
   },
 
+  fetchBuilderProjectByIdConsumer: {
+    url: "consumer/property/getProjectDetails",
+    method: "POST",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+
   saveBuilderProject: {
     url: "admin/builder/saveProjectDetails",
     method: "POST",
@@ -3373,6 +3386,56 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  alertNotifications: {
+    url: "admin/system/alertNotifications",
+    method: "POST",
+    data: {
+      pageNumber: "",
+      pageSize: ""
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  getVisitMediaByCameraId: {
+    url: "consumer/visit/getVisitMediaByCameraId",
+    method: "POST",
+    data: {
+      cameraId: "",
+      startDate: "",
+      endDate: "",
+      pageNumber: "",
+      pageSize: ""
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  getMediaByCameraId: {
+    url: "consumer/visit/getMediaByCameraId",
+    method: "POST",
+    data: {
+      cameraId: "",
+      startDate: "",
+      endDate: "",
+      pageNumber: "",
+      pageSize: "",
+      mediaType: "",
+      dataRequiredType: ""
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  }
 };
 console.log(userData)
 

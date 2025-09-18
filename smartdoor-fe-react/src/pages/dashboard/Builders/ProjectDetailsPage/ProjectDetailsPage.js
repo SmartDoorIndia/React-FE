@@ -2,7 +2,7 @@
 
 import { Accordion, AccordionDetails, AccordionSummary, TextField } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
-import { fetchBuilderProjectById, setProjectStatus } from "../../../../common/redux/actions";
+import { fetchBuilderProjectById, fetchBuilderProjectByIdConsumer, setProjectStatus } from "../../../../common/redux/actions";
 import Text from "../../../../shared/Text/Text";
 import ExpandIcon from "../../../../assets/images/expandIcon.png";
 import ProjectDetails from "./ProjectDetails/ProjectDetails";
@@ -25,6 +25,7 @@ const ProjectDetailsPage = (props) => {
    const [projectDetails, setProjectDetails] = useState({
       builderProjectSearchDto: [],
    });
+   const [consumerProjectDetails, setConsumerProjectDetails] = useState({});
    const [subProjectList, setSubProjectList] = useState([]);
    const [addTowerFlag, setAddTowerFlag] = useState(false);
    const [loading, setLoading] = useState(false);
@@ -47,6 +48,10 @@ const ProjectDetailsPage = (props) => {
             setSubProjectList([...response?.data?.resourceData?.subProjectList]);
          }
       });
+      // fetchBuilderProjectByIdConsumer({builderProjectIds: [props?.location?.state?.projectId], propertyDataRequired: true})
+      // .then((response) => {
+      //    setConsumerProjectDetails(response?.data?.resourceData);
+      // })
    }, []);
 
    const handleShowProjectPost = useCallback(async () => {
@@ -445,15 +450,17 @@ const ProjectDetailsPage = (props) => {
                   </Col>
                </Row>
             </div>
-            <div className="d-flex justify-content-end">
-               <Buttons
-                  name="Preview Project"
-                  varient="primary"
-                  onClick={() => {
-                     setPreviewModal(true);
-                  }}
-               />
-            </div>
+            {userData?.roleName !== "SUPER ADMIN" ? (
+               <div className="d-flex justify-content-end">
+                  <Buttons
+                     name="Preview Project"
+                     varient="primary"
+                     onClick={() => {
+                        setPreviewModal(true);
+                     }}
+                  />
+               </div>
+            ) : null} 
          </div>
          <Modal
             show={previewModal}
@@ -463,7 +470,7 @@ const ProjectDetailsPage = (props) => {
             centered
          >
             <Modal.Body className="d-flex justify-content-center">
-               <ProjectPreview projectDetails={projectDetails} subProjectList={subProjectList} />
+               <ProjectPreview projectDetails={projectDetails} subProjectList={subProjectList} builderId={props?.location?.state?.builderId} projectId={props?.location?.state?.projectId} />
             </Modal.Body>
          </Modal>
          <Modal

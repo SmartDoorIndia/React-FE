@@ -207,14 +207,14 @@ const PropertyModule = (props) => {
          style: { padding: "0 !important" },
          center: true,
          minWidth: "300px",
-         cell: ({ houseNumber, societyName, societyAddress, city, state }) => (
+         cell: ({ houseNumber, societyName, societyAddress, city, state, address  }) => (
             <span>
-               {houseNumber} {" , "}
-               {societyName}
-               {" , "}
+               {houseNumber},{address}
+               {/* {societyName}
+               {", "}
                {societyAddress} 
-               {city !== null ? <>{societyAddress.includes(city) ? null : <>{" , "}{city}</>}</> : null}
-               {state !== null ? <>{societyAddress.includes(state) ? null : <>{" , "}{state}</>}</> : null}
+               {city !== null ? <>{societyAddress.includes(city) ? null : <>{", "}{city}</>}</> : null}
+               {state !== null ? <>{societyAddress.includes(state) ? null : <>{", "}{state}</>}</> : null} */}
             </span> 
          ),
       },
@@ -779,8 +779,6 @@ const PropertyModule = (props) => {
                            } else if (typeSelected === 'NON SMARTDOOR') {
                               type = false
                            }
-                           const regex = /([^,]+),\s*(\d{6})/;
-                           const matches = address.match(regex);
                            if (!validateDates()) {
                               return null;
                            }

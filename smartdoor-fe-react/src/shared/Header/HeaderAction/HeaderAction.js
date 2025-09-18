@@ -5,6 +5,7 @@ import './HeaderAction.scss';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 import bellIcon from '../../../assets/svg/bell.svg';
+import warningIcon from '../../../assets/images/warning.png';
 import profile from '../../../assets/svg/avatar_sml.svg';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Image from '../../../shared/Image/Image';
@@ -14,11 +15,13 @@ import { useUserContext } from '../../../common/helpers/Auth';
 import NotificationModal from '../../Modal/NotificationModal/NotificationModal';
 import { ToolTip, getLocalStorage } from '../../../common/helpers/Utils';
 import { revokeToken } from '../../../common/redux/actions';
+import AlertNotificationModal from '../../Modal/AlertNotificationModal/AlertNotificationModal';
 
 const HeaderAction = (props) => {
   const { disconnectSocket, socket } = useSocket();
   const { logoutUser } = useUserContext();
   const [show, setShow] = useState(false)
+  const [showAlertModal, setShowAlertModal] = useState(false)
   const userData = getLocalStorage("authData")
 
   async function logout() {
@@ -30,11 +33,15 @@ const HeaderAction = (props) => {
   }
   const handleClose = () => {
     setShow(false)
-}
+  }
+  const handleAlertClose = () => {
+    setShowAlertModal(false)
+  }
 
   return (
     <>
     <NotificationModal show={show} handleClose={handleClose} />
+    <AlertNotificationModal show={showAlertModal} handleClose={handleAlertClose} />
       <div className="headerAction">
         <div className="d-flex  align-items-center">
           {/* <Image
@@ -50,6 +57,9 @@ const HeaderAction = (props) => {
           {/* <div className="mr-3 actionButton" }>
             <Image name="settingIcon" src={ settingIcon } />
           </div> */}
+          <div className="mr-3 actionButton" onClick={ () => setShowAlertModal(true) }>
+            <Image name="bellIcon" src={ warningIcon } style={{height: '24px', width: '24px'}} />
+          </div>
           <div className="mr-3 actionButton" onClick={ () => setShow(true) }>
             <Image name="bellIcon" src={ bellIcon } />
           </div>

@@ -65,6 +65,7 @@ import PostingFields from "../../../common/helpers/PostingFields";
 // import 'video.js/dist/video-js.css';
 // import 'videojs-flash';
 import { ReactFlvPlayer } from "react-flv-player";
+import VisitMedia from "./VisitRecordings/VisitMedia";
 
 // const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
@@ -2953,7 +2954,8 @@ const PropertyDetails = (props) => {
                         />
                      </>
                   )}
-
+                  
+                  {/* <VisitMedia cameraId={} /> */}
                   {/* <div>
                      <Text
                         fontSize="40px"

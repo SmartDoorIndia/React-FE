@@ -28,9 +28,13 @@ const BuilderProperty = (props) => {
                      >
                         <Card.Body>
                            <div className="d-flex">
-                              <div className="col text-start">
+                              <div className="col text-start p-0">
                                  <Text
-                                    text={property.compositionType}
+                                    text={
+                                       property?.compositionType?.trim()?.length === 0
+                                          ? property?.propertySubType
+                                          : property?.compositionType
+                                    }
                                     style={{ fontSize: "16px", fontWeight: "700" }}
                                  />
                               </div>
@@ -54,17 +58,31 @@ const BuilderProperty = (props) => {
                            </div>
                            <div className="d-flex text-start">
                               <Text
-                                 text={(property.minArea || 0) + "Sq. Ft - " + (property.maxArea || 0) + "Sq. Ft"}
+                                 text={
+                                    (property.minArea || 0) +
+                                    "Sq. Ft - " +
+                                    (property.maxArea || 0) +
+                                    "Sq. Ft"
+                                 }
                                  style={{ fontSize: "13px", fontWeight: "700" }}
                               />
                            </div>
                            <div className="d-flex">
                               <div className="text-start w-auto">
                                  <Text
+                                    className="mt-1"
                                     text={"Amenities:"}
                                     style={{ fontSize: "13px", fontWeight: "700" }}
                                  />
-                                 <StarRating rating={property?.amenitiesRating} />
+                              </div>
+                              <div
+                                 style={{
+                                    scale: "0.7",
+                                    marginInlineStart: "-7%",
+                                    marginTop: "-1%",
+                                 }}
+                              >
+                                 <StarRating rating={subProject?.amenitiesRating} />
                               </div>
                            </div>
                         </Card.Body>

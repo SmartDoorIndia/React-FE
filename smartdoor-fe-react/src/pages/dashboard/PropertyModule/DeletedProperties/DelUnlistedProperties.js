@@ -92,6 +92,7 @@ const DeletedProperties = (props) => {
          selector: "propertyId",
          sortable: true,
          center: true,
+         style: {padding: '0%'},
          cell: ({ propertyId }) => (
             <ToolTip position="top" style={{ width: '100%' }} name={propertyId}>
               <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />

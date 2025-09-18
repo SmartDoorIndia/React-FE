@@ -16,16 +16,36 @@ import whatsappIcon from "../../../../assets/images/whatsappIcon.png";
 import share from "../../../../assets/images/share.png";
 import BuilderProperty from "../ProjectPreview/BuilderProperty/BuilderProperty";
 import "./ProjectPreview.scss";
+import { fetchBuilderProjectById } from "../../../../common/redux/actions";
+import { FallBackLoader } from "../../../../common/helpers/Loader";
 
 const ProjectPreview = (props) => {
-   const [projectDetails, setProjectDetails] = useState(props?.projectDetails);
-   const [subProjectList, setSubProjectList] = useState(props?.subProjectList);
+   const [projectDetails, setProjectDetails] = useState();
+   const [subProjectList, setSubProjectList] = useState();
+   const [loading, setLoading] = useState(false);
+
    useEffect(() => {
-      // console.log(props?.projectDetails);
-   }, [projectDetails]);
+      setLoading(true);
+      fetchBuilderProjectById({
+         projectId: props?.projectId,
+         builderId: props?.builderId,
+      }).then((response) => {
+         setLoading(false);
+         console.log(response);
+         setProjectDetails(response?.data?.resourceData);
+         if (response?.data?.resourceData?.subProjectList !== null) {
+            setSubProjectList([...response?.data?.resourceData?.subProjectList]);
+         }
+      });
+   }, []);
 
    return (
       <>
+         {loading ? (
+                     <>
+                        <FallBackLoader />
+                     </>
+                  ) : null}
          <div className="main-div">
             <Carousel slide={false}>
                {projectDetails?.builderProjectSearchDto[0]?.projectImages?.map((image, index) => (
@@ -109,9 +129,17 @@ const ProjectPreview = (props) => {
                   </div>
                   <div className="d-flex text-start">
                      <Text text="Amenities: " style={{ fontSize: "13px", fontWeight: "700" }} />
-                     <StarRating
-                        rating={projectDetails?.builderProjectSearchDto[0]?.amenitiesRating}
-                     />
+                     <div
+                        style={{
+                           scale: "0.7",
+                           marginInlineStart: "-7%",
+                           marginTop: "-2.5%",
+                        }}
+                     >
+                        <StarRating
+                           rating={projectDetails?.builderProjectSearchDto[0]?.amenitiesRating}
+                        />
+                     </div>
                   </div>
                   <div className="d-flex mt-2 text-start w-100 ">
                      <img
@@ -253,7 +281,7 @@ const ProjectPreview = (props) => {
                      </div>
                   </div>
 
-                  <div className="" style={{ justifySelf: "end" }}>
+                  {/* <div className="" style={{ justifySelf: "end" }}>
                      <img
                         src={share}
                         alt=""
@@ -266,7 +294,7 @@ const ProjectPreview = (props) => {
                         //     setShareModal(true);
                         //  }}
                      />
-                  </div>
+                  </div> */}
                </div>
             </div>
             <hr />
@@ -421,15 +449,18 @@ const ProjectPreview = (props) => {
                   <>
                      {subProjectList?.map((subProject, index) => (
                         <>
-                        {subProject?.properties?.length > 0 ? (
-                           <>
-                                    <BuilderProperty builderPropertyDetailList={subProject?.properties} subProject={subProject} />
-                              {/* {subProject?.properties?.map((property, propIndex) => (
+                           {subProject?.properties?.length > 0 ? (
+                              <>
+                                 <BuilderProperty
+                                    builderPropertyDetailList={subProject?.properties}
+                                    subProject={subProject}
+                                 />
+                                 {/* {subProject?.properties?.map((property, propIndex) => (
                                  <>
                                  </>
                               ))} */}
-                           </>
-                        ) : null}
+                              </>
+                           ) : null}
                         </>
                      ))}
                   </>

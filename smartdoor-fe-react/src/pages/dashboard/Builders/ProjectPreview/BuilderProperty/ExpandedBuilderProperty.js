@@ -51,7 +51,7 @@ const ExpandedBuilderProperty = (props) => {
       <>
          <Card>
             <Carousel slide={false}>
-               {property.propertyImagesList.map((image, index) => (
+               {[...(subProject?.projectImages || []), ...(property?.propertyImagesList || [])].map((image, index) => (
                   <Carousel.Item key={index}>
                      <img
                         src={image}
@@ -128,7 +128,7 @@ const ExpandedBuilderProperty = (props) => {
                   <div className="text-start ml-3">
                      <div>
                         <Text
-                           text={property.compositionType || "N/A"}
+                           text={property.compositionType || property?.propertySubType || "N/A"}
                            style={{ fontSize: "16px", fontWeight: "700" }}
                         />
                      </div>
@@ -144,7 +144,15 @@ const ExpandedBuilderProperty = (props) => {
                            text={"Amenities:"}
                            style={{ fontSize: "13px", fontWeight: "700" }}
                         />
-                        <StarRating rating={property?.amenitiesRating} />
+                        <div
+                           style={{
+                              scale: "0.7",
+                              marginInlineStart: "-7%",
+                              // marginTop: "-1%",
+                           }}
+                        >
+                           <StarRating rating={property?.amenitiesRating} />
+                        </div>
                      </div>
                      <div className="d-flex">
                         <Text
@@ -152,43 +160,51 @@ const ExpandedBuilderProperty = (props) => {
                            style={{ fontSize: "13px", fontWeight: "700" }}
                         />{" "}
                         &nbsp;
-                        <img
-                           className="mt-1"
-                           src={Divider}
-                           style={{ height: "8px", width: "8px" }}
-                           alt=""
-                        />{" "}
-                        &nbsp;
-                        <Text
-                           text={"Total Floors:" + subProject.totalFloors}
-                           style={{ fontSize: "13px", fontWeight: "700" }}
-                        />
+                        {property?.totalFloors ? 
+                        <>
+                           <img
+                              className="mt-1"
+                              src={Divider}
+                              style={{ height: "8px", width: "8px" }}
+                              alt=""
+                           />{" "}
+                           &nbsp;
+                           <Text
+                              text={"Total Floors:" + (subProject.totalFloors || '-')}
+                              style={{ fontSize: "13px", fontWeight: "700" }}
+                           />
+                        </>
+                        : null}
                      </div>
                      <div className="d-flex">
                         <Text
-                           text={"Total Units:" + subProject.totalUnits}
+                           text={"Total Units:" + property.totalUnits || "-"}
                            style={{ fontSize: "13px", fontWeight: "700" }}
                         />{" "}
                         &nbsp;
-                        <img
-                           className="mt-1"
-                           src={Divider}
-                           style={{ height: "8px", width: "8px" }}
-                           alt=""
-                        />{" "}
-                        &nbsp;
-                        <Text
-                           text={"Units Per Floor:" + subProject.unitsPerFloor}
-                           style={{ fontSize: "13px", fontWeight: "700" }}
-                        />
+                        {subProject.unitsPerFloor ? 
+                        <>
+                           <img
+                              className="mt-1"
+                              src={Divider}
+                              style={{ height: "8px", width: "8px" }}
+                              alt=""
+                           />{" "}
+                           &nbsp;
+                           <Text
+                              text={"Units Per Floor:" + subProject.unitsPerFloor}
+                              style={{ fontSize: "13px", fontWeight: "700" }}
+                           />
+                        </>
+                        : null}
                      </div>
                      <div>
                         <Text
                            text={
                               "Possession: " +
-                              formateDate(property.possessionFrom, "MMMM YYYY") +
+                              formateDate(property.possessionFrom || subProject?.possessionFrom , "MMMM YYYY") +
                               " - " +
-                              formateDate(property.possessionTo, "MMMM YYYY")
+                              formateDate(property.possessionTo || subProject?.possessionTo , "MMMM YYYY")
                            }
                            style={{ fontSize: "13px", fontWeight: "700" }}
                         />
@@ -345,7 +361,7 @@ const ExpandedBuilderProperty = (props) => {
                   </div>
                </>
             ) : null}
-            <div className="p-2">
+            {/* <div className="p-2">
                <Button
                   className="w-100 px-2"
                   style={{ backgroundColor: "#BE1452", color: "white", border: "none" }}
@@ -353,7 +369,7 @@ const ExpandedBuilderProperty = (props) => {
                >
                   Call Now
                </Button>
-            </div>
+            </div> */}
          </Card>
 
          <Modal

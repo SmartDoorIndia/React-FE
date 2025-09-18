@@ -237,6 +237,7 @@ const UserManagement = (props) => {
          maxWidth: "120px",
          sortable: true,
          center: true,
+         style: {padding: '0%'},
          cell: ({ joiningDate }) => <span>{formateDate(joiningDate)}</span>,
          id: 2
       },
@@ -333,7 +334,7 @@ const UserManagement = (props) => {
                      }}
                   >
                      <Image
-                        name="contentIcon"
+                        name="editIcon"
                         className="p-1"
                         src={row.blocked ? blockIconActive : blockIcon}
                      />
