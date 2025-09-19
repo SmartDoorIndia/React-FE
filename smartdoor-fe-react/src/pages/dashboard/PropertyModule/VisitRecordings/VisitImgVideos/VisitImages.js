@@ -150,7 +150,7 @@ const VisitImages = (props) => {
                ></Buttons>
             </Modal.Header>
             <Modal.Body className="d-flex justify-content-center">
-               <img src={selectedImg} alt="" style={{width: '150px', height: '150px'}} />
+               <img src={selectedImg} alt="" style={{width: '250px', height: '250px'}} />
             </Modal.Body>
          </Modal>
       </>

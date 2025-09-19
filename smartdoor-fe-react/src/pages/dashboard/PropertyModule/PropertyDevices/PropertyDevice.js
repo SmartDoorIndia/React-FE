@@ -510,9 +510,11 @@ const PropertyDevice = (props) => {
             &nbsp;&nbsp;
             {cameraData.map((camera) => (
                <>
+                  <hr />
                   <Text className="mt-3 mb-0 h5" size="medium" text={"Visits"} />
                   <VisitMedia cameraId={camera?.cameraDeviceId} />
-                  <Text className="mt-3 mb-0 h5" size="medium" text={"Intrusions"} />
+                  <hr />
+                  <Text className="mt-3 mb-0 h5" size="medium" text={"Intrusions (In last 30 days)"} />
                   <IntrusionMedia cameraId={camera?.cameraDeviceId} />
                </>
             ))}

@@ -10,6 +10,8 @@ import { formateDate, showErrorToast } from "../../../../../common/helpers/Utils
 import { TableLoader } from "../../../../../common/helpers/Loader";
 import ReactPlayer from "react-player";
 import Buttons from "../../../../../shared/Buttons/Buttons";
+import VideoBgImg from "../../../../../assets/images/videoBgImg.png";
+import PlayBtn from "../../../../../assets/images/PlayBtn.png";
 
 const VisitVideos = (props) => {
    const [VisitVideoList, setVisitVideoList] = useState([]);
@@ -55,7 +57,9 @@ const VisitVideos = (props) => {
             setShowMore(true);
          } else {
             setShowMore(false);
-            showErrorToast(props?.dataRequiredType === "VISIT_DATA" ? "No more videos available..." : "");
+            showErrorToast(
+               props?.dataRequiredType === "VISIT_DATA" ? "No more videos available..." : ""
+            );
          }
          if (pageNo > 1) {
             setVisitVideoList((prev) => [...prev, ...response.data.resourceData]);
@@ -117,12 +121,47 @@ const VisitVideos = (props) => {
                               <Card.Body className="p-1">
                                  <div className="d-flex">
                                     <Col lg={3} className="p-1 justify-content-center">
-                                       <img
-                                          src={VisitVideo.mediaUrl}
-                                          alt=""
-                                          style={{ height: "50px", width: "50px", cursor: 'pointer' }}
-                                          onClick={() => {setSelectedVideo(VisitVideo.mediaUrl); setShowVideo(true);}}
-                                       />
+                                       <div
+                                          style={{
+                                             position: "relative",
+                                             display: "inline-block",
+                                             height: "50px",
+                                             width: "50px",
+                                             cursor: "pointer",
+                                          }}
+                                          onClick={() => {
+                                             setSelectedVideo(VisitVideo.mediaUrl);
+                                             setShowVideo(true);
+                                          }}
+                                       >
+                                          {/* Background thumbnail */}
+                                          <img
+                                             src={VideoBgImg}
+                                             alt=""
+                                             style={{
+                                                height: "100%",
+                                                width: "100%",
+                                                borderRadius: "5px",
+                                                objectFit: "cover",
+                                                display: "block",
+                                             }}
+                                          />
+
+                                          {/* Play icon overlay */}
+                                          <img
+                                             src={PlayBtn}
+                                             alt="Play"
+                                             style={{
+                                                position: "absolute",
+                                                top: "50%",
+                                                left: "50%",
+                                                transform: "translate(-50%, -50%)",
+                                                height: "20px",
+                                                width: "20px",
+                                                pointerEvents: "none", // so the click is handled by the parent
+                                             }}
+                                          />
+                                       </div>
                                     </Col>
                                     <Col lg={6} className="align-self-center">
                                        <Text
@@ -151,7 +190,7 @@ const VisitVideos = (props) => {
                                  getMedia(currentPage + 1);
                                  setCurrentPage(currentPage + 1);
                               }}
-                              className="text-center mb-4"
+                              className="d-inline-block text-center mb-4 showmoreBellicon"
                               alt="show more"
                               fontWeight="mediumbold"
                               color="primaryColor"
@@ -173,7 +212,7 @@ const VisitVideos = (props) => {
             centered
             backdrop="static"
          >
-            <Modal.Header style={{justifyContent: 'end'}}>
+            <Modal.Header style={{ justifyContent: "end" }}>
                <Buttons
                   style={{ float: "right" }}
                   name="X"

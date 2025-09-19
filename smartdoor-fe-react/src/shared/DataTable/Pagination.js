@@ -154,6 +154,7 @@ const Pagination = ({
   paginationIconPrevious,
   paginationComponentOptions,
   PaginationActionButton,
+  showPageChange = true
 }) => {
   const shouldShow = true;
   const isRTL = false;
@@ -218,62 +219,66 @@ const Pagination = ({
             {select}
           </>
         )}
-        {shouldShow && (
-          <Range>
-            {range}
-          </Range>
-        )}
-        <PageList>
-          <Button
-            id="pagination-first-page"
-            type="button"
-            aria-label="First Page"
-            aria-disabled={ disabledLesser }
-            onClick={ handleFirst }
-            disabled={ disabledLesser }
-            isRTL={ isRTL }
-          >
-            {paginationIconFirstPage}
-          </Button>
+        {showPageChange ?
+        <>
+          {shouldShow && (
+            <Range>
+              {range}
+            </Range>
+          )}
+          <PageList>
+            <Button
+              id="pagination-first-page"
+              type="button"
+              aria-label="First Page"
+              aria-disabled={ disabledLesser }
+              onClick={ handleFirst }
+              disabled={ disabledLesser }
+              isRTL={ isRTL }
+            >
+              {paginationIconFirstPage}
+            </Button>
 
-          <Button
-            id="pagination-previous-page"
-            type="button"
-            aria-label="Previous Page"
-            aria-disabled={ disabledLesser }
-            onClick={ handlePrevious }
-            disabled={ disabledLesser }
-            isRTL={ isRTL }
-          >
-            {paginationIconPrevious}
-          </Button>
+            <Button
+              id="pagination-previous-page"
+              type="button"
+              aria-label="Previous Page"
+              aria-disabled={ disabledLesser }
+              onClick={ handlePrevious }
+              disabled={ disabledLesser }
+              isRTL={ isRTL }
+            >
+              {paginationIconPrevious}
+            </Button>
 
-          {!shouldShow && select}
+            {!shouldShow && select}
 
-          <Button
-            id="pagination-next-page"
-            type="button"
-            aria-label="Next Page"
-            aria-disabled={ disabledGreater }
-            onClick={ handleNext }
-            disabled={ disabledGreater }
-            isRTL={ isRTL }
-          >
-            {paginationIconNext}
-          </Button>
+            <Button
+              id="pagination-next-page"
+              type="button"
+              aria-label="Next Page"
+              aria-disabled={ disabledGreater }
+              onClick={ handleNext }
+              disabled={ disabledGreater }
+              isRTL={ isRTL }
+            >
+              {paginationIconNext}
+            </Button>
 
-          <Button
-            id="pagination-last-page"
-            type="button"
-            aria-label="Last Page"
-            aria-disabled={ disabledGreater }
-            onClick={ handleLast }
-            disabled={ disabledGreater }
-            isRTL={ isRTL }
-          >
-            {paginationIconLastPage}
-          </Button>
-        </PageList>
+            <Button
+              id="pagination-last-page"
+              type="button"
+              aria-label="Last Page"
+              aria-disabled={ disabledGreater }
+              onClick={ handleLast }
+              disabled={ disabledGreater }
+              isRTL={ isRTL }
+            >
+              {paginationIconLastPage}
+            </Button>
+          </PageList>
+        </>
+        : null}
 
       </Div>
     </PaginationWrapper>
