@@ -136,6 +136,8 @@ const TransactionDetailsPage = React.lazy(() => import('./TransactionDashboard/T
 const TransactionListingPage = React.lazy(() => import('./TransactionDashboard/TransactionListing/TransactionListing'));
 const DealApprovalDetailPage = React.lazy(() => import('./TransactionDashboard/DealApproval/DealApproval'))
 const SmartDoorCities = React.lazy(() => import('./SmartdoorCities/SmartDoorCities'))
+const AllKitList = React.lazy(() => import('./SmartdoorKit/SDKitList/KitList'))
+const SDKitDetails = React.lazy(() => import('./SmartdoorKit/KitDetails/KitDetails'))
 
 // Routing data
 const routeData = [
@@ -1373,6 +1375,23 @@ const routeData = [
     excat: true,
     component: TermsAndConditions
   }, 
+  
+  {
+    path: '/admin/all-kit-list/kit-details',
+    name: 'Kit Details',
+    bradcrumb: false,
+    excat: true,
+    component: SDKitDetails
+  }, 
+  
+  {
+    path: '/admin/all-kit-list',
+    name: 'Kit List',
+    bradcrumb: false,
+    excat: true,
+    component: AllKitList
+  }, 
+
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

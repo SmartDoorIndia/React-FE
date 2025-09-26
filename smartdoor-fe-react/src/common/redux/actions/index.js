@@ -2396,3 +2396,18 @@ export const getMediaByCameraId = async (data) => {
   const response = await mainApiService('getMediaByCameraId', data);
   return response;
 }
+
+export const fetchKitList = (data) => async (dispatch) => {
+  dispatch({type: Actions.KIT_LIST_LOADING, data: []});
+  const response = await mainApiService('fetchKitList', data);
+  if(response?.status === 200) {
+    dispatch({type: Actions.KIT_LIST_SUCCESS, data: {list: response?.data?.resourceData, records: data?.pageNumber !== 1 ? data?.records : response.data.records, currentPage: data?.pageNumber, rowsPerPage: data?.pageSize, kitId: data?.kitId, status: data?.status }})
+  } else {
+    dispatch({type: Actions.KIT_LIST_ERROR, data: response?.data});
+  }
+}
+
+export const getDeviceIdList = async (data) => {
+  const response = await mainApiService('getDeviceIdList', data);
+  return response;
+}

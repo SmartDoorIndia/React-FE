@@ -3435,6 +3435,34 @@ export const ApiJson = {
     },
     showResultMessage: false,
     showErrorMessage: true,
+  },
+  fetchKitList: {
+    url: "smartlock/smartlock/fetchKitList",
+    method: "POST",
+    data: {
+      kitId: null,
+      status: "",
+      pageNumber: null,
+      pageSize: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  getDeviceIdList: {
+    url: "smartlock/smartlock/getDeviceIdList/:kitId",
+    method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
   }
 };
 console.log(userData)

@@ -98,7 +98,7 @@ import { brokerProperty } from './views/BrokerProperty.reducer';
 import { allCorporates } from './views/corporateList.reducer';
 import { corporateProperty } from './views/corporateProperty.reducer';
 import { allHubList } from './views/hubList.reducer';
-import { allKitList } from './views/kitList.reducer';
+import { allKitList } from './views/allKitList.reducer';
 import { unInstalledKits } from './views/unInstalledKits.reducer';
 import { UnAssignedKits } from './views/UnAssignedKits.reducer';
 import { builderProjectList } from './views/builderProjectList.reducer';
