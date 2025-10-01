@@ -2411,3 +2411,17 @@ export const getDeviceIdList = async (data) => {
   const response = await mainApiService('getDeviceIdList', data);
   return response;
 }
+
+export const transferKit = async (data) => {
+  const response = await mainApiService('transferKit', data);
+  return response;
+}
+
+export const fetchKitById = async (data) => {
+  const response = await mainApiService('fetchKitList', data);
+  return response;
+}
+
+export const viewKitHistory = async (data) => {
+  const response = await mainApiService('kitHistory', data);
+  return response;}

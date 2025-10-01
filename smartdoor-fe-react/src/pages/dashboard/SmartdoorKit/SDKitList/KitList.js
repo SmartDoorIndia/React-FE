@@ -11,15 +11,20 @@ import { TableLoader } from "../../../../common/helpers/Loader";
 import Pagination from "../../../../shared/DataTable/Pagination";
 import Input from "../../../../shared/Inputs/Input/Input";
 import "./KitList.scss";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { compose } from "redux";
 import { fetchKitList } from "../../../../common/redux/actions";
+import { Form } from "react-bootstrap";
+import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
+import Buttons from "../../../../shared/Buttons/Buttons";
 
 const KitList = (props) => {
    const { allKitList, fetchKitList } = props;
    const [kitId, setKitId] = useState(null);
    const [status, setStatus] = useState("");
    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
+   const statusArr = CONSTANTS_STATUS.kitStatus;
+   const data = useSelector(state => state.allKitList.data);
    const tableRef = useRef();
 
    const kitListColumns = [
@@ -40,11 +45,15 @@ const KitList = (props) => {
          name: "Created Date",
          selector: (row) => row.createdDate,
          sortable: true,
-         center: false,
+         center: true,
          minWidth: "150px",
          cell: ({ createdDate }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={createdDate}>
-               <Text size="Small" color="secondryColor elipsis-text" text={formateDate(createdDate)} />
+               <Text
+                  size="Small"
+                  color="secondryColor elipsis-text"
+                  text={formateDate(createdDate)}
+               />
             </ToolTip>
          ),
          id: 2,
@@ -53,11 +62,15 @@ const KitList = (props) => {
          name: "Last Modified Date",
          selector: (row) => row.lastModifiedDate,
          sortable: true,
-         center: false,
+         center: true,
          minWidth: "150px",
          cell: ({ lastModifiedDate }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={lastModifiedDate}>
-               <Text size="Small" color="secondryColor elipsis-text" text={formateDate(lastModifiedDate)} />
+               <Text
+                  size="Small"
+                  color="secondryColor elipsis-text"
+                  text={formateDate(lastModifiedDate)}
+               />
             </ToolTip>
          ),
          id: 3,
@@ -65,7 +78,7 @@ const KitList = (props) => {
       {
          name: "Corporate",
          selector: (row) => row.corporateName,
-         sortable: true,
+         sortable: false,
          center: false,
          minWidth: "150px",
          cell: ({ corporateName }) => (
@@ -78,7 +91,7 @@ const KitList = (props) => {
       {
          name: "Status",
          selector: (row) => row.status,
-         sortable: true,
+         sortable: false,
          center: false,
          minWidth: "150px",
          cell: ({ status }) => (
@@ -90,7 +103,7 @@ const KitList = (props) => {
       },
       {
          name: "Action",
-         sortable: true,
+         sortable: false,
          center: false,
          maxWidth: "150px",
          cell: ({ kitId, corporateId }) => (
@@ -100,7 +113,7 @@ const KitList = (props) => {
                      <Link
                         to={{
                            pathname: "/admin/all-kit-list/kit-details",
-                              state: { kitId: kitId, corporateId: corporateId},
+                           state: { kitId: kitId, corporateId: corporateId },
                         }}
                      >
                         <Image name="editIcon" src={contentIcon} />
@@ -150,26 +163,28 @@ const KitList = (props) => {
    );
 
    const getAllKits = (pageNo, pageSize) => {
-      if(pageNo !== 1) {
+      if (pageNo !== 1) {
          fetchKitList({
-         kitId: kitId,
-         status: status,
-         pageNumber: pageNo,
-         pageSize: pageSize,
-         records: allKitList?.data?.records
-      });   
+            kitId: kitId,
+            status: status,
+            pageNumber: pageNo,
+            pageSize: pageSize,
+            records: allKitList?.data?.records,
+         });
       } else {
          fetchKitList({
             kitId: kitId,
             status: status,
             pageNumber: pageNo,
-            pageSize: pageSize
+            pageSize: pageSize,
          });
       }
-   }
+   };
 
    useEffect(() => {
-      getAllKits(currentPage, rowsPerPage);
+      if(data?.length === 0 || data?.autoRefresh === true) {
+         getAllKits(currentPage, rowsPerPage);
+      }
    }, []);
 
    const kitIdBox = React.useMemo(() => {
@@ -212,26 +227,63 @@ const KitList = (props) => {
                         text="Kits"
                      />
                   </div>
-                  <div className="locationSelect d-flex">{kitIdBox}</div>
+                  <div className="locationSelect d-flex">
+                     {kitIdBox}
+                     <Form.Group controlId="exampleForm.SelectCustom">
+                        <Form.Control
+                           as="select"
+                           value={status}
+                           onChange={(e) => {
+                              setStatus(e.target.value);
+                           }}
+                        >
+                           <option value="">Select Status</option>
+                           {statusArr.length
+                              ? statusArr.map((_value, index) => (
+                                   <option key={index} value={_value}>
+                                      {_value}
+                                   </option>
+                                ))
+                              : null}
+                        </Form.Control>
+                     </Form.Group>
+                     &nbsp;&nbsp;
+                     <Buttons
+                        name="Search"
+                        varient="primary"
+                        size="Small"
+                        color="white"
+                        style={{ height: "40px !important" }}
+                        onClick={async () => {
+                           fetchKitList({
+                              kitId: kitId,
+                              status: status,
+                              pageNumber: 1,
+                              pageSize: 8,
+                              records: allKitList?.data?.records,
+                           });
+                        }}
+                     />
+                  </div>
                </div>
-               <div className="kitListTableWrapper">
-                  <DataTableComponent
-                     ref={tableRef}
-                     data={allKitList?.data?.list || []}
-                     columns={kitListColumns}
-                     progressPending={allKitList?.isLoading}
-                     progressComponent={ProgressComponent}
-                     paginationComponent={PaginationComponent}
-                     paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                     paginationPerPage={recordsPerPage}
-                     currentPage={currentPage}
-                     onChangePage={handlePageChange}
-                     onChangeRowsPerPage={handleRowsPerPageChange}
-                     perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-                     paginationServer={true}
-                     persistTableHead
-                  />
-               </div>
+            </div>
+            <div className="kitListTableWrapper">
+               <DataTableComponent
+                  ref={tableRef}
+                  data={allKitList?.data?.list || []}
+                  columns={kitListColumns}
+                  progressPending={allKitList?.isLoading}
+                  progressComponent={ProgressComponent}
+                  paginationComponent={PaginationComponent}
+                  paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  paginationPerPage={recordsPerPage}
+                  currentPage={currentPage}
+                  onChangePage={handlePageChange}
+                  onChangeRowsPerPage={handleRowsPerPageChange}
+                  perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  paginationServer={true}
+                  persistTableHead
+               />
             </div>
          </div>
       </>
@@ -239,11 +291,11 @@ const KitList = (props) => {
 };
 
 const mapStateToProps = ({ allKitList }) => ({
-   allKitList
+   allKitList,
 });
 
 const actions = {
-   fetchKitList
+   fetchKitList,
 };
 
 const withConnect = connect(mapStateToProps, actions);

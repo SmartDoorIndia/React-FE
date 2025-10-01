@@ -1379,7 +1379,7 @@ const routeData = [
   {
     path: '/admin/all-kit-list/kit-details',
     name: 'Kit Details',
-    bradcrumb: false,
+    bradcrumb: ["Kit List", "Kit Details"],
     excat: true,
     component: SDKitDetails
   }, 

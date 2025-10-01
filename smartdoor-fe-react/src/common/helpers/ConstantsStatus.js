@@ -20,7 +20,8 @@ const CONSTANTS_STATUS = {
     brokerPostedProperty: ["PUBLISHED", "UNDER REVIEW" , "PENDING" , "QUERY" , "UNINSTALLED/SOLD" , "REJECTED"],
     permissionList: ['Smart Door Posting', 'Non Smart Door Posting'],
     leadStatusList : ['INITIATED', 'COMPLETED', 'DELETED'],
-    kycMethodList : ["AADHAR_OTP", "AADHAR_DIGILOCKER", "MOBILE_OTP_CELLULAR"]
+    kycMethodList : ["AADHAR_OTP", "AADHAR_DIGILOCKER", "MOBILE_OTP_CELLULAR"],
+    kitStatus: ["Ready To Install", "Deleted", "Installed"]
  };
  
  export default CONSTANTS_STATUS;

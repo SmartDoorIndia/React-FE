@@ -464,6 +464,18 @@ const Nav = () => {
                            />
                            Kit List
                         </Link>
+                        <Link
+                           to="/admin/all-kit-list"
+                           className={`nav-link ${
+                              pathname.includes("/admin/all-kit-list") ? "nav-active" : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/all-kit-list") ? borkerIcon : dashboard}
+                           />
+                           SD New Kit List
+                        </Link>
                      </>
                   )}
                   {(userData.roleName === "SUPER ADMIN" ||

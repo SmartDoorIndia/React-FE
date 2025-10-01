@@ -3463,7 +3463,34 @@ export const ApiJson = {
     },
     showResultMessage: false,
     showErrorMessage: true,
-  }
+  },
+  transferKit: {
+    url: "smartlock/smartlock/transferKit",
+    method: "PUT",
+    data: {
+      kitId: null,
+      corporateId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  kitHistory: {
+    url: "smartlock/smartlock/kit-history/:kitId",
+    method: "GET",
+    data: {
+      kitId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 
