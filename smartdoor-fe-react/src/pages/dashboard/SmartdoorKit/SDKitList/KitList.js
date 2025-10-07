@@ -13,8 +13,8 @@ import Input from "../../../../shared/Inputs/Input/Input";
 import "./KitList.scss";
 import { connect, useSelector } from "react-redux";
 import { compose } from "redux";
-import { fetchKitList } from "../../../../common/redux/actions";
-import { Form } from "react-bootstrap";
+import { fetchKitList, getKitMis } from "../../../../common/redux/actions";
+import { Card, Form } from "react-bootstrap";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import Buttons from "../../../../shared/Buttons/Buttons";
 
@@ -24,7 +24,9 @@ const KitList = (props) => {
    const [status, setStatus] = useState("");
    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
    const statusArr = CONSTANTS_STATUS.kitStatus;
-   const data = useSelector(state => state.allKitList.data);
+   const data = useSelector((state) => state.allKitList.data);
+   const [kitStatusList, setKitStatusList] = useState([]);
+   const [kitInventoryList, setKitInventoryList] = useState([]);
    const tableRef = useRef();
 
    const kitListColumns = [
@@ -181,12 +183,6 @@ const KitList = (props) => {
       }
    };
 
-   useEffect(() => {
-      if(data?.length === 0 || data?.autoRefresh === true) {
-         getAllKits(currentPage, rowsPerPage);
-      }
-   }, []);
-
    const kitIdBox = React.useMemo(() => {
       const handleClear = () => {
          if (kitId) {
@@ -214,8 +210,117 @@ const KitList = (props) => {
       );
    }, [kitId, resetPaginationToggle]);
 
+   useEffect(() => {
+      getKitMis({ corporateId: 0 }).then((response) => {
+         if (response?.status === 200) {
+            let kitStatusList = [...response?.data?.resourceData?.kitStatus];
+
+            // Define all possible statuses
+            const allStatuses = ["INSTALLED", "READY_TO_INSTALL", "DELETED", "ON_HOLD"];
+
+            // Add missing statuses with count 0
+            const completeList = allStatuses.map((status) => {
+               const found = kitStatusList.find((item) => item.status === status);
+               return found ? found : { status, statusCount: 0 };
+            });
+
+            // Set the final list
+            setKitStatusList(completeList);
+
+            let inventoryList = [...response?.data?.resourceData?.kitInventory];
+            const allInventories = ["SD", "CORPORATE"];
+
+            const inventoryCompleteList = allInventories.map((inventoryType) => {
+               const found = inventoryList.find((item) => item.inventoryType === inventoryType);
+               return found ? found : { inventoryType, inventoryCount: 0 };
+            });
+
+            setKitInventoryList(inventoryCompleteList);
+         }
+      });
+
+      if (data?.length === 0 || data?.autoRefresh === true) {
+         getAllKits(currentPage, rowsPerPage);
+      }
+   }, []);
+
    return (
       <>
+         <div className="d-flex p-0">
+            {kitStatusList.map((kitStatus, index) => (
+               <>
+                  <Card className="col-2 p-0">
+                     <Card.Body>
+                        <Text
+                           text={kitStatus?.statusCount}
+                           style={{ color: "#BE1452", fontSize: "24px", fontWeight: "600" }}
+                        />
+                        {kitStatus?.status === "INSTALLED" ? (
+                           <>
+                              <Text
+                                 text="Installed"
+                                 style={{ color: "", fontSize: "14px", fontWeight: "600" }}
+                              />
+                           </>
+                        ) : null}
+                        {kitStatus?.status === "READY_TO_INSTALL" ? (
+                           <>
+                              <Text
+                                 text="Ready to Install"
+                                 style={{ color: "", fontSize: "14px", fontWeight: "600" }}
+                              />
+                           </>
+                        ) : null}
+                        {kitStatus?.status === "DELETED" ? (
+                           <>
+                              <Text
+                                 text="Deleted"
+                                 style={{ color: "", fontSize: "14px", fontWeight: "600" }}
+                              />
+                           </>
+                        ) : null}
+                        {kitStatus?.status === "ON_HOLD" ? (
+                           <>
+                              <Text
+                                 text="On Hold"
+                                 style={{ color: "", fontSize: "14px", fontWeight: "600" }}
+                              />
+                           </>
+                        ) : null}
+                     </Card.Body>
+                  </Card>{" "}
+                  {/* &nbsp; */}
+               </>
+            ))}
+            {kitInventoryList.map((kitInventory, index) => (
+               <>
+                  <Card className="col-2 p-0">
+                     <Card.Body>
+                        <Text
+                           text={kitInventory?.inventoryCount}
+                           style={{ color: "#BE1452", fontSize: "24px", fontWeight: "600" }}
+                        />
+                        {kitInventory?.inventoryType === "SD" ? (
+                           <>
+                              <Text
+                                 text="SmartDoor"
+                                 style={{ color: "", fontSize: "14px", fontWeight: "600" }}
+                              />
+                           </>
+                        ) : null}
+                        {kitInventory?.inventoryType === "CORPORATE" ? (
+                           <>
+                              <Text
+                                 text="Corporate"
+                                 style={{ color: "", fontSize: "14px", fontWeight: "600" }}
+                              />
+                           </>
+                        ) : null}
+                     </Card.Body>
+                  </Card>
+               </>
+            ))}
+         </div>
          <div className="tableBox">
             <div className="align-items-center tableHeading">
                <div className="d-flex justify-content-between">

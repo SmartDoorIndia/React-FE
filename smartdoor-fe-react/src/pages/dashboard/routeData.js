@@ -138,6 +138,7 @@ const DealApprovalDetailPage = React.lazy(() => import('./TransactionDashboard/D
 const SmartDoorCities = React.lazy(() => import('./SmartdoorCities/SmartDoorCities'))
 const AllKitList = React.lazy(() => import('./SmartdoorKit/SDKitList/KitList'))
 const SDKitDetails = React.lazy(() => import('./SmartdoorKit/KitDetails/KitDetails'))
+const PreconfiguredDevices = React.lazy(() => import('./PreConfiguredDevices/PreconfiguredDevices'))
 
 // Routing data
 const routeData = [
@@ -1390,6 +1391,14 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: AllKitList
+  }, 
+  
+  {
+    path: '/admin/preconfigured-devices',
+    name: 'Preconfigured Devices',
+    bradcrumb: false,
+    excat: true,
+    component: PreconfiguredDevices
   }, 
 
   // {

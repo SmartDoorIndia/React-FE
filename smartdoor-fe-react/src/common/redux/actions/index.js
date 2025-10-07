@@ -2424,4 +2424,20 @@ export const fetchKitById = async (data) => {
 
 export const viewKitHistory = async (data) => {
   const response = await mainApiService('kitHistory', data);
-  return response;}
+  return response;
+}
+
+export const getKitMis = async (data) => {
+  const response = await mainApiService('kitMIS', data);
+  return response;
+}
+
+export const assignDeviceToKit = async (data) => {
+  const response = await mainApiService('assignDeviceToKit', data);
+  return response;
+}
+
+export const restoreOrDeleteDevice = async (data) => {
+  const response = await mainApiService('restoreOrDeleteDevice', data);
+  return response;
+}

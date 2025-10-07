@@ -3491,6 +3491,49 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  kitMIS: {
+    url: "smartlock/smartlock/fetchKitMis/:corporateId",
+    method: "GET",
+    data: {
+      corporateId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  assignDeviceToKit: {
+    url: "smartlock/smartlock/assignDeviceToKit",
+    method: "POST",
+    data: {
+      deviceType: "",
+      kitId: "",
+      deviceId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  restoreOrDeleteDevice: {
+    url: "smartlock/smartlock/restoreOrDeleteDevice",
+    method: "POST",
+    data: {
+      deviceType: "",
+      actionTYpe: "",
+      deviceId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 

@@ -476,6 +476,18 @@ const Nav = () => {
                            />
                            SD New Kit List
                         </Link>
+                        <Link
+                           to="/admin/preconfigured-devices"
+                           className={`nav-link ${
+                              pathname.includes("/admin/preconfigured-devices") ? "nav-active" : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/preconfigured-devices") ? borkerIcon : dashboard}
+                           />
+                           Preconfigured Devices
+                        </Link>
                      </>
                   )}
                   {(userData.roleName === "SUPER ADMIN" ||
