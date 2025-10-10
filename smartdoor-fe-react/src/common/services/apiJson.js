@@ -2765,7 +2765,7 @@ export const ApiJson = {
   },
 
   getDeviceToken: {
-    url: '/consumer/notification/notifyy/:sns/:status/:propertyId',
+    url: '/consumer/notification/notifyy/:sns/:status',
     method: 'GET',
     data: {
     },
@@ -3526,6 +3526,70 @@ export const ApiJson = {
       deviceType: "",
       actionTYpe: "",
       deviceId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  deleteKitByKitId: {
+    url: "smartlock/smartlock/deleteKitByKitId/:kitId",
+    method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  fetchSmartLockStats: {
+    url: "smartlock/smartlock/fetchSmartLockStats",
+    method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  fetchCameraStats: {
+    url: "smartlock/smartlock/fetchCameraStats",
+    method: "GET",
+    data: {
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  getReturnRequests: {
+    url: "smartlock/smartlock/getReturnRequests",
+    method: "POST",
+    data: {
+      status: "",
+      corporateId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  acceptOrRejectReturnRequest: {
+    url: "smartlock/smartlock/acceptOrRejectReturnRequest",
+    method: "PUT",
+    data: {
+      requestId: null,
+      actionType: ""
     },
     headers: {
       Accept: "*/*",

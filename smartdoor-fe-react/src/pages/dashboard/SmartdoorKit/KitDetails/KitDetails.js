@@ -1,12 +1,14 @@
 /** @format */
 
 import React, { memo, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import {
    assignDeviceToKit,
+   deleteKitByKitId,
    fetchKitById,
    getCorporateById,
    getDeviceIdList,
+   getDeviceToken,
    restoreOrDeleteDevice,
    transferKit,
 } from "../../../../common/redux/actions";
@@ -21,7 +23,8 @@ import * as Actions from "../../../../common/redux/types";
 import downArrow from "../../../../assets/images/arrow-down.png";
 import upArrow from "../../../../assets/images/up-arrow.png";
 import KitHistory from "../KitHistory/KitHistory";
-import { showSuccessToast } from "../../../../common/helpers/Utils";
+import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
+import ReactPlayer from "react-player";
 
 const KitDetails = (props) => {
    const { allKitList } = props;
@@ -40,8 +43,11 @@ const KitDetails = (props) => {
    const [addCameraFlag, setAddCameraFlag] = useState(false);
    const [cameraList, setCameraList] = useState([]);
    const [smartlockList, setSmartlockList] = useState([]);
-   const [newCameraDeviceId, setNewCameraDeviceId] = useState([]);
+   const [selectedCamera, setSelectedCamera] = useState(null);
+   const [livestreamURL, setLivestreamURL] = useState("");
+   let liveStremUrl = "";
    const dispatch = useDispatch();
+   const history = useHistory();
 
    const getCorprateDetails = async (detailsFlag) => {
       await getCorporateById({
@@ -59,7 +65,11 @@ const KitDetails = (props) => {
 
    const fetchKitDetails = () => {
       fetchKitById({ kitId: kitId, pageNumber: 1, pageSize: 8 }).then((response) => {
-         setKitDetails(response.data.resourceData[0]);
+         if (response.data.resourceData?.length === 0) {
+            setKitDetails({ kitId: kitId, kitStatus: "DELETED" });
+         } else {
+            setKitDetails(response.data.resourceData[0]);
+         }
       });
    };
 
@@ -113,27 +123,69 @@ const KitDetails = (props) => {
       <>
          {loading ? <FallBackLoader /> : null}
 
+         {kitDetails?.kitStatus !== "DELETED" ? (
+            <Card className="mb-2">
+               <Card.Body>
+                  <div className="d-flex justify-content-between">
+                     <div className="d-flex align-items-center">
+                        <Text
+                           text="Do you want to delete this kit permanently?"
+                           style={{ fontSize: "16px", fontWeight: "600" }}
+                        />{" "}
+                        &nbsp;&nbsp;
+                     </div>
+                     <div>
+                        <Buttons
+                           name="Delete Kit"
+                           onClick={() => {
+                              deleteKitByKitId({ kitId: kitId }).then((response) => {
+                                 if (response?.status === 200) {
+                                    history.push(-1);
+                                 }
+                              });
+                           }}
+                        />
+                     </div>
+                  </div>
+               </Card.Body>
+            </Card>
+         ) : null}
          <Card>
             <Card.Body>
                <div className="d-flex justify-content-between">
-                  <div className="d-flex align-items-center">
-                     <Text
-                        text="Corporate Assigned:"
-                        style={{ fontSize: "16px", fontWeight: "600" }}
-                     />{" "}
-                     &nbsp;&nbsp;
-                     <Text
-                        text={kitDetails?.corporateName || "-"}
-                        style={{ fontSize: "16px", fontWeight: "500" }}
-                     />
+                  <div>
+                     <div className="d-flex align-items-center">
+                        <Text
+                           text="Corporate Assigned:"
+                           style={{ fontSize: "16px", fontWeight: "600" }}
+                        />{" "}
+                        &nbsp;&nbsp;
+                        <Text
+                           text={kitDetails?.corporateName || "-"}
+                           style={{ fontSize: "16px", fontWeight: "500" }}
+                        />
+                     </div>
+                     <div className="d-flex">
+                        <Text
+                           text="Note: Kit can be assigned to corporate only when it is "
+                           style={{ fontSize: "13px", fontWeight: "500" }}
+                        />{" "}
+                        &nbsp;
+                        <Text
+                           text="Ready To Install"
+                           style={{ fontSize: "13px", fontWeight: "700" }}
+                        />
+                     </div>
                   </div>
                   <div>
-                     <Buttons
-                        name="Assign another corporate"
-                        onClick={() => {
-                           setTransferKitModalFlag(true);
-                        }}
-                     />
+                     {kitDetails?.kitStatus === "READY_TO_INSTALL" ? (
+                        <Buttons
+                           name="Assign another corporate"
+                           onClick={() => {
+                              setTransferKitModalFlag(true);
+                           }}
+                        />
+                     ) : null}
                   </div>
                </div>
             </Card.Body>
@@ -148,6 +200,13 @@ const KitDetails = (props) => {
                <Card>
                   <Card.Body>
                      <Row style={{ overflow: "hidden" }}>
+                        <Col lg={4}>
+                           <Text text="Id" style={{ fontSize: "13px", fontWeight: "600" }} />
+                           <Text
+                              text={smartlock.id || "-"}
+                              style={{ fontSize: "13px", fontWeight: "500" }}
+                           />
+                        </Col>
                         <Col lg={4}>
                            <Text text="Lock Id" style={{ fontSize: "13px", fontWeight: "600" }} />
                            <Text
@@ -273,18 +332,23 @@ const KitDetails = (props) => {
                            }}
                         />{" "}
                         &nbsp;&nbsp;
-                        <Buttons name="Return to SD Inventory" onClick={() => {
-                           restoreOrDeleteDevice({
+                        <Buttons
+                           name="Return to SD Inventory"
+                           onClick={() => {
+                              restoreOrDeleteDevice({
                                  deviceType: "Camera",
                                  deviceId: camera?.cameraDeviceId,
                                  actionType: "Restore",
                               }).then((response) => {
                                  if (response?.status === 200) {
-                                    showSuccessToast("Camera returned to Smartdoor inventory successfully...");
+                                    showSuccessToast(
+                                       "Camera returned to Smartdoor inventory successfully..."
+                                    );
                                     fetchDeviceIdListByKitId();
                                  }
                               });
-                        }} />
+                           }}
+                        />
                      </div>
                   </Card.Body>
                </Card>
@@ -366,14 +430,21 @@ const KitDetails = (props) => {
                setAddCameraFlag(false);
             }}
             centered
+            backdrop="static"
          >
             <Modal.Header>
                <Buttons
                   style={{ float: "right" }}
                   name="X"
                   varient="secondary"
-                  onClick={() => {
+                  onClick={async () => {
                      setAddCameraFlag(false);
+                     setSelectedCamera(null);
+                     const response = await getDeviceToken({
+                        sns: selectedCamera?.uuId,
+                        status: "close",
+                     });
+                     setLivestreamURL(null);
                   }}
                ></Buttons>
             </Modal.Header>
@@ -382,35 +453,92 @@ const KitDetails = (props) => {
                   className="textfieldInput w-100 mt-1"
                   select
                   multiple={false}
-                  value={newCameraDeviceId}
+                  value={selectedCamera}
                   label="Select Camera DeviceId"
-                  onChange={(e) => {
+                  onChange={async (e) => {
+                     if (selectedCamera !== null) {
+                        const response = await getDeviceToken({
+                           sns: selectedCamera?.uuId,
+                           status: "close",
+                        });
+                        await setLivestreamURL(null);
+                     }
                      console.log(e.target.value);
-                     setNewCameraDeviceId(e.target.value);
+                     setSelectedCamera(e.target.value);
                   }}
-                  style={{ minHeight: "50vh" }}
+                  style={{ minHeight: "25vh" }}
                >
                   {cameraList.map((camera) => (
-                     <MenuItem key={camera?.cameraDeviceId} value={camera?.cameraDeviceId}>
+                     <MenuItem key={camera?.cameraDeviceId} value={camera}>
                         {camera?.cameraDeviceId}
                      </MenuItem>
                   ))}
                </TextField>
+
+               {selectedCamera !== null ? (
+                  <>
+                     <div className="text-center">
+                        <Buttons
+                           name="View LiveStream"
+                           varient="primary"
+                           size="xSmall"
+                           onClick={async () => {
+                              setLoading(true);
+                              const response = await getDeviceToken({
+                                 sns: selectedCamera?.uuId,
+                                 status: "open",
+                              });
+                              setLoading(false);
+                              if (response.status === 200) {
+                                 liveStremUrl = response.data.resourceData.liveStreamUrl;
+                                 setLivestreamURL(response.data.resourceData.liveStreamUrl);
+                              } else {
+                                 showErrorToast("Camera is offline");
+                              }
+                           }}
+                        ></Buttons>
+                     </div>
+                     {liveStremUrl !== null ? (
+                        <>
+                           <div className="d-flex justify-content-center mt-2">
+                              <ReactPlayer
+                                 url={livestreamURL}
+                                 controls={true}
+                                 muted={false}
+                                 playing={true}
+                                 width="80%"
+                                 height="80%"
+                                 style={{
+                                    position: "relative",
+                                    top: 0,
+                                    left: 0,
+                                    borderRadius: "4px",
+                                 }}
+                              />
+                           </div>
+                        </>
+                     ) : null}
+                  </>
+               ) : null}
             </Modal.Body>
             <Modal.Footer style={{ justifyContent: "center" }}>
                <Buttons
                   name="Assign Device to Kit"
-                  onClick={() => {
+                  onClick={async () => {
+                     const response = await getDeviceToken({
+                        sns: selectedCamera?.uuId,
+                        status: "close",
+                     });
                      assignDeviceToKit({
                         deviceType: "Camera",
                         kitId: kitId,
-                        deviceId: newCameraDeviceId,
+                        deviceId: selectedCamera?.cameraDeviceId,
                      }).then((response) => {
                         if (response?.status === 200) {
                            showSuccessToast("Device added successfully...");
                            fetchDeviceIdListByKitId();
                            setAddCameraFlag(false);
-                           setNewCameraDeviceId("");
+                           setSelectedCamera("");
                         }
                      });
                   }}

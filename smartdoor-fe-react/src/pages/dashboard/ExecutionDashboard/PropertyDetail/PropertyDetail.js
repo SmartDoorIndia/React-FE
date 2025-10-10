@@ -369,6 +369,10 @@ const PropertyDetail = (props) => {
                     }
                     {/* <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || "-"} />                         */}
                   </div>
+                  <div className='col-lg-3'>
+                    <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="Installer Mobile No." />
+                    <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignToMobile || "-"} />                        
+                  </div>
                   {data.kitId === null ?
                     <div className='col-lg-3'>
                       <Text size="xSmall" fontWeight="smbold" color="TaupeGrey" text="Assigned Hub" />

@@ -1309,7 +1309,6 @@ const PropertyDetails = (props) => {
                               <div className="d-flex justify-content-end">
                                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "SALES ADMIN") &&
                                  propertyData.miscellaneousDetails.status === "UNDER REVIEW" &&
-                                 propertyData.miscellaneousDetails.smartLockProperty === false &&
                                  propertyData?.miscellaneousDetails?.deleted === false ? (
                                     <>
                                        <Buttons

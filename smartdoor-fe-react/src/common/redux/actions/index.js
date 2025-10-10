@@ -2441,3 +2441,26 @@ export const restoreOrDeleteDevice = async (data) => {
   const response = await mainApiService('restoreOrDeleteDevice', data);
   return response;
 }
+
+export const deleteKitByKitId = async (data) => {
+  const response = await mainApiService("deleteKitByKitId", data);
+  return response;
+}
+
+export const fetchSmartLockStats = async (data) => {
+  const response = await mainApiService("fetchSmartLockStats", data);
+  return response;
+}
+export const fetchCameraStats = async (data) => {
+  const response = await mainApiService("fetchCameraStats", data);
+  return response;
+}
+export const fetchReturnRequests = async (data) => {
+  const response = await mainApiService("getReturnRequests", data);
+  return response;
+}
+
+export const acceptRejectReturnRequest = async (data) => {
+  const response = await mainApiService("acceptOrRejectReturnRequest", data);
+  return response;
+}

@@ -28,6 +28,7 @@ const Input = forwardRef(({
 	type,
 	component,
 	showSearch,
+	margin,
 	// register,
 	...rest
 }, ref) => {
@@ -42,7 +43,7 @@ const Input = forwardRef(({
 						{children}
 					</Form.Control>
 						{showSearch ? 
-						<span className="position-absolute" style={{ top: '45%', paddingLeft: '0.5rem', transform: 'translateY(-50%)' }}>
+						<span className="position-absolute" style={{ top: (margin ? '70%' : '45%'), paddingLeft: '0.5rem', transform: 'translateY(-50%)' }}>
 								<Image src={SearchIcon} name="Search Icon" className="img-fluid" />    
 						</span>
 						: null}

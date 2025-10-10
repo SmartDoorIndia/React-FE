@@ -142,6 +142,17 @@ const Nav = () => {
                                  Transaction Team
                               </Link>
                            ) : null}
+                           {userData.roleName === "SUPER ADMIN" ||
+                           userData.roleName === "INSTALLATION ADMIN" ? (
+                              <Link
+                                 to="/admin/return-requests"
+                                 className={`dropdown-item  ${
+                                    pathname.includes("return-requests") ? "active" : ""
+                                 }`}
+                              >
+                                 Return Requests
+                              </Link>
+                           ) : null}
                         </>
                      </ReactBoostrap.NavDropdown>
                   ) : null}

@@ -9,6 +9,7 @@ import { Card, Col, Modal, Row } from "react-bootstrap";
 import { formateDate, showErrorToast } from "../../../../../common/helpers/Utils";
 import { FallBackLoader, TableLoader } from "../../../../../common/helpers/Loader";
 import Buttons from "../../../../../shared/Buttons/Buttons";
+import downloadIcon from "../../../../../assets/images/downloads.png";
 
 const VisitImages = (props) => {
    const [visitImages, setVisitImages] = useState([]);
@@ -33,7 +34,9 @@ const VisitImages = (props) => {
             setShowMore(true);
          } else {
             setShowMore(false);
-            showErrorToast(props?.dataRequiredType === "VISIT_DATA" ? "No more images available..." : "");
+            showErrorToast(
+               props?.dataRequiredType === "VISIT_DATA" ? "No more images available..." : ""
+            );
          }
          if (pageNo > 1) {
             setVisitImages((prev) => [...prev, ...response.data.resourceData]);
@@ -47,6 +50,31 @@ const VisitImages = (props) => {
       setLoading(true);
       getMedia(1);
    }, []);
+
+   const downloadImage = async (imageUrl) => {
+      try {
+         const response = await fetch(imageUrl);
+         const blob = await response.blob();
+         const url = window.URL.createObjectURL(blob);
+
+         const link = document.createElement("a");
+         link.href = url;
+
+         // Extract filename from URL or use a default name
+         const filename = imageUrl.split("/").pop() || "download.jpg";
+         link.download = filename;
+
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
+
+         // Clean up the URL object
+         window.URL.revokeObjectURL(url);
+      } catch (error) {
+         console.error("Error downloading image:", error);
+         // You can add toast notification here
+      }
+   };
 
    return (
       <>
@@ -68,7 +96,9 @@ const VisitImages = (props) => {
             >
                <Text
                   className="page-title ml-3"
-                  text={props?.dataRequiredType === "VISIT_DATA" ? "VISIT IMAGES" : "INTRUSION IMAGES"}
+                  text={
+                     props?.dataRequiredType === "VISIT_DATA" ? "VISIT IMAGES" : "INTRUSION IMAGES"
+                  }
                   style={{ fontSize: "18px", fontWeight: "700", color: "white" }}
                ></Text>
             </AccordionSummary>
@@ -77,7 +107,11 @@ const VisitImages = (props) => {
                   <>
                      <Text
                         className="text-center"
-                        text={props?.dataRequiredType === "VISIT_DATA" ? "Visit images not available" : "Intrusion images not available"}
+                        text={
+                           props?.dataRequiredType === "VISIT_DATA"
+                              ? "Visit images not available"
+                              : "Intrusion images not available"
+                        }
                         style={{ fontSize: "14px", fontWeight: "600", color: "#BE1452" }}
                      />
                   </>
@@ -93,8 +127,15 @@ const VisitImages = (props) => {
                                        <img
                                           src={visitImage.mediaUrl}
                                           alt=""
-                                          style={{ height: "50px", width: "50px", cursor: 'pointer' }}
-                                          onClick={() => {setSelectedImg(visitImage.mediaUrl); setShowImage(true);}}
+                                          style={{
+                                             height: "50px",
+                                             width: "50px",
+                                             cursor: "pointer",
+                                          }}
+                                          onClick={() => {
+                                             setSelectedImg(visitImage.mediaUrl);
+                                             setShowImage(true);
+                                          }}
                                        />
                                     </Col>
                                     <Col lg={6} className="align-self-center">
@@ -105,6 +146,15 @@ const VisitImages = (props) => {
                                        <Text
                                           text={formateDate(visitImage.capturedDate, "HH:mm:ss A")}
                                           style={{ fontSize: "13px", fontWeight: "500" }}
+                                       />
+                                    </Col>
+                                    <Col lg={1} className="align-self-center">
+                                       <img
+                                          src={downloadIcon}
+                                          alt=""
+                                          onClick={() => {
+                                             downloadImage(visitImage.mediaUrl);
+                                          }}
                                        />
                                     </Col>
                                  </div>
@@ -138,8 +188,15 @@ const VisitImages = (props) => {
                )}
             </AccordionDetails>
          </Accordion>
-         <Modal show={showImage} onHide={() => {setShowImage(false);}} centered backdrop="static" >
-            <Modal.Header style={{justifyContent: 'end'}}>
+         <Modal
+            show={showImage}
+            onHide={() => {
+               setShowImage(false);
+            }}
+            centered
+            backdrop="static"
+         >
+            <Modal.Header style={{ justifyContent: "end" }}>
                <Buttons
                   style={{ float: "right" }}
                   name="X"
@@ -150,7 +207,7 @@ const VisitImages = (props) => {
                ></Buttons>
             </Modal.Header>
             <Modal.Body className="d-flex justify-content-center">
-               <img src={selectedImg} alt="" style={{width: '250px', height: '250px'}} />
+               <img src={selectedImg} alt="" style={{ width: "250px", height: "250px" }} />
             </Modal.Body>
          </Modal>
       </>

@@ -1,0 +1,188 @@
+/** @format */
+@import '../../../scss/modules/variables.scss';
+
+.return-requests {
+    padding: 20px;
+
+    .device-section {
+        .section-header {
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+
+            .section-title {
+                font-size: 1.5rem;
+                margin: 0;
+            }
+        }
+    }
+
+    .table-card {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        .table-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .table-actions {
+                display: flex;
+                gap: 10px;
+            }
+        }
+    }
+
+    .table-container {
+        overflow-x: auto;
+
+        .rdt_Table {
+            min-width: 900px;
+        }
+
+        .rdt_TableCol {
+            padding: 12px 15px;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            //  border-right: 1px solid #e9ecef;
+            text-align: center;
+
+            &:nth-child(1) {
+                width: 150px !important; // Increased from 180px
+                min-width: 150px !important;
+                max-width: 150px !important;
+            }
+
+            &:last-child {
+                border-right: none;
+            }
+        }
+
+        .rdt_TableCell {
+            padding: 12px 15px;
+            //  border-right: 1px solid #e9ecef;
+            text-align: center;
+
+            &:nth-child(1) {
+                width: 150px !important; // Increased from 180px
+                min-width: 150px !important;
+                max-width: 150px !important;
+            }
+            
+            &:last-child {
+                border-right: none;
+            }
+        }
+
+        .column-content {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .elipsis-text {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+                display: block;
+                font-size: 14px;
+            }
+        }
+    }
+
+    .action-icon {
+        // border: 1px solid $lightBorder;
+        border-radius: 4px;
+        display: inline-flex;
+        width: 32px;
+        height: 32px;
+        text-align: center;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff;
+        }
+    }
+
+    // Kit Details Modal Styles
+    .kit-details-modal {
+        .modal-header-custom {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+        }
+
+        .modal-body-custom {
+            padding: 1.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
+
+            .device-card {
+                border: 1px solid #e9ecef;
+                border-radius: 6px;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                }
+            }
+        }
+
+        .modal-footer-custom {
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            padding: 1rem 1.5rem;
+        }
+    }
+
+    // Responsive adjustments
+    @media (max-width: 768px) {
+        padding: 10px;
+
+        .table-header {
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start !important;
+
+            .table-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        .table-container {
+            .rdt_Table {
+                min-width: 1000px;
+            }
+        }
+
+        .kit-details-modal {
+            .modal-dialog {
+                margin: 10px;
+            }
+        }
+    }
+}
+
+// Remove old styles and keep only necessary ones
+.returnRequestsTableWrapper {
+    @extend .table-container;
+}
+
+// Loading state
+.loading-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #6c757d;
+}

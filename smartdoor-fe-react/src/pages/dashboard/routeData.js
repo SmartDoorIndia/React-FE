@@ -139,6 +139,7 @@ const SmartDoorCities = React.lazy(() => import('./SmartdoorCities/SmartDoorCiti
 const AllKitList = React.lazy(() => import('./SmartdoorKit/SDKitList/KitList'))
 const SDKitDetails = React.lazy(() => import('./SmartdoorKit/KitDetails/KitDetails'))
 const PreconfiguredDevices = React.lazy(() => import('./PreConfiguredDevices/PreconfiguredDevices'))
+const ReturnRequests = React.lazy(() => import('./ReturnRequestsDashboard/ReturnRequests'))
 
 // Routing data
 const routeData = [
@@ -1399,6 +1400,14 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: PreconfiguredDevices
+  }, 
+
+  {
+    path: '/admin/return-requests',
+    name: 'Return Requests',
+    bradcrumb: false,
+    excat: true,
+    component: ReturnRequests
   }, 
 
   // {

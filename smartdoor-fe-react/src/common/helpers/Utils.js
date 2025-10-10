@@ -179,6 +179,8 @@ export function handleStatusElement(status) {
          "Yes, I’m interested",
          "completed",
          "Completed",
+         "ACCEPTED",
+         "INSTALLED"
       ].includes(status)
    ) {
       return (
@@ -216,6 +218,7 @@ export function handleStatusElement(status) {
          "PROBLEM",
          "NOT INTERESTED",
          "ON HOLD",
+         "ON_HOLD",
          "REJECTED",
          "CLOSED",
          "FAILED",
@@ -244,6 +247,16 @@ export function handleStatusElement(status) {
             fontWeight="mediumbold"
             color="white"
             text="IN PROGRESS"
+            className="tagInfo defaultTag ml-2 labelFontSize 11"
+         />
+      );
+   } else if (status === "READY_TO_INSTALL") {
+      return (
+         <Text
+            size="xSmall"
+            fontWeight="mediumbold"
+            color="white"
+            text="READY TO INSTALL"
             className="tagInfo defaultTag ml-2 labelFontSize 11"
          />
       );

@@ -228,6 +228,7 @@ const NonSDProperties = (props) => {
             onClear={() => handleClear}
             filterText={propertyIdText}
             showSearch={true}
+            margin={45}
          />
       );
    }, [propertyIdText, resetPaginationToggle]);

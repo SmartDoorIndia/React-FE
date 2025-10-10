@@ -313,7 +313,7 @@ const PropertyDevice = (props) => {
                         const response = await getDeviceToken({
                            sns: uuId,
                            status: "open",
-                           propertyId: propertyId,
+                           // propertyId: propertyId,
                         });
                         setLoading(false);
                         if (response.status === 200) {

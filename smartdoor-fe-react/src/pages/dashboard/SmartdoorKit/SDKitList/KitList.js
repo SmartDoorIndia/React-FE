@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { useEffect, useRef, useState } from "react";
-import { formateDate, ToolTip } from "../../../../common/helpers/Utils";
+import { formateDate, handleStatusElement, ToolTip } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Image from "../../../../shared/Image/Image";
@@ -92,13 +92,13 @@ const KitList = (props) => {
       },
       {
          name: "Status",
-         selector: (row) => row.status,
+         selector: (row) => row.kitStatus,
          sortable: false,
-         center: false,
+         center: true,
          minWidth: "150px",
-         cell: ({ status }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={status}>
-               <Text size="Small" color="secondryColor elipsis-text" text={status} />
+         cell: ({ kitStatus }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={kitStatus}>
+               <Text size="Small" color="secondryColor elipsis-text" text={handleStatusElement(kitStatus)} />
             </ToolTip>
          ),
          id: 5,
@@ -108,9 +108,9 @@ const KitList = (props) => {
          sortable: false,
          center: false,
          maxWidth: "150px",
-         cell: ({ kitId, corporateId }) => (
+         cell: ({ kitId, corporateId, kitStatus }) => (
             <div className="action">
-               <ToolTip position="left" name="View Details">
+               <ToolTip position="left" name={kitStatus !== "DELETED" ? "View Details" : "No data to show"}>
                   <span>
                      <Link
                         to={{
@@ -118,7 +118,7 @@ const KitList = (props) => {
                            state: { kitId: kitId, corporateId: corporateId },
                         }}
                      >
-                        <Image name="editIcon" src={contentIcon} />
+                        <Image name="editIcon" src={contentIcon} style={{cursor: (kitStatus === "DELETED" ? "cross" : "pointer")}} />
                      </Link>
                   </span>
                </ToolTip>
@@ -206,6 +206,7 @@ const KitList = (props) => {
             }}
             filterText={kitId}
             showSearch={true}
+            margin={70}
          />
       );
    }, [kitId, resetPaginationToggle]);
@@ -366,6 +367,22 @@ const KitList = (props) => {
                               pageNumber: 1,
                               pageSize: 8,
                               records: allKitList?.data?.records,
+                           });
+                        }}
+                     />
+                     &nbsp;&nbsp;
+                     <Buttons
+                        name="Refresh"
+                        varient="primary"
+                        size="Small"
+                        color="white"
+                        style={{ height: "40px !important" }}
+                        onClick={async () => {
+                           fetchKitList({
+                              kitId: null,
+                              status: "",
+                              pageNumber: 1,
+                              pageSize: 8
                            });
                         }}
                      />

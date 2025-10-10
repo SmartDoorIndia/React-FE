@@ -524,6 +524,7 @@ const PropertyModule = (props) => {
             onClear={() => {handleClear()}}
             filterText={propertyIdText}
             showSearch={true}
+            margin={70}
          />
       );
    }, [propertyIdText, resetPaginationToggle]);

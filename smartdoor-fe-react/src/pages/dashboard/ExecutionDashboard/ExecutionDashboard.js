@@ -939,7 +939,7 @@ const ExecutionDashboard = (props) => {
           </div>
         </div>
 
-        <div className='servicereqTableWrapper'>
+        {/* <div className='servicereqTableWrapper'>
           <ListingDataTable
             title='Service Requests'
             data={serviceRequestData.data.length ? serviceRequestData.data.slice(0, 4) : []}
@@ -953,16 +953,16 @@ const ExecutionDashboard = (props) => {
             handleFilterChange={_filterServiceReq}
             pagination={false}
           />
-        </div>
+        </div> */}
 
-        <div className="tableBox mb-5">
+        {/* <div className="tableBox mb-5">
           <div className="d-flex justify-content-between align-items-center tableHeading">
             <div>
               <Text size="regular" fontWeight="mediumbold" color="secondryColor" text="Published Property" />
             </div>
             <div className="locationSelect">
               <Form.Group controlId="exampleForm.SelectCustom">
-                {/* <Form.Label>City:</Form.Label> */}
+                <Form.Label>City:</Form.Label>
                 <Form.Control as="select" onChange={(e) => _filterPublishPropertyCity(e.target.value)}>
                   <option value="">Select City</option>
                   {
@@ -988,7 +988,7 @@ const ExecutionDashboard = (props) => {
               progressComponent={ProgressComponent}
             />
           </div>
-        </div>
+        </div> */}
         <div className="tableBox mb-5">
           <div className="d-flex justify-content-between align-items-center tableHeading">
             <div>
