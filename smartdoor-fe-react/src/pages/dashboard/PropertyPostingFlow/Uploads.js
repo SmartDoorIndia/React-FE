@@ -188,10 +188,10 @@ const Uploads = (props) => {
 
    const saveUploads = () => {
       let isValid = true;
-      if (imageArr.length < 3) {
-         showErrorToast("Please upload minimum 3 images");
-         isValid = false;
-      }
+      // if (imageArr.length < 3) {
+      //    showErrorToast("Please upload minimum 3 images");
+      //    isValid = false;
+      // }
       let videoUrlObj = [];
       if (videoUrl1?.trim()?.length !== 0 && addNewVideoFlag === false) {
          videoUrlObj = [
@@ -241,10 +241,10 @@ const Uploads = (props) => {
 
    const notifyUploads = async (loadNext) => {
       let isValid = true;
-      if (imageArr.length < 3) {
-         showErrorToast("Please upload minimum 3 images");
-         isValid = false;
-      }
+      // if (imageArr.length < 3) {
+      //    showErrorToast("Please upload minimum 3 images");
+      //    isValid = false;
+      // }
       let videoUrlObj = [];
       if (videoUrl1?.trim()?.length !== 0 && addNewVideoFlag === false) {
          videoUrlObj = [
@@ -366,11 +366,11 @@ const Uploads = (props) => {
                         style={{ fontSize: "12px", color: "#949494" }}
                      />
                      {/* <Text text={'Please upload at-least 2 exterior image'} fontWeight={'500'} style={{ fontSize: '12px', color: '#A11447' }} /> */}
-                     <Text
+                     {/* <Text
                         text={"Please upload minimum 3 exterior images"}
                         fontWeight={"500"}
                         style={{ fontSize: "12px", color: "#A11447" }}
-                     />
+                     /> */}
                   </span>
                   <Button
                      className="w-50"

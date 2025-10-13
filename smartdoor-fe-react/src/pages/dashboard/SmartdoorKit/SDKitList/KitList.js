@@ -98,7 +98,11 @@ const KitList = (props) => {
          minWidth: "150px",
          cell: ({ kitStatus }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={kitStatus}>
-               <Text size="Small" color="secondryColor elipsis-text" text={handleStatusElement(kitStatus)} />
+               <Text
+                  size="Small"
+                  color="secondryColor elipsis-text"
+                  text={handleStatusElement(kitStatus)}
+               />
             </ToolTip>
          ),
          id: 5,
@@ -110,7 +114,10 @@ const KitList = (props) => {
          maxWidth: "150px",
          cell: ({ kitId, corporateId, kitStatus }) => (
             <div className="action">
-               <ToolTip position="left" name={kitStatus !== "DELETED" ? "View Details" : "No data to show"}>
+               <ToolTip
+                  position="left"
+                  name={kitStatus !== "DELETED" ? "View Details" : "No data to show"}
+               >
                   <span>
                      <Link
                         to={{
@@ -118,7 +125,11 @@ const KitList = (props) => {
                            state: { kitId: kitId, corporateId: corporateId },
                         }}
                      >
-                        <Image name="editIcon" src={contentIcon} style={{cursor: (kitStatus === "DELETED" ? "cross" : "pointer")}} />
+                        <Image
+                           name="editIcon"
+                           src={contentIcon}
+                           style={{ cursor: kitStatus === "DELETED" ? "cross" : "pointer" }}
+                        />
                      </Link>
                   </span>
                </ToolTip>
@@ -245,9 +256,74 @@ const KitList = (props) => {
       }
    }, []);
 
+   // StatCard component
+   const StatCard = ({ value, label, color = "#BE1452" }) => (
+      <Card className="stat-card" style={{ width: "150px", minHeight: "120px" }}>
+         <Card.Body className="d-flex flex-column justify-content-center align-items-center p-3">
+            <div className="stat-value mb-2" style={{ color, fontSize: "32px", fontWeight: "700" }}>
+               {value || 0}
+            </div>
+            <div
+               className="stat-label"
+               style={{
+                  color: "#6c757d",
+                  fontSize: "14px",
+                  fontWeight: "600",
+                  textAlign: "center",
+               }}
+            >
+               {label}
+            </div>
+         </Card.Body>
+      </Card>
+   );
    return (
       <>
-         <div className="d-flex p-0">
+         <div className="device-section">
+            <div className="d-flex flex-wrap gap-3 p-3">
+               {kitStatusList.map((kitStatus, index) => (
+                  <>
+                     <StatCard
+                        key={`status-${index}`}
+                        value={kitStatus?.statusCount}
+                        label={
+                           kitStatus?.status === "INSTALLED"
+                              ? "Installed"
+                              : kitStatus?.status === "READY_TO_INSTALL"
+                              ? "Ready to Install"
+                              : kitStatus?.status === "DELETED"
+                              ? "Deleted"
+                              : kitStatus?.status === "ON_HOLD"
+                              ? "On Hold"
+                              : ""
+                        }
+                        color="#BE1452"
+                     />{" "}
+                     &nbsp;&nbsp;
+                  </>
+               ))}
+
+               {kitInventoryList.map((kitInventory, index) => (
+                  <>
+                     <StatCard
+                        key={`inventory-${index}`}
+                        value={kitInventory?.inventoryCount}
+                        label={
+                           kitInventory?.inventoryType === "SD"
+                              ? "SmartDoor"
+                              : kitInventory?.inventoryType === "CORPORATE"
+                              ? "Corporate"
+                              : ""
+                        }
+                        color="#BE1452"
+                     />{" "}
+                     &nbsp;&nbsp;
+                  </>
+               ))}
+            </div>
+         </div>
+
+         {/* <div className="d-flex p-0">
             {kitStatusList.map((kitStatus, index) => (
                <>
                   <Card className="col-2 p-0">
@@ -290,7 +366,6 @@ const KitList = (props) => {
                         ) : null}
                      </Card.Body>
                   </Card>{" "}
-                  {/* &nbsp; */}
                </>
             ))}
             {kitInventoryList.map((kitInventory, index) => (
@@ -321,7 +396,7 @@ const KitList = (props) => {
                   </Card>
                </>
             ))}
-         </div>
+         </div> */}
          <div className="tableBox">
             <div className="align-items-center tableHeading">
                <div className="d-flex justify-content-between">
@@ -382,7 +457,7 @@ const KitList = (props) => {
                               kitId: null,
                               status: "",
                               pageNumber: 1,
-                              pageSize: 8
+                              pageSize: 8,
                            });
                         }}
                      />

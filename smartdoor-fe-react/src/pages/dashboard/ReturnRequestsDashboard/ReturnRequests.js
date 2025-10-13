@@ -140,7 +140,7 @@ const ReturnRequests = () => {
                      size="16px"
                      color="secondaryColor"
                      className="elipsis-text"
-                     text={corporateName}
+                     text={corporateName || "-"}
                   />
                </ToolTip>
             </div>
@@ -342,6 +342,24 @@ const ReturnRequests = () => {
                                           />
                                           <Text
                                              text={smartlock.lockId || "-"}
+                                             style={{
+                                                fontSize: "14px",
+                                                fontWeight: "500",
+                                                color: "#333",
+                                             }}
+                                          />
+                                       </Col>
+                                       <Col lg={4} className="mb-2">
+                                          <Text
+                                             text="Id"
+                                             style={{
+                                                fontSize: "12px",
+                                                fontWeight: "600",
+                                                color: "#6c757d",
+                                             }}
+                                          />
+                                          <Text
+                                             text={smartlock.id || "-"}
                                              style={{
                                                 fontSize: "14px",
                                                 fontWeight: "500",
