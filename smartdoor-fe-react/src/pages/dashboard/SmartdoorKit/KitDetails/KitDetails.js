@@ -138,9 +138,15 @@ const KitDetails = (props) => {
                         <Buttons
                            name="Delete Kit"
                            onClick={() => {
+                              setLoading(true);
                               deleteKitByKitId({ kitId: kitId }).then((response) => {
+                                 setLoading(false);
                                  if (response?.status === 200) {
-                                    history.push(-1);
+                                    showSuccessToast("Kit deleted successfully");
+                                    fetchKitDetails();
+                                    let reduxData = { ...allKitList?.data };
+                                    reduxData.autoRefresh = true;
+                                    dispatch({ type: Actions.KIT_LIST_SUCCESS, data: reduxData });
                                  }
                               });
                            }}
@@ -250,13 +256,17 @@ const KitDetails = (props) => {
          <hr />
          <div className="d-flex justify-content-between mb-2">
             <Text text={"Camera List"} style={{ fontSize: "16px", fontWeight: "600" }} />
-            <Buttons
-               className="mr-2"
-               name="Add Camera"
-               onClick={() => {
-                  setAddCameraFlag(true);
-               }}
-            />
+            {kitDetails?.kitStatus !== "DELETED" ? (
+               <>
+                  <Buttons
+                     className="mr-2"
+                     name="Add Camera"
+                     onClick={() => {
+                        setAddCameraFlag(true);
+                     }}
+                  />
+               </>
+            ) : null}
          </div>
          {cameraDeviceIdList.map((camera) => (
             <>
