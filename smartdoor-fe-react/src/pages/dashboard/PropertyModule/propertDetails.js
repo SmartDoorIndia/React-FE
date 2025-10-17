@@ -1115,7 +1115,7 @@ const PropertyDetails = (props) => {
                                     size="large"
                                     fontWeight="mediumbold"
                                     color="secondry-color"
-                                    text={`Flat/House  ${
+                                    text={`${
                                        propertyData.address.houseNumber || "-"
                                     }, ${
                                        propertyData.address.towerName
