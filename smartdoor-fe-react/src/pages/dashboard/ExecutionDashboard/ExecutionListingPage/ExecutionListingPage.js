@@ -90,20 +90,20 @@ const ExecutionListing = (props) => {
          }
          return filteredItems;
       }
-      if (props?.tabName === "Published Property") {
-         filteredItems = publishedProperyData.data.length
-            ? publishedProperyData.data.filter((item) => {
-                 return (
-                    item?.smartdoorPropertyId === filterText ||
-                    item?.propertyPostedBy?.toLowerCase().includes(filterText.toLowerCase()) ||
-                    item?.phoneNumber?.includes(filterText) ||
-                    item?.city?.toLowerCase().includes(filterText.toLowerCase()) ||
-                    item?.propertySubType?.toLowerCase().includes(filterText.toLowerCase())
-                 );
-              })
-            : [];
-         return filteredItems;
-      }
+      // if (props?.tabName === "Published Property") {
+      //    filteredItems = publishedProperyData.data.length
+      //       ? publishedProperyData.data.filter((item) => {
+      //            return (
+      //               item?.smartdoorPropertyId === filterText ||
+      //               item?.propertyPostedBy?.toLowerCase().includes(filterText.toLowerCase()) ||
+      //               item?.phoneNumber?.includes(filterText) ||
+      //               item?.city?.toLowerCase().includes(filterText.toLowerCase()) ||
+      //               item?.propertySubType?.toLowerCase().includes(filterText.toLowerCase())
+      //            );
+      //         })
+      //       : [];
+      //    return filteredItems;
+      // }
    };
 
    const PaginationActionButton = () => (
@@ -156,9 +156,9 @@ const ExecutionListing = (props) => {
             getInstallationRequest({ city: "", location: "", pageSize: "8", pageNo: "1" });
          }
       }
-      if (props?.tabName === "Published Property") {
-         getAllPublishedProperty({ city: "", records: "", pageNumber: "" });
-      }
+      // if (props?.tabName === "Published Property") {
+      //    getAllPublishedProperty({ city: "", records: "", pageNumber: "" });
+      // }
    }, [getInstallationRequest, getAllPublishedProperty, getAllCity]);
 
    // const PaginationComponent = (props) => (<Pagination {...props} />);
@@ -193,7 +193,7 @@ const ExecutionListing = (props) => {
       {
          name: "Installation Time",
          selector: "dateTime",
-         sortable: true,
+         sortable: false,
          center: true,
          minWidth: "160px",
          cell: ({ dateTime, slotTime }) => (
@@ -411,12 +411,12 @@ const ExecutionListing = (props) => {
    };
 
    const showColumns = () => {
-      if (props?.tabName === "Installation/Un-installation Requests") {
-         return InstallationRequestsColumns;
-      }
-      if (props?.tabName === "Published Property") {
-         return PublishedPropertyColumns;
-      }
+      // if (props?.tabName === "Installation/Un-installation Requests") {
+      // }
+      return InstallationRequestsColumns;
+      // if (props?.tabName === "Published Property") {
+      //    return PublishedPropertyColumns;
+      // }
    };
 
    const _filterStatus = (status_value) => {
@@ -488,9 +488,9 @@ const ExecutionListing = (props) => {
       // Store sorted data
       // const { selector, direction } = newSortedData;
       let selectorVal = newSortedData?.selector;
-      console.log(newSortedData?.selector);
       // Perform sorting based on selector and direction
       let filteredItems = showData();
+      console .log(filteredItems);
       const sorted = [...filteredItems].sort((a, b) => {
          if (selectorVal === "id") {
             if (defaultSort === true) {
@@ -514,10 +514,15 @@ const ExecutionListing = (props) => {
       console.log(sorted);
       // filteredItems = [...sorted]
       dispatch({
-         type: Actions.EXCUTIVE_INSTALLATION_SUCCESS,
-         data: [...sorted],
-      });
+   type: Actions.EXCUTIVE_INSTALLATION_SUCCESS,
+   data: {
+      ...installationReqData.data,
+      list: [...sorted],
+   },
+});
+
    };
+
    return (
       <div className="tableBox bg-white">
          <div className="d-flex justify-content-between align-items-center tableHeading">
@@ -600,9 +605,10 @@ const ExecutionListing = (props) => {
                data={showData()}
                columns={showColumns()}
                progressPending={
-                  props?.tabName === "Published Property"
-                     ? publishedProperyData.isLoading
-                     : installationReqData.isLoading
+                  // props?.tabName === "Published Property"
+                  //    ? publishedProperyData.isLoading
+                  //    : 
+                     installationReqData.isLoading
                }
                progressComponent={ProgressComponent}
                paginationComponent={PaginationComponent}

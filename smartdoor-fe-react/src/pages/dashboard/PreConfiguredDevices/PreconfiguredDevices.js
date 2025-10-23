@@ -5,15 +5,17 @@ import {
    fetchCameraStats,
    fetchSmartLockStats,
    getDeviceIdList,
+   getDeviceToken,
    restoreOrDeleteDevice,
 } from "../../../common/redux/actions";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
-import { showSuccessToast, ToolTip } from "../../../common/helpers/Utils";
+import { showErrorToast, showSuccessToast, ToolTip } from "../../../common/helpers/Utils";
 import Text from "../../../shared/Text/Text";
 import "./PreconfigDevices.scss";
 import Buttons from "../../../shared/Buttons/Buttons";
-import { Card, Row, Col } from "react-bootstrap";
+import { Card, Row, Col, Modal } from "react-bootstrap";
 import QrModal from "../../../shared/Modal/QrModal/QrModal";
+import ReactPlayer from "react-player";
 
 const PreconfiguredDevices = () => {
    const [cameraList, setCameraList] = useState([]);
@@ -23,6 +25,10 @@ const PreconfiguredDevices = () => {
    const [loading, setLoading] = useState(false);
    const [showQrModal, setShowQrModal] = useState(false);
    const [qrData, setQrData] = useState({});
+   const [selectedCamera, setSelectedCamera] = useState(null);
+   const [livestreamURL, setLivestreamURL] = useState("");
+   const [showLiveStream, setShowLiveStream] = useState(false);
+   let liveStremUrl = "";
 
    const qrGenerator = (slData) => {
       console.log(slData, "slData for qr");
@@ -85,26 +91,49 @@ const PreconfiguredDevices = () => {
          name: "ACTIONS",
          sortable: false,
          center: true,
-         width: "120px",
+         width: "270px",
          cell: ({ cameraDeviceId, type }) => (
-            <Buttons
-               name="Delete"
-               variant="outline-danger"
-               onClick={() => {
-                  if (window.confirm(`Are you sure you want to delete ${type} camera?`)) {
-                     restoreOrDeleteDevice({
-                        deviceType: "Camera",
-                        deviceId: cameraDeviceId,
-                        actionType: "Delete",
-                     }).then((response) => {
-                        if (response?.status === 200) {
-                           showSuccessToast("Camera deleted successfully");
-                           fetchDeviceIdList();
-                        }
+            <>
+               <Buttons
+                  name="Delete"
+                  variant="outline-danger"
+                  size="xSmall"
+                  onClick={() => {
+                     if (window.confirm(`Are you sure you want to delete ${type} camera?`)) {
+                        restoreOrDeleteDevice({
+                           deviceType: "Camera",
+                           deviceId: cameraDeviceId,
+                           actionType: "Delete",
+                        }).then((response) => {
+                           if (response?.status === 200) {
+                              showSuccessToast("Camera deleted successfully");
+                              fetchDeviceIdList();
+                           }
+                        });
+                     }
+                  }}
+               /> &nbsp;&nbsp;
+               <Buttons
+                  name="View LiveStream"
+                  varient="primary"
+                  size="xSmall"
+                  onClick={async () => {
+                     // setLoading(true);
+                     const response = await getDeviceToken({
+                        sns: selectedCamera?.uuId,
+                        status: "open",
                      });
-                  }
-               }}
-            />
+                     // setLoading(false);
+                     if (response.status === 200) {
+                        liveStremUrl = response.data.resourceData.liveStreamUrl;
+                        setLivestreamURL(response.data.resourceData.liveStreamUrl);
+                        setShowLiveStream(true);
+                     } else {
+                        showErrorToast("Camera is offline");
+                     }
+                  }}
+               ></Buttons>
+            </>
          ),
          id: 4,
       },
@@ -194,7 +223,7 @@ const PreconfiguredDevices = () => {
                   variant="outline-danger"
                   onClick={() => {
                      const data = {
-                        encLockDeviceId: encryptedId
+                        encLockDeviceId: encryptedId,
                      };
                      setQrData(data, () => {
                         console.log(qrData, "QR data");
@@ -399,6 +428,56 @@ const PreconfiguredDevices = () => {
             }}
             headerText="QR Code"
          />
+         <Modal
+            show={showLiveStream}
+            onHide={() => {
+               setShowLiveStream(false);
+            }}
+            centered
+            backdrop="static"
+         >
+            <Modal.Header>
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  varient="secondary"
+                  onClick={async () => {
+                     setSelectedCamera(null);
+                     const response = await getDeviceToken({
+                        sns: selectedCamera?.uuId,
+                        status: "close",
+                     });
+                     setLivestreamURL(null);
+                  }}
+               ></Buttons>
+            </Modal.Header>
+            <Modal.Body>
+               {selectedCamera !== null ? (
+                  <>
+                     {liveStremUrl !== null ? (
+                        <>
+                           <div className="d-flex justify-content-center mt-2">
+                              <ReactPlayer
+                                 url={livestreamURL}
+                                 controls={true}
+                                 muted={false}
+                                 playing={true}
+                                 width="80%"
+                                 height="80%"
+                                 style={{
+                                    position: "relative",
+                                    top: 0,
+                                    left: 0,
+                                    borderRadius: "4px",
+                                 }}
+                              />
+                           </div>
+                        </>
+                     ) : null}
+                  </>
+               ) : null}
+            </Modal.Body>
+         </Modal>
       </>
    );
 };

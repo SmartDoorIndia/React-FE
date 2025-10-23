@@ -1615,7 +1615,7 @@ const PropertyDetails = (props) => {
 
                               <table className="w-100">
                                  <tbody>
-                                    <tr>
+                                    <tr className="bg-white">
                                        <td className="pl-0 ">
                                           <Text
                                              size="xSmall"
@@ -1659,7 +1659,7 @@ const PropertyDetails = (props) => {
                                           />
                                        </td>
                                     </tr>
-                                    <tr>
+                                    <tr className="bg-white">
                                        <td className="pl-0">
                                           <Text
                                              size="xSmall"
@@ -1933,9 +1933,7 @@ const PropertyDetails = (props) => {
                      <Col md={12} className="propertyDetailsTable">
                         <div className=" bg-white">
                            <table className="w-100 bg-white">
-                              {/* First ROW */}
-
-                              <tr>
+                              <tr className="bg-white">
                                  <td className="p-2">
                                     <Text
                                        size="xSmall"
@@ -1996,7 +1994,7 @@ const PropertyDetails = (props) => {
 
                               {/* second Row */}
 
-                              <tr>
+                              <tr className="bg-white">
                                  {specList.includes("Carpet area/built-up area") ? (
                                     <td className="p-2">
                                        <Text
@@ -2119,7 +2117,7 @@ const PropertyDetails = (props) => {
 
                               {showMore ? (
                                  //  third Row
-                                 <tr>
+                                 <tr className="bg-white">
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -2266,7 +2264,7 @@ const PropertyDetails = (props) => {
 
                               {/* forth row */}
                               {showMore ? (
-                                 <tr>
+                                 <tr className="bg-white">
                                     {specList.includes("BHK") ? (
                                        <td className="p-2">
                                           <Text
@@ -2353,7 +2351,7 @@ const PropertyDetails = (props) => {
                               ) : null}
                               {/* fifth row */}
                               {showMore ? (
-                                 <tr>
+                                 <tr className="bg-white" >
                                     {specList.includes("Number of balconies") ? (
                                        <td className="p-2">
                                           <Text
@@ -2408,7 +2406,7 @@ const PropertyDetails = (props) => {
                               ) : null}
                               {showMore ? (
                                  // Sixth Row
-                                 <tr>
+                                 <tr className="bg-white">
                                     {specList.includes("Preferred for") ? (
                                        <td className="p-2">
                                           <Text
@@ -2451,7 +2449,7 @@ const PropertyDetails = (props) => {
                               ) : null}
                               {showMore ? (
                                  //  Seventh Row
-                                 <tr>
+                                 <tr className="bg-white">
                                     {specList.includes("Maintenance") ? (
                                        <td className="p-2">
                                           <Text
@@ -2478,7 +2476,7 @@ const PropertyDetails = (props) => {
                               ) : null}
                               {showMore ? (
                                  //  Eighth Row
-                                 <tr>
+                                 <tr className="bg-white">
                                     <td className="p-2">
                                        <Text
                                           size="xSmall"
@@ -2537,7 +2535,7 @@ const PropertyDetails = (props) => {
                               ) : null}
                               {showMore ? (
                                  //  Nineth Row
-                                 <tr>
+                                 <tr className="bg-white">
                                     {specList.includes("Furnishing type" || "Unit furnishing") ? (
                                        <td className="p-2">
                                           <Text
@@ -2640,7 +2638,7 @@ const PropertyDetails = (props) => {
                            text="Current Plan details"
                         />
                         <table className="w-100 bg-white">
-                           <tr>
+                           <tr className="bg-white">
                               <td className="p-2">
                                  <Text
                                     size="xSmall"
@@ -2684,7 +2682,7 @@ const PropertyDetails = (props) => {
                                  />
                               </td>
                            </tr>
-                           <tr>
+                           <tr className="bg-white">
                               <td className="p-2">
                                  <Text
                                     size="xSmall"
@@ -2692,12 +2690,6 @@ const PropertyDetails = (props) => {
                                     color="secondryColor"
                                     text="Auto Renew Status"
                                  />
-                                 {/* <Text
-                                 size="Small"
-                                 fontWeight="semibold"
-                                 color="secondryColor"
-                                 text={currentPlanData.autoRenewStatus ? "YES" : "NO"}
-                              /> */}
                                  <Switch
                                     checked={currentPlanData.autoRenewStatus ? true : false}
                                     color="warning"
@@ -2748,7 +2740,7 @@ const PropertyDetails = (props) => {
                            <>
                               {upgradePlanData?.map((planData) => (
                                  <table className="w-100 bg-white">
-                                    <tr>
+                                    <tr className="bg-white">
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2792,7 +2784,7 @@ const PropertyDetails = (props) => {
                                           />
                                        </td>
                                     </tr>
-                                    <tr>
+                                    <tr className="bg-white">
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -2800,12 +2792,6 @@ const PropertyDetails = (props) => {
                                              color="secondryColor"
                                              text="Auto Renew Status"
                                           />
-                                          {/* <Text
-                                       size="Small"
-                                       fontWeight="semibold"
-                                       color="secondryColor"
-                                       text={currentPlanData.autoRenewStatus ? "YES" : "NO"}
-                                    /> */}
                                           <Switch
                                              checked={planData.autoRenewStatus ? true : false}
                                              color="warning"

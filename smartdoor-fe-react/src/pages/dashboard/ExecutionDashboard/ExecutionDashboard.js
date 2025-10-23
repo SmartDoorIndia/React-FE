@@ -117,7 +117,7 @@ const ExecutionDashboard = (props) => {
       "ticketNumber": "",
       "startDate": "", records: "4", pageNumber: "1"
     });
-    getAllPublishedProperty({ city: "", records: "4", pageNumber: "1" });
+    // getAllPublishedProperty({ city: "", records: "4", pageNumber: "1" });
     getAllExecutiveTeams({ city: "" });
     getExecutionDashboardCount();
     // getExcutionDashboardCity();
