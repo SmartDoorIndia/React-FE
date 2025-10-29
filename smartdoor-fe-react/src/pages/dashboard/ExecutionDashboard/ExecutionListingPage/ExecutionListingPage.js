@@ -27,6 +27,7 @@ import "./ExecutionListingPage.scss";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import * as Actions from "../../../../common/redux/types";
 import { TableLoader } from "../../../../common/helpers/Loader";
+import Buttons from "../../../../shared/Buttons/Buttons";
 
 const ExecutionListing = (props) => {
    const {
@@ -61,33 +62,34 @@ const ExecutionListing = (props) => {
       let status = status_value || statusSelected;
       let filteredItems = [];
       if (props?.tabName === "Installation/Un-installation Requests") {
-         filteredItems = installationReqData?.data?.list?.length
-            ? installationReqData?.data?.list?.filter((item) => {
-                // dispatch({
-                //         type: Actions.EXCUTIVE_INSTALLATION_SUCCESS,
-                //         data: {list: installationReqData?.data?.list?.length, currentPage: currentPage, rowsPerPage: rowsPerPage},
-                //       });
-                 return (
-                    item?.id === Number(filterText) ||
-                    item?.propertyId === Number(filterText) ||
-                    (item?.assignedTo !== null
-                       ? item?.assignedTo?.toLowerCase().includes(filterText.toLowerCase())
-                       : []) ||
-                    item?.location?.toLowerCase().includes(filterText.toLowerCase()) ||
-                    (item?.city !== null
-                       ? item?.city?.toLowerCase().includes(filterText.toLowerCase())
-                       : []) ||
-                    item?.propertySubType?.toLowerCase().includes(filterText.toLowerCase()) ||
-                    item?.status?.includes(filterText.toUpperCase()) ||
-                    item?.assignedTo?.toLowerCase().includes(filterText.toLowerCase())
-                 );
-              })
-            : [];
-         if (status && filteredItems.length) {
-            filteredItems = filteredItems.filter((item) => {
-               return item?.status === status;
-            });
-         }
+         filteredItems = installationReqData?.data?.list;
+         // filteredItems = installationReqData?.data?.list?.length
+         //    ? installationReqData?.data?.list?.filter((item) => {
+         //        // dispatch({
+         //        //         type: Actions.EXCUTIVE_INSTALLATION_SUCCESS,
+         //        //         data: {list: installationReqData?.data?.list?.length, currentPage: currentPage, rowsPerPage: rowsPerPage},
+         //        //       });
+         //         return (
+         //            item?.id === Number(filterText) ||
+         //            item?.propertyId === Number(filterText) ||
+         //            (item?.assignedTo !== null
+         //               ? item?.assignedTo?.toLowerCase().includes(filterText.toLowerCase())
+         //               : []) ||
+         //            item?.location?.toLowerCase().includes(filterText.toLowerCase()) ||
+         //            (item?.city !== null
+         //               ? item?.city?.toLowerCase().includes(filterText.toLowerCase())
+         //               : []) ||
+         //            item?.propertySubType?.toLowerCase().includes(filterText.toLowerCase()) ||
+         //            item?.status?.includes(filterText.toUpperCase()) ||
+         //            item?.assignedTo?.toLowerCase().includes(filterText.toLowerCase())
+         //         );
+         //      })
+         //    : [];
+         // if (status && filteredItems.length) {
+         //    filteredItems = filteredItems.filter((item) => {
+         //       return item?.status === status;
+         //    });
+         // }
          return filteredItems;
       }
       // if (props?.tabName === "Published Property") {
@@ -123,13 +125,13 @@ const ExecutionListing = (props) => {
 
    const handlePageChange = (newPage) => {
       setCurrentPage(Number(newPage));
-      getInstallationRequest({ city: "", location: "", pageSize: "8", pageNo: newPage });
+      getInstallationRequest({ installationStatus: statusSelected, location: selectedLocation, searchString: filterText, city: city, pageSize: "8", pageNo: newPage });
     };
     
     const handleRowsPerPageChange = async (newRowsPerPage) => {
       recordsPerPage = Number(newRowsPerPage);
       setRowsPerPage(Number(newRowsPerPage));
-      getInstallationRequest({ city: "", location: "", pageSize: newRowsPerPage, pageNo: currentPage });
+      getInstallationRequest({ installationStatus: statusSelected, location: selectedLocation, searchString: filterText, city: city, pageSize: newRowsPerPage, pageNo: currentPage });
    };
 
    let PaginationComponent = ({ onChangePage, onChangeRowsPerPage, ...props }) => (
@@ -387,7 +389,6 @@ const ExecutionListing = (props) => {
    ];
 
    const _filterInstallationRequests = (city, locationData) => {
-      console.log(locationData, "in the api for city and location");
       let data = locationData;
       const regex = /([^,]+),\s*(\d{6})/;
       const matches = data.match(regex);
@@ -396,12 +397,13 @@ const ExecutionListing = (props) => {
          const location = matches[1].trim();
          const zipcode = matches[2];
          console.log(city, location, zipcode, "data for filter");
-         getInstallationRequest({ city, zipcode, location, pageSize: "", pageNo: "1" });
+         setSelectedLocation(location);
+         // getInstallationRequest({ city, zipcode, location, pageSize: "", pageNo: "1" });
       }
       if (locationData === "") {
          console.log("outside match");
          setCity(city);
-         getInstallationRequest({ city, location: locationData, records: "", pageNumber: "" });
+         // getInstallationRequest({ city, location: locationData, records: "", pageNumber: "" });
       }
    };
 
@@ -427,7 +429,7 @@ const ExecutionListing = (props) => {
    const _filterCityData = (city, zipcode) => {
       setLocationsData([]);
       if (props.location.state.module === "Installation Requests") {
-         _filterInstallationRequests(city, "");
+         // _filterInstallationRequests(city, "");
       }
       if (props.location.state.module === "Published Property") {
          _filterPublishPropertyCity(city, "");
@@ -579,24 +581,28 @@ const ExecutionListing = (props) => {
                   </Form.Control>
                </Form.Group>
                {props?.tabName === "Published Property" ? null : (
-                  <Form.Group controlId="exampleForm.SelectCustom">
-                     {/* <Form.Label>Location:</Form.Label> */}
-                     <Form.Control
-                        as="select"
-                        className="locationWidth"
-                        onChange={(e) => _filterLocationData(selectedCity, e.target.value)}
-                     >
-                        <option value="">Select Location</option>
-                        {locationsData && locationsData.length
-                           ? locationsData.map((_value, index) => (
-                                <option key={_value.pinCode} value={_value.location}>
-                                   {_value.location}
-                                </option>
-                             ))
-                           : null}
-                     </Form.Control>
-                  </Form.Group>
+                  <>
+                     <Form.Group controlId="exampleForm.SelectCustom">
+                        <Form.Control
+                           as="select"
+                           className="locationWidth"
+                           onChange={(e) => _filterLocationData(selectedCity, e.target.value)}
+                        >
+                           <option value="">Select Location</option>
+                           {locationsData && locationsData.length
+                              ? locationsData.map((_value, index) => (
+                                 <option key={_value.pinCode} value={_value.location}>
+                                    {_value.location}
+                                 </option>
+                              ))
+                              : null}
+                        </Form.Control>
+                     </Form.Group>&nbsp;&nbsp;
+                  </>
                )}
+               <Buttons name="Search" onClick={() => {
+                  getInstallationRequest({ city: city, location: selectedLocation, installationStatus: statusSelected, searchString: filterText, pageSize: "8", pageNo: "1" });
+               }} />
             </div>
          </div>
          {/* <div className='executionInstallationrequestsTableWrapper'> */}

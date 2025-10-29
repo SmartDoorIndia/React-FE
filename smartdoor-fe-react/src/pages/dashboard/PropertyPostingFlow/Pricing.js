@@ -488,14 +488,14 @@ const Pricing = (props) => {
                                 fontWeight={'500'} style={{ fontSize: '13px' }} />
                         </Col>
                         : null}
-                    {/* <Col lg='2' className="d-flex">
+                    <Col lg='2' className="d-flex">
                         <Checkbox onChange={(e) => { setOpenForBrokerFlag(e.target.checked) }}
                             disabled={openForBrokerFlag && editPropertyFlag ? true : false}
                             checked={openForBrokerFlag ? true : false} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
                         <Text text={'Open for Brokers? '} className="mt-5 w-100"
                             fontWeight={'700'} style={{ fontSize: '14px', wordBreak: 'break-word' }} />
-                    </Col> */}
-                    {/* {basicDetailFields?.data?.propertyCategory === "Selling" && openForBrokerFlag ?
+                    </Col>
+                    {basicDetailFields?.data?.propertyCategory === "Selling" && openForBrokerFlag ?
                         <>
                             <Col lg='6'>
                                 <FormControl>
@@ -604,9 +604,9 @@ const Pricing = (props) => {
                                 </FormControl>
                             </Col>
                         </>
-                        : null} */}
+                        : null}
                     
-                    <Col lg='2' className="d-flex">
+                    {/* <Col lg='2' className="d-flex">
                         <Checkbox onChange={(e) => { setOpenForBrokerFlag(e.target.checked);
                             if(e.target.checked === false) {
                                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: null, brokerageValue: "" }))
@@ -730,7 +730,7 @@ const Pricing = (props) => {
                     {pricingDetails.brokerageType !== null && pricingDetails.brokerageType?.length !== 0 ?
                         <>
                         </>
-                        : null}
+                        : null} */}
                 </Row>
 
                 {pricingList.includes('Add additional fields') ?

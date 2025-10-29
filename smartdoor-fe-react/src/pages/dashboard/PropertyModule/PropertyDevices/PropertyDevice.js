@@ -270,26 +270,32 @@ const PropertyDevice = (props) => {
          sortable: false,
          center: true,
          minWidth: "150px",
-         cell: ({ uuId, propertyId }) => (
-            <div>
-               <Buttons
-                  name="Set Alarm"
-                  varient="primary"
-                  size="xSmall"
-                  onClick={async () => {
-                     const response = await setCallBackUrl({
-                        type: "prod",
-                        sns: uuId,
-                        propertyId: propertyId,
-                     });
-                     if (response.status === 200) {
-                        showSuccessToast(response?.data?.customMessage);
-                     } else {
-                        showErrorToast(response?.data?.customMessage);
-                     }
-                  }}
-               ></Buttons>
-            </div>
+         cell: ({ uuId, propertyId, cameraType }) => (
+            <>
+               {cameraType !== "PIR_CAMERA" ? (
+                     <>
+                        <div>
+                           <Buttons
+                              name="Set Alarm"
+                              varient="primary"
+                              size="xSmall"
+                              onClick={async () => {
+                                 const response = await setCallBackUrl({
+                                    type: "prod",
+                                    sns: uuId,
+                                    propertyId: propertyId,
+                                 });
+                                 if (response.status === 200) {
+                                    showSuccessToast(response?.data?.customMessage);
+                                 } else {
+                                    showErrorToast(response?.data?.customMessage);
+                                 }
+                              }}
+                           ></Buttons>
+                        </div>
+                     </>
+               ): null}
+            </>
          ),
       },
       {
@@ -297,35 +303,39 @@ const PropertyDevice = (props) => {
          sortable: false,
          center: true,
          minWidth: "170px",
-         cell: ({ uuId }) => (
+         cell: ({ uuId, cameraType }) => (
             <div>
-               {loading && uuId === currentUUID ? (
-                  <Loader />
-               ) : (
-                  <Buttons
-                     name="View LiveStream"
-                     varient="primary"
-                     size="xSmall"
-                     onClick={async () => {
-                        // setShowLiveStream(true);
-                        setCurrentUUID(uuId);
-                        setLoading(true);
-                        const response = await getDeviceToken({
-                           sns: uuId,
-                           status: "open",
-                           // propertyId: propertyId,
-                        });
-                        setLoading(false);
-                        if (response.status === 200) {
-                           liveStremUrl = response.data.resourceData.liveStreamUrl;
-                           setLivestreamURL(response.data.resourceData.liveStreamUrl);
-                           setShowLiveStream(true);
-                        } else {
-                           showErrorToast("Camera is offline");
-                        }
-                     }}
-                  ></Buttons>
-               )}
+               {cameraType !== "PIR_CAMERA" ? (
+                  <>
+                     {loading && uuId === currentUUID ? (
+                        <Loader />
+                     ) : (
+                        <Buttons
+                           name="View LiveStream"
+                           varient="primary"
+                           size="xSmall"
+                           onClick={async () => {
+                              // setShowLiveStream(true);
+                              setCurrentUUID(uuId);
+                              setLoading(true);
+                              const response = await getDeviceToken({
+                                 sns: uuId,
+                                 status: "open",
+                                 // propertyId: propertyId,
+                              });
+                              setLoading(false);
+                              if (response.status === 200) {
+                                 liveStremUrl = response.data.resourceData.liveStreamUrl;
+                                 setLivestreamURL(response.data.resourceData.liveStreamUrl);
+                                 setShowLiveStream(true);
+                              } else {
+                                 showErrorToast("Camera is offline");
+                              }
+                           }}
+                        ></Buttons>
+                     )}
+                  </>
+               ) : null}
             </div>
          ),
       },
@@ -514,7 +524,11 @@ const PropertyDevice = (props) => {
                   <Text className="mt-3 mb-0 h5" size="medium" text={"Visits"} />
                   <VisitMedia cameraId={camera?.cameraDeviceId} />
                   <hr />
-                  <Text className="mt-3 mb-0 h5" size="medium" text={"Intrusions (In last 30 days)"} />
+                  <Text
+                     className="mt-3 mb-0 h5"
+                     size="medium"
+                     text={"Intrusions (In last 30 days)"}
+                  />
                   <IntrusionMedia cameraId={camera?.cameraDeviceId} />
                </>
             ))}

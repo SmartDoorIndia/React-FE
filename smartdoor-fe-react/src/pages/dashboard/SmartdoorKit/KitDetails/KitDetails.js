@@ -123,7 +123,7 @@ const KitDetails = (props) => {
       <>
          {loading ? <FallBackLoader /> : null}
 
-         {kitDetails?.kitStatus !== "DELETED" ? (
+         {kitDetails?.kitStatus !== "DELETED" && kitDetails?.kitStatus !== "INSTALLED" ? (
             <Card className="mb-2">
                <Card.Body>
                   <div className="d-flex justify-content-between">
@@ -256,7 +256,7 @@ const KitDetails = (props) => {
          <hr />
          <div className="d-flex justify-content-between mb-2">
             <Text text={"Camera List"} style={{ fontSize: "16px", fontWeight: "600" }} />
-            {kitDetails?.kitStatus !== "DELETED" ? (
+            {kitDetails?.kitStatus !== "DELETED" && kitDetails?.kitStatus !== "INSTALLED" ? (
                <>
                   <Buttons
                      className="mr-2"
@@ -325,41 +325,44 @@ const KitDetails = (props) => {
                            />
                         </Col>
                      </Row>
-                     <div className="d-flex justify-content-end mt-1">
-                        <Buttons
-                           name="Delete"
-                           onClick={() => {
-                              restoreOrDeleteDevice({
-                                 deviceType: "Camera",
-                                 deviceId: camera?.cameraDeviceId,
-                                 actionType: "Delete",
-                              }).then((response) => {
-                                 if (response?.status === 200) {
-                                    showSuccessToast("Camera deleted successfully...");
-                                    fetchDeviceIdListByKitId();
-                                 }
-                              });
-                           }}
-                        />{" "}
-                        &nbsp;&nbsp;
-                        <Buttons
-                           name="Return to SD Inventory"
-                           onClick={() => {
-                              restoreOrDeleteDevice({
-                                 deviceType: "Camera",
-                                 deviceId: camera?.cameraDeviceId,
-                                 actionType: "Restore",
-                              }).then((response) => {
-                                 if (response?.status === 200) {
-                                    showSuccessToast(
-                                       "Camera returned to Smartdoor inventory successfully..."
-                                    );
-                                    fetchDeviceIdListByKitId();
-                                 }
-                              });
-                           }}
-                        />
-                     </div>
+                     {kitDetails?.kitStatus !== "INSTALLED" ? 
+                        <>
+                           <div className="d-flex justify-content-end mt-1">
+                              <Buttons
+                                 name="Delete"
+                                 onClick={() => {
+                                    restoreOrDeleteDevice({
+                                       deviceType: "Camera",
+                                       deviceId: camera?.cameraDeviceId,
+                                       actionType: "Delete",
+                                    }).then((response) => {
+                                       if (response?.status === 200) {
+                                          showSuccessToast("Camera deleted successfully...");
+                                          fetchDeviceIdListByKitId();
+                                       }
+                                    });
+                                 }}
+                              />{" "}
+                              &nbsp;&nbsp;
+                              <Buttons
+                                 name="Return to SD Inventory"
+                                 onClick={() => {
+                                    restoreOrDeleteDevice({
+                                       deviceType: "Camera",
+                                       deviceId: camera?.cameraDeviceId,
+                                       actionType: "Restore",
+                                    }).then((response) => {
+                                       if (response?.status === 200) {
+                                          showSuccessToast(
+                                             "Camera returned to Smartdoor inventory successfully..."
+                                          );
+                                          fetchDeviceIdListByKitId();
+                                       }
+                                    });
+                                 }}
+                              />
+                           </div>
+                        </> : null}
                   </Card.Body>
                </Card>
                <hr />
@@ -485,7 +488,7 @@ const KitDetails = (props) => {
                   ))}
                </TextField>
 
-               {selectedCamera !== null ? (
+               {selectedCamera !== null && selectedCamera?.cameraType !== "PIR_CAMERA" ? (
                   <>
                      <div className="text-center">
                         <Buttons

@@ -113,7 +113,7 @@ const PreconfiguredDevices = () => {
                      }
                   }}
                /> &nbsp;&nbsp;
-               <Buttons
+               {/* <Buttons
                   name="View LiveStream"
                   varient="primary"
                   size="xSmall"
@@ -132,7 +132,7 @@ const PreconfiguredDevices = () => {
                         showErrorToast("Camera is offline");
                      }
                   }}
-               ></Buttons>
+               ></Buttons> */}
             </>
          ),
          id: 4,

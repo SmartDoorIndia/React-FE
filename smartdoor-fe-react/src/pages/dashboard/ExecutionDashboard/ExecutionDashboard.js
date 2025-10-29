@@ -118,7 +118,7 @@ const ExecutionDashboard = (props) => {
       "startDate": "", records: "4", pageNumber: "1"
     });
     // getAllPublishedProperty({ city: "", records: "4", pageNumber: "1" });
-    getAllExecutiveTeams({ city: "" });
+    // getAllExecutiveTeams({ city: "" });
     getExecutionDashboardCount();
     // getExcutionDashboardCity();
     getAllCity();
@@ -171,7 +171,7 @@ const ExecutionDashboard = (props) => {
   // }
 
   const _filterExecutionTeamCity = (value) => {
-    getAllExecutiveTeams({ city: value });
+    // getAllExecutiveTeams({ city: value });
   }
 
   function onChangePage(e) { }
