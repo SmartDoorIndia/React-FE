@@ -488,7 +488,7 @@ const Pricing = (props) => {
                                 fontWeight={'500'} style={{ fontSize: '13px' }} />
                         </Col>
                         : null}
-                    <Col lg='2' className="d-flex">
+                    {/* <Col lg='2' className="d-flex">
                         <Checkbox onChange={(e) => { setOpenForBrokerFlag(e.target.checked) }}
                             disabled={openForBrokerFlag && editPropertyFlag ? true : false}
                             checked={openForBrokerFlag ? true : false} className="p-1 mt-0" style={{ scale: '1', color: '#BE1452' }}></Checkbox>
@@ -604,9 +604,9 @@ const Pricing = (props) => {
                                 </FormControl>
                             </Col>
                         </>
-                        : null}
+                        : null} */}
                     
-                    {/* <Col lg='2' className="d-flex">
+                    <Col lg='2' className="d-flex">
                         <Checkbox onChange={(e) => { setOpenForBrokerFlag(e.target.checked);
                             if(e.target.checked === false) {
                                 setPricingDetails(prevPricingDetails => ({ ...prevPricingDetails, brokerageType: null, brokerageValue: "" }))
@@ -727,10 +727,6 @@ const Pricing = (props) => {
                             </Col>
                         </>
                         : null}
-                    {pricingDetails.brokerageType !== null && pricingDetails.brokerageType?.length !== 0 ?
-                        <>
-                        </>
-                        : null} */}
                 </Row>
 
                 {pricingList.includes('Add additional fields') ?

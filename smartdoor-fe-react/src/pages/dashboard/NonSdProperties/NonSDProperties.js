@@ -529,15 +529,15 @@ const NonSDProperties = (props) => {
       <>
          <div className="tableBox ">
             <div className="align-items-center tableHeading">
-               <div className="d-flex justify-content-between">
                   <div className="text-nowrap mb-2">
                      <Text
                         size="regular"
                         fontWeight="mediumbold"
                         color="secondryColor"
-                        text="Approval"
+                        text="Non SmartDoor Properties — Under Review by Admin"
                      />
                   </div>
+               <div className="d-flex justify-content-between">
                   <div className="locationSelect d-flex">
                      <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
@@ -629,9 +629,6 @@ const NonSDProperties = (props) => {
                         />
                      </Form.Group>
 
-                  </div>
-               </div>
-               <div className="locationSelect justify-content-end d-flex mt-2">
                   {propertyIdBox}
                   {subHeaderComponentMemo}
                   <div className="ml-3">
@@ -665,6 +662,9 @@ const NonSDProperties = (props) => {
                            // setRecordSize(allPropertyData?.data?.propertyData?.length)
                         }}
                      />
+                  </div>
+               </div>
+               <div className="locationSelect justify-content-end d-flex mt-2">
                   </div>
                </div>
             </div>

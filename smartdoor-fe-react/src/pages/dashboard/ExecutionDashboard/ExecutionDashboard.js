@@ -121,7 +121,7 @@ const ExecutionDashboard = (props) => {
     // getAllExecutiveTeams({ city: "" });
     getExecutionDashboardCount();
     // getExcutionDashboardCity();
-    getAllCity();
+    // getAllCity();
     getAllCityWithId({ smartdoorServiceStatus: true, stateId: null });
   }, [getInstallationRequest,
     getServiceRequest,

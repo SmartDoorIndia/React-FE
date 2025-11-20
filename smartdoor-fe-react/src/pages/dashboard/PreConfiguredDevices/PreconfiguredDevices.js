@@ -55,8 +55,8 @@ const PreconfiguredDevices = () => {
          minWidth: "120px",
          maxWidth: "120px",
          cell: ({ cameraDeviceId }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={cameraDeviceId}>
-               <Text className="elipsis-text" text={cameraDeviceId} />
+            <ToolTip position="top" style={{ width: "100%" }} name={cameraDeviceId || "-"}>
+               <Text className="elipsis-text" text={cameraDeviceId || "-"} />
             </ToolTip>
          ),
          id: 1,
@@ -68,8 +68,8 @@ const PreconfiguredDevices = () => {
          center: false,
          maxWidth: "150px",
          cell: ({ uuId }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={uuId}>
-               <Text className="elipsis-text" text={uuId} />
+            <ToolTip position="top" style={{ width: "100%" }} name={uuId || "-"}>
+               <Text className="elipsis-text" text={uuId || "-"} />
             </ToolTip>
          ),
          id: 2,
@@ -81,8 +81,8 @@ const PreconfiguredDevices = () => {
          center: true,
          width: "150px",
          cell: ({ type }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={type}>
-               <Text className="elipsis-text" text={type} />
+            <ToolTip position="top" style={{ width: "100%" }} name={type || "-"}>
+               <Text className="elipsis-text" text={type || "-"} />
             </ToolTip>
          ),
          id: 3,
@@ -147,8 +147,8 @@ const PreconfiguredDevices = () => {
          center: true,
          width: "120px",
          cell: ({ id }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={id}>
-               <Text className="elipsis-text" text={id} />
+            <ToolTip position="top" style={{ width: "100%" }} name={id || "-"}>
+               <Text className="elipsis-text" text={id || "-"} />
             </ToolTip>
          ),
          id: 1,
@@ -160,8 +160,8 @@ const PreconfiguredDevices = () => {
          center: true,
          width: "150px",
          cell: ({ lockId }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={lockId}>
-               <Text className="elipsis-text" text={lockId} />
+            <ToolTip position="top" style={{ width: "100%" }} name={lockId || "-"}>
+               <Text className="elipsis-text" text={lockId || "-"} />
             </ToolTip>
          ),
          id: 2,
@@ -173,8 +173,8 @@ const PreconfiguredDevices = () => {
          center: true,
          width: "160px",
          cell: ({ smartlockAdminPasscode }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={smartlockAdminPasscode}>
-               <Text className="elipsis-text" text={smartlockAdminPasscode} />
+            <ToolTip position="top" style={{ width: "100%" }} name={smartlockAdminPasscode || "-"}>
+               <Text className="elipsis-text" text={smartlockAdminPasscode || "-"} />
             </ToolTip>
          ),
          id: 3,
@@ -186,8 +186,8 @@ const PreconfiguredDevices = () => {
          center: true,
          width: "200px",
          cell: ({ lockmac }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={lockmac}>
-               <Text className="elipsis-text" text={lockmac} />
+            <ToolTip position="top" style={{ width: "100%" }} name={lockmac || "-"}>
+               <Text className="elipsis-text" text={lockmac || "-"} />
             </ToolTip>
          ),
          id: 4,

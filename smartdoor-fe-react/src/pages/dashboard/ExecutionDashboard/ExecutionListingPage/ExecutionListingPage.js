@@ -14,6 +14,7 @@ import {
    getLocationByCity,
    getAllCity,
    changeInstallationAssignee,
+   getAllCityWithId,
 } from "../../../../common/redux/actions";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import { Link } from "react-router-dom";
@@ -38,7 +39,9 @@ const ExecutionListing = (props) => {
       installationReqData,
       getAllCity,
       // allTransactionCities,
+      getAllCityWithId,
       allCities,
+      allCitiesWithId
    } = props;
    // const location = useLocation()
    const dispatch = useDispatch();
@@ -152,7 +155,8 @@ const ExecutionListing = (props) => {
       console.log(installationReqData?.data);
       console.log(currentPage);
       console.log(rowsPerPage);
-      getAllCity();
+      // getAllCity();
+      getAllCityWithId({ smartdoorServiceStatus: true, stateId: null });
       if (props?.tabName === "Installation/Un-installation Requests") {
          if (installationReqData?.data?.length === 0 || installationReqData?.data?.list?.length === 4) {
             getInstallationRequest({ city: "", location: "", pageSize: "8", pageNo: "1" });
@@ -161,7 +165,7 @@ const ExecutionListing = (props) => {
       // if (props?.tabName === "Published Property") {
       //    getAllPublishedProperty({ city: "", records: "", pageNumber: "" });
       // }
-   }, [getInstallationRequest, getAllPublishedProperty, getAllCity]);
+   }, [getInstallationRequest, getAllPublishedProperty, getAllCity, getAllCityWithId]);
 
    // const PaginationComponent = (props) => (<Pagination {...props} />);
 
@@ -435,6 +439,7 @@ const ExecutionListing = (props) => {
          _filterPublishPropertyCity(city, "");
       }
       setSelectedCity(city);
+      setCity(city);
       setSelectedLocation("");
       if (city.length) {
          getLocationByCity({ city })
@@ -571,10 +576,10 @@ const ExecutionListing = (props) => {
                      }}
                   >
                      <option value="">Select City</option>
-                     {allCities?.data?.cities && allCities?.data?.cities.length
-                        ? allCities?.data?.cities.map((_value, index) => (
-                             <option key={index} value={_value}>
-                                {_value}
+                     {allCitiesWithId?.data && allCitiesWithId?.data?.length
+                        ? allCitiesWithId?.data?.map((city, index) => (
+                             <option key={index} value={city?.cityName}>
+                                {city?.cityName}
                              </option>
                           ))
                         : null}
@@ -656,6 +661,7 @@ const mapStateToProps = ({
    allLocationsByCity,
    allTransactionCities,
    allCities,
+   allCitiesWithId
 }) => ({
    excutiveTeamsData,
    publishedProperyData,
@@ -666,6 +672,7 @@ const mapStateToProps = ({
    allLocationsByCity,
    allTransactionCities,
    allCities,
+   allCitiesWithId
 });
 
 const actions = {
@@ -677,6 +684,7 @@ const actions = {
    getExcutionDashboardCity,
    getLocationByCity,
    getAllCity,
+   getAllCityWithId
 };
 
 const withConnect = connect(mapStateToProps, actions);

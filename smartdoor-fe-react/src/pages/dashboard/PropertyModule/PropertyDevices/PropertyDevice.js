@@ -241,6 +241,12 @@ const PropertyDevice = (props) => {
 
    const cameraDeviceColumns = [
       {
+         name: "Id",
+         selector: "cameraDeviceId",
+         maxWidth: "150px",
+         center: true,
+      },
+      {
          name: "Property Id",
          selector: "propertyId",
          maxWidth: "150px !important",
@@ -250,12 +256,6 @@ const PropertyDevice = (props) => {
          name: "UUId",
          selector: "uuId",
          minWidth: "120px",
-         center: true,
-      },
-      {
-         name: "Camera DeviceId",
-         selector: "cameraDeviceId",
-         maxWidth: "150px",
          center: true,
       },
       {

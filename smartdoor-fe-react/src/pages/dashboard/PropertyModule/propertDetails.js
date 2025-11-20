@@ -612,7 +612,7 @@ const PropertyDetails = (props) => {
          // accessToken: slData.accessToken,
          // lockId: slData.lockId,
          // lockmac: slData.lockmac,
-         encLockDeviceId: slData.encryptedId,
+         // encLockDeviceId: slData.encryptedId,
          propertyId: slData.propertyId,
       };
       setQrData(data, () => {
