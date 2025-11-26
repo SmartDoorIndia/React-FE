@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
    fetchCameraStats,
    fetchSmartLockStats,
+   getCameraTypes,
    getDeviceIdList,
    getDeviceToken,
    restoreOrDeleteDevice,
@@ -13,7 +14,7 @@ import { showErrorToast, showSuccessToast, ToolTip } from "../../../common/helpe
 import Text from "../../../shared/Text/Text";
 import "./PreconfigDevices.scss";
 import Buttons from "../../../shared/Buttons/Buttons";
-import { Card, Row, Col, Modal } from "react-bootstrap";
+import { Card, Row, Col, Modal, Form } from "react-bootstrap";
 import QrModal from "../../../shared/Modal/QrModal/QrModal";
 import ReactPlayer from "react-player";
 
@@ -28,6 +29,8 @@ const PreconfiguredDevices = () => {
    const [selectedCamera, setSelectedCamera] = useState(null);
    const [livestreamURL, setLivestreamURL] = useState("");
    const [showLiveStream, setShowLiveStream] = useState(false);
+   const [cameraTypeList, setCameraTypeList] = useState([]);
+   const [selectedCameraType, setSelectedCameraType] = useState([]);
    let liveStremUrl = "";
 
    const qrGenerator = (slData) => {
@@ -112,7 +115,8 @@ const PreconfiguredDevices = () => {
                         });
                      }
                   }}
-               /> &nbsp;&nbsp;
+               />{" "}
+               &nbsp;&nbsp;
                {/* <Buttons
                   name="View LiveStream"
                   varient="primary"
@@ -265,6 +269,13 @@ const PreconfiguredDevices = () => {
    };
 
    useEffect(() => {
+      getCameraTypes({})
+         .then((response) => {
+            setCameraTypeList(response.data.resourceData);
+         })
+         .catch((error) => {
+            console.log(error);
+         });
       fetchDeviceIdList();
       getSmartlockStats();
       getCameraStats();
@@ -298,7 +309,7 @@ const PreconfiguredDevices = () => {
                      fontWeight="bold"
                      color="primary"
                      text="SmartLock Management"
-                     className="section-title"
+                     className="section-title px-2"
                   />
                </div>
 
@@ -367,7 +378,7 @@ const PreconfiguredDevices = () => {
                      fontWeight="bold"
                      color="primary"
                      text="Camera Management"
-                     className="section-title"
+                     className="section-title px-2"
                   />
                </div>
 
@@ -391,7 +402,26 @@ const PreconfiguredDevices = () => {
                <Card className="table-card">
                   <Card.Header className="table-header">
                      <Text size="regular" fontWeight="semibold" color="dark" text="Camera List" />
+
                      <div className="table-actions">
+                        <Form.Group>
+                           <Form.Control
+                              as="select"
+                              onChange={(e) => {
+                                 setSelectedCameraType(e.target.value);
+                              }}
+                              value={selectedCameraType}
+                           >
+                              <option value="">Select Camera</option>
+                              {cameraTypeList.length > 0
+                                 ? cameraTypeList?.map((camera) => (
+                                      <option key={camera} value={camera}>
+                                         {camera}
+                                      </option>
+                                   ))
+                                 : null}
+                           </Form.Control>
+                        </Form.Group>
                         <Buttons
                            name="Refresh"
                            variant="outline-primary"
