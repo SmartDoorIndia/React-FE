@@ -197,6 +197,19 @@ const PreconfiguredDevices = () => {
          id: 4,
       },
       {
+         name: "LOCK TYPE",
+         selector: (row) => row.smartlockType,
+         sortable: false,
+         center: true,
+         width: "180px",
+         cell: ({ smartlockType }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={smartlockType || "-"}>
+               <Text className="elipsis-text" text={smartlockType || "-"} />
+            </ToolTip>
+         ),
+         id: 5,
+      },
+      {
          name: "ACTIONS",
          sortable: false,
          center: true,
@@ -237,7 +250,7 @@ const PreconfiguredDevices = () => {
                />
             </div>
          ),
-         id: 5,
+         id: 6,
       },
    ];
 

@@ -147,6 +147,12 @@ const PropertyDevice = (props) => {
          center: true,
       },
       {
+         name: "Lock Type",
+         selector: "smartlockType",
+         maxWidth: "120px",
+         center: true,
+      },
+      {
          name: "Access Token",
          selector: "accessToken",
          maxWidth: "300px",
