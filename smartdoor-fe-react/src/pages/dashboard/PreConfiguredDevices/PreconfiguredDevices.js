@@ -417,7 +417,7 @@ const PreconfiguredDevices = () => {
                      <Text size="regular" fontWeight="semibold" color="dark" text="Camera List" />
 
                      <div className="table-actions">
-                        <Form.Group>
+                        {/* <Form.Group>
                            <Form.Control
                               as="select"
                               onChange={(e) => {
@@ -434,7 +434,7 @@ const PreconfiguredDevices = () => {
                                    ))
                                  : null}
                            </Form.Control>
-                        </Form.Group>
+                        </Form.Group> */}
                         <Buttons
                            name="Refresh"
                            variant="outline-primary"

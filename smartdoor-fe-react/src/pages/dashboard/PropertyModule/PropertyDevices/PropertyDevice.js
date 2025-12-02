@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { connect } from "react-redux";
 import {
+   assignDeviceToProperty,
    getSmartLockData,
    getContactSensor,
    getCameraDevice,
@@ -12,6 +13,8 @@ import {
    getDeviceToken,
    deleteCamera,
    getAccountEmailDetails,
+   getDeviceIdList,
+   restoreOrDeleteDevice,
 } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
@@ -27,20 +30,9 @@ import { ReactFlvPlayer } from "react-flv-player";
 import ReactPlayer from "react-player";
 import VisitMedia from "../VisitRecordings/VisitMedia";
 import IntrusionMedia from "../Intrusions/IntrusionMedia";
-// import Hls from "hls.js";
-// import ReactHlsPlayer from 'react-hls-player';
-// import videojs from "video.js";
-// import 'video.js/dist/video-js.css';
-// import 'videojs-contrib-hls';
-// import flvjs from 'flv.js';
-
-// import 'videojs-http-streaming';
 
 const PropertyDevice = (props) => {
    const propertyId = props.location.state.propertyId ? props.location.state.propertyId : null;
-   // const userId = props.location.state.userId ?
-   //     props.location.state.userId :
-   //     null
    const [smartLockData, setSmartLockData] = useState([]);
    const [showEditSmartLockData, setShowEditSmartLockData] = useState(false);
    const [selectedSmartLockData, setselectedSmartLockData] = useState({});
@@ -53,6 +45,7 @@ const PropertyDevice = (props) => {
    const [showEditCameraData, setShowEditCameraData] = useState(false);
    const [selectedCameraData, setselectedCameraData] = useState({});
    const [addCameraFlag, setAddCameraFlag] = useState(false);
+   const [viewCameraFlag, setViewCameraFlag] = useState(false);
    const [changeUUIDFlag, setChangeUUIDFlag] = useState(false);
    const [cameraTypeList, setCameraTypeList] = useState([]);
    const endPointList = ["prod", "uat"];
@@ -65,6 +58,8 @@ const PropertyDevice = (props) => {
    const [livestreamURL, setLivestreamURL] = useState("");
    const [currentUUID, setCurrentUUID] = useState(null);
    const [accountDetails, setAccountDetails] = useState({});
+   const [cameraList, setCameraList] = useState([]);
+   const [selectedCamera, setSelectedCamera] = useState(null);
    let liveStremUrl = "";
 
    const _getSmartLockData = useCallback(async () => {
@@ -120,6 +115,14 @@ const PropertyDevice = (props) => {
       [propertyId]
    );
 
+   const fetchDeviceIdListByKitId = () => {
+      setLoading(true);
+      getDeviceIdList({ kitId: 0 }).then((response) => {
+         setLoading(false);
+         setCameraList([...response.data.resourceData.cameraList]);
+      });
+   };
+
    useEffect(() => {
       _getSmartLockData();
       _getContactSensor(propertyId);
@@ -131,6 +134,7 @@ const PropertyDevice = (props) => {
          .catch((error) => {
             console.log(error);
          });
+      fetchDeviceIdListByKitId();
    }, [propertyId, _getSmartLockData, _getContactSensor, _getCameraDevice]);
 
    const columns = [
@@ -149,7 +153,7 @@ const PropertyDevice = (props) => {
       {
          name: "Lock Type",
          selector: "smartlockType",
-         maxWidth: "120px",
+         maxWidth: "220px",
          center: true,
       },
       {
@@ -279,28 +283,28 @@ const PropertyDevice = (props) => {
          cell: ({ uuId, propertyId, cameraType }) => (
             <>
                {cameraType !== "PIR_CAMERA" ? (
-                     <>
-                        <div>
-                           <Buttons
-                              name="Set Alarm"
-                              varient="primary"
-                              size="xSmall"
-                              onClick={async () => {
-                                 const response = await setCallBackUrl({
-                                    type: "prod",
-                                    sns: uuId,
-                                    propertyId: propertyId,
-                                 });
-                                 if (response.status === 200) {
-                                    showSuccessToast(response?.data?.customMessage);
-                                 } else {
-                                    showErrorToast(response?.data?.customMessage);
-                                 }
-                              }}
-                           ></Buttons>
-                        </div>
-                     </>
-               ): null}
+                  <>
+                     <div>
+                        <Buttons
+                           name="Set Alarm"
+                           varient="primary"
+                           size="xSmall"
+                           onClick={async () => {
+                              const response = await setCallBackUrl({
+                                 type: "prod",
+                                 sns: uuId,
+                                 propertyId: propertyId,
+                              });
+                              if (response.status === 200) {
+                                 showSuccessToast(response?.data?.customMessage);
+                              } else {
+                                 showErrorToast(response?.data?.customMessage);
+                              }
+                           }}
+                        ></Buttons>
+                     </div>
+                  </>
+               ) : null}
             </>
          ),
       },
@@ -351,6 +355,21 @@ const PropertyDevice = (props) => {
          center: true,
          cell: ({ cameraDeviceId }) => (
             <div>
+               {/* <Buttons
+                  name="Delete"
+                  varient="primary"
+                  size="xSmall"
+                  onClick={async () => {
+                     const response = await deleteCamera({
+                        cameraId: cameraDeviceId,
+                     });
+                     if (response.status === 200) {
+                        await _getCameraDevice(propertyId);
+                     } else {
+                        showErrorToast(response?.data?.customMessage);
+                     }
+                  }}
+               ></Buttons> */}
                <Buttons
                   name="Delete"
                   varient="primary"
@@ -410,7 +429,7 @@ const PropertyDevice = (props) => {
    };
    const showCameraData = (uuId) => {
       setShowEditCameraData(true);
-      setAddCameraFlag(true);
+      setViewCameraFlag(true);
       cameraData.forEach((element) => {
          if (element.uuId === uuId) {
             setselectedCameraData({
@@ -755,26 +774,96 @@ const PropertyDevice = (props) => {
             </Modal.Body>
          </Modal>
          <Modal
-            size="lg"
+            size="md"
             show={addCameraFlag}
             onHide={() => {
                setAddCameraFlag(false);
                setShowEditCameraData(false);
-               setselectedCameraData((prevCameraData) => ({
-                  ...prevCameraData,
-                  uuId: "",
-                  userName: "",
-                  password: "",
-                  nickName: "",
-                  cameraDeviceId: "",
-                  cameraId: "",
-                  cameraType: "",
-                  endpointType: "",
-                  propertyId: propertyId,
-               }));
             }}
             centered={true}
+            backdrop="static"
          >
+            <Modal.Header>
+               <Text text="Select a pre-configured camera device ID from the dropdown below." style={{fontSize:'14px', fontWeight:'600'}} />
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  varient="secondary"
+                  onClick={async () => {
+                     setAddCameraFlag(false);
+                     setSelectedCamera(null);
+                  }}
+               ></Buttons>
+            </Modal.Header>
+            <Modal.Body>
+               <TextField
+                  className="textfieldInput w-100 mt-1"
+                  select
+                  multiple={false}
+                  value={selectedCamera}
+                  label="Select Camera DeviceId"
+                  onChange={async (e) => {
+                     if (selectedCamera !== null) {
+                        const response = await getDeviceToken({
+                           sns: selectedCamera?.uuId,
+                           status: "close",
+                        });
+                        await setLivestreamURL(null);
+                     }
+                     console.log(e.target.value);
+                     setSelectedCamera(e.target.value);
+                  }}
+                  style={{ minHeight: "25vh" }}
+               >
+                  {cameraList.map((camera) => (
+                     <MenuItem key={camera?.cameraDeviceId} value={camera}>
+                        {camera?.cameraDeviceId}
+                     </MenuItem>
+                  ))}
+               </TextField>
+            </Modal.Body>
+            <Modal.Footer style={{ justifyContent: "center" }}>
+               <Buttons
+                  name="Assign Camera to Property"
+                  onClick={async () => {
+                     assignDeviceToProperty({
+                        deviceType: "Camera",
+                        propertyId: propertyId,
+                        deviceId: selectedCamera?.cameraDeviceId,
+                     }).then((response) => {
+                        if (response?.status === 200) {
+                           showSuccessToast("Device added successfully...");
+                           fetchDeviceIdListByKitId();
+                           setAddCameraFlag(false);
+                           setSelectedCamera(null);
+                           _getCameraDevice(propertyId);
+                        }
+                     });
+                  }}
+               />
+            </Modal.Footer>
+         </Modal>
+         <Modal
+            size="lg"
+            show={viewCameraFlag}
+            onHide={() => {
+               setViewCameraFlag(false);
+               setShowEditCameraData(false);
+            }}
+            centered={true}
+            backdrop="static"
+         >
+            <Modal.Header>
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  varient="secondary"
+                  onClick={async () => {
+                     setViewCameraFlag(false);
+                     setSelectedCamera(null);
+                  }}
+               ></Buttons>
+            </Modal.Header>
             <Modal.Body>
                <Text
                   className="m-2 h5"
@@ -789,8 +878,8 @@ const PropertyDevice = (props) => {
                      id="uuId"
                      error={error.uuId}
                      contentEditable={true}
-                     // disabled={showEditCameraData ? true : false}
                      label="UUID"
+                     disabled={true}
                      onChange={(e) => {
                         setselectedCameraData((prevCameraData) => ({
                            ...prevCameraData,
@@ -799,30 +888,36 @@ const PropertyDevice = (props) => {
                      }}
                      value={selectedCameraData?.uuId}
                   />
-                  <TextField
+                  {/* <TextField
                      className="col-4 px-1 mt-3"
                      id="propertyId"
                      contentEditable={false}
                      // disabled={showEditCameraData ? true : false}
                      label="Property Id"
                      value={selectedCameraData?.propertyId}
+                  /> */}
+                  <TextField
+                     className="col-4 px-1 mt-3"
+                     id="propertyId"
+                     contentEditable={false}
+                     label="Camera DeviceId"
+                     disabled={true}
+                     onChange={(e) => {
+                        setselectedCameraData((prevCameraData) => ({
+                           ...prevCameraData,
+                           cameraId: Number(e.target.value),
+                        }));
+                     }}
+                     value={selectedCameraData?.cameraId}
                   />
-                  {/* <TextField
-                            className='col-4 px-1 mt-3'
-                            id="propertyId"
-                            contentEditable={false}
-                            label="Camera DeviceId"
-                            onChange={(e) => { setselectedCameraData(prevCameraData => ({ ...prevCameraData, cameraId: Number(e.target.value )})) }}
-                            value={selectedCameraData?.cameraId}
-                        /> */}
                   <TextField
                      className="col-4 px-1 mt-3"
                      id="userName"
                      contentEditable={true}
-                     // disabled={showEditCameraData ? true : false}
                      error={error.userName}
                      type="text"
                      label="userName"
+                     disabled={true}
                      onChange={(e) => {
                         setselectedCameraData((prevCameraData) => ({
                            ...prevCameraData,
@@ -835,10 +930,10 @@ const PropertyDevice = (props) => {
                      className="col-4 px-1 mt-3"
                      id="password"
                      contentEditable={true}
-                     // disabled={showEditCameraData ? true : false}
                      error={error.password}
                      type="text"
                      label="Password"
+                     disabled={true}
                      onChange={(e) => {
                         setselectedCameraData((prevCameraData) => ({
                            ...prevCameraData,
@@ -852,8 +947,8 @@ const PropertyDevice = (props) => {
                      id="cameraType"
                      select
                      error={error.cameraType}
-                     // disabled={showEditCameraData ? true : false}
                      label="Camera Type"
+                     disabled={true}
                      onChange={(e) => {
                         setselectedCameraData((prevCameraData) => ({
                            ...prevCameraData,
@@ -873,9 +968,9 @@ const PropertyDevice = (props) => {
                      id="nickName"
                      contentEditable={true}
                      error={error.nickName}
-                     // disabled={showEditCameraData ? true : false}
                      type="text"
                      label="Nick Name"
+                     disabled={true}
                      onChange={(e) => {
                         setselectedCameraData((prevCameraData) => ({
                            ...prevCameraData,
@@ -889,8 +984,8 @@ const PropertyDevice = (props) => {
                      id="endPointType"
                      select
                      error={error.endpointType}
-                     // disabled={showEditCameraData ? true : false}
                      label="EndPoint Type"
+                     disabled={true}
                      onChange={(e) => {
                         setselectedCameraData((prevCameraData) => ({
                            ...prevCameraData,
@@ -909,11 +1004,12 @@ const PropertyDevice = (props) => {
                      className="col-4 px-1 mt-3"
                      id="deleted"
                      contentEditable={false}
+                     disabled={true}
                      label="Is deleted"
                      value={selectedCameraData?.deleted ? "Yes" : "No"}
                   />
                </div>
-               <div className="d-flex justify-content-center">
+               {/* <div className="d-flex justify-content-center">
                   {!showEditCameraData ? (
                      <>
                         {loading ? (
@@ -943,7 +1039,7 @@ const PropertyDevice = (props) => {
                         }}
                      />
                   )}
-               </div>
+               </div> */}
             </Modal.Body>
          </Modal>
          <Modal

@@ -2464,3 +2464,8 @@ export const acceptRejectReturnRequest = async (data) => {
   const response = await mainApiService("acceptOrRejectReturnRequest", data);
   return response;
 }
+
+export const assignDeviceToProperty = async (data) => {
+  const response = await mainApiService('assignDeviceToProperty', data);
+  return response;
+}

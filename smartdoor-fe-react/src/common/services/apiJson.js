@@ -3598,6 +3598,21 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  assignDeviceToProperty: {
+    url: "smartlock/smartlock/assignDeviceToProperty",
+    method: "POST",
+    data: {
+      deviceType: "",
+      kitId: "",
+      deviceId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 
