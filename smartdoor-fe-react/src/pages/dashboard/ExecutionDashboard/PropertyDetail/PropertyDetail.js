@@ -302,10 +302,10 @@ const PropertyDetail = (props) => {
                       </Link>
                     </div>
 
-                    <div className='ml-2' style={{ float: 'right' }}>
+                    {/* <div className='ml-2' style={{ float: 'right' }}>
                       <Buttons className='' size="xSmall" fontWeight="mediumbold" name='Delete Request'
                         onClick={() => {}} />
-                    </div>
+                    </div> */}
 
                   </div>
                 </div>
