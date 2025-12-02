@@ -380,6 +380,7 @@ const PropertyDevice = (props) => {
                      });
                      if (response.status === 200) {
                         await _getCameraDevice(propertyId);
+                        fetchDeviceIdListByKitId();
                      } else {
                         showErrorToast(response?.data?.customMessage);
                      }
@@ -837,6 +838,7 @@ const PropertyDevice = (props) => {
                            setAddCameraFlag(false);
                            setSelectedCamera(null);
                            _getCameraDevice(propertyId);
+                           fetchDeviceIdListByKitId();
                         }
                      });
                   }}
