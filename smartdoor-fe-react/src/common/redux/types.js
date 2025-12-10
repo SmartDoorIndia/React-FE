@@ -383,3 +383,7 @@ export const UNASSIGNED_KIT_LIST_LOADING = 'src/pages/Dashboar/UnAssignedKitList
 export const BUILDER_PROJECT_LIST_SUCCESS = 'src/pages/Dashboard/builderProjectList/Success';
 export const BUILDER_PROJECT_LIST_ERROR = 'src/pages/Dashboard/builderProjectList/Error';
 export const BUILDER_PROJECT_LIST_LOADING = 'src/pages/Dashboar/builderProjectList/Loading';
+
+export const AUTO_REFRESH_LIST_SUCCESS = 'src/pages/Dashboard/autoRefreshList/Success';
+export const AUTO_REFRESH_LIST_ERROR = 'src/pages/Dashboard/autoRefreshList/Error';
+export const AUTO_REFRESH_LIST_LOADING = 'src/pages/Dashboar/autoRefreshList/Loading';

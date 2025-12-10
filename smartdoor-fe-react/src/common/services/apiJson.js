@@ -3613,6 +3613,19 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  deleteInstallationRequest: {
+    url: "admin/execution/deleteRequest/:taskId",
+    method: "PUT",
+    data: {
+      taskId: null
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 

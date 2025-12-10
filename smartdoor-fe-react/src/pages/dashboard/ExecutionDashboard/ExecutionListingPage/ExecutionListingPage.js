@@ -41,7 +41,8 @@ const ExecutionListing = (props) => {
       // allTransactionCities,
       getAllCityWithId,
       allCities,
-      allCitiesWithId
+      allCitiesWithId,
+      autoRefreshList
    } = props;
    // const location = useLocation()
    const dispatch = useDispatch();
@@ -158,8 +159,9 @@ const ExecutionListing = (props) => {
       // getAllCity();
       getAllCityWithId({ smartdoorServiceStatus: true, stateId: null });
       if (props?.tabName === "Installation/Un-installation Requests") {
-         if (installationReqData?.data?.length === 0 || installationReqData?.data?.list?.length === 4) {
+         if (installationReqData?.data?.length === 0 || installationReqData?.data?.list?.length === 4 || autoRefreshList?.data === true) {
             getInstallationRequest({ city: "", location: "", pageSize: "8", pageNo: "1" });
+            dispatch({type: Actions.AUTO_REFRESH_LIST_SUCCESS, data: false})
          }
       }
       // if (props?.tabName === "Published Property") {
@@ -661,7 +663,8 @@ const mapStateToProps = ({
    allLocationsByCity,
    allTransactionCities,
    allCities,
-   allCitiesWithId
+   allCitiesWithId,
+   autoRefreshList
 }) => ({
    excutiveTeamsData,
    publishedProperyData,
@@ -672,7 +675,8 @@ const mapStateToProps = ({
    allLocationsByCity,
    allTransactionCities,
    allCities,
-   allCitiesWithId
+   allCitiesWithId,
+   autoRefreshList
 });
 
 const actions = {

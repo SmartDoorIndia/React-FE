@@ -2469,3 +2469,8 @@ export const assignDeviceToProperty = async (data) => {
   const response = await mainApiService('assignDeviceToProperty', data);
   return response;
 }
+
+export const deleteInstallationRequest = async (data) => {
+  const response = await mainApiService('deleteInstallationRequest', data);
+  return response;
+}

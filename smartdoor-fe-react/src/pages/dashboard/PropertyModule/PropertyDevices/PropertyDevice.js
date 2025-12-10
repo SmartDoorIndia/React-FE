@@ -48,6 +48,7 @@ const PropertyDevice = (props) => {
    const [viewCameraFlag, setViewCameraFlag] = useState(false);
    const [changeUUIDFlag, setChangeUUIDFlag] = useState(false);
    const [cameraTypeList, setCameraTypeList] = useState([]);
+   const [cameraSubTypeList, setCameraSubTypeList] = useState([]);
    const endPointList = ["prod", "uat"];
    const [lockLoading, setLockLoading] = useState(false);
    const [censorloading, setCensorLoading] = useState(false);
@@ -102,8 +103,6 @@ const PropertyDevice = (props) => {
             const result_data = await getCameraDevice({ propertyid });
             setCameraLoading(false);
             if (result_data.data.status === 200 && result_data.data.resourceData) {
-               let data = [];
-               data.push(result_data.data.resourceData);
                setCameraData(result_data.data.resourceData);
             } else if (result_data.status !== 200) {
                setCameraData([]);
@@ -129,7 +128,8 @@ const PropertyDevice = (props) => {
       _getCameraDevice(propertyId);
       getCameraTypes({})
          .then((response) => {
-            setCameraTypeList(response.data.resourceData);
+            setCameraTypeList(response.data.resourceData?.cameraTypes);
+            setCameraSubTypeList(response.data.resourceData?.cameraSubTypes);
          })
          .catch((error) => {
             console.log(error);
@@ -280,9 +280,9 @@ const PropertyDevice = (props) => {
          sortable: false,
          center: true,
          minWidth: "150px",
-         cell: ({ uuId, propertyId, cameraType }) => (
+         cell: ({ uuId, propertyId, type }) => (
             <>
-               {cameraType !== "PIR_CAMERA" ? (
+               {type !== "PIR_CAMERA" ? (
                   <>
                      <div>
                         <Buttons
@@ -313,9 +313,9 @@ const PropertyDevice = (props) => {
          sortable: false,
          center: true,
          minWidth: "170px",
-         cell: ({ uuId, cameraType }) => (
+         cell: ({ uuId, type }) => (
             <div>
-               {cameraType !== "PIR_CAMERA" ? (
+               {type !== "PIR_CAMERA" ? (
                   <>
                      {loading && uuId === currentUUID ? (
                         <Loader />
@@ -433,12 +433,17 @@ const PropertyDevice = (props) => {
       setViewCameraFlag(true);
       cameraData.forEach((element) => {
          if (element.uuId === uuId) {
+            console.log(element);
             setselectedCameraData({
                ...element,
                cameraId: element.cameraDeviceId,
-               cameraType: element.type,
+               type: element.type,
                endpointType: "prod",
+               subType: element.subType,
             });
+            // if(Object.keys(cameraSubTypeList).includes(element?.type)) {
+            //    setCameraSubTypeList(cameraSubTypeList[element?.type]);
+            // }
          }
       });
    };
@@ -457,7 +462,7 @@ const PropertyDevice = (props) => {
          let reqData = {
             ...selectedCameraData,
             ...accountDetails,
-            adminLogin: selectedCameraData.cameraType === "4G_CAMERA" ? true : false,
+            adminLogin: selectedCameraData.type === "4G_CAMERA" ? true : false,
             cameraAlreadyAdded: false,
          };
          const response = await editCameraData(reqData);
@@ -475,7 +480,8 @@ const PropertyDevice = (props) => {
                nickName: "",
                cameraDeviceId: "",
                cameraId: "",
-               cameraType: "",
+               type: "",
+               subType: "",
                endpointType: "",
                propertyId: propertyId,
             }));
@@ -533,7 +539,8 @@ const PropertyDevice = (props) => {
                      nickName: "",
                      cameraDeviceId: "",
                      cameraId: "",
-                     cameraType: "",
+                     type: "",
+                     subType: "",
                      endpointType: "",
                      propertyId: propertyId,
                   }));
@@ -785,7 +792,10 @@ const PropertyDevice = (props) => {
             backdrop="static"
          >
             <Modal.Header>
-               <Text text="Select a pre-configured camera device ID from the dropdown below." style={{fontSize:'14px', fontWeight:'600'}} />
+               <Text
+                  text="Select a pre-configured camera device ID from the dropdown below."
+                  style={{ fontSize: "14px", fontWeight: "600" }}
+               />
                <Buttons
                   style={{ float: "right" }}
                   name="X"
@@ -946,25 +956,47 @@ const PropertyDevice = (props) => {
                   />
                   <TextField
                      className="col-4 px-1 mt-3"
-                     id="cameraType"
+                     id="type"
                      select
-                     error={error.cameraType}
+                     error={error.type}
                      label="Camera Type"
                      disabled={true}
                      onChange={(e) => {
                         setselectedCameraData((prevCameraData) => ({
                            ...prevCameraData,
-                           cameraType: e.target.value,
+                           type: e.target.value,
                         }));
                      }}
-                     value={selectedCameraData?.cameraType}
+                     value={selectedCameraData?.type}
                   >
-                     {cameraTypeList.map((item) => (
+                     {cameraTypeList?.map((item) => (
                         <MenuItem key={item} value={item}>
                            {item}
                         </MenuItem>
                      ))}
                   </TextField>
+                  {/* <TextField
+                     className="col-4 px-1 mt-3"
+                     id="subType"
+                     select
+                     error={error.subType}
+                     label="Camera Sub Type"
+                     disabled={true}
+                     onChange={(e) => {
+                        setselectedCameraData((prevCameraData) => ({
+                           ...prevCameraData,
+                           subType: e.target.value,
+                        }));
+                     }}
+                     value={selectedCameraData?.subType}
+                  >
+                     {}
+                     {cameraSubTypeList[selectedCameraData?.type]?.map((item) => (
+                        <MenuItem key={item} value={item}>
+                           {item}
+                        </MenuItem>
+                     ))}
+                  </TextField> */}
                   <TextField
                      className="col-4 px-1 mt-3"
                      id="nickName"

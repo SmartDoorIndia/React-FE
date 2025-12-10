@@ -90,6 +90,32 @@ const PreconfiguredDevices = () => {
          ),
          id: 3,
       },
+      // {
+      //    name: "SUB TYPE",
+      //    selector: (row) => row.subType,
+      //    sortable: false,
+      //    center: true,
+      //    width: "180px",
+      //    cell: ({ subType }) => (
+      //       <ToolTip position="top" style={{ width: "100%" }} name={subType || "-"}>
+      //          <Text className="elipsis-text" text={subType || "-"} />
+      //       </ToolTip>
+      //    ),
+      //    id: 4,
+      // },
+      {
+         name: "ACCOUNT EMAIL",
+         selector: (row) => row.accountEmail,
+         sortable: false,
+         center: true,
+         width: "250px",
+         cell: ({ accountEmail }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={accountEmail || "-"}>
+               <Text className="elipsis-text" text={accountEmail || "-"} />
+            </ToolTip>
+         ),
+         id: 4,
+      },
       {
          name: "ACTIONS",
          sortable: false,
@@ -139,7 +165,7 @@ const PreconfiguredDevices = () => {
                ></Buttons> */}
             </>
          ),
-         id: 4,
+         id: 5,
       },
    ];
 
