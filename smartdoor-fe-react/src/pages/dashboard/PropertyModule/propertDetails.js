@@ -1369,7 +1369,7 @@ const PropertyDetails = (props) => {
 
                                  {propertyData.miscellaneousDetails?.smartLockProperty === true &&
                                  propertyData.miscellaneousDetails?.deleted === false &&
-                                 userData.roleName === "SUPER ADMIN" ? (
+                                 (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
                                     <>
                                        <Link
                                           to={{
@@ -1427,7 +1427,7 @@ const PropertyDetails = (props) => {
                                  ) : null}
                               </div>
                               <div className="d-flex mt-2">
-                                 {userData.roleName === "SUPER ADMIN" ? (
+                                 {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
                                     <>
                                        <Buttons
                                           style={{ float: "left" }}
@@ -1514,7 +1514,7 @@ const PropertyDetails = (props) => {
                                  ) : (
                                     <></>
                                  )}
-                                 {isDeleted === false && userData.roleName === "SUPER ADMIN" ? (
+                                 {isDeleted === false && (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
                                     <>
                                        <Buttons
                                           style={{ float: "left" }}
@@ -1534,7 +1534,7 @@ const PropertyDetails = (props) => {
                                  )}
                               </div>
                               <div>
-                                 {isDeleted === true && userData.roleName === "SUPER ADMIN" ? (
+                                 {isDeleted === true && (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
                                     <>
                                        <Buttons
                                           style={{ float: "left" }}

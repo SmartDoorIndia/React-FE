@@ -305,6 +305,13 @@ const KitDetails = (props) => {
                            />
                         </Col>
                         <Col lg={4} className="mt-3">
+                           <Text text="Sub Type" style={{ fontSize: "13px", fontWeight: "600" }} />
+                           <Text
+                              text={camera.subType || "-"}
+                              style={{ fontSize: "13px", fontWeight: "500" }}
+                           />
+                        </Col>
+                        <Col lg={4} className="mt-3">
                            <Text
                               text="Account Email"
                               style={{ fontSize: "13px", fontWeight: "600" }}

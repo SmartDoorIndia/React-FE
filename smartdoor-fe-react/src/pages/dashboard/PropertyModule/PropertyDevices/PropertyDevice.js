@@ -975,7 +975,7 @@ const PropertyDevice = (props) => {
                         </MenuItem>
                      ))}
                   </TextField>
-                  {/* <TextField
+                  <TextField
                      className="col-4 px-1 mt-3"
                      id="subType"
                      select
@@ -996,7 +996,7 @@ const PropertyDevice = (props) => {
                            {item}
                         </MenuItem>
                      ))}
-                  </TextField> */}
+                  </TextField>
                   <TextField
                      className="col-4 px-1 mt-3"
                      id="nickName"

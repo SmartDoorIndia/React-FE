@@ -348,7 +348,7 @@ const PropertyDetail = (props) => {
                            </Link>
                         </div>
 
-                        {/* {data?.status !== "DELETED" ? (
+                        {data?.status !== "DELETED" ? (
                            <>
                               <div className="ml-2" style={{ float: "right" }}>
                                  <Buttons
@@ -375,7 +375,7 @@ const PropertyDetail = (props) => {
                                  />
                               </div>
                            </>
-                        ) : null} */}
+                        ) : null}
                      </div>
                   </div>
                   <Row className="mt-3">
