@@ -866,6 +866,13 @@ const PropertyDevice = (props) => {
             backdrop="static"
          >
             <Modal.Header>
+               <Text
+                  className="m-2 h5"
+                  size="medium"
+                  text={
+                     showEditCameraData ? "Camera Device Data" : "Add New Camera Device Data"
+                  }
+               />
                <Buttons
                   style={{ float: "right" }}
                   name="X"
@@ -877,14 +884,7 @@ const PropertyDevice = (props) => {
                ></Buttons>
             </Modal.Header>
             <Modal.Body>
-               <Text
-                  className="m-2 h5"
-                  size="medium"
-                  text={
-                     showEditCameraData ? "Edit Camera Device Data" : "Add New Camera Device Data"
-                  }
-               />
-               <div className="d-flex mt-3 row col-12">
+               <div className="d-flex row col-12">
                   <TextField
                      className="col-4 px-1 mt-3"
                      id="uuId"
@@ -1012,6 +1012,22 @@ const PropertyDevice = (props) => {
                         }));
                      }}
                      value={selectedCameraData?.nickName}
+                  />
+                  <TextField
+                     className="col-5 px-1 mt-3"
+                     id="accountEmail"
+                     contentEditable={true}
+                     error={error.accountEmail}
+                     type="text"
+                     label="Account Email"
+                     disabled={true}
+                     onChange={(e) => {
+                        setselectedCameraData((prevCameraData) => ({
+                           ...prevCameraData,
+                           accountEmail: e.target.value,
+                        }));
+                     }}
+                     value={selectedCameraData?.accountEmail}
                   />
                   <TextField
                      className="col-4 px-1 mt-3"
