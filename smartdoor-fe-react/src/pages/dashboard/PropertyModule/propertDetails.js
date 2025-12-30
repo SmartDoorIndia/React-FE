@@ -1627,10 +1627,10 @@ const PropertyDetails = (props) => {
                                              size="Small"
                                              fontWeight="mediumbold"
                                              color="secondry-color"
-                                             text={propertyAnalyticsData.data.userVisited}
+                                             text={propertyData.miscellaneousDetails.userVisited || '0'}
                                           />
                                        </td>
-                                       <td className="p-2">
+                                       {/* <td className="p-2">
                                           <Text
                                              size="xSmall"
                                              fontWeight="fw500"
@@ -1643,7 +1643,7 @@ const PropertyDetails = (props) => {
                                              color="secondry-color"
                                              text={propertyAnalyticsData.data.meetingDone}
                                           />
-                                       </td>
+                                       </td> */}
                                        <td className="p-2">
                                           <Text
                                              size="xSmall"
@@ -1655,11 +1655,9 @@ const PropertyDetails = (props) => {
                                              size="Small"
                                              fontWeight="mediumbold"
                                              color="secondry-color"
-                                             text={propertyAnalyticsData.data.favouriteCount}
+                                             text={propertyData.miscellaneousDetails.favouriteCount || '0'}
                                           />
                                        </td>
-                                    </tr>
-                                    <tr className="bg-white">
                                        <td className="pl-0">
                                           <Text
                                              size="xSmall"
@@ -1671,10 +1669,26 @@ const PropertyDetails = (props) => {
                                              size="Small"
                                              fontWeight="mediumbold"
                                              color="secondry-color"
-                                             text={propertyAnalyticsData.data.upcomingVisits}
+                                             text={propertyData.miscellaneousDetails.upcomingVisits || '0'}
                                           />
                                        </td>
-                                       <td className="p-2">
+                                    </tr>
+                                    <tr className="bg-white">
+                                       {/* <td className="pl-0">
+                                          <Text
+                                             size="xSmall"
+                                             fontWeight="fw500"
+                                             color="TaupeGrey"
+                                             text={"Upcoming Visits"}
+                                          />
+                                          <Text
+                                             size="Small"
+                                             fontWeight="mediumbold"
+                                             color="secondry-color"
+                                             text={propertyData.miscellaneousDetails.upcomingVisits || '0'}
+                                          />
+                                       </td> */}
+                                       {/* <td className="p-2">
                                           <Text
                                              size="xSmall"
                                              fontWeight="fw500"
@@ -1687,7 +1701,7 @@ const PropertyDetails = (props) => {
                                              color="secondry-coFlor"
                                              text={propertyAnalyticsData.data.dealCancelled}
                                           />
-                                       </td>
+                                       </td> */}
                                        <td className="p-2"></td>
                                     </tr>
                                  </tbody>

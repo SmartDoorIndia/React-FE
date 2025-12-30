@@ -209,7 +209,11 @@ const PropertyModule = (props) => {
          minWidth: "300px",
          cell: ({ houseNumber, societyName, societyAddress, city, state, address  }) => (
             <span>
-               {houseNumber},{address}
+               {houseNumber?.trim() &&
+                  !address?.trim().startsWith(houseNumber.trim())
+                     ? <>{houseNumber}, </>
+                     : null
+               }{address}
                {/* {societyName}
                {", "}
                {societyAddress} 

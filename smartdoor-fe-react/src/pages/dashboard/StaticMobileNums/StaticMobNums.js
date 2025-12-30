@@ -38,7 +38,7 @@ const StaticMobNums = () => {
         if (response?.data?.status === 200) {
             showSuccessToast("Mobile Numbers Updated Successfully")
         } else {
-            showErrorToast("Please try again...");
+            showErrorToast(response?.data?.message);
         }
     }
 

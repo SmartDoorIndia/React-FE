@@ -208,6 +208,7 @@ const VisitVideos = (props) => {
             show={showVideo}
             onHide={() => {
                setShowVideo(false);
+               setSelectedVideo("");
             }}
             centered
             backdrop="static"
@@ -219,6 +220,7 @@ const VisitVideos = (props) => {
                   varient="secondary"
                   onClick={() => {
                      setShowVideo(false);
+                     setSelectedVideo("");
                   }}
                ></Buttons>
             </Modal.Header>
@@ -226,7 +228,7 @@ const VisitVideos = (props) => {
                <div className="d-flex justify-content-center">
                   <ReactPlayer
                      url={
-                        "https://smartdoor-uat.s3.ap-south-1.amazonaws.com/app-images/camera-videos/4258/4258_7fa2fd1c0086e460_1745903211000"
+                        selectedVideo
                      }
                      controls={true}
                      muted={false}
