@@ -276,6 +276,13 @@ const PropertyDevice = (props) => {
          cell: ({ deleted }) => (deleted ? <Text text="Yes" /> : <Text text="No" />),
       },
       {
+         name: "Battery %",
+         selector: "batteryPercentage",
+         maxWidth: "60px",
+         center: true,
+         cell: ({ batteryPercentage }) => (batteryPercentage !== null ? <Text text={batteryPercentage} /> : <Text text="-" />),
+      },
+      {
          name: "Set callBack URL",
          sortable: false,
          center: true,
