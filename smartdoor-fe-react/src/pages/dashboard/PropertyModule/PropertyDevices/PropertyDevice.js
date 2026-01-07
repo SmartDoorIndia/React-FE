@@ -280,7 +280,7 @@ const PropertyDevice = (props) => {
          selector: "batteryPercentage",
          maxWidth: "60px",
          center: true,
-         cell: ({ batteryPercentage }) => (batteryPercentage !== null ? <Text text={batteryPercentage} /> : <Text text="-" />),
+         cell: ({ batteryPercentage }) => (batteryPercentage !== null ? <Text text={batteryPercentage + "%"} /> : <Text text="-" />),
       },
       {
          name: "Set callBack URL",
