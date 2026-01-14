@@ -499,6 +499,18 @@ const Nav = () => {
                            />
                            Preconfigured Devices
                         </Link>
+                        <Link
+                           to="/admin/camera-dashboard"
+                           className={`nav-link ${
+                              pathname.includes("/admin/camera-dashboard") ? "nav-active" : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/camera-dashboard") ? borkerIcon : dashboard}
+                           />
+                           Camera Dashboard
+                        </Link>
                      </>
                   )}
                   {(userData.roleName === "SUPER ADMIN" ||

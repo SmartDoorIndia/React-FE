@@ -21,7 +21,8 @@ const CONSTANTS_STATUS = {
     permissionList: ['Smart Door Posting', 'Non Smart Door Posting'],
     leadStatusList : ['INITIATED', 'COMPLETED', 'DELETED'],
     kycMethodList : ["AADHAR_OTP", "AADHAR_DIGILOCKER", "MOBILE_OTP_CELLULAR"],
-    kitStatus: ["READY_TO_INSTALL", "DELETED", "INSTALLED"]
+    kitStatus: ["READY_TO_INSTALL", "DELETED", "INSTALLED"],
+    cameraStatus: ["PRECONFIGURED_CAMERA","PRECONFIGURED_KIT_DEVICE","INSTALLED","DEFECTIVE","SOLD"]
  };
  
  export default CONSTANTS_STATUS;

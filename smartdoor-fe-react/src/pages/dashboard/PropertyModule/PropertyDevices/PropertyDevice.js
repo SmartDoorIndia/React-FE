@@ -15,6 +15,7 @@ import {
    getAccountEmailDetails,
    getDeviceIdList,
    restoreOrDeleteDevice,
+   updateCameraStatus,
 } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
@@ -169,6 +170,12 @@ const PropertyDevice = (props) => {
          center: true,
       },
       {
+         name: "Status",
+         selector: "status",
+         maxWidth: "260px",
+         center: true,
+      },
+      {
          name: "Action",
          sortable: false,
          center: true,
@@ -185,7 +192,8 @@ const PropertyDevice = (props) => {
                   onClick={() => {
                      showSmartLockData(id);
                   }}
-               />
+               />{" "}
+               &nbsp;&nbsp;
             </div>
          ),
       },
@@ -280,14 +288,25 @@ const PropertyDevice = (props) => {
          selector: "batteryPercentage",
          maxWidth: "60px",
          center: true,
-         cell: ({ batteryPercentage }) => (batteryPercentage !== null ? <Text text={batteryPercentage + "%"} /> : <Text text="-" />),
+         cell: ({ batteryPercentage }) =>
+            batteryPercentage !== null ? (
+               <Text text={batteryPercentage + "%"} />
+            ) : (
+               <Text text="-" />
+            ),
+      },
+      {
+         name: "Status",
+         selector: "status",
+         maxWidth: "260px",
+         center: true,
       },
       {
          name: "Set callBack URL",
          sortable: false,
          center: true,
          minWidth: "150px",
-         cell: ({ uuId, propertyId, type }) => (
+         cell: ({ uuId, propertyId, type, cameraDeviceId }) => (
             <>
                {type !== "PIR_CAMERA" ? (
                   <>
@@ -400,8 +419,8 @@ const PropertyDevice = (props) => {
          name: "Action",
          sortable: false,
          center: true,
-         minWidth: "140px",
-         cell: ({ uuId }) => (
+         minWidth: "440px",
+         cell: ({ uuId, cameraDeviceId }) => (
             <div className="action">
                <Buttons
                   name="View Data"
@@ -411,6 +430,44 @@ const PropertyDevice = (props) => {
                   className="mt-2 mb-2"
                   onClick={() => {
                      showCameraData(uuId);
+                  }}
+               />
+               &nbsp;&nbsp;
+               <Buttons
+                  name="Mark as Defective"
+                  variant="outline-danger"
+                  size="xSmall"
+                  onClick={async () => {
+                     await updateCameraStatus({
+                        cameraId: cameraDeviceId,
+                        status: "",
+                     }).then((response) => {
+                        if (response?.status === 200) {
+                           showSuccessToast("Marked as defective successfully...");
+                           _getCameraDevice(propertyId);
+                        } else {
+                           showErrorToast(response?.data?.message);
+                        }
+                     });
+                  }}
+               />
+               &nbsp;&nbsp;
+               <Buttons
+                  name="Mark as Sold"
+                  variant="outline-danger"
+                  size="xSmall"
+                  onClick={async () => {
+                     await updateCameraStatus({
+                        cameraId: cameraDeviceId,
+                        status: "",
+                     }).then((response) => {
+                        if (response?.status === 200) {
+                           showSuccessToast("Marked as sold successfully...");
+                           _getCameraDevice(propertyId);
+                        } else {
+                           showErrorToast(response?.data?.message);
+                        }
+                     });
                   }}
                />
             </div>
@@ -876,9 +933,7 @@ const PropertyDevice = (props) => {
                <Text
                   className="m-2 h5"
                   size="medium"
-                  text={
-                     showEditCameraData ? "Camera Device Data" : "Add New Camera Device Data"
-                  }
+                  text={showEditCameraData ? "Camera Device Data" : "Add New Camera Device Data"}
                />
                <Buttons
                   style={{ float: "right" }}

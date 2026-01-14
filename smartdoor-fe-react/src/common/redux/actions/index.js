@@ -2474,3 +2474,13 @@ export const deleteInstallationRequest = async (data) => {
   const response = await mainApiService('deleteInstallationRequest', data);
   return response;
 }
+
+export const updateCameraStatus = async (data) => {
+  const response = await mainApiService("updateCameraStatus", data);
+  return response;
+}
+
+export const updateSmartlockStatus = async (data) => {
+  const response = await mainApiService("updateSmartlockStatus", data);
+  return response;
+}

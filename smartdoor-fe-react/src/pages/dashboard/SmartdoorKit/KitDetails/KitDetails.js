@@ -254,6 +254,13 @@ const KitDetails = (props) => {
                               style={{ fontSize: "13px", fontWeight: "500" }}
                            />
                         </Col>
+                        <Col lg={4} className="mt-3">
+                           <Text text="Status" style={{ fontSize: "13px", fontWeight: "600" }} />
+                           <Text
+                              text={smartlock.status || "-"}
+                              style={{ fontSize: "13px", fontWeight: "500" }}
+                           />
+                        </Col>
                      </Row>
                   </Card.Body>
                </Card>
@@ -335,6 +342,13 @@ const KitDetails = (props) => {
                            <Text text="Nickname" style={{ fontSize: "13px", fontWeight: "600" }} />
                            <Text
                               text={camera.nickName || "-"}
+                              style={{ fontSize: "13px", fontWeight: "500" }}
+                           />
+                        </Col>
+                        <Col lg={4} className="mt-3">
+                           <Text text="Status" style={{ fontSize: "13px", fontWeight: "600" }} />
+                           <Text
+                              text={camera.status || "-"}
                               style={{ fontSize: "13px", fontWeight: "500" }}
                            />
                         </Col>

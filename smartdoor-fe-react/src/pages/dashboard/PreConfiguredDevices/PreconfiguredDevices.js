@@ -8,6 +8,8 @@ import {
    getDeviceIdList,
    getDeviceToken,
    restoreOrDeleteDevice,
+   updateCameraStatus,
+   updateSmartlockStatus,
 } from "../../../common/redux/actions";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import { showErrorToast, showSuccessToast, ToolTip } from "../../../common/helpers/Utils";
@@ -104,6 +106,19 @@ const PreconfiguredDevices = () => {
          id: 4,
       },
       {
+         name: "STATUS",
+         selector: (row) => row.status,
+         sortable: false,
+         center: true,
+         width: "180px",
+         cell: ({ status }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={status || "-"}>
+               <Text className="elipsis-text" text={status || "-"} />
+            </ToolTip>
+         ),
+         id: 5,
+      },
+      {
          name: "ACCOUNT EMAIL",
          selector: (row) => row.accountEmail,
          sortable: false,
@@ -114,14 +129,14 @@ const PreconfiguredDevices = () => {
                <Text className="elipsis-text" text={accountEmail || "-"} />
             </ToolTip>
          ),
-         id: 5,
+         id: 6,
       },
       {
          name: "ACTIONS",
          sortable: false,
          center: true,
-         width: "270px",
-         cell: ({ cameraDeviceId, type }) => (
+         width: "400px",
+         cell: ({ cameraDeviceId, type, status }) => (
             <>
                <Buttons
                   name="Delete"
@@ -143,6 +158,47 @@ const PreconfiguredDevices = () => {
                   }}
                />{" "}
                &nbsp;&nbsp;
+               {status === "PRECONFIGURED_CAMERA" ? (
+                  <>
+                     <Buttons
+                        name="Mark as Defective"
+                        variant="outline-danger"
+                        size="xSmall"
+                        onClick={async () => {
+                           await updateCameraStatus({
+                              cameraDeviceId: cameraDeviceId,
+                              status: "DEFECTIVE",
+                           }).then((response) => {
+                              if (response?.status === 200) {
+                                 showSuccessToast("Camera marked as defective successfully...");
+                                 fetchDeviceIdList();
+                              } else {
+                                 showErrorToast(response?.data?.message);
+                              }
+                           });
+                        }}
+                     />
+                     &nbsp;&nbsp;
+                     <Buttons
+                        name="Mark as Sold"
+                        variant="outline-danger"
+                        size="xSmall"
+                        onClick={async () => {
+                           await updateCameraStatus({
+                              cameraDeviceId: cameraDeviceId,
+                              status: "SOLD",
+                           }).then((response) => {
+                              if (response?.status === 200) {
+                                 showSuccessToast("Camera marked as sold successfully...");
+                                 fetchDeviceIdList();
+                              } else {
+                                 showErrorToast(response?.data?.message);
+                              }
+                           });
+                        }}
+                     />
+                  </>
+               ) : null}
                {/* <Buttons
                   name="View LiveStream"
                   varient="primary"
@@ -165,7 +221,7 @@ const PreconfiguredDevices = () => {
                ></Buttons> */}
             </>
          ),
-         id: 6,
+         id: 7,
       },
    ];
 
@@ -236,11 +292,24 @@ const PreconfiguredDevices = () => {
          id: 5,
       },
       {
-         name: "ACTIONS",
+         name: "STATUS",
+         selector: (row) => row.status,
          sortable: false,
          center: true,
          width: "240px",
-         cell: ({ id, lockId, encryptedId }) => (
+         cell: ({ status }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={status || "-"}>
+               <Text className="elipsis-text" text={status || "-"} />
+            </ToolTip>
+         ),
+         id: 6,
+      },
+      {
+         name: "ACTIONS",
+         sortable: false,
+         center: true,
+         width: "480px",
+         cell: ({ id, lockId, encryptedId, status }) => (
             <div className="d-flex">
                <Buttons
                   name="Delete"
@@ -273,10 +342,51 @@ const PreconfiguredDevices = () => {
                      });
                      setShowQrModal(true);
                   }}
-               />
+               />&nbsp;&nbsp;
+               {status === "PRECONFIGURED_CAMERA" ? (
+                  <>
+                     <Buttons
+                        name="Mark as Defective"
+                        variant="outline-danger"
+                        size="xSmall"
+                        onClick={async () => {
+                           await updateSmartlockStatus({
+                              lockId: id,
+                              status: "DEFECTIVE",
+                           }).then((response) => {
+                              if (response?.status === 200) {
+                                 showSuccessToast("Smartlock marked as defective successfully...");
+                                 fetchDeviceIdList();
+                              } else {
+                                 showErrorToast(response?.data?.message);
+                              }
+                           });
+                        }}
+                     />
+                     &nbsp;&nbsp;
+                     <Buttons
+                        name="Mark as Sold"
+                        variant="outline-danger"
+                        size="xSmall"
+                        onClick={async () => {
+                           await updateSmartlockStatus({
+                              lockId: id,
+                              status: "SOLD",
+                           }).then((response) => {
+                              if (response?.status === 200) {
+                                 showSuccessToast("Smartlock marked as sold successfully...");
+                                 fetchDeviceIdList();
+                              } else {
+                                 showErrorToast(response?.data?.message);
+                              }
+                           });
+                        }}
+                     />
+                  </>
+               ) : null}
             </div>
          ),
-         id: 6,
+         id: 7,
       },
    ];
 

@@ -140,6 +140,7 @@ const AllKitList = React.lazy(() => import('./SmartdoorKit/SDKitList/KitList'))
 const SDKitDetails = React.lazy(() => import('./SmartdoorKit/KitDetails/KitDetails'))
 const PreconfiguredDevices = React.lazy(() => import('./PreConfiguredDevices/PreconfiguredDevices'))
 const ReturnRequests = React.lazy(() => import('./ReturnRequestsDashboard/ReturnRequests'))
+const CameraDashboard = React.lazy(() => import('./CameraModule/CameraDashboard/CameraDashboard'))
 
 // Routing data
 const routeData = [
@@ -1410,6 +1411,14 @@ const routeData = [
     component: ReturnRequests
   }, 
 
+  {
+    path: '/admin/camera-dashboard',
+    name: 'Camera Dashboard',
+    bradcrumb: false,
+    excat: true,
+    component: CameraDashboard
+  }, 
+  
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',
