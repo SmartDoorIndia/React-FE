@@ -106,6 +106,7 @@ import { builderProjectList } from './views/builderProjectList.reducer';
 import { USER_LOGOUT } from '../types';
 import { batteryLevel } from './views/batteryLevel.reducer';
 import { autoRefreshList } from './views/autoRefreshList.reducer';
+import { cameraList } from './views/cameraDashboardList.reducer';
 
 const appReducer = combineReducers({
   dashboardTitle,
@@ -194,7 +195,8 @@ const appReducer = combineReducers({
   unInstalledKits,
   UnAssignedKits,
   builderProjectList,
-  autoRefreshList
+  autoRefreshList,
+  cameraList
 });
 
 const rootReducer = (state, action) => {

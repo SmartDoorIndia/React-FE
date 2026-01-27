@@ -165,6 +165,17 @@
                     padding-top: 4px;
                     
                 }
+                .form-control1{
+                    background: $lightgray;
+                    @include border;                    
+                    font-weight: $smbold;                    
+                    font-size: $xSmall !important;
+                    border-radius: 4px !important;
+                    height: 30px !important;      
+                    box-shadow: none;
+                    padding-top: 4px;
+                    
+                }
             }
         }
         table{

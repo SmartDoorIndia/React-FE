@@ -3648,6 +3648,17 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  cameraDashboardList: {
+    url: "smartlock/smartlock/cameraDashboardList",
+    method: "POST",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 

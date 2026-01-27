@@ -432,7 +432,7 @@ const PropertyDevice = (props) => {
                      showCameraData(uuId);
                   }}
                />
-               &nbsp;&nbsp;
+               {/* &nbsp;&nbsp;
                <Buttons
                   name="Mark as Defective"
                   variant="outline-danger"
@@ -469,7 +469,7 @@ const PropertyDevice = (props) => {
                         }
                      });
                   }}
-               />
+               /> */}
             </div>
          ),
       },

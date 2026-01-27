@@ -158,7 +158,7 @@ const PreconfiguredDevices = () => {
                   }}
                />{" "}
                &nbsp;&nbsp;
-               {status === "PRECONFIGURED_CAMERA" ? (
+               {status === "PRECONFIGURED_DEVICE" ? (
                   <>
                      <Buttons
                         name="Mark as Defective"
@@ -343,7 +343,7 @@ const PreconfiguredDevices = () => {
                      setShowQrModal(true);
                   }}
                />&nbsp;&nbsp;
-               {status === "PRECONFIGURED_CAMERA" ? (
+               {status === "PRECONFIGURED_DEVICE" ? (
                   <>
                      <Buttons
                         name="Mark as Defective"

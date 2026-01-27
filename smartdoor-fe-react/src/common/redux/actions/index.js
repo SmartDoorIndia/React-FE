@@ -2484,3 +2484,13 @@ export const updateSmartlockStatus = async (data) => {
   const response = await mainApiService("updateSmartlockStatus", data);
   return response;
 }
+
+export const getCameraDashboardList = data => async (dispatch) => {
+  dispatch({type: Actions.CAMERA_DASHBOARD_LIST_LOADING, data: []});
+  const response = await mainApiService("cameraDashboardList", data);
+  if(response?.status === 200) {
+    dispatch({type: Actions.CAMERA_DASHBOARD_LIST_SUCCESS, data: {list: response?.data?.resourceData?.devices, statusCounts: response?.data?.resourceData?.statusCounts, records: data?.pageNumber !== 1 ? data?.records : response.data.records, currentPage: data?.pageNumber, rowsPerPage: data?.pageSize, kitId: data?.kitId, status: data?.status }})
+  } else {
+    dispatch({type: Actions.CAMERA_DASHBOARD_LIST_ERROR, data: response?.data});
+  }
+}

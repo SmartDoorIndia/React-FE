@@ -387,3 +387,7 @@ export const BUILDER_PROJECT_LIST_LOADING = 'src/pages/Dashboar/builderProjectLi
 export const AUTO_REFRESH_LIST_SUCCESS = 'src/pages/Dashboard/autoRefreshList/Success';
 export const AUTO_REFRESH_LIST_ERROR = 'src/pages/Dashboard/autoRefreshList/Error';
 export const AUTO_REFRESH_LIST_LOADING = 'src/pages/Dashboar/autoRefreshList/Loading';
+
+export const CAMERA_DASHBOARD_LIST_SUCCESS = 'src/pages/Dashboard/cameraDashboardList/Success';
+export const CAMERA_DASHBOARD_LIST_ERROR = 'src/pages/Dashboard/cameraDashboardList/Error';
+export const CAMERA_DASHBOARD_LIST_LOADING = 'src/pages/Dashboard/cameraDashboardList/Loading';
