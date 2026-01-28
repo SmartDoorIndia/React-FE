@@ -1,111 +1,74 @@
 /** @format */
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
-import { ToolTip } from "../../../../common/helpers/Utils";
-import Text from "../../../../shared/Text/Text";
-import "./CameraDashboard.scss";
-import { Form } from "react-bootstrap";
-import DataTableComponent from "../../../../shared/DataTable/DataTable";
+import React, { useEffect, useRef, useState } from "react";
+import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
+import { ToolTip } from "../../../common/helpers/Utils";
+import Text from "../../../shared/Text/Text";
+import Image from "../../../shared/Image";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
-import Image from "../../../../shared/Image";
-import contentIcon from "../../../../assets/images/content-ico.png";
-import Buttons from "../../../../shared/Buttons/Buttons";
-import {
-   getAllCityWithId,
-   getCameraDashboardList,
-   getCameraTypes,
-   getCorporateById,
-} from "../../../../common/redux/actions";
-import Input from "../../../../shared/Inputs/Input/Input";
+import { TableLoader } from "../../../common/helpers/Loader";
+import Pagination from "../../../shared/DataTable/Pagination";
+import { getAllCityWithId, getCorporateById, getSmartlockDashboardList } from "../../../common/redux/actions";
+import Input from "../../../shared/Inputs/Input/Input";
+import { Form } from "react-bootstrap";
 import { Checkbox, ListItemText, MenuItem, TextField } from "@mui/material";
-import Pagination from "../../../../shared/DataTable/Pagination";
-import { TableLoader } from "../../../../common/helpers/Loader";
-import { compose } from "redux";
 import { connect } from "react-redux";
+import { compose } from "redux";
+import Buttons from "../../../shared/Buttons/Buttons";
+import DataTableComponent from "../../../shared/DataTable/DataTable";
+import contentIcon from "../../../assets/images/content-ico.png";
 
-const CameraDashboard = (props) => {
-   const { allCitiesWithId, getAllCityWithId, cameraList, getCameraDashboardList } = props;
-   const cameraStatus = CONSTANTS_STATUS.cameraStatus;
+const SmartlockDashboard = (props) => {
+   const { allCitiesWithId, getAllCityWithId, smartlockList, getSmartlockDashboardList } = props;
+   const smartlockStatus = CONSTANTS_STATUS.smartlockStatus;
    const [deviceStatus, setDeviceStatus] = useState([]);
    const [propertyIdText, setPropertyIdText] = useState("");
-   const [cameraIdText, setCameraIdText] = useState("");
-   const [uuIdText, setUUIdText] = useState("");
+   const [smartlockIdText, setSmartlockIdText] = useState("");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [corporateList, setCorporateList] = useState([]);
    const [selectedCorporate, setSelectedCorporate] = useState([]);
-   const [cameraStats, setCameraStats] = useState({});
-   const [cameraTypeList, setCameraTypeList] = useState([]);
-   const [cameraType, setCameraType] = useState("");
-   const [cameraSubTypeList, setCameraSubTypeList] = useState([]);
-   const [cameraSubType, setCameraSubType] = useState("");
+   const [smartlockStats, setSmartlockStats] = useState({});
+   const [smartlockTypeList, setSmartlockTypeList] = useState([]);
+   const [smartlockType, setSmartlockType] = useState("");
    const [cityIdList, setCityIdList] = useState([]);
-   const [cameraListReqDto, setCameraListReqDto] = useState({
+   const [smartlockListReqDto, setSmartlockListReqDto] = useState({
       deviceStatus: deviceStatus, // preconfig , install ,sold //
       corporateId: selectedCorporate, //
       cityIdList: null, //
-      cameraType: cameraType, //
-      cameraSubType: cameraSubType,
+      smartlockType: smartlockType,
       propertyId: Number(propertyIdText),
-      cameraId: cameraIdText,
-      uuId: uuIdText,
+      smartlockId: smartlockIdText,
       pageNumber: 1,
       pageSize: 8,
    });
    const tableRef = useRef();
 
-   const cameraColumns = [
+   const smartlockColumns = [
       {
          name: "Id",
-         selector: (row) => row.cameraDeviceId,
+         selector: (row) => row.smartlockDeviceId,
          sortable: true,
          center: false,
          maxWidth: "150px",
-         cell: ({ cameraDeviceId }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={cameraDeviceId}>
-               <Text size="Small" color="secondryColor elipsis-text" text={cameraDeviceId} />
+         cell: ({ smartlockDeviceId }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={smartlockDeviceId}>
+               <Text size="Small" color="secondryColor elipsis-text" text={smartlockDeviceId} />
             </ToolTip>
          ),
          id: 1,
       },
       {
-         name: "UUId",
-         selector: (row) => row.uuId,
+         name: "Type",
+         selector: (row) => row.smartlockType,
          sortable: true,
          center: true,
          minWidth: "150px",
-         cell: ({ uuId }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={uuId}>
-               <Text size="Small" color="secondryColor elipsis-text" text={uuId} />
+         cell: ({ smartlockType }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={smartlockType}>
+               <Text size="Small" color="secondryColor elipsis-text" text={smartlockType} />
             </ToolTip>
          ),
          id: 2,
-      },
-      {
-         name: "Type",
-         selector: (row) => row.cameraType,
-         sortable: true,
-         center: true,
-         minWidth: "150px",
-         cell: ({ cameraType }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={cameraType}>
-               <Text size="Small" color="secondryColor elipsis-text" text={cameraType} />
-            </ToolTip>
-         ),
-         id: 3,
-      },
-      {
-         name: "SubType",
-         selector: (row) => row.cameraSubType,
-         sortable: true,
-         center: true,
-         minWidth: "150px",
-         cell: ({ cameraSubType }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={cameraSubType}>
-               <Text size="Small" color="secondryColor elipsis-text" text={cameraSubType} />
-            </ToolTip>
-         ),
-         id: 4,
       },
       {
          name: "Battery",
@@ -122,7 +85,7 @@ const CameraDashboard = (props) => {
                />
             </ToolTip>
          ),
-         id: 5,
+         id: 3,
       },
       {
          name: "Status",
@@ -135,7 +98,7 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={status} />
             </ToolTip>
          ),
-         id: 6,
+         id: 4,
       },
       {
          name: "PropertyId",
@@ -148,7 +111,7 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
             </ToolTip>
          ),
-         id: 7,
+         id: 5,
       },
       {
          name: "Action",
@@ -176,40 +139,36 @@ const CameraDashboard = (props) => {
 
    const ProgressComponent = <TableLoader />;
    const [currentPage, setCurrentPage] = useState(
-      cameraList?.data?.length !== 0 ? cameraList?.data?.currentPage : 1
+      smartlockList?.data?.length !== 0 ? smartlockList?.data?.currentPage : 1
    );
    const [rowsPerPage, setRowsPerPage] = useState(
-      cameraList?.data?.length !== 0 ? cameraList?.data?.rowsPerPage : 8
+      smartlockList?.data?.length !== 0 ? smartlockList?.data?.rowsPerPage : 8
    );
-   const recordSize = cameraList?.data?.records || 0;
+   const recordSize = smartlockList?.data?.records || 0;
    let recordsPerPage = 0;
-   recordsPerPage = cameraList?.data?.rowsPerPage;
+   recordsPerPage = smartlockList?.data?.rowsPerPage;
 
    const handlePageChange = (newPage) => {
-      getCameraDashboardList({
+      getSmartlockDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
          cityIdList: null, //
-         cameraType: cameraType, //
-         cameraSubType: cameraSubType,
+         smartlockType: smartlockType, //
          propertyId: Number(propertyIdText),
-         cameraId: cameraIdText,
-         uuId: uuIdText,
+         smartlockId: smartlockIdText,
          pageNumber: newPage,
          pageSize: rowsPerPage,
       });
    };
 
    const handleRowsPerPageChange = async (newRowsPerPage) => {
-      getCameraDashboardList({
+      getSmartlockDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
          cityIdList: null, //
-         cameraType: cameraType, //
-         cameraSubType: cameraSubType,
+         smartlockType: smartlockType, //
          propertyId: Number(propertyIdText),
-         cameraId: cameraIdText,
-         uuId: uuIdText,
+         smartlockId: smartlockIdText,
          pageNumber: currentPage,
          pageSize: newRowsPerPage,
       });
@@ -250,25 +209,15 @@ const CameraDashboard = (props) => {
    };
 
    useEffect(() => {
-      getCameraTypes({})
-         .then((response) => {
-            setCameraTypeList(response.data.resourceData?.cameraTypes);
-            setCameraSubTypeList(response.data.resourceData?.cameraSubTypes);
-         })
-         .catch((error) => {
-            console.log(error);
-         });
       getAllCityWithId({ smartdoorServiceStatus: true, stateId: null });
       getCorprateList();
-      getCameraDashboardList({
+      getSmartlockDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
          cityIdList: null, //
-         cameraType: cameraType, //
-         cameraSubType: cameraSubType,
+         smartlockType: smartlockType, //
          propertyId: Number(propertyIdText),
-         cameraId: cameraIdText,
-         uuId: uuIdText,
+         smartlockId: smartlockIdText,
          pageNumber: currentPage,
          pageSize: rowsPerPage,
       });
@@ -302,61 +251,33 @@ const CameraDashboard = (props) => {
       );
    }, [propertyIdText, resetPaginationToggle]);
 
-   const cameraIdBox = React.useMemo(() => {
+   const smartlockIdBox = React.useMemo(() => {
       const handleClear = () => {
-         if (cameraIdText) {
+         if (smartlockIdText) {
             setResetPaginationToggle(!resetPaginationToggle);
-            setCameraIdText(null);
+            setSmartlockIdText(null);
          }
       };
 
       return (
          <Input
-            id={"cameraId"}
-            placeholder={"Camera id"}
+            id={"smartlockId"}
+            placeholder={"Smartlock id"}
             type={"number"}
-            value={cameraIdText}
+            value={smartlockIdText}
             onInput={(e) => {
-               setCameraIdText(e.target.value);
+               setSmartlockIdText(e.target.value);
                console.log(e);
             }}
             onClear={() => {
                handleClear();
             }}
-            filterText={cameraIdText}
+            filterText={smartlockIdText}
             showSearch={true}
             margin={70}
          />
       );
-   }, [cameraIdText, resetPaginationToggle]);
-
-   const uuIdBox = React.useMemo(() => {
-      const handleClear = () => {
-         if (uuIdText) {
-            setResetPaginationToggle(!resetPaginationToggle);
-            setCameraIdText(null);
-         }
-      };
-
-      return (
-         <Input
-            id={"uuIdText"}
-            placeholder={"UUID"}
-            type={"text"}
-            value={uuIdText}
-            onInput={(e) => {
-               setUUIdText(e.target.value);
-               console.log(e);
-            }}
-            onClear={() => {
-               handleClear();
-            }}
-            filterText={uuIdText}
-            showSearch={true}
-            margin={70}
-         />
-      );
-   }, [uuIdText, resetPaginationToggle]);
+   }, [smartlockIdText, resetPaginationToggle]);
 
    return (
       <>
@@ -365,8 +286,7 @@ const CameraDashboard = (props) => {
                <div className="justify-content-between">
                   <div className="locationSelect justify-content-end mb-2">
                      {propertyIdBox}
-                     {cameraIdBox}
-                     {uuIdBox}
+                     {smartlockIdBox}
                      <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
                            as="select"
@@ -376,8 +296,8 @@ const CameraDashboard = (props) => {
                            }}
                         >
                            <option value="">Select Status</option>
-                           {cameraStatus?.length
-                              ? cameraStatus.map((status) => (
+                           {smartlockStatus?.length
+                              ? smartlockStatus.map((status) => (
                                    <option key={status} value={status}>
                                       {status}
                                    </option>
@@ -465,7 +385,8 @@ const CameraDashboard = (props) => {
                               />
                            </MenuItem>
                         ))}
-                     </TextField> &nbsp;&nbsp;
+                     </TextField>{" "}
+                     &nbsp;&nbsp;
                      <TextField
                         hiddenLabel
                         size="small"
@@ -534,10 +455,7 @@ const CameraDashboard = (props) => {
                      >
                         {allCitiesWithId?.data?.map((city, index) => (
                            <MenuItem key={index} value={city.cityId} sx={{ height: 32 }}>
-                              <Checkbox
-                                 size="small"
-                                 checked={cityIdList.includes(city.cityId)}
-                              />
+                              <Checkbox size="small" checked={cityIdList.includes(city.cityId)} />
                               <ListItemText
                                  primary={city.cityName}
                                  primaryTypographyProps={{ fontSize: "12px" }}
@@ -548,14 +466,14 @@ const CameraDashboard = (props) => {
                      <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
                            as="select"
-                           value={cameraType}
+                           value={smartlockType}
                            onChange={(e) => {
-                              setCameraType(e.target.value);
+                              setSmartlockType(e.target.value);
                            }}
                         >
                            <option value="">Select Type</option>
-                           {cameraTypeList?.length
-                              ? cameraTypeList.map((type) => (
+                           {smartlockTypeList?.length
+                              ? smartlockTypeList.map((type) => (
                                    <option key={type} value={type}>
                                       {type}
                                    </option>
@@ -563,25 +481,6 @@ const CameraDashboard = (props) => {
                               : null}
                         </Form.Control>
                      </Form.Group>
-                     <Form.Group controlId="exampleForm.SelectCustom">
-                        <Form.Control
-                           as="select"
-                           value={cameraSubType}
-                           onChange={(e) => {
-                              setCameraSubType(e.target.value);
-                           }}
-                        >
-                           <option value="">Select SubType</option>
-                           {cameraSubTypeList[cameraType]?.length
-                              ? cameraSubTypeList[cameraType]?.map((subType) => (
-                                   <option key={subType} value={subType}>
-                                      {subType}
-                                   </option>
-                                ))
-                              : null}
-                        </Form.Control>
-                     </Form.Group>{" "}
-                     
                      <div className="ml-3">
                         <Buttons
                            name="Search"
@@ -590,15 +489,13 @@ const CameraDashboard = (props) => {
                            color="white"
                            style={{ height: "40px !important" }}
                            onClick={async () => {
-                              getCameraDashboardList({
+                              getSmartlockDashboardList({
                                  deviceStatus: deviceStatus, // preconfig , install ,sold //
                                  corporateId: selectedCorporate, //
                                  cityIdList: null, //
-                                 cameraType: cameraType, //
-                                 cameraSubType: cameraSubType,
+                                 smartlockType: smartlockType, //
                                  propertyId: Number(propertyIdText),
-                                 cameraId: cameraIdText,
-                                 uuId: uuIdText,
+                                 smartlockId: smartlockIdText,
                                  pageNumber: currentPage,
                                  pageSize: rowsPerPage,
                               });
@@ -608,12 +505,12 @@ const CameraDashboard = (props) => {
                   </div>
                </div>
             </div>
-            <div className="cameraTableWrapper">
+            <div className="smartlockTableWrapper">
                <DataTableComponent
                   ref={tableRef}
-                  data={cameraList?.data?.list}
-                  columns={cameraColumns}
-                  progressPending={cameraList?.isLoading}
+                  data={smartlockList?.data?.list}
+                  columns={smartlockColumns}
+                  progressPending={smartlockList?.isLoading}
                   persistTableHead
                   paginationServer={true}
                   paginationComponent={PaginationComponent}
@@ -630,13 +527,13 @@ const CameraDashboard = (props) => {
    );
 };
 
-const mapStateToProps = ({ allCitiesWithId, cameraList }) => ({ allCitiesWithId, cameraList });
+const mapStateToProps = ({ allCitiesWithId, smartlockList }) => ({ allCitiesWithId, smartlockList });
 
 const actions = {
    getAllCityWithId,
-   getCameraDashboardList,
+   getSmartlockDashboardList,
 };
 
 const withConnect = connect(mapStateToProps, actions);
 
-export default compose(withConnect)(CameraDashboard);
+export default compose(withConnect)(SmartlockDashboard);

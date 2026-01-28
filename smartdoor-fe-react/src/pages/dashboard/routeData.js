@@ -141,6 +141,7 @@ const SDKitDetails = React.lazy(() => import('./SmartdoorKit/KitDetails/KitDetai
 const PreconfiguredDevices = React.lazy(() => import('./PreConfiguredDevices/PreconfiguredDevices'))
 const ReturnRequests = React.lazy(() => import('./ReturnRequestsDashboard/ReturnRequests'))
 const CameraDashboard = React.lazy(() => import('./CameraModule/CameraDashboard/CameraDashboard'))
+const SmartlockDashboard = React.lazy(() => import('./SmartlockModule/SmartlockDashboard'))
 
 // Routing data
 const routeData = [
@@ -1417,6 +1418,14 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: CameraDashboard
+  }, 
+  
+  {
+    path: '/admin/smartlock-dashboard',
+    name: 'Smartlock Dashboard',
+    bradcrumb: false,
+    excat: true,
+    component: SmartlockDashboard
   }, 
   
   // {

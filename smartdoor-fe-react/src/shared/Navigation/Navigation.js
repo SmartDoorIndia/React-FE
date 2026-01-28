@@ -511,6 +511,18 @@ const Nav = () => {
                            />
                            Camera Dashboard
                         </Link>
+                        <Link
+                           to="/admin/smartlock-dashboard"
+                           className={`nav-link ${
+                              pathname.includes("/admin/smartlock-dashboard") ? "nav-active" : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/smartlock-dashboard") ? borkerIcon : dashboard}
+                           />
+                           Smartlock Dashboard
+                        </Link>
                      </>
                   )}
                   {(userData.roleName === "SUPER ADMIN" ||
