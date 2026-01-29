@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
-import { ToolTip } from "../../../../common/helpers/Utils";
+import { showErrorToast, showSuccessToast, ToolTip } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import "./CameraDashboard.scss";
 import { Form } from "react-bootstrap";
@@ -16,6 +16,7 @@ import {
    getCameraDashboardList,
    getCameraTypes,
    getCorporateById,
+   updateCameraStatus,
 } from "../../../../common/redux/actions";
 import Input from "../../../../shared/Inputs/Input/Input";
 import { Checkbox, ListItemText, MenuItem, TextField } from "@mui/material";
@@ -46,7 +47,7 @@ const CameraDashboard = (props) => {
       cityIdList: null, //
       cameraType: cameraType, //
       cameraSubType: cameraSubType,
-      propertyId: Number(propertyIdText),
+      propertyId: propertyIdText,
       cameraId: cameraIdText,
       uuId: uuIdText,
       pageNumber: 1,
@@ -154,8 +155,8 @@ const CameraDashboard = (props) => {
          name: "Action",
          sortable: false,
          center: true,
-         maxWidth: "40px",
-         cell: ({ row, propertyId, postedById }) => (
+         minWidth: "340px",
+         cell: ({ id, status }) => (
             <div className="action">
                <ToolTip position="left" name="View Details">
                   <span>
@@ -169,6 +170,70 @@ const CameraDashboard = (props) => {
                      </Link>
                   </span>
                </ToolTip>
+               &nbsp;&nbsp;
+               {status !== "DEFECTIVE" && status !== "SOLD" ? (
+                  <>
+                     <Buttons
+                        name="Mark as Defective"
+                        variant="outline-danger"
+                        size="xSmall"
+                        onClick={async () => {
+                           await updateCameraStatus({
+                              cameraDeviceId: id,
+                              status: "DEFECTIVE",
+                           }).then((response) => {
+                              if (response?.status === 200) {
+                                 showSuccessToast("Camera marked as defective successfully...");
+                                 getCameraDashboardList({
+                                    deviceStatus: deviceStatus, // preconfig , install ,sold //
+                                    corporateId: selectedCorporate, //
+                                    cityIdList: cityIdList, //
+                                    cameraType: cameraType, //
+                                    cameraSubType: cameraSubType,
+                                    propertyId: propertyIdText,
+                                    cameraId: cameraIdText,
+                                    uuId: uuIdText,
+                                    pageNumber: currentPage,
+                                    pageSize: rowsPerPage,
+                                 });
+                              } else {
+                                 showErrorToast(response?.data?.message);
+                              }
+                           });
+                        }}
+                     />
+                     &nbsp;&nbsp;
+                     <Buttons
+                        name="Mark as Sold"
+                        variant="outline-danger"
+                        size="xSmall"
+                        onClick={async () => {
+                           await updateCameraStatus({
+                              cameraDeviceId: id,
+                              status: "SOLD",
+                           }).then((response) => {
+                              if (response?.status === 200) {
+                                 showSuccessToast("Camera marked as sold successfully...");
+                                 getCameraDashboardList({
+                                    deviceStatus: deviceStatus, // preconfig , install ,sold //
+                                    corporateId: selectedCorporate, //
+                                    cityIdList: cityIdList, //
+                                    cameraType: cameraType, //
+                                    cameraSubType: cameraSubType,
+                                    propertyId: propertyIdText,
+                                    cameraId: cameraIdText,
+                                    uuId: uuIdText,
+                                    pageNumber: currentPage,
+                                    pageSize: rowsPerPage,
+                                 });
+                              } else {
+                                 showErrorToast(response?.data?.message);
+                              }
+                           });
+                        }}
+                     />
+                  </>
+               ) : null}
             </div>
          ),
       },
@@ -189,10 +254,10 @@ const CameraDashboard = (props) => {
       getCameraDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
-         cityIdList: null, //
+         cityIdList: cityIdList, //
          cameraType: cameraType, //
          cameraSubType: cameraSubType,
-         propertyId: Number(propertyIdText),
+         propertyId: propertyIdText,
          cameraId: cameraIdText,
          uuId: uuIdText,
          pageNumber: newPage,
@@ -204,10 +269,10 @@ const CameraDashboard = (props) => {
       getCameraDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
-         cityIdList: null, //
+         cityIdList: cityIdList, //
          cameraType: cameraType, //
          cameraSubType: cameraSubType,
-         propertyId: Number(propertyIdText),
+         propertyId: propertyIdText,
          cameraId: cameraIdText,
          uuId: uuIdText,
          pageNumber: currentPage,
@@ -263,10 +328,10 @@ const CameraDashboard = (props) => {
       getCameraDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
-         cityIdList: null, //
+         cityIdList: cityIdList, //
          cameraType: cameraType, //
          cameraSubType: cameraSubType,
-         propertyId: Number(propertyIdText),
+         propertyId: propertyIdText,
          cameraId: cameraIdText,
          uuId: uuIdText,
          pageNumber: currentPage,
@@ -465,7 +530,8 @@ const CameraDashboard = (props) => {
                               />
                            </MenuItem>
                         ))}
-                     </TextField> &nbsp;&nbsp;
+                     </TextField>{" "}
+                     &nbsp;&nbsp;
                      <TextField
                         hiddenLabel
                         size="small"
@@ -534,10 +600,7 @@ const CameraDashboard = (props) => {
                      >
                         {allCitiesWithId?.data?.map((city, index) => (
                            <MenuItem key={index} value={city.cityId} sx={{ height: 32 }}>
-                              <Checkbox
-                                 size="small"
-                                 checked={cityIdList.includes(city.cityId)}
-                              />
+                              <Checkbox size="small" checked={cityIdList.includes(city.cityId)} />
                               <ListItemText
                                  primary={city.cityName}
                                  primaryTypographyProps={{ fontSize: "12px" }}
@@ -581,7 +644,6 @@ const CameraDashboard = (props) => {
                               : null}
                         </Form.Control>
                      </Form.Group>{" "}
-                     
                      <div className="ml-3">
                         <Buttons
                            name="Search"
@@ -593,10 +655,10 @@ const CameraDashboard = (props) => {
                               getCameraDashboardList({
                                  deviceStatus: deviceStatus, // preconfig , install ,sold //
                                  corporateId: selectedCorporate, //
-                                 cityIdList: null, //
+                                 cityIdList: cityIdList, //
                                  cameraType: cameraType, //
                                  cameraSubType: cameraSubType,
-                                 propertyId: Number(propertyIdText),
+                                 propertyId: propertyIdText,
                                  cameraId: cameraIdText,
                                  uuId: uuIdText,
                                  pageNumber: currentPage,

@@ -2,13 +2,19 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
-import { ToolTip } from "../../../common/helpers/Utils";
+import { showErrorToast, showSuccessToast, ToolTip } from "../../../common/helpers/Utils";
 import Text from "../../../shared/Text/Text";
 import Image from "../../../shared/Image";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import { TableLoader } from "../../../common/helpers/Loader";
 import Pagination from "../../../shared/DataTable/Pagination";
-import { getAllCityWithId, getCorporateById, getSmartlockDashboardList } from "../../../common/redux/actions";
+import {
+   getAllCityWithId,
+   getCorporateById,
+   getSmartlockDashboardList,
+   updateCameraStatus,
+   updateSmartlockStatus,
+} from "../../../common/redux/actions";
 import Input from "../../../shared/Inputs/Input/Input";
 import { Form } from "react-bootstrap";
 import { Checkbox, ListItemText, MenuItem, TextField } from "@mui/material";
@@ -17,6 +23,7 @@ import { compose } from "redux";
 import Buttons from "../../../shared/Buttons/Buttons";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import contentIcon from "../../../assets/images/content-ico.png";
+import "./SmartlockDashboard.scss";
 
 const SmartlockDashboard = (props) => {
    const { allCitiesWithId, getAllCityWithId, smartlockList, getSmartlockDashboardList } = props;
@@ -36,7 +43,7 @@ const SmartlockDashboard = (props) => {
       corporateId: selectedCorporate, //
       cityIdList: null, //
       smartlockType: smartlockType,
-      propertyId: Number(propertyIdText),
+      propertyId: propertyIdText,
       smartlockId: smartlockIdText,
       pageNumber: 1,
       pageSize: 8,
@@ -46,13 +53,13 @@ const SmartlockDashboard = (props) => {
    const smartlockColumns = [
       {
          name: "Id",
-         selector: (row) => row.smartlockDeviceId,
+         selector: (row) => row.id,
          sortable: true,
          center: false,
          maxWidth: "150px",
-         cell: ({ smartlockDeviceId }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={smartlockDeviceId}>
-               <Text size="Small" color="secondryColor elipsis-text" text={smartlockDeviceId} />
+         cell: ({ id }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={id}>
+               <Text size="Small" color="secondryColor elipsis-text" text={id} />
             </ToolTip>
          ),
          id: 1,
@@ -62,26 +69,26 @@ const SmartlockDashboard = (props) => {
          selector: (row) => row.smartlockType,
          sortable: true,
          center: true,
-         minWidth: "150px",
+         minWidth: "250px",
          cell: ({ smartlockType }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={smartlockType}>
-               <Text size="Small" color="secondryColor elipsis-text" text={smartlockType} />
+               <Text size="Small" color="secondryColor elipsis-text" text={smartlockType || "-"} />
             </ToolTip>
          ),
          id: 2,
       },
       {
          name: "Battery",
-         selector: (row) => row.battery,
+         selector: (row) => row.batteryPercentage,
          sortable: true,
          center: true,
          maxWidth: "80px",
-         cell: ({ battery }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={battery}>
+         cell: ({ batteryPercentage }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={batteryPercentage}>
                <Text
                   size="Small"
                   color="secondryColor elipsis-text"
-                  text={battery ? battery + "%" : "-"}
+                  text={batteryPercentage ? batteryPercentage + "%" : "-"}
                />
             </ToolTip>
          ),
@@ -117,8 +124,8 @@ const SmartlockDashboard = (props) => {
          name: "Action",
          sortable: false,
          center: true,
-         maxWidth: "40px",
-         cell: ({ row, propertyId, postedById }) => (
+         minWidth: "340px",
+         cell: ({ id, status }) => (
             <div className="action">
                <ToolTip position="left" name="View Details">
                   <span>
@@ -132,6 +139,66 @@ const SmartlockDashboard = (props) => {
                      </Link>
                   </span>
                </ToolTip>
+               &nbsp;&nbsp;
+               {status !== "DEFECTIVE" && status !== "SOLD" ? (
+                  <>
+                     <Buttons
+                        name="Mark as Defective"
+                        variant="outline-danger"
+                        size="xSmall"
+                        onClick={async () => {
+                           await updateSmartlockStatus({
+                              lockId: id,
+                              status: "DEFECTIVE",
+                           }).then((response) => {
+                              if (response?.status === 200) {
+                                 showSuccessToast("Smartlock marked as defective successfully...");
+                                 getSmartlockDashboardList({
+                                    deviceStatus: deviceStatus, // preconfig , install ,sold //
+                                    corporateId: selectedCorporate, //
+                                    cityIdList: cityIdList, //
+                                    smartlockType: smartlockType, //
+                                    propertyId: propertyIdText,
+                                    smartlockId: smartlockIdText,
+                                    pageNumber: currentPage,
+                                    pageSize: rowsPerPage,
+                                 });
+                              } else {
+                                 showErrorToast(response?.data?.message);
+                              }
+                           });
+                        }}
+                     />
+                     &nbsp;&nbsp;
+                     <Buttons
+                        name="Mark as Sold"
+                        variant="outline-danger"
+                        size="xSmall"
+                        onClick={async () => {
+                           await updateSmartlockStatus({
+                              lockId: id,
+                              status: "SOLD",
+                           }).then((response) => {
+                              if (response?.status === 200) {
+                                 showSuccessToast("Smartlock marked as sold successfully...");
+                                 getSmartlockDashboardList({
+                                    deviceStatus: deviceStatus, // preconfig , install ,sold //
+                                    corporateId: selectedCorporate, //
+                                    cityIdList: cityIdList, //
+                                    smartlockType: smartlockType, //
+                                    propertyId: propertyIdText,
+                                    smartlockId: smartlockIdText,
+                                    pageNumber: currentPage,
+                                    pageSize: rowsPerPage,
+                                 });
+                              } else {
+                                 showErrorToast(response?.data?.message);
+                              }
+                           });
+                        }}
+                     />
+                  </>
+               ) : null}
             </div>
          ),
       },
@@ -152,9 +219,9 @@ const SmartlockDashboard = (props) => {
       getSmartlockDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
-         cityIdList: null, //
+         cityIdList: cityIdList, //
          smartlockType: smartlockType, //
-         propertyId: Number(propertyIdText),
+         propertyId: propertyIdText,
          smartlockId: smartlockIdText,
          pageNumber: newPage,
          pageSize: rowsPerPage,
@@ -165,9 +232,9 @@ const SmartlockDashboard = (props) => {
       getSmartlockDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
-         cityIdList: null, //
+         cityIdList: cityIdList, //
          smartlockType: smartlockType, //
-         propertyId: Number(propertyIdText),
+         propertyId: propertyIdText,
          smartlockId: smartlockIdText,
          pageNumber: currentPage,
          pageSize: newRowsPerPage,
@@ -214,9 +281,9 @@ const SmartlockDashboard = (props) => {
       getSmartlockDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
-         cityIdList: null, //
+         cityIdList: cityIdList, //
          smartlockType: smartlockType, //
-         propertyId: Number(propertyIdText),
+         propertyId: propertyIdText,
          smartlockId: smartlockIdText,
          pageNumber: currentPage,
          pageSize: rowsPerPage,
@@ -492,9 +559,9 @@ const SmartlockDashboard = (props) => {
                               getSmartlockDashboardList({
                                  deviceStatus: deviceStatus, // preconfig , install ,sold //
                                  corporateId: selectedCorporate, //
-                                 cityIdList: null, //
+                                 cityIdList: cityIdList, //
                                  smartlockType: smartlockType, //
-                                 propertyId: Number(propertyIdText),
+                                 propertyId: propertyIdText,
                                  smartlockId: smartlockIdText,
                                  pageNumber: currentPage,
                                  pageSize: rowsPerPage,
@@ -527,7 +594,10 @@ const SmartlockDashboard = (props) => {
    );
 };
 
-const mapStateToProps = ({ allCitiesWithId, smartlockList }) => ({ allCitiesWithId, smartlockList });
+const mapStateToProps = ({ allCitiesWithId, smartlockList }) => ({
+   allCitiesWithId,
+   smartlockList,
+});
 
 const actions = {
    getAllCityWithId,
