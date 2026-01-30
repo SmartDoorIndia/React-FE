@@ -1397,7 +1397,8 @@ const PropertyDetails = (props) => {
 
                               <div className="d-flex mt-2">
                                  {propertyData.miscellaneousDetails?.smartLockProperty === true &&
-                                 propertyData?.miscellaneousDetails?.deleted === false &&
+                                 propertyData?.miscellaneousDetails?.deleted === false && 
+                                 propertyData.miscellaneousDetails.status !== "UNDER REVIEW" &&
                                  userData.roleName === "SUPER ADMIN" ? (
                                     <>
                                        <Buttons

@@ -33,6 +33,12 @@ const PreconfiguredDevices = () => {
    const [showLiveStream, setShowLiveStream] = useState(false);
    const [cameraTypeList, setCameraTypeList] = useState([]);
    const [selectedCameraType, setSelectedCameraType] = useState([]);
+   const [confirmDeleteModalFlag, setConfirmDeleteModalFlag] = useState(false);
+   const [selectedDevice, setSelectedDevice] = useState({
+      deviceType: "",
+      deviceId: null,
+      actionType: "Delete",
+   })
    let liveStremUrl = "";
 
    const qrGenerator = (slData) => {
@@ -138,25 +144,10 @@ const PreconfiguredDevices = () => {
          width: "400px",
          cell: ({ cameraDeviceId, type, status }) => (
             <>
-               <Buttons
-                  name="Delete"
-                  variant="outline-danger"
-                  size="xSmall"
-                  onClick={() => {
-                     if (window.confirm(`Are you sure you want to delete ${type} camera?`)) {
-                        restoreOrDeleteDevice({
-                           deviceType: "Camera",
-                           deviceId: cameraDeviceId,
-                           actionType: "Delete",
-                        }).then((response) => {
-                           if (response?.status === 200) {
-                              showSuccessToast("Camera deleted successfully");
-                              fetchDeviceIdList();
-                           }
-                        });
-                     }
-                  }}
-               />{" "}
+               <Buttons name="Delete" variant="outline-danger" size="xSmall" onClick={() => {
+                  setSelectedDevice({deviceType: 'Camera', deviceId: cameraDeviceId, actionType: 'Delete'});
+                  setConfirmDeleteModalFlag(true)
+               }} />{" "}
                &nbsp;&nbsp;
                {status === "PRECONFIGURED_DEVICE" ? (
                   <>
@@ -317,16 +308,18 @@ const PreconfiguredDevices = () => {
                   onClick={() => {
                      // if (window.confirm(`Are you sure you want to delete smartlock ${lockId}?`)) {
                      // }
-                     restoreOrDeleteDevice({
-                        deviceType: "Smartlock",
-                        deviceId: id,
-                        actionType: "Delete",
-                     }).then((response) => {
-                        if (response?.status === 200) {
-                           showSuccessToast("Smartlock deleted successfully");
-                           fetchDeviceIdList();
-                        }
-                     });
+                     // restoreOrDeleteDevice({
+                     //    deviceType: "Smartlock",
+                     //    deviceId: id,
+                     //    actionType: "Delete",
+                     // }).then((response) => {
+                     //    if (response?.status === 200) {
+                     //       showSuccessToast("Smartlock deleted successfully");
+                     //       fetchDeviceIdList();
+                     //    }
+                     // });
+                     setSelectedDevice({deviceType: 'Smartlock', deviceId: id, actionType: 'Delete'});
+                     setConfirmDeleteModalFlag(true)
                   }}
                />{" "}
                &nbsp;&nbsp;
@@ -342,7 +335,8 @@ const PreconfiguredDevices = () => {
                      });
                      setShowQrModal(true);
                   }}
-               />&nbsp;&nbsp;
+               />
+               &nbsp;&nbsp;
                {status === "PRECONFIGURED_DEVICE" ? (
                   <>
                      <Buttons
@@ -429,6 +423,19 @@ const PreconfiguredDevices = () => {
       getSmartlockStats();
       getCameraStats();
    }, []);
+
+   const handleDelete = () => {
+      restoreOrDeleteDevice({
+         deviceType: selectedDevice.deviceType,
+         deviceId: selectedDevice.deviceId,
+         actionType: selectedDevice.actionType,
+      }).then((response) => {
+         if (response?.status === 200) {
+            showSuccessToast(selectedDevice.deviceType + " deleted successfully");
+            fetchDeviceIdList();
+         }
+      });
+   };
 
    const StatCard = ({ value, label, color = "#BE1452" }) => (
       <Card className="stat-card h-100">
@@ -655,6 +662,59 @@ const PreconfiguredDevices = () => {
                      ) : null}
                   </>
                ) : null}
+            </Modal.Body>
+         </Modal>
+
+         <Modal
+            show={confirmDeleteModalFlag}
+            onHide={() => {
+               setConfirmDeleteModalFlag(false);
+            }}
+            centered
+         >
+            <Modal.Body>
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  size="small"
+                  varient="secondary"
+                  onClick={() => {
+                     setConfirmDeleteModalFlag(false);
+                  }}
+               ></Buttons>
+               <Text
+                  size="regular"
+                  fontWeight="bold"
+                  color="secondryColor"
+                  className="text-center mt-3"
+                  text={"Are you sure you want to delete this device?"}
+               />
+
+               <div className="d-flex justify-content-center mt-5 mb-3">
+                  <Buttons
+                     name="Cancel"
+                     varient="disable"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => {
+                        setConfirmDeleteModalFlag(false);
+                     }}
+                  />
+
+                  <Buttons
+                     name="Confirm"
+                     varient="primary"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => {
+                        handleDelete();
+                     }}
+                  />
+               </div>
             </Modal.Body>
          </Modal>
       </>

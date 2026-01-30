@@ -16,7 +16,7 @@ import {
    updateSmartlockStatus,
 } from "../../../common/redux/actions";
 import Input from "../../../shared/Inputs/Input/Input";
-import { Form } from "react-bootstrap";
+import { Card, Col, Form, Row } from "react-bootstrap";
 import { Checkbox, ListItemText, MenuItem, TextField } from "@mui/material";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -28,16 +28,16 @@ import "./SmartlockDashboard.scss";
 const SmartlockDashboard = (props) => {
    const { allCitiesWithId, getAllCityWithId, smartlockList, getSmartlockDashboardList } = props;
    const smartlockStatus = CONSTANTS_STATUS.smartlockStatus;
-   const [deviceStatus, setDeviceStatus] = useState([]);
-   const [propertyIdText, setPropertyIdText] = useState("");
-   const [smartlockIdText, setSmartlockIdText] = useState("");
+   const [deviceStatus, setDeviceStatus] = useState(smartlockList?.data?.deviceStatus || []);
+   const [propertyIdText, setPropertyIdText] = useState(smartlockList?.data?.propertyId || "");
+   const [smartlockIdText, setSmartlockIdText] = useState(smartlockList?.data?.smartlockId || "");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [corporateList, setCorporateList] = useState([]);
-   const [selectedCorporate, setSelectedCorporate] = useState([]);
+   const [selectedCorporate, setSelectedCorporate] = useState(smartlockList?.data?.corporateId || []);
    const [smartlockStats, setSmartlockStats] = useState({});
-   const [smartlockTypeList, setSmartlockTypeList] = useState([]);
-   const [smartlockType, setSmartlockType] = useState("");
-   const [cityIdList, setCityIdList] = useState([]);
+   const smartlockTypeList = CONSTANTS_STATUS.smartlockType;
+   const [smartlockType, setSmartlockType] = useState(smartlockList?.data?.smartlockType || "");
+   const [cityIdList, setCityIdList] = useState(smartlockList?.data?.cityIdList || []);
    const [smartlockListReqDto, setSmartlockListReqDto] = useState({
       deviceStatus: deviceStatus, // preconfig , install ,sold //
       corporateId: selectedCorporate, //
@@ -95,6 +95,19 @@ const SmartlockDashboard = (props) => {
          id: 3,
       },
       {
+         name: "Inventory",
+         selector: (row) => row.inventoryType,
+         sortable: true,
+         center: true,
+         minWidth: "200px",
+         cell: ({ inventoryType }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={inventoryType}>
+               <Text size="Small" color="secondryColor elipsis-text" text={inventoryType || "-"} />
+            </ToolTip>
+         ),
+         id: 4,
+      },
+      {
          name: "Status",
          selector: (row) => row.status,
          sortable: true,
@@ -105,7 +118,7 @@ const SmartlockDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={status} />
             </ToolTip>
          ),
-         id: 4,
+         id: 5,
       },
       {
          name: "PropertyId",
@@ -118,7 +131,7 @@ const SmartlockDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
             </ToolTip>
          ),
-         id: 5,
+         id: 6,
       },
       {
          name: "Action",
@@ -127,7 +140,7 @@ const SmartlockDashboard = (props) => {
          minWidth: "340px",
          cell: ({ id, status }) => (
             <div className="action">
-               <ToolTip position="left" name="View Details">
+               {/* <ToolTip position="left" name="View Details">
                   <span>
                      <Link
                         to={{
@@ -139,7 +152,7 @@ const SmartlockDashboard = (props) => {
                      </Link>
                   </span>
                </ToolTip>
-               &nbsp;&nbsp;
+               &nbsp;&nbsp; */}
                {status !== "DEFECTIVE" && status !== "SOLD" ? (
                   <>
                      <Buttons
@@ -204,6 +217,22 @@ const SmartlockDashboard = (props) => {
       },
    ];
 
+   const ALL_STATUSES = [
+      { status: "TOTAL", count: 0 },
+      { status: "PRECONFIGURED_DEVICE", count: 0 },
+      { status: "INSTALLED", count: 0 },
+      { status: "SOLD", count: 0 },
+      { status: "DEFECTIVE", count: 0 },
+   ];
+
+   const statusCounts = smartlockList?.data?.statusCounts || [];
+
+   const mergedStatusCounts = ALL_STATUSES.map((defaultStatus) => {
+      const found = statusCounts.find((item) => item.status === defaultStatus.status);
+
+      return found ? found : defaultStatus;
+   });
+
    const ProgressComponent = <TableLoader />;
    const [currentPage, setCurrentPage] = useState(
       smartlockList?.data?.length !== 0 ? smartlockList?.data?.currentPage : 1
@@ -211,7 +240,10 @@ const SmartlockDashboard = (props) => {
    const [rowsPerPage, setRowsPerPage] = useState(
       smartlockList?.data?.length !== 0 ? smartlockList?.data?.rowsPerPage : 8
    );
-   const recordSize = smartlockList?.data?.records || 0;
+   const recordSize =
+      smartlockList?.data?.statusCounts !== undefined
+         ? smartlockList?.data?.statusCounts[0]?.count
+         : 0;
    let recordsPerPage = 0;
    recordsPerPage = smartlockList?.data?.rowsPerPage;
 
@@ -346,15 +378,32 @@ const SmartlockDashboard = (props) => {
       );
    }, [smartlockIdText, resetPaginationToggle]);
 
+   const StatCard = ({ value, label, color = "#BE1452" }) => (
+      <Card className="stat-card h-100">
+         <Card.Body className="text-center p-3">
+            <Text
+               text={value || 0}
+               className="stat-value"
+               style={{ color, fontSize: "28px", fontWeight: "700" }}
+            />
+            <Text
+               text={label}
+               className="stat-label"
+               style={{ color: "#6c757d", fontSize: "14px", fontWeight: "500" }}
+            />
+         </Card.Body>
+      </Card>
+   );
+
    return (
       <>
-         <div className="tableBox ">
+         <div className="tableBox " style={{overflowX: 'hidden'}}>
             <div className="align-items-center tableHeading">
                <div className="justify-content-between">
                   <div className="locationSelect justify-content-end mb-2">
                      {propertyIdBox}
                      {smartlockIdBox}
-                     <Form.Group controlId="exampleForm.SelectCustom">
+                     {/* <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
                            as="select"
                            value={deviceStatus}
@@ -371,7 +420,83 @@ const SmartlockDashboard = (props) => {
                                 ))
                               : null}
                         </Form.Control>
-                     </Form.Group>
+                     </Form.Group> */}
+                     <TextField
+                        hiddenLabel
+                        size="small"
+                        className="form-control1"
+                        select
+                        placeholder="Select Status(s)"
+                        SelectProps={{
+                           multiple: true,
+                           displayEmpty: true,
+                           renderValue: (selected) =>
+                              selected.length
+                                 ? smartlockStatus
+                                      .filter((c) => selected.includes(c))
+                                      .map((c) => c)
+                                      .join(", ")
+                                 : "Select Status(s)",
+                        }}
+                        value={deviceStatus}
+                        onChange={(e) => setDeviceStatus(e.target.value)}
+                        variant="outlined"
+                        sx={{
+                           width: "30%",
+
+                           "&.MuiFormControl-root": {
+                              margin: 0,
+                              height: "fit-content",
+                           },
+
+                           "& .MuiFormHelperText-root": {
+                              display: "none",
+                           },
+                           "& .MuiOutlinedInput-root": {
+                              height: "30px",
+                              padding: "0 8px",
+                              borderRadius: "4px",
+                              backgroundColor: "#F8F3F5",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                              display: "flex",
+                              alignItems: "center",
+                              fontFamily: "inherit",
+                              color: "#495057",
+                              boxSizing: "border-box",
+                              "& fieldset": {
+                                 border: "1px solid #ced4da",
+                              },
+                           },
+                           "& .MuiOutlinedInput-notchedOutline": {
+                              border: "1px solid #ced4da",
+                           },
+                           "& .MuiSelect-select": {
+                              padding: "0 !important",
+                              height: "30px",
+                              display: "flex",
+                              alignItems: "center",
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
+                           },
+
+                           "& .MuiSelect-icon": {
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                           },
+                        }}
+                     >
+                        {smartlockStatus.map((status, index) => (
+                           <MenuItem key={index} value={status} sx={{ height: 32 }}>
+                              <Checkbox size="small" checked={deviceStatus.includes(status)} />
+                              <ListItemText
+                                 primary={status}
+                                 primaryTypographyProps={{ fontSize: "12px" }}
+                              />
+                           </MenuItem>
+                        ))}
+                     </TextField>
                   </div>
                   <div className="locationSelect d-flex">
                      <TextField
@@ -571,6 +696,18 @@ const SmartlockDashboard = (props) => {
                      </div>
                   </div>
                </div>
+               <Row className="g-3 mt-3">
+                  <hr />
+                  {smartlockList?.data?.statusCounts?.length > 0 ? (
+                     <>
+                        {mergedStatusCounts?.slice(1)?.map((item, index) => (
+                           <Col md={3} key={item.status}>
+                              <StatCard value={item.count} label={item.status} />
+                           </Col>
+                        ))}
+                     </>
+                  ) : null}
+               </Row>
             </div>
             <div className="smartlockTableWrapper">
                <DataTableComponent

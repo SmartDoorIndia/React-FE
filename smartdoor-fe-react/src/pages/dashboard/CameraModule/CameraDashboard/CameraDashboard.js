@@ -5,7 +5,7 @@ import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import { showErrorToast, showSuccessToast, ToolTip } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import "./CameraDashboard.scss";
-import { Form } from "react-bootstrap";
+import { Card, Col, Form, Row } from "react-bootstrap";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import Image from "../../../../shared/Image";
@@ -28,19 +28,19 @@ import { connect } from "react-redux";
 const CameraDashboard = (props) => {
    const { allCitiesWithId, getAllCityWithId, cameraList, getCameraDashboardList } = props;
    const cameraStatus = CONSTANTS_STATUS.cameraStatus;
-   const [deviceStatus, setDeviceStatus] = useState([]);
-   const [propertyIdText, setPropertyIdText] = useState("");
-   const [cameraIdText, setCameraIdText] = useState("");
-   const [uuIdText, setUUIdText] = useState("");
+   const [deviceStatus, setDeviceStatus] = useState(cameraList?.data?.deviceStatus || []);
+   const [propertyIdText, setPropertyIdText] = useState(cameraList?.data?.propertyId || "");
+   const [cameraIdText, setCameraIdText] = useState(cameraList?.data?.cameraId || "");
+   const [uuIdText, setUUIdText] = useState(cameraList?.data?.uuId || "");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [corporateList, setCorporateList] = useState([]);
-   const [selectedCorporate, setSelectedCorporate] = useState([]);
-   const [cameraStats, setCameraStats] = useState({});
+   const [selectedCorporate, setSelectedCorporate] = useState(cameraList?.data?.corporateId || []);
+   const [cameraStats, setCameraStats] = useState(cameraList?.data?.statusCounts || []);
    const [cameraTypeList, setCameraTypeList] = useState([]);
-   const [cameraType, setCameraType] = useState("");
+   const [cameraType, setCameraType] = useState(cameraList?.data?.cameraType || "");
    const [cameraSubTypeList, setCameraSubTypeList] = useState([]);
-   const [cameraSubType, setCameraSubType] = useState("");
-   const [cityIdList, setCityIdList] = useState([]);
+   const [cameraSubType, setCameraSubType] = useState(cameraList?.data?.cameraSubType || "");
+   const [cityIdList, setCityIdList] = useState(cameraList?.data?.cityIdList || []);
    const [cameraListReqDto, setCameraListReqDto] = useState({
       deviceStatus: deviceStatus, // preconfig , install ,sold //
       corporateId: selectedCorporate, //
@@ -139,6 +139,19 @@ const CameraDashboard = (props) => {
          id: 6,
       },
       {
+         name: "Inventory",
+         selector: (row) => row.inventoryType,
+         sortable: true,
+         center: true,
+         minWidth: "200px",
+         cell: ({ inventoryType }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={inventoryType}>
+               <Text size="Small" color="secondryColor elipsis-text" text={inventoryType || "-"} />
+            </ToolTip>
+         ),
+         id: 7,
+      },
+      {
          name: "PropertyId",
          selector: (row) => row.propertyId,
          sortable: true,
@@ -149,7 +162,7 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
             </ToolTip>
          ),
-         id: 7,
+         id: 8,
       },
       {
          name: "Action",
@@ -158,7 +171,7 @@ const CameraDashboard = (props) => {
          minWidth: "340px",
          cell: ({ id, status }) => (
             <div className="action">
-               <ToolTip position="left" name="View Details">
+               {/* <ToolTip position="left" name="View Details">
                   <span>
                      <Link
                         to={{
@@ -170,7 +183,7 @@ const CameraDashboard = (props) => {
                      </Link>
                   </span>
                </ToolTip>
-               &nbsp;&nbsp;
+               &nbsp;&nbsp; */}
                {status !== "DEFECTIVE" && status !== "SOLD" ? (
                   <>
                      <Buttons
@@ -239,6 +252,22 @@ const CameraDashboard = (props) => {
       },
    ];
 
+   const ALL_STATUSES = [
+      { status: "TOTAL", count: 0 },
+      { status: "PRECONFIGURED_DEVICE", count: 0 },
+      { status: "INSTALLED", count: 0 },
+      { status: "SOLD", count: 0 },
+      { status: "DEFECTIVE", count: 0 },
+   ];
+
+   const statusCounts = cameraList?.data?.statusCounts || [];
+
+   const mergedStatusCounts = ALL_STATUSES.map((defaultStatus) => {
+      const found = statusCounts.find((item) => item.status === defaultStatus.status);
+
+      return found ? found : defaultStatus;
+   });
+
    const ProgressComponent = <TableLoader />;
    const [currentPage, setCurrentPage] = useState(
       cameraList?.data?.length !== 0 ? cameraList?.data?.currentPage : 1
@@ -246,7 +275,10 @@ const CameraDashboard = (props) => {
    const [rowsPerPage, setRowsPerPage] = useState(
       cameraList?.data?.length !== 0 ? cameraList?.data?.rowsPerPage : 8
    );
-   const recordSize = cameraList?.data?.records || 0;
+   const recordSize =
+      cameraList?.data?.statusCounts !== undefined ? cameraList?.data?.statusCounts[0]?.count : 0;
+   console.log(cameraList?.data?.statusCounts);
+   console.log(cameraList?.data);
    let recordsPerPage = 0;
    recordsPerPage = cameraList?.data?.rowsPerPage;
 
@@ -423,16 +455,33 @@ const CameraDashboard = (props) => {
       );
    }, [uuIdText, resetPaginationToggle]);
 
+   const StatCard = ({ value, label, color = "#BE1452" }) => (
+      <Card className="stat-card h-100">
+         <Card.Body className="text-center p-3">
+            <Text
+               text={value || 0}
+               className="stat-value"
+               style={{ color, fontSize: "28px", fontWeight: "700" }}
+            />
+            <Text
+               text={label}
+               className="stat-label"
+               style={{ color: "#6c757d", fontSize: "14px", fontWeight: "500" }}
+            />
+         </Card.Body>
+      </Card>
+   );
+
    return (
       <>
-         <div className="tableBox ">
+         <div className="tableBox " style={{overflowX: 'hidden'}}>
             <div className="align-items-center tableHeading">
                <div className="justify-content-between">
                   <div className="locationSelect justify-content-end mb-2">
                      {propertyIdBox}
                      {cameraIdBox}
                      {uuIdBox}
-                     <Form.Group controlId="exampleForm.SelectCustom">
+                     {/* <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
                            as="select"
                            value={deviceStatus}
@@ -449,7 +498,86 @@ const CameraDashboard = (props) => {
                                 ))
                               : null}
                         </Form.Control>
-                     </Form.Group>
+                     </Form.Group> */}
+                     <TextField
+                        hiddenLabel
+                        size="small"
+                        className="form-control1"
+                        select
+                        placeholder="Select Status(s)"
+                        SelectProps={{
+                           multiple: true,
+                           displayEmpty: true,
+                           renderValue: (selected) =>
+                              selected.length
+                                 ? cameraStatus
+                                      .filter((c) => selected.includes(c))
+                                      .map((c) => c)
+                                      .join(", ")
+                                 : "Select Status(s)",
+                        }}
+                        value={deviceStatus}
+                        onChange={(e) => setDeviceStatus(e.target.value)}
+                        variant="outlined"
+                        sx={{
+                           width: "30%",
+
+                           "&.MuiFormControl-root": {
+                              margin: 0,
+                              height: "fit-content",
+                           },
+
+                           "& .MuiFormHelperText-root": {
+                              display: "none",
+                           },
+                           "& .MuiOutlinedInput-root": {
+                              height: "30px",
+                              padding: "0 8px",
+                              borderRadius: "4px",
+                              backgroundColor: "#F8F3F5",
+                              fontSize: "12px",
+                              fontWeight: 600,
+                              display: "flex",
+                              alignItems: "center",
+                              fontFamily: "inherit",
+                              color: "#495057",
+                              boxSizing: "border-box",
+                              "& fieldset": {
+                                 border: "1px solid #ced4da",
+                              },
+                           },
+                           "& .MuiOutlinedInput-notchedOutline": {
+                              border: "1px solid #ced4da",
+                           },
+                           "& .MuiSelect-select": {
+                              padding: "0 !important",
+                              height: "30px",
+                              display: "flex",
+                              alignItems: "center",
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
+                           },
+
+                           "& .MuiSelect-icon": {
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                           },
+                        }}
+                     >
+                        {cameraStatus.map((status, index) => (
+                           <MenuItem key={index} value={status} sx={{ height: 32 }}>
+                              <Checkbox
+                                 size="small"
+                                 checked={deviceStatus.includes(status)}
+                              />
+                              <ListItemText
+                                 primary={status}
+                                 primaryTypographyProps={{ fontSize: "12px" }}
+                              />
+                           </MenuItem>
+                        ))}
+                     </TextField>
                   </div>
                   <div className="locationSelect d-flex">
                      <TextField
@@ -669,6 +797,18 @@ const CameraDashboard = (props) => {
                      </div>
                   </div>
                </div>
+               <Row className="g-3 mt-3">
+                  <hr/>
+                  {cameraList?.data?.statusCounts?.length > 0 ? (
+                     <>
+                        {mergedStatusCounts?.slice(1)?.map((item, index) => (
+                           <Col md={3} key={item.status}>
+                              <StatCard value={item.count} label={item.status} />
+                           </Col>
+                        ))}
+                     </>
+                  ) : null}
+               </Row>
             </div>
             <div className="cameraTableWrapper">
                <DataTableComponent
