@@ -742,6 +742,7 @@ const CameraDashboard = (props) => {
                            value={cameraType}
                            onChange={(e) => {
                               setCameraType(e.target.value);
+                              setCameraSubType("");
                            }}
                         >
                            <option value="">Select Type</option>
