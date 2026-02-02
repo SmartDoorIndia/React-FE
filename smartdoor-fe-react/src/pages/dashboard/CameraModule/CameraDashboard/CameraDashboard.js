@@ -139,6 +139,39 @@ const CameraDashboard = (props) => {
          id: 6,
       },
       {
+         name: "Online/Offline",
+         // selector: (row) => row.status,
+         sortable: true,
+         center: true,
+         minWidth: "200px",
+         cell: ({ battery, lastBatteryCheckDate }) => {
+            const lastBatteryDate = new Date(lastBatteryCheckDate);
+
+            const todayMidnight = new Date();
+            todayMidnight.setHours(0, 0, 0, 0);
+
+            let isOffline = (battery === 0 || battery === null) && lastBatteryDate > todayMidnight;
+            if (lastBatteryCheckDate === null && (battery === 0 || battery === null)) {
+               isOffline = true;
+            }
+
+            return (
+               <ToolTip
+                  position="top"
+                  style={{ width: "100%" }}
+                  name={isOffline ? "Offline" : "Online"}
+               >
+                  <Text
+                     size="Small"
+                     color="secondryColor elipsis-text"
+                     text={isOffline ? "Offline" : "Online"}
+                  />
+               </ToolTip>
+            );
+         },
+         id: 7,
+      },
+      {
          name: "Inventory",
          selector: (row) => row.inventoryType,
          sortable: true,
@@ -149,7 +182,20 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={inventoryType || "-"} />
             </ToolTip>
          ),
-         id: 7,
+         id: 8,
+      },
+      {
+         name: "City",
+         selector: (row) => row.city,
+         sortable: false,
+         center: true,
+         minWidth: "200px",
+         cell: ({ city }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={city}>
+               <Text size="Small" color="secondryColor elipsis-text" text={city || "-"} />
+            </ToolTip>
+         ),
+         id: 9,
       },
       {
          name: "PropertyId",
@@ -162,14 +208,14 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
             </ToolTip>
          ),
-         id: 8,
+         id: 10,
       },
       {
          name: "Action",
          sortable: false,
          center: true,
          minWidth: "340px",
-         cell: ({ id, status }) => (
+         cell: ({ cameraDeviceId, status, propertyId }) => (
             <div className="action">
                {/* <ToolTip position="left" name="View Details">
                   <span>
@@ -184,7 +230,7 @@ const CameraDashboard = (props) => {
                   </span>
                </ToolTip>
                &nbsp;&nbsp; */}
-               {status !== "DEFECTIVE" && status !== "SOLD" ? (
+               {/* {status !== "DEFECTIVE" && status !== "SOLD" ? (
                   <>
                      <Buttons
                         name="Mark as Defective"
@@ -192,7 +238,7 @@ const CameraDashboard = (props) => {
                         size="xSmall"
                         onClick={async () => {
                            await updateCameraStatus({
-                              cameraDeviceId: id,
+                              cameraDeviceId: cameraDeviceId,
                               status: "DEFECTIVE",
                            }).then((response) => {
                               if (response?.status === 200) {
@@ -222,7 +268,7 @@ const CameraDashboard = (props) => {
                         size="xSmall"
                         onClick={async () => {
                            await updateCameraStatus({
-                              cameraDeviceId: id,
+                              cameraDeviceId: cameraDeviceId,
                               status: "SOLD",
                            }).then((response) => {
                               if (response?.status === 200) {
@@ -246,7 +292,77 @@ const CameraDashboard = (props) => {
                         }}
                      />
                   </>
-               ) : null}
+               ) : null} */}
+               <div className="locationSelect">
+                  <>
+                     <style>
+                        {`
+                              .mark-status-select {
+                                 background: #f0f0f0;
+                                 border: 1px solid #ccc;
+                                 font-weight: 600;
+                                 font-size: 12px;
+                                 border-radius: 4px;
+                                 height: 30px;
+                                 box-shadow: none;
+                                 padding-top: 4px;
+                              }
+                           `}
+                     </style>
+
+                     <Form.Group controlId="exampleForm.SelectCustom">
+                        <Form.Control
+                           as="select"
+                           className="mark-status-select"
+                           value={deviceStatus}
+                           onChange={async (e) => {
+                              if (propertyId !== null) {
+                                 showErrorToast(
+                                    "You cannot change status as Camera is installed on property."
+                                 );
+                                 return null;
+                              } else {
+                                 await updateCameraStatus({
+                                    cameraDeviceId: cameraDeviceId,
+                                    status: e.target.value,
+                                 }).then((response) => {
+                                    if (response?.status === 200) {
+                                       showSuccessToast(
+                                          "Camera marked as " + e.target.value + " successfully..."
+                                       );
+                                       getCameraDashboardList({
+                                          deviceStatus: [], // preconfig , install ,sold //
+                                          corporateId: selectedCorporate, //
+                                          cityIdList: cityIdList, //
+                                          cameraType: cameraType, //
+                                          cameraSubType: cameraSubType,
+                                          propertyId: propertyIdText,
+                                          cameraId: cameraIdText,
+                                          uuId: uuIdText,
+                                          pageNumber: currentPage,
+                                          pageSize: rowsPerPage,
+                                       });
+                                    } else {
+                                       showErrorToast(response?.data?.message);
+                                    }
+                                 });
+                              }
+                           }}
+                        >
+                           <option value="">Mark as</option>
+                           {cameraStatus
+                              ?.filter((s) => status !== s)
+                              ?.map((status) => (
+                                 <option key={status} value={status}>
+                                    {status}
+                                 </option>
+                              ))}
+                        </Form.Control>
+                     </Form.Group>
+                  </>
+               </div>
+               {/* {status === "DEFECTIVE" || status === "SOLD" ? (
+               ) : null} */}
             </div>
          ),
       },
@@ -260,12 +376,14 @@ const CameraDashboard = (props) => {
       { status: "DEFECTIVE", count: 0 },
    ];
 
-   const statusCounts = cameraList?.data?.statusCounts || [];
+   const statusCounts = Array.isArray(cameraList?.data?.statusCounts)
+      ? cameraList.data.statusCounts
+      : [];
 
    const mergedStatusCounts = ALL_STATUSES.map((defaultStatus) => {
       const found = statusCounts.find((item) => item.status === defaultStatus.status);
 
-      return found ? found : defaultStatus;
+      return found ?? defaultStatus;
    });
 
    const ProgressComponent = <TableLoader />;
@@ -283,6 +401,7 @@ const CameraDashboard = (props) => {
    recordsPerPage = cameraList?.data?.rowsPerPage;
 
    const handlePageChange = (newPage) => {
+      setCurrentPage(newPage);
       getCameraDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
@@ -298,6 +417,7 @@ const CameraDashboard = (props) => {
    };
 
    const handleRowsPerPageChange = async (newRowsPerPage) => {
+      setRowsPerPage(newRowsPerPage);
       getCameraDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
@@ -382,7 +502,7 @@ const CameraDashboard = (props) => {
       return (
          <Input
             id={"propertyId"}
-            placeholder={"Property id"}
+            placeholder={"Search Property id"}
             type={"number"}
             value={propertyIdText}
             onInput={(e) => {
@@ -393,7 +513,7 @@ const CameraDashboard = (props) => {
                handleClear();
             }}
             filterText={propertyIdText}
-            showSearch={true}
+            showSearch={false}
             margin={50}
          />
       );
@@ -410,7 +530,7 @@ const CameraDashboard = (props) => {
       return (
          <Input
             id={"cameraId"}
-            placeholder={"Camera id"}
+            placeholder={"Search Camera id"}
             type={"number"}
             value={cameraIdText}
             onInput={(e) => {
@@ -421,7 +541,7 @@ const CameraDashboard = (props) => {
                handleClear();
             }}
             filterText={cameraIdText}
-            showSearch={true}
+            showSearch={false}
             margin={70}
          />
       );
@@ -438,7 +558,7 @@ const CameraDashboard = (props) => {
       return (
          <Input
             id={"uuIdText"}
-            placeholder={"UUID"}
+            placeholder={"Search UUID"}
             type={"text"}
             value={uuIdText}
             onInput={(e) => {
@@ -449,7 +569,7 @@ const CameraDashboard = (props) => {
                handleClear();
             }}
             filterText={uuIdText}
-            showSearch={true}
+            showSearch={false}
             margin={70}
          />
       );
@@ -474,7 +594,7 @@ const CameraDashboard = (props) => {
 
    return (
       <>
-         <div className="tableBox " style={{overflowX: 'hidden'}}>
+         <div className="tableBox " style={{ overflowX: "hidden" }}>
             <div className="align-items-center tableHeading">
                <div className="justify-content-between">
                   <div className="locationSelect justify-content-end mb-2">
@@ -508,13 +628,20 @@ const CameraDashboard = (props) => {
                         SelectProps={{
                            multiple: true,
                            displayEmpty: true,
-                           renderValue: (selected) =>
-                              selected.length
+                           renderValue: (selected) => {
+                              const text = selected.length
                                  ? cameraStatus
-                                      .filter((c) => selected.includes(c))
-                                      .map((c) => c)
+                                      .filter((s) => selected.includes(s))
+                                      .map((s) => s)
                                       .join(", ")
-                                 : "Select Status(s)",
+                                 : "Select Status(s)";
+
+                              return React.createElement(
+                                 "span",
+                                 { className: "select-ellipsis" },
+                                 text
+                              );
+                           },
                         }}
                         value={deviceStatus}
                         onChange={(e) => setDeviceStatus(e.target.value)}
@@ -563,14 +690,18 @@ const CameraDashboard = (props) => {
                               top: "50%",
                               transform: "translateY(-50%)",
                            },
+                           "& .select-ellipsis": {
+                              display: "block",
+                              maxWidth: "calc(100% - 24px)", // 👈 icon width
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
+                           },
                         }}
                      >
                         {cameraStatus.map((status, index) => (
                            <MenuItem key={index} value={status} sx={{ height: 32 }}>
-                              <Checkbox
-                                 size="small"
-                                 checked={deviceStatus.includes(status)}
-                              />
+                              <Checkbox size="small" checked={deviceStatus.includes(status)} />
                               <ListItemText
                                  primary={status}
                                  primaryTypographyProps={{ fontSize: "12px" }}
@@ -589,13 +720,20 @@ const CameraDashboard = (props) => {
                         SelectProps={{
                            multiple: true,
                            displayEmpty: true,
-                           renderValue: (selected) =>
-                              selected.length
+                           renderValue: (selected) => {
+                              const text = selected.length
                                  ? corporateList
                                       .filter((c) => selected.includes(c.corporateId))
                                       .map((c) => c.companyName)
                                       .join(", ")
-                                 : "Select Corporate(s)",
+                                 : "Select Corporate(s)";
+
+                              return React.createElement(
+                                 "span",
+                                 { className: "select-ellipsis" },
+                                 text
+                              );
+                           },
                         }}
                         value={selectedCorporate}
                         onChange={(e) => setSelectedCorporate(e.target.value)}
@@ -631,7 +769,7 @@ const CameraDashboard = (props) => {
                               border: "1px solid #ced4da",
                            },
                            "& .MuiSelect-select": {
-                              padding: "0 !important",
+                              padding: "0 24px 0 0 !important",
                               height: "30px",
                               display: "flex",
                               alignItems: "center",
@@ -643,6 +781,13 @@ const CameraDashboard = (props) => {
                            "& .MuiSelect-icon": {
                               top: "50%",
                               transform: "translateY(-50%)",
+                           },
+                           "& .select-ellipsis": {
+                              display: "block",
+                              maxWidth: "calc(100% - 24px)", // 👈 icon width
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
                            },
                         }}
                      >
@@ -669,13 +814,19 @@ const CameraDashboard = (props) => {
                         SelectProps={{
                            multiple: true,
                            displayEmpty: true,
-                           renderValue: (selected) =>
-                              selected.length
+                           renderValue: (selected) => {
+                              const text = selected.length
                                  ? allCitiesWithId?.data
                                       .filter((c) => selected.includes(c.cityId))
                                       .map((c) => c.cityName)
                                       .join(", ")
-                                 : "Select City(s)",
+                                 : "Select City(s)";
+                              return React.createElement(
+                                 "span",
+                                 { className: "select-ellipsis" },
+                                 text
+                              );
+                           },
                         }}
                         value={cityIdList}
                         onChange={(e) => setCityIdList(e.target.value)}
@@ -723,6 +874,13 @@ const CameraDashboard = (props) => {
                            "& .MuiSelect-icon": {
                               top: "50%",
                               transform: "translateY(-50%)",
+                           },
+                           "& .select-ellipsis": {
+                              display: "block",
+                              maxWidth: "calc(100% - 24px)", // 👈 icon width
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
                            },
                         }}
                      >
@@ -790,7 +948,7 @@ const CameraDashboard = (props) => {
                                  propertyId: propertyIdText,
                                  cameraId: cameraIdText,
                                  uuId: uuIdText,
-                                 pageNumber: currentPage,
+                                 pageNumber: 1,
                                  pageSize: rowsPerPage,
                               });
                            }}
@@ -799,8 +957,8 @@ const CameraDashboard = (props) => {
                   </div>
                </div>
                <Row className="g-3 mt-3">
-                  <hr/>
-                  {cameraList?.data?.statusCounts?.length > 0 ? (
+                  <hr />
+                  {mergedStatusCounts?.length > 0 ? (
                      <>
                         {mergedStatusCounts?.slice(1)?.map((item, index) => (
                            <Col md={3} key={item.status}>

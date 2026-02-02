@@ -33,7 +33,9 @@ const SmartlockDashboard = (props) => {
    const [smartlockIdText, setSmartlockIdText] = useState(smartlockList?.data?.smartlockId || "");
    const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
    const [corporateList, setCorporateList] = useState([]);
-   const [selectedCorporate, setSelectedCorporate] = useState(smartlockList?.data?.corporateId || []);
+   const [selectedCorporate, setSelectedCorporate] = useState(
+      smartlockList?.data?.corporateId || []
+   );
    const [smartlockStats, setSmartlockStats] = useState({});
    const smartlockTypeList = CONSTANTS_STATUS.smartlockType;
    const [smartlockType, setSmartlockType] = useState(smartlockList?.data?.smartlockType || "");
@@ -108,6 +110,19 @@ const SmartlockDashboard = (props) => {
          id: 4,
       },
       {
+         name: "City",
+         selector: (row) => row.city,
+         sortable: false,
+         center: true,
+         minWidth: "200px",
+         cell: ({ city }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={city}>
+               <Text size="Small" color="secondryColor elipsis-text" text={city || "-"} />
+            </ToolTip>
+         ),
+         id: 5,
+      },
+      {
          name: "Status",
          selector: (row) => row.status,
          sortable: true,
@@ -118,7 +133,7 @@ const SmartlockDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={status} />
             </ToolTip>
          ),
-         id: 5,
+         id: 6,
       },
       {
          name: "PropertyId",
@@ -131,7 +146,7 @@ const SmartlockDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
             </ToolTip>
          ),
-         id: 6,
+         id: 7,
       },
       {
          name: "Action",
@@ -225,12 +240,14 @@ const SmartlockDashboard = (props) => {
       { status: "DEFECTIVE", count: 0 },
    ];
 
-   const statusCounts = smartlockList?.data?.statusCounts || [];
+   const statusCounts = Array.isArray(smartlockList?.data?.statusCounts)
+      ? smartlockList.data.statusCounts
+      : [];
 
    const mergedStatusCounts = ALL_STATUSES.map((defaultStatus) => {
       const found = statusCounts.find((item) => item.status === defaultStatus.status);
 
-      return found ? found : defaultStatus;
+      return found ?? defaultStatus;
    });
 
    const ProgressComponent = <TableLoader />;
@@ -248,6 +265,7 @@ const SmartlockDashboard = (props) => {
    recordsPerPage = smartlockList?.data?.rowsPerPage;
 
    const handlePageChange = (newPage) => {
+      setCurrentPage(newPage);
       getSmartlockDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
@@ -261,6 +279,7 @@ const SmartlockDashboard = (props) => {
    };
 
    const handleRowsPerPageChange = async (newRowsPerPage) => {
+      setRowsPerPage(newRowsPerPage);
       getSmartlockDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
@@ -333,7 +352,7 @@ const SmartlockDashboard = (props) => {
       return (
          <Input
             id={"propertyId"}
-            placeholder={"Property id"}
+            placeholder={"Search Property id"}
             type={"number"}
             value={propertyIdText}
             onInput={(e) => {
@@ -344,7 +363,7 @@ const SmartlockDashboard = (props) => {
                handleClear();
             }}
             filterText={propertyIdText}
-            showSearch={true}
+            showSearch={false}
             margin={50}
          />
       );
@@ -361,7 +380,7 @@ const SmartlockDashboard = (props) => {
       return (
          <Input
             id={"smartlockId"}
-            placeholder={"Smartlock id"}
+            placeholder={"Search Smartlock id"}
             type={"number"}
             value={smartlockIdText}
             onInput={(e) => {
@@ -372,7 +391,7 @@ const SmartlockDashboard = (props) => {
                handleClear();
             }}
             filterText={smartlockIdText}
-            showSearch={true}
+            showSearch={false}
             margin={70}
          />
       );
@@ -397,7 +416,7 @@ const SmartlockDashboard = (props) => {
 
    return (
       <>
-         <div className="tableBox " style={{overflowX: 'hidden'}}>
+         <div className="tableBox " style={{ overflowX: "hidden" }}>
             <div className="align-items-center tableHeading">
                <div className="justify-content-between">
                   <div className="locationSelect justify-content-end mb-2">
@@ -430,13 +449,20 @@ const SmartlockDashboard = (props) => {
                         SelectProps={{
                            multiple: true,
                            displayEmpty: true,
-                           renderValue: (selected) =>
-                              selected.length
+                           renderValue: (selected) => {
+                              const text = selected.length
                                  ? smartlockStatus
-                                      .filter((c) => selected.includes(c))
-                                      .map((c) => c)
+                                      .filter((s) => selected.includes(s))
+                                      .map((s) => s)
                                       .join(", ")
-                                 : "Select Status(s)",
+                                 : "Select Status(s)";
+
+                              return React.createElement(
+                                 "span",
+                                 { className: "select-ellipsis" },
+                                 text
+                              );
+                           },
                         }}
                         value={deviceStatus}
                         onChange={(e) => setDeviceStatus(e.target.value)}
@@ -485,6 +511,13 @@ const SmartlockDashboard = (props) => {
                               top: "50%",
                               transform: "translateY(-50%)",
                            },
+                           "& .select-ellipsis": {
+                              display: "block",
+                              maxWidth: "calc(100% - 24px)", // 👈 icon width
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
+                           },
                         }}
                      >
                         {smartlockStatus.map((status, index) => (
@@ -508,13 +541,20 @@ const SmartlockDashboard = (props) => {
                         SelectProps={{
                            multiple: true,
                            displayEmpty: true,
-                           renderValue: (selected) =>
-                              selected.length
+                           renderValue: (selected) => {
+                              const text = selected.length
                                  ? corporateList
                                       .filter((c) => selected.includes(c.corporateId))
                                       .map((c) => c.companyName)
                                       .join(", ")
-                                 : "Select Corporate(s)",
+                                 : "Select Corporate(s)";
+
+                              return React.createElement(
+                                 "span",
+                                 { className: "select-ellipsis" },
+                                 text
+                              );
+                           },
                         }}
                         value={selectedCorporate}
                         onChange={(e) => setSelectedCorporate(e.target.value)}
@@ -563,6 +603,14 @@ const SmartlockDashboard = (props) => {
                               top: "50%",
                               transform: "translateY(-50%)",
                            },
+
+                           "& .select-ellipsis": {
+                              display: "block",
+                              maxWidth: "calc(100% - 24px)", // 👈 icon width
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
+                           },
                         }}
                      >
                         {corporateList.map((corporate, index) => (
@@ -588,13 +636,19 @@ const SmartlockDashboard = (props) => {
                         SelectProps={{
                            multiple: true,
                            displayEmpty: true,
-                           renderValue: (selected) =>
-                              selected.length
+                           renderValue: (selected) => {
+                              const text = selected.length
                                  ? allCitiesWithId?.data
                                       .filter((c) => selected.includes(c.cityId))
                                       .map((c) => c.cityName)
                                       .join(", ")
-                                 : "Select City(s)",
+                                 : "Select City(s)";
+                              return React.createElement(
+                                 "span",
+                                 { className: "select-ellipsis" },
+                                 text
+                              );
+                           },
                         }}
                         value={cityIdList}
                         onChange={(e) => setCityIdList(e.target.value)}
@@ -643,6 +697,14 @@ const SmartlockDashboard = (props) => {
                               top: "50%",
                               transform: "translateY(-50%)",
                            },
+
+                           "& .select-ellipsis": {
+                              display: "block",
+                              maxWidth: "calc(100% - 24px)", // 👈 icon width
+                              overflow: "hidden",
+                              whiteSpace: "nowrap",
+                              textOverflow: "ellipsis",
+                           },
                         }}
                      >
                         {allCitiesWithId?.data?.map((city, index) => (
@@ -688,7 +750,7 @@ const SmartlockDashboard = (props) => {
                                  smartlockType: smartlockType, //
                                  propertyId: propertyIdText,
                                  smartlockId: smartlockIdText,
-                                 pageNumber: currentPage,
+                                 pageNumber: 1,
                                  pageSize: rowsPerPage,
                               });
                            }}
@@ -698,7 +760,7 @@ const SmartlockDashboard = (props) => {
                </div>
                <Row className="g-3 mt-3">
                   <hr />
-                  {smartlockList?.data?.statusCounts?.length > 0 ? (
+                  {mergedStatusCounts?.length > 0 ? (
                      <>
                         {mergedStatusCounts?.slice(1)?.map((item, index) => (
                            <Col md={3} key={item.status}>
