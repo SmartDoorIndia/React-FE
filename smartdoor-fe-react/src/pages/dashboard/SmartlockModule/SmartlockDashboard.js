@@ -154,22 +154,9 @@ const SmartlockDashboard = (props) => {
          sortable: false,
          center: true,
          minWidth: "340px",
-         cell: ({ id, status }) => (
+         cell: ({ id, status, propertyId }) => (
             <div className="action">
-               {/* <ToolTip position="left" name="View Details">
-                  <span>
-                     <Link
-                        to={{
-                           pathname: "/admin/",
-                           state: {},
-                        }}
-                     >
-                        <Image name="editIcon" src={contentIcon} />
-                     </Link>
-                  </span>
-               </ToolTip>
-               &nbsp;&nbsp; */}
-               {status !== "DEFECTIVE" && status !== "SOLD" ? (
+               {/* {status !== "DEFECTIVE" && status !== "SOLD" ? (
                   <>
                      <Buttons
                         name="Mark as Defective"
@@ -227,7 +214,73 @@ const SmartlockDashboard = (props) => {
                         }}
                      />
                   </>
-               ) : null}
+               ) : null} */}
+               <div className="locationSelect">
+                  <>
+                     <style>
+                        {`
+                           .mark-status-select {
+                              background: #f0f0f0;
+                              border: 1px solid #ccc;
+                              font-weight: 600;
+                              font-size: 12px;
+                              border-radius: 4px;
+                              height: 30px;
+                              box-shadow: none;
+                              padding-top: 4px;
+                           }
+                        `}
+                     </style>
+
+                     <Form.Group controlId="exampleForm.SelectCustom">
+                        <Form.Control
+                           as="select"
+                           className="mark-status-select"
+                           onChange={async (e) => {
+                              if (propertyId !== null && propertyId !== 0) {
+                                 showErrorToast(
+                                    "You cannot change status as Smartlock is installed on property."
+                                 );
+                                 e.target.value = "";
+                                 return null;
+                              } else {
+                                 const selectedStatus = e.target.value; 
+                                 await updateSmartlockStatus({
+                                    lockId: id,
+                                    status: e.target.value,
+                                 }).then((response) => {
+                                    if (response?.status === 200) {
+                                       let successToast = `Smartlock marked as ${selectedStatus} successfully...`;
+                                       showSuccessToast(successToast);
+                                       getSmartlockDashboardList({
+                                          deviceStatus: deviceStatus, // preconfig , install ,sold //
+                                          corporateId: selectedCorporate, //
+                                          cityIdList: cityIdList, //
+                                          smartlockType: smartlockType, //
+                                          propertyId: propertyIdText,
+                                          smartlockId: smartlockIdText,
+                                          pageNumber: currentPage,
+                                          pageSize: rowsPerPage,
+                                       });
+                                    } else {
+                                       showErrorToast(response?.data?.message);
+                                    }
+                                 });
+                              }
+                           }}
+                        >
+                           <option value="">Mark as</option>
+                           {smartlockStatus
+                              ?.filter((s) => status !== s && s !== 'INSTALLED')
+                              ?.map((status) => (
+                                 <option key={status} value={status}>
+                                    {status}
+                                 </option>
+                              ))}
+                        </Form.Control>
+                     </Form.Group>
+                  </>
+               </div>
             </div>
          ),
       },

@@ -315,22 +315,23 @@ const CameraDashboard = (props) => {
                         <Form.Control
                            as="select"
                            className="mark-status-select"
-                           value={deviceStatus}
+                           // value={deviceStatus}
                            onChange={async (e) => {
-                              if (propertyId !== null) {
+                              if (propertyId !== null && propertyId !== 0) {
                                  showErrorToast(
                                     "You cannot change status as Camera is installed on property."
                                  );
+                                 e.target.value = "";
                                  return null;
                               } else {
+                                 const selectedStatus = e.target.value; 
                                  await updateCameraStatus({
                                     cameraDeviceId: cameraDeviceId,
                                     status: e.target.value,
                                  }).then((response) => {
                                     if (response?.status === 200) {
-                                       showSuccessToast(
-                                          "Camera marked as " + e.target.value + " successfully..."
-                                       );
+                                       let successToast = `Camera marked as ${selectedStatus} successfully...`;
+                                       showSuccessToast(successToast);
                                        getCameraDashboardList({
                                           deviceStatus: [], // preconfig , install ,sold //
                                           corporateId: selectedCorporate, //
@@ -352,7 +353,7 @@ const CameraDashboard = (props) => {
                         >
                            <option value="">Mark as</option>
                            {cameraStatus
-                              ?.filter((s) => status !== s)
+                              ?.filter((s) => status !== s && s !== 'INSTALLED')
                               ?.map((status) => (
                                  <option key={status} value={status}>
                                     {status}
