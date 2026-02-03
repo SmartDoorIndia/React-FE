@@ -125,7 +125,7 @@ const PropertyDevice = (props) => {
 
    useEffect(() => {
       _getSmartLockData();
-      _getContactSensor(propertyId);
+      // _getContactSensor(propertyId);
       _getCameraDevice(propertyId);
       getCameraTypes({})
          .then((response) => {

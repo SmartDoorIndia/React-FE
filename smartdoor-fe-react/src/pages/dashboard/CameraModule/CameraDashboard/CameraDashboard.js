@@ -24,6 +24,7 @@ import Pagination from "../../../../shared/DataTable/Pagination";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 
 const CameraDashboard = (props) => {
    const { allCitiesWithId, getAllCityWithId, cameraList, getCameraDashboardList } = props;
@@ -500,21 +501,22 @@ const CameraDashboard = (props) => {
       };
 
       return (
-         <Input
+         <SearchInput
             id={"propertyId"}
             placeholder={"Search Property id"}
-            type={"number"}
+            textType={"number"}
             value={propertyIdText}
-            onInput={(e) => {
-               setPropertyIdText(e.target.value);
-               console.log(e);
-            }}
+            // onInput={(e) => {
+            //    setPropertyIdText(e.target.value);
+            //    console.log(e);
+            // }}
+            onFilter={(e) => setPropertyIdText(e.target.value)}
             onClear={() => {
                handleClear();
             }}
             filterText={propertyIdText}
-            showSearch={false}
-            margin={50}
+            // showSearch={true}
+            // margin={50}
          />
       );
    }, [propertyIdText, resetPaginationToggle]);
@@ -528,21 +530,22 @@ const CameraDashboard = (props) => {
       };
 
       return (
-         <Input
+         <SearchInput
             id={"cameraId"}
             placeholder={"Search Camera id"}
-            type={"number"}
+            textType={"number"}
             value={cameraIdText}
-            onInput={(e) => {
-               setCameraIdText(e.target.value);
-               console.log(e);
-            }}
+            // onInput={(e) => {
+            //    setCameraIdText(e.target.value);
+            //    console.log(e);
+            // }}
+            onFilter={(e) => setCameraIdText(e.target.value)}
             onClear={() => {
                handleClear();
             }}
             filterText={cameraIdText}
-            showSearch={false}
-            margin={70}
+            // showSearch={false}
+            // margin={70}
          />
       );
    }, [cameraIdText, resetPaginationToggle]);
@@ -556,21 +559,22 @@ const CameraDashboard = (props) => {
       };
 
       return (
-         <Input
+         <SearchInput
             id={"uuIdText"}
             placeholder={"Search UUID"}
-            type={"text"}
+            textType={"text"}
             value={uuIdText}
-            onInput={(e) => {
-               setUUIdText(e.target.value);
-               console.log(e);
-            }}
+            // onInput={(e) => {
+            //    setUUIdText(e.target.value);
+            //    console.log(e);
+            // }}
+            onFilter={(e) => setUUIdText(e.target.value)}
             onClear={() => {
                handleClear();
             }}
             filterText={uuIdText}
-            showSearch={false}
-            margin={70}
+            // showSearch={false}
+            // margin={70}
          />
       );
    }, [uuIdText, resetPaginationToggle]);

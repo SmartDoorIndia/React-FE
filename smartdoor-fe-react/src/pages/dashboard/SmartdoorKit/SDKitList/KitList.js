@@ -17,6 +17,7 @@ import { fetchKitList, getKitMis } from "../../../../common/redux/actions";
 import { Card, Form } from "react-bootstrap";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import Buttons from "../../../../shared/Buttons/Buttons";
+import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 
 const KitList = (props) => {
    const { allKitList, fetchKitList } = props;
@@ -203,21 +204,22 @@ const KitList = (props) => {
       };
 
       return (
-         <Input
+         <SearchInput
             id={"kitId"}
             placeholder={"Search by Kit id"}
             type={"number"}
             value={kitId}
-            onInput={(e) => {
-               setKitId(e.target.value);
-               console.log(e);
-            }}
+            // onInput={(e) => {
+            //    setKitId(e.target.value);
+            //    console.log(e);
+            // }}
+            onFilter={(e) => setKitId(e.target.value)}
             onClear={() => {
                handleClear();
             }}
             filterText={kitId}
-            showSearch={true}
-            margin={70}
+            // showSearch={true}
+            // margin={70}
          />
       );
    }, [kitId, resetPaginationToggle]);

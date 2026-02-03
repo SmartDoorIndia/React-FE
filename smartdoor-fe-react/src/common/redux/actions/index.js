@@ -1681,7 +1681,7 @@ export const getSalesTransactionByUser = async (data) => {
 // Action to  Get All User Roles
 export const getCameraDevice = async (data) => {
   const response = await mainApiService('getCameraDevice', data);
-  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error. Please try again later');
+  if (response.data.status !== 200 && response.data.status !== 404) showErrorToast('Unexpected error for fetching Camera list. Please try again later');
   return response;
 };
 

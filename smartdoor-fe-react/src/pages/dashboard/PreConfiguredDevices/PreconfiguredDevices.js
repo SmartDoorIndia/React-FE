@@ -470,7 +470,7 @@ const PreconfiguredDevices = () => {
                </div>
 
                {/* SmartLock Stats */}
-               <Row className="g-3 mb-4">
+               {/* <Row className="g-3 mb-4">
                   <Col md={4}>
                      <StatCard value={smartlockStats?.installedCount} label="Installed" />
                   </Col>
@@ -486,7 +486,7 @@ const PreconfiguredDevices = () => {
                         label="Ready To Install"
                      />
                   </Col>
-               </Row>
+               </Row> */}
 
                {/* SmartLock Table */}
                <Card className="table-card">
@@ -539,7 +539,7 @@ const PreconfiguredDevices = () => {
                </div>
 
                {/* Camera Stats */}
-               <Row className="g-3 mb-4">
+               {/* <Row className="g-3 mb-4">
                   <Col md={4}>
                      <StatCard value={cameraStats?.installedCount} label="Installed" />
                   </Col>
@@ -552,7 +552,7 @@ const PreconfiguredDevices = () => {
                   <Col md={4}>
                      <StatCard value={cameraStats?.readyToInstallCount} label="Ready To Install" />
                   </Col>
-               </Row>
+               </Row> */}
 
                {/* Camera Table */}
                <Card className="table-card">

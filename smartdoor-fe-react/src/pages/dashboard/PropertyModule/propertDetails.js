@@ -1167,21 +1167,12 @@ const PropertyDetails = (props) => {
                            <Loader />
                         ) : (
                            <div className="bg-white rounded px-3 py-3 border">
-                              {!propertyData.uninstallationDone ? (
+                              {/* {!propertyData.uninstallationDone ? (
                                  <div className="statusDiv">
-                                    {/* { propertyData?.cameraPlan? */}
-                                    {/* {propertyAnalyticsData?.basicPlan ? '' :   */}
-
-                                    {/* }  */}
+                                    
                                     {propertyData.basicDetails.propertyType === "Commercial" ? (
                                        <div className="lock-div">
                                           {showCameraButton()}
-                                          <div className="lockIcon">
-                                             {/* <img src={smartLock} /> */}
-                                          </div>
-                                          {/* <div>
-                                       Smartlock Power % : {smartdoorBattery}%
-                                    </div> */}
                                           {propertyData.miscellaneousDetails?.smartLockProperty ===
                                              true &&
                                           propertyData.miscellaneousDetails?.deleted === false &&
@@ -1222,15 +1213,6 @@ const PropertyDetails = (props) => {
                                              <>
                                                 {door_status ? (
                                                    <div style={{ display: "flex" }}>
-                                                      {/* <Text
-                                                
-                                                className=" mt-2"
-                                                size="xSmall"
-                                                fontWeight="xsemibold"
-                                                color="primaryColor"
-                                                text={`Door Status: ${door_status}`}
-                                             /> */}
-
                                                       {door_status === "Open" ? (
                                                          <img
                                                             className="LockIconOpen"
@@ -1243,15 +1225,6 @@ const PropertyDetails = (props) => {
                                                             src={LockClose}
                                                          />
                                                       )}
-
-                                                      {/* <Buttons
-                                             onClick={() => doorClose(smartLockData)}
-                                             name="Door Open"
-                                             varient="primary"
-                                             type="submit"
-                                             size="Small"
-                                             color="white"
-                                          /> */}
                                                    </div>
                                                 ) : null}
                                                 {censorBattery_status ? (
@@ -1270,7 +1243,7 @@ const PropertyDetails = (props) => {
                                  </div>
                               ) : (
                                  ""
-                              )}
+                              )} */}
 
                               {showCameraDD ? (
                                  <select

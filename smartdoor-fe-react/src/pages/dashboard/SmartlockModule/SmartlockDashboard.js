@@ -24,6 +24,7 @@ import Buttons from "../../../shared/Buttons/Buttons";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
 import contentIcon from "../../../assets/images/content-ico.png";
 import "./SmartlockDashboard.scss";
+import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 
 const SmartlockDashboard = (props) => {
    const { allCitiesWithId, getAllCityWithId, smartlockList, getSmartlockDashboardList } = props;
@@ -350,21 +351,22 @@ const SmartlockDashboard = (props) => {
       };
 
       return (
-         <Input
+         <SearchInput
             id={"propertyId"}
             placeholder={"Search Property id"}
-            type={"number"}
+            textType={"number"}
             value={propertyIdText}
-            onInput={(e) => {
-               setPropertyIdText(e.target.value);
-               console.log(e);
-            }}
+            // onInput={(e) => {
+            //    setPropertyIdText(e.target.value);
+            //    console.log(e);
+            // }}
+            onFilter={(e) => setPropertyIdText(e.target.value)}
             onClear={() => {
                handleClear();
             }}
             filterText={propertyIdText}
-            showSearch={false}
-            margin={50}
+            // showSearch={false}
+            // margin={50}
          />
       );
    }, [propertyIdText, resetPaginationToggle]);
@@ -378,21 +380,22 @@ const SmartlockDashboard = (props) => {
       };
 
       return (
-         <Input
+         <SearchInput
             id={"smartlockId"}
             placeholder={"Search Smartlock id"}
-            type={"number"}
+            textType={"number"}
             value={smartlockIdText}
-            onInput={(e) => {
-               setSmartlockIdText(e.target.value);
-               console.log(e);
-            }}
+            // onInput={(e) => {
+            //    setSmartlockIdText(e.target.value);
+            //    console.log(e);
+            // }}
+            onFilter={(e) => setSmartlockIdText(e.target.value)}
             onClear={() => {
                handleClear();
             }}
             filterText={smartlockIdText}
-            showSearch={false}
-            margin={70}
+            // showSearch={false}
+            // margin={70}
          />
       );
    }, [smartlockIdText, resetPaginationToggle]);

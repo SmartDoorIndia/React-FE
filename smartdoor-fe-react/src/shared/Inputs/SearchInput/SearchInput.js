@@ -3,11 +3,11 @@ import './SearchInput.scss';
 import Image from '../../Image/Image';
 import SearchIcon from '../../../assets/svg/Search.svg';
 
-const SearchInput = ({ filterText, onFilter, onClear, placeholder, className }) => (
+const SearchInput = ({ filterText, onFilter, onClear, placeholder, className, textType }) => (
     <div className="searchCrossButon">
         <Input
          id="search"
-         type="text"
+         type= {textType || "text"}
          placeholder= {placeholder}
          aria-label="Search Input"
          value={filterText}

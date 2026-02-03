@@ -219,16 +219,16 @@ const NonSDProperties = (props) => {
       };
 
       return (
-         <Input
+         <SearchInput
             id={'propertyId'}
             placeholder={'Search by Property id'}
-            type={'number'}
+            textType={'number'}
             value={propertyIdText}
             onInput={(e) => { setPropertyIdText((e.target.value)); console.log(e) }}
             onClear={() => handleClear}
             filterText={propertyIdText}
-            showSearch={true}
-            margin={45}
+            // showSearch={true}
+            // margin={45}
          />
       );
    }, [propertyIdText, resetPaginationToggle]);
