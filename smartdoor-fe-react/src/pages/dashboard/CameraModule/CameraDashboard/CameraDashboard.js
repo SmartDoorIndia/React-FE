@@ -151,8 +151,8 @@ const CameraDashboard = (props) => {
             const todayMidnight = new Date();
             todayMidnight.setHours(0, 0, 0, 0);
 
-            let isOffline = (battery === 0 || battery === null) && lastBatteryDate > todayMidnight;
-            if (lastBatteryCheckDate === null && (battery === 0 || battery === null)) {
+            let isOffline = false;
+            if (lastBatteryCheckDate === null || battery === null ||  (lastBatteryDate < todayMidnight) ||  (battery === 0 )) {
                isOffline = true;
             }
 

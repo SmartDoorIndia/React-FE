@@ -62,6 +62,12 @@ const PropertyDevice = (props) => {
    const [accountDetails, setAccountDetails] = useState({});
    const [cameraList, setCameraList] = useState([]);
    const [selectedCamera, setSelectedCamera] = useState(null);
+   const [confirmDeleteModalFlag, setConfirmDeleteModalFlag] = useState(false);
+   const [selectedDevice, setSelectedDevice] = useState({
+      deviceType: "",
+      deviceId: null,
+      actionType: "Delete",
+   });
    let liveStremUrl = "";
 
    const _getSmartLockData = useCallback(async () => {
@@ -401,15 +407,17 @@ const PropertyDevice = (props) => {
                   varient="primary"
                   size="xSmall"
                   onClick={async () => {
-                     const response = await deleteCamera({
-                        cameraId: cameraDeviceId,
-                     });
-                     if (response.status === 200) {
-                        await _getCameraDevice(propertyId);
-                        fetchDeviceIdListByKitId();
-                     } else {
-                        showErrorToast(response?.data?.customMessage);
-                     }
+                     // const response = await deleteCamera({
+                     //    cameraId: cameraDeviceId,
+                     // });
+                     // if (response.status === 200) {
+                     //    await _getCameraDevice(propertyId);
+                     //    fetchDeviceIdListByKitId();
+                     // } else {
+                     //    showErrorToast(response?.data?.customMessage);
+                     // }
+                     setSelectedDevice({deviceType: 'Camera', deviceId: cameraDeviceId, actionType: 'Delete'});
+                     setConfirmDeleteModalFlag(true);
                   }}
                ></Buttons>
             </div>
@@ -550,6 +558,19 @@ const PropertyDevice = (props) => {
                propertyId: propertyId,
             }));
          }
+      }
+   };
+
+   const handleDelete = async () => {
+      const response = await deleteCamera({
+         cameraId: selectedDevice.deviceId,
+      });
+      if (response.status === 200) {
+         await _getCameraDevice(propertyId);
+         fetchDeviceIdListByKitId();
+         setConfirmDeleteModalFlag(false);
+      } else {
+         showErrorToast(response?.data?.customMessage);
       }
    };
 
@@ -1185,6 +1206,58 @@ const PropertyDevice = (props) => {
                   muted={false}
                   playing={true}
                />
+            </Modal.Body>
+         </Modal>
+         <Modal
+            show={confirmDeleteModalFlag}
+            onHide={() => {
+               setConfirmDeleteModalFlag(false);
+            }}
+            centered
+         >
+            <Modal.Body>
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  size="small"
+                  varient="secondary"
+                  onClick={() => {
+                     setConfirmDeleteModalFlag(false);
+                  }}
+               ></Buttons>
+               <Text
+                  size="regular"
+                  fontWeight="bold"
+                  color="secondryColor"
+                  className="text-center mt-3"
+                  text={"Are you sure you want to delete this device?"}
+               />
+
+               <div className="d-flex justify-content-center mt-5 mb-3">
+                  <Buttons
+                     name="Cancel"
+                     varient="disable"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => {
+                        setConfirmDeleteModalFlag(false);
+                     }}
+                  />
+
+                  <Buttons
+                     name="Confirm"
+                     varient="primary"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => {
+                        handleDelete();
+                     }}
+                  />
+               </div>
             </Modal.Body>
          </Modal>
       </>

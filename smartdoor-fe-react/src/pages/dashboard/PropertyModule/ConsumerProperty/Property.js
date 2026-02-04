@@ -524,7 +524,8 @@ const PropertyModule = (props) => {
             placeholder={'Search by Property id'}
             textType={'number'}
             value={propertyIdText}
-            onInput={(e) => {setPropertyIdText((e.target.value)); console.log(e)}}
+            // onInput={(e) => {setPropertyIdText((e.target.value)); console.log(e)}}
+            onFilter={(e) => setPropertyIdText(e.target.value)}
             onClear={() => {handleClear()}}
             filterText={propertyIdText}
             // showSearch={true}

@@ -67,8 +67,8 @@ const BatteryLvlChk = (props) => {
             const todayMidnight = new Date();
             todayMidnight.setHours(0, 0, 0, 0);
 
-            let isOffline = (battryPercentage === 0 || battryPercentage === null) && lastBatteryDate > todayMidnight;
-            if (lastBatteryCheckDate === null && (battryPercentage === 0 || battryPercentage === null)) {
+            let isOffline = false;
+            if (lastBatteryCheckDate === null || battryPercentage === null ||  (lastBatteryDate < todayMidnight) ||  (battryPercentage === 0 )) {
                isOffline = true;
             }
 
