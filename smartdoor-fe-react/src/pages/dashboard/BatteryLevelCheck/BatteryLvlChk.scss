@@ -147,6 +147,10 @@
               width: 180px;
               min-width: 180px;
           }
+          &:nth-child(2) {
+              width: 120px;
+              min-width: 120px;
+          }
           white-space: normal; /* Allows headers to wrap */
           word-wrap: break-word; /* Allows headers to break words */
           text-align: center; /* Optional: Center align text */
@@ -163,7 +167,14 @@
                   min-width: 180px;
                   white-space: normal; /* Allows first cell to wrap */
                   overflow: visible;
-              }                
+              }                                
+              &:nth-child(2) {
+                  &:first-child {
+                      min-width: 120px;
+                      white-space: normal; /* Allows first cell to wrap */
+                      overflow: visible;
+                  }                                
+              }
           }
          //  &:nth-child(2) {
          //      .elipsis-text {

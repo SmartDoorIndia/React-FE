@@ -323,7 +323,7 @@ const PropertyDevice = (props) => {
                            size="xSmall"
                            onClick={async () => {
                               const response = await setCallBackUrl({
-                                 type: "prod",
+                                 type: "uat",
                                  sns: uuId,
                                  propertyId: propertyId,
                               });

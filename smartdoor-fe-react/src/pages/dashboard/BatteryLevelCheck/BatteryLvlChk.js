@@ -39,6 +39,7 @@ const BatteryLvlChk = (props) => {
          selector: (row) => row.battryPercentage,
          center: true,
          sortable: false,
+         minWidth: "125px",
          cell: ({ battryPercentage }) => (
             <>
                <span>{battryPercentage !== null ? <>{battryPercentage}%</> : <>{"-"}</>}</span>
@@ -50,6 +51,7 @@ const BatteryLvlChk = (props) => {
          selector: (row) => row.lastBatteryCheckDate,
          center: true,
          sortable: false,
+         minWidth: "200px",
          cell: ({ lastBatteryCheckDate }) => (
             <>
                <span>{formateDate(lastBatteryCheckDate, "DD-MM-yyyy hh:mm:ss A")}</span>
@@ -61,6 +63,7 @@ const BatteryLvlChk = (props) => {
          // selector: ((row) => row.lastBatteryCheckDate),
          center: true,
          sortable: false,
+         minWidth: "180px",
          cell: ({ battryPercentage, lastBatteryCheckDate }) => {
             const lastBatteryDate = new Date(lastBatteryCheckDate);
 
@@ -86,6 +89,54 @@ const BatteryLvlChk = (props) => {
                </ToolTip>
             );
          },
+      },
+      {
+         name: "Address",
+         selector: (row) => row.address,
+         center: true,
+         sortable: false,
+         minWidth: "250px",
+         cell: ({ address }) => (
+            <>
+               <span>{address}</span>
+            </>
+         ),
+      },
+      {
+         name: "Owner",
+         selector: (row) => row.ownerName,
+         center: true,
+         sortable: false,
+         minWidth: "220px",
+         cell: ({ ownerName }) => (
+            <>
+               <span>{ownerName}</span>
+            </>
+         ),
+      },
+      {
+         name: "Owner Mobile",
+         selector: (row) => row.ownerMobile,
+         center: true,
+         sortable: false,
+         minWidth: "180px",
+         cell: ({ ownerMobile }) => (
+            <>
+               <span>{ownerMobile}</span>
+            </>
+         ),
+      },
+      {
+         name: "Installation Date",
+         selector: (row) => row.requestDate,
+         center: true,
+         sortable: false,
+         minWidth: "200px",
+         cell: ({ requestDate }) => (
+            <>
+               <span>{formateDate(requestDate, "DD-MM-yyyy hh:mm:ss A")}</span>
+            </>
+         ), 
       },
       {
          name: "View Property",
