@@ -2504,3 +2504,8 @@ export const getSmartlockDashboardList = data => async (dispatch) => {
     dispatch({type: Actions.SMARTLOCK_DASHBOARD_LIST_ERROR, data: response?.data});
   }
 }
+
+export const returnCameraToInventory =async (data) => {
+  const response = await mainApiService("returnCameraToInventory", data);
+  return response
+}

@@ -3670,6 +3670,17 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  returnCameraToInventory: {
+    url: "smartlock/smartlock/returnCameraToInventory",
+    method: "POST",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
 };
 console.log(userData)
 

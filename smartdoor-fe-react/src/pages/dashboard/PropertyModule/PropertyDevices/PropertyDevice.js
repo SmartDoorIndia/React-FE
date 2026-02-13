@@ -16,6 +16,7 @@ import {
    getDeviceIdList,
    restoreOrDeleteDevice,
    updateCameraStatus,
+   returnCameraToInventory,
 } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
@@ -416,7 +417,7 @@ const PropertyDevice = (props) => {
                      // } else {
                      //    showErrorToast(response?.data?.customMessage);
                      // }
-                     setSelectedDevice({deviceType: 'Camera', deviceId: cameraDeviceId, actionType: 'Delete'});
+                     setSelectedDevice({ deviceType: 'Camera', deviceId: cameraDeviceId, actionType: 'Delete' });
                      setConfirmDeleteModalFlag(true);
                   }}
                ></Buttons>
@@ -428,7 +429,7 @@ const PropertyDevice = (props) => {
          sortable: false,
          center: true,
          minWidth: "440px",
-         cell: ({ uuId, cameraDeviceId }) => (
+         cell: ({ uuId, cameraDeviceId, kitId }) => (
             <div className="action">
                <Buttons
                   name="View Data"
@@ -440,6 +441,22 @@ const PropertyDevice = (props) => {
                      showCameraData(uuId);
                   }}
                />
+               {kitId === null ?
+                  <>
+                     &nbsp;&nbsp;
+                     <Buttons
+                        name="Return to Inventory"
+                        varient="primary"
+                        size="xSmall"
+                        color="white"
+                        className="mt-2 mb-2"
+                        onClick={() => {
+                           returnCameraToInventory({
+                              deviceId: cameraDeviceId
+                           })
+                        }}
+                     />
+                  </> : null}
                {/* &nbsp;&nbsp;
                <Buttons
                   name="Mark as Defective"
@@ -1073,7 +1090,7 @@ const PropertyDevice = (props) => {
                      }}
                      value={selectedCameraData?.subType}
                   >
-                     {}
+                     { }
                      {cameraSubTypeList[selectedCameraData?.type]?.map((item) => (
                         <MenuItem key={item} value={item}>
                            {item}
