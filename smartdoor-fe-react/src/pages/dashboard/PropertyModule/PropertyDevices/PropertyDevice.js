@@ -429,7 +429,7 @@ const PropertyDevice = (props) => {
          sortable: false,
          center: true,
          minWidth: "440px",
-         cell: ({ uuId, cameraDeviceId, kitId }) => (
+         cell: ({ uuId, cameraDeviceId, kitId, propertyId }) => (
             <div className="action">
                <Buttons
                   name="View Data"
@@ -450,10 +450,17 @@ const PropertyDevice = (props) => {
                         size="xSmall"
                         color="white"
                         className="mt-2 mb-2"
-                        onClick={() => {
-                           returnCameraToInventory({
-                              deviceId: cameraDeviceId
-                           })
+                        onClick={async () => {
+                           setLoading(true);
+                           const response = await returnCameraToInventory({deviceId: cameraDeviceId});
+                           setLoading(false);
+                           if(response?.status === 200) {
+                              showSuccessToast("Camera returned to inventory successfully");
+                              _getCameraDevice(propertyId);
+                              fetchDeviceIdListByKitId();
+                           } else {
+                              showErrorToast("Pleae try again...");
+                           }
                         }}
                      />
                   </> : null}

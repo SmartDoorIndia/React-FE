@@ -41,6 +41,8 @@ const SmartlockDashboard = (props) => {
    const smartlockTypeList = CONSTANTS_STATUS.smartlockType;
    const [smartlockType, setSmartlockType] = useState(smartlockList?.data?.smartlockType || "");
    const [cityIdList, setCityIdList] = useState(smartlockList?.data?.cityIdList || []);
+   const [orderByParam, setOrderByParam] = useState(smartlockList?.data?.orderByParam || "BATTERY_VALUE");
+   const [orderBy, setOrderBy] = useState(smartlockList?.data?.orderBy || "INCREASING");
    const [smartlockListReqDto, setSmartlockListReqDto] = useState({
       deviceStatus: deviceStatus, // preconfig , install ,sold //
       corporateId: selectedCorporate, //
@@ -244,7 +246,7 @@ const SmartlockDashboard = (props) => {
                                  e.target.value = "";
                                  return null;
                               } else {
-                                 const selectedStatus = e.target.value; 
+                                 const selectedStatus = e.target.value;
                                  await updateSmartlockStatus({
                                     lockId: id,
                                     status: e.target.value,
@@ -261,6 +263,8 @@ const SmartlockDashboard = (props) => {
                                           smartlockId: smartlockIdText,
                                           pageNumber: currentPage,
                                           pageSize: rowsPerPage,
+                                          orderByParam: orderByParam,
+                                          orderBy: orderBy
                                        });
                                     } else {
                                        showErrorToast(response?.data?.message);
@@ -329,6 +333,8 @@ const SmartlockDashboard = (props) => {
          smartlockId: smartlockIdText,
          pageNumber: newPage,
          pageSize: rowsPerPage,
+         orderByParam: orderByParam,
+         orderBy: orderBy
       });
    };
 
@@ -343,6 +349,8 @@ const SmartlockDashboard = (props) => {
          smartlockId: smartlockIdText,
          pageNumber: currentPage,
          pageSize: newRowsPerPage,
+         orderByParam: orderByParam,
+         orderBy: orderBy
       });
    };
 
@@ -392,6 +400,8 @@ const SmartlockDashboard = (props) => {
          smartlockId: smartlockIdText,
          pageNumber: currentPage,
          pageSize: rowsPerPage,
+         orderByParam: orderByParam,
+         orderBy: orderBy
       });
    }, []);
 
@@ -418,8 +428,8 @@ const SmartlockDashboard = (props) => {
                handleClear();
             }}
             filterText={propertyIdText}
-            // showSearch={false}
-            // margin={50}
+         // showSearch={false}
+         // margin={50}
          />
       );
    }, [propertyIdText, resetPaginationToggle]);
@@ -447,8 +457,8 @@ const SmartlockDashboard = (props) => {
                handleClear();
             }}
             filterText={smartlockIdText}
-            // showSearch={false}
-            // margin={70}
+         // showSearch={false}
+         // margin={70}
          />
       );
    }, [smartlockIdText, resetPaginationToggle]);
@@ -470,6 +480,28 @@ const SmartlockDashboard = (props) => {
       </Card>
    );
 
+   const handleSortedData = (newSortedData, sortDirection) => {
+      let selectorVal = newSortedData?.selector?.toString().split('.');
+      console.log(selectorVal)
+      setOrderBy(sortDirection === "asc" ? "INCREASING" : "DECREASING")
+      selectorVal = selectorVal?.length > 1 ? selectorVal[1] : selectorVal[0]
+      if (selectorVal === 'batteryPercentage') {
+         getSmartlockDashboardList({
+            deviceStatus: deviceStatus, // preconfig , install ,sold //
+            corporateId: selectedCorporate, //
+            cityIdList: cityIdList, //
+            smartlockType: smartlockType, //
+            propertyId: propertyIdText,
+            smartlockId: smartlockIdText,
+            pageNumber: 1,
+            pageSize: rowsPerPage,
+            orderByParam: orderByParam,
+            orderBy: orderBy,
+            orderBy: sortDirection === "asc" ? "INCREASING" : "DECREASING"
+         });
+      }
+   }
+
    return (
       <>
          <div className="tableBox " style={{ overflowX: "hidden" }}>
@@ -478,24 +510,24 @@ const SmartlockDashboard = (props) => {
                   <div className="locationSelect justify-content-end mb-2">
                      {propertyIdBox}
                      {smartlockIdBox}
-                     {/* <Form.Group controlId="exampleForm.SelectCustom">
+                     <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
                            as="select"
-                           value={deviceStatus}
+                           value={orderBy}
                            onChange={(e) => {
-                              setDeviceStatus(e.target.value);
+                              setOrderBy(e.target.value);
                            }}
+                           placeholder="Sort By"
                         >
-                           <option value="">Select Status</option>
-                           {smartlockStatus?.length
-                              ? smartlockStatus.map((status) => (
-                                   <option key={status} value={status}>
-                                      {status}
-                                   </option>
-                                ))
-                              : null}
+                           {/* <option value="">Sort By</option> */}
+                           <option key={"INCREASING"} value={"INCREASING"}>
+                              {"Battery " + "(INCREASING)"}
+                           </option>
+                           <option key={"DECREASING"} value={"DECREASING"}>
+                              {"Battery " + "(DECREASING)"}
+                           </option>
                         </Form.Control>
-                     </Form.Group> */}
+                     </Form.Group>&nbsp;&nbsp;
                      <TextField
                         hiddenLabel
                         size="small"
@@ -508,9 +540,9 @@ const SmartlockDashboard = (props) => {
                            renderValue: (selected) => {
                               const text = selected.length
                                  ? smartlockStatus
-                                      .filter((s) => selected.includes(s))
-                                      .map((s) => s)
-                                      .join(", ")
+                                    .filter((s) => selected.includes(s))
+                                    .map((s) => s)
+                                    .join(", ")
                                  : "Select Status(s)";
 
                               return React.createElement(
@@ -600,9 +632,9 @@ const SmartlockDashboard = (props) => {
                            renderValue: (selected) => {
                               const text = selected.length
                                  ? corporateList
-                                      .filter((c) => selected.includes(c.corporateId))
-                                      .map((c) => c.companyName)
-                                      .join(", ")
+                                    .filter((c) => selected.includes(c.corporateId))
+                                    .map((c) => c.companyName)
+                                    .join(", ")
                                  : "Select Corporate(s)";
 
                               return React.createElement(
@@ -695,9 +727,9 @@ const SmartlockDashboard = (props) => {
                            renderValue: (selected) => {
                               const text = selected.length
                                  ? allCitiesWithId?.data
-                                      .filter((c) => selected.includes(c.cityId))
-                                      .map((c) => c.cityName)
-                                      .join(", ")
+                                    .filter((c) => selected.includes(c.cityId))
+                                    .map((c) => c.cityName)
+                                    .join(", ")
                                  : "Select City(s)";
                               return React.createElement(
                                  "span",
@@ -784,10 +816,10 @@ const SmartlockDashboard = (props) => {
                            <option value="">Select Type</option>
                            {smartlockTypeList?.length
                               ? smartlockTypeList.map((type) => (
-                                   <option key={type} value={type}>
-                                      {type}
-                                   </option>
-                                ))
+                                 <option key={type} value={type}>
+                                    {type}
+                                 </option>
+                              ))
                               : null}
                         </Form.Control>
                      </Form.Group>
@@ -808,6 +840,8 @@ const SmartlockDashboard = (props) => {
                                  smartlockId: smartlockIdText,
                                  pageNumber: 1,
                                  pageSize: rowsPerPage,
+                                 orderByParam: orderByParam,
+                                 orderBy: orderBy
                               });
                            }}
                         />
@@ -842,6 +876,7 @@ const SmartlockDashboard = (props) => {
                   onChangePage={handlePageChange}
                   onChangeRowsPerPage={handleRowsPerPageChange}
                   perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  onSort={handleSortedData}
                ></DataTableComponent>
             </div>
          </div>

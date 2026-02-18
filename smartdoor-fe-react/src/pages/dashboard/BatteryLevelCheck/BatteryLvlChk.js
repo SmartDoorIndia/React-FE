@@ -126,18 +126,18 @@ const BatteryLvlChk = (props) => {
             </>
          ),
       },
-      {
-         name: "Installation Date",
-         selector: (row) => row.requestDate,
-         center: true,
-         sortable: false,
-         minWidth: "200px",
-         cell: ({ requestDate }) => (
-            <>
-               <span>{formateDate(requestDate, "DD-MM-yyyy hh:mm:ss A")}</span>
-            </>
-         ), 
-      },
+      // {
+      //    name: "Installation Date",
+      //    selector: (row) => row.requestDate,
+      //    center: true,
+      //    sortable: false,
+      //    minWidth: "200px",
+      //    cell: ({ requestDate }) => (
+      //       <>
+      //          <span>{formateDate(requestDate, "DD-MM-yyyy hh:mm:ss A")}</span>
+      //       </>
+      //    ), 
+      // },
       {
          name: "View Property",
          selector: (row) => row.propertyId,

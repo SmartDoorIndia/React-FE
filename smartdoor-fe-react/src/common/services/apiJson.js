@@ -3671,14 +3671,14 @@ export const ApiJson = {
     showErrorMessage: true,
   },
   returnCameraToInventory: {
-    url: "smartlock/smartlock/returnCameraToInventory",
-    method: "POST",
+    url: "smartlock/smartlock/returnCameraToInventory/:deviceId",
+    method: "PUT",
     data: {},
     headers: {
       Accept: "*/*",
       "Content-Type": "application/json",
     },
-    showResultMessage: false,
+    showResultMessage: true,
     showErrorMessage: true,
   },
 };

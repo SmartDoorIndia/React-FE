@@ -25,6 +25,7 @@ import { TableLoader } from "../../../../common/helpers/Loader";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
+import viewIcon from "../../../../assets/images/visual.png";
 
 const CameraDashboard = (props) => {
    const { allCitiesWithId, getAllCityWithId, cameraList, getCameraDashboardList } = props;
@@ -42,6 +43,8 @@ const CameraDashboard = (props) => {
    const [cameraSubTypeList, setCameraSubTypeList] = useState([]);
    const [cameraSubType, setCameraSubType] = useState(cameraList?.data?.cameraSubType || "");
    const [cityIdList, setCityIdList] = useState(cameraList?.data?.cityIdList || []);
+   const [orderByParam, setOrderByParam] = useState(cameraList?.data?.orderByParam || "BATTERY_VALUE");
+   const [orderBy, setOrderBy] = useState(cameraList?.data?.orderBy || "INCREASING");
    const [cameraListReqDto, setCameraListReqDto] = useState({
       deviceStatus: deviceStatus, // preconfig , install ,sold //
       corporateId: selectedCorporate, //
@@ -53,6 +56,8 @@ const CameraDashboard = (props) => {
       uuId: uuIdText,
       pageNumber: 1,
       pageSize: 8,
+      orderByParam: 'BATTERY_VALUE',
+      orderBy: 'INCREASING'
    });
    const tableRef = useRef();
 
@@ -152,7 +157,7 @@ const CameraDashboard = (props) => {
             todayMidnight.setHours(0, 0, 0, 0);
 
             let isOffline = false;
-            if (lastBatteryCheckDate === null || battery === null ||  (lastBatteryDate < todayMidnight) ||  (battery === 0 )) {
+            if (lastBatteryCheckDate === null || battery === null || (lastBatteryDate < todayMidnight) || (battery === 0)) {
                isOffline = true;
             }
 
@@ -173,6 +178,19 @@ const CameraDashboard = (props) => {
          id: 7,
       },
       {
+         name: "Account",
+         selector: (row) => row.cameraMail,
+         sortable: false,
+         center: false,
+         minWidth: "250px",
+         cell: ({ cameraMail }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={cameraMail}>
+               <Text size="Small" color="secondryColor elipsis-text" text={cameraMail || "-"} />
+            </ToolTip>
+         ),
+         id: 8,
+      },
+      {
          name: "Inventory",
          selector: (row) => row.inventoryType,
          sortable: true,
@@ -183,7 +201,7 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={inventoryType || "-"} />
             </ToolTip>
          ),
-         id: 8,
+         id: 9,
       },
       {
          name: "City",
@@ -196,20 +214,23 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={city || "-"} />
             </ToolTip>
          ),
-         id: 9,
+         id: 10,
       },
       {
          name: "PropertyId",
          selector: (row) => row.propertyId,
          sortable: true,
-         center: true,
+         center: false,
          maxWidth: "120px",
          cell: ({ propertyId }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={propertyId}>
-               <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
-            </ToolTip>
+            <div className="d-flex">
+               <ToolTip position="top" style={{ width: "100%" }} name={propertyId}>
+                  <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
+               </ToolTip> &nbsp;
+               {/* <img src={viewIcon} alt="" style={{ height: '25px', width: '25px', alignSelf:'end' }} /> */}
+            </div>
          ),
-         id: 10,
+         id: 11,
       },
       {
          name: "Action",
@@ -218,82 +239,6 @@ const CameraDashboard = (props) => {
          minWidth: "340px",
          cell: ({ cameraDeviceId, status, propertyId }) => (
             <div className="action">
-               {/* <ToolTip position="left" name="View Details">
-                  <span>
-                     <Link
-                        to={{
-                           pathname: "/admin/",
-                           state: {},
-                        }}
-                     >
-                        <Image name="editIcon" src={contentIcon} />
-                     </Link>
-                  </span>
-               </ToolTip>
-               &nbsp;&nbsp; */}
-               {/* {status !== "DEFECTIVE" && status !== "SOLD" ? (
-                  <>
-                     <Buttons
-                        name="Mark as Defective"
-                        variant="outline-danger"
-                        size="xSmall"
-                        onClick={async () => {
-                           await updateCameraStatus({
-                              cameraDeviceId: cameraDeviceId,
-                              status: "DEFECTIVE",
-                           }).then((response) => {
-                              if (response?.status === 200) {
-                                 showSuccessToast("Camera marked as defective successfully...");
-                                 getCameraDashboardList({
-                                    deviceStatus: deviceStatus, // preconfig , install ,sold //
-                                    corporateId: selectedCorporate, //
-                                    cityIdList: cityIdList, //
-                                    cameraType: cameraType, //
-                                    cameraSubType: cameraSubType,
-                                    propertyId: propertyIdText,
-                                    cameraId: cameraIdText,
-                                    uuId: uuIdText,
-                                    pageNumber: currentPage,
-                                    pageSize: rowsPerPage,
-                                 });
-                              } else {
-                                 showErrorToast(response?.data?.message);
-                              }
-                           });
-                        }}
-                     />
-                     &nbsp;&nbsp;
-                     <Buttons
-                        name="Mark as Sold"
-                        variant="outline-danger"
-                        size="xSmall"
-                        onClick={async () => {
-                           await updateCameraStatus({
-                              cameraDeviceId: cameraDeviceId,
-                              status: "SOLD",
-                           }).then((response) => {
-                              if (response?.status === 200) {
-                                 showSuccessToast("Camera marked as sold successfully...");
-                                 getCameraDashboardList({
-                                    deviceStatus: deviceStatus, // preconfig , install ,sold //
-                                    corporateId: selectedCorporate, //
-                                    cityIdList: cityIdList, //
-                                    cameraType: cameraType, //
-                                    cameraSubType: cameraSubType,
-                                    propertyId: propertyIdText,
-                                    cameraId: cameraIdText,
-                                    uuId: uuIdText,
-                                    pageNumber: currentPage,
-                                    pageSize: rowsPerPage,
-                                 });
-                              } else {
-                                 showErrorToast(response?.data?.message);
-                              }
-                           });
-                        }}
-                     />
-                  </>
-               ) : null} */}
                <div className="locationSelect">
                   <>
                      <style>
@@ -324,7 +269,7 @@ const CameraDashboard = (props) => {
                                  e.target.value = "";
                                  return null;
                               } else {
-                                 const selectedStatus = e.target.value; 
+                                 const selectedStatus = e.target.value;
                                  await updateCameraStatus({
                                     cameraDeviceId: cameraDeviceId,
                                     status: e.target.value,
@@ -343,6 +288,8 @@ const CameraDashboard = (props) => {
                                           uuId: uuIdText,
                                           pageNumber: currentPage,
                                           pageSize: rowsPerPage,
+                                          orderByParam: orderByParam,
+                                          orderBy: orderBy
                                        });
                                     } else {
                                        showErrorToast(response?.data?.message);
@@ -397,8 +344,7 @@ const CameraDashboard = (props) => {
    );
    const recordSize =
       cameraList?.data?.statusCounts !== undefined ? cameraList?.data?.statusCounts[0]?.count : 0;
-   console.log(cameraList?.data?.statusCounts);
-   console.log(cameraList?.data);
+
    let recordsPerPage = 0;
    recordsPerPage = cameraList?.data?.rowsPerPage;
 
@@ -415,6 +361,8 @@ const CameraDashboard = (props) => {
          uuId: uuIdText,
          pageNumber: newPage,
          pageSize: rowsPerPage,
+         orderByParam: orderByParam,
+         orderBy: orderBy
       });
    };
 
@@ -431,6 +379,8 @@ const CameraDashboard = (props) => {
          uuId: uuIdText,
          pageNumber: currentPage,
          pageSize: newRowsPerPage,
+         orderByParam: orderByParam,
+         orderBy: orderBy
       });
    };
 
@@ -490,6 +440,8 @@ const CameraDashboard = (props) => {
          uuId: uuIdText,
          pageNumber: currentPage,
          pageSize: rowsPerPage,
+         orderByParam: orderByParam,
+         orderBy: orderBy
       });
    }, []);
 
@@ -516,8 +468,8 @@ const CameraDashboard = (props) => {
                handleClear();
             }}
             filterText={propertyIdText}
-            // showSearch={true}
-            // margin={50}
+         // showSearch={true}
+         // margin={50}
          />
       );
    }, [propertyIdText, resetPaginationToggle]);
@@ -545,8 +497,8 @@ const CameraDashboard = (props) => {
                handleClear();
             }}
             filterText={cameraIdText}
-            // showSearch={false}
-            // margin={70}
+         // showSearch={false}
+         // margin={70}
          />
       );
    }, [cameraIdText, resetPaginationToggle]);
@@ -574,8 +526,8 @@ const CameraDashboard = (props) => {
                handleClear();
             }}
             filterText={uuIdText}
-            // showSearch={false}
-            // margin={70}
+         // showSearch={false}
+         // margin={70}
          />
       );
    }, [uuIdText, resetPaginationToggle]);
@@ -597,6 +549,29 @@ const CameraDashboard = (props) => {
       </Card>
    );
 
+   const handleSortedData = (newSortedData, sortDirection) => {
+      let selectorVal = newSortedData?.selector?.toString().split('.');
+      console.log(sortDirection)
+      setOrderBy(sortDirection === "asc" ? "INCREASING" : "DECREASING")
+      selectorVal = selectorVal?.length > 1 ? selectorVal[1] : selectorVal[0]
+      if (selectorVal === 'battery') {
+         getCameraDashboardList({
+            deviceStatus: deviceStatus, // preconfig , install ,sold //
+            corporateId: selectedCorporate, //
+            cityIdList: cityIdList, //
+            cameraType: cameraType, //
+            cameraSubType: cameraSubType,
+            propertyId: propertyIdText,
+            cameraId: cameraIdText,
+            uuId: uuIdText,
+            pageNumber: currentPage,
+            pageSize: rowsPerPage,
+            orderByParam: orderByParam,
+            orderBy: sortDirection === "asc" ? "INCREASING" : "DECREASING"
+         });
+      }
+   }
+
    return (
       <>
          <div className="tableBox " style={{ overflowX: "hidden" }}>
@@ -606,24 +581,24 @@ const CameraDashboard = (props) => {
                      {propertyIdBox}
                      {cameraIdBox}
                      {uuIdBox}
-                     {/* <Form.Group controlId="exampleForm.SelectCustom">
+                     <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
                            as="select"
-                           value={deviceStatus}
+                           value={orderBy}
                            onChange={(e) => {
-                              setDeviceStatus(e.target.value);
+                              setOrderBy(e.target.value);
                            }}
+                           placeholder="Sort By"
                         >
-                           <option value="">Select Status</option>
-                           {cameraStatus?.length
-                              ? cameraStatus.map((status) => (
-                                   <option key={status} value={status}>
-                                      {status}
-                                   </option>
-                                ))
-                              : null}
-                        </Form.Control>
-                     </Form.Group> */}
+                           {/* <option value="">Sort By</option> */}
+                           <option key={"INCREASING"} value={"INCREASING"}>
+                              {"Battery " + "(INCREASING)"}
+                           </option>
+                           <option key={"DECREASING"} value={"DECREASING"}>
+                              {"Battery " + "(DECREASING)"}
+                           </option>
+                        </Form.Control> 
+                     </Form.Group>&nbsp;&nbsp;
                      <TextField
                         hiddenLabel
                         size="small"
@@ -636,9 +611,9 @@ const CameraDashboard = (props) => {
                            renderValue: (selected) => {
                               const text = selected.length
                                  ? cameraStatus
-                                      .filter((s) => selected.includes(s))
-                                      .map((s) => s)
-                                      .join(", ")
+                                    .filter((s) => selected.includes(s))
+                                    .map((s) => s)
+                                    .join(", ")
                                  : "Select Status(s)";
 
                               return React.createElement(
@@ -728,9 +703,9 @@ const CameraDashboard = (props) => {
                            renderValue: (selected) => {
                               const text = selected.length
                                  ? corporateList
-                                      .filter((c) => selected.includes(c.corporateId))
-                                      .map((c) => c.companyName)
-                                      .join(", ")
+                                    .filter((c) => selected.includes(c.corporateId))
+                                    .map((c) => c.companyName)
+                                    .join(", ")
                                  : "Select Corporate(s)";
 
                               return React.createElement(
@@ -822,9 +797,9 @@ const CameraDashboard = (props) => {
                            renderValue: (selected) => {
                               const text = selected.length
                                  ? allCitiesWithId?.data
-                                      .filter((c) => selected.includes(c.cityId))
-                                      .map((c) => c.cityName)
-                                      .join(", ")
+                                    .filter((c) => selected.includes(c.cityId))
+                                    .map((c) => c.cityName)
+                                    .join(", ")
                                  : "Select City(s)";
                               return React.createElement(
                                  "span",
@@ -911,10 +886,10 @@ const CameraDashboard = (props) => {
                            <option value="">Select Type</option>
                            {cameraTypeList?.length
                               ? cameraTypeList.map((type) => (
-                                   <option key={type} value={type}>
-                                      {type}
-                                   </option>
-                                ))
+                                 <option key={type} value={type}>
+                                    {type}
+                                 </option>
+                              ))
                               : null}
                         </Form.Control>
                      </Form.Group>
@@ -929,10 +904,10 @@ const CameraDashboard = (props) => {
                            <option value="">Select SubType</option>
                            {cameraSubTypeList[cameraType]?.length
                               ? cameraSubTypeList[cameraType]?.map((subType) => (
-                                   <option key={subType} value={subType}>
-                                      {subType}
-                                   </option>
-                                ))
+                                 <option key={subType} value={subType}>
+                                    {subType}
+                                 </option>
+                              ))
                               : null}
                         </Form.Control>
                      </Form.Group>{" "}
@@ -955,6 +930,8 @@ const CameraDashboard = (props) => {
                                  uuId: uuIdText,
                                  pageNumber: 1,
                                  pageSize: rowsPerPage,
+                                 orderByParam: orderByParam,
+                                 orderBy: orderBy
                               });
                            }}
                         />
@@ -989,6 +966,7 @@ const CameraDashboard = (props) => {
                   onChangePage={handlePageChange}
                   onChangeRowsPerPage={handleRowsPerPageChange}
                   perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  onSort={handleSortedData}
                ></DataTableComponent>
             </div>
          </div>
