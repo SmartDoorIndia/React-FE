@@ -5,7 +5,7 @@ import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
 import { showErrorToast, showSuccessToast, ToolTip } from "../../../common/helpers/Utils";
 import Text from "../../../shared/Text/Text";
 import Image from "../../../shared/Image";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { TableLoader } from "../../../common/helpers/Loader";
 import Pagination from "../../../shared/DataTable/Pagination";
 import {
@@ -25,6 +25,7 @@ import DataTableComponent from "../../../shared/DataTable/DataTable";
 import contentIcon from "../../../assets/images/content-ico.png";
 import "./SmartlockDashboard.scss";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
+import { provideAuth } from "../../../common/helpers/Auth";
 
 const SmartlockDashboard = (props) => {
    const { allCitiesWithId, getAllCityWithId, smartlockList, getSmartlockDashboardList } = props;
@@ -54,6 +55,7 @@ const SmartlockDashboard = (props) => {
       pageSize: 8,
    });
    const tableRef = useRef();
+   const history = useHistory();
 
    const smartlockColumns = [
       {
@@ -93,7 +95,7 @@ const SmartlockDashboard = (props) => {
                <Text
                   size="Small"
                   color="secondryColor elipsis-text"
-                  text={batteryPercentage ? batteryPercentage + "%" : "-"}
+                  text={batteryPercentage !== null ? batteryPercentage + "%" : "-"}
                />
             </ToolTip>
          ),
@@ -145,8 +147,9 @@ const SmartlockDashboard = (props) => {
          center: true,
          maxWidth: "120px",
          cell: ({ propertyId }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={propertyId}>
-               <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
+            <ToolTip position="top" style={{ width: "100%" }} name={"Click here to view Property"}>
+               <Text size="Small" color="secondryColor elipsis-text" text={propertyId} 
+                  onClick={() => {history.push("/admin/smartlock-dashboard/viewProperty", {propertyId: propertyId, userId: provideAuth().userData.userid})}} />
             </ToolTip>
          ),
          id: 7,

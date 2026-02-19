@@ -227,7 +227,7 @@ const Nav = () => {
                         </Link>
                      </>
                   )}
-                  {userData.roleName === "SUPER ADMIN" && (
+                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") && (
                      <>
                         <Link
                            to="/admin/user-management"

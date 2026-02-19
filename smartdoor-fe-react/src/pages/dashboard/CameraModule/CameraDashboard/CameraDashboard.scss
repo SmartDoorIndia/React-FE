@@ -272,6 +272,27 @@
     }
 }
 
+.property-id-wrapper {
+   display: flex;
+   align-items: center;
+   gap: 6px;
+
+   .view-icon {
+      height: 25px;
+      width: 25px;
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+   }
+
+   .property-id-text:hover + .view-icon {
+      opacity: 1;
+   }
+}
+
+.view-icon {
+   cursor: pointer;
+}
+
 
 /*******Css start here************/
 @media screen {

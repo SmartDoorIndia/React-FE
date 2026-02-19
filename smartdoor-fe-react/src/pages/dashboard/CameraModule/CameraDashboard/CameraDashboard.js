@@ -7,7 +7,7 @@ import Text from "../../../../shared/Text/Text";
 import "./CameraDashboard.scss";
 import { Card, Col, Form, Row } from "react-bootstrap";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import Image from "../../../../shared/Image";
 import contentIcon from "../../../../assets/images/content-ico.png";
 import Buttons from "../../../../shared/Buttons/Buttons";
@@ -26,6 +26,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import viewIcon from "../../../../assets/images/visual.png";
+import { provideAuth } from "../../../../common/helpers/Auth";
 
 const CameraDashboard = (props) => {
    const { allCitiesWithId, getAllCityWithId, cameraList, getCameraDashboardList } = props;
@@ -60,6 +61,7 @@ const CameraDashboard = (props) => {
       orderBy: 'INCREASING'
    });
    const tableRef = useRef();
+   const history = useHistory();
 
    const cameraColumns = [
       {
@@ -125,7 +127,7 @@ const CameraDashboard = (props) => {
                <Text
                   size="Small"
                   color="secondryColor elipsis-text"
-                  text={battery ? battery + "%" : "-"}
+                  text={battery !== null ? battery + "%" : "-"}
                />
             </ToolTip>
          ),
@@ -223,11 +225,21 @@ const CameraDashboard = (props) => {
          center: false,
          maxWidth: "120px",
          cell: ({ propertyId }) => (
-            <div className="d-flex">
-               <ToolTip position="top" style={{ width: "100%" }} name={propertyId}>
-                  <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
-               </ToolTip> &nbsp;
-               {/* <img src={viewIcon} alt="" style={{ height: '25px', width: '25px', alignSelf:'end' }} /> */}
+            <div className="property-id-wrapper">
+               <ToolTip position="top" style={{ width: "100%" }} name={"Click to view property details"}>
+                  <Text
+                     size="Small"
+                     color="secondryColor elipsis-text property-id-text"
+                     text={propertyId}
+                     onClick={() => {history.push("/admin/camera-dashboard/viewProperty", {propertyId: propertyId, userId: provideAuth().userData.userid})}}
+                  />
+               </ToolTip>
+
+               {/* <img
+                  src={viewIcon}
+                  alt=""
+                  className="view-icon"
+               /> */}
             </div>
          ),
          id: 11,
@@ -597,7 +609,7 @@ const CameraDashboard = (props) => {
                            <option key={"DECREASING"} value={"DECREASING"}>
                               {"Battery " + "(DECREASING)"}
                            </option>
-                        </Form.Control> 
+                        </Form.Control>
                      </Form.Group>&nbsp;&nbsp;
                      <TextField
                         hiddenLabel

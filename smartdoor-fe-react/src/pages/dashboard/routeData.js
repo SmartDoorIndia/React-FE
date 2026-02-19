@@ -1413,12 +1413,28 @@ const routeData = [
   }, 
 
   {
+    path: '/admin/camera-dashboard/viewProperty',
+    name: 'Property Details',
+    bradcrumb: ['Camera Dashboard', 'Property Details'],
+    excat: true,
+    component: PropertyDetailsModule,
+  },
+  
+  {
     path: '/admin/camera-dashboard',
     name: 'Camera Dashboard',
     bradcrumb: false,
     excat: true,
     component: CameraDashboard
   }, 
+  
+  {
+    path: '/admin/smartlock-dashboard/viewProperty',
+    name: 'Property Details',
+    bradcrumb: ['Smartlock Dashboard', 'Property Details'],
+    excat: true,
+    component: PropertyDetailsModule,
+  },
   
   {
     path: '/admin/smartlock-dashboard',
