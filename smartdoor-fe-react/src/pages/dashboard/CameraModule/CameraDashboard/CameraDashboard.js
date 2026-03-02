@@ -5,7 +5,7 @@ import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import { showErrorToast, showSuccessToast, ToolTip } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import "./CameraDashboard.scss";
-import { Card, Col, Form, Row } from "react-bootstrap";
+import { Card, Col, Form, Modal, Row } from "react-bootstrap";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import Image from "../../../../shared/Image";
@@ -16,6 +16,7 @@ import {
    getCameraDashboardList,
    getCameraTypes,
    getCorporateById,
+   restoreOrDeleteDevice,
    updateCameraStatus,
 } from "../../../../common/redux/actions";
 import Input from "../../../../shared/Inputs/Input/Input";
@@ -60,6 +61,12 @@ const CameraDashboard = (props) => {
       orderByParam: 'BATTERY_VALUE',
       orderBy: 'INCREASING'
    });
+   const [confirmDeleteModalFlag, setConfirmDeleteModalFlag] = useState(false);
+   const [selectedDevice, setSelectedDevice] = useState({
+      deviceType: "",
+      deviceId: null,
+      actionType: "Delete",
+   })
    const tableRef = useRef();
    const history = useHistory();
 
@@ -183,7 +190,7 @@ const CameraDashboard = (props) => {
          name: "Account",
          selector: (row) => row.cameraMail,
          sortable: false,
-         center: false,
+         center: true,
          minWidth: "250px",
          cell: ({ cameraMail }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={cameraMail}>
@@ -222,34 +229,39 @@ const CameraDashboard = (props) => {
          name: "PropertyId",
          selector: (row) => row.propertyId,
          sortable: true,
-         center: false,
-         maxWidth: "120px",
+         center: true,
+         minWidth: "200px",
          cell: ({ propertyId }) => (
-            <div className="property-id-wrapper">
-               <ToolTip position="top" style={{ width: "100%" }} name={"Click to view property details"}>
-                  <Text
-                     size="Small"
-                     color="secondryColor elipsis-text property-id-text"
-                     text={propertyId}
-                     onClick={() => {history.push("/admin/camera-dashboard/viewProperty", {propertyId: propertyId, userId: provideAuth().userData.userid})}}
-                  />
-               </ToolTip>
-
-               {/* <img
-                  src={viewIcon}
-                  alt=""
-                  className="view-icon"
-               /> */}
+            <div className="d-flex justify-content-space-between" style={{justifyContent:'space-between'}}>
+               <Text size="Small" color="secondryColor elipsis-text" text={propertyId || "-"} />
+               &nbsp;&nbsp;
+               {propertyId !== null && propertyId !== 0 ?
+                  <>
+                     <Buttons name="View" size="small" onClick={() => { history.push("/admin/camera-dashboard/viewProperty", { propertyId: propertyId, userId: provideAuth().userData.userid }) }} />
+                  </> : null}
             </div>
          ),
          id: 11,
+      },
+      {
+         name: "Installer Executive",
+         selector: (row) => row.preconfiguredById,
+         sortable: false,
+         center: true,
+         minWidth: "200px",
+         cell: ({ preconfiguredById }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={preconfiguredById}>
+               <Text size="Small" color="secondryColor elipsis-text" text={preconfiguredById || "-"} />
+            </ToolTip>
+         ),
+         id: 12,
       },
       {
          name: "Action",
          sortable: false,
          center: true,
          minWidth: "340px",
-         cell: ({ cameraDeviceId, status, propertyId }) => (
+         cell: ({ cameraDeviceId, status, propertyId, kitId }) => (
             <div className="action">
                <div className="locationSelect">
                   <>
@@ -320,10 +332,18 @@ const CameraDashboard = (props) => {
                               ))}
                         </Form.Control>
                      </Form.Group>
+
                   </>
+                  &nbsp;&nbsp;
+                  {status === "PRECONFIGURED_DEVICE" && kitId === null ? (
+                     <>
+                        <Buttons name="Delete" variant="outline-danger" size="xSmall" onClick={() => {
+                           setSelectedDevice({ deviceType: 'Camera', deviceId: cameraDeviceId, actionType: 'Delete' });
+                           setConfirmDeleteModalFlag(true)
+                        }} />{" "}
+                     </>
+                  ) : null}
                </div>
-               {/* {status === "DEFECTIVE" || status === "SOLD" ? (
-               ) : null} */}
             </div>
          ),
       },
@@ -583,6 +603,33 @@ const CameraDashboard = (props) => {
          });
       }
    }
+
+   const handleDelete = () => {
+      restoreOrDeleteDevice({
+         deviceType: selectedDevice.deviceType,
+         deviceId: selectedDevice.deviceId,
+         actionType: selectedDevice.actionType,
+      }).then((response) => {
+         if (response?.status === 200) {
+            showSuccessToast(selectedDevice.deviceType + " deleted successfully");
+            setConfirmDeleteModalFlag(false)
+            getCameraDashboardList({
+               deviceStatus: deviceStatus, // preconfig , install ,sold //
+               corporateId: selectedCorporate, //
+               cityIdList: cityIdList, //
+               cameraType: cameraType, //
+               cameraSubType: cameraSubType,
+               propertyId: propertyIdText,
+               cameraId: cameraIdText,
+               uuId: uuIdText,
+               pageNumber: 1,
+               pageSize: rowsPerPage,
+               orderByParam: orderByParam,
+               orderBy: orderBy
+            });
+         }
+      });
+   };
 
    return (
       <>
@@ -982,6 +1029,59 @@ const CameraDashboard = (props) => {
                ></DataTableComponent>
             </div>
          </div>
+
+         <Modal
+            show={confirmDeleteModalFlag}
+            onHide={() => {
+               setConfirmDeleteModalFlag(false);
+            }}
+            centered
+         >
+            <Modal.Body>
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  size="small"
+                  varient="secondary"
+                  onClick={() => {
+                     setConfirmDeleteModalFlag(false);
+                  }}
+               ></Buttons>
+               <Text
+                  size="regular"
+                  fontWeight="bold"
+                  color="secondryColor"
+                  className="text-center mt-3"
+                  text={"Are you sure you want to delete this device?"}
+               />
+
+               <div className="d-flex justify-content-center mt-5 mb-3">
+                  <Buttons
+                     name="Cancel"
+                     varient="disable"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => {
+                        setConfirmDeleteModalFlag(false);
+                     }}
+                  />
+
+                  <Buttons
+                     name="Confirm"
+                     varient="primary"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => {
+                        handleDelete();
+                     }}
+                  />
+               </div>
+            </Modal.Body>
+         </Modal>
       </>
    );
 };

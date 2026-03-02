@@ -310,6 +310,13 @@ const UserManagement = (props) => {
          minWidth: '200px',
          cell: ({ position }) => <span>{position}</span>,
       },
+      // {
+      //    name: "Blocked By",
+      //    selector: "blockedByAdmin",
+      //    center: true,
+      //    minWidth: '200px',
+      //    cell: ({ blockedByAdmin }) => <span>{blockedByAdmin}</span>,
+      // },
 
       {
          name: "Action",

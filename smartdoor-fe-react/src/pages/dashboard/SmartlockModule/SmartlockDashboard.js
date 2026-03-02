@@ -12,11 +12,12 @@ import {
    getAllCityWithId,
    getCorporateById,
    getSmartlockDashboardList,
+   restoreOrDeleteDevice,
    updateCameraStatus,
    updateSmartlockStatus,
 } from "../../../common/redux/actions";
 import Input from "../../../shared/Inputs/Input/Input";
-import { Card, Col, Form, Row } from "react-bootstrap";
+import { Card, Col, Form, Modal, Row } from "react-bootstrap";
 import { Checkbox, ListItemText, MenuItem, TextField } from "@mui/material";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -54,6 +55,12 @@ const SmartlockDashboard = (props) => {
       pageNumber: 1,
       pageSize: 8,
    });
+   const [confirmDeleteModalFlag, setConfirmDeleteModalFlag] = useState(false);
+   const [selectedDevice, setSelectedDevice] = useState({
+      deviceType: "",
+      deviceId: null,
+      actionType: "Delete",
+   })
    const tableRef = useRef();
    const history = useHistory();
 
@@ -145,81 +152,40 @@ const SmartlockDashboard = (props) => {
          selector: (row) => row.propertyId,
          sortable: true,
          center: true,
-         maxWidth: "120px",
+         minWidth: "200px",
          cell: ({ propertyId }) => (
-            <ToolTip position="top" style={{ width: "100%" }} name={"Click here to view Property"}>
-               <Text size="Small" color="secondryColor elipsis-text" text={propertyId} 
-                  onClick={() => {history.push("/admin/smartlock-dashboard/viewProperty", {propertyId: propertyId, userId: provideAuth().userData.userid})}} />
-            </ToolTip>
+            <div className="d-flex justify-content-space-between" style={{ justifyContent: 'space-between' }}>
+               <Text size="Small" color="secondryColor elipsis-text" text={propertyId || "-"} />
+               &nbsp;&nbsp;
+               {propertyId !== null && propertyId !== 0 ?
+                  <>
+                     <Buttons name="View" size="small" onClick={() => { history.push("/admin/smartlock-dashboard/viewProperty", { propertyId: propertyId, userId: provideAuth().userData.userid }) }} />
+                  </> : null}
+            </div>
+
          ),
          id: 7,
+      },
+      {
+         name: "Installer Executive",
+         selector: (row) => row.preconfiguredById,
+         sortable: false,
+         center: true,
+         minWidth: "200px",
+         cell: ({ preconfiguredById }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={preconfiguredById}>
+               <Text size="Small" color="secondryColor elipsis-text" text={preconfiguredById || "-"} />
+            </ToolTip>
+         ),
+         id: 8,
       },
       {
          name: "Action",
          sortable: false,
          center: true,
          minWidth: "340px",
-         cell: ({ id, status, propertyId }) => (
+         cell: ({ id, status, propertyId, kitId }) => (
             <div className="action">
-               {/* {status !== "DEFECTIVE" && status !== "SOLD" ? (
-                  <>
-                     <Buttons
-                        name="Mark as Defective"
-                        variant="outline-danger"
-                        size="xSmall"
-                        onClick={async () => {
-                           await updateSmartlockStatus({
-                              lockId: id,
-                              status: "DEFECTIVE",
-                           }).then((response) => {
-                              if (response?.status === 200) {
-                                 showSuccessToast("Smartlock marked as defective successfully...");
-                                 getSmartlockDashboardList({
-                                    deviceStatus: deviceStatus, // preconfig , install ,sold //
-                                    corporateId: selectedCorporate, //
-                                    cityIdList: cityIdList, //
-                                    smartlockType: smartlockType, //
-                                    propertyId: propertyIdText,
-                                    smartlockId: smartlockIdText,
-                                    pageNumber: currentPage,
-                                    pageSize: rowsPerPage,
-                                 });
-                              } else {
-                                 showErrorToast(response?.data?.message);
-                              }
-                           });
-                        }}
-                     />
-                     &nbsp;&nbsp;
-                     <Buttons
-                        name="Mark as Sold"
-                        variant="outline-danger"
-                        size="xSmall"
-                        onClick={async () => {
-                           await updateSmartlockStatus({
-                              lockId: id,
-                              status: "SOLD",
-                           }).then((response) => {
-                              if (response?.status === 200) {
-                                 showSuccessToast("Smartlock marked as sold successfully...");
-                                 getSmartlockDashboardList({
-                                    deviceStatus: deviceStatus, // preconfig , install ,sold //
-                                    corporateId: selectedCorporate, //
-                                    cityIdList: cityIdList, //
-                                    smartlockType: smartlockType, //
-                                    propertyId: propertyIdText,
-                                    smartlockId: smartlockIdText,
-                                    pageNumber: currentPage,
-                                    pageSize: rowsPerPage,
-                                 });
-                              } else {
-                                 showErrorToast(response?.data?.message);
-                              }
-                           });
-                        }}
-                     />
-                  </>
-               ) : null} */}
                <div className="locationSelect">
                   <>
                      <style>
@@ -287,6 +253,16 @@ const SmartlockDashboard = (props) => {
                         </Form.Control>
                      </Form.Group>
                   </>
+                  &nbsp;&nbsp;
+                  {status === "PRECONFIGURED_DEVICE" && kitId === null ? (
+                     <>
+                        <Buttons name="Delete" variant="outline-danger" size="xSmall" onClick={() => {
+                           setSelectedDevice({ deviceType: 'Camera', deviceId: id, actionType: 'Delete' });
+                           setConfirmDeleteModalFlag(true)
+                        }} />{" "}
+                        &nbsp;&nbsp;
+                     </>
+                  ) : null}
                </div>
             </div>
          ),
@@ -504,6 +480,31 @@ const SmartlockDashboard = (props) => {
          });
       }
    }
+
+   const handleDelete = () => {
+      restoreOrDeleteDevice({
+         deviceType: selectedDevice.deviceType,
+         deviceId: selectedDevice.deviceId,
+         actionType: selectedDevice.actionType,
+      }).then((response) => {
+         if (response?.status === 200) {
+            showSuccessToast(selectedDevice.deviceType + " deleted successfully");
+            setConfirmDeleteModalFlag(false)
+            getSmartlockDashboardList({
+               deviceStatus: deviceStatus, // preconfig , install ,sold //
+               corporateId: selectedCorporate, //
+               cityIdList: cityIdList, //
+               smartlockType: smartlockType, //
+               propertyId: propertyIdText,
+               smartlockId: smartlockIdText,
+               pageNumber: currentPage,
+               pageSize: rowsPerPage,
+               orderByParam: orderByParam,
+               orderBy: orderBy
+            });
+         }
+      });
+   };
 
    return (
       <>
@@ -883,6 +884,58 @@ const SmartlockDashboard = (props) => {
                ></DataTableComponent>
             </div>
          </div>
+         <Modal
+            show={confirmDeleteModalFlag}
+            onHide={() => {
+               setConfirmDeleteModalFlag(false);
+            }}
+            centered
+         >
+            <Modal.Body>
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  size="small"
+                  varient="secondary"
+                  onClick={() => {
+                     setConfirmDeleteModalFlag(false);
+                  }}
+               ></Buttons>
+               <Text
+                  size="regular"
+                  fontWeight="bold"
+                  color="secondryColor"
+                  className="text-center mt-3"
+                  text={"Are you sure you want to delete this device?"}
+               />
+
+               <div className="d-flex justify-content-center mt-5 mb-3">
+                  <Buttons
+                     name="Cancel"
+                     varient="disable"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => {
+                        setConfirmDeleteModalFlag(false);
+                     }}
+                  />
+
+                  <Buttons
+                     name="Confirm"
+                     varient="primary"
+                     type="button"
+                     // size="xSmall"
+                     color="black"
+                     className="mr-3"
+                     onClick={() => {
+                        handleDelete();
+                     }}
+                  />
+               </div>
+            </Modal.Body>
+         </Modal>
       </>
    );
 };
