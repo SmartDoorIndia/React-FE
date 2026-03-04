@@ -232,7 +232,7 @@ const CameraDashboard = (props) => {
          center: true,
          minWidth: "200px",
          cell: ({ propertyId }) => (
-            <div className="d-flex justify-content-space-between" style={{justifyContent:'space-between'}}>
+            <div className="d-flex justify-content-space-between" style={{ justifyContent: 'space-between' }}>
                <Text size="Small" color="secondryColor elipsis-text" text={propertyId || "-"} />
                &nbsp;&nbsp;
                {propertyId !== null && propertyId !== 0 ?

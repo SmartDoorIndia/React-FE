@@ -257,7 +257,7 @@ const SmartlockDashboard = (props) => {
                   {status === "PRECONFIGURED_DEVICE" && kitId === null ? (
                      <>
                         <Buttons name="Delete" variant="outline-danger" size="xSmall" onClick={() => {
-                           setSelectedDevice({ deviceType: 'Camera', deviceId: id, actionType: 'Delete' });
+                           setSelectedDevice({ deviceType: 'SmartLock', deviceId: id, actionType: 'Delete' });
                            setConfirmDeleteModalFlag(true)
                         }} />{" "}
                         &nbsp;&nbsp;
