@@ -242,7 +242,7 @@ export const getAllUsers = (data) => async (dispatch) => {
   if (response) {
     if (response.data && response.status === 200) {
       if (response.data.resourceData) {
-        dispatch({ type: Actions.USER_MANAGEMENT_SUCCESS, data: { userData: response.data.resourceData, records: response.data.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchStr: data?.searchString, city: data?.searchByCity, location: data?.searchByzipCode, department: data.departmentName, defaultSort: data?.defaultSort, defaultSortId: data?.defaultSortId, defaultSortFieldId: data?.defaultSortFieldId } });
+        dispatch({ type: Actions.USER_MANAGEMENT_SUCCESS, data: { userData: response.data.resourceData, records: response.data.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchStr: data?.searchString, city: data?.searchByCity, location: data?.searchByzipCode, department: data.departmentName, activeUser: data?.activeUser, defaultSort: data?.defaultSort, defaultSortId: data?.defaultSortId, defaultSortFieldId: data?.defaultSortFieldId } });
       }
     } else dispatch({ type: Actions.USER_MANAGEMENT_ERROR, data: response.data });
   }
@@ -2500,7 +2500,8 @@ export const getSmartlockDashboardList = data => async (dispatch) => {
   dispatch({type: Actions.SMARTLOCK_DASHBOARD_LIST_LOADING, data: []});
   const response = await mainApiService("smartlockDashboardList", data);
   if(response?.status === 200) {
-    dispatch({type: Actions.SMARTLOCK_DASHBOARD_LIST_SUCCESS, data: {list: response?.data?.resourceData?.devices, statusCounts: response?.data?.resourceData?.statusCounts, currentPage: data?.pageNumber, rowsPerPage: data?.pageSize, deviceStatus: data?.deviceStatus, propertyId: data?.propertyId, smartlockId: data?.smartlockId, corporateId: data?.corporateId, smartlockType: data?.smartlockType, cityIdList: data?.cityIdList }})
+    dispatch({type: Actions.SMARTLOCK_DASHBOARD_LIST_SUCCESS, data: {list: response?.data?.resourceData?.devices, statusCounts: response?.data?.resourceData?.statusCounts, currentPage: data?.pageNumber, rowsPerPage: data?.pageSize, deviceStatus: data?.deviceStatus, propertyId: data?.propertyId, smartlockId: data?.smartlockId, corporateId: data?.corporateId, smartlockType: data?.smartlockType, cityIdList: data?.cityIdList, orderByParam: data.orderByParam,
+      orderBy: data.orderBy }})
   } else {
     dispatch({type: Actions.SMARTLOCK_DASHBOARD_LIST_ERROR, data: response?.data});
   }

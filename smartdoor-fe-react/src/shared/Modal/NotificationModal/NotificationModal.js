@@ -9,6 +9,8 @@ import { useUserContext } from '../../../common/helpers/Auth';
 import { Link } from 'react-router-dom';
 import ModalModule from '../ModalModule';
 import { getUserDetailById } from '../../../common/redux/actions'
+import Buttons from '../../Buttons/Buttons';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 function NotificationModal(props) {
    const [allNotifications, setAllNotifications] = useState([]);
@@ -19,6 +21,7 @@ function NotificationModal(props) {
    const [userDetailId, setUseDetailId] = useState('')
    const [modalData, setModalData] = useState({})
    const [propertyId, setPropertyId] = useState('')
+   const history = useHistory();
 
    const closeModal = (data = { isReload: false }) => {
       // if(data?.isReload) {
@@ -258,14 +261,42 @@ function NotificationModal(props) {
                                              </div>
                                           </Link>
                                        )
-                                       : notification.notifictionAction==="ASSIGN_SLOT" ?
-                                       (
-                                          <Link className='removeUnderline' to={{
-                                             pathname: "/admin/execution/installation-detail",
-                                             state: { taskId: notification.redirectId }
-                                          }}
-                                             onClick={props.handleClose}
-                                          >
+                                       : notification.notifictionAction === "ASSIGN_SLOT" ?
+                                          (
+                                             <Link className='removeUnderline' to={{
+                                                pathname: "/admin/execution/installation-detail",
+                                                state: { taskId: notification.redirectId }
+                                             }}
+                                                onClick={props.handleClose}
+                                             >
+                                                <div className="cardSecond" >
+                                                   <Text
+                                                      size="regular"
+                                                      fontWeight="smbold"
+                                                      color="secondryColor"
+                                                      text={notification.notificationTitle}
+                                                   />
+                                                   <div className="d-flex align-items-center pt-2">
+                                                      <Text
+                                                         size="xSmall"
+                                                         fontWeight="smbold"
+                                                         color="TaupeGrey"
+                                                         text={notification.notification}
+                                                         className="mr-3"
+                                                      />
+                                                   </div>
+                                                   <Text
+                                                      size="xSmall"
+                                                      fontWeight="smbold"
+                                                      color="TaupeGrey"
+                                                      text={formateDateTime(notification.dateTime)}
+                                                      className="mr-3"
+                                                   />
+                                                </div>
+                                             </Link>
+                                          )
+                                          :
+                                          (
                                              <div className="cardSecond" >
                                                 <Text
                                                    size="regular"
@@ -289,36 +320,13 @@ function NotificationModal(props) {
                                                    text={formateDateTime(notification.dateTime)}
                                                    className="mr-3"
                                                 />
+                                                {(notification?.redirectId !== null ) ?
+                                                   <>
+                                                      <Buttons size="small" name="View Property" onClick={() => { props.handleClose(); history.push("/admin/property/property-details", { propertyId: notification?.redirectId, userId: notification?.userId, menuName: 'Properties' }) }} />
+                                                   </>
+                                                   : null}
                                              </div>
-                                          </Link>
-                                       )
-                                       :
-                                       (
-                                          <div className="cardSecond" >
-                                             <Text
-                                                size="regular"
-                                                fontWeight="smbold"
-                                                color="secondryColor"
-                                                text={notification.notificationTitle}
-                                             />
-                                             <div className="d-flex align-items-center pt-2">
-                                                <Text
-                                                   size="xSmall"
-                                                   fontWeight="smbold"
-                                                   color="TaupeGrey"
-                                                   text={notification.notification}
-                                                   className="mr-3"
-                                                />
-                                             </div>
-                                             <Text
-                                                size="xSmall"
-                                                fontWeight="smbold"
-                                                color="TaupeGrey"
-                                                text={formateDateTime(notification.dateTime)}
-                                                className="mr-3"
-                                             />
-                                          </div>
-                                       )}
+                                          )}
                   </div>
                )}
             </div>

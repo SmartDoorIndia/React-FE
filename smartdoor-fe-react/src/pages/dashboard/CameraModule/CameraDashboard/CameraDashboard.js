@@ -1,15 +1,13 @@
 /** @format */
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
 import { showErrorToast, showSuccessToast, ToolTip } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import "./CameraDashboard.scss";
 import { Card, Col, Form, Modal, Row } from "react-bootstrap";
 import DataTableComponent from "../../../../shared/DataTable/DataTable";
-import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import Image from "../../../../shared/Image";
-import contentIcon from "../../../../assets/images/content-ico.png";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import {
    getAllCityWithId,
@@ -19,14 +17,12 @@ import {
    restoreOrDeleteDevice,
    updateCameraStatus,
 } from "../../../../common/redux/actions";
-import Input from "../../../../shared/Inputs/Input/Input";
 import { Checkbox, ListItemText, MenuItem, TextField } from "@mui/material";
 import Pagination from "../../../../shared/DataTable/Pagination";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
-import viewIcon from "../../../../assets/images/visual.png";
 import { provideAuth } from "../../../../common/helpers/Auth";
 
 const CameraDashboard = (props) => {

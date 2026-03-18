@@ -4,8 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import CONSTANTS_STATUS from "../../../common/helpers/ConstantsStatus";
 import { showErrorToast, showSuccessToast, ToolTip } from "../../../common/helpers/Utils";
 import Text from "../../../shared/Text/Text";
-import Image from "../../../shared/Image";
-import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { TableLoader } from "../../../common/helpers/Loader";
 import Pagination from "../../../shared/DataTable/Pagination";
 import {
@@ -13,17 +12,14 @@ import {
    getCorporateById,
    getSmartlockDashboardList,
    restoreOrDeleteDevice,
-   updateCameraStatus,
    updateSmartlockStatus,
 } from "../../../common/redux/actions";
-import Input from "../../../shared/Inputs/Input/Input";
 import { Card, Col, Form, Modal, Row } from "react-bootstrap";
 import { Checkbox, ListItemText, MenuItem, TextField } from "@mui/material";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import Buttons from "../../../shared/Buttons/Buttons";
 import DataTableComponent from "../../../shared/DataTable/DataTable";
-import contentIcon from "../../../assets/images/content-ico.png";
 import "./SmartlockDashboard.scss";
 import SearchInput from "../../../shared/Inputs/SearchInput/SearchInput";
 import { provideAuth } from "../../../common/helpers/Auth";

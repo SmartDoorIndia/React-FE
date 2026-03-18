@@ -59,15 +59,13 @@ const UserManagement = (props) => {
    const { userData } = provideAuth();
    const moduleName = props.location?.state?.moduleName ? props.location?.state?.moduleName : ''
    const dispatch = useDispatch();
-   console.log("user mgmnt:userData:", userData);
-   console.log(moduleName, "moduleName");
-   console.log(props, "generalCityDepData");
    const data = useSelector(state => state.allUsersData.data);
    const { getAllUsers, allUsersData, getCityAndDept, generalCityDepData, getLocationByCity } =
       props;
    const [city, setCity] = useState(data.length !== 0 ? allUsersData.data?.city : "");
    const [location, setLocation] = useState(data.length !== 0 ? allUsersData.data?.city : "");
    const [departments, setDepartment] = useState(props.location?.state?.moduleName ? props.location?.state?.moduleName : "");
+   const [blockedUser, setsetBlockedUser] = useState(allUsersData.data?.blockedUser || false);
 
    const [show, setShow] = useState(false);
    const [blockData, setBlockData] = useState({});
@@ -125,6 +123,7 @@ const UserManagement = (props) => {
             pageNo: newPage,
             userId: userData.userid,
             searchString: filterText,
+            blockedUser: blockedUser,
             departmentName: departments,
             defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
@@ -137,6 +136,7 @@ const UserManagement = (props) => {
             pageNo: newPage,
             userId: userData.userid,
             searchString: filterText,
+            blockedUser: blockedUser,
             departmentName: departments,
             defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
@@ -159,7 +159,8 @@ const UserManagement = (props) => {
             pageNo: currentPage,
             userId: userData.userid,
             searchString: filterText,
-            departmentName: departments
+            departmentName: departments,
+            blockedUser: blockedUser,
          });
       } else {
          getAllUsers({
@@ -167,6 +168,7 @@ const UserManagement = (props) => {
             pageSize: Number(newRowsPerPage),
             searchByCity: city,
             // searchByzipCode: location,
+            blockedUser: blockedUser,
             departmentName: departments,
             searchString: filterText,
          });
@@ -195,7 +197,7 @@ const UserManagement = (props) => {
       );
       blockTeamMember({ userId: blockData.id, startDate: startDt, endDate: endDt })
          .then((data) => {
-            getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments });
+            getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments, blockedUser: blockedUser });
             setDatePickerblockvalue([]);
          })
          .catch((error) => {
@@ -213,7 +215,7 @@ const UserManagement = (props) => {
       // if (city === "" && departments === "") {
       if (data?.length === 0 || props?.location?.state?.autoRefresh === 'Yes') {
          getCityAndDept();
-         getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: "", departmentName: departments, defaultSort: true, defaultSortId: 'id', defaultSortFieldId: 1 });
+         getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: "", departmentName: departments, blockedUser: blockedUser, defaultSort: true, defaultSortId: 'id', defaultSortFieldId: 1 });
       }
    }
       // else {
@@ -237,7 +239,7 @@ const UserManagement = (props) => {
          maxWidth: "120px",
          sortable: true,
          center: true,
-         style: {padding: '0%'},
+         style: { padding: '0%' },
          cell: ({ joiningDate }) => <span>{formateDate(joiningDate)}</span>,
          id: 2
       },
@@ -310,13 +312,13 @@ const UserManagement = (props) => {
          minWidth: '200px',
          cell: ({ position }) => <span>{position}</span>,
       },
-      // {
-      //    name: "Blocked By",
-      //    selector: "blockedByAdmin",
-      //    center: true,
-      //    minWidth: '200px',
-      //    cell: ({ blockedByAdmin }) => <span>{blockedByAdmin}</span>,
-      // },
+      {
+         name: "Blocked By",
+         selector: "blockedByAdmin",
+         center: true,
+         minWidth: '200px',
+         cell: ({ blockedByAdmin }) => <span>{blockedByAdmin || "-"}</span>,
+      },
 
       {
          name: "Action",
@@ -354,7 +356,7 @@ const UserManagement = (props) => {
          name: 'Gift Coins',
          selector: "user",
          center: true,
-         minWidth:'150px',
+         minWidth: '150px',
          cell: ((user) =>
             <div>
                <Buttons
@@ -372,7 +374,7 @@ const UserManagement = (props) => {
 
    const closeModal = (data = { isReload: false }) => {
       if (data?.isReload) {
-         getAllUsers({ pageNo: "", pageSize: "", searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
+         getAllUsers({ pageNo: "", pageSize: "", searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId, blockedUser: blockedUser });
       }
       // getAllUsers({pageNumber:"", records:"",searchByCity:"", searchByzipCode:""});
       setModalData();
@@ -612,6 +614,25 @@ const UserManagement = (props) => {
                               : null
                            : null}
                      </Form.Control>
+                     <Form.Control as="select"
+                        value={blockedUser}
+                        onChange={(e) => {
+                           // _filterData(city, location, e.target.value)
+                           setsetBlockedUser(e.target.value)
+                        }}
+                     >
+                        <option key="active" value={false}>Active</option>
+                        <option key="blocked" value={true}>Blocked</option>
+                        {/* {generalCityDepData.departments
+                           ? generalCityDepData.departments.length
+                              ? generalCityDepData.departments.map((_value, index) => (
+                                 <option key={index} value={_value}>
+                                    {_value}
+                                 </option>
+                              ))
+                              : null
+                           : null} */}
+                     </Form.Control>
                      <div className="ml-3">
                         <Buttons
                            name="Search"
@@ -620,10 +641,8 @@ const UserManagement = (props) => {
                            color="white"
                            style={{ height: "40px !important" }}
                            onClick={() => {
-                              setCurrentPage(1)
-                              const regex = /([^,]+),\s*(\d{6})/;
-                              const matches = location.match(regex);
-                              getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
+                              setCurrentPage(1);
+                              getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments, blockedUser: blockedUser, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
                            }}
                         />
                      </div>
