@@ -82,13 +82,6 @@ const UserManagement = (props) => {
    const [defaultSort, setDefaultSort] = useState(data.length !== 0 ? allUsersData?.data?.defaultSort : true);
    const [defaultSortId, setDefaultSortId] = useState(data.length !== 0 ? allUsersData?.data?.defaultSortId : 'id');
    const [defaultSortFieldId, setDefaultSortFieldId] = useState(data.length !== 0 ? allUsersData?.data?.defaultSortFieldId : 1);
-   // const [dates, setDates] = useState([
-   //    {
-   //       startDate: new Date(),
-   //       endDate: null,
-   //       key: "selection",
-   //    },
-   // ]);
 
    const PaginationActionButton = () => (
       <div className="d-flex justify-content-between tableBottom">
@@ -102,6 +95,7 @@ const UserManagement = (props) => {
    const [showModal, setShowModal] = useState(false);
    const [newCoinValue, setNewCoinValue] = useState(null);
    const [currentUserId, setCurrentUserId] = useState(null);
+   const [columns, setColumns] = useState([]);
    const [currentPage, setCurrentPage] = useState(data.length !== 0 ? allUsersData?.data?.currentPage : 1);
    const [rowsPerPage, setRowsPerPage] = useState(data.length !== 0 ? allUsersData?.data?.rowsPerPage : 8);
    let recordsPerPage = (data.length !== 0 ? allUsersData?.data?.rowsPerPage : 8);
@@ -206,177 +200,140 @@ const UserManagement = (props) => {
       handleClose();
    };
 
-   // useEffect(() => {
-   //    if(data?.length === 0) {
-   //    }
-   // }, [getCityAndDept]);
+   useEffect(() => {
+      setColumns(buildColumns(blockedUser));
+   }, []);
 
    useEffect(() => {
-      // if (city === "" && departments === "") {
       if (data?.length === 0 || props?.location?.state?.autoRefresh === 'Yes') {
          getCityAndDept();
          getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: "", departmentName: departments, blockedUser: blockedUser, defaultSort: true, defaultSortId: 'id', defaultSortFieldId: 1 });
       }
-   }
-      // else {
-      //    getUserByCityAndDept({ city, departments });
-      // }
-      // }
-      , [getAllUsers, getCityAndDept]);
+   }, [getAllUsers, getCityAndDept]);
 
-   const columns = [
-      {
-         name: "Id",
-         selector: "id",
-         center: true,
-         sortable: true,
-         id: 1
-      },
-
-      {
-         name: "Joined On",
-         selector: ((row) => row.joiningDate),
-         maxWidth: "120px",
-         sortable: true,
-         center: true,
-         style: { padding: '0%' },
-         cell: ({ joiningDate }) => <span>{formateDate(joiningDate)}</span>,
-         id: 2
-      },
-      {
-         name: "Name ",
-         selector: "name",
-         center: true,
-         minWidth: '180px',
-         cell: ({ name, contactNumber, imageUrl }) => (
-            <div className="">
-               {/* <div className="userImage">
-          <Image name="userImage" src={ imageUrl || userImage } />
-        </div> */}
-               <ToolTip
-                  position="top"
-                  name={
-                     <div>
-                        {" "}
-                        <span>{name || "-"} </span>
-                        <span> {`(${contactNumber})`} </span>
-                     </div>
-                  }
-               >
+   const buildColumns = (blockedUserVal) => {
+      const baseColumns = [
+         {
+            name: "Id",
+            selector: "id",
+            center: true,
+            sortable: true,
+            id: 1
+         },
+         {
+            name: "Joined On",
+            selector: (row) => row.joiningDate,
+            maxWidth: "120px",
+            sortable: true,
+            center: true,
+            style: { padding: '0%' },
+            cell: ({ joiningDate }) => <span>{formateDate(joiningDate)}</span>,
+            id: 2
+         },
+         {
+            name: "Name",
+            selector: "name",
+            center: true,
+            minWidth: '180px',
+            cell: ({ name, contactNumber }) => (
+               <ToolTip position="top" name={`${name} (${contactNumber})`}>
                   <Text size="Small" color="secondryColor" text={name ? name.capitalizeWord() : "-"} />
                </ToolTip>
-            </div>
-         ),
-      },
-      // {
-      //    name: "Location",
-      //    // selector: 'workLocation',
-      //    selector: (row) => row.workLocation,
-      //    center: true,
-      //    wrap: true,
-      //    maxWidth: "150px",
-      //    style: { padding: '0px !important' },
-      //    cell: (row) => (
-      //       // <ToolTip
-      //       //    position="left"
-      //       //    style={{ width: "100%" }}
-      //       //    name={getLocationStr(row.workLocation)}
-      //       // >
-      //       <span className="cursor-pointer elipsis-text" title={row?.workLocation?.map(obj => obj.location)}>
-      //          {row?.workLocation?.length && row?.workLocation !== null
-      //             ? `${row?.workLocation[0]?.location.toString()}...`
-      //             : "-"}
-      //       </span>
-      //       // </ToolTip>
-      //    ),
-      // },
-      {
-         name: "City",
-         selector: "city",
-         center: true,
-         minWidth: "250px",
-         style: { padding: '0px !important' },
-         wrap: true,
-         cell: ({ city }) =>
-         (
-            <ToolTip position='top' name={city.join(", ")} >
-               <span className="cursor-pointer elipsis-text" title={city}>
-                  <Text size="Small" color="secondryColor" text={city.join(", ") || "-"} />
-               </span>
-            </ToolTip>)
-      },
-      {
-         name: "Position",
-         selector: "position",
-         center: true,
-         minWidth: '200px',
-         cell: ({ position }) => <span>{position}</span>,
-      },
-      {
-         name: "Blocked By",
-         selector: "blockedByAdmin",
-         center: true,
-         minWidth: '200px',
-         cell: ({ blockedByAdmin }) => <span>{blockedByAdmin || "-"}</span>,
-      },
+            ),
+            id: 3
+         },
+         {
+            name: "City",
+            selector: "city",
+            center: true,
+            minWidth: "250px",
+            wrap: true,
+            cell: ({ city }) => (
+               <ToolTip position='top' name={city.join(", ")}>
+                  <span className="cursor-pointer elipsis-text">
+                     <Text size="Small" color="secondryColor" text={city.join(", ") || "-"} />
+                  </span>
+               </ToolTip>
+            ),
+            id: 4
+         },
+         {
+            name: "Position",
+            selector: "position",
+            center: true,
+            minWidth: '200px',
+            cell: ({ position }) => <span>{position}</span>,
+            id: 5
+         }
+      ];
 
-      {
-         name: "Action",
-         center: true,
-         cell: (row) => (
-            <div className="action">
-               <ToolTip position="left" name="View Details">
-                  <span
-                     onClick={() => {
+      // ✅ Only add when blocked = true
+      if (blockedUserVal === true) {
+         baseColumns.push({
+            name: "Blocked By",
+            selector: "blockedByAdmin",
+            center: true,
+            minWidth: '200px',
+            cell: ({ blockedByAdmin }) => <span>{blockedByAdmin || "-"}</span>,
+         });
+      }
+
+      baseColumns.push(
+         {
+            name: "Action",
+            center: true,
+            cell: (row) => (
+               <div className="action">
+                  <ToolTip position="left" name="View Details">
+                     <span onClick={() => {
                         const makeData = getModalActionData(row);
                         setModalData(makeData);
-                     }}
-                  >
-                     <Image name="editIcon" src={actionIcon} />
-                  </span>
-               </ToolTip>
-               <ToolTip position="right" name={row.blocked ? "Unblock" : "Block"}>
-                  <span
-                     onClick={() => {
+                     }}>
+                        <Image name="editIcon" src={actionIcon} />
+                     </span>
+                  </ToolTip>
+                  <ToolTip position="right" name={row.blocked ? "Unblock" : "Block"}>
+                     <span onClick={() => {
                         handleShow();
                         setBlockData({ id: row.id, isBlocked: row.blocked });
-                     }}
-                  >
-                     <Image
-                        name="editIcon"
-                        className="p-1"
-                        src={row.blocked ? blockIconActive : blockIcon}
-                     />
-                  </span>
-               </ToolTip>
-            </div>
-         ),
-      },
-      {
-         name: 'Gift Coins',
-         selector: "user",
-         center: true,
-         minWidth: '150px',
-         cell: ((user) =>
-            <div>
+                     }}>
+                        <Image
+                           name="editIcon"
+                           className="p-1"
+                           src={row.blocked ? blockIconActive : blockIcon}
+                        />
+                     </span>
+                  </ToolTip>
+               </div>
+            ),
+         },
+         {
+            name: 'Gift Coins',
+            selector: "user",
+            center: true,
+            minWidth: '150px',
+            cell: (user) => (
                <Buttons
                   name="Add Coins"
                   varient="primary"
-                  type="submit"
                   size="xSmall"
                   color="white"
-                  onClick={() => { setCurrentUserId(user.id); setShowModal(true) }}
+                  onClick={() => {
+                     setCurrentUserId(user.id);
+                     setShowModal(true);
+                  }}
                />
-            </div>
-         )
-      }
-   ];
+            )
+         }
+      );
+
+      return baseColumns;
+   };
 
    const closeModal = (data = { isReload: false }) => {
       if (data?.isReload) {
          getAllUsers({ pageNo: "", pageSize: "", searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId, blockedUser: blockedUser });
       }
-      // getAllUsers({pageNumber:"", records:"",searchByCity:"", searchByzipCode:""});
       setModalData();
    };
 
@@ -395,32 +352,8 @@ const UserManagement = (props) => {
       );
    }, [filterText, resetPaginationToggle]);
 
-   // function searchingLocation(element, index, array) {
-   //    return element.location.toLowerCase().includes(filterText.toLowerCase());
-   // }
-
    let filteredItems = allUsersData?.data?.userData?.length ?
-      allUsersData?.data?.userData
-      // ?.filter(item => {
-      //    return item?.id === filterText ||
-      //       item?.name?.toLowerCase().includes(filterText.toLowerCase()) ||
-      //       // item?.city?.toLowerCase().includes(filterText.toLowerCase()) ||
-      //       item?.position?.toLowerCase().includes(filterText.toLowerCase()) ||
-
-      //       item?.workLocation?.some(searchingLocation)
-      //    // item.workLocation.filter(place => 
-      //    //     place?.location.toLowerCase().includes(filterText.toLowerCase())
-
-
-      // }) 
-      : [];
-
-   const _filterData = (city, zipCode, department_name) => {
-      // setInstallationCity(city);
-      // getAllUsers({ pageNo: "", records: "", searchByCity: city, searchByzipCode: zipCode, departmentName: department_name });
-   }
-   console.log(allUsersData, "aaaaaaaaaaaaaaaaaaaaaaaaaa")
-
+      allUsersData?.data?.userData : [];
 
    const handleSortedData = (newSortedData) => {
       // Store sorted data
@@ -514,14 +447,6 @@ const UserManagement = (props) => {
                   departments={departments}
                />
             )}
-            {/* <Route
-          path="/admin/user-management/user-details"
-          excat
-          render={ (props) => <ModalModule
-            { ...props }
-          /> }
-        /> */}
-            {/* <Route path='/admin/user-management/user-details'  render={props=> <ModalModule {...props} allUsersData={allUsersData}/> }  />*/}
             <div className="d-flex flex-md-column flex-xl-row justify-content-xl-between align-items-xl-center align-items-left tableHeading">
                <div className="text-nowrap mb-2">
                   <Text
@@ -533,7 +458,6 @@ const UserManagement = (props) => {
                </div>
                <div className="locationSelect d-flex align-items-xl-center align-items-left">
                   {subHeaderComponentMemo}
-                  {/* <div className="m-2"></div> */}
                   <Form.Group controlId="exampleForm.SelectCustom" className="w-40 userGrp ml-0">
                      {/* <Form.Label>City:</Form.Label> */}
                      {/* <Form.Control as="select"
@@ -617,21 +541,11 @@ const UserManagement = (props) => {
                      <Form.Control as="select"
                         value={blockedUser}
                         onChange={(e) => {
-                           // _filterData(city, location, e.target.value)
-                           setsetBlockedUser(e.target.value)
+                           setsetBlockedUser(e.target.value === "true");
                         }}
                      >
                         <option key="active" value={false}>Active</option>
                         <option key="blocked" value={true}>Blocked</option>
-                        {/* {generalCityDepData.departments
-                           ? generalCityDepData.departments.length
-                              ? generalCityDepData.departments.map((_value, index) => (
-                                 <option key={index} value={_value}>
-                                    {_value}
-                                 </option>
-                              ))
-                              : null
-                           : null} */}
                      </Form.Control>
                      <div className="ml-3">
                         <Buttons
@@ -641,8 +555,22 @@ const UserManagement = (props) => {
                            color="white"
                            style={{ height: "40px !important" }}
                            onClick={() => {
+                              const isBlocked = blockedUser === true || blockedUser === "true";
+
+                              setColumns(buildColumns(isBlocked));   // ✅ FORCE column update
                               setCurrentPage(1);
-                              getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments, blockedUser: blockedUser, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId });
+
+                              getAllUsers({
+                                 pageNo: 1,
+                                 pageSize: rowsPerPage,
+                                 searchString: filterText,
+                                 searchByCity: city,
+                                 departmentName: departments,
+                                 blockedUser: isBlocked,
+                                 defaultSort,
+                                 defaultSortId,
+                                 defaultSortFieldId
+                              });
                            }}
                         />
                      </div>
