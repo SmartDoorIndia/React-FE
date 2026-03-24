@@ -1444,6 +1444,14 @@ const routeData = [
     component: SmartlockDashboard
   }, 
   
+  {
+    path: '/admin/property-details/:notificationId',
+    name: 'Property Details',
+    bradcrumb: false,
+    excat: true,
+    component: PropertyDetailsModule
+  }, 
+  
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

@@ -1,14 +1,12 @@
 /** @format */
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { connect, useDispatch } from "react-redux";
 import { Row, Col, Modal } from "react-bootstrap";
 import ImageSliderComponent from "./ImageSliderComponent";
 import Buttons from "../../../shared/Buttons/Buttons";
 import userImg from "../../../assets/svg/avatar_sml.svg";
 import mailIcon from "../../../assets/images/mail-icon.svg";
-import LockClose from "../../../assets/svg/LockClose.svg";
-import LockOpen from "../../../assets/svg/LockOpen.svg";
 import {
    getPropertyDetails,
    getPropertyAnalyticsByPropertyId,
@@ -44,7 +42,6 @@ import {
 } from "../../../common/helpers/Utils";
 import "./PropertyDoc.scss";
 import MessageModal from "../../../shared/Modal/MessageModal/MessageModal";
-import doc from "../../../assets/svg/doc.svg";
 import DownArrow from "../../../assets/svg/DownArrow.svg";
 import UpArrow from "../../../assets/svg/UpArrow.svg";
 import Text from "../../../shared/Text/Text";
@@ -56,7 +53,7 @@ import AesAlgo from "../../../camera-related/aesAlgorithm";
 import SignatureAlgo from "../../../camera-related/signatureAlgorithm";
 import TimeStampAlgo from "../../../camera-related/timeMilis";
 import QrModal from "../../../shared/Modal/QrModal/QrModal";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { Switch } from "@mui/material";
 import reviewIcon from "../../../assets/svg/reviewIcon.svg";
 import { getLocalStorage } from "../../../common/helpers/Utils";
@@ -64,8 +61,6 @@ import PostingFields from "../../../common/helpers/PostingFields";
 // import videojs from 'video.js';
 // import 'video.js/dist/video-js.css';
 // import 'videojs-flash';
-import { ReactFlvPlayer } from "react-flv-player";
-import VisitMedia from "./VisitRecordings/VisitMedia";
 
 // const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
@@ -212,7 +207,7 @@ const PropertyDetails = (props) => {
 
    // getPropertyDetails()
    const _getPropertyDetails = useCallback(async () => {
-      await getPropertyDetails({ propertyId: propertyId, userId: userId })
+      await getPropertyDetails({ propertyId: props?.history?.location?.state?.propertyId, userId: userId })
          .then((response) => {
             console.log("resp data => ", response);
             setLoading(false);
@@ -281,8 +276,6 @@ const PropertyDetails = (props) => {
                   if (!response.data.resourceData.basicPlan) _getContactSensor(propertyId);
                }
             }
-            console.log("responseSocietyDetails", response);
-            // console.log("owner id", response.data.resourceData.postedById);
          })
          .catch((error) => {
             setLoading(false);
@@ -290,7 +283,7 @@ const PropertyDetails = (props) => {
          });
    }, []);
 
-   console.log("propertyData=> ", propertyData);
+   console.log("propertyData=> ", props);
 
    const _getPropertyPlanDetailsById = useCallback(() => {
       getPropertyPlanDetails({ propertyId: propertyId })
@@ -307,8 +300,6 @@ const PropertyDetails = (props) => {
             console.log("error", error);
          });
    });
-   console.log("censor data:", censorData);
-   console.log("smart lock data", smartLockData);
 
    const deleteImageHandler = useCallback(
       (docId) => {
@@ -1115,13 +1106,11 @@ const PropertyDetails = (props) => {
                                     size="large"
                                     fontWeight="mediumbold"
                                     color="secondry-color"
-                                    text={`${
-                                       propertyData.address.houseNumber || "-"
-                                    }, ${
-                                       propertyData.address.towerName
+                                    text={`${propertyData.address.houseNumber || "-"
+                                       }, ${propertyData.address.towerName
                                           ? `${propertyData.address.towerName},`
                                           : ""
-                                    } ${propertyData.address.otherSociety}`}
+                                       } ${propertyData.address.otherSociety}`}
                                  />
                                  <Text
                                     className="fw500"
@@ -1258,12 +1247,11 @@ const PropertyDetails = (props) => {
                                     <option selected>Select camera</option>
                                     {cameraData.length
                                        ? cameraData.map((cItem, cIndx) => {
-                                            return (
-                                               <option value={cItem.uuId} key={cIndx}>{`camera ${
-                                                  cIndx + 1
-                                               } (${cItem.nickName})`}</option>
-                                            );
-                                         })
+                                          return (
+                                             <option value={cItem.uuId} key={cIndx}>{`camera ${cIndx + 1
+                                                } (${cItem.nickName})`}</option>
+                                          );
+                                       })
                                        : ""}
                                  </select>
                               ) : (
@@ -1282,8 +1270,8 @@ const PropertyDetails = (props) => {
                               {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
                               <div className="d-flex justify-content-end">
                                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "SALES ADMIN" || userData.roleName === "INSTALLATION ADMIN") &&
-                                 propertyData.miscellaneousDetails.status === "UNDER REVIEW" &&
-                                 propertyData?.miscellaneousDetails?.deleted === false ? (
+                                    propertyData.miscellaneousDetails.status === "UNDER REVIEW" &&
+                                    propertyData?.miscellaneousDetails?.deleted === false ? (
                                     <>
                                        <Buttons
                                           name="Approve"
@@ -1341,8 +1329,8 @@ const PropertyDetails = (props) => {
                                  ) : null}
 
                                  {propertyData.miscellaneousDetails?.smartLockProperty === true &&
-                                 propertyData.miscellaneousDetails?.deleted === false &&
-                                 (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
+                                    propertyData.miscellaneousDetails?.deleted === false &&
+                                    (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
                                     <>
                                        <Link
                                           to={{
@@ -1370,9 +1358,9 @@ const PropertyDetails = (props) => {
 
                               <div className="d-flex mt-2">
                                  {propertyData.miscellaneousDetails?.smartLockProperty === true &&
-                                 propertyData?.miscellaneousDetails?.deleted === false && 
-                                 showQr === true &&
-                                 userData.roleName === "SUPER ADMIN" ? (
+                                    propertyData?.miscellaneousDetails?.deleted === false &&
+                                    showQr === true &&
+                                    userData.roleName === "SUPER ADMIN" ? (
                                     <>
                                        <Buttons
                                           style={{ float: "right" }}
@@ -1435,7 +1423,7 @@ const PropertyDetails = (props) => {
                                     </>
                                  ) : null}
                                  {userData.roleName === "MARKETING EXECUTIVE" &&
-                                 propertyData.miscellaneousDetails.status !== "APPROVED" ? (
+                                    propertyData.miscellaneousDetails.status !== "APPROVED" ? (
                                     <>
                                        <Buttons
                                           style={{ float: "left" }}
@@ -1469,8 +1457,8 @@ const PropertyDetails = (props) => {
                                     </>
                                  ) : null}
                                  {isDeleted === false &&
-                                 userData.roleName === "MARKETING EXECUTIVE" &&
-                                 propertyData.miscellaneousDetails.status !== "APPROVED" ? (
+                                    userData.roleName === "MARKETING EXECUTIVE" &&
+                                    propertyData.miscellaneousDetails.status !== "APPROVED" ? (
                                     <>
                                        <Buttons
                                           style={{ float: "left" }}
@@ -1576,11 +1564,10 @@ const PropertyDetails = (props) => {
                                     text={
                                        propertyAnalyticsData.data.registerdOn === null
                                           ? "Published On: - "
-                                          : `Published On: ${
-                                               formateDate(
-                                                  propertyAnalyticsData.data.registerdOn
-                                               ) || "-"
-                                            }`
+                                          : `Published On: ${formateDate(
+                                             propertyAnalyticsData.data.registerdOn
+                                          ) || "-"
+                                          }`
                                     }
                                  />
                               </div>
@@ -1999,8 +1986,8 @@ const PropertyDetails = (props) => {
                                              propertyData.specs?.carpetArea === null
                                                 ? "-"
                                                 : propertyData.specs?.carpetArea +
-                                                  " " +
-                                                  propertyData.specs?.carpetAreaMeasurementUnit
+                                                " " +
+                                                propertyData.specs?.carpetAreaMeasurementUnit
                                           }
                                        />
                                     </td>
@@ -2023,8 +2010,8 @@ const PropertyDetails = (props) => {
                                              propertyData.specs?.builtUpArea === null
                                                 ? "-"
                                                 : propertyData.specs?.builtUpArea +
-                                                  " " +
-                                                  propertyData.specs?.builtUpAreaMeasurementUnit
+                                                " " +
+                                                propertyData.specs?.builtUpAreaMeasurementUnit
                                           }
                                        />
                                     </td>
@@ -2047,8 +2034,8 @@ const PropertyDetails = (props) => {
                                              propertyData.specs?.plotArea === null
                                                 ? "-"
                                                 : propertyData.specs?.plotArea +
-                                                  " " +
-                                                  propertyData.specs?.plotAreaMeasurementUnit
+                                                " " +
+                                                propertyData.specs?.plotAreaMeasurementUnit
                                           }
                                        />
                                     </td>
@@ -2071,8 +2058,8 @@ const PropertyDetails = (props) => {
                                              propertyData.specs?.openArea === null
                                                 ? "-"
                                                 : propertyData.specs?.openArea +
-                                                  " " +
-                                                  propertyData.specs?.openAreaMeasurementUnit
+                                                " " +
+                                                propertyData.specs?.openAreaMeasurementUnit
                                           }
                                        />
                                     </td>
@@ -2152,7 +2139,7 @@ const PropertyDetails = (props) => {
                                        {propertyData?.pricing?.brokerageType !== null ? (
                                           <>
                                              {propertyData?.pricing?.brokerageType ===
-                                             "BrokerageAbsoluteValue" ? (
+                                                "BrokerageAbsoluteValue" ? (
                                                 <Text
                                                    size="Small"
                                                    fontWeight="semibold"
@@ -2165,7 +2152,7 @@ const PropertyDetails = (props) => {
                                                 />
                                              ) : null}
                                              {propertyData?.pricing?.brokerageType ===
-                                             "BrokerageMonths" ? (
+                                                "BrokerageMonths" ? (
                                                 <Text
                                                    size="Small"
                                                    fontWeight="semibold"
@@ -2173,13 +2160,13 @@ const PropertyDetails = (props) => {
                                                    text={
                                                       propertyData?.pricing?.brokerageValue
                                                          ? propertyData?.pricing?.brokerageValue +
-                                                           "months of monthly rent"
+                                                         "months of monthly rent"
                                                          : "-"
                                                    }
                                                 />
                                              ) : null}
                                              {propertyData?.pricing?.brokerageType ===
-                                             "BrokeragePercentage" ? (
+                                                "BrokeragePercentage" ? (
                                                 <Text
                                                    size="Small"
                                                    fontWeight="semibold"
@@ -2187,7 +2174,7 @@ const PropertyDetails = (props) => {
                                                    text={
                                                       propertyData?.pricing?.brokerageValue
                                                          ? propertyData?.pricing?.brokerageValue +
-                                                           "% of property price"
+                                                         "% of property price"
                                                          : "-"
                                                    }
                                                 />
@@ -2326,8 +2313,8 @@ const PropertyDetails = (props) => {
                                              text={
                                                 propertyData.specs?.propertyOverlookings
                                                    ? propertyData.specs?.propertyOverlookings.join(
-                                                        ", "
-                                                     )
+                                                      ", "
+                                                   )
                                                    : "-"
                                              }
                                           />
@@ -2375,14 +2362,14 @@ const PropertyDetails = (props) => {
                                              text={
                                                 propertyData.specs?.internalAmenities.length !==
                                                    0 ||
-                                                propertyData.specs?.generalAmenities.length !== 0 ||
-                                                propertyData.specs?.commercialGeneralAmenities
-                                                   .length !== 0
+                                                   propertyData.specs?.generalAmenities.length !== 0 ||
+                                                   propertyData.specs?.commercialGeneralAmenities
+                                                      .length !== 0
                                                    ? propertyData.specs?.internalAmenities +
-                                                     ", " +
-                                                     propertyData.specs?.generalAmenities +
-                                                     ", " +
-                                                     propertyData.specs?.commercialGeneralAmenities
+                                                   ", " +
+                                                   propertyData.specs?.generalAmenities +
+                                                   ", " +
+                                                   propertyData.specs?.commercialGeneralAmenities
                                                    : "-"
                                              }
                                           />
@@ -2533,7 +2520,7 @@ const PropertyDetails = (props) => {
                                              text={"Furnishing"}
                                           />
                                           {propertyData.basicDetails?.propertyCategory ===
-                                          "Commercial" ? (
+                                             "Commercial" ? (
                                              <Text
                                                 size="Small"
                                                 fontWeight="semibold"
@@ -2928,7 +2915,7 @@ const PropertyDetails = (props) => {
                         />
                      </>
                   )}
-                  
+
                   {/* <VisitMedia cameraId={} /> */}
                   {/* <div>
                      <Text
@@ -2981,11 +2968,11 @@ const PropertyDetails = (props) => {
                      // sendMsgHandler={sendMsgHandler}
                      ownerId={ownerId}
                      userId={userId}
-                     // modalData={modalData}
-                     // dataFrom="user_manage"
-                     // closeModal={closeModal}
-                     // history={{ goBack: closeModal }}
-                     // getAllUsers={getAllUsers}
+                  // modalData={modalData}
+                  // dataFrom="user_manage"
+                  // closeModal={closeModal}
+                  // history={{ goBack: closeModal }}
+                  // getAllUsers={getAllUsers}
                   />
 
                   <QrModal
@@ -2994,15 +2981,15 @@ const PropertyDetails = (props) => {
                      // handleShow={handleshowQrModal}
                      handleClose={handleCloseQrModal}
                      headerText="QR Code"
-                     // subHeaderText="Message"
-                     // sendMsgHandler={sendMsgHandler}
-                     // ownerId={ownerId}
-                     // userId={userId}
-                     // modalData={modalData}
-                     // dataFrom="user_manage"
-                     // closeModal={closeModal}
-                     // history={{ goBack: closeModal }}
-                     // getAllUsers={getAllUsers}
+                  // subHeaderText="Message"
+                  // sendMsgHandler={sendMsgHandler}
+                  // ownerId={ownerId}
+                  // userId={userId}
+                  // modalData={modalData}
+                  // dataFrom="user_manage"
+                  // closeModal={closeModal}
+                  // history={{ goBack: closeModal }}
+                  // getAllUsers={getAllUsers}
                   />
 
                   {/* <ModalComponent /> */}
