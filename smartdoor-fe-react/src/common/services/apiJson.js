@@ -7,7 +7,8 @@ const userData = getLocalStorage('authData');
 export const ApiJson = {
   login: {
     // url: 'userauth/oauth/token?username=:username&password=:password&roleId=&loginBy=password&grant_type=password&deviceId=4343&deviceType=crome&appName=admin',
-    url: '/userauth/oauth/token?username=:username&password=:password&roleId=&loginBy=otp&grant_type=password&deviceId=4343&deviceType=crome&appName=admin',
+    // url: '/userauth/oauth/token?username=:username&password=:password&roleId=&loginBy=otp&grant_type=password&deviceId=4343&deviceType=crome&appName=admin',
+    url: '/auth/otp/verifyUser/:mobileNumber/:otp?deviceId=4343&deviceType=crome&appName=admin&version=1',
     method: 'POST',
     data: {},
     headers: {
@@ -18,7 +19,8 @@ export const ApiJson = {
   },
 
   getOtp: {
-    url: '/userauth/public/sendLoginOtp?mobile=:mobile&appName=admin',
+    // url: '/userauth/public/sendLoginOtp?mobile=:mobile&appName=admin',
+    url: '/auth/otp/sendLoginOtp?mobile=:mobile&appName=admin',
     method: 'POST',
     data: {},
     headers: {
@@ -28,7 +30,8 @@ export const ApiJson = {
     showErrorMessage: true,
   },
   getOtpForNew: {
-    url: '/consumer/user/verifyUser/:mobileNumber/:otp/1?deviceId=4343&deviceType=crome&appName=admin',
+    // url: '/consumer/user/verifyUser/:mobileNumber/:otp/1?deviceId=4343&deviceType=crome&appName=admin',
+    url: '/auth/otp/verifyUser/:mobileNumber/:otp/1?deviceId=4343&deviceType=crome&appName=admin',
     method: 'POST',
     data: {},
     headers: {

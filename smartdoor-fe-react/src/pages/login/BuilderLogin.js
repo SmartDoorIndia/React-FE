@@ -228,7 +228,8 @@ const BuilderLogin = (props) => {
       const passwordToBase64 = stringToBase64(otpValue);
       if (userExists) {
          await props
-            .actionLogin({ username: userNumber, password: passwordToBase64 })
+            // .actionLogin({ username: userNumber, password: passwordToBase64 })
+            .actionLogin({ mobileNumber: userNumber, otp: otpValue })
             .then(async (response) => {
                setButtonDisable(false);
                if (response.data) {
