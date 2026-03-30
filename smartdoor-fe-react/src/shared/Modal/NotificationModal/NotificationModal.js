@@ -322,7 +322,7 @@ function NotificationModal(props) {
                                                 />
                                                 {(notification?.redirectId !== null ) ?
                                                    <>
-                                                      <Buttons size="small" name="View Property" onClick={() => { props.handleClose(); history.push("/admin/property-details/" + notification.notificationId, { propertyId: notification?.redirectId, userId: userData.userid, menuName: 'Properties' }) }} />
+                                                      <Buttons size="small" name="View Property" onClick={() => { props.handleClose(); history.push("/admin/property-details/" + notification.notificationId, { propertyId: notification?.redirectId, userId: userData.userid }) }} />
                                                    </>
                                                    : null}
                                              </div>
