@@ -282,7 +282,7 @@ const HelpDeskDashboard = (props) => {
         </Card>
       </div>
 
-      <div className='helpdeskPropertyleadsTableWrapper'>
+      {/* <div className='helpdeskPropertyleadsTableWrapper'>
         <ListingDataTable
           title="Property Leads"
           data={ helpdeskPropertyLeads.data }
@@ -296,7 +296,7 @@ const HelpDeskDashboard = (props) => {
           filterCity={ allCities.data.cities }
           handleFilterChange={ _filterPropertyLeads }
         />
-      </div>
+      </div> */}
       <div className='helpdeskServicereqTableWrapper'>
         <ListingDataTable
           title="Service Requests"
