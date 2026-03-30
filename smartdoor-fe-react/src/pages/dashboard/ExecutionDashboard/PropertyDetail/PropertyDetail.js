@@ -306,8 +306,8 @@ const PropertyDetail = (props) => {
                      </div>
                      <div className="locationSelect">
                         {data.status &&
-                        data.status === "COMPLETED" &&
-                        data?.requestType !== "UN INSTALLATION" ? (
+                           data.status === "COMPLETED" &&
+                           data?.requestType !== "UN INSTALLATION" ? (
                            <Buttons
                               name={data.approved ? "Approved" : "Approve"}
                               varient="primary"
@@ -391,9 +391,8 @@ const PropertyDetail = (props) => {
                               size="Small"
                               fontWeight="mediumbold"
                               color="secondryColor"
-                              text={`${data.taskDate ? formateDate(data.taskDate) : ""} | ${
-                                 data.timeSlot || "-"
-                              }`}
+                              text={`${data.taskDate ? formateDate(data.taskDate) : ""} | ${data.timeSlot || "-"
+                                 }`}
                            />
                         </div>
                      </Col>
@@ -497,10 +496,10 @@ const PropertyDetail = (props) => {
                                     {/* <option value="" >None</option>*/}
                                     {executiveList
                                        ? executiveList.map((data, index) => (
-                                            <option key={index} value={data.id}>
-                                               {data.name}
-                                            </option>
-                                         ))
+                                          <option key={index} value={data.id}>
+                                             {data.name}
+                                          </option>
+                                       ))
                                        : null}
                                  </Form.Control>
                               </Form.Group>
@@ -529,7 +528,7 @@ const PropertyDetail = (props) => {
                            text={data.assignToMobile || "-"}
                         />
                      </div>
-                     {data.kitId === null ? (
+                     {/* {data.kitId === null ? (
                         <div className="col-lg-3">
                            <Text
                               size="xSmall"
@@ -549,7 +548,6 @@ const PropertyDetail = (props) => {
                                     <option value="" disabled selected>
                                        Assign Hub
                                     </option>
-                                    {/* <option value="" >None</option>*/}
                                     {allHubList?.allHubList?.data?.hubList?.map((data, index) => (
                                        <option key={data.hubId} value={data.hubId}>
                                           {data.hubName}
@@ -558,21 +556,16 @@ const PropertyDetail = (props) => {
                                  </Form.Control>
                               </Form.Group>
                            </div>
-                           {/* <Text size="Small" fontWeight="mediumbold" color="secondryColor" text={data.assignTo || "-"} />                         */}
                         </div>
                      ) : null}
-                     {/* <Col lg='3'>
-                  </Col> */}
                      <Col lg="1">
                         {data.status &&
-                        (data.status === "COMPLETED" ||
-                           data.status === "IN PROGRESS" ||
-                           data.status === "ASSIGNED" ||
-                           data.status === "ACCEPTED") ? null : (
+                           (data.status === "COMPLETED" ||
+                              data.status === "IN PROGRESS" ||
+                              data.status === "ASSIGNED" ||
+                              data.status === "ACCEPTED") ? null : (
                            <Buttons
                               className="mt-3"
-                              // disabled={
-                              //     data.status === 'ASSIGNED' || handleStatus(data.reviews, data.status,"edit") ? true : false}
                               name={assignToListToggle ? "Save" : "Edit"}
                               varient="primary"
                               type="submit"
@@ -586,7 +579,7 @@ const PropertyDetail = (props) => {
                               }}
                            />
                         )}
-                     </Col>
+                     </Col> */}
                   </div>
                   <div className="separator mt-5"></div>
                   <div id="qrcode" style={{ display: "none" }} className="qrcode">
@@ -721,15 +714,15 @@ const PropertyDetail = (props) => {
                               <div className="cursor-remove">
                                  {data && data.requestCodeDetails
                                     ? data.requestCodeDetails.map((_value, index) => (
-                                         <div className="mt-2">
-                                            <CheckBoxComponent
-                                               id={index}
-                                               value={index}
-                                               label={_value.description}
-                                               checked={_value.checked}
-                                            />
-                                         </div>
-                                      ))
+                                       <div className="mt-2">
+                                          <CheckBoxComponent
+                                             id={index}
+                                             value={index}
+                                             label={_value.description}
+                                             checked={_value.checked}
+                                          />
+                                       </div>
+                                    ))
                                     : null}
                               </div>
                            </div>

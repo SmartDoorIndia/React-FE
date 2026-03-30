@@ -132,7 +132,7 @@ const PropertyDetails = (props) => {
    const _getContactSensor = useCallback(
       async (propertyId) => {
          try {
-            console.log(" not a basic plan");
+            // console.log(" not a basic plan");
             const result_data = await getContactSensor({ propertyId });
             let access_token_device;
             if (result_data.data.status === 200 && result_data.data.resourceData) {
@@ -273,7 +273,7 @@ const PropertyDetails = (props) => {
                      }
                      setSpecList(speclist);
                   }
-                  if (!response.data.resourceData.basicPlan) _getContactSensor(propertyId);
+                  // if (!response.data.resourceData.basicPlan) _getContactSensor(propertyId);
                }
             }
          })
