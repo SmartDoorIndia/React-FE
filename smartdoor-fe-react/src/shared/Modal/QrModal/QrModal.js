@@ -10,13 +10,13 @@ const QrModal = (props) => {
     // const [show, setShow] = useState(false);
     // const qrCodeRef = useRef(null); // create a ref for the QR code element
 
-    console.log(props, "inside msg modal props")
+    // console.log(props, "inside msg modal props")
     // const modalData = props.modalData;
     // const [data, setData] = useState({});
 
     // const [message, setMessage] = useState('')
 
-    console.log(props, "qr data modal")
+    // console.log(props, "qr data modal")
 
     function handlePrintClick() {
         const printContents = '<div style="display:flex;justify-content:center;align-items:center;height:100%;"><div id="qrcode">' + document.getElementById("qrcode").innerHTML + '</div></div>';

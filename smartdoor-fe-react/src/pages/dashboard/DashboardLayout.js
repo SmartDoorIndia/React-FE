@@ -234,7 +234,7 @@ const DashboardLayout = (props) => {
   }, [callingData, socket]);
 
   useEffect(()=>{
-    console.log('CONNECT SOCKET SERVER', socket.id , socket , socketLoggedInUserData);
+    // console.log('CONNECT SOCKET SERVER', socket.id , socket , socketLoggedInUserData);
     if (!socketLoggedInUserData) {
       connectSocket(socket);
     }
@@ -360,7 +360,7 @@ const DashboardLayout = (props) => {
   }, [userAuthData])
 
   useEffect(() => {
-    console.log("4th useeffect");
+    // console.log("4th useeffect");
     _handleCallEvents();
     // if (callInProgress && !callReceived) {
     //   console.log("calling time start");

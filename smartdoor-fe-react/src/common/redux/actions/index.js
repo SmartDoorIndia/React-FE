@@ -1966,7 +1966,7 @@ export const getChatGptDescription = async (data) => {
 }
 
 export const revokeToken = async (data) => {
-  const response = await mainApiService('logoutUser', {});
+  const response = await mainApiService('logoutUser', data);
   if (response.status === 200) {
     // clearLocalStorage();
   }

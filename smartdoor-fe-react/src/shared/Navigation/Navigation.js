@@ -49,7 +49,7 @@ const Nav = () => {
          setIsOpen(false);
       }
    }, [pathname]);
-   console.log(userData);
+   // console.log(userData);
 
    function checkNavActive() {
       setIsOpen(!isOpen);

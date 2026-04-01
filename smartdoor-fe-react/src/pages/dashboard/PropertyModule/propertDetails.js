@@ -137,7 +137,7 @@ const PropertyDetails = (props) => {
             let access_token_device;
             if (result_data.data.status === 200 && result_data.data.resourceData) {
                setCensorData(result_data.data.resourceData);
-               console.log("result_data.data.resourceData: CENSOR:", result_data.data.resourceData);
+               // console.log("result_data.data.resourceData: CENSOR:", result_data.data.resourceData);
                //   const censor_login_result = await cameraServicesApi("POST", {
                //     "email":"sd176@smartdoor.com",
                //     "password":"smartdoor@176"
@@ -148,17 +148,17 @@ const PropertyDetails = (props) => {
                   email: result_data?.data?.resourceData?.email,
                   password: result_data?.data?.resourceData?.password,
                });
-               console.log("censor_login_result", censor_login_result);
+               // console.log("censor_login_result", censor_login_result);
                if (
                   censor_login_result.data.status === 200 &&
                   censor_login_result.data.resourceData
                ) {
                   const cersor_device_data = JSON.parse(censor_login_result.data.resourceData);
-                  console.log("cersor_device_data:", cersor_device_data);
+                  // console.log("cersor_device_data:", cersor_device_data);
                   if (cersor_device_data.statusCode === 200) {
                      access_token_device = cersor_device_data.result.accessToken;
 
-                     console.log("access_token_device:", access_token_device);
+                     // console.log("access_token_device:", access_token_device);
                      //   const get_censor_data = await cameraServicesApi("GET", {Authorization: `Bearer ${access_token_device}` }
                      // , `https://77dfrqoarc.execute-api.us-east-2.amazonaws.com/dev/user/devices/${result_data?.data?.resourceData?.serialNumber}`);
                      try {
@@ -168,7 +168,7 @@ const PropertyDetails = (props) => {
                         });
                         if (get_censor_data.status === 200 && get_censor_data.data.resourceData) {
                            let censorObj = JSON.parse(get_censor_data.data.resourceData);
-                           console.log("censorObj:", censorObj);
+                           // console.log("censorObj:", censorObj);
                            setDoor_status(censorObj?.door_status === 0 ? "Open" : "Closed");
                            setCensorBattery_status(batteryStatusCensor(censorObj?.battery_status));
                         }
@@ -188,16 +188,13 @@ const PropertyDetails = (props) => {
    const _getSmartLockData = useCallback(async () => {
       try {
          const result_data = await getSmartLockData({ id: propertyId });
-         console.log(result_data);
          if (result_data.data.status === 200 && result_data.data.resourceData) {
-            console.log("result_data.data.resourceData:", result_data.data.resourceData);
             setSmartdoorBattery(result_data?.data?.resourceData?.lockPowerPercentage);
             setSmartlockAdminPassCode(result_data?.data?.resourceData?.smartlockAdminPasscode);
             setSmartLockData(result_data?.data?.resourceData);
-            console.log(result_data?.data?.resourceData?.lockPowerPercentage);
             setShowQr(true);
             setTimeout(() => {
-               console.log("smart lock data after update", smartLockData);
+               console.log("smart lock data after update");
             }, 3000);
          }
       } catch (err) {
@@ -209,7 +206,7 @@ const PropertyDetails = (props) => {
    const _getPropertyDetails = useCallback(async () => {
       await getPropertyDetails({ propertyId: props?.history?.location?.state?.propertyId, userId: userId })
          .then((response) => {
-            console.log("resp data => ", response);
+            // console.log("resp data => ", response);
             setLoading(false);
 
             if (response.data) {
@@ -252,12 +249,6 @@ const PropertyDetails = (props) => {
                               PostingFields.postingFieldsObject[fields.propertyCategory][
                                  fields.stageOfProperty
                               ][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs;
-                           console.log(
-                              "specs=> ",
-                              PostingFields.postingFieldsObject[fields.propertyCategory][
-                                 fields.stageOfProperty
-                              ][fields.propertyType]["Pg"][fields.guestHouseOrPgPropertyType].Specs
-                           );
                         } else {
                            speclist =
                               PostingFields.postingFieldsObject[fields.propertyCategory][
@@ -269,7 +260,6 @@ const PropertyDetails = (props) => {
                            PostingFields.postingFieldsObject[fields.propertyCategory][
                               fields.stageOfProperty
                            ][fields.propertyType].Specs;
-                        console.log("speclist", speclist);
                      }
                      setSpecList(speclist);
                   }
@@ -283,14 +273,12 @@ const PropertyDetails = (props) => {
          });
    }, []);
 
-   console.log("propertyData=> ", props);
-
    const _getPropertyPlanDetailsById = useCallback(() => {
       getPropertyPlanDetails({ propertyId: propertyId })
          .then((response) => {
             if (response.data) {
                if (response.data.resourceData && response.data.status === 200) {
-                  console.log(response.data.resourceData);
+                  // console.log(response.data.resourceData);
                   setCurrentPlanData(response?.data?.resourceData?.currentPlanData);
                   setUpgradePlanData(response?.data?.resourceData?.upgradePlanData);
                }
@@ -303,7 +291,7 @@ const PropertyDetails = (props) => {
 
    const deleteImageHandler = useCallback(
       (docId) => {
-         console.log(docId, "doc id");
+         // console.log(docId, "doc id");
          deletePropertyImage({ docId: docId })
             .then((response) => {
                // setLoading(false);
@@ -314,7 +302,6 @@ const PropertyDetails = (props) => {
                      // setpropertyData(response.data.resourceData);
                   }
                }
-               console.log("responseDeleteImage", response);
             })
             .catch((error) => {
                // setLoading(false);
@@ -325,7 +312,6 @@ const PropertyDetails = (props) => {
    );
 
    const handleDeviceInterface = async (camera_sno) => {
-      console.log("camera_sno::", camera_sno);
       var userAccessToken;
       var deviceToken;
       var liveFeed_url;
@@ -337,14 +323,14 @@ const PropertyDetails = (props) => {
          },
          "https://tks.xmeye.net/v2/device/token/00000011673509759382/b712b4d786d71bd6f2d8ffb80478734a.rs"
       );
-      console.log(result, "Result- device interface");
+      // console.log(result, "Result- device interface");
       if (result.code === 2000) {
          deviceToken = result.data[0].token;
          const timeStamp_Algo = new TimeStampAlgo();
          const aes_Algo = new AesAlgo();
          const signature_Algo = new SignatureAlgo();
          const timeMillis = timeStamp_Algo.getTimMillis();
-         console.log("timeMillis:", timeMillis);
+         // console.log("timeMillis:", timeMillis);
          const user = aes_Algo.encryptWithAES(
             aes_Algo.keyFilter("00000011673509759382", `${Constants.CAMERA_APP_SECRET}`),
             "domsdcamera1@gmail.com"
@@ -353,8 +339,8 @@ const PropertyDetails = (props) => {
             aes_Algo.keyFilter("00000011673509759382", `${Constants.CAMERA_APP_SECRET}`),
             "Domsd@123"
          );
-         console.log(`data user = ${user.toUpperCase()}`);
-         console.log(`data pass = ${pass.toUpperCase()}`);
+         // console.log(`data user = ${user.toUpperCase()}`);
+         // console.log(`data pass = ${pass.toUpperCase()}`);
          const signatureData = signature_Algo.getEncryptStr(
             `${Constants.CAMERA_UUID}`,
             `${Constants.CAMERA_APP_KEY}`,
@@ -362,7 +348,7 @@ const PropertyDetails = (props) => {
             "00000011673509759382",
             `${Constants.CAMERA_MOVE_CARD}`
          );
-         console.log("signatureData:", signatureData);
+         // console.log("signatureData:", signatureData);
 
          const tokenResult = await getCameraUserToken({
             account: "58D59FAAECE240D42E5835558B3ABC97F1F688D11398534FFD786F477F40D4BC",
@@ -370,14 +356,14 @@ const PropertyDetails = (props) => {
             signature: "c33647c28800ea2ef46bab84843d6fbc",
             timemilis: "00000011673509759382",
          });
-         console.log(tokenResult.data.resourceData, "tokenResult");
+         // console.log(tokenResult.data.resourceData, "tokenResult");
          if (tokenResult.data.resourceData.length) {
             let decoded = decodeURIComponent(tokenResult.data.resourceData);
             const decodedObj = JSON.parse(decoded);
-            console.log("decodedObj:", decodedObj);
+            // console.log("decodedObj:", decodedObj);
             if (decodedObj.code === 2000 && Object.keys(decodedObj).length) {
                userAccessToken = decodedObj?.data?.accessToken;
-               console.log("userAccessToken:", userAccessToken, "deviceToken:", deviceToken);
+               // console.log("userAccessToken:", userAccessToken, "deviceToken:", deviceToken);
                const livefeeds_result = await cameraServicesApi(
                   "POST",
                   {
@@ -393,7 +379,7 @@ const PropertyDetails = (props) => {
                   },
                   `https://rds.bcloud365.net/v2/rtc/device/livestream/${deviceToken}`
                );
-               console.log("livefeeds_result", livefeeds_result);
+               // console.log("livefeeds_result", livefeeds_result);
                if (livefeeds_result.code === 2000) {
                   liveFeed_url = livefeeds_result.data.url;
                   // fetch(livefeeds_result.data.url, {
@@ -598,7 +584,7 @@ const PropertyDetails = (props) => {
    };
 
    const qrGenerator = (slData) => {
-      console.log(slData, "slData for qr");
+      // console.log(slData, "slData for qr");
       const data = {
          // accessToken: slData.accessToken,
          // lockId: slData.lockId,
@@ -607,7 +593,7 @@ const PropertyDetails = (props) => {
          // propertyId: slData.propertyId,
       };
       setQrData(data, () => {
-         console.log(qrData, "QR data");
+         console.log("QR data");
       });
       setShowQrModal(true);
    };
@@ -641,13 +627,13 @@ const PropertyDetails = (props) => {
          const result_data = await doorClosed(doorCloseData);
          if (result_data.data.status === 200 && result_data.data.resourceData) {
             let doorOpenResponse = JSON.parse(result_data.data.resourceData);
-            console.log("doorOpenResponse:", doorOpenResponse);
+            // console.log("doorOpenResponse:", doorOpenResponse);
             if (doorOpenResponse.errcode === 0) {
                setDoor_status("Open");
             }
 
             // _getContactSensor(propertyId);
-            console.log("doorClose result_data.data.resourceData:", result_data.data.resourceData);
+            // console.log("doorClose result_data.data.resourceData:", result_data.data.resourceData);
             // setSmartdoorBattery(result_data?.data?.resourceData?.lockPowerPercentage)
             //   setCensorData(result_data.data.resourceData)
             //   const censor_login_result = await cameraServicesApi("POST", {
@@ -776,7 +762,7 @@ const PropertyDetails = (props) => {
             defaultSortFieldId: allNonSDProperties?.data?.defaultSortFieldId,
          }).then((response) => {
             setConfirmHideModal(false);
-            console.log(response);
+            // console.log(response);
             PropertyList = response?.data?.resourceData;
          });
          if (menuName === "NonSDProperties") {
@@ -799,7 +785,7 @@ const PropertyDetails = (props) => {
             defaultSortId: allPropertyData?.data?.defaultSortId,
             defaultSortFieldId: allPropertyData?.data?.defaultSortFieldId,
          }).then((response) => {
-            console.log(response);
+            // console.log(response);
             PropertyList = response?.data?.resourceData;
          });
          if (menuName === "Properties") {
@@ -836,7 +822,7 @@ const PropertyDetails = (props) => {
             defaultSortId: deletedPropertyData?.data?.defaultSortId,
             defaultSortFieldId: deletedPropertyData?.data?.defaultSortFieldId,
          }).then((response) => {
-            console.log(response);
+            // console.log(response);
             deletedList = response.data.resourceData;
          });
          await getNonSDProperties({
@@ -931,7 +917,7 @@ const PropertyDetails = (props) => {
                         defaultSortId: allNonSDProperties?.data?.defaultSortId,
                         defaultSortFieldId: allNonSDProperties?.data?.defaultSortFieldId,
                      }).then((response) => {
-                        console.log(response);
+                        // console.log(response);
                         PropertyList = response.data.resourceData;
                      });
                   } else if (menuName === "Properties") {
@@ -952,7 +938,7 @@ const PropertyDetails = (props) => {
                         defaultSortId: allPropertyData?.data?.defaultSortId,
                         defaultSortFieldId: allPropertyData?.data?.defaultSortFieldId,
                      }).then((response) => {
-                        console.log(response);
+                        // console.log(response);
                         PropertyList = response.data.resourceData;
                      });
                   }
@@ -992,7 +978,7 @@ const PropertyDetails = (props) => {
             }
          }
       });
-      console.log(sorted);
+      // console.log(sorted);
       filteredItems = [...sorted];
       if (menuName === "Properties") {
          dispatch({

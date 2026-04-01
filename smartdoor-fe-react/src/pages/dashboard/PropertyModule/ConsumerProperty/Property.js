@@ -97,7 +97,6 @@ const PropertyModule = (props) => {
          return 2
       }
       });
-      console.log(allPropertyData.data.defaultSort)
    const cityPresent = useCallback(
       () => {
          getLocationByCity({ city: p_city })
@@ -311,7 +310,6 @@ const PropertyModule = (props) => {
    const [currentPage, setCurrentPage] = useState(allPropertyData?.data?.length !== 0 ? allPropertyData?.data?.currentPage : 1);
    const [rowsPerPage, setRowsPerPage] = useState(allPropertyData?.data?.length !== 0 ? allPropertyData?.data?.rowsPerPage : 8);
    const recordSize = (allPropertyData?.data?.records || 0);
-   console.log(recordSize)
    let recordsPerPage = 0
    recordsPerPage = allPropertyData?.data?.rowsPerPage;
 
@@ -434,7 +432,7 @@ const PropertyModule = (props) => {
    );
 
    const onRowClicked = (rowdata) => {
-      console.log()
+      // console.log()
    }
 
    const [scrollPosition, setScrollPosition] = useState(0);
@@ -445,7 +443,7 @@ const PropertyModule = (props) => {
       if (tableRef.current) {
          setScrollPosition(tableRef.current.scrollTop);
       }
-      console.log("test")
+      // console.log("test")
    };
 
    useEffect(() => {
@@ -539,7 +537,6 @@ const PropertyModule = (props) => {
       let status = status_value || statusSelected;
       filteredItems = [];
       filteredItems = allPropertyData?.data?.propertyData
-      console.log(allPropertyData?.data?.propertyData)
       // console.log("filteredItems : ", filteredItems)
       // if (status && filteredItems.length) {
       //    filteredItems = filteredItems.filter((item) => {
@@ -586,8 +583,6 @@ const PropertyModule = (props) => {
       });
       // showData();
    };
-
-   console.log(allPropertyData.data.propertyData)
 
    return (
       <>
@@ -750,7 +745,6 @@ const PropertyModule = (props) => {
                         placeholder="From Date"
                         value={fromDate}
                         onChange={(e) => {
-                           console.log(e.target.value);
                            const selectedDate = new Date(e.target.value);
                            setFromDate(e.target.value)
                         }}
@@ -764,7 +758,6 @@ const PropertyModule = (props) => {
                         placeholder="To Date"
                         value={toDate}
                         onChange={(e) => {
-                           console.log(e.target.value);
                            const selectedDate = new Date(e.target.value);
                            setToDate(e.target.value)
                         }}

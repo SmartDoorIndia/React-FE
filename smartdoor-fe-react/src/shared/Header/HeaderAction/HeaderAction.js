@@ -27,9 +27,11 @@ const HeaderAction = (props) => {
   async function logout() {
     props._handleCallReject();
     props._handleCallEnd();
-    const response = await revokeToken();
-    logoutUser();
-    disconnectSocket(socket);
+    const response = await revokeToken({refreshToken: userData?.refresh_token});
+    if(response?.data === true) {
+      logoutUser();
+      disconnectSocket(socket);
+    }
   }
   const handleClose = () => {
     setShow(false)

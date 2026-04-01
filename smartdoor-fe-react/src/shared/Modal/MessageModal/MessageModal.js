@@ -8,13 +8,13 @@ import TextArea from '../../Inputs/TextArea/TextArea';
 
 const MessageModal = (props) => {
   // const [show, setShow] = useState(false);
-  console.log(props, "inside msg modal props")
+  // console.log(props, "inside msg modal props")
   // const modalData = props.modalData;
   // const [data, setData] = useState({});
 
   const [message, setMessage] = useState('')
 
-  console.log(props, "msg modal")
+  // console.log(props, "msg modal")
 
   const sendMsgHandler = () => {
 

@@ -2697,7 +2697,7 @@ export const ApiJson = {
   },
 
   logoutUser: {
-    url: '/userauth/public/revokeToken',
+    url: '/auth/auth/logout?refreshToken=:refreshToken',
     method: 'DELETE',
     // data: {},
     headers: {
@@ -3685,7 +3685,7 @@ export const ApiJson = {
     showErrorMessage: true,
   },
 };
-console.log(userData)
+// console.log(userData)
 
 
 

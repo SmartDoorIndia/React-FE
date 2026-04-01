@@ -319,8 +319,13 @@ const UserManagement = (props) => {
                   size="xSmall"
                   color="white"
                   onClick={() => {
-                     setCurrentUserId(user.id);
-                     setShowModal(true);
+                     if(user?.blocked) {
+                        showErrorToast("Cannot gift coins to blocked user...");
+                        return null;
+                     } else {
+                        setCurrentUserId(user.id);
+                        setShowModal(true);
+                     }
                   }}
                />
             )
