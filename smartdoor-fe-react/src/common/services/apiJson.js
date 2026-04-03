@@ -3675,7 +3675,7 @@ export const ApiJson = {
   },
   returnCameraToInventory: {
     url: "smartlock/smartlock/returnCameraToInventory/:deviceId",
-    method: "PUT",
+    method: "POST",
     data: {},
     headers: {
       Accept: "*/*",

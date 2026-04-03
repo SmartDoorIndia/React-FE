@@ -124,7 +124,7 @@ const ExecutiveHome = (props) => {
                     </div>
                     <div className="d-flex mt-3">
                         <Buttons className='p-2' name='Add New Post' onClick={() => {
-                            if (!userData.isActive) {
+                            if (!userData.active) {
                                 showErrorToast("Your Account has been deactivated...");
                             }
                             // else if(!validateRegex?.numberOnly?.test(String(customerDetails.mobile).toLowerCase())) {

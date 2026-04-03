@@ -45,7 +45,7 @@ const BrokerDetails = (props) => {
    const [modalData, setModalData] = useState();
    const [count, setCount] = useState(0);
    const statusArr = CONSTANTS_STATUS.brokerPostedProperty;
-   const { brokerdetailId } = useParams();
+   const brokerdetailId = props?.location?.state?.brokerId;
    const [blockData, setBlockData] = useState(null);
 
    const [Broker_data, setBrokerData] = useState([]);
@@ -106,8 +106,8 @@ const BrokerDetails = (props) => {
       getBrokerDetails({ userId: brokerdetailId })
          .then((response) => {
             setLoading(false);
-            if (response.data.status) {
-               setBrokerData(response.data.resourceData);
+            if (response?.data?.status === 200) {
+               setBrokerData(response?.data?.resourceData);
             }
          })
          .catch((error) => {

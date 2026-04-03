@@ -310,7 +310,7 @@ const ExecutiveList = (props) => {
                     <div className="locationSelect d-flex justify-content-end">
                         <Buttons
                             name='Add New Executive'
-                            disabled={userData.isActive ? false : true}
+                            disabled={userData.active ? false : true}
                             varient="primary"
                             size="xSmall"
                             color="white"
