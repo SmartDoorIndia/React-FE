@@ -37,8 +37,8 @@ const ExecutiveHome = (props) => {
         dispatch({ type: Actions.PRICING_DETAILS_SUCCESS, data: {} });
         dispatch({ type: Actions.UPLOAD_IMAGES_SUCCESS, data: {} });
         dispatch({ type: Actions.TERMS_CONDITIONS_SUCCESS, data: {} });
-        if(userData.transfered_cusomers) {
-            if (userData?.transfered_cusomers?.length > 0) {
+        if(userData.transferred_customers) {
+            if (userData?.transferred_customers?.length > 0) {
                 setShowTransferCustModal(true);
             }
         }
@@ -90,6 +90,7 @@ const ExecutiveHome = (props) => {
                                 className="w-90"
                                 label={'Search Mobile Number'}
                                 type="number"
+                                autoComplete="off"
                                 inputProps={{ min: 0, max: 9999999999 }}
                                 InputProps={{
                                     startAdornment: (
@@ -199,13 +200,13 @@ const ExecutiveHome = (props) => {
                         : null}
                 </div>
             </div>
-            {userData.transfered_cusomers ?
+            {userData.transferred_customers ?
                 <Modal size="lg" show={showTransferCustModal} onHide={() => { setShowTransferCustModal(false) }} centered={true}>
                     <Modal.Body>
                         <div className="d-flex justify-content-center">
-                            <Text text={'Your customer ' + userData?.transfered_cusomers[0] + ' '}
+                            <Text text={'Your customer ' + userData?.transferred_customers[0] + ' '}
                                 fontWeight={'bold'} style={{ fontSize: '20px' }} />&nbsp;
-                            <Text text={userData?.transfered_cusomers?.length > 1 ? ' and ' + ' +' + (userData.transfered_cusomers.length - 1) : ''}
+                            <Text text={userData?.transferred_customers?.length > 1 ? ' and ' + ' +' + (userData.transferred_customers.length - 1) : ''}
                                 fontWeight={'bold'} style={{ fontSize: '20px' }} />
                         </div>
                         <div className="d-flex justify-content-center">

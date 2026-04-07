@@ -104,7 +104,6 @@ const UserManagement = (props) => {
    const handlePageChange = (newPage) => {
       // Handle the page change in the parent component
       setCurrentPage(Number(newPage));
-      console.log(currentPage)
 
       const regex = /([^,]+),\s*(\d{6})/;
       const matches = location.match(regex);
@@ -143,7 +142,6 @@ const UserManagement = (props) => {
       const matches = location.match(regex);
       setRowsPerPage(Number(newRowsPerPage))
       recordsPerPage = Number(newRowsPerPage)
-      console.log(`Rows per page changed to: ${recordsPerPage}`);
       if (matches) {
 
          getAllUsers({
@@ -180,7 +178,6 @@ const UserManagement = (props) => {
    );
 
    const handleBlockUser = () => {
-      console.log("blockData.isBlocked:", blockData.isBlocked);
       let startDt = dateWithFormate(
          datePickerblockvalue.length ? datePickerblockvalue[0] : "",
          "YYYY-MM-DD"
@@ -195,7 +192,7 @@ const UserManagement = (props) => {
             setDatePickerblockvalue([]);
          })
          .catch((error) => {
-            console.log("");
+            console.log("" + error);
          });
       handleClose();
    };
@@ -337,7 +334,7 @@ const UserManagement = (props) => {
 
    const closeModal = (data = { isReload: false }) => {
       if (data?.isReload) {
-         getAllUsers({ pageNo: "", pageSize: "", searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId, blockedUser: blockedUser });
+         getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId, blockedUser: blockedUser });
       }
       setModalData();
    };
@@ -365,7 +362,6 @@ const UserManagement = (props) => {
       const { selector, direction } = newSortedData;
       let selectorVal = newSortedData?.selector?.toString().split('.');
       selectorVal = selectorVal?.length > 1 ? selectorVal[1] : selectorVal[0]
-      console.log(selectorVal)
       // Perform sorting based on selector and direction
       const sorted = [...filteredItems].sort((a, b) => {
          if (selectorVal === 'id') {
@@ -388,7 +384,6 @@ const UserManagement = (props) => {
       });
       setDefaultSort(!defaultSort)
       // Update sorted data state
-      console.log(sorted);
       filteredItems = [...sorted]
       dispatch({
          type: Actions.USER_MANAGEMENT_SUCCESS,

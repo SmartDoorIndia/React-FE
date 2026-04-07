@@ -120,7 +120,6 @@ const ModalModule = (props) => {
 
    const _getAllConvertedLeadsByUser = useCallback(
       async (startDt = "", endDt = "") => {
-         console.log("startDt:", startDt, "endDt:", endDt);
         try{
           const convertedLeadsByUser = await getAllConvertedLeadsByUser({
                userId: userId,
@@ -222,7 +221,6 @@ const ModalModule = (props) => {
 
    const _getExecutionTasks = useCallback(
       async (startDt = "", endDt = "") => {
-         console.log("startDt:", startDt, "endDt:", endDt);
          try{
           const executionTask = await getAllExecutionTask({ userId: userId, fromDate: startDt, toDate: endDt })  
           const validexecutionTask = getValidData(executionTask);
@@ -371,7 +369,9 @@ const ModalModule = (props) => {
            await blockTeamMember({ userId, startDate: startDt, endDate: endDt })
            await _getUserDetails();
             //   if (module === 'USER') props.getAllUsers();
-            if (module === 'USER') props.getAllUsers({pageNumber:"", records:"",searchByCity: props.city, searchByzipCode: props.location, departmentName: props.departments});
+            if (module === 'USER') {
+               props.getAllUsers({pageNumber:"", records:"",searchByCity:props.city, searchByzipCode:props.location, departmentName: props.departments});
+            }
            //getAllUsers({pageNumber:"", records:"",searchByCity:city, searchByzipCode:location, departmentName: departments});
            setDatePickerblockvalue([])
          }
@@ -391,7 +391,9 @@ const ModalModule = (props) => {
             .then((data) => {
                _getUserDetails();
                // if (module === "USER") props.getAllUsers();
-               if (module === "USER") props.getAllUsers({pageNumber:"", records:"",searchByCity: props.city, searchByzipCode: props.location, departmentName: props.departments});
+               if (module === "USER") {
+                  props.getAllUsers({pageNo:1, pageSize:8, searchString: "", searchByCity: "", departmentName: props.departments, blockedUser: props?.blocked});
+               } 
             })
             .catch((error) => {
                console.log(error);
@@ -445,7 +447,6 @@ const ModalModule = (props) => {
 
    useEffect(() => {
       const showHideIcon = showHideEditIcon(userData.roleName, user_Data?.position);
-      console.log("user_Data?.position:", user_Data?.position);
       setShowIcon(showHideIcon);
    }, [user_Data?.position,userData.roleName]);
 

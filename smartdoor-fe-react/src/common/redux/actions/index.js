@@ -458,7 +458,7 @@ export const deactivateTeamMember = async (data) => {
   const response = await mainApiService('activateDeactivateUser', data);
   if (response.data && response.data.status === 200) { data.activateDeactivateuser ? showSuccessToast("User Activated Successfully") : showSuccessToast("User Deactivated Successfully") }
   //  showSuccessToast(response.data.customMessage);
-  else if (response.data && response.data.error) showErrorToast(response.data.error);
+  else if (response.data && response.data.error) showErrorToast(response.data.message);
   else showErrorToast('Unexpected error. Please try again later');
   return response;
 };
