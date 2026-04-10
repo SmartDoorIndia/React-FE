@@ -989,7 +989,7 @@ const ExecutionDashboard = (props) => {
             />
           </div>
         </div> */}
-        <div className="tableBox mb-5">
+        {/* <div className="tableBox mb-5">
           <div className="d-flex justify-content-between align-items-center tableHeading">
             <div>
               <Text size="regular" fontWeight="mediumbold" color="secondryColor" text="Installation Team" />
@@ -1029,7 +1029,7 @@ const ExecutionDashboard = (props) => {
                 <TeamTablePaginationActionButton />
               </div>
           }
-        </div>
+        </div> */}
       </div>
     </>
   )
