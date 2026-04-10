@@ -129,7 +129,7 @@ const ExecutionListing = (props) => {
 
    const handlePageChange = (newPage) => {
       setCurrentPage(Number(newPage));
-      getInstallationRequest({ installationStatus: statusSelected, location: selectedLocation, searchString: filterText, city: city, pageSize: "8", pageNo: newPage });
+      getInstallationRequest({ installationStatus: statusSelected, location: selectedLocation, searchString: filterText, city: city, pageSize: rowsPerPage, pageNo: newPage });
     };
     
     const handleRowsPerPageChange = async (newRowsPerPage) => {

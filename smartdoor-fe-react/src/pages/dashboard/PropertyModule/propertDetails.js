@@ -2468,7 +2468,7 @@ const PropertyDetails = (props) => {
                                           fontWeight="semibold"
                                           color="secondryColor"
                                           text={
-                                             propertyData?.address?.totalFloors
+                                             propertyData?.address?.totalFloors !== null
                                                 ? propertyData?.address?.totalFloors
                                                 : "-"
                                           }

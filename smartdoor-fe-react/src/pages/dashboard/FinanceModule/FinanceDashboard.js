@@ -554,7 +554,7 @@ const FinanceDashboard = (props) => {
         />
       </div>
 
-      <div className='financeBuybackrequestTableWrap'>
+      {/* <div className='financeBuybackrequestTableWrap'>
         <ListingDataTable
           title='Refund Requests'
           data={getBuybackRequestsData?.data?.length ? getBuybackRequestsData?.data?.slice(0, 5) : []}
@@ -567,7 +567,7 @@ const FinanceDashboard = (props) => {
           handleFilterChange={_filterReq}
           pagination={false}
         />
-      </div>
+      </div> */}
       </div>
 
       {/* <ListingDataTable
