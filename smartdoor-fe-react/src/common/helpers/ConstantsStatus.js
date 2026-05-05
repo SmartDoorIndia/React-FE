@@ -16,7 +16,7 @@ const CONSTANTS_STATUS = {
     propertyStage : [ "Ready" , "Under Construction"],
     propertySubType : [ "Apartment", "Independent house", "Builder Floor", "Plot", "PG/Co-living"],
     monthList : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-    brokerStatus: [ "APPROVED", "REJECTED", "ON_HOLD", "PENDING_APPROVAL", "EXPIRED" ],
+    brokerStatus: [ "APPROVED", "REJECTED", "ON_HOLD", "PENDING_APPROVAL", "EXPIRED", "PAYMENT_PENDING" ],
     brokerPostedProperty: ["PUBLISHED", "UNDER REVIEW" , "PENDING" , "QUERY" , "UNINSTALLED/SOLD" , "REJECTED"],
     permissionList: ['Smart Door Posting', 'Non Smart Door Posting'],
     leadStatusList : ['INITIATED', 'COMPLETED', 'DELETED'],

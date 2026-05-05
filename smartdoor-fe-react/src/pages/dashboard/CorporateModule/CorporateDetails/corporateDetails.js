@@ -45,8 +45,11 @@ const CorporateDetails = (props) => {
                     </Col>
                     <Col lg='7'>
                         <Text text='Location Details' fontWeight='bold' style={{ fontSize: '16px', color: '#BE1452' }} />
-                        <Text className='mt-3' text='Address' fontWeight='bold' style={{ fontSize: '14px', color: '#757575' }} />
+                        <Text className='mt-1' text='Address' fontWeight='bold' style={{ fontSize: '14px', color: '#757575' }} />
                         <Text text={corporateDetails?.companyAddress} 
+                            fontWeight='700' style={{ fontSize: '14px' }} />
+                        <Text className='mt-2' text='Email Ids' fontWeight='bold' style={{ fontSize: '14px', color: '#757575' }} />
+                        <Text text={corporateDetails?.corporateEmails || '-'} 
                             fontWeight='700' style={{ fontSize: '14px' }} />
                     </Col>
                     <Col lg='2'>

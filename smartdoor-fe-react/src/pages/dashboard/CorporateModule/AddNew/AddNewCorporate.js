@@ -30,7 +30,8 @@ const AddNewCorporate = (props) => {
       companyName: '',
       companyAddress: '',
       smartDoorPlanId: '',
-      nonSmartDoorPlanId: ''
+      nonSmartDoorPlanId: '',
+      corporateEmails: ''
    });
    const [newUser, setNewUser] = useState({
       name: '',
@@ -315,6 +316,20 @@ const AddNewCorporate = (props) => {
                         {nonSmartDoorPlanList.map(element => (
                            <MenuItem key={element.id} value={element.id}>{element.planName}</MenuItem>
                         ))}
+                     </TextField>
+                  </Col>
+               </Row>
+               <Row>
+                  <Col lg={2}></Col>
+                  <Col lg={6} style={{ paddingInlineEnd: '0%' }}>
+                     <TextField
+                        className="w-100 mt-3"
+                        label='Email'
+                        placeholder="Please enter comma separated email Ids"
+                        multiline
+                        maxRows={3}
+                        value={corporateDetails.corporateEmails}
+                        onChange={(e) => { setCorporateDetails({ ...corporateDetails, corporateEmails: e?.target?.value }) }}>
                      </TextField>
                   </Col>
                </Row>
