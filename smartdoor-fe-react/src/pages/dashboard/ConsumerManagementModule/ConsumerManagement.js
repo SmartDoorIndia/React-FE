@@ -480,7 +480,7 @@ const ConsumerManagement = (props) => {
 				  fontWeight="bold"
 				  color="secondryColor"
 				  className="text-center ms-3"
-				  text="Consumer Details"
+				  text="Silent KYC"
 			   />
 			   <Buttons
 				  style={{ float: "right" }}
