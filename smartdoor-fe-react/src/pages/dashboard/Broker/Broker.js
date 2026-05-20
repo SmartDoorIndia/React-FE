@@ -335,8 +335,8 @@ const Broker = (props) => {
                         <Link
                            to={{
                               pathname:
-                                 `/admin/BrokerDetails/${row.brokerId}`,
-                              state: { loginMobile: row.loginMobile, propertiesPosted: row.postingcount }
+                                "/admin/BrokerDetails",
+                              state: { loginMobile: row.loginMobile, propertiesPosted: row.postingcount, brokerId: row.brokerId }
                            }}
                         >
                            Details

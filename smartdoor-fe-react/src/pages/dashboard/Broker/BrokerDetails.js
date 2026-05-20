@@ -45,7 +45,7 @@ const BrokerDetails = (props) => {
    const [modalData, setModalData] = useState();
    const [count, setCount] = useState(0);
    const statusArr = CONSTANTS_STATUS.brokerPostedProperty;
-   const { brokerdetailId } = useParams();
+    const brokerdetailId = props?.location?.state?.brokerId;
    const [blockData, setBlockData] = useState(null);
 
    const [Broker_data, setBrokerData] = useState([]);
@@ -106,8 +106,8 @@ const BrokerDetails = (props) => {
       getBrokerDetails({ userId: brokerdetailId })
          .then((response) => {
             setLoading(false);
-            if (response.data.status) {
-               setBrokerData(response.data.resourceData);
+            if (response?.data?.status === 200) {
+               setBrokerData(response?.data?.resourceData);
             }
          })
          .catch((error) => {
@@ -462,7 +462,7 @@ const BrokerDetails = (props) => {
                      </div>
                      <div className="sell-rent-status">
                         <div className="sell-rent-box d-flex">
-                           {Broker_data?.status === 'APPROVED' || Broker_data?.status === 'ON_HOLD' ?
+                           {Broker_data?.status === 'APPROVED' || Broker_data?.status === 'ON_HOLD' || Broker_data?.status === 'PAYMENT_PENDING' ?
                               <>
                                  <Table className="table_sell-rent">
                                     <tr>
@@ -544,7 +544,7 @@ const BrokerDetails = (props) => {
                               </>
                               : null}
                            <div className="brokerdetail-hold">
-                              {Broker_data?.status === 'APPROVED' || Broker_data?.status === 'ON_HOLD' ?
+                              {Broker_data?.status === 'APPROVED' || Broker_data?.status === 'ON_HOLD' || Broker_data?.status === 'PAYMENT_PENDING' ?
                                  <Buttons
                                     className="hold-btn"
                                     name={!holdStatus ? "Hold" : "UnHold"}
@@ -767,7 +767,7 @@ const BrokerDetails = (props) => {
                   </div>
                   : null}
 
-               {Broker_data.status === 'APPROVED' || Broker_data.status === 'ON_HOLD' ?
+               {Broker_data.status === 'APPROVED' || Broker_data.status === 'ON_HOLD' || Broker_data?.status === 'PAYMENT_PENDING' ?
                   <>
                      <Col lg={12}>
                         <Buttons

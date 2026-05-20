@@ -174,6 +174,7 @@ export function handleStatusElement(status) {
          "PUBLISHED",
          "CONVERTED",
          "APPROVED",
+         "PROPERTY APPROVED",
          "Approved",
          "VISITED",
          "Yes, I’m interested",

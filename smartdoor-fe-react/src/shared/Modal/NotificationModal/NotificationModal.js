@@ -38,6 +38,13 @@ function NotificationModal(props) {
          .then((response) => {
             setAllNotifications(response.data.resourceData)
             setTotalRecords(response.data.records)
+            if(response?.data?.resourceData) {
+               response?.data?.resourceData?.forEach(element => {
+                  console.log(element)
+                  if(element?.notifictionAction === "LOW_BATTERY_PERCENTAGE_LOCK") {
+                  }
+               });
+            }
          })
          .catch((error) => {
             console.log('error', error)
@@ -131,6 +138,7 @@ function NotificationModal(props) {
                                        text={formateDateTime(notification.dateTime)}
                                        className="mr-3"
                                     />
+                                    {/* <Buttons name="View Property" size="small" onClick={() => redirectingProperty(notification.propertyId)} /> */}
                                  </div>
                               </Link>
                            )

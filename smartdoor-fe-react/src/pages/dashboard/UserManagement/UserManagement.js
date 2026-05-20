@@ -332,7 +332,7 @@ const UserManagement = (props) => {
 
    const closeModal = (data = { isReload: false }) => {
       if (data?.isReload) {
-         getAllUsers({ pageNo: "", pageSize: "", searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId, blockedUser: blockedUser });
+         getAllUsers({ pageNo: currentPage, pageSize: rowsPerPage, searchString: filterText, searchByCity: city, departmentName: departments, defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId, blockedUser: blockedUser });
       }
       setModalData();
    };

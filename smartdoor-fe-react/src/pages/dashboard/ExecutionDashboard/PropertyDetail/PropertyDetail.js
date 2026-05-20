@@ -304,19 +304,23 @@ const PropertyDetail = (props) => {
                            text={data.locality || ""}
                         />
                      </div>
-                     <div className="locationSelect">
+                     <div className="locationSelect d-flex">
                         {data.status &&
                            data.status === "COMPLETED" &&
                            data?.requestType !== "UN INSTALLATION" ? (
-                           <Buttons
-                              name={data.approved ? "Approved" : "Approve"}
-                              varient="primary"
-                              disabled={data.approved}
-                              type="submit"
-                              size="xSmall"
-                              color="white"
-                              onClick={handleShow}
-                           />
+                           <>
+                              {data?.approved === false ? (
+                                 <Buttons
+                                    name={data.approved ? "Approved" : "Approve"}
+                                    varient="primary"
+                                    disabled={data.approved}
+                                    type="submit"
+                                    size="xSmall"
+                                    color="white"
+                                    onClick={handleShow}
+                                 />
+                              ) : null}
+                           </>
                         ) : null}
 
                         <span className="ml-2"></span>
@@ -331,6 +335,16 @@ const PropertyDetail = (props) => {
                               onClick={handlePrintClick}
                            />
                         ) : null}
+                        <div className="locationSelect mt-1" style={{alignItems: 'center'}}>
+                           {data.status &&
+                              data.status === "COMPLETED" &&
+                              data?.requestType !== "UN INSTALLATION" && data?.approved === true ? (
+                              <>
+                                 {handleStatusElement("PROPERTY APPROVED")}
+                              </>
+                           ) : null}
+                        </div>
+
                         <div className="ml-2" style={{ float: "right" }}>
                            <Link
                               className="removeUnderline"

@@ -75,6 +75,7 @@ const SignUp = React.lazy(() => import('../SignUp/SignUp'));
 const ContactLeadList = React.lazy(() => import('./ContactLeads/ContactLeadList'));
 const LoanLeads = React.lazy(() => import('./HomeLoanLeads/LoanLeads'));
 const TermsAndConditions = React.lazy(() => import('../../shared/TermsCOnditions/TermsAndConditions'));
+const VisitMISDashboard = React.lazy(() => import('./MISDashboard/VisitMISDashboard/VisitMISDashboard'));
 
 const InstallationCalenderView = React.lazy(() =>
   import('./ExecutionDashboard/InstallationCalender/InstallationCalender'),
@@ -1237,7 +1238,7 @@ const routeData = [
     component: BrokerApprovedDetail,
   },
   {
-    path: '/admin/BrokerDetails/:brokerdetailId',
+    path: '/admin/BrokerDetails',
     name: 'Brokers',
     bradcrumb: ['Brokers', 'Broker Details'],
     breadcrumb: false,
@@ -1452,6 +1453,13 @@ const routeData = [
     component: PropertyDetailsModule
   }, 
   
+  {
+    path: '/admin/visitMISDashboard',
+    name: 'Visit MIS',
+    bradcrumb: false,
+    excat: true,
+    component: VisitMISDashboard
+  }, 
   // {
   //   path: '/admin/execution/installation-detail/property-details',
   //   name: 'Installation Team Dashboard',

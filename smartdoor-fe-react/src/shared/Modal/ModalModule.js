@@ -371,7 +371,7 @@ const ModalModule = (props) => {
            await blockTeamMember({ userId, startDate: startDt, endDate: endDt })
            await _getUserDetails();
             //   if (module === 'USER') props.getAllUsers();
-            if (module === 'USER') props.getAllUsers({pageNumber:"", records:"",searchByCity: props.city, searchByzipCode: props.location, departmentName: props.departments});
+            if (module === 'USER') props.getAllUsers({pageNo:1, pageSize:8, searchByCity: props.city, searchByzipCode: props.location, departmentName: props.departments});
            //getAllUsers({pageNumber:"", records:"",searchByCity:city, searchByzipCode:location, departmentName: departments});
            setDatePickerblockvalue([])
          }
@@ -391,7 +391,7 @@ const ModalModule = (props) => {
             .then((data) => {
                _getUserDetails();
                // if (module === "USER") props.getAllUsers();
-               if (module === "USER") props.getAllUsers({pageNumber:"", records:"",searchByCity: props.city, searchByzipCode: props.location, departmentName: props.departments});
+               if (module === "USER") props.getAllUsers({pageNO:1, pageSize:8, searchByCity: props.city, searchByzipCode: props.location, departmentName: props.departments});
             })
             .catch((error) => {
                console.log(error);
