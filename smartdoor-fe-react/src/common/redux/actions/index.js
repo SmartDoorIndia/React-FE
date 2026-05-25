@@ -767,7 +767,11 @@ export const getAllConsumers = (data) => async (dispatch) => {
       dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: { consumersData: response.data.resourceData, records: response.data.records, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchString, kycStatus: data.kycStatus, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId } });
     } else if (response.status === 404) {
       dispatch({ type: Actions.CONSUMSER_MANAGEMENT_SUCCESS, data: { consumersData: [], records: 0, currentPage: data.pageNo, rowsPerPage: data.pageSize, searchStr: data.searchString, kycStatus: data.kycStatus, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId } });
-    } else dispatch({ type: Actions.CONSUMSER_MANAGEMENT_ERROR, data: response.data.resourceData });
+    } else 
+      { 
+        dispatch({ type: Actions.CONSUMSER_MANAGEMENT_ERROR, data: response.data.resourceData });
+        return response;
+      } 
   }
 };
 

@@ -5,10 +5,10 @@ import axios from "axios";
 import CONSTANTS from "../helpers/Constants";
 
 import { ApiJson } from "./apiJson";
-import { showErrorToast, showSuccessToast } from "../helpers/Utils";
+import { clearLocalStorage, showErrorToast, showSuccessToast } from "../helpers/Utils";
 
 import { disconnectSocket } from "../helpers/SocketProvider";
-import { tokenExpired, provideAuth } from "../helpers/Auth";
+import { tokenExpired, provideAuth, useUserContext } from "../helpers/Auth";
 
 let apiFailCounter = 0;
 axios.defaults.baseURL = CONSTANTS.baseUrl;
@@ -18,17 +18,8 @@ axios.interceptors.request.use(
       const { isAuth, userData } = provideAuth();
 
       if (isAuth) {
-         // if (userInfo.access_token) {
          config.headers.Authorization = `bearer ${userData.access_token}`;
          config.headers.Accept = "*/*";
-         // config.headers["Content-Type"] = "application/json";
-
-         // }
-
-         //added new
-         // config.headers["Content-Type"]: "application/json",
-         // config.headers["uuid"] =  CONSTANTS.CAMERA_UUID;
-         // config.headers["appKey"] =  CONSTANTS.CAMERA_APP_KEY;
       }
       return config;
    },
@@ -73,15 +64,17 @@ const injectParamsToUrl = (_url_, paramObj) => {
 //   return _headers_;
 // };
 
+
 const handleErrorByStatus = (error) => {
    if (error && error.data.error) {
-      if (error.status === 401) showErrorToast(error.data.error_description);
+      if (error.status === 401) {
+         showErrorToast(error.data.error_description);
+      }
       else showErrorToast(error.data.error_description);
    }
 };
 
 const mainApiService = async (apiKeyName, data) => {
-   console.log("test 1")
    const apiDetails = ApiJson[apiKeyName];
 
    if (!apiDetails) {
@@ -108,9 +101,16 @@ const mainApiService = async (apiKeyName, data) => {
          }
          return result || { data: {} };
       })
-      .catch(function (error) {
+      .catch(async function (error) {
          if (error && error.response) {
             if (requestObject.showErrorMessage === true) handleErrorByStatus(error.response);
+            if (error?.response?.status === 401) {
+               clearLocalStorage();
+               await showErrorToast("Session expired. Please login again")
+               setTimeout(() => {
+                  window.location.href = "/builder/login";
+               }, 1500); // 1.5 sec delay
+            }
          }
          if (error.config) {
             if (
