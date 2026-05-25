@@ -263,7 +263,7 @@ const ConsumerManagement = (props) => {
 			defaultSortFieldId: 1,
 		 });
 	  }
-   });
+   },[]);
 
    const subHeaderComponentMemo = React.useMemo(() => {
 	  const handleClear = () => {
