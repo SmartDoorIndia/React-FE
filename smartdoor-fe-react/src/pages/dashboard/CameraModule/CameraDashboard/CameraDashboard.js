@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
-import { showErrorToast, showSuccessToast, ToolTip } from "../../../../common/helpers/Utils";
+import { formateDate, formateDateTime, showErrorToast, showSuccessToast, ToolTip } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import "./CameraDashboard.scss";
 import { Card, Col, Form, Modal, Row } from "react-bootstrap";
@@ -114,7 +114,7 @@ const CameraDashboard = (props) => {
          minWidth: "150px",
          cell: ({ cameraSubType }) => (
             <ToolTip position="top" style={{ width: "100%" }} name={cameraSubType}>
-               <Text size="Small" color="secondryColor elipsis-text" text={cameraSubType} />
+               <Text size="Small" color="secondryColor elipsis-text" text={cameraSubType || "-"} />
             </ToolTip>
          ),
          id: 4,
@@ -137,6 +137,23 @@ const CameraDashboard = (props) => {
          id: 5,
       },
       {
+         name: "Last Battery Check Date",
+         selector: (row) => row.lastBatteryCheckDate,
+         sortable: true,
+         center: true,
+         minWidth: "280px",
+         cell: ({ lastBatteryCheckDate }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={lastBatteryCheckDate}>
+               <Text
+                  size="Small"
+                  color="secondryColor elipsis-text"
+                  text={lastBatteryCheckDate !== null ? formateDateTime(lastBatteryCheckDate) : "-"}
+               />
+            </ToolTip>
+         ),
+         id: 6,
+      },
+      {
          name: "Status",
          selector: (row) => row.status,
          sortable: true,
@@ -147,7 +164,7 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={status} />
             </ToolTip>
          ),
-         id: 6,
+         id: 7,
       },
       {
          name: "Online/Offline",
@@ -180,7 +197,7 @@ const CameraDashboard = (props) => {
                </ToolTip>
             );
          },
-         id: 7,
+         id: 8,
       },
       {
          name: "Account",
@@ -193,7 +210,7 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={cameraMail || "-"} />
             </ToolTip>
          ),
-         id: 8,
+         id: 9,
       },
       {
          name: "Inventory",
@@ -206,7 +223,7 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={inventoryType || "-"} />
             </ToolTip>
          ),
-         id: 9,
+         id: 10,
       },
       {
          name: "City",
@@ -219,7 +236,7 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={city || "-"} />
             </ToolTip>
          ),
-         id: 10,
+         id: 11,
       },
       {
          name: "PropertyId",
@@ -237,7 +254,7 @@ const CameraDashboard = (props) => {
                   </> : null}
             </div>
          ),
-         id: 11,
+         id: 12,
       },
       {
          name: "Installer Executive",
@@ -250,7 +267,7 @@ const CameraDashboard = (props) => {
                <Text size="Small" color="secondryColor elipsis-text" text={preconfiguredById || "-"} />
             </ToolTip>
          ),
-         id: 12,
+         id: 13,
       },
       {
          name: "Action",
