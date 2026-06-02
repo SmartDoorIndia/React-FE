@@ -63,11 +63,6 @@ const BuilderLogin = (props) => {
          otp1: e,
          disable: !(e && loginData.otp2 && loginData.otp3 && loginData.otp4),
       });
-      console.log(userNumber);
-      console.log(e, "gggggggggggggggggggggg");
-      // if(otpValue.length<0){
-      //   num1.current.focus();
-      // }
       if (e.length === 1) {
          num2.current.focus();
       }
@@ -185,27 +180,29 @@ const BuilderLogin = (props) => {
    }, []);
 
    const handleArrowClick = () => {
-      props
-         .actionGetOtp({ mobile: userNumber })
-         .then((response) => {
-            // setButtonDisable(false)
-            if (Object.keys(response.data).length === 0) {
-               showErrorToast("Unable to generate OTP");
-            }
-            if (response?.status === 200) {
-               setShowOTP(true);
-               setTimer();
-               setUserExists(response?.data?.resourceData);
-               showSuccessToast("OTP sent successfully");
-            } else {
-               showErrorToast(response.data.message);
-            }
-         })
-         .catch((error) => {
-            setButtonDisable(false);
-            console.log(error);
-         });
-      // setShowOTP(true);
+      console.log(userNumber);
+      if (userNumber !== null && userNumber.length === 10 && showOTP === false) {
+         props
+            .actionGetOtp({ mobile: userNumber })
+            .then((response) => {
+               // setButtonDisable(false)
+               if (Object.keys(response.data).length === 0) {
+                  showErrorToast("Unable to generate OTP");
+               }
+               if (response?.status === 200) {
+                  setShowOTP(true);
+                  setTimer();
+                  setUserExists(response?.data?.resourceData);
+                  showSuccessToast("OTP sent successfully");
+               } else {
+                  showErrorToast(response.data.message);
+               }
+            })
+            .catch((error) => {
+               setButtonDisable(false);
+               console.log(error);
+            });
+      }
    };
 
    const validateForm = (event) => {
@@ -236,7 +233,7 @@ const BuilderLogin = (props) => {
                   if (response.data.access_token) {
                      setLocalStorage("authData", response.data);
                      loginUser();
-                  } 
+                  }
                   setLoginData((prevData) => ({
                      ...prevData,
                      value: "",
@@ -319,12 +316,12 @@ const BuilderLogin = (props) => {
                                  icon={faArrowRight}
                                  type="submit"
                                  onClick={handleArrowClick}
-                                 className={`input-icon ${
-                                    userNumber.length === 10 ? "clickable" : "disabled"
-                                 }`}
+                                 aria-disabled={userNumber.length === 10 && userNumber !== null ? false : true}
+                                 className={`input-icon ${userNumber.length === 10 && showOTP === false ? "clickable" : "disabled"
+                                    }`}
                                  style={{
-                                    cursor: userNumber.length === 10 ? "pointer" : "not-allowed",
-                                    opacity: userNumber.length === 10 ? 1 : 0.5,
+                                    cursor: userNumber.length === 10 && showOTP === false ? "pointer" : "not-allowed",
+                                    opacity: userNumber.length === 10 && showOTP === false ? 1 : 0.5,
                                  }}
                               />
                            </div>
@@ -439,9 +436,8 @@ const BuilderLogin = (props) => {
                                  </div>
                                  <button
                                     type="submit"
-                                    className={`submit-button ${
-                                       loginData.disable || buttonDisable ? "disabled" : "clickable"
-                                    }`}
+                                    className={`submit-button ${loginData.disable || buttonDisable ? "disabled" : "clickable"
+                                       }`}
                                     disabled={loginData.disable || buttonDisable}
                                  >
                                     Sign In

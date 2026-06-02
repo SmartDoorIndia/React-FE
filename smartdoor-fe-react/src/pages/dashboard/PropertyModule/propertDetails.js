@@ -1315,7 +1315,7 @@ const PropertyDetails = (props) => {
                                  ) : null}
 
                                  {propertyData.miscellaneousDetails?.smartLockProperty === true &&
-                                    propertyData.miscellaneousDetails?.deleted === false &&
+                                    propertyData.miscellaneousDetails?.deleted === false && showQr === true &&
                                     (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
                                     <>
                                        <Link

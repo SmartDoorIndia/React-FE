@@ -291,7 +291,6 @@ const PropertyDetail = (props) => {
                                  className=" linkFor mr-2"
                               />
                            </Link>
-                           {handleStatusElement(data.status)}
                         </div>
 
                         <Text
@@ -303,44 +302,52 @@ const PropertyDetail = (props) => {
                      </div>
 
                      <div className="locationSelect d-flex">
-                        {data.status &&
-                           data.status === "COMPLETED" &&
-                           data?.requestType !== "UN INSTALLATION" ? (
-                           <>
-                              {data?.approved === false ? (
-                                 <Buttons
-                                    name={data.approved ? "Approved" : "Approve"}
-                                    varient="primary"
-                                    disabled={data.approved}
-                                    type="submit"
-                                    size="xSmall"
-                                    color="white"
-                                    onClick={handleShow}
-                                 />
-                              ) : null}
-                           </>
-                        ) : null}
+                        <div className=" d-flex" style={{ float: "right" }}>
+                           <div className="mt-1">
+                              {handleStatusElement(data.status)}
+                           </div>
 
-                        {showPrintBtn ? (
-                           <Buttons
-                              name={"Print QR"}
-                              varient="primary"
-                              size="xSmall"
-                              color="white"
-                              onClick={handlePrintClick}
-                           />
-                        ) : null}
-                        <div className="locationSelect mt-1" style={{alignItems: 'center'}}>
+                           <div className="mt-1">
+                              {data.status &&
+                                 data.status === "COMPLETED" &&
+                                 data?.requestType !== "UN INSTALLATION" && data?.approved === true ? (
+                                 <>
+                                    {handleStatusElement("PROPERTY APPROVED")}
+                                 </>
+                              ) : null}
+                           </div> &nbsp;&nbsp;
+
                            {data.status &&
                               data.status === "COMPLETED" &&
-                              data?.requestType !== "UN INSTALLATION" && data?.approved === true ? (
+                              data?.requestType !== "UN INSTALLATION" ? (
                               <>
-                                 {handleStatusElement("PROPERTY APPROVED")}
+                                 {data?.approved === false ? (
+                                    <Buttons
+                                       name={data.approved ? "Approved" : "Approve"}
+                                       varient="primary"
+                                       disabled={data.approved}
+                                       type="submit"
+                                       size="xSmall"
+                                       color="white"
+                                       onClick={handleShow}
+                                    />
+                                 ) : null}
                               </>
                            ) : null}
-                        </div>
 
-                        <div className="ml-2" style={{ float: "right" }}>
+                           {showPrintBtn ? (
+                              <>
+                                 <div>
+                                    <Buttons
+                                       name={"Print QR"}
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       onClick={handlePrintClick}
+                                    />
+                                 </div> &nbsp;&nbsp;
+                              </>
+                           ) : null}
                            <Link
                               className="removeUnderline"
                               to={{

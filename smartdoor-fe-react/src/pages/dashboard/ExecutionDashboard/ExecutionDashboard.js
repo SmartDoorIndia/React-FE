@@ -478,20 +478,20 @@ const ExecutionDashboard = (props) => {
     {
       name: 'Id',
       selector: row => row.id,
-      sortable: true,
+      sortable: false,
       center: true,
     },
     {
       name: 'Property Id',
       selector: row => row.propertyId,
-      sortable: true,
+      sortable: false,
       center: true,
       minWidth: '180px',
     },
     {
       name: 'Installation Time',
       selector: row => row.dateTime,
-      sortable: true,
+      sortable: false,
       center: true,
       minWidth: '180px',
       cell: ({ dateTime, slotTime }) => (<span>{`${formateDate(dateTime)} | ${slotTime || '-'}`}</span>),
