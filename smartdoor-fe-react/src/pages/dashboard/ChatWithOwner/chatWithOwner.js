@@ -12,14 +12,15 @@ import { Col, Row } from "react-bootstrap";
 const ChatWithOwner = (props) => {
 
     const [chatHistory, setChatHistory] = useState([]);
-    const { roleId, userId, ownerId, ownerName } = props.location.state
+    const { receiverRoleId, userId, ownerId, ownerName } = props.location.state
     const { socket, socketLoggedInUserData, connectSocket, subscribeSocketEvents } = useSocket();
     const [message, setMessage] = useState('');
     const [disableSend, setDisableSend] = useState(true);
     const userData = getLocalStorage('authData');
     
     const handleUpdateChatEvent = (response) => {
-        if(response.sender_id !== userId) {
+        if(response?.sender_id !== userId) {
+            console.log("recieve: ", response)
             let chatData = [...chatHistory];
             chatData.push(response)
             setChatHistory(chatHistory => [...chatHistory, ...chatData])
@@ -83,7 +84,7 @@ const ChatWithOwner = (props) => {
                         sender_id: userId,
                         sender_role_id: userData?.roleId,
                         receiver_id: ownerId,
-                        receiver_role_id: roleId,
+                        receiver_role_id: receiverRoleId,
                         pagination: 100,
                         page: 1,
                         visit_id: 3,
@@ -135,7 +136,7 @@ const ChatWithOwner = (props) => {
                             <Col lg='1' className=""></Col>
 
                             <Col lg='5' className="mt-3" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                                {chat.sender_id === ownerId ?
+                                {chat?.sender_id === ownerId ?
                                     <>
                                         {/* <Chip label={chat.message} /> */}
                                         <div style={{ marginRight: 'auto', marginBottom: '0px' }}>
@@ -155,7 +156,7 @@ const ChatWithOwner = (props) => {
                                     : null}
                             </Col>
                             <Col lg='5' className="mt-3" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                                {chat.sender_id === userId ?
+                                {chat?.sender_id === userId ?
                                     <>
                                         <div style={{ marginLeft: 'auto', marginBottom: '0px' }}>
                                             <Card className="p-1" style={{ width: 'fit-content', backgroundColor: '#BE1452', borderBottomRightRadius: '0%', color:'white' }}>

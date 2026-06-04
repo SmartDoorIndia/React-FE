@@ -1284,7 +1284,7 @@ const PropertyDetails = (props) => {
                                              userId: userData.userid,
                                              ownerId: ownerId,
                                              ownerName: ownerName,
-                                             roleId: propertyData?.ownerRoleId,
+                                             receiverRoleId: propertyData?.miscellaneousDetails?.ownerRoleId,
                                           },
                                        }}
                                     >
