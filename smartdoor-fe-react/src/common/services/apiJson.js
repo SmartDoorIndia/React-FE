@@ -3681,6 +3681,17 @@ export const ApiJson = {
     showResultMessage: true,
     showErrorMessage: true,
   },
+  getSmartlockTypes: {
+    url: "admin/system/getValues/LOCK_TYPE",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  }
 };
 console.log(userData)
 
