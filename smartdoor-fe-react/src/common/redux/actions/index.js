@@ -2515,3 +2515,8 @@ export const returnCameraToInventory = async (data) => {
   const response = await mainApiService("returnCameraToInventory", data);
   return response
 }
+
+export const fetchSmartlockTypeList = async (data) => {
+  const response = await mainApiService("getSmartlockTypes", data);
+  return response
+}

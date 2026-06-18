@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { TableLoader } from "../../../common/helpers/Loader";
 import Pagination from "../../../shared/DataTable/Pagination";
 import {
+   fetchSmartlockTypeList,
    getAllCityWithId,
    getCorporateById,
    getSmartlockDashboardList,
@@ -36,7 +37,7 @@ const SmartlockDashboard = (props) => {
       smartlockList?.data?.corporateId || []
    );
    const [smartlockStats, setSmartlockStats] = useState({});
-   const smartlockTypeList = CONSTANTS_STATUS.smartlockType;
+   const [smartlockTypeList, setSmartlockTypeList] = useState([] || CONSTANTS_STATUS.smartlockType);
    const [smartlockType, setSmartlockType] = useState(smartlockList?.data?.smartlockType || "");
    const [cityIdList, setCityIdList] = useState(smartlockList?.data?.cityIdList || []);
    const [orderByParam, setOrderByParam] = useState(smartlockList?.data?.orderByParam || "BATTERY_VALUE");
@@ -341,6 +342,16 @@ const SmartlockDashboard = (props) => {
       />
    );
 
+   const getSmartlockTypeList = async () => {
+      const response = await fetchSmartlockTypeList({});
+      if (response?.status === 200) {
+         const values =
+            JSON.parse(response?.data?.resourceData?.[0]?.value || "{}")?.values || [];
+
+         setSmartlockTypeList(values);
+      }
+   };
+
    const getCorprateList = async () => {
       try {
          const response = await getCorporateById({
@@ -366,6 +377,7 @@ const SmartlockDashboard = (props) => {
    useEffect(() => {
       getAllCityWithId({ smartdoorServiceStatus: true, stateId: null });
       getCorprateList();
+      getSmartlockTypeList();
       getSmartlockDashboardList({
          deviceStatus: deviceStatus, // preconfig , install ,sold //
          corporateId: selectedCorporate, //
