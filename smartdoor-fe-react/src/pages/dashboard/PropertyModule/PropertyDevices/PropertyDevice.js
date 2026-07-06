@@ -16,13 +16,14 @@ import {
    getDeviceIdList,
    restoreOrDeleteDevice,
    updateCameraStatus,
+   updateCameraAlertMode,
    returnCameraToInventory,
 } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import ListingDataTable from "../../../../shared/DataTable/ListingDataTable";
-import { Divider, MenuItem, TextField } from "@mui/material";
+import { Divider, MenuItem, Switch, TextField } from "@mui/material";
 import TextArea from "../../../../shared/Inputs/TextArea/TextArea";
 import { Modal } from "react-bootstrap";
 import { validateCameraData } from "../../../../common/validations";
@@ -121,6 +122,22 @@ const PropertyDevice = (props) => {
       },
       [propertyId]
    );
+
+   const handleAlertModeChange = async (cameraDeviceId, alertMode) => {
+      try {
+         const response = await updateCameraAlertMode({
+            cameraDeviceId: cameraDeviceId,
+            alertMode: !alertMode,
+         });
+         if (response?.status === 200) {
+            _getCameraDevice(propertyId);
+         } else {
+            showErrorToast(response?.data?.customMessage);
+         }
+      } catch (err) {
+         showErrorToast("Unexpected Error.");
+      }
+   };
 
    const fetchDeviceIdListByKitId = () => {
       setLoading(true);
@@ -307,6 +324,19 @@ const PropertyDevice = (props) => {
          selector: "status",
          maxWidth: "260px",
          center: true,
+      },
+      {
+         name: "Alert Mode",
+         selector: "alertMode",
+         maxWidth: "120px",
+         center: true,
+         cell: ({ cameraDeviceId, alertMode }) => (
+            <Switch
+               checked={alertMode ? true : false}
+               color="warning"
+               onChange={() => handleAlertModeChange(cameraDeviceId, alertMode)}
+            />
+         ),
       },
       {
          name: "Set callBack URL",

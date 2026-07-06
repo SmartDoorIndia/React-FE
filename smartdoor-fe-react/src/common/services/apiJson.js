@@ -3640,6 +3640,17 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  updateCameraAlertMode: {
+    url: "smartlock/smartlock/updateCameraAlertMode",
+    method: "POST",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
   updateSmartlockStatus: {
     url: "smartlock/smartlock/updateSmartlockStatus",
     method: "POST",

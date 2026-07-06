@@ -2484,6 +2484,11 @@ export const updateCameraStatus = async (data) => {
   return response;
 }
 
+export const updateCameraAlertMode = async (data) => {
+  const response = await mainApiService("updateCameraAlertMode", data);
+  return response;
+}
+
 export const updateSmartlockStatus = async (data) => {
   const response = await mainApiService("updateSmartlockStatus", data);
   return response;
