@@ -23,7 +23,7 @@ import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Uti
 import Text from "../../../../shared/Text/Text";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import ListingDataTable from "../../../../shared/DataTable/ListingDataTable";
-import { Divider, MenuItem, Switch, TextField } from "@mui/material";
+import { Autocomplete, Divider, MenuItem, Switch, TextField } from "@mui/material";
 import TextArea from "../../../../shared/Inputs/TextArea/TextArea";
 import { Modal } from "react-bootstrap";
 import { validateCameraData } from "../../../../common/validations";
@@ -946,13 +946,13 @@ const PropertyDevice = (props) => {
                ></Buttons>
             </Modal.Header>
             <Modal.Body>
-               <TextField
+               <Autocomplete
                   className="textfieldInput w-100 mt-1"
-                  select
-                  multiple={false}
+                  options={cameraList}
+                  getOptionLabel={(camera) => camera?.cameraDeviceId?.toString() ?? ""}
+                  isOptionEqualToValue={(option, value) => option?.cameraDeviceId === value?.cameraDeviceId}
                   value={selectedCamera}
-                  label="Select Camera DeviceId"
-                  onChange={async (e) => {
+                  onChange={async (event, newValue) => {
                      if (selectedCamera !== null) {
                         const response = await getDeviceToken({
                            sns: selectedCamera?.uuId,
@@ -960,17 +960,11 @@ const PropertyDevice = (props) => {
                         });
                         await setLivestreamURL(null);
                      }
-                     console.log(e.target.value);
-                     setSelectedCamera(e.target.value);
+                     setSelectedCamera(newValue);
                   }}
+                  renderInput={(params) => <TextField {...params} label="Select Camera DeviceId" />}
                   style={{ minHeight: "25vh" }}
-               >
-                  {cameraList.map((camera) => (
-                     <MenuItem key={camera?.cameraDeviceId} value={camera}>
-                        {camera?.cameraDeviceId}
-                     </MenuItem>
-                  ))}
-               </TextField>
+               />
             </Modal.Body>
             <Modal.Footer style={{ justifyContent: "center" }}>
                <Buttons
