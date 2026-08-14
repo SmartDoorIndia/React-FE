@@ -74,6 +74,7 @@ const ProjectDetailsPage = React.lazy(() => import('./Builders/ProjectDetailsPag
 const SignUp = React.lazy(() => import('../SignUp/SignUp'));
 const ContactLeadList = React.lazy(() => import('./ContactLeads/ContactLeadList'));
 const LoanLeads = React.lazy(() => import('./HomeLoanLeads/LoanLeads'));
+const CityDigestSubscribers = React.lazy(() => import('./CityDigest/CityDigestSubscribers'));
 const TermsAndConditions = React.lazy(() => import('../../shared/TermsCOnditions/TermsAndConditions'));
 
 const InstallationCalenderView = React.lazy(() =>
@@ -1370,7 +1371,15 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: LoanLeads
-  }, 
+  },
+
+  {
+    path: '/admin/city-digest-subscribers',
+    name: 'City Digest Subscribers',
+    bradcrumb: false,
+    excat: true,
+    component: CityDigestSubscribers
+  },
 
   {
     path: '/admin/terms-and-conditions',

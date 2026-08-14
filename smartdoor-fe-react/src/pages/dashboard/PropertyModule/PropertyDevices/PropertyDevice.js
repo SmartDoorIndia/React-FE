@@ -63,6 +63,7 @@ const PropertyDevice = (props) => {
    const [currentUUID, setCurrentUUID] = useState(null);
    const [accountDetails, setAccountDetails] = useState({});
    const [cameraList, setCameraList] = useState([]);
+   const [cameraListLoading, setCameraListLoading] = useState(false);
    const [selectedCamera, setSelectedCamera] = useState(null);
    const [confirmDeleteModalFlag, setConfirmDeleteModalFlag] = useState(false);
    const [selectedDevice, setSelectedDevice] = useState({
@@ -140,9 +141,9 @@ const PropertyDevice = (props) => {
    };
 
    const fetchDeviceIdListByKitId = () => {
-      setLoading(true);
+      setCameraListLoading(true);
       getDeviceIdList({ kitId: 0 }).then((response) => {
-         setLoading(false);
+         setCameraListLoading(false);
          setCameraList([...response.data.resourceData.cameraList]);
       });
    };
@@ -949,6 +950,7 @@ const PropertyDevice = (props) => {
                <Autocomplete
                   className="textfieldInput w-100 mt-1"
                   options={cameraList}
+                  loading={cameraListLoading}
                   getOptionLabel={(camera) => camera?.cameraDeviceId?.toString() ?? ""}
                   isOptionEqualToValue={(option, value) => option?.cameraDeviceId === value?.cameraDeviceId}
                   value={selectedCamera}
@@ -962,7 +964,13 @@ const PropertyDevice = (props) => {
                      }
                      setSelectedCamera(newValue);
                   }}
-                  renderInput={(params) => <TextField {...params} label="Select Camera DeviceId" />}
+                  renderInput={(params) => (
+                     <TextField
+                        {...params}
+                        label="Select Camera DeviceId"
+                        placeholder={cameraListLoading ? "Loading available cameras…" : undefined}
+                     />
+                  )}
                   style={{ minHeight: "25vh" }}
                />
             </Modal.Body>

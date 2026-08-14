@@ -142,7 +142,7 @@
         }    
         .locationSelect{
             display: flex;
-            justify-content: space-between; 
+            justify-content: space-between;
             .form-group{
                 display: flex;
                 margin-bottom: 0;
@@ -156,14 +156,121 @@
                 }
                 .form-control{
                     background: $lightgray;
-                    @include border;                    
-                    font-weight: $smbold;                    
+                    @include border;
+                    font-weight: $smbold;
                     font-size: $xSmall !important;
                     border-radius: 4px !important;
-                    height: 30px !important;      
+                    height: 30px !important;
                     box-shadow: none;
                     padding-top: 4px;
-                    
+
+                }
+            }
+        }
+        // Professional filter bar for the "Listed Properties" toolbar: a distinct card,
+        // every control gets a visible label above it, and a single CSS grid lays all
+        // fields out together so rows always fill evenly (no orphaned single-field lines,
+        // no "&nbsp;&nbsp;" spacer hacks).
+        .filtersPanel{
+            background: $lightgray;
+            border: 1px solid $lightBorder;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin: 8px 12px;
+
+            .filtersGrid{
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 10px 12px;
+                margin-top: 10px;
+                align-items: end;
+
+                .filterField{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+                    min-width: 0;
+
+                    .filterLabel{
+                        font-size: 10px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 0.03em;
+                        color: $gray;
+                        margin-bottom: 0;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                    .form-group{
+                        margin-bottom: 0;
+                    }
+                    .form-control{
+                        background: $white;
+                        border: 1px solid $lightBorder;
+                        border-radius: 6px !important;
+                        font-weight: $smbold;
+                        font-size: $xSmall !important;
+                        height: 32px !important;
+                        width: 100%;
+                        padding: 0 10px;
+                        box-shadow: none;
+                        transition: border-color .15s ease, box-shadow .15s ease;
+
+                        &:hover{
+                            border-color: $secondry-color-hover;
+                        }
+                        &:focus{
+                            border-color: $primary-color;
+                            box-shadow: 0 0 0 3px rgba(190, 20, 82, 0.12);
+                        }
+                    }
+                    // SearchInput-based fields (Property ID / Owner search) render their own
+                    // wrapper markup (searchCrossButon > sdInputFields > form-group) with a
+                    // built-in search icon AND an always-rendered floating label (blank here,
+                    // since no label prop is passed in) that still reserves height above the
+                    // input - both are what was pushing these two fields taller/out of line
+                    // with the rest of the grid. Hide both and undo the icon's reserved
+                    // left-padding and the shared Input component's forced 95% width, so
+                    // these boxes match every plain text/select input exactly.
+                    .searchCrossButon{
+                        width: 100%;
+                        .inputSearchIcon{
+                            display: none;
+                        }
+                        .form-label{
+                            display: none;
+                        }
+                        .form-control{
+                            height: 32px !important;
+                            border-radius: 6px !important;
+                            width: 100% !important;
+                            padding-left: 10px !important;
+                            background: $white !important;
+                        }
+                    }
+                }
+                .filterSearchAction{
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: flex-start;
+
+                    .filterSearchBtn{
+                        height: 32px;
+                        width: 100%;
+                        max-width: 110px;
+                    }
+                }
+            }
+        }
+        @media (max-width: 576px) {
+            .filtersPanel .filtersGrid{
+                grid-template-columns: 1fr;
+            }
+            .filtersPanel .filtersGrid .filterSearchAction{
+                justify-content: stretch;
+                .filterSearchBtn{
+                    max-width: none;
                 }
             }
         }

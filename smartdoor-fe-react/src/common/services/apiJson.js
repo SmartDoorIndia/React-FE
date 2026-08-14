@@ -3353,6 +3353,17 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
+  getAllCityDigestSubscribers: {
+    url: '/admin/city-digest/all-subscribers',
+    method: 'GET',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
   changeLeadStatus: {
     url: "/admin/user/changeContactLeadStatus/:srNo/:status",
     method: "POST",

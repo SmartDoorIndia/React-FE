@@ -1,0 +1,27 @@
+@import '../../../scss/modules/variables.scss';
+
+// Only the page-specific table wrapper - .dashboard/.tableBox/.tableHeading are already
+// provided globally by the shared dashboard styles bundled from other pages (same
+// convention as ContactLeads.scss/property.scss).
+.cityDigestSubscribersTableWrapper {
+    .rdt_TableBody {
+        max-height: calc(65vh);
+        height: fit-content;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    .rdt_TableRow {
+        min-height: auto;
+        .rdt_TableCell {
+            text-align: center;
+            .elipsis-text {
+                white-space: nowrap;
+                overflow: hidden;
+                width: 180px;
+                min-width: 180px;
+                text-overflow: ellipsis;
+                display: block;
+            }
+        }
+    }
+}

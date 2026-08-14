@@ -2367,6 +2367,11 @@ export const fetchContactLeadList = async (data) => {
   return response
 }
 
+export const getAllCityDigestSubscribers = async () => {
+  const response = await mainApiService("getAllCityDigestSubscribers");
+  return response
+}
+
 export const changeContactLeadStatus = async (data) => {
   const response = await mainApiService("changeLeadStatus", data);
   return response

@@ -449,6 +449,10 @@ const PropertyModule = (props) => {
    useEffect(() => {
       if (data?.length === 0 || localStorage.getItem('autoRefresh') === 'Yes') {
          getAllStateWithId();
+         // Load the full city list up front (stateId: null is getAllCityWithId's own
+         // documented default - see apiJson.js) so City works even before a State is
+         // picked; selecting a State below still re-fetches it narrowed to that state.
+         getAllCityWithId({ smartdoorServiceStatus: null });
          getAllProperties({
             city: p_city,
             zipcode: '',
@@ -470,7 +474,7 @@ const PropertyModule = (props) => {
          }
          localStorage.setItem('autoRefresh', 'No')
       }
-   }, [getPropertyCity, getAllStateWithId, scrollPosition]);
+   }, [getPropertyCity, getAllStateWithId, getAllCityWithId, scrollPosition]);
 
    const _filterData = (city, locationData) => {
       let data = locationData;
@@ -593,7 +597,7 @@ const PropertyModule = (props) => {
                component={ModalModule}
             />
             {/* <TableTitle /> */}
-            <div className="align-items-center tableHeading">
+            <div className="align-items-center tableHeading filtersPanel">
                <div className="d-flex justify-content-between">
 
                   <div>
@@ -604,8 +608,10 @@ const PropertyModule = (props) => {
                         text="Properties on Smartdoor"
                      />
                   </div>
-                  <div className="locationSelect d-flex">
-                     
+               </div>
+               <div className="filtersGrid">
+                  <div className="filterField">
+                     <label className="filterLabel">State</label>
                      <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
                            as="select"
@@ -627,6 +633,9 @@ const PropertyModule = (props) => {
                               : null}
                         </Form.Control>
                      </Form.Group>
+                  </div>
+                  <div className="filterField">
+                     <label className="filterLabel">City</label>
                      <Form.Group controlId="exampleForm.SelectCustom">
                         <Form.Control
                            as="select"
@@ -664,30 +673,26 @@ const PropertyModule = (props) => {
                               ))
                               : null}
                         </Form.Control>
-                     </Form.Group> &nbsp;&nbsp;
-                     {/* <Form.Label>Location:</Form.Label> */}
-                     <Form.Group controlId="exampleForm.SelectCustom" className="loc-input">
+                     </Form.Group>
+                  </div>
+                  <div className="filterField addressSearchField">
+                     <label className="filterLabel">Address Search</label>
+                     <Form.Group controlId="addressSearchInput" className="loc-input">
                         <Form.Control
                            type="text"
-                           placeholder="Location"
+                           placeholder="Search by address, locality, landmark..."
                            value={address}
                            onChange={(e) => {
                               // _filterData(p_city, e.target.value);
                               setAddress(e.target.value);
                            }}
                            className="locationWidth"
-                        >
-                           {/* <option value="">Select Location</option>
-                           {locationsData && locationsData.length
-                              ? locationsData.map((_value, index) => (
-                                 <option key={_value.pinCode} value={_value.location}>
-                                    {_value.location}
-                                 </option>
-                              ))
-                              : null} */}
-                        </Form.Control>
+                        />
                      </Form.Group>
-                     {propertyType.length ? (
+                  </div>
+                  {propertyType.length ? (
+                     <div className="filterField">
+                        <label className="filterLabel">Property Type</label>
                         <Form.Group controlId="exampleForm.SelectCustom">
                            <Form.Control
                               as="select"
@@ -706,10 +711,13 @@ const PropertyModule = (props) => {
                                  : null}
                            </Form.Control>
                         </Form.Group>
-                     ) : (
-                        ""
-                     )}
-                     {statusArr.length ? (
+                     </div>
+                  ) : (
+                     ""
+                  )}
+                  {statusArr.length ? (
+                     <div className="filterField">
+                        <label className="filterLabel">Status</label>
                         <Form.Group controlId="exampleForm.SelectCustom">
                            <Form.Control
                               as="select"
@@ -728,48 +736,56 @@ const PropertyModule = (props) => {
                                  : null}
                            </Form.Control>
                         </Form.Group>
-                     ) : (
-                        ""
-                     )}
-
+                     </div>
+                  ) : (
+                     ""
+                  )}
+                  <div className="filterField">
+                     <label className="filterLabel">Property ID</label>
+                     {propertyIdBox}
                   </div>
-               </div>
-               <div className="locationSelect justify-content-end d-flex mt-2">
-                  {propertyIdBox} &nbsp;&nbsp;&nbsp;&nbsp;
-                  {subHeaderComponentMemo} &nbsp;&nbsp;&nbsp;&nbsp;
-                  <Form.Group controlId="exampleForm.SelectCustom">
-                     {/* <Form.Label>From Date</Form.Label> */}
-                     <Form.Control
-                        type="date"
-                        max={new Date().toISOString().split("T")[0]}
-                        placeholder="From Date"
-                        value={fromDate}
-                        onChange={(e) => {
-                           const selectedDate = new Date(e.target.value);
-                           setFromDate(e.target.value)
-                        }}
-                     />
-                  </Form.Group> &nbsp;&nbsp;&nbsp;&nbsp;
-                  <Form.Group controlId="exampleForm.SelectCustom">
-                     {/* <Form.Label>To Date</Form.Label> */}
-                     <Form.Control
-                        type="date"
-                        max={new Date().toISOString().split("T")[0]}
-                        placeholder="To Date"
-                        value={toDate}
-                        onChange={(e) => {
-                           const selectedDate = new Date(e.target.value);
-                           setToDate(e.target.value)
-                        }}
-                     />
-                  </Form.Group>
-                  <div className="ml-3">
+                  <div className="filterField">
+                     <label className="filterLabel">Owner / Mobile No.</label>
+                     {subHeaderComponentMemo}
+                  </div>
+                  <div className="filterField">
+                     <label className="filterLabel">From Date</label>
+                     <Form.Group controlId="exampleForm.SelectCustom">
+                        <Form.Control
+                           type="date"
+                           max={new Date().toISOString().split("T")[0]}
+                           placeholder="From Date"
+                           value={fromDate}
+                           onChange={(e) => {
+                              const selectedDate = new Date(e.target.value);
+                              setFromDate(e.target.value)
+                           }}
+                        />
+                     </Form.Group>
+                  </div>
+                  <div className="filterField">
+                     <label className="filterLabel">To Date</label>
+                     <Form.Group controlId="exampleForm.SelectCustom">
+                        <Form.Control
+                           type="date"
+                           max={new Date().toISOString().split("T")[0]}
+                           placeholder="To Date"
+                           value={toDate}
+                           onChange={(e) => {
+                              const selectedDate = new Date(e.target.value);
+                              setToDate(e.target.value)
+                           }}
+                        />
+                     </Form.Group>
+                  </div>
+                  <div className="filterField filterSearchAction">
+                     <label className="filterLabel">&nbsp;</label>
                      <Buttons
                         name="Search"
                         varient="primary"
                         size="Small"
                         color="white"
-                        style={{ height: "40px !important" }}
+                        className="filterSearchBtn"
                         onClick={async () => {
                            setCurrentPage(1)
                            let type = null
@@ -838,7 +854,7 @@ const mapStateToProps = ({ allPropertyData, getPropertyCityData, allCities, allC
    allPropertyData,
    getPropertyCityData,
    allCities,
-   allCitiesWithId, 
+   allCitiesWithId,
    allStatesWithId
 });
 
