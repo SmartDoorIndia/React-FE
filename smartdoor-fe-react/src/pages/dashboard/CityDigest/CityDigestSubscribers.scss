@@ -1,9 +1,58 @@
 @import '../../../scss/modules/variables.scss';
+@import '../../../scss/modules/mixin.scss';
 
-// Only the page-specific table wrapper - .dashboard/.tableBox/.tableHeading are already
-// provided globally by the shared dashboard styles bundled from other pages (same
-// convention as ContactLeads.scss/property.scss).
+// .tableBox/.tableHeading get no styling at all from the global style.scss rule (it only
+// nests a couple of sort-icon selectors) - every sibling listing page (ManagePlan, Broker,
+// ContactLeads, etc.) supplies its own card treatment for them, so this page needs the same
+// white-card/border/heading-divider look rather than rendering as bare, unstyled text+table.
+.dashboard {
+    .tableBox {
+        background-color: $white;
+        @include border;
+        border-radius: 8px;
+        padding-bottom: 4px;
+
+        .tableHeading {
+            padding: 16px 20px;
+            border-bottom: 1px solid $lightBorder;
+        }
+    }
+}
+
+.cityDigestSubscribersPage {
+    .stat-card {
+        border: 1px solid $lightBorder;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+        transition: box-shadow 0.15s ease;
+
+        &:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-value {
+            margin-bottom: 2px;
+        }
+    }
+}
+
 .cityDigestSubscribersTableWrapper {
+    // DataTable.js's shared customStyles hardcodes the FIRST column to 65px (min & max) for
+    // every table in the app, tuned for the common case of a short "#"/icon first column.
+    // This table's first column is "User ID" (7 characters), which doesn't fit in 65px and
+    // gets clipped - override it here, scoped to just this table, without touching the
+    // shared default every other admin table still relies on.
+    .rdt_TableHeadRow .rdt_TableCol:first-child {
+        min-width: 100px !important;
+        max-width: 100px !important;
+        white-space: normal !important;
+        overflow: visible !important;
+    }
+    .rdt_TableRow .rdt_TableCell:first-child {
+        min-width: 100px !important;
+        max-width: 100px !important;
+    }
+
     .rdt_TableBody {
         max-height: calc(65vh);
         height: fit-content;
@@ -14,14 +63,86 @@
         min-height: auto;
         .rdt_TableCell {
             text-align: center;
+            // Cells had no horizontal padding and no boundary between them at all - a long
+            // Name/Email value filling its column ran right up against the next column's
+            // value with nothing separating them. Padding alone was still ambiguous to the
+            // eye, so a hairline border between columns makes the boundary unmistakable
+            // regardless of how much text is in either cell.
+            padding: 10px 14px !important;
+            border-right: 1px solid $lightBorder;
+            &:last-child {
+                border-right: none;
+            }
             .elipsis-text {
                 white-space: nowrap;
                 overflow: hidden;
-                width: 180px;
-                min-width: 180px;
+                width: 150px;
+                min-width: 150px;
                 text-overflow: ellipsis;
                 display: block;
+                margin: 0 auto;
+            }
+            // Name wraps at word boundaries instead of truncating - the full name is always
+            // visible, just across multiple lines when it doesn't fit on one.
+            .wrap-text {
+                white-space: normal;
+                word-break: normal;
+                overflow-wrap: break-word;
+                width: 160px;
+                display: block;
+                margin: 0 auto;
             }
         }
+    }
+
+    // Cities collapse behind a dropdown ("Pune +3") instead of always showing every chip
+    // inline, so a subscriber with many cities doesn't blow out the row height - the full
+    // list is one click away rather than always-on-screen.
+    .cityDropdownToggle {
+        cursor: pointer;
+        display: inline-block;
+        background-color: $lightPink;
+        color: $primary-color;
+        font-size: $xSmall;
+        font-weight: $xsemibold;
+        padding: 4px 12px;
+        border-radius: 24px;
+        white-space: nowrap;
+
+        &::after {
+            margin-left: 6px;
+        }
+    }
+
+    .cityDropdownMenu {
+        padding: 10px;
+        min-width: 220px;
+        max-width: 320px;
+        border: 1px solid $lightBorder;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    // Every subscribed city shown as its own pill, wrapping onto as many lines as needed -
+    // replaces the old comma-joined + ellipsis + hover-only text, so the full city list is
+    // always visible directly in the table instead of being hidden/merged behind a tooltip.
+    .cityChipsWrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        padding: 4px 2px;
+    }
+
+    .cityChip {
+        display: inline-block;
+        background-color: $lightPink;
+        color: $primary-color;
+        font-size: $xSmall;
+        font-weight: $xsemibold;
+        padding: 3px 10px;
+        border-radius: 24px;
+        white-space: nowrap;
+        line-height: 1.4;
     }
 }
