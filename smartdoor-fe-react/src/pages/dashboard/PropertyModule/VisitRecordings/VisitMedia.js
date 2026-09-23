@@ -11,6 +11,9 @@ import VisitVideos from "./VisitImgVideos/VisitVideos";
 import "./VisitMedia.scss";
 import ListingDataTable from "../../../../shared/DataTable/ListingDataTable";
 import { Modal } from "react-bootstrap";
+import { TextField } from "@mui/material";
+import { validateDates } from "../../../../common/validations";
+import { showErrorToast } from "../../../../common/helpers/Utils";
 
 const VisitMedia = (props) => {
    const [visitRecordings, setVisitRecordings] = useState([]);
@@ -22,6 +25,8 @@ const VisitMedia = (props) => {
    const [loading, setLoading] = useState(false);
    const [selectedVisitorImg, setSelectedVisitorImg] = useState("");
    const [showVisitorImg, setShowVisitorImg] = useState(false);
+   const [startDate, setStartDate] = useState("");
+   const [endDate, setEndDate] = useState("");
 
    const mediaColumns = [
       {
@@ -92,10 +97,14 @@ const VisitMedia = (props) => {
 
    const getVisitMedia = (newPage, newRowsPerPage) => {
       setLoading(true);
+      if(!validateDates) {
+         showErrorToast("Please enter valid dates");
+         return;
+      }
       getVisitMediaByCameraId({
          cameraId: props?.cameraId,
-         startDate: formatDateTime(fromDate),
-         endDate: formatDateTime(toDate),
+         startDate: startDate || formatDateTime(fromDate),
+         endDate: endDate || formatDateTime(toDate),
          pageNumber: newPage,
          pageSize: newRowsPerPage,
       }).then((response) => {
@@ -180,6 +189,32 @@ const VisitMedia = (props) => {
 
    return (
       <>
+         <div>
+            <div className="w-100 mt-3 d-flex" style={{ justifyContent: "space-between" }}>
+               <TextField
+                  className="textFieldInput mt-1"
+                  style={{ width: '40%' }}
+                  placeholder=""
+                  InputLabelProps={{ shrink: true }}
+                  type="date"
+                  value={startDate}
+                  label="Start Date"
+                  onChange={(e) => { setStartDate(e.target.value) }}
+               />
+               <TextField
+                  className="textFieldInput mt-1"
+                  style={{ width: '40%' }}
+                  placeholder=""
+                  InputLabelProps={{ shrink: true }}
+                  type="date"
+                  value={endDate}
+                  label="End Date"
+                  onChange={(e) => { setEndDate(e.target.value) }}
+               />
+
+               <Buttons className="py-0" name = "Search" onClick={() => {getVisitMedia();}} />
+            </div>
+         </div>
          <ListingDataTable
             className="visitMediaTable"
             columns={mediaColumns}

@@ -50,28 +50,46 @@ const VisitVideos = (props) => {
          pageSize: 10,
          mediaType: "VIDEO_FILE",
          dataRequiredType:
-            props?.dataRequiredType === "VISIT_DATA" ? "VISIT_DATA" : "INRUSION_DATA",
-      }).then((response) => {
-         setLoading(false);
-         if (response.data.resourceData?.length >= 1) {
-            setShowMore(true);
-         } else {
+            props?.dataRequiredType === "VISIT_DATA"
+               ? "VISIT_DATA"
+               : "INRUSION_DATA",
+      })
+         .then((response) => {
+            const resourceData = response.data.resourceData || [];
+
+            if (pageNo > 1) {
+               setVisitVideoList((prev) => [
+                  ...prev,
+                  ...resourceData
+               ]);
+            } else {
+               setVisitVideoList(resourceData);
+            }
+
+            setShowMore(resourceData.length >= 1);
+         })
+         .catch((error) => {
+            console.error("Error fetching videos:", error);
+            setVisitVideoList([]);
             setShowMore(false);
-            showErrorToast(
-               props?.dataRequiredType === "VISIT_DATA" ? "No more videos available..." : ""
-            );
-         }
-         if (pageNo > 1) {
-            setVisitVideoList((prev) => [...prev, ...response.data.resourceData]);
-         } else {
-            setVisitVideoList(response.data.resourceData);
-         }
-      });
+         })
+         .finally(() => {
+            setLoading(false);
+         });
    };
+
    useEffect(() => {
       setLoading(true);
+      setCurrentPage(1);
+      setShowMore(false);
+
       getMedia(1);
-   }, []);
+   }, [
+      props?.cameraId,
+      props?.startTime,
+      props?.endTime,
+      props?.dataRequiredType
+   ]);
 
    return (
       <>
@@ -130,8 +148,11 @@ const VisitVideos = (props) => {
                                              cursor: "pointer",
                                           }}
                                           onClick={() => {
-                                             setSelectedVideo(VisitVideo.mediaUrl);
-                                             setShowVideo(true);
+                                             const nextPage = currentPage + 1;
+
+                                             setLoading(true);
+                                             setCurrentPage(nextPage);
+                                             getMedia(nextPage);
                                           }}
                                        >
                                           {/* Background thumbnail */}

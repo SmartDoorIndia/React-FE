@@ -28,28 +28,40 @@ const VisitImages = (props) => {
          pageSize: 10,
          mediaType: "IMAGE_FILE",
          dataRequiredType: props?.dataRequiredType,
-      }).then((response) => {
-         setLoading(false);
-         if (response.data.resourceData?.length >= 1) {
-            setShowMore(true);
-         } else {
+      })
+         .then((response) => {
+            const resourceData = response.data.resourceData || [];
+
+            if (pageNo > 1) {
+               setVisitImages((prev) => [...prev, ...resourceData]);
+            } else {
+               setVisitImages(resourceData);
+            }
+
+            setShowMore(resourceData.length >= 1);
+         })
+         .catch((error) => {
+            console.error("Error fetching media:", error);
+            setVisitImages([]);
             setShowMore(false);
-            showErrorToast(
-               props?.dataRequiredType === "VISIT_DATA" ? "No more images available..." : ""
-            );
-         }
-         if (pageNo > 1) {
-            setVisitImages((prev) => [...prev, ...response.data.resourceData]);
-         } else {
-            setVisitImages(response.data.resourceData);
-         }
-      });
+         })
+         .finally(() => {
+            setLoading(false);
+         });
    };
 
    useEffect(() => {
       setLoading(true);
+      setCurrentPage(1);
+      setShowMore(false);
+
       getMedia(1);
-   }, []);
+   }, [
+      props?.cameraId,
+      props?.startTime,
+      props?.endTime,
+      props?.dataRequiredType
+   ]);
 
    const downloadImage = async (imageUrl) => {
       try {
@@ -133,8 +145,11 @@ const VisitImages = (props) => {
                                              cursor: "pointer",
                                           }}
                                           onClick={() => {
-                                             setSelectedImg(visitImage.mediaUrl);
-                                             setShowImage(true);
+                                             const nextPage = currentPage + 1;
+
+                                             setLoading(true);
+                                             getMedia(nextPage);
+                                             setCurrentPage(nextPage);
                                           }}
                                        />
                                     </Col>

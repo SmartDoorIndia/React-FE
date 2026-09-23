@@ -3097,7 +3097,7 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
-  
+
   getUnInstalledKitList: {
     url: "/smartlock/smartlock/getUnInstalledKitList",
     method: "GET",
@@ -3201,7 +3201,7 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: true,
   },
-  
+
   getBuilderById: {
     url: "admin/builder/getBuilderDetails/:builderId/:userId",
     method: "GET",
@@ -3710,6 +3710,38 @@ export const ApiJson = {
     url: "admin/system/getValues/LOCK_TYPE",
     method: "GET",
     data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
+  sendMISMail: {
+    url: "consumer/corporate/sendMISMail",
+    method: "POST",
+    data: {
+      emailList: [],
+      startDate: "",
+      endDate: "",
+      cityList: []
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
+  downloadMIS: {
+    url: "consumer/corporate/downloadMIS",
+    method: "POST",
+    data: {
+      emailList: [],
+      startDate: "",
+      endDate: "",
+      cityList: []
+    },
     headers: {
       Accept: "*/*",
       "Content-Type": "application/json",

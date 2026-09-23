@@ -1,6 +1,6 @@
 /** @format */
 
-import { MenuItem, Switch, TextField } from "@mui/material";
+import { InputAdornment, MenuItem, Switch, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Col, Image, Row } from "react-bootstrap";
 import Text from "../../../../shared/Text/Text";
@@ -31,7 +31,8 @@ const AddNewCorporate = (props) => {
       companyAddress: '',
       smartDoorPlanId: '',
       nonSmartDoorPlanId: '',
-      corporateEmails: ''
+      corporateEmails: '',
+      retentionPeriod: null
    });
    const [newUser, setNewUser] = useState({
       name: '',
@@ -330,6 +331,20 @@ const AddNewCorporate = (props) => {
                         maxRows={3}
                         value={corporateDetails.corporateEmails}
                         onChange={(e) => { setCorporateDetails({ ...corporateDetails, corporateEmails: e?.target?.value }) }}>
+                     </TextField>
+                  </Col>
+                  <Col lg={4} style={{ paddingInlineEnd: '0%' }}>
+                     <TextField
+                        className="w-90 mt-3"
+                        label='Retention Period'
+                        placeholder="Enter retention period in days"
+                        type="number"
+                        inputProps={{ min: 0 }}
+                        InputProps={{
+                           endAdornment: <InputAdornment position="end">Days</InputAdornment>,
+                        }}
+                        value={corporateDetails.retentionPeriod}
+                        onChange={(e) => { setCorporateDetails({ ...corporateDetails, retentionPeriod: Number(e?.target?.value) }) }}>
                      </TextField>
                   </Col>
                </Row>

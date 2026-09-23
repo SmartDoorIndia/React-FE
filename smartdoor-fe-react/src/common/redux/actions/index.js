@@ -2530,3 +2530,13 @@ export const fetchSmartlockTypeList = async (data) => {
   const response = await mainApiService("getSmartlockTypes", data);
   return response
 }
+
+export const sendMISMail = async (data) => {
+  const response = await mainApiService("sendMISMail", data);
+  return response;
+}
+
+export const downloadMIS = async (data) => {
+  const response = await mainApiService("downloadMIS", data);
+  return response;
+}

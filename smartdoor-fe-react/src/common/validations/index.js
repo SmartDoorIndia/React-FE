@@ -1607,3 +1607,26 @@ export const validateSubProjectUnit = (data) => {
     isValid: isEmpty(errors)
   }
 }
+
+export const validateMISMailDTO = (data) => {
+  let errors = {};
+    if(!isBlank(data?.startDate)) {
+      errors.startDate = true;
+    }
+}
+
+export const validateDates = (startDate, endDate) => {
+      if ((startDate === null && endDate === null) || (startDate === "" && endDate === "")) {
+         return true;
+      } else if (startDate !== null && endDate !== null && startDate !== "" && endDate !== "") {
+         if (new Date(startDate) > new Date(endDate)) {
+            showErrorToast("Start date should be less than end date");
+            return false;
+         } else {
+            return true;
+         }
+      } else {
+         showErrorToast("Please enter start date and end date or set both empty");
+         return false;
+      }
+   };
