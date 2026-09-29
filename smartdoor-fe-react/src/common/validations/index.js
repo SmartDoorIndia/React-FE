@@ -1372,7 +1372,7 @@ export const validateBuilderDetails = (data) => {
   //   errors.directors = true;
   // }
   let directors = [];
-  if(isBlank(data?.directors[0]?.directorName)) {
+  if (isBlank(data?.directors[0]?.directorName)) {
     directors[0] = true;
   }
   // if(isBlank(data?.directors[1]?.directorName)) {
@@ -1380,7 +1380,7 @@ export const validateBuilderDetails = (data) => {
   // }
   // directors[2] = false;
   // directors[3] = false;
-  if(directors.length !== 0) {
+  if (directors.length !== 0) {
     errors.directors = directors;
   }
 
@@ -1492,8 +1492,8 @@ export const validateSubProjectDetails = (data) => {
     errors.possessionTo = true;
   }
   if (!isBlank(data?.possessionFrom) &&
-  !isBlank(data?.possessionTo) &&
-  new Date(data.possessionTo) < new Date(data.possessionFrom)) {
+    !isBlank(data?.possessionTo) &&
+    new Date(data.possessionTo) < new Date(data.possessionFrom)) {
     errors.possessionTo = true;
     errors.possessionFrom = true;
   }
@@ -1573,7 +1573,7 @@ export const validateSubProjectUnit = (data) => {
   if (Number(data?.maxArea) <= 0) {
     errors.maxArea = true;
   }
-  if(Number(data?.minArea) > Number(data?.maxArea)) {
+  if (Number(data?.minArea) > Number(data?.maxArea)) {
     errors.minArea = true;
     errors.maxArea = true;
   }
@@ -1589,17 +1589,17 @@ export const validateSubProjectUnit = (data) => {
   if (isBlank(data?.maxPrice)) {
     errors.maxPrice = true;
   }
-  if(Number(data?.minPrice) > Number(data?.maxPrice)) {
+  if (Number(data?.minPrice) > Number(data?.maxPrice)) {
     errors.minPrice = true;
     errors.maxPrice = true;
   }
-  if(data?.propertySubType !== 'Plot') {
-    if(data?.propertyImagesList?.length <= 0) {
+  if (data?.propertySubType !== 'Plot') {
+    if (data?.propertyImagesList?.length <= 0) {
       errors.propertyImagesList = true;
     }
   }
-  
-  if(data?.floorPlan?.length <= 0) {
+
+  if (data?.floorPlan?.length <= 0) {
     errors.floorPlan = true;
   }
   return {
@@ -1608,25 +1608,45 @@ export const validateSubProjectUnit = (data) => {
   }
 }
 
-export const validateMISMailDTO = (data) => {
-  let errors = {};
-    if(!isBlank(data?.startDate)) {
-      errors.startDate = true;
-    }
-}
-
 export const validateDates = (startDate, endDate) => {
-      if ((startDate === null && endDate === null) || (startDate === "" && endDate === "")) {
-         return true;
-      } else if (startDate !== null && endDate !== null && startDate !== "" && endDate !== "") {
-         if (new Date(startDate) > new Date(endDate)) {
-            showErrorToast("Start date should be less than end date");
-            return false;
-         } else {
-            return true;
-         }
-      } else {
-         showErrorToast("Please enter start date and end date or set both empty");
-         return false;
-      }
-   };
+  if ((startDate === null && endDate === null) || (startDate === "" && endDate === "")) {
+    return true;
+  } else if (startDate !== null && endDate !== null && startDate !== "" && endDate !== "") {
+    if (new Date(startDate) > new Date(endDate)) {
+      showErrorToast("Start date should be less than end date");
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    showErrorToast("Please enter start date and end date or set both empty");
+    return false;
+  }
+};
+
+export const validateMISRequest = (data, emailFlag) => {
+  let errors = {};
+  if (!validateDates(data?.startDate, data?.endDate)) {
+    errors.startDate = true;
+    errors.endDate = true;
+  }
+  if (isBlank(data?.startDate)) {
+    errors.startDate = true;
+  }
+  if (isBlank(data?.endDate)) {
+    errors.endDate = true;
+  }
+  if (data?.cityList?.length <= 0) {
+    errors.city = true;
+  }
+  if (emailFlag) {
+    if (data?.emailList?.length <= 0) {
+      errors.emailList = true;
+    }
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors)
+  }
+}

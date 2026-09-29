@@ -9,12 +9,13 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useEffect, useState } from "react";
 import { downloadMIS, getAllCityWithId, getCorporateById, sendMISMail } from "../../../../common/redux/actions";
 import { connect } from "react-redux";
-import { formateDate } from "../../../../common/helpers/Utils";
+import { formateDate, showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import { Checkbox, ListItemText, MenuItem, TextField } from "@mui/material";
 import DropdownMultiselect from "react-multiselect-dropdown-bootstrap";
 import './corporateDetails.scss';
-import { validateDates } from "../../../../common/validations";
+import { validateDates, validateMISRequest } from "../../../../common/validations";
+import Loader, { FallBackLoader } from "../../../../common/helpers/Loader";
 
 const CorporateDetails = (props) => {
     const { getAllCityWithId, allCitiesWithId } = props;
@@ -27,7 +28,7 @@ const CorporateDetails = (props) => {
     const [city, setCity] = useState([]);
     const [loading, setLoading] = useState(false);
     const [cityWiseData, setCityWiseData] = useState([]);
-
+    const [errors, setError] = useState({});
     const history = useHistory();
 
     const getCorprateDetails = async () => {
@@ -59,9 +60,22 @@ const CorporateDetails = (props) => {
             endDate: endDate,
             cityList: city
         }
-        if (validateDates && emailForMISDownload.length > 0 && city.length > 0) {
-            const response = await sendMISMail(MISRequestDto);
-            console.log(response);
+        const validate = validateMISRequest(MISRequestDto, true);
+        setError(validate.errors);
+        if(validate.isValid) {
+            if (validateDates && emailForMISDownload.length > 0 && city.length > 0) {
+                setLoading(true);
+                const response = await sendMISMail(MISRequestDto);
+                setLoading(false);
+                console.log(response);
+                if(response?.status === 200) {
+                    showSuccessToast("Email sent successfully");
+                    return null;
+                } else {
+                    showErrorToast("Please try again...");
+                    return null;
+                }
+            }
         }
     }
 
@@ -78,23 +92,34 @@ const CorporateDetails = (props) => {
             endDate: endDate,
             cityList: city
         };
-
-        if (
-            validateDates &&
-            city.length > 0
-        ) {
-            const response = await downloadMIS(MISRequestDto);
-
-            console.log(response);
-
-            const cityWiseDataResponse =
-                response?.data?.resourceData?.cityWiseData || [];
-
-            // Update state if you need it elsewhere
-            setCityWiseData(cityWiseDataResponse);
-
-            // Download using the response data directly
-            await downloadCityWiseCSV(cityWiseDataResponse);
+        const validate = validateMISRequest(MISRequestDto, false);
+        setError(validate.errors);
+        if(validate.isValid) {
+            if (
+                validateDates &&
+                city.length > 0
+            ) {
+                setLoading(true);
+                const response = await downloadMIS(MISRequestDto);
+    
+                console.log(response);
+                setLoading(false);
+                if(response?.data?.status === 200) {
+                    const cityWiseDataResponse =
+                        response?.data?.resourceData?.cityWiseData || [];
+        
+                    // Update state if you need it elsewhere
+                    setCityWiseData(cityWiseDataResponse);
+        
+                    // Download using the response data directly
+                    await downloadCityWiseCSV(cityWiseDataResponse);
+                    showSuccessToast("MIS downloaded successfully...");
+                    return null;
+                } else {
+                    showErrorToast("Please try again...");
+                    return null;
+                }
+            }
         }
     };
 
@@ -237,6 +262,8 @@ const CorporateDetails = (props) => {
 
     return (
         <>
+            {loading ?
+                <FallBackLoader /> : null}
             <div className="whiteBg">
                 <Row>
                     <Col lg='3' className="text-center" style={{ borderInlineEnd: '2px dashed #DED6D9' }}>
@@ -293,6 +320,7 @@ const CorporateDetails = (props) => {
                             multiline
                             maxRows={3}
                             value={emailForMISDownload}
+                            error={errors?.emailList}
                             onChange={(e) => {
                                 setEmailForMISDownload(e.target.value);
                             }}
@@ -308,6 +336,7 @@ const CorporateDetails = (props) => {
                                 value={startDate}
                                 label="Start Date"
                                 required={true}
+                                error={errors?.startDate}
                                 onChange={(e) => { setStartDate(e.target.value) }}
                             />
                             <TextField
@@ -319,6 +348,7 @@ const CorporateDetails = (props) => {
                                 value={endDate}
                                 label="End Date"
                                 required={true}
+                                error={errors?.endDate}
                                 onChange={(e) => { setEndDate(e.target.value) }}
                             />
                         </div>
@@ -337,6 +367,7 @@ const CorporateDetails = (props) => {
                                 renderValue: (selected) => selected.join(', ')
                             }}
                             required={true}
+                            error={errors?.city}
                         >
                             {allCitiesWithId?.data?.map((cityItem) => (
                                 <MenuItem

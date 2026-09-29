@@ -25,8 +25,28 @@ const VisitMedia = (props) => {
    const [loading, setLoading] = useState(false);
    const [selectedVisitorImg, setSelectedVisitorImg] = useState("");
    const [showVisitorImg, setShowVisitorImg] = useState(false);
-   const [startDate, setStartDate] = useState("");
-   const [endDate, setEndDate] = useState("");
+   
+   // Helper to format as "yyyy-MM-dd HH:mm:ss"
+   function formatDateTime(d) {
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+
+      const hh = String(d.getHours()).padStart(2, "0");
+      const min = String(d.getMinutes()).padStart(2, "0");
+      const sec = String(d.getSeconds()).padStart(2, "0");
+
+      return `${yyyy}-${mm}-${dd} ${hh}:${min}:${sec}`;
+   }
+
+   // Today's date
+   const toDate = new Date();
+
+   // 30 days before today
+   const fromDate = new Date();
+   fromDate.setDate(toDate.getDate() - 30);
+   const [startDate, setStartDate] = useState(formatDateTime(fromDate));
+   const [endDate, setEndDate] = useState(formatDateTime(toDate));
 
    const mediaColumns = [
       {
@@ -75,12 +95,6 @@ const VisitMedia = (props) => {
       },
    ];
 
-   // Today's date
-   const toDate = new Date();
-
-   // 30 days before today
-   const fromDate = new Date();
-   fromDate.setDate(toDate.getDate() - 30);
 
    // Helper to format as "yyyy-MM-dd HH:mm:ss"
    function formatDateTime(d) {
@@ -96,15 +110,15 @@ const VisitMedia = (props) => {
    }
 
    const getVisitMedia = (newPage, newRowsPerPage) => {
-      setLoading(true);
-      if(!validateDates) {
-         showErrorToast("Please enter valid dates");
+      if(!validateDates(startDate, endDate)) {
+         // showErrorToast("Please enter valid dates");
          return;
       }
+      setLoading(true);
       getVisitMediaByCameraId({
          cameraId: props?.cameraId,
-         startDate: startDate || formatDateTime(fromDate),
-         endDate: endDate || formatDateTime(toDate),
+         startDate: (`${startDate} 00:00:00`) || formatDateTime(fromDate),
+         endDate: (`${endDate} 23:59:00`) || formatDateTime(toDate),
          pageNumber: newPage,
          pageSize: newRowsPerPage,
       }).then((response) => {
@@ -212,7 +226,7 @@ const VisitMedia = (props) => {
                   onChange={(e) => { setEndDate(e.target.value) }}
                />
 
-               <Buttons className="py-0" name = "Search" onClick={() => {getVisitMedia();}} />
+               <Buttons className="py-0" name = "Search" onClick={() => {getVisitMedia(1, 10);}} />
             </div>
          </div>
          <ListingDataTable

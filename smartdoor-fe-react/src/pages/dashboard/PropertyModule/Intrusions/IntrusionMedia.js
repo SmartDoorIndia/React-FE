@@ -5,6 +5,7 @@ import VisitImages from "../VisitRecordings/VisitImgVideos/VisitImages";
 import VisitVideos from "../VisitRecordings/VisitImgVideos/VisitVideos";
 import { TextField } from "@mui/material";
 import Buttons from "../../../../shared/Buttons/Buttons";
+import { validateDates } from "../../../../common/validations";
 
 const IntrusionMedia = (props) => {
 
@@ -40,7 +41,7 @@ const IntrusionMedia = (props) => {
    const [searchedEndDate, setSearchedEndDate] = useState(defaultEndDate);
 
    const search = () => {
-      if (!startDate || !endDate) {
+      if (!validateDates(startDate, endDate)) {
          return;
       }
 
