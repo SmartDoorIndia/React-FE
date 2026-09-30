@@ -528,7 +528,7 @@ const Nav = () => {
                            />
                            Camera Dashboard
                         </Link>
-                        <Link
+                        {/* <Link
                            to="/admin/camera-media-dashboard"
                            className={`nav-link ${
                               pathname.includes("/admin/camera-media-dashboard") ? "nav-active" : ""
@@ -539,7 +539,7 @@ const Nav = () => {
                               src={pathname.includes("/admin/camera-media-dashboard") ? borkerIcon : dashboard}
                            />
                            Camera Media Dashboard
-                        </Link>
+                        </Link> */}
                         <Link
                            to="/admin/smartlock-dashboard"
                            className={`nav-link ${
