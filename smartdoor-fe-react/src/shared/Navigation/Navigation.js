@@ -529,6 +529,18 @@ const Nav = () => {
                            Camera Dashboard
                         </Link>
                         <Link
+                           to="/admin/camera-media-dashboard"
+                           className={`nav-link ${
+                              pathname.includes("/admin/camera-media-dashboard") ? "nav-active" : ""
+                           }`}
+                        >
+                           <Image
+                              name="houseIcon"
+                              src={pathname.includes("/admin/camera-media-dashboard") ? borkerIcon : dashboard}
+                           />
+                           Camera Media Dashboard
+                        </Link>
+                        <Link
                            to="/admin/smartlock-dashboard"
                            className={`nav-link ${
                               pathname.includes("/admin/smartlock-dashboard") ? "nav-active" : ""

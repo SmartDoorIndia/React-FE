@@ -507,6 +507,30 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: false,
   },
+  // PUT /property/setContactLead - body: { propertyId, ownerId, mobile }
+  setContactLead: {
+    url: '/consumer/property/setContactLead',
+    method: 'PUT',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
+  // DELETE /property/removeContactLead - body: { propertyId, ownerId }
+  removeContactLead: {
+    url: '/consumer/property/removeContactLead',
+    method: 'DELETE',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
   // Delete /property/deleteDocById/{docId}
   deletePropertyImage: {
     url: '/consumer/property/deleteDocById/:docId',
@@ -3682,6 +3706,65 @@ export const ApiJson = {
       "Content-Type": "application/json",
     },
     showResultMessage: false,
+    showErrorMessage: true,
+  },
+  cameraMediaStats: {
+    url: "smartlock/smartlock/cameraMediaStats",
+    method: "POST",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  cameraMediaDayWiseQueue: {
+    url: "smartlock/smartlock/cameraMediaDayWiseQueue",
+    method: "POST",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  cameraMediaList: {
+    url: "smartlock/smartlock/cameraMediaList",
+    method: "POST",
+    data: { cameraId: null, startDate: null, endDate: null, mediaType: null, pageNumber: 1, pageSize: 10 },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  cameraVisitData: {
+    url: "smartlock/smartlock/cameraVisitData",
+    method: "POST",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: true,
+  },
+  cameraMediaTimestampCorrection: {
+    url: "smartlock/smartlock/cameraMediaTimestamp",
+    method: "PUT",
+    data: {
+      cameraDeviceId: null,
+      capturedDate: null,
+      newCapturedTime: null,
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
     showErrorMessage: true,
   },
   smartlockDashboardList: {

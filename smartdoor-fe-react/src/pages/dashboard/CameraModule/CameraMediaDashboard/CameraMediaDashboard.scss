@@ -1,0 +1,95 @@
+@import '../../../../scss/modules/variables.scss';
+
+.dashboard {
+    .tableBox {
+        overflow: auto;
+        display: block;
+        margin-top: 30px;
+        background-color: $white;
+        @include border;
+        border-radius: 4px;
+        .tableHeading {
+            padding: 12px;
+            border-bottom: 1px solid $lightBorder;
+        }
+        .locationSelect {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+    }
+}
+
+.stat-card {
+    @include border;
+    border-radius: 4px;
+}
+
+.cameraMediaDashboardTableWrapper,
+.cameraMediaDetailTableWrapper {
+    .rdt_TableBody {
+        max-height: calc(51vh);
+        height: fit-content;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    .rdt_TableRow {
+        min-height: auto;
+        .rdt_TableCell {
+            text-align: center;
+        }
+    }
+}
+
+.media-type-badge {
+    border-radius: 24px;
+    display: inline-block;
+    padding: 1px 12px;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 600;
+    color: $white;
+
+    &.pending {
+        background-color: $alertColor;
+    }
+    &.segregated {
+        background-color: $success;
+    }
+}
+
+.visit-status-badge {
+    border-radius: 24px;
+    display: inline-block;
+    padding: 1px 12px;
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: 600;
+    color: $white;
+
+    &.in-progress {
+        background-color: $info;
+    }
+    &.visited {
+        background-color: $success;
+    }
+}
+
+.camera-media-thumb {
+    width: 60px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.day-wise-queue-table {
+    width: 100%;
+    margin-bottom: 20px;
+
+    th, td {
+        padding: 8px 12px;
+        text-align: center;
+        border-bottom: 1px solid $lightBorder;
+        font-size: $body;
+    }
+}

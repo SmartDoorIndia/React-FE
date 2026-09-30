@@ -546,6 +546,18 @@ export const getPropertyDetails = async (data) => {
   return response;
 };
 
+// data: { propertyId, ownerId, mobile } - set/reassign, or pass the owner's own mobile to revert
+export const setContactLead = async (data) => {
+  const response = await mainApiService('setContactLead', data);
+  return response;
+};
+
+// data: { propertyId, ownerId } - clears the contact lead entirely
+export const removeContactLead = async (data) => {
+  const response = await mainApiService('removeContactLead', data);
+  return response;
+};
+
 export const getPropertyPlanDetails = async (data) => {
   const response = await mainApiService('getPropertyPlanDetails', data);
   return response;
@@ -2523,6 +2535,36 @@ export const getSmartlockDashboardList = data => async (dispatch) => {
 
 export const returnCameraToInventory = async (data) => {
   const response = await mainApiService("returnCameraToInventory", data);
+  return response
+}
+
+export const getCameraMediaStats = data => async (dispatch) => {
+  dispatch({type: Actions.CAMERA_MEDIA_STATS_LOADING, data: []});
+  const response = await mainApiService("cameraMediaStats", data);
+  if(response?.status === 200) {
+    dispatch({type: Actions.CAMERA_MEDIA_STATS_SUCCESS, data: response?.data?.resourceData})
+  } else {
+    dispatch({type: Actions.CAMERA_MEDIA_STATS_ERROR, data: response?.data});
+  }
+}
+
+export const getCameraMediaDayWiseQueue = async (data) => {
+  const response = await mainApiService("cameraMediaDayWiseQueue", data);
+  return response
+}
+
+export const getCameraMediaList = async (data) => {
+  const response = await mainApiService("cameraMediaList", data);
+  return response
+}
+
+export const getCameraVisitData = async (data) => {
+  const response = await mainApiService("cameraVisitData", data);
+  return response
+}
+
+export const correctCameraMediaTimestamp = async (data) => {
+  const response = await mainApiService("cameraMediaTimestampCorrection", data);
   return response
 }
 

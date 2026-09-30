@@ -142,6 +142,8 @@ const SDKitDetails = React.lazy(() => import('./SmartdoorKit/KitDetails/KitDetai
 const PreconfiguredDevices = React.lazy(() => import('./PreConfiguredDevices/PreconfiguredDevices'))
 const ReturnRequests = React.lazy(() => import('./ReturnRequestsDashboard/ReturnRequests'))
 const CameraDashboard = React.lazy(() => import('./CameraModule/CameraDashboard/CameraDashboard'))
+const CameraMediaDashboard = React.lazy(() => import('./CameraModule/CameraMediaDashboard/CameraMediaDashboard'))
+const CameraMediaDetail = React.lazy(() => import('./CameraModule/CameraMediaDashboard/CameraMediaDetail'))
 const SmartlockDashboard = React.lazy(() => import('./SmartlockModule/SmartlockDashboard'))
 
 // Routing data
@@ -1435,8 +1437,24 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: CameraDashboard
-  }, 
-  
+  },
+
+  {
+    path: '/admin/camera-media-dashboard/:cameraId',
+    name: 'Camera Media Detail',
+    bradcrumb: ['Camera Media Dashboard', 'Camera Media Detail'],
+    excat: true,
+    component: CameraMediaDetail
+  },
+
+  {
+    path: '/admin/camera-media-dashboard',
+    name: 'Camera Media Dashboard',
+    bradcrumb: false,
+    excat: true,
+    component: CameraMediaDashboard
+  },
+
   {
     path: '/admin/smartlock-dashboard/viewProperty',
     name: 'Property Details',

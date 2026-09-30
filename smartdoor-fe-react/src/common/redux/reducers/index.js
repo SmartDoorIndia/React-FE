@@ -107,6 +107,7 @@ import { USER_LOGOUT } from '../types';
 import { batteryLevel } from './views/batteryLevel.reducer';
 import { autoRefreshList } from './views/autoRefreshList.reducer';
 import { cameraList } from './views/cameraDashboardList.reducer';
+import { cameraMediaStats } from './views/cameraMediaStats.reducer';
 import { smartlockList } from './views/smartlockDashboardList.reducer';
 
 const appReducer = combineReducers({
@@ -198,6 +199,7 @@ const appReducer = combineReducers({
   builderProjectList,
   autoRefreshList,
   cameraList,
+  cameraMediaStats,
   smartlockList
 });
 

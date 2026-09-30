@@ -28,6 +28,8 @@ import {
    getAllProperties,
    getNonSDProperties,
    approveProperty,
+   setContactLead,
+   removeContactLead,
 } from "../../../common/redux/actions";
 import * as Actions from "../../../common/redux/types";
 import MapComponent from "../../../shared/Map/MapComponent";
@@ -114,6 +116,10 @@ const PropertyDetails = (props) => {
    const dispatch = useDispatch();
    const [specList, setSpecList] = useState([]);
    const [confirmHideModal, setConfirmHideModal] = useState(false);
+   const [showContactLeadModal, setShowContactLeadModal] = useState(false);
+   const [contactLeadMobile, setContactLeadMobile] = useState("");
+   const [contactLeadSaving, setContactLeadSaving] = useState(false);
+   const [showRemoveContactLeadModal, setShowRemoveContactLeadModal] = useState(false);
 
    const batteryStatusCensor = (censorBatteryStatus) => {
       if (censorBatteryStatus === 0) {
@@ -951,6 +957,61 @@ const PropertyDetails = (props) => {
       }
    };
 
+   // miscellaneousDetails.postedById reflects the contact lead once one is set - the real
+   // owner is always in actualOwnerId regardless, so comparing the two tells us whether a
+   // lead is currently active without needing another API call.
+   const realOwnerId = propertyData?.miscellaneousDetails?.actualOwnerId;
+   const hasContactLead =
+      !!realOwnerId && propertyData?.miscellaneousDetails?.postedById !== realOwnerId;
+
+   const openContactLeadModal = () => {
+      setContactLeadMobile("");
+      setShowContactLeadModal(true);
+   };
+
+   const handleSaveContactLead = () => {
+      if (!contactLeadMobile || contactLeadMobile.trim().length !== 10) {
+         showErrorToast("Enter a valid 10-digit mobile number");
+         return;
+      }
+      setContactLeadSaving(true);
+      setContactLead({
+         propertyId: propertyData.smartdoorPropertyId,
+         ownerId: realOwnerId,
+         mobile: contactLeadMobile.trim(),
+      })
+         .then((response) => {
+            setContactLeadSaving(false);
+            if (response?.data?.status === 200) {
+               showSuccessToast(
+                  hasContactLead ? "Contact lead updated successfully" : "Contact lead added successfully"
+               );
+               setShowContactLeadModal(false);
+               _getPropertyDetails();
+            }
+         })
+         .catch(() => {
+            setContactLeadSaving(false);
+         });
+   };
+
+   const handleRemoveContactLead = () => {
+      removeContactLead({
+         propertyId: propertyData.smartdoorPropertyId,
+         ownerId: realOwnerId,
+      })
+         .then((response) => {
+            if (response?.data?.status === 200) {
+               showSuccessToast("Contact lead removed successfully");
+               setShowRemoveContactLeadModal(false);
+               _getPropertyDetails();
+            }
+         })
+         .catch(() => {
+            setShowRemoveContactLeadModal(false);
+         });
+   };
+
    const handleSortedData = (isGoBack) => {
       let filteredItems = [];
       if (menuName === "Properties") {
@@ -1501,6 +1562,65 @@ const PropertyDetails = (props) => {
                                  )}
                               </div>
 
+                              {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") && realOwnerId ? (
+                                 <div
+                                    className="mt-3 mb-2 p-3"
+                                    style={{ border: "1px solid #DED6D9", borderRadius: "6px" }}
+                                 >
+                                    <div className="d-flex justify-content-between align-items-center">
+                                       <div>
+                                          <Text
+                                             size="xSmall"
+                                             fontWeight="mediumbold"
+                                             color="secondryColor"
+                                             text="Contact Lead"
+                                          />
+                                          {hasContactLead ? (
+                                             <div className="mt-1">
+                                                <Text
+                                                   size="Small"
+                                                   color="secondryColor"
+                                                   text={
+                                                      (propertyData.miscellaneousDetails.postedByName || "") +
+                                                      " · " +
+                                                      (propertyData.miscellaneousDetails.postedByMobile || "")
+                                                   }
+                                                />
+                                             </div>
+                                          ) : (
+                                             <div className="mt-1">
+                                                <Text size="Small" color="TaupeGrey" text="No contact lead set" />
+                                             </div>
+                                          )}
+                                       </div>
+                                       <div className="d-flex">
+                                          <Buttons
+                                             name={hasContactLead ? "Update" : "Add"}
+                                             varient="primary"
+                                             size="xSmall"
+                                             color="white"
+                                             className="mr-2"
+                                             onClick={() => {
+                                                openContactLeadModal();
+                                             }}
+                                          />
+                                          {hasContactLead ? (
+                                             <Buttons
+                                                name="Delete"
+                                                varient="primary"
+                                                size="xSmall"
+                                                color="white"
+                                                className="bg-danger"
+                                                onClick={() => {
+                                                   setShowRemoveContactLeadModal(true);
+                                                }}
+                                             />
+                                          ) : null}
+                                       </div>
+                                    </div>
+                                 </div>
+                              ) : null}
+
                               <Text
                                  className="fw500 mt-5"
                                  size="xSmall"
@@ -1678,6 +1798,8 @@ const PropertyDetails = (props) => {
                                           <ToolTip
                                              position="top"
                                              name={
+                                                propertyData.miscellaneousDetails
+                                                   .actualOwnerName ||
                                                 propertyData.miscellaneousDetails.ownerName ||
                                                 propertyData.miscellaneousDetails.postedByName
                                              }
@@ -1688,6 +1810,8 @@ const PropertyDetails = (props) => {
                                                 className="userName"
                                                 color="secondry-color"
                                                 text={
+                                                   propertyData.miscellaneousDetails
+                                                      .actualOwnerName ||
                                                    propertyData.miscellaneousDetails.ownerName ||
                                                    propertyData.miscellaneousDetails.postedByName
                                                 }
@@ -1698,6 +1822,8 @@ const PropertyDetails = (props) => {
                                              size="xSmall"
                                              color="secondry-color"
                                              text={
+                                                propertyData.miscellaneousDetails
+                                                   .actualOwnerMobile ||
                                                 propertyData.miscellaneousDetails
                                                    .ownerMobileNumber ||
                                                 propertyData.miscellaneousDetails.postedByMobile
@@ -3076,6 +3202,116 @@ const PropertyDetails = (props) => {
                         className="mr-3"
                         onClick={() => {
                            setRemoteOTPErr(false);
+                        }}
+                     />
+                  </div>
+               </div>
+            </Modal.Body>
+         </Modal>
+
+         <Modal
+            show={showContactLeadModal}
+            onHide={() => {
+               setShowContactLeadModal(false);
+            }}
+            centered
+            style={{ backgroundImage: "unset" }}
+         >
+            <Modal.Body>
+               <div>
+                  <Text
+                     size="regular"
+                     fontWeight="bold"
+                     color="secondryColor"
+                     className="text-center"
+                     text={hasContactLead ? "Update Contact Lead" : "Add Contact Lead"}
+                  />
+                  <Text
+                     size="Small"
+                     color="TaupeGrey"
+                     className="text-center mt-2"
+                     text="Enter the registered mobile number of the person who should be the contact lead for this property."
+                  />
+                  <input
+                     type="text"
+                     className="form-control mt-3"
+                     placeholder="Enter mobile number"
+                     maxLength={10}
+                     value={contactLeadMobile}
+                     onChange={(e) => setContactLeadMobile(e.target.value.replace(/\D/g, ""))}
+                  />
+                  <div className="text-center mt-4 mb-3">
+                     <Buttons
+                        name="Cancel"
+                        varient="disable"
+                        type="button"
+                        size="xSmall"
+                        color="black"
+                        className="mr-3"
+                        onClick={() => {
+                           setShowContactLeadModal(false);
+                        }}
+                     />
+                     <Buttons
+                        name={contactLeadSaving ? "Saving..." : "Save"}
+                        varient="primary"
+                        type="button"
+                        size="xSmall"
+                        color="white"
+                        disabled={contactLeadSaving}
+                        onClick={() => {
+                           handleSaveContactLead();
+                        }}
+                     />
+                  </div>
+               </div>
+            </Modal.Body>
+         </Modal>
+
+         <Modal
+            show={showRemoveContactLeadModal}
+            onHide={() => {
+               setShowRemoveContactLeadModal(false);
+            }}
+            centered
+            style={{ backgroundImage: "unset" }}
+         >
+            <Modal.Body>
+               <div>
+                  <Text
+                     size="regular"
+                     fontWeight="bold"
+                     color="secondryColor"
+                     className="text-center"
+                     text="Remove Contact Lead"
+                  />
+                  <Text
+                     size="Small"
+                     color="TaupeGrey"
+                     className="text-center mt-2"
+                     text="This property will go back to showing the real owner's contact details."
+                  />
+                  <div className="text-center mt-4 mb-3">
+                     <Buttons
+                        name="Cancel"
+                        varient="disable"
+                        type="button"
+                        size="xSmall"
+                        color="black"
+                        className="mr-3"
+                        onClick={() => {
+                           setShowRemoveContactLeadModal(false);
+                        }}
+                     />
+                     <Buttons
+                        name="Remove"
+                        varient="primary"
+                        type="button"
+                        size="xSmall"
+                        color="white"
+                        className="bg-danger"
+                        onClick={() => {
+                           handleRemoveContactLead();
                         }}
                      />
                   </div>

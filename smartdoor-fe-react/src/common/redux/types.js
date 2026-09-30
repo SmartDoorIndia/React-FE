@@ -392,6 +392,10 @@ export const CAMERA_DASHBOARD_LIST_SUCCESS = 'src/pages/Dashboard/cameraDashboar
 export const CAMERA_DASHBOARD_LIST_ERROR = 'src/pages/Dashboard/cameraDashboardList/Error';
 export const CAMERA_DASHBOARD_LIST_LOADING = 'src/pages/Dashboard/cameraDashboardList/Loading';
 
+export const CAMERA_MEDIA_STATS_SUCCESS = 'src/pages/Dashboard/cameraMediaStats/Success';
+export const CAMERA_MEDIA_STATS_ERROR = 'src/pages/Dashboard/cameraMediaStats/Error';
+export const CAMERA_MEDIA_STATS_LOADING = 'src/pages/Dashboard/cameraMediaStats/Loading';
+
 export const SMARTLOCK_DASHBOARD_LIST_SUCCESS = 'src/pages/Dashboard/smartlockDashboardList/Success';
 export const SMARTLOCK_DASHBOARD_LIST_ERROR = 'src/pages/Dashboard/smartlockDashboardList/Error';
 export const SMARTLOCK_DASHBOARD_LIST_LOADING = 'src/pages/Dashboard/smartlockDashboardList/Loading';
