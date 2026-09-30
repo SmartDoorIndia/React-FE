@@ -419,7 +419,7 @@ const Pricing = (props) => {
                                 className="w-100 mb-2"
                                 type="number"
                                 error={error.propertyRate}
-                                label={'Selling Price'}
+                                label={(miscellaneousDetails?.isCorporateProperty === true) ? 'Bids Starting From' : 'Selling Price'}
                                 inputProps={{}}
                                 InputProps={{
                                     startAdornment: (

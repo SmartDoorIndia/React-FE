@@ -1169,6 +1169,17 @@ const PropertyDetails = (props) => {
                               </div>
 
                               <div className="d-grid">
+                                 {propertyData?.miscellaneousDetails?.isCorporateProperty ?
+                                    <>
+                                       <Text
+                                          className="fw500"
+                                          size="Small"
+                                          fontWeight="smbold"
+                                          color="secondry-color"
+                                          text={"Bids starting from"}
+                                       />
+                                    </>
+                                    : null}
                                  <Text
                                     size="large"
                                     fontWeight="mediumbold"
@@ -1179,13 +1190,15 @@ const PropertyDetails = (props) => {
                                           : `${setPrice(propertyData.pricing?.propertyRate)}/month`
                                     }
                                  />
-                                 <Text
-                                    className="fw500"
-                                    size="Small"
-                                    fontWeight="smbold"
-                                    color="secondry-color"
-                                    text={propertyData.basicDetails?.propertyCategory}
-                                 />
+                                 {!propertyData?.miscellaneousDetails?.isCorporateProperty ?
+                                    <Text
+                                       className="fw500"
+                                       size="Small"
+                                       fontWeight="smbold"
+                                       color="secondry-color"
+                                       text={propertyData.basicDetails?.propertyCategory}
+                                    />
+                                    : null}
                               </div>
                            </h5>
                         </div>
