@@ -1634,6 +1634,13 @@ const PropertyDetails = (props) => {
                                  </div>
                               ) : null}
 
+                              {propertyData?.miscellaneousDetails?.isCorporateProperty ? 
+                                 <>
+                                    <div className="d-flex" style={{justifyContent:'center'}}>
+                                       <img alt="" src={propertyData?.miscellaneousDetails?.corporateLogo} style={{height: '100px', width: '150px'}} />
+                                    </div>
+                                 </>
+                                 : null}
                               <Text
                                  className="fw500 mt-5"
                                  size="xSmall"
