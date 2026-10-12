@@ -521,8 +521,7 @@ const ConsumerManagement = (props) => {
 				  <Col lg="4">
 					 <Text 
 					 	size="regular"
-						style ={{fontSize:"14px"
-			,			fontWeight:"bold"}}
+						style ={{fontSize:"14px",fontWeight:"bold"}}
 						color="secondryColor"
 						className="text-start"
 						text="Gender :"

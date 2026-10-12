@@ -64,6 +64,7 @@ import PostingFields from "../../../common/helpers/PostingFields";
 // import 'video.js/dist/video-js.css';
 // import 'videojs-flash';
 
+import './propertDetails.scss';
 // const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
 const PropertyDetails = (props) => {
@@ -1148,17 +1149,24 @@ const PropertyDetails = (props) => {
                         )}
                         <div className="my-0 pb-3 border-bottom">
                            <h5 className="d-flex justify-content-between font-weight-bold mb-0">
-                              <div className="d-grid">
+                              <div
+                                 className="d-grid"
+                                 style={{
+                                    minWidth: 0,
+                                    overflowWrap: "break-word",
+                                    wordBreak: "break-word",
+                                 }}
+                              >
                                  <Text
                                     size="large"
                                     fontWeight="mediumbold"
                                     color="secondry-color"
-                                    text={`${propertyData.address.houseNumber || "-"
-                                       }, ${propertyData.address.towerName
-                                          ? `${propertyData.address.towerName},`
+                                    text={`${propertyData.address.houseNumber || "-"}${propertyData.address.towerName
+                                          ? `, ${propertyData.address.towerName}`
                                           : ""
-                                       } ${propertyData.address.otherSociety}`}
+                                       }, ${propertyData.address.otherSociety || "-"}`}
                                  />
+
                                  <Text
                                     className="fw500"
                                     size="Small"
@@ -1328,7 +1336,31 @@ const PropertyDetails = (props) => {
                               color="white"
                               className="mt-2 mb-2" />  */}
                               {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
+                              {/* {propertyData?.miscellaneousDetails?.isCorporateProperty ?
+                                    <>
+                                       <div className="d-flex" style={{ justifyContent: 'center' }}>
+                                          <img alt="" src={propertyData?.miscellaneousDetails?.corporateLogo} style={{ height: '70px', width: '150px' }} />
+                                       </div> &nbsp;&nbsp;
+                                    </>
+                                    : null} */}
+                              {propertyData?.miscellaneousDetails?.isCorporateProperty &&
+                                 propertyData?.miscellaneousDetails?.corporateLogo && (
+                                    <div className="corporate-brand-card">
+                                       <div className="corporate-brand-header">
+                                          <span>Corporate Property</span>
+                                       </div>
+
+                                       <div className="corporate-brand-logo">
+                                          <img
+                                             src={propertyData.miscellaneousDetails.corporateLogo}
+                                             alt="Corporate Logo"
+                                          />
+                                       </div>
+                                    </div>
+                                 )
+                              }
                               <div className="d-flex justify-content-end">
+
                                  {(userData.roleName === "SUPER ADMIN" || userData.roleName === "SALES ADMIN" || userData.roleName === "INSTALLATION ADMIN") &&
                                     propertyData.miscellaneousDetails.status === "UNDER REVIEW" &&
                                     propertyData?.miscellaneousDetails?.deleted === false ? (
@@ -1577,7 +1609,7 @@ const PropertyDetails = (props) => {
 
                               {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") && realOwnerId ? (
                                  <div
-                                    className="mt-3 mb-2 p-3"
+                                    className="mt-5 mb-2 p-3"
                                     style={{ border: "1px solid #DED6D9", borderRadius: "6px" }}
                                  >
                                     <div className="d-flex justify-content-between align-items-center">
@@ -1634,13 +1666,6 @@ const PropertyDetails = (props) => {
                                  </div>
                               ) : null}
 
-                              {propertyData?.miscellaneousDetails?.isCorporateProperty ? 
-                                 <>
-                                    <div className="d-flex" style={{justifyContent:'center'}}>
-                                       <img alt="" src={propertyData?.miscellaneousDetails?.corporateLogo} style={{height: '100px', width: '150px'}} />
-                                    </div>
-                                 </>
-                                 : null}
                               <Text
                                  className="fw500 mt-5"
                                  size="xSmall"
