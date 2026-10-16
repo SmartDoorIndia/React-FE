@@ -3831,7 +3831,40 @@ export const ApiJson = {
     },
     showResultMessage: true,
     showErrorMessage: true,
-  }
+  },
+  fetchAuctionData: {
+    url: "admin/property/getAuctionData/:propertyId",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
+  approveAuctionDetails: {
+    url: "admin/property/approveAuctionDetails/:propertyId",
+    method: "PUT",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
+  deleteAuctionDetails: {
+    url: "admin/property/deleteAuctionDetails/:propertyId",
+    method: "PUT",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
 };
 // console.log(userData)
 

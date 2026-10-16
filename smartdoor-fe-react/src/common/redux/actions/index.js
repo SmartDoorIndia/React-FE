@@ -2582,3 +2582,18 @@ export const downloadMIS = async (data) => {
   const response = await mainApiService("downloadMIS", data);
   return response;
 }
+
+export const approveAuctionDetails = async (data) => {
+  const response = await mainApiService('approveAuctionDetails', data);
+  return response;
+}
+
+export const deleteAuctionDetails = async (data) => {
+  const response = await mainApiService('deleteAuctionDetails', data);
+  return response;
+}
+
+export const fetchAuctionData = async (data) => {
+  const response = await mainApiService('fetchAuctionData', data);
+  return response;
+}

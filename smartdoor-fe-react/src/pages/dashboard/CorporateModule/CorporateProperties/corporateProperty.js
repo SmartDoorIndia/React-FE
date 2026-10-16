@@ -8,10 +8,10 @@ import Image from "../../../../shared/Image";
 import { ToolTip, formateDate, handleStatusElement, showErrorToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import './corporateProperty.scss';
-import { getAllCorporateProperties } from "../../../../common/redux/actions";
+import { approveAuctionDetails, deleteAuctionDetails, fetchAuctionData, getAllCorporateProperties } from "../../../../common/redux/actions";
 import { connect, useSelector } from "react-redux";
 import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
-import { Form } from "react-bootstrap";
+import { Col, Form, Modal, Row } from "react-bootstrap";
 import Pagination from "../../../../shared/DataTable/Pagination";
 import { TableLoader } from "../../../../common/helpers/Loader";
 import Buttons from "../../../../shared/Buttons/Buttons";
@@ -48,6 +48,8 @@ const CorporateProperty = (props) => {
     const [rowsPerPage, setRowsPerPage] = useState(data.length !== 0 ? corporateProperty?.data?.rowsPerPage : 8);
     const recordSize = corporateProperty?.data?.records || 0;
     const ProgressComponent = <TableLoader />;
+    const [auctionDetailsModalFlag, setAuctionDetailsModalFlag] = useState(false);
+    const [auctionDetails, setAuctionDetails] = useState({});
 
     const propertyColumns = [
         {
@@ -152,6 +154,28 @@ const CorporateProperty = (props) => {
             id: 6
         },
         {
+            name: "Auction Details",
+            selector: ((row) => row.propertyId),
+            sortable: true,
+            center: true,
+            maxWidth: "150px",
+            cell: ({ row, propertyId, postedById }) => (
+                <div className="action">
+                    <ToolTip position="left" name="View Details">
+                        <Image name="editIcon" src={contentIcon} 
+                        onClick={async () => { 
+                            const response = await fetchAuctionData(propertyId);
+                            console.log(response);
+                            if(response?.status === 200) {
+                                setAuctionDetails(response?.data?.resourceData);
+                            }
+                            setAuctionDetailsModalFlag(true) }} />
+                    </ToolTip>
+                </div>
+            ),
+            id: 7
+        },
+        {
             name: "Action",
             sortable: false,
             center: true,
@@ -163,7 +187,7 @@ const CorporateProperty = (props) => {
                             <Link
                                 to={{
                                     pathname: "/admin/corporate/corporateProperties/propertyDetails",
-                                    state: {propertyId: propertyId, userId: postedById, menuName: '', isDeleted: false},
+                                    state: { propertyId: propertyId, userId: postedById, menuName: '', isDeleted: false },
                                 }}
                             >
                                 <Image name="editIcon" src={contentIcon} />
@@ -193,7 +217,7 @@ const CorporateProperty = (props) => {
 
     useEffect(() => {
         console.log(data)
-        if(data?.length === 0 || data === undefined) {
+        if (data?.length === 0 || data === undefined) {
             getAllCorporateProperties({
                 corporateId: corporateId,
                 pageNo: currentPage,
@@ -295,6 +319,10 @@ const CorporateProperty = (props) => {
         let filteredItems = [];
         filteredItems = corporateProperty?.data?.corpPropertyList;
         return corporateProperty?.data?.corpPropertyList;
+    }
+
+    const rejectDetails = () => {
+
     }
 
     return (
@@ -432,6 +460,209 @@ const CorporateProperty = (props) => {
                     />
                 </div>
             </div>
+            <Modal
+                show={auctionDetailsModalFlag}
+                onHide={() => setAuctionDetailsModalFlag(false)}
+                size="lg"
+                centered
+                backdrop="static" 
+            >
+                <Modal.Header closeButton>
+                    <Text
+                        text="Auction Details"
+                        style={{
+                            fontSize: "20px",
+                            fontWeight: "700"
+                        }}
+                    />
+                </Modal.Header>
+
+                <Modal.Body style={{overflowInline:'auto'}}>
+
+                    <div className="mb-3">
+                        <Text
+                            text="Property Details"
+                            style={{
+                                fontSize: "17px",
+                                fontWeight: "600",
+                                marginBottom: "10px"
+                            }}
+                        />
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Property Address:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.propertyAddress || "-"} />
+                            </Col>
+                        </Row>
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Property Type:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.propertyType || "-"} />
+                            </Col>
+                        </Row>
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Borrower Name:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.borrowerName || "-"} />
+                            </Col>
+                        </Row>
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Bank Name:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.bankName || "-"} />
+                            </Col>
+                        </Row>
+                    </div>
+
+                    <hr />
+
+                    <div className="mb-3">
+                        <Text
+                            text="Auction Details"
+                            style={{
+                                fontSize: "17px",
+                                fontWeight: "600",
+                                marginBottom: "10px"
+                            }}
+                        />
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Auction Status:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.isUnderAuction ? "Under Auction" : "Not Under Auction"} />
+                            </Col>
+                        </Row>
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Description:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.statusMessage || "-"} />
+                            </Col>
+                        </Row>
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Auction Date:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.auctionDate || "-"} />
+                            </Col>
+                        </Row>
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Bids Starting From:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.bidPriceStartingFrom || "-"} />
+                            </Col>
+                        </Row>
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="EMD Amount:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.emdAmount || "-"} />
+                            </Col>
+                        </Row>
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Application Deadline:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.applicationDeadline || "-"} />
+                            </Col>
+                        </Row>
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Auction Address:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.auctionAddress || "-"} />
+                            </Col>
+                        </Row>
+                    </div>
+
+                    <hr />
+
+                    <div className="mb-3">
+                        <Text
+                            text="Source Details"
+                            style={{
+                                fontSize: "17px",
+                                fontWeight: "600",
+                                marginBottom: "10px"
+                            }}
+                        />
+
+                        <Row className="mb-2">
+                            <Col lg={4} md={5}>
+                                <Text text="Source Name:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.sourceName || "-"} />
+                            </Col>
+                        </Row>
+                    </div>
+
+                    <hr />
+
+                    <div>
+                        <Text
+                            text="Contact Details"
+                            style={{
+                                fontSize: "17px",
+                                fontWeight: "600",
+                                marginBottom: "10px"
+                            }}
+                        />
+
+                        <Row>
+                            <Col lg={4} md={5}>
+                                <Text text="Contact Details:" />
+                            </Col>
+                            <Col lg={8} md={7}>
+                                <Text text={auctionDetails?.contactDetails || "-"} />
+                            </Col>
+                        </Row>
+                    </div>
+
+                </Modal.Body>
+                <Modal.Footer style={{justifyContent:'center'}}>
+                    <div className="d-flex justify-content-center" style={{justifyContent:'center'}}>
+                        <Buttons name="Approve" onClick={async ()=>{
+                            const response = await approveAuctionDetails();
+                            if(response?.status === 200) {
+
+                            }}} /> &nbsp;&nbsp;
+                        <Buttons name="Delete" onClick={async ()=>{
+                            const response = await deleteAuctionDetails();
+                            if(response?.status === 200) {
+
+                            }}} />
+                    </div>
+                </Modal.Footer>
+            </Modal> 
+           
         </>
     )
 }
@@ -441,7 +672,10 @@ const mapStateToProps = ({ corporateProperty }) => ({
 })
 
 const actions = {
-    getAllCorporateProperties
+    getAllCorporateProperties,
+    fetchAuctionData,
+    approveAuctionDetails,
+    deleteAuctionDetails
 }
 
 export default compose(connect(mapStateToProps, actions))(CorporateProperty);

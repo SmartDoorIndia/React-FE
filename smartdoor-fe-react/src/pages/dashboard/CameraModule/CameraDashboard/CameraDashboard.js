@@ -270,6 +270,19 @@ const CameraDashboard = (props) => {
          id: 13,
       },
       {
+         name: "Firmware version",
+         selector: (row) => row.firmwareVersion,
+         sortable: false,
+         center: true,
+         minWidth: "200px",
+         cell: ({ firmwareVersion }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={firmwareVersion}>
+               <Text size="Small" color="secondryColor elipsis-text" text={firmwareVersion || "-"} />
+            </ToolTip>
+         ),
+         id: 14,
+      },
+      {
          name: "Action",
          sortable: false,
          center: true,
