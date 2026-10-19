@@ -272,7 +272,7 @@ const CorporateDetails = (props) => {
                         <Text text={'( ' + corporateDetails.totalPostingCount + ' Postings ) '} fontWeight='600' style={{ fontSize: '12px', color: '#8E878A' }} />
                         <Text text={'Joined on: ' + formateDate(corporateDetails?.joiningDate)} fontWeight='600' style={{ fontSize: '12px' }} />
                     </Col>
-                    <Col lg='7'>
+                    <Col lg='7' style={{wordWrap:'break-word'}}>
                         <Text text='Location Details' fontWeight='bold' style={{ fontSize: '16px', color: '#BE1452' }} />
                         <Text className='mt-1' text='Address' fontWeight='bold' style={{ fontSize: '14px', color: '#757575' }} />
                         <Text text={corporateDetails?.companyAddress}

@@ -5,7 +5,7 @@ import contentIcon from '../../../../assets/images/content-ico.svg';
 import DataTableComponent from '../../../../shared/DataTable/DataTable';
 import { Link } from "react-router-dom/cjs/react-router-dom";
 import Image from "../../../../shared/Image";
-import { ToolTip, formateDate, handleStatusElement, showErrorToast } from "../../../../common/helpers/Utils";
+import { ToolTip, formateDate, handleStatusElement, showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
 import './corporateProperty.scss';
 import { approveAuctionDetails, deleteAuctionDetails, fetchAuctionData, getAllCorporateProperties } from "../../../../common/redux/actions";
@@ -50,6 +50,7 @@ const CorporateProperty = (props) => {
     const ProgressComponent = <TableLoader />;
     const [auctionDetailsModalFlag, setAuctionDetailsModalFlag] = useState(false);
     const [auctionDetails, setAuctionDetails] = useState({});
+    const [auctionPropertyId, setAuctionPropertyId] = useState(null);
 
     const propertyColumns = [
         {
@@ -155,21 +156,22 @@ const CorporateProperty = (props) => {
         },
         {
             name: "Auction Details",
-            selector: ((row) => row.propertyId),
             sortable: true,
             center: true,
             maxWidth: "150px",
             cell: ({ row, propertyId, postedById }) => (
-                <div className="action">
+                <div className="action" onClick={async () => {
+                                setAuctionPropertyId(propertyId);
+                                const response = await fetchAuctionData({ propertyId: propertyId });
+                                console.log(response);
+                                if (response?.status === 200) {
+                                    setAuctionDetails(response?.data?.resourceData);
+                                }
+                                setAuctionDetailsModalFlag(true)
+                            }}>
                     <ToolTip position="left" name="View Details">
-                        <Image name="editIcon" src={contentIcon} 
-                        onClick={async () => { 
-                            const response = await fetchAuctionData(propertyId);
-                            console.log(response);
-                            if(response?.status === 200) {
-                                setAuctionDetails(response?.data?.resourceData);
-                            }
-                            setAuctionDetailsModalFlag(true) }} />
+                        <Image name="editIcon" src={contentIcon}
+                             />
                     </ToolTip>
                 </div>
             ),
@@ -465,7 +467,7 @@ const CorporateProperty = (props) => {
                 onHide={() => setAuctionDetailsModalFlag(false)}
                 size="lg"
                 centered
-                backdrop="static" 
+                backdrop="static"
             >
                 <Modal.Header closeButton>
                     <Text
@@ -477,192 +479,573 @@ const CorporateProperty = (props) => {
                     />
                 </Modal.Header>
 
-                <Modal.Body style={{overflowInline:'auto'}}>
-
-                    <div className="mb-3">
-                        <Text
-                            text="Property Details"
+                <Modal.Body
+                    style={{
+                        maxHeight: "75vh",
+                        overflowY: "auto",
+                        overflowX: "hidden"
+                    }}
+                >
+                    {/* ================= PENDING APPROVAL DETAILS ================= */}
+                    <div className="mb-4">
+                        <div
+                            className="d-flex align-items-center mb-3"
                             style={{
-                                fontSize: "17px",
-                                fontWeight: "600",
-                                marginBottom: "10px"
+                                padding: "10px 14px",
+                                background: "#fff8e1",
+                                borderRadius: "6px",
+                                border: "1px solid #ffe082"
                             }}
-                        />
+                        >
+                            <Text
+                                text="Pending Approval Details"
+                                style={{
+                                    fontSize: "18px",
+                                    fontWeight: "700"
+                                }}
+                            />
+                        </div>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Property Address:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.propertyAddress || "-"} />
-                            </Col>
-                        </Row>
+                        {auctionDetails?.pendingApprovalDetails ? (
+                            <>
+                                {/* Property Details */}
+                                <Text
+                                    text="Property Details"
+                                    style={{
+                                        fontSize: "16px",
+                                        fontWeight: "600",
+                                        marginBottom: "12px"
+                                    }}
+                                />
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Property Type:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.propertyType || "-"} />
-                            </Col>
-                        </Row>
+                                <Row className="mb-2">
+                                    <Col lg={4} md={5}>
+                                        <Text text="Property Address:" />
+                                    </Col>
+                                    <Col lg={8} md={7}>
+                                        <Text
+                                            text={
+                                                auctionDetails.pendingApprovalDetails
+                                                    ?.propertyAddress || "-"
+                                            }
+                                        />
+                                    </Col>
+                                </Row>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Borrower Name:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.borrowerName || "-"} />
-                            </Col>
-                        </Row>
+                                <Row className="mb-2">
+                                    <Col lg={4} md={5}>
+                                        <Text text="Auction Status:" />
+                                    </Col>
+                                    <Col lg={8} md={7}>
+                                        <span
+                                            style={{
+                                                display: "inline-block",
+                                                padding: "4px 10px",
+                                                borderRadius: "15px",
+                                                background: auctionDetails
+                                                    .pendingApprovalDetails?.isUnderAuction
+                                                    ? "#e8f5e9"
+                                                    : "#f5f5f5",
+                                                color: auctionDetails
+                                                    .pendingApprovalDetails?.isUnderAuction
+                                                    ? "#2e7d32"
+                                                    : "#666",
+                                                fontSize: "13px",
+                                                fontWeight: "600"
+                                            }}
+                                        >
+                                            {auctionDetails.pendingApprovalDetails
+                                                ?.isUnderAuction
+                                                ? "Under Auction"
+                                                : "Not Under Auction"}
+                                        </span>
+                                    </Col>
+                                </Row>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Bank Name:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.bankName || "-"} />
-                            </Col>
-                        </Row>
+                                <Row className="mb-3">
+                                    <Col lg={4} md={5}>
+                                        <Text text="Description:" />
+                                    </Col>
+                                    <Col lg={8} md={7}>
+                                        <Text
+                                            text={
+                                                auctionDetails.pendingApprovalDetails
+                                                    ?.statusMessage || "-"
+                                            }
+                                        />
+                                    </Col>
+                                </Row>
+
+                                <hr />
+
+                                {/* Auction Source Details */}
+                                <Text
+                                    text="Auction Source Details"
+                                    style={{
+                                        fontSize: "16px",
+                                        fontWeight: "600",
+                                        marginBottom: "12px"
+                                    }}
+                                />
+
+                                {auctionDetails.pendingApprovalDetails?.sources?.length > 0 ? (
+                                    auctionDetails.pendingApprovalDetails.sources.map(
+                                        (source, index) => (
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    padding: "15px",
+                                                    marginBottom: "15px",
+                                                    border: "1px solid #e0e0e0",
+                                                    borderRadius: "6px",
+                                                    background: "#fafafa"
+                                                }}
+                                            >
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Source Name:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.sourceName || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Property Type:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.propertyType || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Borrower Name:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.borrowerName || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Bank Name:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.bankName || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Auction Date:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.auctionDate || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Bids Starting From:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={
+                                                                source?.bidPriceStartingFrom ||
+                                                                "-"
+                                                            }
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="EMD Amount:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.emdAmount || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Application Deadline:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={
+                                                                source?.applicationDeadline ||
+                                                                "-"
+                                                            }
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Auction Address:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.auctionAddress || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Contact Details:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={
+                                                                source?.contactDetails || "-"
+                                                            }
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row>
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Source Link:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        {source?.sourceLink ? (
+                                                            <a
+                                                                href={source.sourceLink}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                style={{
+                                                                    wordBreak: "break-all"
+                                                                }}
+                                                            >
+                                                                {source.sourceLink}
+                                                            </a>
+                                                        ) : (
+                                                            <Text text="-" />
+                                                        )}
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        )
+                                    )
+                                ) : (
+                                    <div
+                                        className="text-center p-3"
+                                        style={{
+                                            background: "#f8f9fa",
+                                            borderRadius: "6px"
+                                        }}
+                                    >
+                                        <Text text="No source details available." />
+                                    </div>
+                                )}
+                                <div className="d-flex justify-content-center">
+                                    <Buttons
+                                        name="Approve"
+                                        onClick={async () => {
+                                            const response = await approveAuctionDetails({ propertyId: auctionPropertyId });
+
+                                            if (response?.status === 200) {
+                                                setAuctionDetailsModalFlag(false);
+                                                showSuccessToast("Auction details approved successfully");
+                                            } else {
+                                                showErrorToast("Please try again")
+                                            }
+                                        }}
+                                    />
+
+                                    &nbsp;&nbsp;
+
+                                    <Buttons
+                                        name="Delete"
+                                        onClick={async () => {
+                                            const response = await deleteAuctionDetails({ propertyId: auctionPropertyId });
+
+                                            if (response?.status === 200) {
+                                                setAuctionDetailsModalFlag(false);
+                                                showSuccessToast("Auction details deleted successfully");
+                                            } else {
+                                                showErrorToast("Please try again")
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </>
+                        ) : (
+                            <div
+                                className="text-center p-4"
+                                style={{
+                                    background: "#f8f9fa",
+                                    borderRadius: "6px"
+                                }}
+                            >
+                                <Text text="No pending approval details available." />
+                            </div>
+                        )}
                     </div>
 
                     <hr />
 
+                    {/* ================= CURRENT APPROVED DETAILS ================= */}
                     <div className="mb-3">
-                        <Text
-                            text="Auction Details"
+                        <div
+                            className="d-flex align-items-center mb-3"
                             style={{
-                                fontSize: "17px",
-                                fontWeight: "600",
-                                marginBottom: "10px"
+                                padding: "10px 14px",
+                                background: "#e8f5e9",
+                                borderRadius: "6px",
+                                border: "1px solid #c8e6c9"
                             }}
-                        />
+                        >
+                            <Text
+                                text="Current Approved Details"
+                                style={{
+                                    fontSize: "18px",
+                                    fontWeight: "700"
+                                }}
+                            />
+                        </div>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Auction Status:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.isUnderAuction ? "Under Auction" : "Not Under Auction"} />
-                            </Col>
-                        </Row>
+                        {auctionDetails?.currentApprovedDetails ? (
+                            <>
+                                <Row className="mb-2">
+                                    <Col lg={4} md={5}>
+                                        <Text text="Property Address:" />
+                                    </Col>
+                                    <Col lg={8} md={7}>
+                                        <Text
+                                            text={
+                                                auctionDetails.currentApprovedDetails
+                                                    ?.propertyAddress || "-"
+                                            }
+                                        />
+                                    </Col>
+                                </Row>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Description:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.statusMessage || "-"} />
-                            </Col>
-                        </Row>
+                                <Row className="mb-2">
+                                    <Col lg={4} md={5}>
+                                        <Text text="Auction Status:" />
+                                    </Col>
+                                    <Col lg={8} md={7}>
+                                        <Text
+                                            text={
+                                                auctionDetails.currentApprovedDetails
+                                                    ?.isUnderAuction
+                                                    ? "Under Auction"
+                                                    : "Not Under Auction"
+                                            }
+                                        />
+                                    </Col>
+                                </Row>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Auction Date:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.auctionDate || "-"} />
-                            </Col>
-                        </Row>
+                                <Row className="mb-2">
+                                    <Col lg={4} md={5}>
+                                        <Text text="Description:" />
+                                    </Col>
+                                    <Col lg={8} md={7}>
+                                        <Text
+                                            text={
+                                                auctionDetails.currentApprovedDetails
+                                                    ?.statusMessage || "-"
+                                            }
+                                        />
+                                    </Col>
+                                </Row>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Bids Starting From:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.bidPriceStartingFrom || "-"} />
-                            </Col>
-                        </Row>
+                                {auctionDetails.currentApprovedDetails?.sources?.map(
+                                    (source, index) => (
+                                        <div
+                                            key={index}
+                                            className="mt-3"
+                                            style={{
+                                                padding: "15px",
+                                                border: "1px solid #e0e0e0",
+                                                borderRadius: "6px"
+                                            }}
+                                        >
+                                            <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Source Name:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.sourceName || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="EMD Amount:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.emdAmount || "-"} />
-                            </Col>
-                        </Row>
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Property Type:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.propertyType || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Application Deadline:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.applicationDeadline || "-"} />
-                            </Col>
-                        </Row>
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Borrower Name:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.borrowerName || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
 
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Auction Address:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.auctionAddress || "-"} />
-                            </Col>
-                        </Row>
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Bank Name:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.bankName || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Auction Date:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.auctionDate || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Bids Starting From:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={
+                                                                source?.bidPriceStartingFrom ||
+                                                                "-"
+                                                            }
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="EMD Amount:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.emdAmount || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Application Deadline:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={
+                                                                source?.applicationDeadline ||
+                                                                "-"
+                                                            }
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Auction Address:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={source?.auctionAddress || "-"}
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row className="mb-2">
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Contact Details:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        <Text
+                                                            text={
+                                                                source?.contactDetails || "-"
+                                                            }
+                                                        />
+                                                    </Col>
+                                                </Row>
+
+                                                <Row>
+                                                    <Col lg={4} md={5}>
+                                                        <Text text="Source Link:" />
+                                                    </Col>
+                                                    <Col lg={8} md={7}>
+                                                        {source?.sourceLink ? (
+                                                            <a
+                                                                href={source.sourceLink}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                style={{
+                                                                    wordBreak: "break-all"
+                                                                }}
+                                                            >
+                                                                {source.sourceLink}
+                                                            </a>
+                                                        ) : (
+                                                            <Text text="-" />
+                                                        )}
+                                                    </Col>
+                                                </Row>
+                                        </div>
+                                    )
+                                )}
+                            </>
+                        ) : (
+                            <div
+                                className="text-center p-4"
+                                style={{
+                                    background: "#f8f9fa",
+                                    border: "1px dashed #bdbdbd",
+                                    borderRadius: "6px"
+                                }}
+                            >
+                                <Text
+                                    text="No approved auction details available."
+                                    style={{
+                                        color: "#757575"
+                                    }}
+                                />
+                            </div>
+                        )}
                     </div>
-
-                    <hr />
-
-                    <div className="mb-3">
-                        <Text
-                            text="Source Details"
-                            style={{
-                                fontSize: "17px",
-                                fontWeight: "600",
-                                marginBottom: "10px"
-                            }}
-                        />
-
-                        <Row className="mb-2">
-                            <Col lg={4} md={5}>
-                                <Text text="Source Name:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.sourceName || "-"} />
-                            </Col>
-                        </Row>
-                    </div>
-
-                    <hr />
-
-                    <div>
-                        <Text
-                            text="Contact Details"
-                            style={{
-                                fontSize: "17px",
-                                fontWeight: "600",
-                                marginBottom: "10px"
-                            }}
-                        />
-
-                        <Row>
-                            <Col lg={4} md={5}>
-                                <Text text="Contact Details:" />
-                            </Col>
-                            <Col lg={8} md={7}>
-                                <Text text={auctionDetails?.contactDetails || "-"} />
-                            </Col>
-                        </Row>
-                    </div>
-
                 </Modal.Body>
-                <Modal.Footer style={{justifyContent:'center'}}>
-                    <div className="d-flex justify-content-center" style={{justifyContent:'center'}}>
-                        <Buttons name="Approve" onClick={async ()=>{
-                            const response = await approveAuctionDetails();
-                            if(response?.status === 200) {
 
-                            }}} /> &nbsp;&nbsp;
-                        <Buttons name="Delete" onClick={async ()=>{
-                            const response = await deleteAuctionDetails();
-                            if(response?.status === 200) {
+                <Modal.Footer style={{ justifyContent: "center" }}>
 
-                            }}} />
-                    </div>
                 </Modal.Footer>
-            </Modal> 
-           
+            </Modal>
+
         </>
     )
 }

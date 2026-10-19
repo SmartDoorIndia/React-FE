@@ -63,6 +63,9 @@ const CameraDashboard = (props) => {
       deviceId: null,
       actionType: "Delete",
    })
+   const [firmwareVersion, setFirmwareVersion] = useState("");
+   const [firmwareList, setFirmwareList] = useState([]);
+
    const tableRef = useRef();
    const history = useHistory();
 
@@ -662,6 +665,38 @@ const CameraDashboard = (props) => {
          <div className="tableBox " style={{ overflowX: "hidden" }}>
             <div className="align-items-center tableHeading">
                <div className="justify-content-between">
+                  <div className="locationSelect justify-content-end mb-2">
+
+                     <div className="white-bg d-flex">
+                        <Form.Group controlId="exampleForm.SelectCustom">
+                           <Form.Control
+                              as="select"
+                              value={firmwareVersion}
+                              onChange={(e) => {
+                                 setFirmwareVersion(e.target.value);
+                              }}
+                              placeholder="Select firmware"
+                           >
+                              {firmwareList?.length > 0 ? 
+                              <>
+                                 {firmwareList?.map((firmware, index) => {
+                                    <>
+                                       <option key={index} value={firmware}>
+                                          {firmware}
+                                       </option>
+                                    </>
+                                 })}
+                              </> : 
+                              <>
+                                 <option value="" >Select Firmware version</option>
+                              </>}
+                           </Form.Control>
+                        </Form.Group>&nbsp;&nbsp;
+
+                        <Buttons name="Download Camera Details" />
+                     </div>
+                  </div>
+                     <hr/>
                   <div className="locationSelect justify-content-end mb-2">
                      {propertyIdBox}
                      {cameraIdBox}
