@@ -3865,6 +3865,17 @@ export const ApiJson = {
     showResultMessage: true,
     showErrorMessage: true,
   },
+  getFirmwareList: {
+    url: "smartlock/smartlock/getFirmwareVersions",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
 };
 // console.log(userData)
 

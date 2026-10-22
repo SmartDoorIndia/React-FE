@@ -10,10 +10,12 @@ import DataTableComponent from "../../../../shared/DataTable/DataTable";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import Buttons from "../../../../shared/Buttons/Buttons";
 import {
+   downloadCameraDetailsList,
    getAllCityWithId,
    getCameraDashboardList,
    getCameraTypes,
    getCorporateById,
+   getFirmwareVersionList,
    restoreOrDeleteDevice,
    updateCameraStatus,
 } from "../../../../common/redux/actions";
@@ -55,7 +57,8 @@ const CameraDashboard = (props) => {
       pageNumber: 1,
       pageSize: 8,
       orderByParam: 'BATTERY_VALUE',
-      orderBy: 'INCREASING'
+      orderBy: 'INCREASING',
+      downloadFlag: 'false'
    });
    const [confirmDeleteModalFlag, setConfirmDeleteModalFlag] = useState(false);
    const [selectedDevice, setSelectedDevice] = useState({
@@ -63,7 +66,7 @@ const CameraDashboard = (props) => {
       deviceId: null,
       actionType: "Delete",
    })
-   const [firmwareVersion, setFirmwareVersion] = useState("");
+   const [firmwareVersion, setFirmwareVersion] = useState(cameraList?.data?.cameraId || "");
    const [firmwareList, setFirmwareList] = useState([]);
 
    const tableRef = useRef();
@@ -479,7 +482,23 @@ const CameraDashboard = (props) => {
       }
    };
 
+   const getFirmwareList = async () => {
+      try {
+         const response = await getFirmwareVersionList({});
+
+         console.log("Firmware API response:", response);
+         console.log("Firmware list:", response?.data?.resourceData);
+
+         if (response?.status === 200) {
+            setFirmwareList(response?.data?.resourceData || []);
+         }
+      } catch (error) {
+         console.error("Failed to get firmware list:", error);
+      }
+   };
+
    useEffect(() => {
+      getFirmwareList();
       getCameraTypes({})
          .then((response) => {
             setCameraTypeList(response.data.resourceData?.cameraTypes);
@@ -502,7 +521,9 @@ const CameraDashboard = (props) => {
          pageNumber: currentPage,
          pageSize: rowsPerPage,
          orderByParam: orderByParam,
-         orderBy: orderBy
+         orderBy: orderBy,
+         firmwareVersion: firmwareVersion,
+         downloadFlag: false
       });
    }, []);
 
@@ -628,7 +649,9 @@ const CameraDashboard = (props) => {
             pageNumber: currentPage,
             pageSize: rowsPerPage,
             orderByParam: orderByParam,
-            orderBy: sortDirection === "asc" ? "INCREASING" : "DECREASING"
+            orderBy: sortDirection === "asc" ? "INCREASING" : "DECREASING",
+            firmwareVersion: firmwareVersion,
+            downloadFlag: false
          });
       }
    }
@@ -654,10 +677,95 @@ const CameraDashboard = (props) => {
                pageNumber: 1,
                pageSize: rowsPerPage,
                orderByParam: orderByParam,
-               orderBy: orderBy
+               orderBy: orderBy,
+               firmwareVersion: firmwareVersion,
+               downloadFlag: false
             });
          }
       });
+   };
+
+   const downloadCameraList = async () => {
+      try {
+         const response = await downloadCameraDetailsList({
+            deviceStatus: deviceStatus,
+            corporateId: selectedCorporate,
+            cityIdList: cityIdList,
+            cameraType: cameraType,
+            cameraSubType: cameraSubType,
+            propertyId: propertyIdText,
+            cameraId: cameraIdText,
+            uuId: uuIdText,
+            pageNumber: 1,
+            pageSize: rowsPerPage,
+            orderByParam: orderByParam,
+            orderBy: orderBy,
+            firmwareVersion: firmwareVersion,
+            downloadFlag: true
+         });
+
+         if (response?.status === 200) {
+            const data = response?.data?.resourceData?.devices;
+
+            if (!data || data.length === 0) {
+               showErrorToast("No camera data available to download.");
+               return;
+            }
+
+            // Get all possible columns
+            const allHeaders = Object.keys(data[0]);
+
+            // Keep only columns having at least one non-empty value
+            const headers = allHeaders.filter((header) =>
+               data.some((row) => {
+                  const value = row[header];
+                  return value !== null &&
+                     value !== undefined &&
+                     String(value).trim() !== "";
+               })
+            );
+
+            // Create CSV rows
+            const csvRows = [
+               headers.join(","),
+               ...data.map((row) =>
+                  headers
+                     .map((header) => {
+                        const value = row[header] ?? "";
+
+                        // Escape quotes, commas and new lines
+                        return `"${String(value).replace(/"/g, '""')}"`;
+                     })
+                     .join(",")
+               )
+            ];
+
+            const csvContent = csvRows.join("\n");
+
+            const blob = new Blob([csvContent], {
+               type: "text/csv;charset=utf-8;"
+            });
+
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `camera_list_${Date.now()}.csv`;
+
+            document.body.appendChild(link);
+            link.click();
+
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+         } else {
+            showErrorToast("Please try again...");
+         }
+
+      } catch (error) {
+         console.error("Error downloading camera list:", error);
+         showErrorToast("Please try again...");
+      }
    };
 
    return (
@@ -665,7 +773,7 @@ const CameraDashboard = (props) => {
          <div className="tableBox " style={{ overflowX: "hidden" }}>
             <div className="align-items-center tableHeading">
                <div className="justify-content-between">
-                  <div className="locationSelect justify-content-end mb-2">
+                  {/* <div className="locationSelect justify-content-end mb-2">
 
                      <div className="white-bg d-flex">
                         <Form.Group controlId="exampleForm.SelectCustom">
@@ -696,7 +804,7 @@ const CameraDashboard = (props) => {
                         <Buttons name="Download Camera Details" />
                      </div>
                   </div>
-                     <hr/>
+                     <hr/> */}
                   <div className="locationSelect justify-content-end mb-2">
                      {propertyIdBox}
                      {cameraIdBox}
@@ -1031,6 +1139,22 @@ const CameraDashboard = (props) => {
                               : null}
                         </Form.Control>
                      </Form.Group>{" "}
+                     <Form.Group controlId="exampleForm.SelectCustom">
+                        <Form.Control
+                           as="select"
+                           value={firmwareVersion}
+                           onChange={(e) => setFirmwareVersion(e.target.value)}
+                        >
+                           <option value="">Select Firmware version</option>
+
+                           {firmwareList?.map((firmware, index) => (
+                              <option key={index} value={firmware}>
+                                 {firmware}
+                              </option>
+                           ))}
+                        </Form.Control>
+                     </Form.Group>
+
                      <div className="ml-3">
                         <Buttons
                            name="Search"
@@ -1051,11 +1175,24 @@ const CameraDashboard = (props) => {
                                  pageNumber: 1,
                                  pageSize: rowsPerPage,
                                  orderByParam: orderByParam,
-                                 orderBy: orderBy
+                                 orderBy: orderBy,
+                                 firmwareVersion: firmwareVersion,
+                                 downloadFlag: false
                               });
                            }}
                         />
                      </div>
+                  </div>
+                  <div className="d-flex mt-1 me-3" style={{ justifyContent: 'end' }}>
+                     <Buttons name="Download Camera Details"
+                        varient="primary"
+                        size="Small"
+                        color="white"
+                        style={{ height: "40px !important" }}
+                        onClick={async () => {
+                           downloadCameraList();
+                        }}
+                     />
                   </div>
                </div>
                <Row className="g-3 mt-3">
