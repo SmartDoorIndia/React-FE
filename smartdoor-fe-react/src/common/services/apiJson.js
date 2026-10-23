@@ -3891,6 +3891,17 @@ export const ApiJson = {
     showResultMessage: true,
     showErrorMessage: true,
   },
+  getLatestImage: {
+    url: "smartlock/smartlock/getLatestMedia/:cameraId",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
 };
 // console.log(userData)
 

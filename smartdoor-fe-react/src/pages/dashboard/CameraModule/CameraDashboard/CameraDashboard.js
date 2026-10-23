@@ -16,6 +16,7 @@ import {
    getCameraTypes,
    getCorporateById,
    getFirmwareVersionList,
+   getLatestImage,
    restoreOrDeleteDevice,
    updateCameraStatus,
 } from "../../../../common/redux/actions";
@@ -68,6 +69,8 @@ const CameraDashboard = (props) => {
    })
    const [firmwareVersion, setFirmwareVersion] = useState(cameraList?.data?.cameraId || "");
    const [firmwareList, setFirmwareList] = useState([]);
+   const [latestImageData, setLatestImageData] = useState({});
+   const [showImageModal, setShowImageModal] = useState(false);
 
    const tableRef = useRef();
    const history = useHistory();
@@ -287,6 +290,23 @@ const CameraDashboard = (props) => {
             </ToolTip>
          ),
          id: 14,
+      },
+      {
+         name: "Latest Media",
+         selector: (row) => row.firmwareVersion,
+         sortable: false,
+         center: true,
+         minWidth: "200px",
+         cell: ({ cameraDeviceId }) => (
+            <Buttons name="View Img" variant="outline-danger" size="xSmall" onClick={async () => {
+               const response = await getLatestImage({ cameraId: cameraDeviceId });
+               if (response?.status === 200) {
+                  setShowImageModal(true);
+                  setLatestImageData(response?.data?.resourceData);
+               }
+            }} />
+         ),
+         id: 15,
       },
       {
          name: "Action",
@@ -1277,6 +1297,91 @@ const CameraDashboard = (props) => {
                         handleDelete();
                      }}
                   />
+               </div>
+            </Modal.Body>
+         </Modal>
+
+         <Modal
+            show={showImageModal}
+            onHide={() => setShowImageModal(false)}
+            centered
+            backdrop="static"
+            size="lg"
+         >
+            <Modal.Header closeButton>
+               <Modal.Title style={{ fontSize: '18px', fontWeight: 600 }}>
+                  Captured Image
+               </Modal.Title>
+            </Modal.Header>
+
+            <Modal.Body style={{ padding: '20px' }}>
+               <div
+                  style={{
+                     display: 'flex',
+                     flexDirection: 'column',
+                     alignItems: 'center',
+                     gap: '15px'
+                  }}
+               >
+                  {/* Image */}
+                  <div
+                     style={{
+                        width: '100%',
+                        maxHeight: '65vh',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '8px',
+                        padding: '10px',
+                        overflow: 'hidden'
+                     }}
+                  >
+                     <img
+                        src={latestImageData?.awsURL}
+                        alt="Captured"
+                        style={{
+                           maxWidth: '100%',
+                           maxHeight: '60vh',
+                           width: 'auto',
+                           height: 'auto',
+                           objectFit: 'contain',
+                           borderRadius: '6px'
+                        }}
+                     />
+                  </div>
+
+                  {/* Captured Date */}
+                  <div
+                     style={{
+                        width: '100%',
+                        padding: '10px 14px',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                     }}
+                  >
+                     <span
+                        style={{
+                           fontSize: '14px',
+                           fontWeight: 600,
+                           color: '#555'
+                        }}
+                     >
+                        Captured Date
+                     </span>
+
+                     <span
+                        style={{
+                           fontSize: '14px',
+                           color: '#333'
+                        }}
+                     >
+                        {formateDateTime(latestImageData?.capturedDate) || '-'}
+                     </span>
+                  </div>
                </div>
             </Modal.Body>
          </Modal>

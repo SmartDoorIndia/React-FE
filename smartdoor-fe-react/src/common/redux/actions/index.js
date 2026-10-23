@@ -2612,3 +2612,8 @@ export const downloadCameraDetailsList = async data => {
   const response = await mainApiService("cameraDashboardList", data);
   return response;
 }
+
+export const getLatestImage = async data => {
+  const response = await mainApiService("getLatestImage", data);
+  return response;
+}
