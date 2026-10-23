@@ -18,6 +18,7 @@ import {
    updateCameraStatus,
    updateCameraAlertMode,
    returnCameraToInventory,
+   replaceSmartlock,
 } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import Text from "../../../../shared/Text/Text";
@@ -33,6 +34,89 @@ import { ReactFlvPlayer } from "react-flv-player";
 import ReactPlayer from "react-player";
 import VisitMedia from "../VisitRecordings/VisitMedia";
 import IntrusionMedia from "../Intrusions/IntrusionMedia";
+
+const STATUS_COLORS = {
+   INSTALLED: { background: "#dcfce7", color: "#166534" },
+   PRECONFIGURED_DEVICE: { background: "#e0e7ff", color: "#3730a3" },
+   DEFECTIVE: { background: "#fee2e2", color: "#991b1b" },
+   SOLD: { background: "#fef3c7", color: "#92400e" },
+};
+
+const StatusBadge = ({ status }) => {
+   if (!status) return <span>-</span>;
+   const colors = STATUS_COLORS[status] || { background: "#f3f4f6", color: "#374151" };
+   return (
+      <span
+         style={{
+            ...colors,
+            padding: "3px 10px",
+            borderRadius: "999px",
+            fontSize: "12px",
+            fontWeight: 600,
+            whiteSpace: "nowrap",
+         }}
+      >
+         {String(status).replace(/_/g, " ")}
+      </span>
+   );
+};
+
+const TruncatedText = ({ value }) => (
+   <span
+      title={value || ""}
+      style={{ display: "block", maxWidth: "100%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+   >
+      {value || "-"}
+   </span>
+);
+
+const SectionCard = ({ title, subtitle, children, action }) => (
+   <section
+      style={{
+         border: "1px solid #e5e7eb",
+         borderRadius: "10px",
+         padding: "16px 18px",
+         marginBottom: "20px",
+         background: "#ffffff",
+         boxShadow: "0 1px 2px rgba(16, 24, 40, 0.04)",
+      }}
+   >
+      <div className="d-flex justify-content-between align-items-start mb-2">
+         <div>
+            <Text className="h5 mb-0" size="medium" text={title} />
+            {subtitle ? <div style={{ fontSize: "13px", color: "#6b7280" }}>{subtitle}</div> : null}
+         </div>
+         {action || null}
+      </div>
+      {children}
+   </section>
+);
+
+const LockSummary = ({ label, lock }) => (
+   <div
+      style={{
+         border: "1px solid #e5e7eb",
+         borderRadius: "8px",
+         padding: "10px 14px",
+         background: "#f9fafb",
+         marginBottom: "12px",
+         fontSize: "13px",
+      }}
+   >
+      <div style={{ fontWeight: 600, marginBottom: "4px", color: "#374151" }}>{label}</div>
+      {lock ? (
+         <div className="d-flex flex-wrap" style={{ gap: "6px 20px" }}>
+            <span>Id: <b>{lock.id ?? "-"}</b></span>
+            <span>Lock Id: <b>{lock.lockId ?? "-"}</b></span>
+            <span>MAC: <b>{lock.lockmac ?? "-"}</b></span>
+            <span>Battery: <b>{lock.lockPowerPercentage != null ? lock.lockPowerPercentage + "%" : "-"}</b></span>
+            <StatusBadge status={lock.status} />
+         </div>
+      ) : (
+         <span style={{ color: "#6b7280" }}>-</span>
+      )}
+   </div>
+);
 
 const PropertyDevice = (props) => {
    const propertyId = props.location.state.propertyId ? props.location.state.propertyId : null;
@@ -65,6 +149,10 @@ const PropertyDevice = (props) => {
    const [cameraList, setCameraList] = useState([]);
    const [cameraListLoading, setCameraListLoading] = useState(false);
    const [selectedCamera, setSelectedCamera] = useState(null);
+   const [smartlockList, setSmartlockList] = useState([]);
+   const [replaceLockFlag, setReplaceLockFlag] = useState(false);
+   const [selectedNewLock, setSelectedNewLock] = useState(null);
+   const [currentLockId, setCurrentLockId] = useState(null);
    const [confirmDeleteModalFlag, setConfirmDeleteModalFlag] = useState(false);
    const [selectedDevice, setSelectedDevice] = useState({
       deviceType: "",
@@ -145,6 +233,7 @@ const PropertyDevice = (props) => {
       getDeviceIdList({ kitId: 0 }).then((response) => {
          setCameraListLoading(false);
          setCameraList([...response.data.resourceData.cameraList]);
+         setSmartlockList([...(response.data.resourceData.smartlockList ?? [])]);
       });
    };
 
@@ -185,27 +274,30 @@ const PropertyDevice = (props) => {
       {
          name: "Access Token",
          selector: "accessToken",
-         maxWidth: "300px",
+         maxWidth: "220px",
          center: true,
+         cell: ({ accessToken }) => <TruncatedText value={accessToken} />,
       },
       {
          name: "Refresh Token",
          selector: "refreshToken",
-         maxWidth: "300px",
+         maxWidth: "220px",
          center: true,
+         cell: ({ refreshToken }) => <TruncatedText value={refreshToken} />,
       },
       {
          name: "Status",
          selector: "status",
-         maxWidth: "260px",
+         maxWidth: "200px",
          center: true,
+         cell: ({ status }) => <StatusBadge status={status} />,
       },
       {
          name: "Action",
          sortable: false,
          center: true,
-         maxWidth: "180px",
-         cell: ({ id, deleted }) => (
+         maxWidth: "320px",
+         cell: ({ id, deleted, kitId }) => (
             <div className="action">
                <Buttons
                   name="View Data"
@@ -219,6 +311,20 @@ const PropertyDevice = (props) => {
                   }}
                />{" "}
                &nbsp;&nbsp;
+               {!kitId ? (
+                  <Buttons
+                     name="Replace Lock"
+                     varient="primary"
+                     size="xSmall"
+                     color="white"
+                     className="mt-2 mb-2"
+                     onClick={() => {
+                        setCurrentLockId(id);
+                        setSelectedNewLock(null);
+                        setReplaceLockFlag(true);
+                     }}
+                  />
+               ) : null}
             </div>
          ),
       },
@@ -323,8 +429,9 @@ const PropertyDevice = (props) => {
       {
          name: "Status",
          selector: "status",
-         maxWidth: "260px",
+         maxWidth: "200px",
          center: true,
+         cell: ({ status }) => <StatusBadge status={status} />,
       },
       {
          name: "Alert Mode",
@@ -632,27 +739,39 @@ const PropertyDevice = (props) => {
    return (
       <>
          <div className="whiteBg">
-            <Text className="h5" size="medium" text={"Smart Lock Data"} />
-            <ListingDataTable
-               isLoading={lockLoading}
-               columns={columns}
-               data={smartLockData}
-               paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-               paginationPerPage={8}
-               perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-               persistTableHead="true"
-            ></ListingDataTable>
-            <Text className="mt-3 h5" size="medium" text={"Contact Sensor Data"} />
-            <ListingDataTable
-               isLoading={censorloading}
-               columns={contactSensorColumns}
-               data={censorData}
-               paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-               paginationPerPage={8}
-               perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
-               persistTableHead="true"
-            ></ListingDataTable>
-            <Text className="mt-3 mb-0 h5" size="medium" text={"Camera Device Data"} />
+            <SectionCard
+               title="Smart Lock"
+               subtitle={
+                  smartLockData.length > 0
+                     ? "Use Replace Lock to swap a damaged lock with one from inventory."
+                     : "No smart lock is attached to this property."
+               }
+            >
+               <ListingDataTable
+                  isLoading={lockLoading}
+                  columns={columns}
+                  data={smartLockData}
+                  paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  paginationPerPage={8}
+                  perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  persistTableHead="true"
+               ></ListingDataTable>
+            </SectionCard>
+            <SectionCard title="Contact Sensor">
+               <ListingDataTable
+                  isLoading={censorloading}
+                  columns={contactSensorColumns}
+                  data={censorData}
+                  paginationRowsPerPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  paginationPerPage={8}
+                  perPageOptions={[8, 16, 24, 32, 40, 48, 56, 64, 72, 80]}
+                  persistTableHead="true"
+               ></ListingDataTable>
+            </SectionCard>
+            <SectionCard
+               title="Camera Devices"
+               subtitle={cameraData.length + (cameraData.length === 1 ? " camera" : " cameras") + " on this property"}
+            >
             <ListingDataTable
                isLoading={cameraloading}
                className="mt-0"
@@ -705,6 +824,7 @@ const PropertyDevice = (props) => {
                   <IntrusionMedia cameraId={camera?.cameraDeviceId} />
                </>
             ))}
+            </SectionCard>
          </div>
 
          <Modal
@@ -992,6 +1112,86 @@ const PropertyDevice = (props) => {
                            fetchDeviceIdListByKitId();
                         }
                      });
+                  }}
+               />
+            </Modal.Footer>
+         </Modal>
+         <Modal
+            size="md"
+            show={replaceLockFlag}
+            onHide={() => {
+               setReplaceLockFlag(false);
+               setSelectedNewLock(null);
+            }}
+            centered={true}
+            backdrop="static"
+         >
+            <Modal.Header>
+               <Text
+                  text="Select an available lock. The current lock will be returned to inventory."
+                  style={{ fontSize: "14px", fontWeight: "600" }}
+               />
+               <Buttons
+                  style={{ float: "right" }}
+                  name="X"
+                  varient="secondary"
+                  onClick={() => {
+                     setReplaceLockFlag(false);
+                     setSelectedNewLock(null);
+                  }}
+               ></Buttons>
+            </Modal.Header>
+            <Modal.Body>
+               <LockSummary label="Current lock (will be returned to inventory)" lock={smartLockData.find((lock) => lock.id === currentLockId)} />
+               <Autocomplete
+                  className="textfieldInput w-100 mt-1"
+                  options={smartlockList}
+                  loading={cameraListLoading}
+                  getOptionLabel={(lock) => lock?.id?.toString() ?? ""}
+                  isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                  value={selectedNewLock}
+                  onChange={(event, newValue) => {
+                     setSelectedNewLock(newValue);
+                  }}
+                  renderInput={(params) => (
+                     <TextField
+                        {...params}
+                        label="Select Lock (Id)"
+                        placeholder={cameraListLoading ? "Loading available locks…" : undefined}
+                     />
+                  )}
+               />
+               {selectedNewLock ? (
+                  <div className="mt-3">
+                     <LockSummary label="New lock (will be attached to this property)" lock={selectedNewLock} />
+                  </div>
+               ) : (
+                  <div className="mt-3" style={{ fontSize: "13px", color: "#6b7280" }}>
+                     Only locks that are not attached to any property or kit are listed.
+                  </div>
+               )}
+            </Modal.Body>
+            <Modal.Footer style={{ justifyContent: "center" }}>
+               <Buttons
+                  name="Replace Lock"
+                  disabled={!selectedNewLock || loading}
+                  onClick={async () => {
+                     setLoading(true);
+                     const response = await replaceSmartlock({
+                        propertyId: propertyId,
+                        oldLockId: currentLockId,
+                        newLockId: selectedNewLock?.id,
+                     });
+                     setLoading(false);
+                     if (response?.status === 200) {
+                        showSuccessToast("Lock replaced successfully");
+                        setReplaceLockFlag(false);
+                        setSelectedNewLock(null);
+                        _getSmartLockData();
+                        fetchDeviceIdListByKitId();
+                     } else {
+                        showErrorToast(response?.data?.customMessage || response?.data?.message || "Please try again...");
+                     }
                   }}
                />
             </Modal.Footer>

@@ -3789,6 +3789,21 @@ export const ApiJson = {
     showResultMessage: true,
     showErrorMessage: true,
   },
+  replaceSmartlock: {
+    url: "smartlock/smartlock/replaceSmartlock",
+    method: "POST",
+    data: {
+      propertyId: null,
+      oldLockId: null,
+      newLockId: null,
+    },
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
   getSmartlockTypes: {
     url: "admin/system/getValues/LOCK_TYPE",
     method: "GET",

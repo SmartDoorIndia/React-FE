@@ -2538,6 +2538,11 @@ export const returnCameraToInventory = async (data) => {
   return response
 }
 
+export const replaceSmartlock = async (data) => {
+  const response = await mainApiService("replaceSmartlock", data);
+  return response
+}
+
 export const getCameraMediaStats = data => async (dispatch) => {
   dispatch({type: Actions.CAMERA_MEDIA_STATS_LOADING, data: []});
   const response = await mainApiService("cameraMediaStats", data);

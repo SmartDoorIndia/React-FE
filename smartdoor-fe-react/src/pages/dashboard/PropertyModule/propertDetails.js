@@ -723,8 +723,13 @@ const PropertyDetails = (props) => {
          consumer_requested: false,
       };
       const response = await remoteOTP(map);
-      if (response?.status === 200) {
-         setRemoteOTPresponse(response.data.resourceData);
+      const otpData = response?.data?.resourceData;
+      if (response?.status === 200 && otpData?.errmsg) {
+         // TTLock answers 200 with errcode/errmsg when it cannot issue the OTP (e.g. lock offline)
+         setRemoteOTPresponse({ message: otpData.errmsg });
+         setRemoteOTPErr(true);
+      } else if (response?.status === 200) {
+         setRemoteOTPresponse(otpData);
          remoteOTPShow();
       } else {
          setRemoteOTPresponse(response?.data);
