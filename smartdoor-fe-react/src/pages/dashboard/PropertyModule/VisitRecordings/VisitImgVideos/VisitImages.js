@@ -145,11 +145,7 @@ const VisitImages = (props) => {
                                              cursor: "pointer",
                                           }}
                                           onClick={() => {
-                                             const nextPage = currentPage + 1;
-
-                                             setLoading(true);
-                                             getMedia(nextPage);
-                                             setCurrentPage(nextPage);
+                                             setShowImage(true);
                                           }}
                                        />
                                     </Col>

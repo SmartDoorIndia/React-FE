@@ -2597,3 +2597,13 @@ export const fetchAuctionData = async (data) => {
   const response = await mainApiService('fetchAuctionData', data);
   return response;
 }
+
+export const getFirmwareVersionList = async (data) => {
+  const response = await mainApiService('getFirmwareList', data);
+  return response;
+}
+
+export const downloadCameraDetailsList = async data => {
+  const response = await mainApiService("cameraDashboardList", data);
+  return response;
+}
