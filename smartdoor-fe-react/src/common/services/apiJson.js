@@ -3902,6 +3902,17 @@ export const ApiJson = {
     showResultMessage: true,
     showErrorMessage: true,
   },
+  chargeVisitCoins: {
+    url: "consumer/property/chargeVisitCoins/:propertyId/:visitCoins",
+    method: "PUT",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
 };
 // console.log(userData)
 

@@ -1159,21 +1159,23 @@ const CameraDashboard = (props) => {
                               : null}
                         </Form.Control>
                      </Form.Group>{" "}
-                     <Form.Group controlId="exampleForm.SelectCustom">
-                        <Form.Control
-                           as="select"
-                           value={firmwareVersion}
-                           onChange={(e) => setFirmwareVersion(e.target.value)}
-                        >
-                           <option value="">Select Firmware version</option>
+                     {cameraType === "PIR_CAMERA" ?
+                        <Form.Group controlId="exampleForm.SelectCustom">
+                           <Form.Control
+                              as="select"
+                              value={firmwareVersion}
+                              onChange={(e) => setFirmwareVersion(e.target.value)}
+                           >
+                              <option value="">Select Firmware version</option>
 
-                           {firmwareList?.map((firmware, index) => (
-                              <option key={index} value={firmware}>
-                                 {firmware}
-                              </option>
-                           ))}
-                        </Form.Control>
-                     </Form.Group>
+                              {firmwareList?.map((firmware, index) => (
+                                 <option key={index} value={firmware}>
+                                    {firmware}
+                                 </option>
+                              ))}
+                           </Form.Control>
+                        </Form.Group>
+                     : null}
 
                      <div className="ml-3">
                         <Buttons
@@ -1203,7 +1205,7 @@ const CameraDashboard = (props) => {
                         />
                      </div>
                   </div>
-                  <div className="d-flex mt-1 me-3" style={{ justifyContent: 'end' }}>
+                  <div className="d-flex mt-2 me-3" style={{ justifyContent: 'end' }}>
                      <Buttons name="Download Camera Details"
                         varient="primary"
                         size="Small"

@@ -296,7 +296,7 @@ const PropertyDevice = (props) => {
          name: "Action",
          sortable: false,
          center: true,
-         maxWidth: "320px",
+         minWidth: "350px",
          cell: ({ id, deleted, kitId }) => (
             <div className="action">
                <Buttons

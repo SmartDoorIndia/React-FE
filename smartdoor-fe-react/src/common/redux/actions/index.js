@@ -2617,3 +2617,8 @@ export const getLatestImage = async data => {
   const response = await mainApiService("getLatestImage", data);
   return response;
 }
+
+export const chargeVisitCoins = async data => {
+  const response = await mainApiService("chargeVisitCoins", data);
+  return response;
+}
