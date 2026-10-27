@@ -30,6 +30,7 @@ import {
    approveProperty,
    setContactLead,
    removeContactLead,
+   chargeVisitCoins,
 } from "../../../common/redux/actions";
 import * as Actions from "../../../common/redux/types";
 import MapComponent from "../../../shared/Map/MapComponent";
@@ -56,16 +57,12 @@ import SignatureAlgo from "../../../camera-related/signatureAlgorithm";
 import TimeStampAlgo from "../../../camera-related/timeMilis";
 import QrModal from "../../../shared/Modal/QrModal/QrModal";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { Switch } from "@mui/material";
+import { Switch, TextField } from "@mui/material";
 import reviewIcon from "../../../assets/svg/reviewIcon.svg";
 import { getLocalStorage } from "../../../common/helpers/Utils";
 import PostingFields from "../../../common/helpers/PostingFields";
-// import videojs from 'video.js';
-// import 'video.js/dist/video-js.css';
-// import 'videojs-flash';
-
+import editIcon from "../../../assets/svg/pencilIcon.svg";
 import './propertDetails.scss';
-// const ReactS3Client = new S3(Constants.CONFIG_PROPERTY);
 
 const PropertyDetails = (props) => {
    const {
@@ -121,6 +118,8 @@ const PropertyDetails = (props) => {
    const [contactLeadMobile, setContactLeadMobile] = useState("");
    const [contactLeadSaving, setContactLeadSaving] = useState(false);
    const [showRemoveContactLeadModal, setShowRemoveContactLeadModal] = useState(false);
+   const [editVisitCoinsFlag, setEditVisiCoinsFlag] = useState(false);
+   const [visitCoins, setVisitCoins] = useState(null);
 
    const batteryStatusCensor = (censorBatteryStatus) => {
       if (censorBatteryStatus === 0) {
@@ -1120,6 +1119,23 @@ const PropertyDetails = (props) => {
       }
    };
 
+   const editVisitCoins = async () => {
+      if (Number(visitCoins) < 0) {
+         showErrorToast("Please enter valid number of coins");
+         return null;
+      }
+      const response = await chargeVisitCoins({ propertyId: propertyId, visitCoins: visitCoins });
+      if (response?.status === 200) {
+         setpropertyData(prevData => ({
+            ...prevData,
+            miscellaneousDetails: {
+               ...prevData.miscellaneousDetails,
+               visitCoins
+            }
+         }));
+         setEditVisiCoinsFlag(false);
+      }
+   }
    return (
       <>
          {Object.keys(propertyData).length > 0 ? (
@@ -1137,7 +1153,7 @@ const PropertyDetails = (props) => {
                   ></Buttons>
                ) : null}
                <div className="container" style={{ height: "84vh", overflowY: "auto" }}>
-                  <Row>
+                  <Row className="mt-3">
                      <Col md={8}>
                         {propertyData.uploads?.propertyImages?.length > 0 ? (
                            <ImageSliderComponent
@@ -1167,8 +1183,8 @@ const PropertyDetails = (props) => {
                                     fontWeight="mediumbold"
                                     color="secondry-color"
                                     text={`${propertyData.address.houseNumber || "-"}${propertyData.address.towerName
-                                          ? `, ${propertyData.address.towerName}`
-                                          : ""
+                                       ? `, ${propertyData.address.towerName}`
+                                       : ""
                                        }, ${propertyData.address.otherSociety || "-"}`}
                                  />
 
@@ -1217,97 +1233,8 @@ const PropertyDetails = (props) => {
                         </div>
                      </Col>
                      <Col md={4} className="mb-3">
-                        <Link
-                           className="float-right editButton"
-                           to={{
-                              pathname: "/admin/property/edit-property",
-                              state: { editpropertyData: propertyData },
-                           }}
-                        ></Link>
-
-                        {propertyAnalyticsData.isLoading ? (
-                           <Loader />
-                        ) : (
-                           <div className="bg-white rounded px-3 py-3 border">
-                              {/* {!propertyData.uninstallationDone ? (
-                                 <div className="statusDiv">
-                                    
-                                    {propertyData.basicDetails.propertyType === "Commercial" ? (
-                                       <div className="lock-div">
-                                          {showCameraButton()}
-                                          {propertyData.miscellaneousDetails?.smartLockProperty ===
-                                             true &&
-                                          propertyData.miscellaneousDetails?.deleted === false &&
-                                          propertyData.miscellaneousDetails.status ===
-                                             "UNDER REVIEW" ? (
-                                             <>
-                                                <Text
-                                                   className=" mt-2"
-                                                   size="xSmall"
-                                                   fontWeight="xsemibold"
-                                                   color="primaryColor"
-                                                   text={`Power: ${smartdoorBattery}%`}
-                                                />
-                                                <Text
-                                                   className=" mt-2"
-                                                   size="xSmall"
-                                                   fontWeight="xsemibold"
-                                                   color="primaryColor"
-                                                   text={`SmartLock Admin Passcode: ${smartlockAdminPassCode}`}
-                                                />
-                                                <Text
-                                                   className=" mt-2"
-                                                   size="xSmall"
-                                                   fontWeight="xsemibold"
-                                                   color="primaryColor"
-                                                   text={`Contact sensor status: ${door_status}`}
-                                                />
-                                                <Text
-                                                   className=" mt-2"
-                                                   size="xSmall"
-                                                   fontWeight="xsemibold"
-                                                   color="primaryColor"
-                                                   text={`Camera ID: ${cameraData[0]?.uuId}`}
-                                                />
-                                             </>
-                                          ) : null}
-                                          {propertyData.basicPlan ? null : (
-                                             <>
-                                                {door_status ? (
-                                                   <div style={{ display: "flex" }}>
-                                                      {door_status === "Open" ? (
-                                                         <img
-                                                            className="LockIconOpen"
-                                                            src={LockOpen}
-                                                         />
-                                                      ) : (
-                                                         <img
-                                                            className="LockIconClose"
-                                                            onClick={() => doorClose(smartLockData)}
-                                                            src={LockClose}
-                                                         />
-                                                      )}
-                                                   </div>
-                                                ) : null}
-                                                {censorBattery_status ? (
-                                                   <Text
-                                                      className=" mt-2"
-                                                      size="xSmall"
-                                                      fontWeight="xsemibold"
-                                                      color="primaryColor"
-                                                      text={`Sensor Power: ${censorBattery_status}%`}
-                                                   />
-                                                ) : null}
-                                             </>
-                                          )}
-                                       </div>
-                                    ) : null}
-                                 </div>
-                              ) : (
-                                 ""
-                              )} */}
-
-                              {showCameraDD ? (
+                        <div className="bg-white rounded px-3 py-3 border">
+                           {/* {showCameraDD ? (
                                  <select
                                     class="form-select"
                                     aria-label="Default select example"
@@ -1329,740 +1256,502 @@ const PropertyDetails = (props) => {
                                  </select>
                               ) : (
                                  ""
-                              )}
+                              )} */}
 
-                              {/* </div> */}
-
-                              {/* <Buttons
-                              onClick={() => {}}
-                              name="Approve"
-                              varient="primary"
-                              size="xSmall"
-                              color="white"
-                              className="mt-2 mb-2" />  */}
-                              {/* <div><span className="TaupeGrey fs-12 fw500">Description</span></div> */}
-                              {/* {propertyData?.miscellaneousDetails?.isCorporateProperty ?
-                                    <>
-                                       <div className="d-flex" style={{ justifyContent: 'center' }}>
-                                          <img alt="" src={propertyData?.miscellaneousDetails?.corporateLogo} style={{ height: '70px', width: '150px' }} />
-                                       </div> &nbsp;&nbsp;
-                                    </>
-                                    : null} */}
-                              {propertyData?.miscellaneousDetails?.isCorporateProperty &&
-                                 propertyData?.miscellaneousDetails?.corporateLogo && (
-                                    <div className="corporate-brand-card">
-                                       <div className="corporate-brand-header">
-                                          <span>Corporate Property</span>
-                                       </div>
-
-                                       <div className="corporate-brand-logo">
-                                          <img
-                                             src={propertyData.miscellaneousDetails.corporateLogo}
-                                             alt="Corporate Logo"
-                                          />
-                                       </div>
+                           {propertyData?.miscellaneousDetails?.isCorporateProperty &&
+                              propertyData?.miscellaneousDetails?.corporateLogo && (
+                                 <div className="corporate-brand-card">
+                                    <div className="corporate-brand-header">
+                                       <span>Corporate Property</span>
                                     </div>
-                                 )
-                              }
-                              <div className="d-flex justify-content-end">
 
-                                 {(userData.roleName === "SUPER ADMIN" || userData.roleName === "SALES ADMIN" || userData.roleName === "INSTALLATION ADMIN") &&
-                                    propertyData.miscellaneousDetails.status === "UNDER REVIEW" &&
-                                    propertyData?.miscellaneousDetails?.deleted === false ? (
-                                    <>
-                                       <Buttons
-                                          name="Approve"
-                                          varient="primary"
-                                          size="xSmall"
-                                          style={{
-                                             width: "100px",
-                                             height: "28px",
-                                             textAlign: "center",
-                                          }}
-                                          color="white"
-                                          onClick={() => {
-                                             handleApproveProperty();
-                                          }}
-                                       />{" "}
-                                       &nbsp; &nbsp;
-                                    </>
-                                 ) : null}
-                                 {userData.roleName === "SUPER ADMIN" ? (
+                                    <div className="corporate-brand-logo">
+                                       <img
+                                          src={propertyData.miscellaneousDetails.corporateLogo}
+                                          alt="Corporate Logo"
+                                       />
+                                    </div>
+                                 </div>
+                              )
+                           }
+                           <div className="d-flex justify-content-end">
+                              {(userData.roleName === "SUPER ADMIN" || userData.roleName === "SALES ADMIN" || userData.roleName === "INSTALLATION ADMIN") &&
+                                 propertyData.miscellaneousDetails.status === "UNDER REVIEW" &&
+                                 propertyData?.miscellaneousDetails?.deleted === false ? (
+                                 <>
+                                    <Buttons
+                                       name="Approve"
+                                       varient="primary"
+                                       size="xSmall"
+                                       style={{
+                                          width: "100px",
+                                          height: "28px",
+                                          textAlign: "center",
+                                       }}
+                                       color="white"
+                                       onClick={() => {
+                                          handleApproveProperty();
+                                       }}
+                                    />{" "}
+                                    &nbsp; &nbsp;
+                                 </>
+                              ) : null}
+                              {userData.roleName === "SUPER ADMIN" ? (
+                                 <Link
+                                    to={{
+                                       pathname: "/admin/chat-history",
+                                       state: {
+                                          userId: userData.userid,
+                                          ownerId: ownerId,
+                                          ownerName: ownerName,
+                                          receiverRoleId: propertyData?.miscellaneousDetails?.ownerRoleId,
+                                       },
+                                    }}
+                                 >
+                                    <Buttons
+                                       style={{ float: "left" }}
+                                       name="Chat"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className=" mb-1"
+                                    />
+                                 </Link>
+                              ) : null}
+                           </div>
+                           <div className="d-flex mt-2">
+                              {propertyData.miscellaneousDetails?.smartLockProperty === true && showQr === true ? (
+                                 <>
+                                    <Buttons
+                                       onClick={() => qrGenerator(smartLockData)}
+                                       name="Print QR"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className="mt-1 mb-1"
+                                    />{" "}
+                                    &nbsp;&nbsp;
+                                 </>
+                              ) : null}
+
+                              {propertyData.miscellaneousDetails?.smartLockProperty === true &&
+                                 propertyData.miscellaneousDetails?.deleted === false && showQr === true &&
+                                 (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
+                                 <>
                                     <Link
                                        to={{
-                                          pathname: "/admin/chat-history",
+                                          pathname: "/admin/property/property-devices",
                                           state: {
-                                             userId: userData.userid,
-                                             ownerId: ownerId,
-                                             ownerName: ownerName,
-                                             receiverRoleId: propertyData?.miscellaneousDetails?.ownerRoleId,
+                                             propertyId: propertyData.smartdoorPropertyId,
+                                             smartLockData: smartLockData,
+                                             propertyDocsResp: propertyData.uploads,
+                                             userId: userId,
                                           },
                                        }}
                                     >
                                        <Buttons
-                                          style={{ float: "left" }}
-                                          name="Chat"
+                                          style={{ float: "right" }}
+                                          name="Show Device Data"
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
-                                          className=" mb-2"
+                                          className="mt-1 mb-1"
                                        />
                                     </Link>
-                                 ) : null}
-                              </div>
-                              <div className="d-flex mt-2">
-                                 {propertyData.miscellaneousDetails?.smartLockProperty === true && showQr === true ? (
-                                    <>
+                                 </>
+                              ) : null}
+                           </div>
+
+                           <div className="d-flex mt-2">
+                              {propertyData.miscellaneousDetails?.smartLockProperty === true &&
+                                 propertyData?.miscellaneousDetails?.deleted === false &&
+                                 showQr === true &&
+                                 userData.roleName === "SUPER ADMIN" ? (
+                                 <>
+                                    <Buttons
+                                       style={{ float: "right" }}
+                                       name="Remote Unlock"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className=""
+                                       onClick={() => {
+                                          remoteUnLock();
+                                       }}
+                                    />{" "}
+                                    &nbsp; &nbsp;
+                                    <Buttons
+                                       style={{ float: "right" }}
+                                       name="Remote OTP"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className=""
+                                       onClick={() => {
+                                          remoteOtp();
+                                       }}
+                                    />
+                                 </>
+                              ) : null}
+                           </div>
+                           <div className="d-flex mt-2">
+                              {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
+                                 <>
+                                    <Buttons
+                                       style={{ float: "left" }}
+                                       name="Edit Property"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className="mb-2"
+                                       onClick={() => {
+                                          localStorage.setItem("autoRefresh", "Yes");
+                                          let miscellaneousDetailsDto =
+                                             propertyData.miscellaneousDetails;
+                                          if (
+                                             propertyData.miscellaneousDetails.status !== null
+                                          ) {
+                                             miscellaneousDetailsDto.draft = false;
+                                          }
+                                          history.push(
+                                             "/admin/property/property-details/EditPost",
+                                             {
+                                                existingDetails: {
+                                                   propertyId: propertyData.smartdoorPropertyId,
+                                                   saveFlag: true,
+                                                },
+                                                miscellaneousDetails: miscellaneousDetailsDto,
+                                             }
+                                          );
+                                       }}
+                                    />{" "}
+                                    &nbsp; &nbsp;
+                                 </>
+                              ) : null}
+                              {userData.roleName === "MARKETING EXECUTIVE" &&
+                                 propertyData.miscellaneousDetails.status !== "APPROVED" ? (
+                                 <>
+                                    <Buttons
+                                       style={{ float: "left" }}
+                                       name="Edit Property"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className=""
+                                       onClick={() => {
+                                          localStorage.setItem("autoRefresh", "Yes");
+                                          let miscellaneousDetailsDto =
+                                             propertyData.miscellaneousDetails;
+                                          if (
+                                             propertyData.miscellaneousDetails.status !== null
+                                          ) {
+                                             miscellaneousDetailsDto.draft = false;
+                                          }
+                                          history.push(
+                                             "/admin/property/property-details/EditPost",
+                                             {
+                                                existingDetails: {
+                                                   propertyId: propertyData.smartdoorPropertyId,
+                                                   saveFlag: true,
+                                                },
+                                                miscellaneousDetails: miscellaneousDetailsDto,
+                                             }
+                                          );
+                                       }}
+                                    />
+                                 </>
+                              ) : null}
+                              {isDeleted === false &&
+                                 userData.roleName === "MARKETING EXECUTIVE" &&
+                                 propertyData.miscellaneousDetails.status !== "APPROVED" ? (
+                                 <>
+                                    <Buttons
+                                       style={{ float: "left" }}
+                                       name="Hide"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className="bg-danger"
+                                       onClick={() => {
+                                          setConfirmHideModal(true);
+                                       }}
+                                    />
+                                 </>
+                              ) : (
+                                 <></>
+                              )}
+                              {isDeleted === false && (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
+                                 <>
+                                    <Buttons
+                                       style={{ float: "left" }}
+                                       name="Hide"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className=" mb-2 bg-danger"
+                                       onClick={() => {
+                                          setConfirmHideModal(true);
+                                       }}
+                                    />
+                                 </>
+                              ) : (
+                                 <></>
+                              )}
+                              {isDeleted === true && (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
+                                 <>
+                                    <Buttons
+                                       style={{ float: "left" }}
+                                       name="Restore"
+                                       varient="primary"
+                                       size="xSmall"
+                                       color="white"
+                                       className="mb-2 bg-danger"
+                                       onClick={() => {
+                                          handleRestore();
+                                       }}
+                                    />
+                                 </>
+                              ) : (
+                                 <></>
+                              )}
+                           </div>
+
+                           {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") && realOwnerId ? (
+                              <div
+                                 className="mt-2 mb-2 p-3"
+                                 style={{ border: "1px solid #DED6D9", borderRadius: "6px" }}
+                              >
+                                 <div className="d-flex justify-content-between align-items-center">
+                                    <div>
+                                       <Text
+                                          size="xSmall"
+                                          fontWeight="mediumbold"
+                                          color="secondryColor"
+                                          text="Contact Lead"
+                                       />
+                                       {hasContactLead ? (
+                                          <div className="mt-1">
+                                             <Text
+                                                size="Small"
+                                                color="secondryColor"
+                                                text={
+                                                   (propertyData.miscellaneousDetails.postedByName || "") +
+                                                   " · " +
+                                                   (propertyData.miscellaneousDetails.postedByMobile || "")
+                                                }
+                                             />
+                                          </div>
+                                       ) : (
+                                          <div className="mt-1">
+                                             <Text size="Small" color="TaupeGrey" text="No contact lead set" />
+                                          </div>
+                                       )}
+                                    </div>
+                                    <div className="d-flex">
                                        <Buttons
-                                          onClick={() => qrGenerator(smartLockData)}
-                                          name="Print QR"
+                                          name={hasContactLead ? "Update" : "Add"}
                                           varient="primary"
                                           size="xSmall"
                                           color="white"
-                                          className="mt-2 mb-2"
-                                       />{" "}
-                                       &nbsp;&nbsp;
-                                    </>
-                                 ) : null}
-
-                                 {propertyData.miscellaneousDetails?.smartLockProperty === true &&
-                                    propertyData.miscellaneousDetails?.deleted === false && showQr === true &&
-                                    (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
-                                    <>
-                                       <Link
-                                          to={{
-                                             pathname: "/admin/property/property-devices",
-                                             state: {
-                                                propertyId: propertyData.smartdoorPropertyId,
-                                                smartLockData: smartLockData,
-                                                propertyDocsResp: propertyData.uploads,
-                                                userId: userId,
-                                             },
+                                          className="mr-2"
+                                          onClick={() => {
+                                             openContactLeadModal();
                                           }}
-                                       >
+                                       />
+                                       {hasContactLead ? (
                                           <Buttons
-                                             style={{ float: "right" }}
-                                             name="Show Device Data"
+                                             name="Delete"
                                              varient="primary"
                                              size="xSmall"
                                              color="white"
-                                             className="mt-2 mb-2"
-                                          />
-                                       </Link>
-                                    </>
-                                 ) : null}
-                              </div>
-
-                              <div className="d-flex mt-2">
-                                 {propertyData.miscellaneousDetails?.smartLockProperty === true &&
-                                    propertyData?.miscellaneousDetails?.deleted === false &&
-                                    showQr === true &&
-                                    userData.roleName === "SUPER ADMIN" ? (
-                                    <>
-                                       <Buttons
-                                          style={{ float: "right" }}
-                                          name="Remote Unlock"
-                                          varient="primary"
-                                          size="xSmall"
-                                          color="white"
-                                          className="mt-2 mb-2"
-                                          onClick={() => {
-                                             remoteUnLock();
-                                          }}
-                                       />{" "}
-                                       &nbsp; &nbsp;
-                                       <Buttons
-                                          style={{ float: "right" }}
-                                          name="Remote OTP"
-                                          varient="primary"
-                                          size="xSmall"
-                                          color="white"
-                                          className="mt-2 mb-2"
-                                          onClick={() => {
-                                             remoteOtp();
-                                          }}
-                                       />
-                                    </>
-                                 ) : null}
-                              </div>
-                              <div className="d-flex mt-2">
-                                 {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
-                                    <>
-                                       <Buttons
-                                          style={{ float: "left" }}
-                                          name="Edit Property"
-                                          varient="primary"
-                                          size="xSmall"
-                                          color="white"
-                                          className=" mb-2"
-                                          onClick={() => {
-                                             localStorage.setItem("autoRefresh", "Yes");
-                                             let miscellaneousDetailsDto =
-                                                propertyData.miscellaneousDetails;
-                                             if (
-                                                propertyData.miscellaneousDetails.status !== null
-                                             ) {
-                                                miscellaneousDetailsDto.draft = false;
-                                             }
-                                             history.push(
-                                                "/admin/property/property-details/EditPost",
-                                                {
-                                                   existingDetails: {
-                                                      propertyId: propertyData.smartdoorPropertyId,
-                                                      saveFlag: true,
-                                                   },
-                                                   miscellaneousDetails: miscellaneousDetailsDto,
-                                                }
-                                             );
-                                          }}
-                                       />{" "}
-                                       &nbsp; &nbsp;
-                                    </>
-                                 ) : null}
-                                 {userData.roleName === "MARKETING EXECUTIVE" &&
-                                    propertyData.miscellaneousDetails.status !== "APPROVED" ? (
-                                    <>
-                                       <Buttons
-                                          style={{ float: "left" }}
-                                          name="Edit Property"
-                                          varient="primary"
-                                          size="xSmall"
-                                          color="white"
-                                          className=" mb-2"
-                                          onClick={() => {
-                                             localStorage.setItem("autoRefresh", "Yes");
-                                             let miscellaneousDetailsDto =
-                                                propertyData.miscellaneousDetails;
-                                             if (
-                                                propertyData.miscellaneousDetails.status !== null
-                                             ) {
-                                                miscellaneousDetailsDto.draft = false;
-                                             }
-                                             history.push(
-                                                "/admin/property/property-details/EditPost",
-                                                {
-                                                   existingDetails: {
-                                                      propertyId: propertyData.smartdoorPropertyId,
-                                                      saveFlag: true,
-                                                   },
-                                                   miscellaneousDetails: miscellaneousDetailsDto,
-                                                }
-                                             );
-                                          }}
-                                       />{" "}
-                                       &nbsp; &nbsp;
-                                    </>
-                                 ) : null}
-                                 {isDeleted === false &&
-                                    userData.roleName === "MARKETING EXECUTIVE" &&
-                                    propertyData.miscellaneousDetails.status !== "APPROVED" ? (
-                                    <>
-                                       <Buttons
-                                          style={{ float: "left" }}
-                                          name="Hide"
-                                          varient="primary"
-                                          size="xSmall"
-                                          color="white"
-                                          className=" mb-2 bg-danger"
-                                          onClick={() => {
-                                             setConfirmHideModal(true);
-                                          }}
-                                       />{" "}
-                                       &nbsp; &nbsp;
-                                    </>
-                                 ) : (
-                                    <></>
-                                 )}
-                                 {isDeleted === false && (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
-                                    <>
-                                       <Buttons
-                                          style={{ float: "left" }}
-                                          name="Hide"
-                                          varient="primary"
-                                          size="xSmall"
-                                          color="white"
-                                          className=" mb-2 bg-danger"
-                                          onClick={() => {
-                                             setConfirmHideModal(true);
-                                          }}
-                                       />{" "}
-                                       &nbsp; &nbsp;
-                                    </>
-                                 ) : (
-                                    <></>
-                                 )}
-                              </div>
-                              <div>
-                                 {isDeleted === true && (userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") ? (
-                                    <>
-                                       <Buttons
-                                          style={{ float: "left" }}
-                                          name="Restore"
-                                          varient="primary"
-                                          size="xSmall"
-                                          color="white"
-                                          className=" mb-2 bg-danger"
-                                          onClick={() => {
-                                             handleRestore();
-                                          }}
-                                       />
-                                    </>
-                                 ) : (
-                                    <></>
-                                 )}
-                              </div>
-
-                              {(userData.roleName === "SUPER ADMIN" || userData.roleName === "INSTALLATION ADMIN") && realOwnerId ? (
-                                 <div
-                                    className="mt-5 mb-2 p-3"
-                                    style={{ border: "1px solid #DED6D9", borderRadius: "6px" }}
-                                 >
-                                    <div className="d-flex justify-content-between align-items-center">
-                                       <div>
-                                          <Text
-                                             size="xSmall"
-                                             fontWeight="mediumbold"
-                                             color="secondryColor"
-                                             text="Contact Lead"
-                                          />
-                                          {hasContactLead ? (
-                                             <div className="mt-1">
-                                                <Text
-                                                   size="Small"
-                                                   color="secondryColor"
-                                                   text={
-                                                      (propertyData.miscellaneousDetails.postedByName || "") +
-                                                      " · " +
-                                                      (propertyData.miscellaneousDetails.postedByMobile || "")
-                                                   }
-                                                />
-                                             </div>
-                                          ) : (
-                                             <div className="mt-1">
-                                                <Text size="Small" color="TaupeGrey" text="No contact lead set" />
-                                             </div>
-                                          )}
-                                       </div>
-                                       <div className="d-flex">
-                                          <Buttons
-                                             name={hasContactLead ? "Update" : "Add"}
-                                             varient="primary"
-                                             size="xSmall"
-                                             color="white"
-                                             className="mr-2"
+                                             className="bg-danger"
                                              onClick={() => {
-                                                openContactLeadModal();
+                                                setShowRemoveContactLeadModal(true);
                                              }}
                                           />
-                                          {hasContactLead ? (
-                                             <Buttons
-                                                name="Delete"
-                                                varient="primary"
-                                                size="xSmall"
-                                                color="white"
-                                                className="bg-danger"
-                                                onClick={() => {
-                                                   setShowRemoveContactLeadModal(true);
-                                                }}
-                                             />
-                                          ) : null}
-                                       </div>
+                                       ) : null}
                                     </div>
                                  </div>
-                              ) : null}
+                              </div>
+                           ) : null}
 
+                           <Text
+                              className="fw500 mt-2"
+                              size="xSmall"
+                              color="TaupeGrey"
+                              text="Description"
+                           />
+
+                           <Text
+                              className="fw500"
+                              size="Small"
+                              color="secondry-color"
+                              text={propertyAnalyticsData.data.description || ""}
+                           />
+
+                           <div className="mapLocation my-3">
+
+                              <div style={{ height: "120px", overflow: "hidden" }}>
+                                 <MapComponent
+                                    p_lat={propertyData.address.latitude}
+                                    p_lng={propertyData.address.longitude}
+                                 />
+                              </div>
+                              <hr />
+                           </div>
+
+                           <div className="d-grid">
+                              {/* <span>Analytics</span> */}
                               <Text
-                                 className="fw500 mt-5"
-                                 size="xSmall"
-                                 color="TaupeGrey"
-                                 text="Description"
+                                 size="large"
+                                 fontWeight="mediumbold"
+                                 color="secondry-color"
+                                 text={"Analytics"}
                               />
 
-                              {/* <p className="mb-0 fs-13">{propertyAnalyticsData.data.description || ''}</p> */}
-                              {/* <Text className="fw500" size="Small" color="secondry-color" text={propertyAnalyticsData.data.description || ''} /> */}
+                              {/* <small className="fs-12 d-block mt-1 fw500">{(propertyAnalyticsData.data.registerdOn === null) ? 'Published On: - ' : `Published On: ${formateDate(propertyAnalyticsData.data.registerdOn) || '-'}`}</small> */}
                               <Text
                                  className="fw500"
                                  size="Small"
+                                 fontWeight="semibold"
                                  color="secondry-color"
-                                 text={propertyAnalyticsData.data.description || ""}
+                                 text={
+                                    propertyAnalyticsData.data.registerdOn === null
+                                       ? "Published On: - "
+                                       : `Published On: ${formateDate(
+                                          propertyAnalyticsData.data.registerdOn
+                                       ) || "-"
+                                       }`
+                                 }
                               />
+                           </div>
 
-                              <div className="mapLocation my-3">
-                                 {/* <div style={{height: '120px',overflow: 'hidden'}}>
-                     <MapComponent p_lat ="22.7196" p_lng ="75.8577" />
-                  </div> */}
-                                 <div style={{ height: "120px", overflow: "hidden" }}>
-                                    <MapComponent
-                                       p_lat={propertyData.address.latitude}
-                                       p_lng={propertyData.address.longitude}
-                                    />
-                                 </div>
-                                 <hr />
-                              </div>
-
-                              <div className="mt-0"></div>
-                              {/* <h5 className="d-flex justify-content-between font-weight-bold my-3"> */}
-                              <div className="d-grid">
-                                 {/* <span>Analytics</span> */}
-                                 <Text
-                                    size="large"
-                                    fontWeight="mediumbold"
-                                    color="secondry-color"
-                                    text={"Analytics"}
-                                 />
-
-                                 {/* <small className="fs-12 d-block mt-1 fw500">{(propertyAnalyticsData.data.registerdOn === null) ? 'Published On: - ' : `Published On: ${formateDate(propertyAnalyticsData.data.registerdOn) || '-'}`}</small> */}
-                                 <Text
-                                    className="fw500"
-                                    size="Small"
-                                    fontWeight="semibold"
-                                    color="secondry-color"
-                                    text={
-                                       propertyAnalyticsData.data.registerdOn === null
-                                          ? "Published On: - "
-                                          : `Published On: ${formateDate(
-                                             propertyAnalyticsData.data.registerdOn
-                                          ) || "-"
-                                          }`
-                                    }
-                                 />
-                              </div>
-
-                              {/* </h5> */}
-
-                              <table className="w-100">
-                                 <tbody>
-                                    <tr className="bg-white">
-                                       <td className="pl-0 ">
-                                          <Text
-                                             size="xSmall"
-                                             fontWeight="fw500"
-                                             color="TaupeGrey"
-                                             text={"Users Visited"}
-                                          />
+                           <table className="w-100">
+                              <tbody>
+                                 <tr className="bg-white">
+                                    <td className="pl-0 ">
+                                       <Text
+                                          size="xSmall"
+                                          fontWeight="fw500"
+                                          color="TaupeGrey"
+                                          text={"Users Visited"}
+                                       />
+                                       <Text
+                                          size="Small"
+                                          fontWeight="mediumbold"
+                                          color="secondry-color"
+                                          text={propertyData.miscellaneousDetails.userVisited || '0'}
+                                       />
+                                    </td>
+                                    <td className="p-2">
+                                       <Text
+                                          size="xSmall"
+                                          fontWeight="fw500"
+                                          color="TaupeGrey"
+                                          text={"Favorited"}
+                                       />
+                                       <Text
+                                          size="Small"
+                                          fontWeight="mediumbold"
+                                          color="secondry-color"
+                                          text={propertyData.miscellaneousDetails.favouriteCount || '0'}
+                                       />
+                                    </td>
+                                    <td className="pl-0">
+                                       <Text
+                                          size="xSmall"
+                                          fontWeight="fw500"
+                                          color="TaupeGrey"
+                                          text={"Upcoming Visits"}
+                                       />
+                                       <Text
+                                          size="Small"
+                                          fontWeight="mediumbold"
+                                          color="secondry-color"
+                                          text={propertyData.miscellaneousDetails.upcomingVisits || '0'}
+                                       />
+                                    </td>
+                                 </tr>
+                              </tbody>
+                           </table>
+                           <hr />
+                           <div className="ownerInfoWrap">
+                              <Text
+                                 fontWeight="mediumbold"
+                                 color="secondry-color"
+                                 text="Owner Info"
+                                 className="mb-3 fs16 mt-2"
+                              />
+                              <div className="d-flex justify-content-between mb-2 propertyOwnerInfoWrap align-items-baseline">
+                                 <div className="d-flex userName propertyOwnerInfoWrapFirst mb-3 align-items-end">
+                                    <div className="uName">
+                                       <img
+                                          src={propertyData.ownerImageUrl || userImg}
+                                          className="rounded-circle object-cover"
+                                          width="50px"
+                                          height="50px"
+                                          alt=""
+                                       />
+                                    </div>
+                                    <div className="flex-1 align-items-center ml-2 ownerdetail">
+                                       <ToolTip
+                                          position="top"
+                                          name={
+                                             propertyData.miscellaneousDetails
+                                                .actualOwnerName ||
+                                             propertyData.miscellaneousDetails.ownerName ||
+                                             propertyData.miscellaneousDetails.postedByName
+                                          }
+                                       >
                                           <Text
                                              size="Small"
                                              fontWeight="mediumbold"
+                                             className="userName"
                                              color="secondry-color"
-                                             text={propertyData.miscellaneousDetails.userVisited || '0'}
-                                          />
-                                       </td>
-                                       {/* <td className="p-2">
-                                          <Text
-                                             size="xSmall"
-                                             fontWeight="fw500"
-                                             color="TaupeGrey"
-                                             text={"Meetings Done"}
-                                          />
-                                          <Text
-                                             size="Small"
-                                             fontWeight="mediumbold"
-                                             color="secondry-color"
-                                             text={propertyAnalyticsData.data.meetingDone}
-                                          />
-                                       </td> */}
-                                       <td className="p-2">
-                                          <Text
-                                             size="xSmall"
-                                             fontWeight="fw500"
-                                             color="TaupeGrey"
-                                             text={"Favorited"}
-                                          />
-                                          <Text
-                                             size="Small"
-                                             fontWeight="mediumbold"
-                                             color="secondry-color"
-                                             text={propertyData.miscellaneousDetails.favouriteCount || '0'}
-                                          />
-                                       </td>
-                                       <td className="pl-0">
-                                          <Text
-                                             size="xSmall"
-                                             fontWeight="fw500"
-                                             color="TaupeGrey"
-                                             text={"Upcoming Visits"}
-                                          />
-                                          <Text
-                                             size="Small"
-                                             fontWeight="mediumbold"
-                                             color="secondry-color"
-                                             text={propertyData.miscellaneousDetails.upcomingVisits || '0'}
-                                          />
-                                       </td>
-                                    </tr>
-                                    <tr className="bg-white">
-                                       {/* <td className="pl-0">
-                                          <Text
-                                             size="xSmall"
-                                             fontWeight="fw500"
-                                             color="TaupeGrey"
-                                             text={"Upcoming Visits"}
-                                          />
-                                          <Text
-                                             size="Small"
-                                             fontWeight="mediumbold"
-                                             color="secondry-color"
-                                             text={propertyData.miscellaneousDetails.upcomingVisits || '0'}
-                                          />
-                                       </td> */}
-                                       {/* <td className="p-2">
-                                          <Text
-                                             size="xSmall"
-                                             fontWeight="fw500"
-                                             color="TaupeGrey"
-                                             text={"Cancelled Deals"}
-                                          />
-                                          <Text
-                                             size="Small"
-                                             fontWeight="mediumbold"
-                                             color="secondry-coFlor"
-                                             text={propertyAnalyticsData.data.dealCancelled}
-                                          />
-                                       </td> */}
-                                       <td className="p-2"></td>
-                                    </tr>
-                                 </tbody>
-                              </table>
-                              <hr />
-                              <div className="ownerInfoWrap">
-                                 <Text
-                                    fontWeight="mediumbold"
-                                    color="secondry-color"
-                                    text="Owner Info"
-                                    className="mb-3 fs16 mt-2"
-                                 />
-                                 {/* {propertyData.miscellaneousDetails.ownerName === null ? null : (
-                                 )} */}
-                                 <div className="d-flex justify-content-between mb-2 propertyOwnerInfoWrap align-items-baseline">
-                                    <div className="d-flex userName propertyOwnerInfoWrapFirst mb-3 align-items-end">
-                                       <div className="uName">
-                                          <img
-                                             src={propertyData.ownerImageUrl || userImg}
-                                             className="rounded-circle object-cover"
-                                             width="50px"
-                                             height="50px"
-                                             alt=""
-                                          />
-                                       </div>
-                                       <div className="flex-1 align-items-center ml-2 ownerdetail">
-                                          <ToolTip
-                                             position="top"
-                                             name={
+                                             text={
                                                 propertyData.miscellaneousDetails
                                                    .actualOwnerName ||
                                                 propertyData.miscellaneousDetails.ownerName ||
                                                 propertyData.miscellaneousDetails.postedByName
                                              }
-                                          >
-                                             <Text
-                                                size="Small"
-                                                fontWeight="mediumbold"
-                                                className="userName"
-                                                color="secondry-color"
-                                                text={
-                                                   propertyData.miscellaneousDetails
-                                                      .actualOwnerName ||
-                                                   propertyData.miscellaneousDetails.ownerName ||
-                                                   propertyData.miscellaneousDetails.postedByName
-                                                }
-                                             />
-                                          </ToolTip>
-                                          <Text
-                                             className="fw500 wordWrap"
-                                             size="xSmall"
-                                             color="secondry-color"
-                                             text={
-                                                propertyData.miscellaneousDetails
-                                                   .actualOwnerMobile ||
-                                                propertyData.miscellaneousDetails
-                                                   .ownerMobileNumber ||
-                                                propertyData.miscellaneousDetails.postedByMobile
-                                             }
                                           />
-                                       </div>
+                                       </ToolTip>
+                                       <Text
+                                          className="fw500 wordWrap"
+                                          size="xSmall"
+                                          color="secondry-color"
+                                          text={
+                                             propertyData.miscellaneousDetails
+                                                .actualOwnerMobile ||
+                                             propertyData.miscellaneousDetails
+                                                .ownerMobileNumber ||
+                                             propertyData.miscellaneousDetails.postedByMobile
+                                          }
+                                       />
                                     </div>
-                                    <div className="msgtoowner propertyOwnerInfoWrapLast">
-                                       {/* <ToolTip position="left" name="Under development"> */}
-                                       <span className="btnNew">
-                                          <Buttons
-                                             onClick={() => setShowMsgModal(true)}
-                                             disabled={
-                                                propertyData.miscellaneousDetails.ownerAvailable
-                                                   ? true
-                                                   : false
-                                             }
-                                             name="Owner"
-                                             varient="primary"
-                                             type="submit"
-                                             size="Small"
-                                             color="white"
-                                             iconSrc={mailIcon}
-                                          />
-                                          {/* <img color='red' src={mailIcon} /> */}
-                                       </span>
-                                       {/* </ToolTip> */}
-
-                                       {/* <ToolTip position="top" name="Property Document">
-                                          {propertyData?.miscellaneousDetails.ownerAvailable ? (
-                                             <img
-                                                className={
-                                                   "doc docOwner" +
-                                                   propertyData?.miscellaneousDetails.ownerAvailable
-                                                      ? "doc docOwner disabled-icon"
-                                                      : ""
-                                                }
-                                                src={doc}
-                                                alt=""
-                                             />
-                                          ) : (
-                                             <Link
-                                                to={{
-                                                   pathname: "/admin/property/property-documents",
-                                                   state: {
-                                                      propertyId: propertyData.smartdoorPropertyId,
-                                                      propertyDocsResp: propertyData.uploads,
-                                                      userId: userId,
-                                                   },
-                                                }}
-                                             >
-                                                 <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " />
-                                                <img className="doc docOwner" src={doc} alt="" />
-                                             </Link>
-                                          )}
-                                       </ToolTip> */}
-                                    </div>
+                                 </div>
+                                 <div className="msgtoowner propertyOwnerInfoWrapLast">
+                                    {/* <ToolTip position="left" name="Under development"> */}
+                                    <span className="btnNew">
+                                       <Buttons
+                                          onClick={() => setShowMsgModal(true)}
+                                          disabled={
+                                             propertyData.miscellaneousDetails.ownerAvailable
+                                                ? true
+                                                : false
+                                          }
+                                          name="Owner"
+                                          varient="primary"
+                                          type="submit"
+                                          size="Small"
+                                          color="white"
+                                          iconSrc={mailIcon}
+                                       />
+                                    </span>
                                  </div>
                               </div>
-                              {/* <div className="ownerInfoWrap">
-                                 <div className="d-flex justify-content-between mb-2 propertyOwnerInfoWrap align-items-baseline">
-                                    <div className="d-flex userName propertyOwnerInfoWrapFirst mb-3 align-items-end">
-                                       <div className="uName">
-                                          <img
-                                             src={propertyData.imageUrl || userImg}
-                                             className="rounded-circle object-cover"
-                                             width="50px"
-                                             height="50px"
-                                             alt=""
-                                          />
-                                       </div>
-                                       <div className="flex-1 ml-2 ownerdetail">
-
-                                          <ToolTip
-                                             position="top"
-                                             name={propertyData.miscellaneousDetails.ownerName || "-"}
-                                          >
-                                             <Text
-                                                size="Small"
-                                                fontWeight="mediumbold"
-                                                className="userName"
-                                                color="secondry-color"
-                                                text={propertyData.miscellaneousDetails.ownerName || "-"}
-                                             />
-                                          </ToolTip>
-                                          <Text
-                                             className="fw500"
-                                             size="xSmall"
-                                             color="secondry-color"
-                                             text={propertyData.phoneNumber || "-"}
-                                          />
-                                       </div>
-                                    </div>
-                                    <div className="msgtoowner propertyOwnerInfoWrapLast">
-                                       <span className="btnNew">
-                                          {propertyData.miscellaneousDetails.ownerName === null ? (
-                                             <>
-                                                <Buttons
-                                                   onClick={() => setShowMsgModal(true)}
-                                                   name={propertyData.miscellaneousDetails.ownerName ? "Realtor" : "Owner"}
-                                                   varient="primary"
-                                                   type="submit"
-                                                   size="Small"
-                                                   color="white"
-                                                   iconSrc={mailIcon}
-                                                />
-                                                <ToolTip position="top" name="Property Document">
-                                                   <Link
-                                                      to={{
-                                                         pathname:
-                                                            "/admin/property/property-documents",
-                                                         state: {
-                                                            propertyId:
-                                                               propertyData.smartdoorPropertyId,
-                                                            propertyDocsResp:
-                                                               propertyData.propertyDocsResp,
-                                                            userId: userId
-                                                         },
-                                                      }}
-                                                   >
-
-                                                       <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " />
-                                                      <img className="doc docOwner" src={doc} alt=""/>
-
-                                                   </Link>
-                                                </ToolTip>
-                                             </>
-                                          ) : (
-                                             <>
-                                                <Buttons
-                                                   disabled={
-                                                      propertyData?.ownerNotAvailable ? false : true
-                                                   }
-                                                   onClick={() => setShowMsgModal(true)}
-                                                   name={propertyData.ownerName ? "Realtor" : "Owner"}
-                                                   varient="primary"
-                                                   type="submit"
-                                                   size="Small"
-                                                   color="white"
-                                                   iconSrc={mailIcon}
-                                                />
-                                                <ToolTip position="top" name="Property Document">
-                                                   {propertyData?.ownerNotAvailable ? (
-                                                      <Link
-                                                         style={{
-                                                            pointerEvents:
-                                                               propertyData.ownerNotAvailable
-                                                                  ? ""
-                                                                  : "none",
-                                                         }}
-                                                         to={{
-                                                            pathname:
-                                                               "/admin/property/property-documents",
-                                                            state: {
-                                                               propertyId:
-                                                                  propertyData.smartdoorPropertyId,
-                                                               propertyDocsResp:
-                                                                  propertyData.propertyDocsResp,
-                                                               userId: userId
-                                                            },
-                                                         }}
-                                                      >
-
-                                                       <Buttons name="View Property Documents" varient="buttonGray" type="submit" size="Small" color="" className="ml-3 " />
-                                                         <img className={"doc docOwner "} src={doc} alt="" />
-                                                         <img className={"doc docOwner "} src={doc} alt=""/>
-
-                                                      </Link>
-                                                   ) : (
-                                                      <img
-                                                         className={
-                                                            "doc docOwner " +
-                                                               propertyData?.ownerNotAvailable
-                                                               ? "doc docOwner"
-                                                               : "disabled-icon "
-                                                         }
-                                                         src={doc}
-                                                         alt=""
-                                                      />
-                                                   )}
-                                                </ToolTip>
-                                             </>
-                                          )}
-                                       </span>
-                                    </div>
-                                 </div>
-                                       </div> */}
                            </div>
-                        )}
+                        </div>
                      </Col>
                   </Row>
 
@@ -2767,7 +2456,7 @@ const PropertyDetails = (props) => {
                   </Row>
 
                   <Row>
-                     <Col md={12} className="propertyDetailsTable mb-5">
+                     <Col md={12} className="propertyDetailsTable mb-3">
                         <Text
                            size="medium"
                            fontWeight="bold"
@@ -2866,7 +2555,7 @@ const PropertyDetails = (props) => {
                   </Row>
 
                   <Row>
-                     <Col md={12} className="propertyDetailsTable mb-5">
+                     <Col md={12} className="propertyDetailsTable mb-3">
                         <Text
                            size="medium"
                            fontWeight="bold"
@@ -2969,7 +2658,7 @@ const PropertyDetails = (props) => {
                         ) : (
                            <>
                               <Row>
-                                 <Col md={12} className="mb-3">
+                                 <Col md={12} className="mb-2">
                                     <Text
                                        fontSize="40px"
                                        fontWeight="bold"
@@ -2982,6 +2671,78 @@ const PropertyDetails = (props) => {
                         )}
                      </Col>
                   </Row>
+
+                  <div className="d-flex bg-white p-2" style={{ justifyContent: 'space-between' }}>
+                     <div className="d-flex">
+                        <Text text="Visit Coins: " style={{ fontSize: '18px', fontWeight: '700' }} /> &nbsp;&nbsp;
+                        {!editVisitCoinsFlag ?
+                           <Text text={propertyData?.miscellaneousDetails?.visitCoins ? propertyData?.miscellaneousDetails?.visitCoins + "SD Coins" : "0 SD Coins"} style={{ fontSize: '18px', fontWeight: '700', color: '#BE1452' }} />
+                           :
+                           <div className="d-flex">
+                              <TextField
+                                 className="textFieldInput"
+                                 inputProps={{ min: 0 }}
+                                 type="number"
+                                 placeholder="Enter SD Coins"
+                                 value={visitCoins}
+                                 onChange={(e) => { setVisitCoins(e.target.value) }}
+                                 sx={{
+                                    "&.MuiFormControl-root": {
+                                       margin: 0,
+                                       height: "fit-content",
+                                    },
+
+                                    "& .MuiFormHelperText-root": {
+                                       display: "none",
+                                    },
+                                    "& .MuiOutlinedInput-root": {
+                                       height: "30px",
+                                       padding: "0 8px",
+                                       borderRadius: "4px",
+                                       // backgroundColor: "#F8F3F5",
+                                       fontSize: "12px",
+                                       fontWeight: 600,
+                                       display: "flex",
+                                       alignItems: "center",
+                                       fontFamily: "inherit",
+                                       color: "#495057",
+                                       boxSizing: "border-box",
+                                       "& fieldset": {
+                                          border: "1px solid #ced4da",
+                                       },
+                                    },
+                                    "& .MuiOutlinedInput-notchedOutline": {
+                                       border: "1px solid #ced4da",
+                                    },
+                                    "& .MuiSelect-select": {
+                                       padding: "0 !important",
+                                       height: "30px",
+                                       display: "flex",
+                                       alignItems: "center",
+                                       overflow: "hidden",
+                                       whiteSpace: "nowrap",
+                                       textOverflow: "ellipsis",
+                                    },
+
+                                    "& .MuiSelect-icon": {
+                                       top: "50%",
+                                       transform: "translateY(-50%)",
+                                    },
+                                    "& .select-ellipsis": {
+                                       display: "block",
+                                       maxWidth: "calc(100% - 24px)", // 👈 icon width
+                                       overflow: "hidden",
+                                       whiteSpace: "nowrap",
+                                       textOverflow: "ellipsis",
+                                    },
+                                 }}
+                              /> &nbsp;&nbsp;
+                              <Buttons name="Save" onClick={() => { editVisitCoins(); }} />
+                           </div>
+                        }
+                     </div>
+                     <img src={editIcon} style={{ cursor: 'pointer', height: '18px', width: '18px', alignSelf: 'anchor-center' }} onClick={() => { setEditVisiCoinsFlag(true) }} />
+                  </div>
 
                   <Text
                      size="medium"
