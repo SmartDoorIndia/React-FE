@@ -35,6 +35,10 @@ import ReactPlayer from "react-player";
 import VisitMedia from "../VisitRecordings/VisitMedia";
 import IntrusionMedia from "../Intrusions/IntrusionMedia";
 
+// Keep action buttons on one line; Windows fonts are wider than macOS ones.
+const ACTION_CELL_STYLE = { display: "flex", flexWrap: "nowrap", alignItems: "center", gap: "10px" };
+const ACTION_BUTTON_STYLE = { whiteSpace: "nowrap", flexShrink: 0 };
+
 const STATUS_COLORS = {
    INSTALLED: { background: "#dcfce7", color: "#166534" },
    PRECONFIGURED_DEVICE: { background: "#e0e7ff", color: "#3730a3" },
@@ -268,26 +272,27 @@ const PropertyDevice = (props) => {
       {
          name: "Lock Type",
          selector: "smartlockType",
-         maxWidth: "220px",
+         maxWidth: "160px",
          center: true,
       },
       {
          name: "Access Token",
          selector: "accessToken",
-         maxWidth: "220px",
+         maxWidth: "160px",
          center: true,
          cell: ({ accessToken }) => <TruncatedText value={accessToken} />,
       },
       {
          name: "Refresh Token",
          selector: "refreshToken",
-         maxWidth: "220px",
+         maxWidth: "160px",
          center: true,
          cell: ({ refreshToken }) => <TruncatedText value={refreshToken} />,
       },
       {
          name: "Status",
          selector: "status",
+         minWidth: "170px",
          maxWidth: "200px",
          center: true,
          cell: ({ status }) => <StatusBadge status={status} />,
@@ -297,8 +302,9 @@ const PropertyDevice = (props) => {
          sortable: false,
          center: true,
          minWidth: "350px",
+         grow: 2,
          cell: ({ id, deleted, kitId }) => (
-            <div className="action">
+            <div className="action" style={ACTION_CELL_STYLE}>
                <Buttons
                   name="View Data"
                   varient="primary"
@@ -306,11 +312,11 @@ const PropertyDevice = (props) => {
                   size="xSmall"
                   color="white"
                   className="mt-2 mb-2"
+                  style={ACTION_BUTTON_STYLE}
                   onClick={() => {
                      showSmartLockData(id);
                   }}
-               />{" "}
-               &nbsp;&nbsp;
+               />
                {!kitId ? (
                   <Buttons
                      name="Replace Lock"
@@ -318,6 +324,7 @@ const PropertyDevice = (props) => {
                      size="xSmall"
                      color="white"
                      className="mt-2 mb-2"
+                     style={ACTION_BUTTON_STYLE}
                      onClick={() => {
                         setCurrentLockId(id);
                         setSelectedNewLock(null);
