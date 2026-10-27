@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { connect, useDispatch } from "react-redux";
-import { Row, Col, Modal } from "react-bootstrap";
+import { Row, Col, Modal, Card, Form, Button } from "react-bootstrap";
 import ImageSliderComponent from "./ImageSliderComponent";
 import Buttons from "../../../shared/Buttons/Buttons";
 import userImg from "../../../assets/svg/avatar_sml.svg";
@@ -62,6 +62,7 @@ import reviewIcon from "../../../assets/svg/reviewIcon.svg";
 import { getLocalStorage } from "../../../common/helpers/Utils";
 import PostingFields from "../../../common/helpers/PostingFields";
 import editIcon from "../../../assets/svg/pencilIcon.svg";
+import coinsIcon from "../../../assets/images/coinStack.png";
 import './propertDetails.scss';
 
 const PropertyDetails = (props) => {
@@ -221,6 +222,7 @@ const PropertyDetails = (props) => {
                   setOwnerId(response.data.resourceData.miscellaneousDetails.postedById);
                   setOwnerName(response.data.resourceData.miscellaneousDetails.ownerName);
                   setVisitorReviewList(response.data.resourceData.visitorReviewList);
+                  setVisitCoins(response.data.resourceData.miscellaneousDetails?.visitCoins);
                   _getSmartLockData({ propertyId });
                   dispatch({
                      type: Actions.BASIC_DETAILS_SUCCESS,
@@ -2672,7 +2674,7 @@ const PropertyDetails = (props) => {
                      </Col>
                   </Row>
 
-                  <div className="d-flex bg-white p-2" style={{ justifyContent: 'space-between' }}>
+                  {/* <div className="d-flex bg-white p-2" style={{ justifyContent: 'space-between' }}>
                      <div className="d-flex">
                         <Text text="Visit Coins: " style={{ fontSize: '18px', fontWeight: '700' }} /> &nbsp;&nbsp;
                         {!editVisitCoinsFlag ?
@@ -2742,7 +2744,92 @@ const PropertyDetails = (props) => {
                         }
                      </div>
                      <img src={editIcon} style={{ cursor: 'pointer', height: '18px', width: '18px', alignSelf: 'anchor-center' }} onClick={() => { setEditVisiCoinsFlag(true) }} />
-                  </div>
+                  </div> */}
+
+                  <Card className="visit-coins-card">
+                     <Card.Body>
+                        <div className="visit-coins-header">
+                           <div className="visit-coins-title-section">
+                              <div className="visit-coins-icon">
+                                 <img src={coinsIcon} alt="Visit Coins" style={{scale:'1.5'}} />
+                              </div>
+
+                              <div>
+                                 <h4>Visit Coins</h4>
+                                 <p>Configure coins for property visits</p>
+                              </div>
+                           </div>
+                        </div>
+
+                        <Row className="align-items-center">
+
+                           {/* Current Visit Coins */}
+                           <Col lg={4} md={5} className="current-coins-section">
+                              <div className="coins-label">
+                                 CURRENT VISIT COINS
+                              </div>
+
+                              <div className="current-coins-value">
+                                 <img src={coinsIcon} alt="Coins" />
+                                 <span>
+                                    {propertyData?.miscellaneousDetails?.visitCoins || 0} Coins
+                                 </span>
+                              </div>
+
+                              <div className="coins-description">
+                                 Coins required per property visit.
+                              </div>
+                           </Col>
+
+                           {/* Set Visit Coins */}
+                           <Col lg={8} md={7}>
+                              <div className="set-coins-section">
+
+                                 <label className="coins-input-label">
+                                    Set visit coins <span>*</span>
+                                 </label>
+
+                                 <Row className="align-items-cener">
+                                    <Col md={7}>
+                                       <Form.Control
+                                          type="number"
+                                          min="0"
+                                          value={visitCoins}
+                                          onChange={(e) => {
+                                             const value = e.target.value;
+
+                                             // setpropertyData(prevData => ({
+                                             //    ...prevData,
+                                             //    miscellaneousDetails: {
+                                             //       ...prevData.miscellaneousDetails,
+                                             //       visitCoins: value
+                                             //    }
+                                             // }));
+                                             setVisitCoins(value)
+                                          }}
+                                       />
+                                    </Col>
+
+                                    <Col md={5} className="" style={{verticalAlign:'center'}}>
+                                       <Button
+                                          variant="none"
+                                          className="save-coins-btn"
+                                          onClick={() => { editVisitCoins() }}
+                                          name="Save changes"
+                                       >Save changes</Button>
+                                    </Col>
+                                 </Row>
+
+                                 <div className="coins-help-text">
+                                    Enter the number of coins applicable to each property visit.
+                                 </div>
+
+                              </div>
+                           </Col>
+
+                        </Row>
+                     </Card.Body>
+                  </Card>
 
                   <Text
                      size="medium"
@@ -2794,7 +2881,6 @@ const PropertyDetails = (props) => {
                                     />
                                  </Col>
                                  <Col lg="4">
-                                    {/* {visitorReviewList} */}
                                     {Array.from(
                                        { length: Number(element.visitRating) },
                                        (_, index) => (
@@ -2809,12 +2895,6 @@ const PropertyDetails = (props) => {
                                           ></img>
                                        )
                                     )}
-                                    {/* <Text
-                                 fontSize="40px"
-                                 fontWeight="bold"
-                                 color="secondryColor"
-                                 text={element.visitRating}
-                              /> */}
                                  </Col>
                                  <Col lg="4">
                                     <Text
@@ -2839,90 +2919,23 @@ const PropertyDetails = (props) => {
                      </>
                   )}
 
-                  {/* <VisitMedia cameraId={} /> */}
-                  {/* <div>
-                     <Text
-                        fontSize="40px"
-                        fontWeight="bold"
-                        color="secondryColor"
-                        text={"Chat History"}
-                     />
-                     {chatHistory.map((chat) => (
-                        <>
-                           <div className="row col-8">
-                              <div className="col-4">
-                                 <Text
-                                    fontSize="40px"
-                                    fontWeight="bold"
-                                    color="secondryColor"
-                                    text={chat.sender_id === 361 ? chat.message : null}
-                                 />
-                              </div>
-                              <div className="col-4">
-                                 <Text
-                                    fontSize="40px"
-                                    fontWeight="bold"
-                                    color="secondryColor"
-                                    text={chat.sender_id === 271 ? chat.message : null}
-                                 />
-                              </div>
-                           </div>
-                        </>
-                     ))}
-                  </div> */}
-                  {/* <ConfirmationModal
-        title ={ blockData.status ? 'Are you sure you want to unblock this user?':'Are you sure you want to block this user?' }
-        // title = "Are you sure you want to decline the request ?"
-        cancelButtonName = "Cancel"
-        // primaryButtonName = { blockData.isBlocked?'Unblock':'Block' }
-        primaryButtonName = {blockData.status ? 'Unblock' : 'Block'}
-        show = { show }
-        handleClose = { handleClose }
-        handleShow = { handleShow }
-        handlePerformAction = { ()=> handleRealtorStatus(blockData.id, blockData.status ? "UNBLOCKED" : "BLOCKED" ) }
-      /> */}
-
                   <MessageModal
                      show={showMsgModal}
                      handleShow={handleshowMsgModal}
                      handleClose={handleCloseMsgModal}
                      headerText="Message to Owner"
                      subHeaderText="Message"
-                     // sendMsgHandler={sendMsgHandler}
                      ownerId={ownerId}
                      userId={userId}
-                  // modalData={modalData}
-                  // dataFrom="user_manage"
-                  // closeModal={closeModal}
-                  // history={{ goBack: closeModal }}
-                  // getAllUsers={getAllUsers}
                   />
 
                   <QrModal
                      show={showQrModal}
                      qrData={qrData}
-                     // handleShow={handleshowQrModal}
                      handleClose={handleCloseQrModal}
                      headerText="QR Code"
-                  // subHeaderText="Message"
-                  // sendMsgHandler={sendMsgHandler}
-                  // ownerId={ownerId}
-                  // userId={userId}
-                  // modalData={modalData}
-                  // dataFrom="user_manage"
-                  // closeModal={closeModal}
-                  // history={{ goBack: closeModal }}
-                  // getAllUsers={getAllUsers}
                   />
 
-                  {/* <ModalComponent /> */}
-
-                  {/* <Modal show={show} onHide={handleClose} className="vid_modal" centered>
-                  <Modal.Header closeButton></Modal.Header>
-                  <Modal.Body>
-                     <img src={smapleImg} />
-                  </Modal.Body>
-               </Modal> */}
                </div>
             </>
          ) : null}
