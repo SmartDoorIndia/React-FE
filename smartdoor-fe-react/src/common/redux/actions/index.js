@@ -2622,3 +2622,9 @@ export const chargeVisitCoins = async data => {
   const response = await mainApiService("chargeVisitCoins", data);
   return response;
 }
+
+export const delinkCorporateUser = async data => {
+  const response = await mainApiService("delinkCorporateUser", data);
+  return response;
+}
+

@@ -146,6 +146,7 @@ const VisitImages = (props) => {
                                           }}
                                           onClick={() => {
                                              setShowImage(true);
+                                             setSelectedImg(visitImage?.mediaUrl)
                                           }}
                                        />
                                     </Col>

@@ -148,11 +148,8 @@ const VisitVideos = (props) => {
                                              cursor: "pointer",
                                           }}
                                           onClick={() => {
-                                             const nextPage = currentPage + 1;
-
-                                             setLoading(true);
-                                             setCurrentPage(nextPage);
-                                             getMedia(nextPage);
+                                             setSelectedVideo(VisitVideo.mediaUrl);
+                                             setShowVideo(true);
                                           }}
                                        >
                                           {/* Background thumbnail */}

@@ -11,7 +11,7 @@ import addIcon from '../../../../assets/svg/add.svg';
 import { validateCorpUser, validateCorporate } from "../../../../common/validations";
 import pencilIcon from '../../../../assets/svg/icon-edit.svg';
 import { compose } from "redux";
-import { addEditCorporate, addEditCorporateUser, getAllCorporateUser, getCorporateById, getCorporateEmailList, getCorporateUserHubList, getHubList, getPlansForCorporate, setCorporateEmailList } from "../../../../common/redux/actions";
+import { addEditCorporate, addEditCorporateUser, delinkCorporateUser, getAllCorporateUser, getCorporateById, getCorporateEmailList, getCorporateUserHubList, getHubList, getPlansForCorporate, setCorporateEmailList } from "../../../../common/redux/actions";
 import { showErrorToast, showSuccessToast } from "../../../../common/helpers/Utils";
 import { connect } from "react-redux";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -137,6 +137,7 @@ const AddNewCorporate = (props) => {
             setUserList([...userlist]);
             setNewUser(prevUser => ({ ...prevUser, name: '', mobile: '', sdPosting: '', hubIdList: [] }));
             setAddNewUserFlag(false);
+            getCorporateUser();
             showSuccessToast("User added successfully");
          } else {
             showErrorToast(response.data.message);
@@ -160,9 +161,10 @@ const AddNewCorporate = (props) => {
          }
          const response = await addEditCorporateUser(userObj)
          if (response.status === 200) {
-            setNewUser(prevUser => ({ ...prevUser, name: '', mobile: '', sdPosting: '' }));
+            // setNewUser(prevUser => ({ ...prevUser, name: '', mobile: '', sdPosting: '' }));
             setAddNewUserFlag(false);
-            setEditUserIndex(null)
+            setEditUserIndex(null);
+            getCorporateUser();
             showSuccessToast("User edited successfully");
          } else {
             showErrorToast(response.data.message);
@@ -170,12 +172,6 @@ const AddNewCorporate = (props) => {
          }
       }
    }
-
-   // const deleteUser = (index) => {
-   //    let userlist = [...userList];
-   //    userlist.splice(index, 1);
-   //    setUserList([...userlist]);
-   // }
 
    const imageUpload = (e) => {
       const file = (e.target.files[0])
@@ -202,6 +198,25 @@ const AddNewCorporate = (props) => {
          }
       }
    }
+
+   const delinkUser = async (userId) => {
+      try {
+         const response = await delinkCorporateUser({ userId });
+
+         if (response?.status === 200) {
+            showSuccessToast(response?.data?.customMessage);
+
+            setUserList((prevUserList) =>
+               prevUserList.filter((user) => user.userId !== userId)
+            );
+         } else {
+            showErrorToast("Please try again...");
+         }
+      } catch (error) {
+         console.error("Error delinking user:", error);
+         showErrorToast("Please try again...");
+      }
+   };
 
    return (
       <>
@@ -359,160 +374,148 @@ const AddNewCorporate = (props) => {
                fontWeight="bold"
                style={{ fontSize: "16px", marginLeft: "17px", marginBottom: '1%' }}
             />
-            {/* {userList.length === 0 ?
-               <Loader />
-            : null} */}
-            {userList.map((elememt, index) => (
+            
+            {userList.map((element, index) => (
                <>
-                  <Row className="ml-1 mr-1" id={index}>
-                     <Col lg="4" style={{ marginTop: "0%" }}>
-                        <TextField
-                           className="w-100 mt-2"
-                           type="text"
-                           id={index}
-                           disabled={editUserIndex === index ? false : true}
-                           label="Admin Name"
-                           onChange={(e) => {
-                              const { value } = e.target;
-                              console.log(e)
-                              setUserList((prevUserList) => {
-                                 let newList = [...prevUserList];
-                                 newList[index] = {
-                                    ...newList[index],
-                                    name: value
-                                 };
-                                 return newList;
-                              });
-                           }}
-                           defaultValue={elememt.name}
-                        />
-                        <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
-                     </Col>
-                     <Col lg="4" style={{ marginTop: "0%" }}>
-                        <TextField
-                           className="w-100 mt-2"
-                           type="number"
-                           id={index}
-                           disabled={editUserIndex === index ? false : true}
-                           label="Mobile Number"
-                           InputProps={{
-                              startAdornment:
-                                 <>
-                                    <Text className='ml-2 mr-2' text={'+91'} style={{ fontSize: '16px' }} fontWeight={'500'} />
-                                 </>
-                           }}
-                           onChange={(e) => {
-                              const { value } = e.target;
-                              console.log(e)
-                              setUserList((prevUserList) => {
-                                 let newList = [...prevUserList];
-                                 newList[index] = {
-                                    ...newList[index],
-                                    mobile: value
-                                 };
-                                 return newList;
-                              });
-                           }}
-                           defaultValue={elememt.mobile}
-                        />
-                        <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
-                     </Col>
-                     {/* <Col lg="4" style={{ marginTop: "0%" }}>
-                        <TextField
-                           className="w-100 mt-2"
-                           type="email"
-                           id={index}
-                           disabled={editUserIndex === index ? false : true}
-                           label="Email"
-                           defaultValue={elememt.email}
-                        />
-                        <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
-                     </Col> */}
-                     <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
-                        <TextField
-                           className="w-100 mt-2"
-                           select
-                           id={index}
-                           disabled={editUserIndex === index ? false : true}
-                           label="Posting Permission"
-                           onChange={(e) => {
-                              const { value } = e.target;
-                              console.log(e)
-                              setUserList((prevUserList) => {
-                                 let newList = [...prevUserList];
-                                 newList[index] = {
-                                    ...newList[index],
-                                    sdPosting: e.target.value
-                                 };
-                                 return newList;
-                              });
-                           }}
-                           value={elememt.sdPosting} >
-                           <MenuItem value='' disabled>select</MenuItem>
-                           {permissionList.map(elememt => (
-                              <MenuItem key={elememt} value={elememt}>{elememt}</MenuItem>
-                           ))}
-                        </TextField>
-                     </Col>
-                     <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
-                        <TextField
-                           className="w-100 mt-2"
-                           select
-                           multiple={true}
-                           SelectProps={{
-                              multiple: true
-                           }}
-                           id={index}
-                           disabled={editUserIndex === index ? false : true}
-                           label="Assign Hub"
-                           value={elememt.hubIdList || []}  // Ensure the value is an array
-                           onChange={(e) => {
-                              const { value } = e.target;
-                              console.log(e)
-                              setUserList((prevUserList) => {
-                                 let newList = [...prevUserList];
-                                 newList[index] = {
-                                    ...newList[index],
-                                    hubIdList: typeof value === 'string' ? value.split(',') : value
-                                 };
-                                 return newList;
-                              });
-                           }}
-                        >
-                           <MenuItem value='' disabled>select</MenuItem>
-                           {allHubList?.data?.hubList?.map(elememt => (
-                              <MenuItem key={elememt.hubId} value={elememt.hubId}>
-                                 {elememt.hubName}
-                              </MenuItem>
-                           ))}
-                        </TextField>
-
-                     </Col>
-                     {/* <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
-                        <Switch disabled={editUserIndex === index ? false : true} checked={false} onChange={(e) => {}} color="warning" />
-                        <Text text={'Allow to view MIS to this user'} style={{fontSize:'18px', fontWeight:'500'}} />
-                     </Col> */}
-                     <Col lg='1'>
-                        {editUserIndex !== index ?
-                           <img id={index}
-                              src={pencilIcon}
-                              alt="Edit Icon"
-                              style={{
-                                 marginTop: '40%',
-                                 width: '30px', // Adjust as necessary
-                                 height: '30px', // Adjust as necessary
-                                 cursor: 'pointer',
-                                 backgroundColor: '#BE1452',
-                                 borderRadius: '50%'
+                  <React.Fragment key={element.userId}>
+                     <Row className="ml-1 mr-1" id={index}>
+                        <Col lg="4" style={{ marginTop: "0%" }}>
+                           <TextField
+                              className="w-100 mt-2"
+                              type="text"
+                              id={index}
+                              disabled={editUserIndex === index ? false : true}
+                              label="Admin Name"
+                              onChange={(e) => {
+                                 const { value } = e.target;
+                                 console.log(e)
+                                 setUserList((prevUserList) => {
+                                    let newList = [...prevUserList];
+                                    newList[index] = {
+                                       ...newList[index],
+                                       name: value
+                                    };
+                                    return newList;
+                                 });
                               }}
-                              onClick={() => { setEditUserIndex(index) }}
+                              value={element.name}
                            />
-                           :
-                           <Buttons id={index} disabled={false} name='Done' varient='primary' style={{ marginTop: '40%' }}
-                              onClick={() => { editUser(); }} ></Buttons>
-                        }
-                     </Col>
-                  </Row>
+                           <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
+                        </Col>
+                        <Col lg="4" style={{ marginTop: "0%" }}>
+                           <TextField
+                              className="w-100 mt-2"
+                              type="number"
+                              id={index}
+                              disabled={editUserIndex === index ? false : true}
+                              label="Mobile Number"
+                              InputProps={{
+                                 startAdornment:
+                                    <>
+                                       <Text className='ml-2 mr-2' text={'+91'} style={{ fontSize: '16px' }} fontWeight={'500'} />
+                                    </>
+                              }}
+                              onChange={(e) => {
+                                 const { value } = e.target;
+                                 console.log(e)
+                                 setUserList((prevUserList) => {
+                                    let newList = [...prevUserList];
+                                    newList[index] = {
+                                       ...newList[index],
+                                       mobile: value
+                                    };
+                                    return newList;
+                                 });
+                              }}
+                              value={element.mobile}
+                           />
+                           <Text color="dangerText" size="xSmall" className="pt-2" text={""} />
+                        </Col>
+                        <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
+                           <TextField
+                              className="w-100 mt-2"
+                              select
+                              id={index}
+                              disabled={editUserIndex === index ? false : true}
+                              label="Posting Permission"
+                              onChange={(e) => {
+                                 const { value } = e.target;
+                                 console.log(e)
+                                 setUserList((prevUserList) => {
+                                    let newList = [...prevUserList];
+                                    newList[index] = {
+                                       ...newList[index],
+                                       sdPosting: e.target.value
+                                    };
+                                    return newList;
+                                 });
+                              }}
+                              value={element.sdPosting} >
+                              <MenuItem value='' disabled>select</MenuItem>
+                              {permissionList.map(element => (
+                                 <MenuItem key={element} value={element}>{element}</MenuItem>
+                              ))}
+                           </TextField>
+                        </Col>
+                        <Col lg='4' style={{ paddingInlineEnd: '0%' }}>
+                           <TextField
+                              className="w-100 mt-2"
+                              select
+                              multiple={true}
+                              SelectProps={{
+                                 multiple: true
+                              }}
+                              id={index}
+                              disabled={editUserIndex === index ? false : true}
+                              label="Assign Hub"
+                              value={element.hubIdList || []}  // Ensure the value is an array
+                              onChange={(e) => {
+                                 const { value } = e.target;
+                                 console.log(e)
+                                 setUserList((prevUserList) => {
+                                    let newList = [...prevUserList];
+                                    newList[index] = {
+                                       ...newList[index],
+                                       hubIdList: typeof value === 'string' ? value.split(',') : value
+                                    };
+                                    return newList;
+                                 });
+                              }}
+                           >
+                              <MenuItem value='' disabled>select</MenuItem>
+                              {allHubList?.data?.hubList?.map(element => (
+                                 <MenuItem key={element.hubId} value={element.hubId}>
+                                    {element.hubName}
+                                 </MenuItem>
+                              ))}
+                           </TextField>
+
+                        </Col>
+                        <Col lg='1' className="d-flex align-items-center" style={{ alignItems: 'center' }}>
+                           {editUserIndex !== index ?
+                              <img id={index}
+                                 src={pencilIcon}
+                                 alt="Edit Icon"
+                                 style={{
+                                    // marginTop: '40%',
+                                    width: '30px', // Adjust as necessary
+                                    height: '30px', // Adjust as necessary
+                                    cursor: 'pointer',
+                                    backgroundColor: '#BE1452',
+                                    borderRadius: '50%'
+                                 }}
+                                 onClick={() => { setEditUserIndex(index) }}
+                              />
+                              :
+                              <Buttons id={index} disabled={false} name='Done' varient='primary'
+                                 onClick={() => { editUser(); }} ></Buttons>
+                           }
+                        </Col>
+                        <Col lg={2} className="d-flex align-items-center" style={{ alignItems: 'center' }} >
+                           <Buttons name="Delink User" onClick={() => { delinkUser(element?.userId); }} />
+                        </Col>
+                     </Row>
+                  </React.Fragment>
 
                   <hr />
                </>
@@ -580,8 +583,8 @@ const AddNewCorporate = (props) => {
                            }}
                            value={newUser.sdPosting} >
                            <MenuItem value='' disabled>select</MenuItem>
-                           {permissionList.map(elememt => (
-                              <MenuItem key={elememt} value={elememt}>{elememt}</MenuItem>
+                           {permissionList.map(element => (
+                              <MenuItem key={element} value={element}>{element}</MenuItem>
                            ))}
                         </TextField>
                      </Col>
@@ -602,9 +605,9 @@ const AddNewCorporate = (props) => {
                            }}
                         >
                            <MenuItem value='' disabled>select</MenuItem>
-                           {allHubList?.data?.hubList?.map(elememt => (
-                              <MenuItem key={elememt.hubId} value={elememt.hubId}>
-                                 {elememt.hubName}
+                           {allHubList?.data?.hubList?.map(element => (
+                              <MenuItem key={element.hubId} value={element.hubId}>
+                                 {element.hubName}
                               </MenuItem>
                            ))}
                         </TextField>
@@ -661,9 +664,9 @@ const AddNewCorporate = (props) => {
                         }}
                      >
                         <MenuItem value='' disabled>select</MenuItem>
-                        {allHubList?.data?.hubList?.map(elememt => (
-                           <MenuItem key={elememt.hubId} value={elememt.hubId}>
-                              {elememt.hubName}
+                        {allHubList?.data?.hubList?.map(element => (
+                           <MenuItem key={element.hubId} value={element.hubId}>
+                              {element.hubName}
                            </MenuItem>
                         ))}
                      </TextField>

@@ -449,6 +449,7 @@ export const ApiJson = {
     method: 'POST',
     data: {
       "userId": "",
+      // "state": "",
       "city": "",
       "location": "",
       "zipcode": "",
@@ -3904,6 +3905,17 @@ export const ApiJson = {
   },
   chargeVisitCoins: {
     url: "consumer/property/chargeVisitCoins/:propertyId/:visitCoins",
+    method: "PUT",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: true,
+    showErrorMessage: true,
+  },
+  delinkCorporateUser: {
+    url: "admin/user/delinkUserFromCorporate/:userId",
     method: "PUT",
     data: {},
     headers: {
