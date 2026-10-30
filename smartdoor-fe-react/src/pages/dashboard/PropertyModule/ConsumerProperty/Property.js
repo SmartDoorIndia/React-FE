@@ -329,6 +329,7 @@ const PropertyModule = (props) => {
       if (matches) {
          let zipcode = matches[2]
          getAllProperties({
+            state:p_state,
             city: p_city,
             zipcode,
             address,
@@ -348,6 +349,7 @@ const PropertyModule = (props) => {
          let zipcode = ""
          let location = ""
          getAllProperties({
+            state:p_state,
             city: p_city,
             zipcode,
             location,
@@ -383,6 +385,7 @@ const PropertyModule = (props) => {
       if (matches) {
          let zipcode = matches[2]
          getAllProperties({
+            state:p_state,
             city: p_city,
             zipcode,
             address,
@@ -402,6 +405,7 @@ const PropertyModule = (props) => {
          let zipcode = ""
          let location = ""
          getAllProperties({
+            state:p_state,
             city: p_city,
             zipcode,
             location,
@@ -454,6 +458,7 @@ const PropertyModule = (props) => {
          // picked; selecting a State below still re-fetches it narrowed to that state.
          getAllCityWithId({ smartdoorServiceStatus: null });
          getAllProperties({
+            state:p_state,
             city: p_city,
             zipcode: '',
             location: address,
@@ -626,7 +631,7 @@ const PropertyModule = (props) => {
                            <option value="">Select State</option>
                            {allStatesWithId?.data?.length > 0
                               ? allStatesWithId?.data?.map((state) => (
-                                 <option key={state.id} value={state.id}>
+                                 <option key={state.id} value={state.stateName}>
                                     {state.stateName}
                                  </option>
                               ))
@@ -799,6 +804,7 @@ const PropertyModule = (props) => {
                            }
                            await getAllProperties({
                               userId: userData.userid,
+                              state:p_state ? p_state : "",
                               city: p_city ? p_city : "",
                               pageSize: rowsPerPage,
                               pageNo: 1,

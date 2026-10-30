@@ -449,7 +449,7 @@ export const ApiJson = {
     method: 'POST',
     data: {
       "userId": "",
-      // "state": "",
+      "state": "",
       "city": "",
       "location": "",
       "zipcode": "",
