@@ -1,0 +1,113 @@
+@import '../../../scss/modules/variables.scss';
+
+// SIM picker and SIM modals - used on the SIM dashboard, camera dashboard, property devices and
+// property approval pages, and rendered in portals, so nothing here is nested under a page class
+
+.simPicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .simPickerProvider {
+        width: 150px;
+        flex-shrink: 0;
+        height: 40px;
+        font-size: $xSmall;
+        font-weight: $smbold;
+    }
+
+    .simPickerSim {
+        flex: 1;
+        min-width: 220px;
+
+        .MuiOutlinedInput-root {
+            font-size: $xSmall;
+        }
+    }
+}
+
+// options in the SIM dropdown (rendered in a popper outside the modal)
+.simPickerIccid {
+    flex: 1;
+    font-size: $xSmall;
+}
+
+.simPickerStatus {
+    margin-left: 10px;
+    font-size: 11px;
+    font-weight: $smbold;
+    color: $alertColor;
+
+    &.active {
+        color: $success;
+    }
+}
+
+.simModalLabel {
+    display: block;
+    margin-bottom: 6px;
+    font-size: $xSmall;
+    font-weight: $smbold;
+    color: $secondry-color;
+}
+
+.simCameraInfo {
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    background: $lightgray;
+    border-radius: 4px;
+    font-size: $xSmall;
+
+    .simInfoLabel {
+        display: inline-block;
+        width: 90px;
+        color: $gray;
+    }
+}
+
+.simApprovalChecking {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 30px 0;
+}
+
+.simApprovalRow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid $lightBorder;
+
+    .simApprovalCamera {
+        width: 180px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        font-size: $xSmall;
+
+        .simApprovalCameraId {
+            font-weight: $smbold;
+            font-size: $body;
+        }
+    }
+
+    .simApprovalPick {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .simPicker {
+            flex: 1;
+        }
+    }
+
+    .simApprovalAttached {
+        flex: 1;
+        font-size: $xSmall;
+        font-weight: $smbold;
+        color: $success;
+    }
+}

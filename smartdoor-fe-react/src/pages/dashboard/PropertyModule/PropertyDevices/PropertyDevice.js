@@ -34,6 +34,8 @@ import { ReactFlvPlayer } from "react-flv-player";
 import ReactPlayer from "react-player";
 import VisitMedia from "../VisitRecordings/VisitMedia";
 import IntrusionMedia from "../Intrusions/IntrusionMedia";
+import CONSTANTS_STATUS from "../../../../common/helpers/ConstantsStatus";
+import ReplaceSimModal from "../../SimModule/ReplaceSimModal";
 
 // Keep action buttons on one line; Windows fonts are wider than macOS ones.
 const ACTION_CELL_STYLE = { display: "flex", flexWrap: "nowrap", alignItems: "center", gap: "10px" };
@@ -133,6 +135,8 @@ const PropertyDevice = (props) => {
    const [selectedCensorData, setselectedCensorData] = useState({});
 
    const [cameraData, setCameraData] = useState([]);
+   // camera whose SIM is being attached / replaced; null keeps the modal closed
+   const [simCamera, setSimCamera] = useState(null);
    const [showEditCameraData, setShowEditCameraData] = useState(false);
    const [selectedCameraData, setselectedCameraData] = useState({});
    const [addCameraFlag, setAddCameraFlag] = useState(false);
@@ -441,6 +445,22 @@ const PropertyDevice = (props) => {
          cell: ({ status }) => <StatusBadge status={status} />,
       },
       {
+         name: "SIM",
+         selector: "iccid",
+         minWidth: "200px",
+         center: true,
+         cell: ({ type, iccid, simProvider }) =>
+            iccid ? (
+               <div className="text-center">
+                  <Text size="xSmall" className="d-block" text={iccid} />
+                  <Text size="xSmall" color="secondryColor" text={simProvider} />
+               </div>
+            ) : (
+               // Wi-Fi cameras never take a SIM; a 4G / PIR camera without one blocks approval
+               <Text text={CONSTANTS_STATUS.simCameraTypes.includes(type) ? "No SIM" : "-"} />
+            ),
+      },
+      {
          name: "Alert Mode",
          selector: "alertMode",
          maxWidth: "120px",
@@ -574,7 +594,7 @@ const PropertyDevice = (props) => {
          sortable: false,
          center: true,
          minWidth: "440px",
-         cell: ({ uuId, cameraDeviceId, kitId, propertyId }) => (
+         cell: ({ uuId, cameraDeviceId, kitId, propertyId, type, deleted, simCardId, iccid, simProvider }) => (
             <div className="action">
                <Buttons
                   name="View Data"
@@ -586,6 +606,21 @@ const PropertyDevice = (props) => {
                      showCameraData(uuId);
                   }}
                />
+               {CONSTANTS_STATUS.simCameraTypes.includes(type) && !deleted ? (
+                  <>
+                     &nbsp;&nbsp;
+                     <Buttons
+                        name={simCardId ? "Replace SIM" : "Attach SIM"}
+                        varient="primary"
+                        size="xSmall"
+                        color="white"
+                        className="mt-2 mb-2"
+                        onClick={() =>
+                           setSimCamera({ cameraDeviceId, uuId, cameraType: type, simCardId, iccid, simProvider })
+                        }
+                     />
+                  </>
+               ) : null}
                {kitId === null ?
                   <>
                      &nbsp;&nbsp;
@@ -1523,6 +1558,15 @@ const PropertyDevice = (props) => {
                </div>
             </Modal.Body>
          </Modal>
+
+         <ReplaceSimModal
+            camera={simCamera}
+            onHide={() => setSimCamera(null)}
+            onReplaced={() => {
+               setSimCamera(null);
+               _getCameraDevice(propertyId);
+            }}
+         />
       </>
    );
 };

@@ -3925,6 +3925,52 @@ export const ApiJson = {
     showResultMessage: true,
     showErrorMessage: true,
   },
+  // SIM dashboard - errors come back as { message } and are shown by the caller
+  getSimList: {
+    url: "smartlock/sim/list",
+    method: "POST",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
+  uploadSimFile: {
+    url: "smartlock/sim/upload",
+    method: "POST",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "multipart/form-data",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
+  getSimUploadLog: {
+    url: "smartlock/sim/uploads/:pageNumber/:pageSize",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
+  // also attaches a SIM to a camera that has none (oldSimCardId null)
+  replaceSim: {
+    url: "smartlock/sim/replaceSim",
+    method: "POST",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
 };
 // console.log(userData)
 

@@ -31,6 +31,7 @@ import QRCode from "react-qr-code";
 import { compose } from "redux";
 import { connect, useDispatch } from "react-redux";
 import * as Actions from "../../../../common/redux/types";
+import SimApprovalCheckModal from "../../SimModule/SimApprovalCheckModal";
 
 const PropertyDetail = (props) => {
    const taskId = props.location.state ? props.location.state.taskId : "";
@@ -45,6 +46,8 @@ const PropertyDetail = (props) => {
    const [assignToListToggle, setAssignToListToggle] = useState(false);
    const [executiveList, setExecutiveList] = useState([]);
    const [show, setShow] = useState(false);
+   // property being checked for camera SIMs before approval; null keeps the check closed
+   const [simCheckPropertyId, setSimCheckPropertyId] = useState(null);
    const handleClose = () => setShow(false);
    const handleShow = () => setShow(true);
    const {
@@ -141,6 +144,8 @@ const PropertyDetail = (props) => {
          approveProperty({ propertyId: data.propertyId })
             .then((response) => {
                if (response.data && response.data.status === 200) _getPropertyDetail();
+               // e.g. 409 when a 4G / PIR camera still has no SIM
+               else showErrorToast(response?.data?.message || "Property could not be approved, please try again.");
                handleClose();
             })
             .catch((err) => {
@@ -255,7 +260,11 @@ const PropertyDetail = (props) => {
                         type="submit"
                         size="xSmall"
                         color="white"
-                        onClick={handleApproveProperty}
+                        // every 4G / PIR camera needs a SIM first; the check approves once they all have one
+                        onClick={() => {
+                           handleClose();
+                           setSimCheckPropertyId(data.propertyId);
+                        }}
                      />
                   </div>
                </div>
@@ -748,6 +757,15 @@ const PropertyDetail = (props) => {
                </>
             )}
          </div>
+
+         <SimApprovalCheckModal
+            propertyId={simCheckPropertyId}
+            onCancel={() => setSimCheckPropertyId(null)}
+            onApprove={() => {
+               setSimCheckPropertyId(null);
+               handleApproveProperty();
+            }}
+         />
       </>
    );
 };

@@ -27,6 +27,7 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import SearchInput from "../../../../shared/Inputs/SearchInput/SearchInput";
 import { provideAuth } from "../../../../common/helpers/Auth";
+import ReplaceSimModal from "../../SimModule/ReplaceSimModal";
 
 const CameraDashboard = (props) => {
    const { allCitiesWithId, getAllCityWithId, cameraList, getCameraDashboardList } = props;
@@ -71,6 +72,8 @@ const CameraDashboard = (props) => {
    const [firmwareList, setFirmwareList] = useState([]);
    const [latestImageData, setLatestImageData] = useState({});
    const [showImageModal, setShowImageModal] = useState(false);
+   // camera row whose SIM is being attached / replaced; null keeps the modal closed
+   const [simCamera, setSimCamera] = useState(null);
 
    const tableRef = useRef();
    const history = useHistory();
@@ -127,6 +130,28 @@ const CameraDashboard = (props) => {
             </ToolTip>
          ),
          id: 4,
+      },
+      {
+         name: "SIM ICCID",
+         selector: (row) => row.iccid,
+         sortable: false,
+         center: true,
+         minWidth: "200px",
+         cell: ({ iccid }) => (
+            <ToolTip position="top" style={{ width: "100%" }} name={iccid || "No SIM"}>
+               <Text size="Small" color="secondryColor elipsis-text" text={iccid || "-"} />
+            </ToolTip>
+         ),
+         id: 16,
+      },
+      {
+         name: "SIM Provider",
+         selector: (row) => row.simProvider,
+         sortable: false,
+         center: true,
+         minWidth: "120px",
+         cell: ({ simProvider }) => <Text size="Small" color="secondryColor" text={simProvider || "-"} />,
+         id: 17,
       },
       {
          name: "Battery",
@@ -312,8 +337,9 @@ const CameraDashboard = (props) => {
          name: "Action",
          sortable: false,
          center: true,
-         minWidth: "340px",
-         cell: ({ cameraDeviceId, status, propertyId, kitId }) => (
+         minWidth: "440px",
+         // the row's camera type is renamed so it doesn't hide the cameraType filter used below
+         cell: ({ cameraDeviceId, status, propertyId, kitId, uuId, cameraType: rowCameraType, simCardId, iccid, simProvider }) => (
             <div className="action">
                <div className="locationSelect">
                   <>
@@ -395,11 +421,49 @@ const CameraDashboard = (props) => {
                         }} />{" "}
                      </>
                   ) : null}
+                  {CONSTANTS_STATUS.simCameraTypes.includes(rowCameraType) ? (
+                     <>
+                        &nbsp;&nbsp;
+                        <Buttons
+                           name={simCardId ? "Replace SIM" : "Attach SIM"}
+                           size="xSmall"
+                           onClick={() =>
+                              setSimCamera({
+                                 cameraDeviceId,
+                                 uuId,
+                                 cameraType: rowCameraType,
+                                 simCardId,
+                                 iccid,
+                                 simProvider,
+                              })
+                           }
+                        />
+                     </>
+                  ) : null}
                </div>
             </div>
          ),
       },
    ];
+
+   const reloadCameraList = () => {
+      getCameraDashboardList({
+         deviceStatus: deviceStatus,
+         corporateId: selectedCorporate,
+         cityIdList: cityIdList,
+         cameraType: cameraType,
+         cameraSubType: cameraSubType,
+         propertyId: propertyIdText,
+         cameraId: cameraIdText,
+         uuId: uuIdText,
+         pageNumber: currentPage,
+         pageSize: rowsPerPage,
+         orderByParam: orderByParam,
+         orderBy: orderBy,
+         firmwareVersion: firmwareVersion,
+         downloadFlag: false
+      });
+   };
 
    const ALL_STATUSES = [
       { status: "TOTAL", count: 0 },
@@ -1387,6 +1451,15 @@ const CameraDashboard = (props) => {
                </div>
             </Modal.Body>
          </Modal>
+
+         <ReplaceSimModal
+            camera={simCamera}
+            onHide={() => setSimCamera(null)}
+            onReplaced={() => {
+               setSimCamera(null);
+               reloadCameraList();
+            }}
+         />
       </>
    );
 };

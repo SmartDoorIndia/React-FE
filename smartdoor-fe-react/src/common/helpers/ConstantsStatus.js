@@ -24,7 +24,11 @@ const CONSTANTS_STATUS = {
     kitStatus: ["READY_TO_INSTALL", "DELETED", "INSTALLED"],
     cameraStatus: ["PRECONFIGURED_DEVICE","INSTALLED","DEFECTIVE","SOLD"],
     smartlockStatus: ["PRECONFIGURED_DEVICE","INSTALLED","DEFECTIVE","SOLD"],
-    smartlockType: [ "WOODEN_DOOR_LARGE_LOCK", "WOODEN_DOOR_MEDIUM_LOCK","GLASS_DOOR_SMALL_LOCK"]
+    smartlockType: [ "WOODEN_DOOR_LARGE_LOCK", "WOODEN_DOOR_MEDIUM_LOCK","GLASS_DOOR_SMALL_LOCK"],
+    simProvider: ["JIO", "AIRTEL", "VI"],
+    simStatus: ["READY_TO_USE", "IN_USE"],
+    // only these camera types take a SIM card
+    simCameraTypes: ["4G_CAMERA", "PIR_CAMERA"]
  };
  
  export default CONSTANTS_STATUS;

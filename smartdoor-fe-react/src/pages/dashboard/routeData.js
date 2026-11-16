@@ -145,6 +145,7 @@ const CameraDashboard = React.lazy(() => import('./CameraModule/CameraDashboard/
 const CameraMediaDashboard = React.lazy(() => import('./CameraModule/CameraMediaDashboard/CameraMediaDashboard'))
 const CameraMediaDetail = React.lazy(() => import('./CameraModule/CameraMediaDashboard/CameraMediaDetail'))
 const SmartlockDashboard = React.lazy(() => import('./SmartlockModule/SmartlockDashboard'))
+const SimDashboard = React.lazy(() => import('./SimModule/SimDashboard'))
 
 // Routing data
 const routeData = [
@@ -1469,7 +1470,23 @@ const routeData = [
     bradcrumb: false,
     excat: true,
     component: SmartlockDashboard
-  }, 
+  },
+
+  {
+    path: '/admin/sim-dashboard/viewProperty',
+    name: 'Property Details',
+    bradcrumb: ['SIM Dashboard', 'Property Details'],
+    excat: true,
+    component: PropertyDetailsModule,
+  },
+
+  {
+    path: '/admin/sim-dashboard',
+    name: 'SIM Dashboard',
+    bradcrumb: false,
+    excat: true,
+    component: SimDashboard
+  },
   
   {
     path: '/admin/property-details/:notificationId',

@@ -77,6 +77,19 @@ export const showErrorToast = (errorMessage, event) => {
    }
 };
 
+// Toaster messages for warning
+export const showWarningToast = (message) => {
+   if (!toast.isActive(toastId)) {
+      toastId = toast.warn(message, {
+         position: toast.POSITION.TOP_RIGHT,
+         hideProgressBar: true,
+         closeOnClick: true,
+         pauseOnHover: true,
+         autoClose: 4000,
+      });
+   }
+};
+
 // Toaster messages for success
 export const showSuccessToast = (message) => {
    if (!toast.isActive(toastId)) {

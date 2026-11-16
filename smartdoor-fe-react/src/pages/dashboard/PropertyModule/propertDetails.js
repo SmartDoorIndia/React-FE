@@ -64,6 +64,7 @@ import PostingFields from "../../../common/helpers/PostingFields";
 import editIcon from "../../../assets/svg/pencilIcon.svg";
 import coinsIcon from "../../../assets/images/coinStack.png";
 import './propertDetails.scss';
+import SimApprovalCheckModal from "../SimModule/SimApprovalCheckModal";
 
 const PropertyDetails = (props) => {
    const {
@@ -116,6 +117,8 @@ const PropertyDetails = (props) => {
    const [specList, setSpecList] = useState([]);
    const [confirmHideModal, setConfirmHideModal] = useState(false);
    const [showContactLeadModal, setShowContactLeadModal] = useState(false);
+   // property being checked for camera SIMs before approval; null keeps the check closed
+   const [simCheckPropertyId, setSimCheckPropertyId] = useState(null);
    const [contactLeadMobile, setContactLeadMobile] = useState("");
    const [contactLeadSaving, setContactLeadSaving] = useState(false);
    const [showRemoveContactLeadModal, setShowRemoveContactLeadModal] = useState(false);
@@ -956,11 +959,24 @@ const PropertyDetails = (props) => {
                      });
                   }
                   handleSortedData(false);
+               } else {
+                  // e.g. 409 when a 4G / PIR camera of a Smart Door property still has no SIM
+                  showErrorToast(response?.data?.message || "Property could not be approved, please try again.");
                }
             })
             .catch((err) => {
                console.log(err);
             });
+      }
+   };
+
+   // Smart Door properties first go through the SIM check, which approves once every 4G / PIR
+   // camera has a SIM; other properties are approved straight away
+   const handleApproveClick = () => {
+      if (propertyData.miscellaneousDetails?.smartLockProperty === true) {
+         setSimCheckPropertyId(propertyData.smartdoorPropertyId);
+      } else {
+         handleApproveProperty();
       }
    };
 
@@ -1291,9 +1307,7 @@ const PropertyDetails = (props) => {
                                           textAlign: "center",
                                        }}
                                        color="white"
-                                       onClick={() => {
-                                          handleApproveProperty();
-                                       }}
+                                       onClick={handleApproveClick}
                                     />{" "}
                                     &nbsp; &nbsp;
                                  </>
@@ -3290,6 +3304,15 @@ const PropertyDetails = (props) => {
                </div>
             </Modal.Body>
          </Modal>
+
+         <SimApprovalCheckModal
+            propertyId={simCheckPropertyId}
+            onCancel={() => setSimCheckPropertyId(null)}
+            onApprove={() => {
+               setSimCheckPropertyId(null);
+               handleApproveProperty();
+            }}
+         />
       </>
    );
 };

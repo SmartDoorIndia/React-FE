@@ -2628,3 +2628,23 @@ export const delinkCorporateUser = async data => {
   return response;
 }
 
+export const getSimList = async data => {
+  const response = await mainApiService("getSimList", data);
+  return response;
+}
+
+export const uploadSimFile = async formData => {
+  const response = await mainApiService("uploadSimFile", formData);
+  return response;
+}
+
+export const getSimUploadLog = async data => {
+  const response = await mainApiService("getSimUploadLog", data);
+  return response;
+}
+
+export const replaceSim = async data => {
+  const response = await mainApiService("replaceSim", data);
+  return response;
+}
+
