@@ -523,7 +523,7 @@ export const getAllProperties = (data) => async (dispatch) => {
   const response = await mainApiService('getAllProperties', data);
   if (response) {
     if (response.data && response.status === 200 && response.data.resourceData) {
-      await dispatch({ type: Actions.PROPERTY_MODULE_SUCCESS, data: { propertyData: response.data.resourceData, records: response.data.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate: data.toDate, pState: data.pState, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId, } });
+      await dispatch({ type: Actions.PROPERTY_MODULE_SUCCESS, data: { propertyData: response.data.resourceData, records: response.data.records, currentPage: data?.pageNo, rowsPerPage: data?.pageSize, searchStr: data?.searchString, propertyId: data.propertyId, city: data?.city, location: data?.location, smartLockProperty: data?.smartLockProperty, propertyStatus: data?.propertyStatus, fromDate: data.fromDate, toDate: data.toDate, pState: data.pState, loanAccNo: data?.loanAccNo, defaultSort: data.defaultSort, defaultSortId: data.defaultSortId, defaultSortFieldId: data.defaultSortFieldId, } });
       return response;
     } else dispatch({ type: Actions.PROPERTY_MODULE_ERROR, data: response.data });
   }
@@ -2645,6 +2645,11 @@ export const getSimUploadLog = async data => {
 
 export const replaceSim = async data => {
   const response = await mainApiService("replaceSim", data);
+  return response;
+}
+
+export const getDeviceHistory = async data => {
+  const response = await mainApiService("getDeviceHistory", data);
   return response;
 }
 

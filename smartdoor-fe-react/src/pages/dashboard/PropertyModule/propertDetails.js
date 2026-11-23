@@ -63,8 +63,9 @@ import { getLocalStorage } from "../../../common/helpers/Utils";
 import PostingFields from "../../../common/helpers/PostingFields";
 import editIcon from "../../../assets/svg/pencilIcon.svg";
 import coinsIcon from "../../../assets/images/coinStack.png";
-import './propertDetails.scss';
 import SimApprovalCheckModal from "../SimModule/SimApprovalCheckModal";
+import DeviceHistory from "./DeviceHistory/DeviceHistory";
+import './propertDetails.scss';
 
 const PropertyDetails = (props) => {
    const {
@@ -2933,6 +2934,9 @@ const PropertyDetails = (props) => {
                      </>
                   )}
 
+                  <div>
+                     <DeviceHistory propertyId={propertyId} />
+                  </div>
                   <MessageModal
                      show={showMsgModal}
                      handleShow={handleshowMsgModal}

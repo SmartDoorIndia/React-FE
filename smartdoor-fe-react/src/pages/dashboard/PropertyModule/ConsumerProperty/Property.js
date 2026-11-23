@@ -86,17 +86,18 @@ const PropertyModule = (props) => {
    const [toDate, setToDate] = useState(data.length !== 0 ? allPropertyData?.data?.toDate : null);
    const [filterText, setFilterText] = React.useState(data.length !== 0 ? allPropertyData?.data?.searchStr : "");
    const [propertyIdText, setPropertyIdText] = React.useState(data.length !== 0 ? allPropertyData?.data?.propertyId : "");
+   const [loanAccNo, setLoanAccNo] = React.useState(data.length !== 0 ? allPropertyData?.data?.loanAccNo : "");
    const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
    const [defaultSort, setDefaultSort] = useState(data.length !== 0 ? allPropertyData?.data?.defaultSort : false);
    const [defaultSortId, setDefaultSortId] = useState(data.length !== 0 ? allPropertyData?.data?.defaultSortId : 'propertyId');
    const [defaultSortFieldId, setDefaultSortFieldId] = useState(() => {
-      if(allPropertyData?.data?.defaultSortId === 'propertyId') {
+      if (allPropertyData?.data?.defaultSortId === 'propertyId') {
          return 1
       }
       else {
          return 2
       }
-      });
+   });
    const cityPresent = useCallback(
       () => {
          getLocationByCity({ city: p_city })
@@ -146,16 +147,16 @@ const PropertyModule = (props) => {
    const columns = [
       {
          name: "Id",
-         selector:((row) => row.propertyId),
+         selector: ((row) => row.propertyId),
          sortable: true,
          center: false,
          maxWidth: "150px",
          cell: ({ propertyId }) => (
             <ToolTip position="top" style={{ width: '100%' }} name={propertyId}>
-              <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
+               <Text size="Small" color="secondryColor elipsis-text" text={propertyId} />
             </ToolTip>
-          ),
-          id: 1
+         ),
+         id: 1
       },
       {
          name: "Added On",
@@ -165,7 +166,7 @@ const PropertyModule = (props) => {
          maxWidth: "120px",
          style: { padding: "0 !important" },
          cell: ({ postedDate }) => <span>{`${formateDate(postedDate)}` || ""}</span>,
-         id:2
+         id: 2
       },
       {
          name: "Published On",
@@ -206,19 +207,19 @@ const PropertyModule = (props) => {
          style: { padding: "0 !important" },
          center: true,
          minWidth: "300px",
-         cell: ({ houseNumber, societyName, societyAddress, city, state, address  }) => (
+         cell: ({ houseNumber, societyName, societyAddress, city, state, address }) => (
             <span>
                {houseNumber?.trim() &&
                   !address?.trim().startsWith(houseNumber.trim())
-                     ? <>{houseNumber}, </>
-                     : null
+                  ? <>{houseNumber}, </>
+                  : null
                }{address}
                {/* {societyName}
                {", "}
                {societyAddress} 
                {city !== null ? <>{societyAddress.includes(city) ? null : <>{", "}{city}</>}</> : null}
                {state !== null ? <>{societyAddress.includes(state) ? null : <>{", "}{state}</>}</> : null} */}
-            </span> 
+            </span>
          ),
       },
       {
@@ -274,7 +275,7 @@ const PropertyModule = (props) => {
                      <Link
                         to={{
                            pathname: "/admin/property/property-details",
-                           state: { propertyId: propertyId, userId: postedById, menuName: 'Properties', isDeleted: false, defaultSort: defaultSort, defaultSortId: defaultSortId},
+                           state: { propertyId: propertyId, userId: postedById, menuName: 'Properties', isDeleted: false, defaultSort: defaultSort, defaultSortId: defaultSortId },
                         }}
                      >
                         <Image name="editIcon" src={contentIco} />
@@ -294,17 +295,17 @@ const PropertyModule = (props) => {
    const validateDates = () => {
       if ((fromDate === null && toDate === null) || (fromDate === '' && toDate === '')) {
          return true;
-     } else if (fromDate !== null && toDate !== null && fromDate !== '' && toDate !== '') {
+      } else if (fromDate !== null && toDate !== null && fromDate !== '' && toDate !== '') {
          if (new Date(fromDate) > new Date(toDate)) {
-             showErrorToast("Start date should be less than end date");
-             return false;
+            showErrorToast("Start date should be less than end date");
+            return false;
          } else {
-             return true;
+            return true;
          }
-     } else {
+      } else {
          showErrorToast("Please enter start date and end date or set both empty");
          return false;
-     }
+      }
    }
    const ProgressComponent = <TableLoader />;
    const [currentPage, setCurrentPage] = useState(allPropertyData?.data?.length !== 0 ? allPropertyData?.data?.currentPage : 1);
@@ -329,7 +330,7 @@ const PropertyModule = (props) => {
       if (matches) {
          let zipcode = matches[2]
          getAllProperties({
-            state:p_state,
+            state: p_state,
             city: p_city,
             zipcode,
             address,
@@ -343,13 +344,14 @@ const PropertyModule = (props) => {
             fromDate: (fromDate),
             toDate: (toDate),
             pState: p_state,
+            loanAccNo: loanAccNo,
             defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
       } else {
          let zipcode = ""
          let location = ""
          getAllProperties({
-            state:p_state,
+            state: p_state,
             city: p_city,
             zipcode,
             location,
@@ -363,6 +365,7 @@ const PropertyModule = (props) => {
             fromDate: (fromDate),
             toDate: (toDate),
             pState: p_state,
+            loanAccNo: loanAccNo,
             defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
       }
@@ -385,7 +388,7 @@ const PropertyModule = (props) => {
       if (matches) {
          let zipcode = matches[2]
          getAllProperties({
-            state:p_state,
+            state: p_state,
             city: p_city,
             zipcode,
             address,
@@ -399,13 +402,14 @@ const PropertyModule = (props) => {
             fromDate: (fromDate),
             toDate: (toDate),
             pState: p_state,
+            loanAccNo: loanAccNo,
             defaultSort: !defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
       } else {
          let zipcode = ""
          let location = ""
          getAllProperties({
-            state:p_state,
+            state: p_state,
             city: p_city,
             zipcode,
             location,
@@ -419,6 +423,7 @@ const PropertyModule = (props) => {
             fromDate: (fromDate),
             toDate: (toDate),
             pState: p_state,
+            loanAccNo: loanAccNo,
             defaultSort: !defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
       }
@@ -458,7 +463,7 @@ const PropertyModule = (props) => {
          // picked; selecting a State below still re-fetches it narrowed to that state.
          getAllCityWithId({ smartdoorServiceStatus: null });
          getAllProperties({
-            state:p_state,
+            state: p_state,
             city: p_city,
             zipcode: '',
             location: address,
@@ -472,6 +477,7 @@ const PropertyModule = (props) => {
             fromDate: fromDate,
             toDate: toDate,
             pState: p_state,
+            loanAccNo: loanAccNo,
             defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
          });
          if (tableRef.current) {
@@ -512,7 +518,7 @@ const PropertyModule = (props) => {
             onFilter={(e) => setFilterText(e.target.value)}
             onClear={() => handleClear}
             filterText={filterText}
-            placeholder="Search owner name/mobile No."
+            placeholder="owner name/mob. No."
          />
       );
    }, [filterText, resetPaginationToggle]);
@@ -533,13 +539,31 @@ const PropertyModule = (props) => {
             value={propertyIdText}
             // onInput={(e) => {setPropertyIdText((e.target.value)); console.log(e)}}
             onFilter={(e) => setPropertyIdText(e.target.value)}
-            onClear={() => {handleClear()}}
+            onClear={() => { handleClear() }}
             filterText={propertyIdText}
-            // showSearch={true}
-            // margin={70}
+         // showSearch={true}
+         // margin={70}
          />
       );
    }, [propertyIdText, resetPaginationToggle]);
+
+   const LANBox = React.useMemo(() => {
+      const handleClear = () => {
+         if (filterText) {
+            setResetPaginationToggle(!resetPaginationToggle);
+            setLoanAccNo("");
+         }
+      };
+
+      return (
+         <SearchInput
+            onFilter={(e) => setLoanAccNo(e.target.value)}
+            onClear={() => handleClear}
+            filterText={loanAccNo}
+            placeholder="Loan acc. No."
+         />
+      );
+   }, [loanAccNo, resetPaginationToggle]);
 
    let filteredItems = [];
    const showData = (status_value) => {
@@ -562,13 +586,14 @@ const PropertyModule = (props) => {
    };
 
    const _filterStatus = (status_value) => {
-      setStatusSelected(status_value);   };
+      setStatusSelected(status_value);
+   };
 
    const _filterPropertyType = (status_value) => {
       setTypeSelected(status_value);
    };
 
-  
+
    const handleSortedData = (newSortedData) => {
       let selectorVal = newSortedData?.selector?.toString().split('.');
       selectorVal = selectorVal?.length > 1 ? selectorVal[1] : selectorVal[0]
@@ -576,19 +601,19 @@ const PropertyModule = (props) => {
       let defaultSortFlag = !defaultSort
       const sorted = [...filteredItems].sort((a, b) => {
          if (selectorVal === 'propertyId') {
-             setDefaultSortFieldId(1);
-             return (defaultSortFlag ? 1 : -1) * (a[selectorVal] - b[selectorVal]);
+            setDefaultSortFieldId(1);
+            return (defaultSortFlag ? 1 : -1) * (a[selectorVal] - b[selectorVal]);
          } else if (selectorVal === 'postedDate') {
-             setDefaultSortFieldId(2);
-             const dateA = new Date(a[selectorVal]);
-             const dateB = new Date(b[selectorVal]);
-             return (defaultSortFlag ? 1 : -1) * (dateA - dateB);
+            setDefaultSortFieldId(2);
+            const dateA = new Date(a[selectorVal]);
+            const dateB = new Date(b[selectorVal]);
+            return (defaultSortFlag ? 1 : -1) * (dateA - dateB);
          }
-     });
-      
+      });
+
       dispatch({
          type: Actions.PROPERTY_MODULE_SUCCESS,
-         data: { propertyData: [...sorted], records: recordSize, currentPage: currentPage, rowsPerPage: rowsPerPage, searchStr: filterText, propertyId: propertyIdText, city: p_city, location: address, smartLockProperty: typeSelected, propertyStatus: statusSelected, fromDate: fromDate, toDate: toDate,  defaultSort: defaultSortFlag, defaultSortId: defaultSortId }
+         data: { propertyData: [...sorted], records: recordSize, currentPage: currentPage, rowsPerPage: rowsPerPage, searchStr: filterText, propertyId: propertyIdText, city: p_city, location: address, smartLockProperty: typeSelected, propertyStatus: statusSelected, fromDate: fromDate, toDate: toDate, loanAccNo: loanAccNo, defaultSort: defaultSortFlag, defaultSortId: defaultSortId }
       });
       // showData();
    };
@@ -783,6 +808,10 @@ const PropertyModule = (props) => {
                         />
                      </Form.Group>
                   </div>
+                  <div className="filterField">
+                     <label className="filterLabel">Loan Acc. No.</label>
+                     {LANBox}
+                  </div>
                   <div className="filterField filterSearchAction">
                      <label className="filterLabel">&nbsp;</label>
                      <Buttons
@@ -804,7 +833,7 @@ const PropertyModule = (props) => {
                            }
                            await getAllProperties({
                               userId: userData.userid,
-                              state:p_state ? p_state : "",
+                              state: p_state ? p_state : "",
                               city: p_city ? p_city : "",
                               pageSize: rowsPerPage,
                               pageNo: 1,
@@ -817,6 +846,7 @@ const PropertyModule = (props) => {
                               fromDate: (fromDate),
                               toDate: (toDate),
                               pState: p_state,
+                              loanAccNo: loanAccNo,
                               defaultSort: defaultSort, defaultSortId: defaultSortId, defaultSortFieldId: defaultSortFieldId
                            });
                            // setRecordSize(allPropertyData?.data?.propertyData?.length)
@@ -826,7 +856,7 @@ const PropertyModule = (props) => {
                </div>
             </div>
             <div className="propertiesTableWrapper" onScroll={handleScroll}>
-               <DataTableComponent ref={tableRef} 
+               <DataTableComponent ref={tableRef}
                   data={showData()}
                   columns={columns}
                   progressPending={allPropertyData.isLoading}

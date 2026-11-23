@@ -3971,6 +3971,17 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: false,
   },
+  getDeviceHistory: {
+    url: "smartlock/smartlock/getDeviceHistory/:propertyId/:deviceType",
+    method: "GET",
+    data: {},
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
 };
 // console.log(userData)
 
