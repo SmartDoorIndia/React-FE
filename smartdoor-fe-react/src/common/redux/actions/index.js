@@ -2653,3 +2653,42 @@ export const getDeviceHistory = async data => {
   return response;
 }
 
+// ---------- Property Transfer (Admin / Super Admin) ----------
+// Each returns the raw axios response; on an error it is error.response, so the Spring
+// error text is in response.data.message.
+
+// data: { search } - at least 3 characters
+export const searchTransferUser = async (data) => {
+  const response = await mainApiService('searchTransferUser', {
+    search: encodeURIComponent(data?.search || ''),
+  });
+  return response;
+};
+
+// data: { userId, newOwnerId? } - newOwnerId adds newOwnerIsCoOwner / newOwnerIsContactLead to each row
+export const getPropertiesForTransfer = async (data) => {
+  const response = await mainApiService('getPropertiesForTransfer', {
+    userId: data?.userId,
+    newOwnerQuery: data?.newOwnerId ? `?newOwnerId=${data.newOwnerId}` : '',
+  });
+  return response;
+};
+
+// data: { fromUserId, toUserId, propertyIds, remarks } - resourceData is the transferRef
+export const transferProperty = async (data) => {
+  const response = await mainApiService('transferProperty', data);
+  return response;
+};
+
+// data: { propertyId }
+export const getPropertyTransferHistory = async (data) => {
+  const response = await mainApiService('getPropertyTransferHistory', data);
+  return response;
+};
+
+// data: { records, pageNumber, userId, propertyId, transferRef, fromDate, toDate } - pageNumber starts at 1
+export const getPropertyTransfers = async (data) => {
+  const response = await mainApiService('getPropertyTransfers', data);
+  return response;
+};
+

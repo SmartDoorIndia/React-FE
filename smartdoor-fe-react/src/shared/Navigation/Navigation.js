@@ -16,6 +16,7 @@ import propertyActive from "../../assets/svg/property-active.svg";
 import houseIcon from "../../assets/images/house-icon.svg";
 import borkerIcon from "../../assets/images/broker-icon.png";
 import { getLocalStorage } from "../../common/helpers/Utils";
+import { isTransferAdmin } from "../../pages/dashboard/PropertyModule/PropertyTransfer/transferUtils";
 
 const Nav = () => {
    const { pathname } = useLocation();
@@ -209,6 +210,25 @@ const Nav = () => {
                         </Link> */}
                         </>
                      )}
+                  {/* Property Transfer: Admin (role 3) and Super Admin (role 16) only */}
+                  {isTransferAdmin(userData) && (
+                     <Link
+                        to="/admin/transfer-property"
+                        className={`nav-link ${
+                           pathname.includes("/admin/transfer-property") ? "nav-active" : ""
+                        }`}
+                     >
+                        <Image
+                           name="houseIcon"
+                           src={
+                              pathname.includes("/admin/transfer-property")
+                                 ? propertyActive
+                                 : houseIcon
+                           }
+                        />
+                        Property Transfer
+                     </Link>
+                  )}
                   {(userData.roleName === "SUPER ADMIN" ||
                      userData.roleName === "CONSUMER ADMIN" ||
                      userData.roleName === "SALES ADMIN") && (

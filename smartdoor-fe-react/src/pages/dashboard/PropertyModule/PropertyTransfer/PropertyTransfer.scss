@@ -1,0 +1,297 @@
+/* Property Transfer: dashboard, history tab and ownership history section */
+@import "../../../../scss/modules/variables.scss";
+
+.property-transfer-page {
+   .nav-tabs .nav-link {
+      cursor: pointer;
+   }
+}
+
+.transfer-step {
+   background: #fff;
+   border: 1px solid #ececec;
+   border-radius: 8px;
+   padding: 16px;
+   margin-bottom: 16px;
+
+   &__title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #252525;
+      margin-bottom: 10px;
+   }
+}
+
+.owner-search {
+   position: relative;
+   max-width: 560px;
+
+   &__input {
+      position: relative;
+
+      .form-control {
+         padding-right: 32px;
+      }
+   }
+
+   &__clear {
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      border: 0;
+      background: transparent;
+      font-size: 1.2rem;
+      line-height: 1;
+      color: #888;
+      cursor: pointer;
+   }
+
+   &__dropdown {
+      position: absolute;
+      z-index: 1050;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      max-height: 320px;
+      overflow-y: auto;
+      background: #fff;
+      border: 1px solid #dcdcdc;
+      border-radius: 6px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+   }
+
+   &__hint {
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      color: #777;
+   }
+
+   &__item {
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #f2f2f2;
+
+      &:last-child {
+         border-bottom: 0;
+      }
+
+      &:hover {
+         background: #f8f3f5;
+      }
+
+      &--disabled {
+         cursor: not-allowed;
+         opacity: 0.55;
+
+         &:hover {
+            background: transparent;
+         }
+      }
+   }
+
+   &__item-title {
+      font-size: 0.875rem;
+      color: #252525;
+   }
+
+   &__item-meta {
+      font-size: 0.78rem;
+      color: #777;
+   }
+}
+
+.owner-card {
+   max-width: 560px;
+   margin-top: 10px;
+   padding: 10px 14px;
+   border: 1px solid #e6e6e6;
+   border-left: 3px solid $primary-color;
+   border-radius: 6px;
+   background: #fcfafb;
+
+   &__title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #252525;
+   }
+
+   &__meta {
+      font-size: 0.8rem;
+      color: #666;
+   }
+}
+
+.transfer-table {
+   &__check {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+   }
+
+}
+
+.transfer-link {
+   color: $primary-color;
+   font-weight: 600;
+   text-decoration: underline;
+}
+
+.transfer-warn {
+   color: #d98b00;
+   font-size: 1rem;
+   cursor: help;
+}
+
+.transfer-note {
+   font-size: 0.8rem;
+   color: #777;
+}
+
+.transfer-error {
+   font-size: 0.85rem;
+   color: #dc3545;
+}
+
+.transfer-confirm {
+   &__list {
+      padding-left: 18px;
+      margin-bottom: 0;
+
+      li {
+         margin-bottom: 6px;
+      }
+   }
+
+   &__warn {
+      color: #9a6200;
+   }
+}
+
+.transfer-toast__link {
+   color: #fff;
+   font-weight: 600;
+   text-decoration: underline;
+
+   &:hover,
+   &:focus {
+      color: #fff;
+   }
+}
+
+.transfer-history {
+   &__label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 4px;
+   }
+
+   &__sub {
+      font-size: 0.78rem;
+      color: #777;
+   }
+
+   &__remarks,
+   &__user {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      padding: 4px 0;
+   }
+
+   // Sized to the column (not a fixed width) so it can never spill into the next column.
+   .elipsis-text {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+   }
+}
+
+.ownership-history {
+   margin-top: 16px;
+
+   .elipsis-text {
+      display: block;
+      max-width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+   }
+}
+
+// Table cells are flex containers; width 100% + min-width 0 make the address wrap inside its own
+// column instead of spilling into the next ones.
+.transfer-address {
+   width: 100%;
+   min-width: 0;
+   white-space: normal;
+   overflow-wrap: anywhere;
+   line-height: 1.4;
+   padding: 8px 0;
+   text-align: center;
+}
+
+.transfer-history__sub.transfer-address {
+   padding: 2px 0 0;
+}
+
+// Columns are centered (to line up with the centered headers), so stacked cell contents
+// (name + mobile, date + time, remarks + badges) are centered too.
+.transfer-history__date,
+.transfer-history__user,
+.transfer-history__remarks {
+   text-align: center;
+}
+
+// The shared DataTable pins every table's first column to 65px (meant for a checkbox / S.No). The
+// history tables start with the date, so give that column room. Scoped to these tables only.
+.transfer-history .rdt_TableCol:first-child,
+.transfer-history .rdt_TableCell:first-child,
+.ownership-history .rdt_TableCol:first-child,
+.ownership-history .rdt_TableCell:first-child {
+   min-width: 130px !important;
+   max-width: 150px !important;
+}
+
+// Date on one line, time on the next.
+.transfer-history__date > div {
+   white-space: nowrap;
+}
+
+.transfer-no {
+   font-weight: 600;
+   white-space: nowrap;
+   letter-spacing: 0.02em;
+}
+
+// Banner shown when Transfer History is filtered to one transfer batch.
+.transfer-batch {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   flex-wrap: wrap;
+   gap: 8px 16px;
+   margin-bottom: 12px;
+   padding: 10px 14px;
+   background-color: #fbf0f4;
+   border-left: 4px solid $primary-color;
+   border-radius: 4px;
+
+   &__text {
+      min-width: 0;
+   }
+
+   &__ref {
+      font-family: monospace;
+      font-size: 0.85rem;
+      word-break: break-all;
+   }
+}
+
+// handleStatusElement adds a left margin (ml-2) that pushes the badge off-center.
+.transfer-table .transfer-status .defaultTag {
+   margin-left: 0 !important;
+}

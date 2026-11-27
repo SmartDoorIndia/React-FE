@@ -3982,6 +3982,71 @@ export const ApiJson = {
     showResultMessage: false,
     showErrorMessage: false,
   },
+
+  // ---------- Property Transfer (Admin / Super Admin) ----------
+  // The screens show the backend `message` themselves, so showErrorMessage is false.
+
+  // GET /property/searchTransferUser?search= - min 3 chars, matches mobile / name / exact user id
+  searchTransferUser: {
+    url: '/admin/property/searchTransferUser?search=:search',
+    method: 'GET',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
+  // GET /property/getPropertiesForTransfer/{userId}?newOwnerId= - :newOwnerQuery is either
+  // "?newOwnerId=<id>" or "" (built in the action) so an absent new owner sends no query param.
+  getPropertiesForTransfer: {
+    url: '/admin/property/getPropertiesForTransfer/:userId:newOwnerQuery',
+    method: 'GET',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
+  // POST /property/transferProperty - body: { fromUserId, toUserId, propertyIds, remarks }
+  transferProperty: {
+    url: '/admin/property/transferProperty',
+    method: 'POST',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
+  // GET /property/transferHistory/{propertyId} - ownership history of one property, newest first
+  getPropertyTransferHistory: {
+    url: '/admin/property/transferHistory/:propertyId',
+    method: 'GET',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
+  // POST /property/getPropertyTransfers/{records}/{pageNumber} - body: { userId, propertyId, transferRef, fromDate, toDate }
+  getPropertyTransfers: {
+    url: '/admin/property/getPropertyTransfers/:records/:pageNumber',
+    method: 'POST',
+    data: {},
+    headers: {
+      'Accept': '*/*',
+      'Content-Type': 'application/json',
+    },
+    showResultMessage: false,
+    showErrorMessage: false,
+  },
 };
 // console.log(userData)
 

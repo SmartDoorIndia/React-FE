@@ -18,6 +18,7 @@ const PropertyModule = React.lazy(() => import('./PropertyModule/ConsumerPropert
 const PropertyDetailsModule = React.lazy(() => import('./PropertyModule/propertDetails'));
 const PropertyDocModule = React.lazy(() => import('./PropertyModule/PropertyDoc'));
 const DeletedProperties = React.lazy(() => import('./PropertyModule/DeletedProperties/DelUnlistedProperties'))
+const PropertyTransfer = React.lazy(() => import('./PropertyModule/PropertyTransfer/PropertyTransfer'))
 const PropertyDevice = React.lazy(() => import('./PropertyModule/PropertyDevices/PropertyDevice'))
 const EditPost1 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/EditPost1'))
 const EditPost2 = React.lazy(() => import('./PropertyModule/EditPropertyDetails/EditPost2'))
@@ -528,6 +529,15 @@ const routeData = [
     excat: true,
     module: 'EXECUTION',
     component: DeletedProperties,
+  },
+  {
+    // Admin / Super Admin only (sidebar link and the page itself check the role)
+    path: '/admin/transfer-property',
+    name: 'Property Transfer',
+    bradcrumb: false,
+    excat: true,
+    module: 'EXECUTION',
+    component: PropertyTransfer,
   },
 
   // Builder property

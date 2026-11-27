@@ -65,6 +65,7 @@ import editIcon from "../../../assets/svg/pencilIcon.svg";
 import coinsIcon from "../../../assets/images/coinStack.png";
 import SimApprovalCheckModal from "../SimModule/SimApprovalCheckModal";
 import DeviceHistory from "./DeviceHistory/DeviceHistory";
+import OwnershipHistory from "./PropertyTransfer/OwnershipHistory";
 import './propertDetails.scss';
 
 const PropertyDetails = (props) => {
@@ -79,8 +80,11 @@ const PropertyDetails = (props) => {
       getNonSDProperties,
       allNonSDProperties,
    } = props;
-   const propertyId = props.location.state ? props.location.state.propertyId || "" : "";
-   const userId = props.location.state ? props.location.state.userId || "" : "";
+   // A new tab (e.g. a property ID link on Property Transfer) has no router state, so fall back to
+   // ?propertyId=&userId= in the URL.
+   const queryParams = new URLSearchParams(props.location.search);
+   const propertyId = props.location.state?.propertyId || Number(queryParams.get("propertyId")) || "";
+   const userId = props.location.state?.userId || Number(queryParams.get("userId")) || "";
    const menuName = props.location.state ? props.location.state.menuName || "" : "";
    const isDeleted = props.location.state ? props.location.state.isDeleted : null;
    const [loading, setLoading] = useState(true);
@@ -2937,6 +2941,7 @@ const PropertyDetails = (props) => {
                   <div>
                      <DeviceHistory propertyId={propertyId} />
                   </div>
+                  <OwnershipHistory propertyId={propertyId} />
                   <MessageModal
                      show={showMsgModal}
                      handleShow={handleshowMsgModal}
